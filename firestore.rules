@@ -1,0 +1,550 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================
+    // GLOBAL SECURITY PRIMITIVES & HELPERS
+    // ==========================================
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Preserves designated developer/tester access for testing cross-role flows
+    function isDeveloper() {
+      return isSignedIn() && request.auth.token.email == 'rylandkeanan@gmail.com';
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && (request.auth.uid == userId || isDeveloper());
+    }
+
+    function isTeacherOfClass(classId) {
+      return isSignedIn() && (
+        isDeveloper() ||
+        get(/databases/$(database)/documents/classes/$(classId)).data.teacherId == request.auth.uid
+      );
+    }
+
+    function isEnrolledInClass(classId) {
+      return isSignedIn() && (
+        isDeveloper() ||
+        request.auth.uid in get(/databases/$(database)/documents/classes/$(classId)).data.studentIds ||
+        get(/databases/$(database)/documents/classes/$(classId)).data.teacherId == request.auth.uid
+      );
+    }
+
+    function isParentOfChild(childId) {
+      return isSignedIn() && (
+        isDeveloper() ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         'linkedStudentIds' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data &&
+         childId in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.linkedStudentIds)
+      );
+    }
+
+    function isTeacherOfEnrolledStudent(studentId) {
+      return isSignedIn() && (
+        isDeveloper() ||
+        (exists(/databases/$(database)/documents/users/$(studentId)) &&
+         'teacherIds' in get(/databases/$(database)/documents/users/$(studentId)).data &&
+         request.auth.uid in get(/databases/$(database)/documents/users/$(studentId)).data.teacherIds)
+      );
+    }
+
+    // ==========================================
+    // ZERO-TRUST VALIDATORS (SHADOW INJECTION GUARDS)
+    // Enforce exact document shapes and reject unapproved fields
+    // ==========================================
+
+    // 1. User Profile Validator
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['uid', 'email', 'role', 'createdAt']) &&
+             data.keys().toSet().hasOnly(['uid', 'email', 'displayName', 'photoURL', 'role', 'createdAt', 'linkedStudentIds', 'subscriptionTier', 'subscriptionStatus', 'trialEndsAt', 'aiUsageToday', 'aiUsageResetDate', 'teacherIds', 'enrolledClassIds']) &&
+             data.uid is string && data.uid.size() <= 128 &&
+             data.email is string && data.email.size() <= 256 &&
+             data.role in ['student', 'teacher', 'parent', 'tutor'] &&
+             data.createdAt is number &&
+             (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 128)) &&
+             (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 512)) &&
+             (!('linkedStudentIds' in data) || (data.linkedStudentIds is list && data.linkedStudentIds.size() <= 50)) &&
+             (!('teacherIds' in data) || (data.teacherIds is list && data.teacherIds.size() <= 50)) &&
+             (!('enrolledClassIds' in data) || (data.enrolledClassIds is list && data.enrolledClassIds.size() <= 50)) &&
+             (!('subscriptionTier' in data) || (data.subscriptionTier in ['free_trial', 'student_pro', 'family_basic', 'educator_plus'])) &&
+             (!('subscriptionStatus' in data) || (data.subscriptionStatus in ['trialing', 'active', 'expired'])) &&
+             (!('trialEndsAt' in data) || (data.trialEndsAt is number)) &&
+             (!('aiUsageToday' in data) || (data.aiUsageToday is number)) &&
+             (!('aiUsageResetDate' in data) || (data.aiUsageResetDate is string && data.aiUsageResetDate.size() <= 20));
+    }
+
+    // 2. Notebook Validator
+    function isValidNotebook(data) {
+      return data.keys().hasAll(['id', 'userId', 'name', 'subject', 'mode', 'createdAt']) &&
+             data.keys().toSet().hasOnly(['id', 'userId', 'name', 'subject', 'mode', 'createdAt', 'lastInteractionId']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
+             data.subject is string && data.subject.size() > 0 && data.subject.size() <= 100 &&
+             data.mode in ['socratic', 'stem', 'writing', 'flashcards', 'teacher'] &&
+             data.createdAt is number &&
+             (!('lastInteractionId' in data) || (data.lastInteractionId is string && data.lastInteractionId.size() <= 200));
+    }
+
+    // 2b. Notebook Message Subcollection Validator
+    function isValidNotebookMessage(data) {
+      return data.keys().hasAll(['id', 'userId', 'notebookId', 'role', 'content', 'timestamp']) &&
+             data.keys().toSet().hasOnly(['id', 'userId', 'notebookId', 'role', 'content', 'timestamp']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.notebookId is string && data.notebookId.size() <= 128 &&
+             data.role in ['user', 'model'] &&
+             data.content is string && data.content.size() <= 50000 &&
+             data.timestamp is number;
+    }
+
+    // 3. Study Plan Item Validator
+    function isValidStudyPlanItem(data) {
+      return data.keys().hasAll(['id', 'userId', 'title', 'subject', 'durationMinutes', 'priority', 'completed', 'type', 'date']) &&
+             data.keys().toSet().hasOnly(['id', 'userId', 'title', 'subject', 'durationMinutes', 'priority', 'completed', 'type', 'date', 'reason']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 300 &&
+             data.subject is string && data.subject.size() > 0 && data.subject.size() <= 100 &&
+             data.durationMinutes is number && data.durationMinutes >= 0 && data.durationMinutes <= 1440 &&
+             data.priority in ['high', 'medium', 'low'] &&
+             data.completed is bool &&
+             data.type in ['ai_recommendation', 'student_task'] &&
+             data.date is string && data.date.size() <= 20 &&
+             (!('reason' in data) || (data.reason is string && data.reason.size() <= 500));
+    }
+
+    // 4. Practice Session Validator
+    function isValidPracticeSession(data) {
+      return data.keys().hasAll(['id', 'userId', 'subject', 'topic', 'difficulty', 'totalQuestions', 'correctAnswers', 'timestamp']) &&
+             data.keys().toSet().hasOnly(['id', 'userId', 'subject', 'topic', 'difficulty', 'totalQuestions', 'correctAnswers', 'timestamp']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.subject is string && data.subject.size() > 0 && data.subject.size() <= 100 &&
+             data.topic is string && data.topic.size() > 0 && data.topic.size() <= 200 &&
+             data.difficulty in ['easy', 'medium', 'hard'] &&
+             data.totalQuestions is number && data.totalQuestions >= 0 && data.totalQuestions <= 100 &&
+             data.correctAnswers is number && data.correctAnswers >= 0 && data.correctAnswers <= data.totalQuestions &&
+             data.timestamp is number;
+    }
+
+    // 5. Personal Teacher Message Validator
+    function isValidTeacherMessage(data) {
+      return data.keys().hasAll(['id', 'userId', 'sender', 'text', 'timestamp', 'read']) &&
+             data.keys().toSet().hasOnly(['id', 'userId', 'sender', 'text', 'timestamp', 'read']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.sender in ['student', 'teacher'] &&
+             data.text is string && data.text.size() > 0 && data.text.size() <= 4000 &&
+             data.timestamp is number &&
+             data.read is bool;
+    }
+
+    // 6. Personal Assignment Validator
+    function isValidAssignment(data) {
+      return data.keys().hasAll(['id', 'userId', 'subject', 'title', 'description', 'dueDate', 'status']) &&
+             data.keys().toSet().hasOnly(['id', 'userId', 'subject', 'title', 'description', 'dueDate', 'status', 'studentSubmission', 'studentNote', 'teacherFeedback', 'grade', 'submittedAt']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.subject is string && data.subject.size() > 0 && data.subject.size() <= 100 &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 300 &&
+             data.description is string && data.description.size() <= 4000 &&
+             data.dueDate is string && data.dueDate.size() <= 50 &&
+             data.status in ['not_started', 'submitted', 'reviewed'] &&
+             (!('studentSubmission' in data) || (data.studentSubmission is string && data.studentSubmission.size() <= 10000)) &&
+             (!('studentNote' in data) || (data.studentNote is string && data.studentNote.size() <= 1000)) &&
+             (!('teacherFeedback' in data) || (data.teacherFeedback is string && data.teacherFeedback.size() <= 4000)) &&
+             (!('grade' in data) || (data.grade is string && data.grade.size() <= 20)) &&
+             (!('submittedAt' in data) || (data.submittedAt is number));
+    }
+
+    // 7. Personal Teacher Resource Validator
+    function isValidTeacherResource(data) {
+      return data.keys().hasAll(['id', 'userId', 'subject', 'title', 'type', 'content', 'createdAt']) &&
+             data.keys().toSet().hasOnly(['id', 'userId', 'subject', 'title', 'type', 'content', 'createdAt', 'url']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.subject is string && data.subject.size() > 0 && data.subject.size() <= 100 &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 300 &&
+             data.type in ['note', 'link'] &&
+             data.content is string && data.content.size() <= 10000 &&
+             data.createdAt is number &&
+             (!('url' in data) || (data.url is string && data.url.size() <= 1000));
+    }
+
+    // 8. Shared Classroom Validator
+    function isValidClassroom(data) {
+      return data.keys().hasAll(['id', 'name', 'subject', 'joinCode', 'teacherId', 'teacherName', 'studentIds', 'createdAt']) &&
+             data.keys().toSet().hasOnly(['id', 'name', 'subject', 'joinCode', 'teacherId', 'teacherName', 'teacherEmail', 'studentIds', 'studentProfiles', 'createdAt']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
+             data.subject is string && data.subject.size() > 0 && data.subject.size() <= 100 &&
+             data.joinCode is string && data.joinCode.size() >= 4 && data.joinCode.size() <= 16 &&
+             data.teacherId is string && data.teacherId.size() <= 128 &&
+             data.teacherName is string && data.teacherName.size() <= 128 &&
+             data.studentIds is list && data.studentIds.size() <= 250 &&
+             data.createdAt is number &&
+             (!('teacherEmail' in data) || (data.teacherEmail is string && data.teacherEmail.size() <= 256));
+    }
+
+    // 8b. Join Code Direct Lookup Validator
+    function isValidJoinCodeEntry(data) {
+      return data.keys().hasAll(['id', 'classId', 'joinCode', 'teacherId', 'createdAt']) &&
+             data.keys().toSet().hasOnly(['id', 'classId', 'joinCode', 'teacherId', 'createdAt']) &&
+             data.id is string && data.id.size() <= 32 &&
+             data.classId is string && data.classId.size() <= 128 &&
+             data.joinCode is string && data.joinCode.size() >= 4 && data.joinCode.size() <= 16 &&
+             data.teacherId is string && data.teacherId.size() <= 128 &&
+             data.createdAt is number;
+    }
+
+    // 8c. Parent Link Code Direct Lookup Validator
+    function isValidParentLinkCode(data) {
+      return data.keys().hasAll(['id', 'studentId', 'studentName', 'linkCode', 'createdAt']) &&
+             data.keys().toSet().hasOnly(['id', 'studentId', 'studentName', 'studentEmail', 'linkCode', 'createdAt']) &&
+             data.id is string && data.id.size() <= 32 &&
+             data.studentId is string && data.studentId.size() <= 128 &&
+             data.studentName is string && data.studentName.size() <= 128 &&
+             data.linkCode is string && data.linkCode.size() >= 4 && data.linkCode.size() <= 16 &&
+             data.createdAt is number &&
+             (!('studentEmail' in data) || (data.studentEmail is string && data.studentEmail.size() <= 256));
+    }
+
+    // 9. Class Assignment Validator
+    function isValidClassAssignment(data) {
+      return data.keys().hasAll(['id', 'classId', 'teacherId', 'subject', 'title', 'description', 'dueDate', 'createdAt']) &&
+             data.keys().toSet().hasOnly(['id', 'classId', 'teacherId', 'subject', 'title', 'description', 'dueDate', 'createdAt']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.classId is string && data.classId.size() <= 128 &&
+             data.teacherId is string && data.teacherId.size() <= 128 &&
+             data.subject is string && data.subject.size() <= 100 &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 300 &&
+             data.description is string && data.description.size() <= 5000 &&
+             data.dueDate is string && data.dueDate.size() <= 50 &&
+             data.createdAt is number;
+    }
+
+    // 10. Assignment Submission Validator
+    function isValidAssignmentSubmission(data) {
+      return data.keys().hasAll(['id', 'assignmentId', 'classId', 'studentId', 'studentName', 'studentSubmission', 'submittedAt', 'status']) &&
+             data.keys().toSet().hasOnly(['id', 'assignmentId', 'classId', 'studentId', 'studentName', 'studentEmail', 'studentSubmission', 'studentNote', 'submittedAt', 'status', 'grade', 'teacherFeedback', 'reviewedAt']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.assignmentId is string && data.assignmentId.size() <= 128 &&
+             data.classId is string && data.classId.size() <= 128 &&
+             data.studentId is string && data.studentId.size() <= 128 &&
+             data.studentName is string && data.studentName.size() <= 128 &&
+             data.studentSubmission is string && data.studentSubmission.size() <= 15000 &&
+             data.submittedAt is number &&
+             data.status in ['submitted', 'reviewed'] &&
+             (!('studentEmail' in data) || (data.studentEmail is string && data.studentEmail.size() <= 256)) &&
+             (!('studentNote' in data) || (data.studentNote is string && data.studentNote.size() <= 2000)) &&
+             (!('grade' in data) || (data.grade is string && data.grade.size() <= 20)) &&
+             (!('teacherFeedback' in data) || (data.teacherFeedback is string && data.teacherFeedback.size() <= 5000)) &&
+             (!('reviewedAt' in data) || (data.reviewedAt is number));
+    }
+
+    // 11. Class Resource Validator
+    function isValidClassResource(data) {
+      return data.keys().hasAll(['id', 'classId', 'teacherId', 'subject', 'title', 'type', 'content', 'createdAt']) &&
+             data.keys().toSet().hasOnly(['id', 'classId', 'teacherId', 'subject', 'title', 'type', 'content', 'createdAt', 'url']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.classId is string && data.classId.size() <= 128 &&
+             data.teacherId is string && data.teacherId.size() <= 128 &&
+             data.subject is string && data.subject.size() <= 100 &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 300 &&
+             data.type in ['note', 'link'] &&
+             data.content is string && data.content.size() <= 10000 &&
+             data.createdAt is number &&
+             (!('url' in data) || (data.url is string && data.url.size() <= 1000));
+    }
+
+    // 12. Class Message Validator
+    function isValidClassMessage(data) {
+      return data.keys().hasAll(['id', 'classId', 'studentId', 'senderId', 'senderRole', 'senderName', 'text', 'timestamp', 'read']) &&
+             data.keys().toSet().hasOnly(['id', 'classId', 'studentId', 'studentName', 'senderId', 'senderRole', 'senderName', 'text', 'timestamp', 'read', 'attachedNotebookContext']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.classId is string && data.classId.size() <= 128 &&
+             data.studentId is string && data.studentId.size() <= 128 &&
+             data.senderId is string && data.senderId.size() <= 128 &&
+             data.senderRole in ['student', 'teacher'] &&
+             data.senderName is string && data.senderName.size() <= 128 &&
+             data.text is string && data.text.size() > 0 && data.text.size() <= 4000 &&
+             data.timestamp is number &&
+             data.read is bool &&
+             (!('studentName' in data) || (data.studentName is string && data.studentName.size() <= 128));
+    }
+
+    // ==========================================
+    // CLASSROOM UPDATE PERMISSION TIERS
+    // ==========================================
+
+    // Tier 1: Teacher managing class details (TeacherId and CreatedAt immutable)
+    function isTeacherClassUpdate(classId) {
+      return isSignedIn() &&
+             isValidClassroom(incoming()) &&
+             (isDeveloper() || existing().teacherId == request.auth.uid) &&
+             incoming().teacherId == existing().teacherId &&
+             incoming().createdAt == existing().createdAt &&
+             incoming().diff(existing()).affectedKeys().hasOnly([
+               'name', 'subject', 'teacherName', 'teacherEmail', 'joinCode', 'studentIds', 'studentProfiles'
+             ]);
+    }
+
+    // Tier 2: Student self-joining via Join Code (Roster-Restricted Update)
+    // Enforces:
+    // - ONLY studentIds can change
+    // - Caller can ONLY add their own UID to the roster
+    // - Cannot remove existing students (hasAll)
+    // - Cannot inject arbitrary UIDs (size bound)
+    // - Cannot modify teacherId, joinCode, name, subject, teacherName, or createdAt
+    function isStudentSelfJoin() {
+      return isSignedIn() &&
+             isValidClassroom(incoming()) &&
+             incoming().diff(existing()).affectedKeys().hasOnly(['studentIds']) &&
+             request.auth.uid in incoming().studentIds &&
+             incoming().studentIds.hasAll(existing().studentIds) &&
+             (
+               incoming().studentIds.size() == existing().studentIds.size() + 1 ||
+               incoming().studentIds.size() == existing().studentIds.size()
+             );
+    }
+
+    // ==========================================
+    // ROOT CATCH-ALL DEFAULT DENY
+    // ==========================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Connection test document
+    match /test/connection {
+      allow get: if true;
+    }
+
+    // ==========================================
+    // USER-SPECIFIC DATA (Personal partition)
+    // Strictly isolates user data and PII
+    // ==========================================
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isParentOfChild(userId);
+      allow create: if isOwner(userId) && isValidId(userId) && isValidUserProfile(incoming()) && incoming().uid == userId;
+      allow update: if isOwner(userId) && isValidId(userId) && isValidUserProfile(incoming()) && incoming().uid == existing().uid && incoming().createdAt == existing().createdAt && incoming().diff(existing()).affectedKeys().hasOnly(['email', 'displayName', 'photoURL', 'role', 'linkedStudentIds', 'subscriptionTier', 'subscriptionStatus', 'trialEndsAt', 'aiUsageToday', 'aiUsageResetDate']);
+      allow delete: if false;
+
+      // Notebooks Subcollection
+      match /notebooks/{notebookId} {
+        allow get, list: if isOwner(userId) || isParentOfChild(userId);
+        allow create: if isOwner(userId) && isValidId(notebookId) && isValidNotebook(incoming()) && incoming().userId == userId;
+        allow update: if isOwner(userId) && isValidId(notebookId) && isValidNotebook(incoming()) && incoming().userId == existing().userId && incoming().createdAt == existing().createdAt && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'subject', 'mode', 'lastInteractionId']);
+        allow delete: if isOwner(userId) && isValidId(notebookId);
+
+        // Subcollection for Notebook Chat Messages (prevents 1MB limit)
+        match /messages/{messageId} {
+          allow get, list: if isOwner(userId) || isParentOfChild(userId);
+          allow create, update: if isOwner(userId) && isValidId(messageId) && isValidNotebookMessage(incoming()) && incoming().userId == userId && incoming().notebookId == notebookId;
+          allow delete: if isOwner(userId) && isValidId(messageId);
+        }
+      }
+
+      // Study Plan Items Subcollection
+      match /studyPlanItems/{studyPlanItemId} {
+        allow get, list: if isOwner(userId) || isParentOfChild(userId);
+        allow create: if isOwner(userId) && isValidId(studyPlanItemId) && isValidStudyPlanItem(incoming()) && incoming().userId == userId;
+        allow update: if isOwner(userId) && isValidId(studyPlanItemId) && isValidStudyPlanItem(incoming()) && incoming().userId == existing().userId && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'subject', 'durationMinutes', 'priority', 'completed', 'type', 'date', 'reason']);
+        allow delete: if isOwner(userId) && isValidId(studyPlanItemId);
+      }
+
+      // Practice Sessions Subcollection
+      match /practiceSessions/{practiceSessionId} {
+        allow get, list: if isOwner(userId) || isParentOfChild(userId);
+        allow create: if isOwner(userId) && isValidId(practiceSessionId) && isValidPracticeSession(incoming()) && incoming().userId == userId;
+        allow update: if isOwner(userId) && isValidId(practiceSessionId) && isValidPracticeSession(incoming()) && incoming().userId == existing().userId && incoming().timestamp == existing().timestamp;
+        allow delete: if isOwner(userId) && isValidId(practiceSessionId);
+      }
+
+      // Teacher Messages Subcollection (Legacy / personal fallback)
+      match /teacherMessages/{teacherMessageId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(teacherMessageId) && isValidTeacherMessage(incoming()) && incoming().userId == userId;
+        allow update: if isOwner(userId) && isValidId(teacherMessageId) && isValidTeacherMessage(incoming()) && incoming().userId == existing().userId && incoming().timestamp == existing().timestamp;
+        allow delete: if isOwner(userId) && isValidId(teacherMessageId);
+      }
+
+      // Assignments Subcollection (Legacy / personal fallback)
+      match /assignments/{assignmentId} {
+        allow get, list: if isOwner(userId) || isParentOfChild(userId);
+        allow create: if isOwner(userId) && isValidId(assignmentId) && isValidAssignment(incoming()) && incoming().userId == userId;
+        allow update: if isOwner(userId) && isValidId(assignmentId) && isValidAssignment(incoming()) && incoming().userId == existing().userId;
+        allow delete: if isOwner(userId) && isValidId(assignmentId);
+      }
+
+      // Teacher Resources Subcollection (Legacy / personal fallback)
+      match /teacherResources/{teacherResourceId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(teacherResourceId) && isValidTeacherResource(incoming()) && incoming().userId == userId;
+        allow update: if isOwner(userId) && isValidId(teacherResourceId) && isValidTeacherResource(incoming()) && incoming().userId == existing().userId && incoming().createdAt == existing().createdAt;
+        allow delete: if isOwner(userId) && isValidId(teacherResourceId);
+      }
+
+      // Learner Brain Profile Subcollection
+      match /learnerModel/{modelId} {
+        allow get, list: if isOwner(userId) || isParentOfChild(userId) || isTeacherOfEnrolledStudent(userId);
+        allow create, update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+
+      // Learning Events Telemetry Subcollection
+      match /learningEvents/{eventId} {
+        allow get, list: if isOwner(userId) || isParentOfChild(userId) || isTeacherOfEnrolledStudent(userId);
+        allow create, update: if isOwner(userId);
+        allow delete: if isOwner(userId);
+      }
+    }
+
+    // ==========================================
+    // PARENT LINK CODE LOOKUP
+    // Prevents collection enumeration while allowing direct single-doc lookup by code
+    // ==========================================
+    match /parentLinkCodes/{code} {
+      allow get: if isSignedIn() && isValidId(code);
+      allow list: if isDeveloper();
+      allow create: if isSignedIn() && isValidId(code) && isValidParentLinkCode(incoming()) && (
+        isDeveloper() || incoming().studentId == request.auth.uid
+      );
+      allow update: if false;
+      allow delete: if isSignedIn() && (isDeveloper() || existing().studentId == request.auth.uid);
+    }
+
+    // ==========================================
+    // DEDICATED JOIN-CODE LOOKUP
+    // Prevents collection enumeration while allowing direct single-doc lookup by code
+    // ==========================================
+    match /classJoinCodes/{code} {
+      // Single-document retrieval allowed for authenticated users who know the code
+      allow get: if isSignedIn() && isValidId(code);
+      // Blanket listing of all join codes is strictly forbidden for ordinary users (Anti-Enumeration Guard)
+      allow list: if isDeveloper();
+      // Teachers (or developer) can register a join code for their class
+      allow create: if isSignedIn() && isValidId(code) && isValidJoinCodeEntry(incoming()) && (
+        isDeveloper() || incoming().teacherId == request.auth.uid
+      );
+      // Join codes are immutable once registered
+      allow update: if false;
+      // Teacher can delete their join code
+      allow delete: if isSignedIn() && (isDeveloper() || existing().teacherId == request.auth.uid);
+    }
+
+    // ==========================================
+    // MULTI-USER CLASSROOMS (Teacher <-> Students)
+    // ==========================================
+    match /classes/{classId} {
+      // Single-document fetch by valid ID
+      allow get: if isSignedIn() && isValidId(classId);
+
+      // Query listing: Restricted to classes the user teaches or is enrolled in (Prevents blanket listing)
+      allow list: if isSignedIn() && (
+        isDeveloper() ||
+        resource.data.teacherId == request.auth.uid ||
+        request.auth.uid in resource.data.studentIds
+      );
+
+      // Only teacher (or developer) can create the class
+      allow create: if isSignedIn() && isValidId(classId) && isValidClassroom(incoming()) && (
+        isDeveloper() || incoming().teacherId == request.auth.uid
+      );
+
+      // Updates strictly partitioned between Teacher Management and Student Self-Join
+      allow update: if isSignedIn() && isValidId(classId) && (
+        isTeacherClassUpdate(classId) ||
+        isStudentSelfJoin()
+      );
+
+      // Only teacher (or developer) can delete the class
+      allow delete: if isSignedIn() && isValidId(classId) && (
+        isDeveloper() || existing().teacherId == request.auth.uid
+      );
+
+      // ==========================================
+      // Assignments inside Classroom
+      // ==========================================
+      match /assignments/{assignmentId} {
+        allow get, list: if isEnrolledInClass(classId) && isValidId(assignmentId);
+        allow create: if isTeacherOfClass(classId) && isValidId(assignmentId) && isValidClassAssignment(incoming()) && incoming().classId == classId && (isDeveloper() || incoming().teacherId == request.auth.uid);
+        allow update: if isTeacherOfClass(classId) && isValidId(assignmentId) && isValidClassAssignment(incoming()) && incoming().classId == existing().classId && incoming().teacherId == existing().teacherId && incoming().createdAt == existing().createdAt && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'subject', 'description', 'dueDate']);
+        allow delete: if isTeacherOfClass(classId) && isValidId(assignmentId);
+
+        // Submissions for each assignment
+        match /submissions/{studentId} {
+          allow get, list: if isSignedIn() && isValidId(studentId) && (request.auth.uid == studentId || isTeacherOfClass(classId));
+          allow create: if isSignedIn() && isValidId(studentId) && isValidAssignmentSubmission(incoming()) && incoming().classId == classId && incoming().assignmentId == assignmentId && incoming().studentId == studentId && (
+            (request.auth.uid == studentId && isEnrolledInClass(classId) && incoming().status == 'submitted') ||
+            isTeacherOfClass(classId)
+          );
+          allow update: if isSignedIn() && isValidId(studentId) && isValidAssignmentSubmission(incoming()) && incoming().classId == existing().classId && incoming().assignmentId == existing().assignmentId && incoming().studentId == existing().studentId && (
+            // Student updating their submission (student cannot self-grade)
+            (request.auth.uid == studentId && isEnrolledInClass(classId) && incoming().status == 'submitted' && incoming().diff(existing()).affectedKeys().hasOnly(['studentSubmission', 'studentNote', 'submittedAt', 'status'])) ||
+            // Teacher grading and providing pedagogical feedback
+            (isTeacherOfClass(classId) && incoming().diff(existing()).affectedKeys().hasOnly(['grade', 'teacherFeedback', 'reviewedAt', 'status']))
+          );
+          allow delete: if isTeacherOfClass(classId) && isValidId(studentId);
+        }
+      }
+
+      // ==========================================
+      // Resources / Handouts inside Classroom
+      // ==========================================
+      match /resources/{resourceId} {
+        allow get, list: if isEnrolledInClass(classId) && isValidId(resourceId);
+        allow create: if isTeacherOfClass(classId) && isValidId(resourceId) && isValidClassResource(incoming()) && incoming().classId == classId && (isDeveloper() || incoming().teacherId == request.auth.uid);
+        allow update: if isTeacherOfClass(classId) && isValidId(resourceId) && isValidClassResource(incoming()) && incoming().classId == existing().classId && incoming().teacherId == existing().teacherId && incoming().createdAt == existing().createdAt && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'subject', 'type', 'content', 'url']);
+        allow delete: if isTeacherOfClass(classId) && isValidId(resourceId);
+      }
+
+      // ==========================================
+      // Office Hours Messages within Classroom
+      // ==========================================
+      match /messages/{messageId} {
+        allow get, list: if isSignedIn() && isValidId(messageId) && (
+          resource.data.studentId == request.auth.uid ||
+          isTeacherOfClass(classId)
+        );
+        allow create: if isSignedIn() && isValidId(messageId) && isValidClassMessage(incoming()) && incoming().classId == classId && incoming().senderId == request.auth.uid && (
+          (incoming().studentId == request.auth.uid && incoming().senderRole == 'student' && isEnrolledInClass(classId)) ||
+          (isTeacherOfClass(classId) && incoming().senderRole == 'teacher')
+        );
+        allow update: if isSignedIn() && isValidId(messageId) && isValidClassMessage(incoming()) && incoming().classId == existing().classId && incoming().studentId == existing().studentId && incoming().diff(existing()).affectedKeys().hasOnly(['read']) && (
+          existing().studentId == request.auth.uid ||
+          isTeacherOfClass(classId)
+        );
+        allow delete: if isTeacherOfClass(classId) && isValidId(messageId);
+      }
+
+      // ==========================================
+      // Enrolled Student Mastery within Classroom
+      // ==========================================
+      match /studentMastery/{studentId} {
+        allow get, list: if isEnrolledInClass(classId) && isValidId(studentId);
+        allow create, update: if isSignedIn() && isValidId(studentId) && (
+          (request.auth.uid == studentId && isEnrolledInClass(classId)) ||
+          isTeacherOfClass(classId)
+        );
+        allow delete: if isTeacherOfClass(classId) && isValidId(studentId);
+      }
+    }
+  }
+}

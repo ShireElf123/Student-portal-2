@@ -1,0 +1,312 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* ==========================================================================
+   SEMANTIC DESIGN TOKENS & AUDIENCE THEMES
+   ========================================================================== */
+
+/* 1. Default Theme & Primary Student Desk (Ages 6-11)
+   Bright sky / sunny learning desk / warm paper surfaces / academic blue */
+:root,
+.theme-primary {
+  /* Surface Layers */
+  --surface-canvas: #f0f4f8;
+  --surface-desk: #ffffff;
+  --surface-card: #ffffff;
+  --surface-card-subtle: #f8fafc;
+  --surface-elevated: #ffffff;
+
+  /* Text & Ink Layers */
+  --ink-primary: #0f172a;
+  --ink-secondary: #334155;
+  --ink-muted: #64748b;
+  --ink-on-accent: #ffffff;
+
+  /* Structural Borders */
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-interactive: #93c5fd;
+
+  /* Intent & Action Accents */
+  --brand-primary: #2563eb;
+  --brand-primary-hover: #1d4ed8;
+  --brand-secondary: #f59e0b;
+  --accent-sparkle: #8b5cf6;
+
+  /* Academic & Pedagogical Feedback */
+  --feedback-success: #10b981;
+  --feedback-warning: #f59e0b;
+  --feedback-alert: #ef4444;
+  --feedback-info: #3b82f6;
+
+  /* Tactile Depth & Shadows */
+  --shadow-tactile-sm: 0 3px 0 #cbd5e1;
+  --shadow-tactile-md: 0 4px 0 #cbd5e1, 0 8px 16px -4px rgba(15, 23, 42, 0.06);
+  --shadow-tactile-lg: 0 8px 0 #94a3b8, 0 16px 28px -6px rgba(15, 23, 42, 0.12);
+}
+
+/* 2. Toddler Sensory World Theme (Ages 2-5)
+   Warm vanilla / butter / sensory storybook environment / oversized tactile controls */
+.theme-toddler {
+  --surface-canvas: #fffbeb;
+  --surface-desk: #fef3c7;
+  --surface-card: #ffffff;
+  --surface-card-subtle: #fef9c3;
+  --surface-elevated: #ffffff;
+
+  --ink-primary: #451a03;
+  --ink-secondary: #78350f;
+  --ink-muted: #92400e;
+  --ink-on-accent: #ffffff;
+
+  --border-subtle: #fde68a;
+  --border-strong: #f59e0b;
+  --border-interactive: #fb923c;
+
+  --brand-primary: #ea580c;
+  --brand-primary-hover: #c2410c;
+  --brand-secondary: #f59e0b;
+  --accent-sparkle: #ec4899;
+
+  --feedback-success: #10b981;
+  --feedback-warning: #f59e0b;
+  --feedback-alert: #ef4444;
+  --feedback-info: #0284c7;
+
+  --shadow-tactile-sm: 0 4px 0 #f59e0b;
+  --shadow-tactile-md: 0 6px 0 #d97706, 0 10px 20px -4px rgba(180, 83, 9, 0.12);
+  --shadow-tactile-lg: 0 10px 0 #b45309, 0 20px 32px -6px rgba(180, 83, 9, 0.18);
+}
+
+/* 3. Parent / Family Perspective Theme
+   Warm porcelain / calm grey / sage / low visual noise */
+.theme-parent {
+  --surface-canvas: #f8fafc;
+  --surface-desk: #ffffff;
+  --surface-card: #ffffff;
+  --surface-card-subtle: #f1f5f9;
+  --surface-elevated: #ffffff;
+
+  --ink-primary: #0f172a;
+  --ink-secondary: #475569;
+  --ink-muted: #64748b;
+  --ink-on-accent: #ffffff;
+
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --border-interactive: #a7f3d0;
+
+  --brand-primary: #059669;
+  --brand-primary-hover: #047857;
+  --brand-secondary: #2563eb;
+  --accent-sparkle: #8b5cf6;
+
+  --feedback-success: #059669;
+  --feedback-warning: #d97706;
+  --feedback-alert: #e11d48;
+  --feedback-info: #0284c7;
+
+  --shadow-tactile-sm: 0 2px 0 #cbd5e1;
+  --shadow-tactile-md: 0 4px 0 #94a3b8, 0 6px 14px -3px rgba(15, 23, 42, 0.05);
+  --shadow-tactile-lg: 0 6px 0 #64748b, 0 12px 24px -4px rgba(15, 23, 42, 0.08);
+}
+
+/* 4. Teacher Classroom Theme
+   Crisp schoolhouse paper / structured slate-blue / professional information density */
+.theme-teacher {
+  --surface-canvas: #f1f5f9;
+  --surface-desk: #ffffff;
+  --surface-card: #ffffff;
+  --surface-card-subtle: #f8fafc;
+  --surface-elevated: #ffffff;
+
+  --ink-primary: #0f172a;
+  --ink-secondary: #334155;
+  --ink-muted: #64748b;
+  --ink-on-accent: #ffffff;
+
+  --border-subtle: #cbd5e1;
+  --border-strong: #94a3b8;
+  --border-interactive: #818cf8;
+
+  --brand-primary: #4f46e5;
+  --brand-primary-hover: #4338ca;
+  --brand-secondary: #0284c7;
+  --accent-sparkle: #7c3aed;
+
+  --feedback-success: #16a34a;
+  --feedback-warning: #d97706;
+  --feedback-alert: #dc2626;
+  --feedback-info: #4f46e5;
+
+  --shadow-tactile-sm: 0 2px 0 #94a3b8;
+  --shadow-tactile-md: 0 3px 0 #64748b, 0 6px 12px -2px rgba(15, 23, 42, 0.06);
+  --shadow-tactile-lg: 0 6px 0 #475569, 0 12px 20px -4px rgba(15, 23, 42, 0.1);
+}
+
+/* 5. Tutor Studio Theme
+   Warm linen / botanical navy-teal / focused academic studio */
+.theme-tutor {
+  --surface-canvas: #fdfbf7;
+  --surface-desk: #ffffff;
+  --surface-card: #ffffff;
+  --surface-card-subtle: #f7f5f0;
+  --surface-elevated: #ffffff;
+
+  --ink-primary: #1c1917;
+  --ink-secondary: #44403c;
+  --ink-muted: #78716c;
+  --ink-on-accent: #ffffff;
+
+  --border-subtle: #e7e5e4;
+  --border-strong: #d6d3d1;
+  --border-interactive: #5eead4;
+
+  --brand-primary: #0d9488;
+  --brand-primary-hover: #0f766e;
+  --brand-secondary: #d97706;
+  --accent-sparkle: #6366f1;
+
+  --feedback-success: #0d9488;
+  --feedback-warning: #d97706;
+  --feedback-alert: #e11d48;
+  --feedback-info: #0284c7;
+
+  --shadow-tactile-sm: 0 2px 0 #d6d3d1;
+  --shadow-tactile-md: 0 4px 0 #a8a29e, 0 6px 14px -3px rgba(28, 25, 23, 0.06);
+  --shadow-tactile-lg: 0 6px 0 #78716c, 0 14px 24px -4px rgba(28, 25, 23, 0.09);
+}
+
+/* ==========================================================================
+   SEMANTIC UTILITY HELPER CLASSES (For Stage 2+ migration)
+   ========================================================================== */
+
+.bg-canvas { background-color: var(--surface-canvas); }
+.bg-desk { background-color: var(--surface-desk); }
+.bg-card-surface { background-color: var(--surface-card); }
+.bg-card-subtle { background-color: var(--surface-card-subtle); }
+.bg-elevated { background-color: var(--surface-elevated); }
+
+.text-ink-primary { color: var(--ink-primary); }
+.text-ink-secondary { color: var(--ink-secondary); }
+.text-ink-muted { color: var(--ink-muted); }
+.text-ink-on-accent { color: var(--ink-on-accent); }
+
+.border-theme-subtle { border-color: var(--border-subtle); }
+.border-theme-strong { border-color: var(--border-strong); }
+.border-theme-interactive { border-color: var(--border-interactive); }
+
+.bg-brand-primary { background-color: var(--brand-primary); }
+.bg-brand-primary:hover { background-color: var(--brand-primary-hover); }
+.text-brand-primary { color: var(--brand-primary); }
+
+.shadow-tactile-sm { box-shadow: var(--shadow-tactile-sm); }
+.shadow-tactile-md { box-shadow: var(--shadow-tactile-md); }
+.shadow-tactile-lg { box-shadow: var(--shadow-tactile-lg); }
+
+/* ==========================================================================
+   BASE & TYPOGRAPHY FOUNDATIONS
+   ========================================================================== */
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--ink-primary, #0f172a);
+    background-color: var(--surface-canvas, #f0f4f8);
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: 'Fredoka', 'Nunito', system-ui, sans-serif;
+    letter-spacing: -0.015em;
+  }
+
+  /* Vector crispness on desktop displays */
+  svg {
+    shape-rendering: geometricPrecision;
+  }
+}
+
+/* Custom sleek PC scrollbars (replaces bulky default OS scrollbars) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.04);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.45);
+}
+
+/* ==========================================================================
+   PRESERVED TACTILE & ILLUSTRATION UTILITIES
+   ========================================================================== */
+
+.btn-tactile {
+  transition: all 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: var(--shadow-tactile-sm, 0 4px 0 rgba(0, 0, 0, 0.2));
+}
+
+.btn-tactile:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.15);
+}
+
+.clay-card {
+  border-radius: 2rem;
+  box-shadow: 
+    0 10px 25px -5px rgba(0, 0, 0, 0.12),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+.clay-card-light {
+  background: #ffffff;
+  border-radius: 2.25rem;
+  box-shadow: 
+    0 16px 32px -8px rgba(34, 76, 24, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.03),
+    inset 0 -4px 0 rgba(0, 0, 0, 0.04);
+}
+
+@keyframes floatGently {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+.animate-float-gentle {
+  animation: floatGently 4s ease-in-out infinite;
+}
+
+/* Accessibility: Focus Rings */
+.focus-ring {
+  outline: none;
+}
+.focus-ring:focus-visible {
+  outline: 2px solid var(--brand-primary, #2563eb);
+  outline-offset: 2px;
+}
+
+/* Accessibility: Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

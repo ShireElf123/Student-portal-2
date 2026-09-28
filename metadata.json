@@ -1,0 +1,12 @@
+{
+  "name": "My Student Portal",
+  "description": "Early learning and primary school homework platform for parents, home tutors, and young learners with interactive picture books, toddler phonics, and guided assessments.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

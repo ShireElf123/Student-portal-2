@@ -1,0 +1,327 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Profile for student, parent, teacher, or tutor user",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "photoURL": { "type": "string", "maxLength": 512 },
+        "role": { "type": "string", "enum": ["student", "teacher", "parent", "tutor"] },
+        "linkedStudentIds": { "type": "array", "items": { "type": "string" } },
+        "subscriptionTier": { "type": "string", "enum": ["free_trial", "student_pro", "family_basic", "educator_plus"] },
+        "subscriptionStatus": { "type": "string", "enum": ["trialing", "active", "expired"] },
+        "trialEndsAt": { "type": "number" },
+        "aiUsageToday": { "type": "number" },
+        "aiUsageResetDate": { "type": "string", "maxLength": 20 },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["uid", "email", "role", "createdAt"]
+    },
+    "Notebook": {
+      "title": "Notebook",
+      "description": "A subject study notebook containing AI chat interactions and notes",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 200 },
+        "subject": { "type": "string", "maxLength": 100 },
+        "mode": { "type": "string", "enum": ["socratic", "stem", "writing", "flashcards", "teacher"] },
+        "lastInteractionId": { "type": "string", "maxLength": 200 },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "userId", "name", "subject", "mode", "createdAt"]
+    },
+    "StudyPlanItem": {
+      "title": "StudyPlanItem",
+      "description": "A scheduled study task or AI recommendation item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 300 },
+        "subject": { "type": "string", "maxLength": 100 },
+        "durationMinutes": { "type": "number" },
+        "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+        "reason": { "type": "string", "maxLength": 500 },
+        "completed": { "type": "boolean" },
+        "type": { "type": "string", "enum": ["ai_recommendation", "student_task"] },
+        "date": { "type": "string", "maxLength": 20 }
+      },
+      "required": ["id", "userId", "title", "subject", "durationMinutes", "priority", "completed", "type", "date"]
+    },
+    "PracticeSession": {
+      "title": "PracticeSession",
+      "description": "Completed practice quiz results and accuracy tracking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "subject": { "type": "string", "maxLength": 100 },
+        "topic": { "type": "string", "maxLength": 200 },
+        "difficulty": { "type": "string", "enum": ["easy", "medium", "hard"] },
+        "totalQuestions": { "type": "number" },
+        "correctAnswers": { "type": "number" },
+        "timestamp": { "type": "number" }
+      },
+      "required": ["id", "userId", "subject", "topic", "difficulty", "totalQuestions", "correctAnswers", "timestamp"]
+    },
+    "TeacherMessage": {
+      "title": "TeacherMessage",
+      "description": "Direct communication between student and instructor with attached notebook context",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "sender": { "type": "string", "enum": ["student", "teacher"] },
+        "text": { "type": "string", "maxLength": 4000 },
+        "timestamp": { "type": "number" },
+        "read": { "type": "boolean" }
+      },
+      "required": ["id", "userId", "sender", "text", "timestamp", "read"]
+    },
+    "Assignment": {
+      "title": "Assignment",
+      "description": "Class assignment with submission and teacher grading/feedback",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "subject": { "type": "string", "maxLength": 100 },
+        "title": { "type": "string", "maxLength": 300 },
+        "description": { "type": "string", "maxLength": 4000 },
+        "dueDate": { "type": "string", "maxLength": 50 },
+        "status": { "type": "string", "enum": ["not_started", "submitted", "reviewed"] },
+        "studentSubmission": { "type": "string", "maxLength": 10000 },
+        "studentNote": { "type": "string", "maxLength": 1000 },
+        "teacherFeedback": { "type": "string", "maxLength": 4000 },
+        "grade": { "type": "string", "maxLength": 20 },
+        "submittedAt": { "type": "number" }
+      },
+      "required": ["id", "userId", "subject", "title", "description", "dueDate", "status"]
+    },
+    "TeacherResource": {
+      "title": "TeacherResource",
+      "description": "Instructor shared course materials, study guides, and external links",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "subject": { "type": "string", "maxLength": 100 },
+        "title": { "type": "string", "maxLength": 300 },
+        "type": { "type": "string", "enum": ["note", "link"] },
+        "content": { "type": "string", "maxLength": 10000 },
+        "url": { "type": "string", "maxLength": 1000 },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "userId", "subject", "title", "type", "content", "createdAt"]
+    },
+    "Classroom": {
+      "title": "Classroom",
+      "description": "A shared academic classroom with instructor, enrolled students, and join code",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 200 },
+        "subject": { "type": "string", "maxLength": 100 },
+        "joinCode": { "type": "string", "maxLength": 16 },
+        "teacherId": { "type": "string", "maxLength": 128 },
+        "teacherName": { "type": "string", "maxLength": 128 },
+        "teacherEmail": { "type": "string", "maxLength": 256 },
+        "studentIds": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "name", "subject", "joinCode", "teacherId", "teacherName", "studentIds", "createdAt"]
+    },
+    "ClassAssignment": {
+      "title": "ClassAssignment",
+      "description": "An assignment posted by a teacher to an entire classroom",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "classId": { "type": "string", "maxLength": 128 },
+        "teacherId": { "type": "string", "maxLength": 128 },
+        "subject": { "type": "string", "maxLength": 100 },
+        "title": { "type": "string", "maxLength": 300 },
+        "description": { "type": "string", "maxLength": 5000 },
+        "dueDate": { "type": "string", "maxLength": 50 },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "classId", "teacherId", "subject", "title", "description", "dueDate", "createdAt"]
+    },
+    "AssignmentSubmission": {
+      "title": "AssignmentSubmission",
+      "description": "A student submission for a classroom assignment, reviewed and graded by teacher",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "assignmentId": { "type": "string", "maxLength": 128 },
+        "classId": { "type": "string", "maxLength": 128 },
+        "studentId": { "type": "string", "maxLength": 128 },
+        "studentName": { "type": "string", "maxLength": 128 },
+        "studentEmail": { "type": "string", "maxLength": 256 },
+        "studentSubmission": { "type": "string", "maxLength": 15000 },
+        "studentNote": { "type": "string", "maxLength": 2000 },
+        "submittedAt": { "type": "number" },
+        "status": { "type": "string", "enum": ["submitted", "reviewed"] },
+        "grade": { "type": "string", "maxLength": 20 },
+        "teacherFeedback": { "type": "string", "maxLength": 5000 },
+        "reviewedAt": { "type": "number" }
+      },
+      "required": ["id", "assignmentId", "classId", "studentId", "studentName", "studentSubmission", "submittedAt", "status"]
+    },
+    "ClassResource": {
+      "title": "ClassResource",
+      "description": "Curriculum resource or reference link posted by instructor for the class",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "classId": { "type": "string", "maxLength": 128 },
+        "teacherId": { "type": "string", "maxLength": 128 },
+        "subject": { "type": "string", "maxLength": 100 },
+        "title": { "type": "string", "maxLength": 300 },
+        "type": { "type": "string", "enum": ["note", "link"] },
+        "content": { "type": "string", "maxLength": 10000 },
+        "url": { "type": "string", "maxLength": 1000 },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "classId", "teacherId", "subject", "title", "type", "content", "createdAt"]
+    },
+    "ClassMessage": {
+      "title": "ClassMessage",
+      "description": "Two-way office hours communication between enrolled student and class instructor",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "classId": { "type": "string", "maxLength": 128 },
+        "studentId": { "type": "string", "maxLength": 128 },
+        "studentName": { "type": "string", "maxLength": 128 },
+        "senderId": { "type": "string", "maxLength": 128 },
+        "senderRole": { "type": "string", "enum": ["student", "teacher"] },
+        "senderName": { "type": "string", "maxLength": 128 },
+        "text": { "type": "string", "maxLength": 4000 },
+        "timestamp": { "type": "number" },
+        "read": { "type": "boolean" }
+      },
+      "required": ["id", "classId", "studentId", "senderId", "senderRole", "text", "timestamp", "read"]
+    },
+    "NotebookMessage": {
+      "title": "NotebookMessage",
+      "description": "Individual chat message stored in a subcollection to bypass 1MB document limit",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "notebookId": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["user", "model"] },
+        "content": { "type": "string", "maxLength": 50000 },
+        "timestamp": { "type": "number" }
+      },
+      "required": ["id", "userId", "notebookId", "role", "content", "timestamp"]
+    },
+    "JoinCodeEntry": {
+      "title": "JoinCodeEntry",
+      "description": "Secure single-document lookup mapping join codes to classroom document IDs",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 32 },
+        "classId": { "type": "string", "maxLength": 128 },
+        "joinCode": { "type": "string", "maxLength": 16 },
+        "teacherId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "classId", "joinCode", "teacherId", "createdAt"]
+    },
+    "ParentLinkCode": {
+      "title": "ParentLinkCode",
+      "description": "Secure lookup allowing parents to link their child account via a short code",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 32 },
+        "studentId": { "type": "string", "maxLength": 128 },
+        "studentName": { "type": "string", "maxLength": 128 },
+        "studentEmail": { "type": "string", "maxLength": 256 },
+        "linkCode": { "type": "string", "maxLength": 16 },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["id", "studentId", "studentName", "linkCode", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/parentLinkCodes/{code}": {
+      "schema": "ParentLinkCode",
+      "description": "Direct single-document lookup for parent-child linking"
+    },
+    "/classJoinCodes/{code}": {
+      "schema": "JoinCodeEntry",
+      "description": "Direct single-document lookup for student self-join without collection listing"
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile document containing authentication metadata and role"
+    },
+    "/users/{userId}/notebooks/{notebookId}": {
+      "schema": "Notebook",
+      "description": "User notebooks with metadata and subject tracking"
+    },
+    "/users/{userId}/notebooks/{notebookId}/messages/{messageId}": {
+      "schema": "NotebookMessage",
+      "description": "Chat messages subcollection scaling past 1MB document limit"
+    },
+    "/users/{userId}/studyPlanItems/{studyPlanItemId}": {
+      "schema": "StudyPlanItem",
+      "description": "Student scheduled study tasks and AI recommendations"
+    },
+    "/users/{userId}/practiceSessions/{practiceSessionId}": {
+      "schema": "PracticeSession",
+      "description": "Records of completed practice quizzes and accuracy metrics"
+    },
+    "/users/{userId}/teacherMessages/{teacherMessageId}": {
+      "schema": "TeacherMessage",
+      "description": "Personal office hours messages backup"
+    },
+    "/users/{userId}/assignments/{assignmentId}": {
+      "schema": "Assignment",
+      "description": "Personal assignments backup"
+    },
+    "/users/{userId}/teacherResources/{teacherResourceId}": {
+      "schema": "TeacherResource",
+      "description": "Personal teacher resources backup"
+    },
+    "/classes/{classId}": {
+      "schema": "Classroom",
+      "description": "Shared multi-user classroom with join code and student roster"
+    },
+    "/classes/{classId}/assignments/{assignmentId}": {
+      "schema": "ClassAssignment",
+      "description": "Class assignments posted by the instructor"
+    },
+    "/classes/{classId}/assignments/{assignmentId}/submissions/{studentId}": {
+      "schema": "AssignmentSubmission",
+      "description": "Student submission for review and grading by instructor"
+    },
+    "/classes/{classId}/resources/{resourceId}": {
+      "schema": "ClassResource",
+      "description": "Shared class handouts and reference links"
+    },
+    "/classes/{classId}/messages/{messageId}": {
+      "schema": "ClassMessage",
+      "description": "Direct student-teacher office hours thread within class"
+    },
+    "/classes/{classId}/studentMastery/{studentId}": {
+      "schema": "LearnerModel",
+      "description": "Enrolled student curriculum mastery snapshot for teacher class analytics"
+    },
+    "/users/{userId}/learnerModel/{modelId}": {
+      "schema": "LearnerModel",
+      "description": "Unified pedagogical learner brain state, evidence scores, and skill mastery graph"
+    },
+    "/users/{userId}/learningEvents/{eventId}": {
+      "schema": "LearningEvent",
+      "description": "Immutable telemetry log of learning events across practice, labs, quizzes, and homework"
+    }
+  }
+}

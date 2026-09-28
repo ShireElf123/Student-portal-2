@@ -1,0 +1,244 @@
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { Star, RotateCcw, Volume2, Sparkles, Trophy } from "lucide-react";
+import { soundEffects } from "../utils/soundEffects";
+import { speakText, stopSpeaking } from "../utils/speechUtils";
+import { awardXP, awardStars, triggerCelebrationConfetti } from "../utils/gamification";
+import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+
+interface CardItem {
+  id: number;
+  pairId: string;
+  emoji: string;
+  name: string;
+  color: string;
+  isFlipped: boolean;
+  isMatched: boolean;
+}
+
+const MEMORY_PAIRS = [
+  { pairId: "cat", emoji: "🐱", name: "Kitten", color: "from-amber-400 to-orange-400" },
+  { pairId: "dog", emoji: "🐶", name: "Puppy", color: "from-blue-400 to-indigo-400" },
+  { pairId: "star", emoji: "⭐", name: "Star", color: "from-yellow-300 to-amber-500" },
+  { pairId: "apple", emoji: "🍎", name: "Apple", color: "from-rose-400 to-red-500" },
+  { pairId: "bear", emoji: "🐻", name: "Teddy", color: "from-emerald-400 to-teal-500" },
+  { pairId: "sun", emoji: "☀️", name: "Sunny", color: "from-amber-300 to-yellow-400" },
+];
+
+function generateCards(): CardItem[] {
+  // Use 4 pairs (8 cards total for toddlers - perfect attention span)
+  const selected = MEMORY_PAIRS.slice(0, 4);
+  const deck: CardItem[] = [];
+  let id = 1;
+  selected.forEach((pair) => {
+    deck.push({ id: id++, pairId: pair.pairId, emoji: pair.emoji, name: pair.name, color: pair.color, isFlipped: false, isMatched: false });
+    deck.push({ id: id++, pairId: pair.pairId, emoji: pair.emoji, name: pair.name, color: pair.color, isFlipped: false, isMatched: false });
+  });
+  return deck.sort(() => Math.random() - 0.5);
+}
+
+export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) => void }) {
+  const [cards, setCards] = useState<CardItem[]>(generateCards);
+  const [flippedIds, setFlippedIds] = useState<number[]>([]);
+  const [matchesCount, setMatchesCount] = useState<number>(0);
+  const [isWon, setIsWon] = useState<boolean>(false);
+  const [moves, setMoves] = useState<number>(0);
+
+  const resetGame = () => {
+    setCards(generateCards());
+    setFlippedIds([]);
+    setMatchesCount(0);
+    setIsWon(false);
+    setMoves(0);
+    soundEffects.playPop();
+    speakText("Find the matching friends! Tap two cards to turn them over!", { pitch: 1.2 });
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      speakText("Welcome to Memory Match! Can you find the matching friends? Tap two cards to turn them over!", {
+        pitch: 1.2,
+        rate: 0.92,
+      });
+    }, 240);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleCardClick = (card: CardItem) => {
+    if (card.isMatched || card.isFlipped || flippedIds.length >= 2) return;
+
+    soundEffects.playPop();
+    const newFlipped = [...flippedIds, card.id];
+    setFlippedIds(newFlipped);
+
+    setCards((prev) =>
+      prev.map((c) => (c.id === card.id ? { ...c, isFlipped: true } : c))
+    );
+
+    if (newFlipped.length === 2) {
+      setMoves((m) => m + 1);
+      const firstCard = cards.find((c) => c.id === newFlipped[0])!;
+      const secondCard = card;
+
+      if (firstCard.pairId === secondCard.pairId) {
+        // MATCH!
+        soundEffects.playSuccessChime();
+        speakText(`Match! You found the ${secondCard.name}!`, { pitch: 1.3 });
+        awardXP(20);
+        awardStars(1);
+        onAddStar?.(1);
+
+        setTimeout(() => {
+          setCards((prev) =>
+            prev.map((c) =>
+              c.id === firstCard.id || c.id === secondCard.id
+                ? { ...c, isMatched: true }
+                : c
+            )
+          );
+          setFlippedIds([]);
+          setMatchesCount((count) => {
+            const next = count + 1;
+            if (next >= 4) {
+              // ALL MATCHED
+              setTimeout(() => {
+                setIsWon(true);
+                soundEffects.playFanfare();
+                triggerCelebrationConfetti();
+                speakText("Hooray! You matched all the friends! You are a superstar!", { pitch: 1.2 });
+                awardXP(50);
+                awardStars(3);
+                onAddStar?.(3);
+
+                try {
+                  recordLearningEvent({
+                    learnerId: getActiveLearnerId(),
+                    activityId: "toddler-memory-match",
+                    activityType: "toddler-memory",
+                    activityTitle: "Memory Match: Matched 4 Pairs",
+                    skillId: "logic-k1-patterns",
+                    domain: "logic",
+                    gradeBand: "toddler",
+                    result: "mastered",
+                    score: 100,
+                    difficulty: "easy",
+                    attempts: moves + 1,
+                    hintsUsed: 0,
+                  });
+                } catch {}
+              }, 400);
+            }
+            return next;
+          });
+        }, 500);
+      } else {
+        // NO MATCH
+        soundEffects.playGentleBoing();
+        setTimeout(() => {
+          setCards((prev) =>
+            prev.map((c) =>
+              c.id === firstCard.id || c.id === secondCard.id
+                ? { ...c, isFlipped: false }
+                : c
+            )
+          );
+          setFlippedIds([]);
+        }, 900);
+      }
+    }
+  };
+
+  return (
+    <div className="bg-[#121320] border border-white/10 rounded-3xl p-4 sm:p-6 shadow-xl max-w-2xl mx-auto">
+      {/* Header bar */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-xl shadow-md">
+            🧩
+          </div>
+          <div>
+            <h3 className="text-base sm:text-lg font-black text-white">Memory Card Match</h3>
+            <p className="text-xs text-white/60">Flip two cards to match the cute characters!</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="px-3 py-1 bg-amber-500/15 border border-amber-400/30 rounded-xl text-amber-300 text-xs font-bold flex items-center gap-1">
+            <Star size={14} className="fill-amber-400" />
+            <span>{matchesCount}/4 Pairs</span>
+          </div>
+
+          <button
+            onClick={resetGame}
+            className="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-white/80 hover:text-white transition-all cursor-pointer"
+            title="Shuffle & Play Again"
+          >
+            <RotateCcw size={16} />
+          </button>
+        </div>
+      </div>
+
+      {!isWon ? (
+        <div className="grid grid-cols-4 gap-2.5 sm:gap-4 my-4">
+          {cards.map((card) => {
+            const showFace = card.isFlipped || card.isMatched;
+            return (
+              <motion.button
+                key={card.id}
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleCardClick(card)}
+                disabled={card.isMatched}
+                className={`aspect-square rounded-2xl flex flex-col items-center justify-center p-2 text-center transition-all cursor-pointer border-b-4 select-none relative ${
+                  card.isMatched
+                    ? "bg-emerald-500/20 border-emerald-400/50 border-b-emerald-600 opacity-90 scale-95"
+                    : showFace
+                    ? "bg-white/15 border-white/40 border-b-white/20 shadow-lg"
+                    : "bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 border-indigo-400/40 border-b-indigo-900 shadow-md"
+                }`}
+              >
+                {showFace ? (
+                  <motion.div
+                    initial={{ rotateY: 90, scale: 0.5 }}
+                    animate={{ rotateY: 0, scale: 1 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex flex-col items-center justify-center"
+                  >
+                    <span className="text-3xl sm:text-4xl filter drop-shadow-md">{card.emoji}</span>
+                    <span className="text-[10px] sm:text-xs font-black text-white mt-1 leading-none">{card.name}</span>
+                  </motion.div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-white/50">
+                    <Sparkles size={22} className="text-amber-300 animate-pulse" />
+                    <span className="text-[10px] font-bold text-white/70 mt-1">Tap</span>
+                  </div>
+                )}
+              </motion.button>
+            );
+          })}
+        </div>
+      ) : (
+        /* Victory Screen */
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="text-center py-8 space-y-4"
+        >
+          <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-amber-400 to-yellow-300 flex items-center justify-center text-5xl shadow-xl shadow-amber-500/30 animate-bounce">
+            🏆
+          </div>
+          <h4 className="text-2xl font-black text-white">Super Memory Champion!</h4>
+          <p className="text-sm text-amber-200">
+            You matched all pairs in <strong className="text-white">{moves} turns</strong>! Earned <strong className="text-white">+3 Golden Stars</strong> &amp; <strong className="text-white">+50 XP</strong>!
+          </p>
+          <button
+            onClick={resetGame}
+            className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black text-sm border-b-4 border-orange-700 active:border-b-0 active:translate-y-1 shadow-lg transition-all cursor-pointer inline-flex items-center gap-2"
+          >
+            <RotateCcw size={16} /> Play Again
+          </button>
+        </motion.div>
+      )}
+    </div>
+  );
+}
