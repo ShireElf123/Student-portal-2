@@ -4,8 +4,6 @@ import {
   Sparkles,
   Target,
   CheckCircle2,
-  Clock,
-  BookOpen,
   CalendarCheck,
   AlertCircle,
   Link as LinkIcon,
@@ -13,15 +11,9 @@ import {
   ChevronRight,
   TrendingUp,
   Brain,
-  MessageSquare,
   Award,
   Plus,
   X,
-  ExternalLink,
-  Volume2,
-  Play,
-  Square,
-  Settings,
   Printer,
   Compass,
 } from "lucide-react";
@@ -39,11 +31,9 @@ import {
 import { getNotebookTopicStatus, getTopicStatusBadge } from "../utils/topicStatus";
 import { todayISO, formatDateLabel } from "../utils/dateUtils";
 import {
-  getActiveVoiceInfo,
   testVoice,
   stopSpeaking,
   isSpeaking,
-  subscribeVoiceChange,
   speechCoordinator,
 } from "../utils/speechUtils";
 import { VoiceSettingsModal } from "./VoiceSettingsModal";
@@ -100,46 +90,6 @@ export function ParentView({
   );
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
 
-  // Parental Control States
-  const [screenTimeLimit, setScreenTimeLimit] = useState<number>(() => {
-    try {
-      const val = localStorage.getItem("parent_screentime_limit");
-      return val ? parseInt(val, 10) : 60;
-    } catch {
-      return 60;
-    }
-  });
-
-  const [bedtimeLockEnabled, setBedtimeLockEnabled] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem("parent_bedtime_lock") !== "false";
-    } catch {
-      return true;
-    }
-  });
-
-  const [parentActionToast, setParentActionToast] = useState<string | null>(null);
-
-  const handleUpdateScreenTime = (mins: number) => {
-    setScreenTimeLimit(mins);
-    try {
-      localStorage.setItem("parent_screentime_limit", mins.toString());
-    } catch {}
-    setParentActionToast(`Local screen-time preference saved: ${mins} minutes. App blocking is not enabled.`);
-    setTimeout(() => setParentActionToast(null), 2500);
-  };
-
-  const handleToggleBedtimeLock = () => {
-    const nextVal = !bedtimeLockEnabled;
-    setBedtimeLockEnabled(nextVal);
-    try {
-      localStorage.setItem("parent_bedtime_lock", nextVal.toString());
-    } catch {}
-    setParentActionToast(nextVal ? "Bedtime preference saved locally; no access block is active." : "Bedtime preference turned off locally.");
-    setTimeout(() => setParentActionToast(null), 2500);
-  };
-
-  const [voiceInfo, setVoiceInfo] = useState(getActiveVoiceInfo());
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
 
   // Pro Diagnostic & Offline Tools
@@ -181,10 +131,8 @@ export function ParentView({
 
   useEffect(() => {
     const unsubSpeech = speechCoordinator.subscribe(setIsVoiceTesting);
-    const unsubVoice = subscribeVoiceChange(() => setVoiceInfo(getActiveVoiceInfo()));
     return () => {
       unsubSpeech();
-      unsubVoice();
     };
   }, []);
 
@@ -304,10 +252,10 @@ export function ParentView({
             <span className="text-slate-400 text-xs sm:text-sm font-medium">{formatDateLabel(todayStr)}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
-            Learning Oversight & Insights
+            Your learner’s progress
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1 font-medium">
-            Supportive visibility into your child's academic journey, AI tutor inquiries, and daily mastery.
+            A clear view of recent learning, progress, and what to try next.
           </p>
         </div>
 
@@ -397,7 +345,7 @@ export function ParentView({
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-black text-white">
-                AI Parent Conversation Starters
+                Conversation starters
               </h3>
               <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-medium">
                 {parentConversationStarters.some((starter) => starter.context.startsWith("Explored inquiry:")) ? `Conversation prompts based on this browser profile’s saved tutor questions for ${activeChild.name}.` : "Gentle conversation prompts for reflecting on learning together."}
@@ -405,7 +353,7 @@ export function ParentView({
             </div>
           </div>
           <span className="text-xs font-black px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 shadow-sm">
-            Pedagogical Coach
+            Based on learning
           </span>
         </div>
 
@@ -451,154 +399,25 @@ export function ParentView({
         );
       })()}
 
-      {/* PARENTAL CONTROLS & SCREEN SAFETY GATE */}
-      <div className="bg-slate-900/90 border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-xl space-y-5">
-        <div className="flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
-              <CalendarCheck className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-base sm:text-lg font-black text-white">
-                Family preferences &amp; supervision
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-medium">
-                These preferences are stored on this browser; enforcement controls are not connected yet.
-              </p>
-            </div>
-          </div>
-
-          {parentActionToast && (
-            <span className="text-xs font-bold text-emerald-300 bg-emerald-500/10 px-3.5 py-1.5 rounded-full border border-emerald-500/30 animate-pulse">
-              ✓ {parentActionToast}
-            </span>
-          )}
-        </div>
-
-        <div className="rounded-xl border border-amber-400/20 bg-amber-400/[.06] px-4 py-3 text-xs leading-relaxed text-amber-100/90">For transparency: screen-time and bedtime values below are saved preferences only. This build does not yet enforce a timer, block access at bedtime, or apply per-child controls. The AI tutor can also make mistakes; review important answers with your learner.</div>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-          {/* Daily Screen Time Budget */}
-          <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                <Clock size={14} className="text-indigo-400" /> Screen-time goal
-              </span>
-              <span className="text-xs font-black text-indigo-400">
-                {screenTimeLimit} mins
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              {[30, 45, 60, 90].map((mins) => (
-                <button
-                  key={mins}
-                  onClick={() => handleUpdateScreenTime(mins)}
-                  className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    screenTimeLimit === mins
-                      ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30"
-                      : "bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800"
-                  }`}
-                >
-                  {mins}m
-                </button>
-              ))}
-            </div>
-            <p className="text-[11px] text-slate-500 font-medium">
-              A planning preference only; reaching this value does not currently trigger a break or block.
+      {/* Family settings: only expose controls that work in this build. */}
+      <section className="rounded-3xl border border-slate-700/80 bg-slate-900/90 p-5 shadow-xl sm:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-base font-black text-white sm:text-lg">Family settings</h3>
+            <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-400">
+              Progress shown here is from this browser profile. Secure multi-account linking and enforced screen-time or bedtime limits are not available yet.
             </p>
           </div>
-
-          {/* Bedtime Lock Toggle */}
-          <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                <AlertCircle size={14} className="text-amber-400" /> Bedtime preference
-              </span>
-              <span className={`text-xs font-black px-2 py-0.5 rounded-full ${
-                bedtimeLockEnabled ? "bg-amber-500/20 text-amber-300" : "bg-slate-800 text-slate-500"
-              }`}>
-                {bedtimeLockEnabled ? "Saved (8 PM)" : "Off"}
-              </span>
-            </div>
-            <button
-              onClick={handleToggleBedtimeLock}
-              className={`w-full py-2 rounded-xl text-xs font-black transition-all cursor-pointer border ${
-                bedtimeLockEnabled
-                  ? "bg-amber-500/20 border-amber-500/40 text-amber-200 hover:bg-amber-500/30"
-                  : "bg-slate-900 border-slate-800 text-slate-400 hover:text-white"
-              }`}
-            >
-              {bedtimeLockEnabled ? "✓ Preference: 8:00 PM" : "Set bedtime preference"}
+          <div className="flex shrink-0 gap-2">
+            <button type="button" onClick={handleTestVoiceToggle} className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-bold text-slate-200 hover:bg-slate-700">
+              {isVoiceTesting ? "Stop voice" : "Preview voice"}
             </button>
-            <p className="text-[11px] text-slate-500 font-medium">
-              Stored as a reminder preference only; no bedtime lock is currently applied.
-            </p>
-          </div>
-
-          {/* Socratic Homework Guard */}
-          <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                <Brain size={14} className="text-emerald-400" /> Tutor approach
-              </span>
-              <span className="text-xs font-black px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">
-                Guidance
-              </span>
-            </div>
-            <div className="p-2.5 rounded-xl bg-slate-900 text-xs font-medium text-slate-300 border border-slate-800 flex items-center justify-between">
-              <span>Hint-first Socratic coaching</span>
-              <span className="text-emerald-400 font-bold">Default</span>
-            </div>
-            <p className="text-[11px] text-slate-500 font-medium">
-              The tutor is prompted to guide reasoning, but it may still provide an incomplete or direct answer. Check important work together.
-            </p>
-          </div>
-
-          {/* AI Coach Voice (Guy / Natural Male Priority) */}
-          <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                <Volume2 size={14} className="text-cyan-400" /> AI Coach Voice
-              </span>
-              <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
-                voiceInfo.isGuy
-                  ? "bg-emerald-500/20 text-emerald-300"
-                  : voiceInfo.isMale
-                  ? "bg-cyan-500/20 text-cyan-300"
-                  : "bg-slate-800 text-slate-300"
-              }`}>
-                {voiceInfo.isGuy ? "Guy (Natural)" : voiceInfo.isMale ? "Natural Male" : "System Voice"}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleTestVoiceToggle}
-                className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                  isVoiceTesting
-                    ? "bg-amber-600 text-white animate-pulse"
-                    : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-sm"
-                }`}
-              >
-                {isVoiceTesting ? <Square size={12} className="fill-white" /> : <Play size={12} className="fill-white" />}
-                <span>{isVoiceTesting ? "Stop" : "Test Voice"}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsVoiceModalOpen(true)}
-                className="p-1.5 px-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 cursor-pointer transition-all flex items-center gap-1 text-xs font-bold"
-                title="Open Voice Settings"
-              >
-                <Settings size={13} />
-                <span>Tuning</span>
-              </button>
-            </div>
-            <p className="text-[11px] text-slate-400 font-medium truncate" title={voiceInfo.name}>
-              {voiceInfo.name}
-            </p>
+            <button type="button" onClick={() => setIsVoiceModalOpen(true)} className="rounded-xl bg-indigo-600 px-3 py-2 text-xs font-bold text-white hover:bg-indigo-500">
+              Voice settings
+            </button>
           </div>
         </div>
-
-      </div>
+      </section>
 
       {/* Two Column Layout: Subject Mastery Matrix & Today's Study Tasks */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -610,7 +429,7 @@ export function ParentView({
               <h3 className="text-base sm:text-lg font-black text-white">Subject Mastery Matrix</h3>
             </div>
             <span className="text-xs text-slate-400 font-medium">
-              Real-time progress indicators
+              Progress from saved practice
             </span>
           </div>
 

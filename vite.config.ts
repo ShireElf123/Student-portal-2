@@ -11,7 +11,13 @@ export default defineConfig(() => {
         output: {
           manualChunks(id) {
             if (id.includes('/node_modules/react/') || id.includes('/node_modules/react-dom/') || id.includes('/node_modules/scheduler/')) return 'vendor-react';
-            if (id.includes('/node_modules/firebase/') || id.includes('/node_modules/@firebase/')) return 'vendor-firebase';
+            // Keep cloud database code out of the unauthenticated first load.
+            // Firestore is dynamically imported after sign-in; service boundaries
+            // preserve that split instead of forcing all Firebase SDKs together.
+            if (id.includes('/node_modules/firebase/firestore/') || id.includes('/node_modules/@firebase/firestore')) return 'vendor-firebase-firestore';
+            if (id.includes('/node_modules/firebase/auth/') || id.includes('/node_modules/@firebase/auth')) return 'vendor-firebase-auth';
+            if (id.includes('/node_modules/firebase/app/') || id.includes('/node_modules/@firebase/app/')) return 'vendor-firebase-core';
+            if (id.includes('/node_modules/@firebase/')) return 'vendor-firebase-shared';
             if (id.includes('/node_modules/motion/')) return 'vendor-motion';
           },
         },

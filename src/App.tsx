@@ -5,7 +5,7 @@
 
 import React, { lazy, Suspense, useState, useEffect, useRef } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
+import type * as FirestoreSdk from "firebase/firestore";
 import {
   AcademicMode,
   NavigationTab,
@@ -21,12 +21,6 @@ import {
   LearningStage,
 } from "./types";
 import { INITIAL_NOTEBOOKS } from "./data/defaultNotebooks";
-import {
-  INITIAL_CLASSROOMS,
-  INITIAL_CLASS_ASSIGNMENTS,
-  INITIAL_SUBMISSIONS,
-  INITIAL_TEACHER_RESOURCES,
-} from "./data/defaultTeacherData";
 
 import { NavigationSidebar } from "./components/NavigationSidebar";
 import { MobileNavigation } from "./components/MobileNavigation";
@@ -56,29 +50,13 @@ const GuidedAssessmentBridge = lazy(() => import("./components/GuidedAssessmentB
 import { soundEffects } from "./utils/soundEffects";
 import { todayISO } from "./utils/dateUtils";
 import {
-  auth,
-  db,
-  signInWithGoogle,
-  logOut,
-  syncUserProfile,
-  updateUserRole,
-  saveNotebookToCloud,
-  syncAllNotebooksToCloud,
-  deleteNotebookFromCloud,
-  saveStudyPlanItemToCloud,
-  deleteStudyPlanItemFromCloud,
-  savePracticeSessionToCloud,
-  createClassroom,
-  joinClassroomByCode,
-  createClassAssignment,
-  submitClassAssignment,
-  gradeClassSubmission,
-  addClassResource,
-  sendClassMessage,
-  fetchLearnerModelFromCloud,
-  handleFirestoreError,
-  OperationType,
-} from "./firebase";
+  auth, signInWithGoogle, logOut, handleFirestoreError, OperationType,
+  syncUserProfile, updateUserRole, saveNotebookToCloud, syncAllNotebooksToCloud,
+  deleteNotebookFromCloud, saveStudyPlanItemToCloud, deleteStudyPlanItemFromCloud,
+  savePracticeSessionToCloud, createClassroom, joinClassroomByCode,
+  createClassAssignment, submitClassAssignment, gradeClassSubmission,
+  addClassResource, sendClassMessage,
+} from "./firebaseCore";
 import {
   setActiveLearnerId,
   saveLearnerModel,
@@ -91,7 +69,6 @@ import { resolveSkillForActivity } from "./data/activitySkillRegistry";
 const NOTEBOOKS_KEY = "my_student_portal_notebooks_v3";
 const STUDY_PLAN_KEY = "my_student_portal_study_plan_v3";
 const PRACTICE_KEY = "my_student_portal_practice_v3";
-const CLASSROOMS_KEY = "my_student_portal_classrooms_v3";
 
 export default function App() {
   const [learningStage, setLearningStage] = useState<LearningStage>(() => {
@@ -120,6 +97,8 @@ export default function App() {
 
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const [cloudModule, setCloudModule] = useState<typeof import("./firebase") | null>(null);
+  const [firestoreSdk, setFirestoreSdk] = useState<typeof FirestoreSdk | null>(null);
 
   // Primary Homework Desk is the default landing experience.
   // The workspace switcher is opened on-demand via the sidebar switcher or profile action,
@@ -285,83 +264,16 @@ export default function App() {
   }, [practiceSessions]);
 
   // 4. TRUE MULTI-USER CLASSROOM STATE (Path B)
-  const [classrooms, setClassrooms] = useState<Classroom[]>(() => {
-    try {
-      const saved = localStorage.getItem(CLASSROOMS_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
-      }
-    } catch {
-      // ignore
-    }
-    return INITIAL_CLASSROOMS;
-  });
+  const [classrooms, setClassrooms] = useState<Classroom[]>([]);
 
-  const [activeClassId, setActiveClassId] = useState<string>(() => {
-    return classrooms[0]?.id || "class-elem-math-3";
-  });
+  const [activeClassId, setActiveClassId] = useState<string>(() => classrooms[0]?.id || "");
 
   const activeClass = classrooms.find((c) => c.id === activeClassId) || classrooms[0];
 
-  const [classAssignments, setClassAssignments] = useState<ClassAssignment[]>(() => {
-    return INITIAL_CLASS_ASSIGNMENTS["class-elem-math-3"] || [];
-  });
-
-  const [classSubmissions, setClassSubmissions] = useState<AssignmentSubmission[]>(() => {
-    return Object.values(INITIAL_SUBMISSIONS);
-  });
-
-  const [classResources, setClassResources] = useState<ClassResource[]>(() => {
-    return INITIAL_TEACHER_RESOURCES.map((r) => ({
-      ...r,
-      classId: "class-elem-math-3",
-      teacherId: "teacher-ms-henderson",
-    }));
-  });
-
-  const [classMessages, setClassMessages] = useState<ClassMessage[]>([
-    {
-      id: "msg-init-1",
-      classId: "class-elem-math-3",
-      studentId: "mock-student-id",
-      senderId: "teacher-ms-henderson",
-      senderName: "Ms. Henderson",
-      senderRole: "teacher",
-      text: "Welcome to Grade 3 class homework room! Feel free to ask any questions or send over your work when you'd like guidance.",
-      timestamp: Date.now() - 3600000 * 24,
-      read: true,
-    },
-    {
-      id: "msg-init-2",
-      classId: "class-elem-math-3",
-      studentId: "mock-student-id",
-      senderId: "mock-student-id",
-      senderName: "Student Scholar",
-      senderRole: "student",
-      text: "Hi Ms. Henderson! I used the Socratic buddy to double check whether 1/3 is bigger than 1/4. We drew a pizza slice diagram!",
-      timestamp: Date.now() - 3600000 * 5,
-      read: true,
-      attachedNotebookContext: {
-        notebookId: "math-primary-3",
-        subject: "Mathematics",
-        notebookName: "Primary Mathematics & Word Problems",
-        lastAIResponse:
-          "Imagine cutting a pizza into 3 big slices versus 4 smaller slices. The fewer pieces you divide it into, the larger each piece is!",
-      },
-    },
-    {
-      id: "msg-init-3",
-      classId: "class-elem-math-3",
-      studentId: "mock-student-id",
-      senderId: "teacher-ms-henderson",
-      senderName: "Ms. Henderson",
-      senderRole: "teacher",
-      text: "That is the perfect visual way to remember it! Great job using your math notebook to visualize fractions.",
-      timestamp: Date.now() - 3600000 * 2,
-      read: false,
-    },
-  ]);
+  const [classAssignments, setClassAssignments] = useState<ClassAssignment[]>([]);
+  const [classSubmissions, setClassSubmissions] = useState<AssignmentSubmission[]>([]);
+  const [classResources, setClassResources] = useState<ClassResource[]>([]);
+  const [classMessages, setClassMessages] = useState<ClassMessage[]>([]);
 
   // Auth Lifecycle Setup
   useEffect(() => {
@@ -383,15 +295,45 @@ export default function App() {
         }
       } else {
         setActiveLearnerId("scholar-primary-1");
+        setClassrooms([]);
+        setActiveClassId("");
+        setClassAssignments([]);
+        setClassSubmissions([]);
+        setClassResources([]);
+        setClassMessages([]);
       }
     });
 
     return () => unsubscribeAuth();
   }, []);
 
+  // Load Firestore only after sign-in. Local learning stays light and usable
+  // without downloading the database SDK before a cloud-backed session is needed.
+  useEffect(() => {
+    if (!currentUser) {
+      setCloudModule(null);
+      setFirestoreSdk(null);
+      return;
+    }
+    let active = true;
+    Promise.all([import("./firebase"), import("firebase/firestore")])
+      .then(([cloud, firestore]) => {
+        if (!active) return;
+        setCloudModule(cloud);
+        setFirestoreSdk(firestore);
+      })
+      .catch((error) => {
+        console.error("Could not load cloud sync services", error);
+        setIsSyncing(false);
+      });
+    return () => { active = false; };
+  }, [currentUser]);
+
   // Firestore Real-Time Data Synchronization: Personal Partition (/users/{uid}/*)
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser || !cloudModule || !firestoreSdk) return;
+    const { collection, onSnapshot, query, where } = firestoreSdk;
+    const { db } = cloudModule;
 
     setIsSyncing(true);
     const uid = currentUser.uid;
@@ -465,11 +407,13 @@ export default function App() {
       unsubSp();
       unsubPs();
     };
-  }, [currentUser]);
+  }, [currentUser, cloudModule, firestoreSdk]);
 
   // Firestore Real-Time Data Synchronization: Classroom Partition (/classes/*)
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser || !cloudModule || !firestoreSdk) return;
+    const { collection, onSnapshot, query, where } = firestoreSdk;
+    const { db } = cloudModule;
 
     const uid = currentUser.uid;
 
@@ -486,14 +430,9 @@ export default function App() {
       studentClasses.forEach((c) => classMap.set(c.id, c));
       const combined = Array.from(classMap.values());
 
-      if (combined.length > 0) {
-        setClassrooms(combined);
-        try {
-          localStorage.setItem(CLASSROOMS_KEY, JSON.stringify(combined));
-        } catch {}
-        if (!combined.some((c) => c.id === activeClassId)) {
-          setActiveClassId(combined[0].id);
-        }
+      setClassrooms(combined);
+      if (!combined.some((c) => c.id === activeClassId)) {
+        setActiveClassId(combined[0]?.id || "");
       }
     };
 
@@ -511,11 +450,19 @@ export default function App() {
       unsubTeacher();
       unsubStudent();
     };
-  }, [currentUser, activeClassId]);
+  }, [currentUser, activeClassId, cloudModule, firestoreSdk]);
 
   // Real-Time Active Classroom Listeners (Assignments, Resources, Messages, Submissions)
   useEffect(() => {
-    if (!currentUser || !activeClassId) return;
+    if (!currentUser) return;
+    if (!activeClassId || !cloudModule || !firestoreSdk) {
+      setClassAssignments([]);
+      setClassResources([]);
+      setClassMessages([]);
+      return;
+    }
+    const { collection, onSnapshot } = firestoreSdk;
+    const { db } = cloudModule;
 
     // 1. Listen to class assignments
     const unsubAsgns = onSnapshot(
@@ -523,9 +470,7 @@ export default function App() {
       (snapshot) => {
         const asgns = snapshot.docs.map((d) => d.data() as ClassAssignment);
         asgns.sort((a, b) => b.createdAt - a.createdAt);
-        if (asgns.length > 0) {
-          setClassAssignments(asgns);
-        }
+        setClassAssignments(asgns);
       },
       (err) => handleFirestoreError(err, OperationType.GET, `classes/${activeClassId}/assignments`)
     );
@@ -536,9 +481,7 @@ export default function App() {
       (snapshot) => {
         const res = snapshot.docs.map((d) => d.data() as ClassResource);
         res.sort((a, b) => b.createdAt - a.createdAt);
-        if (res.length > 0) {
-          setClassResources(res);
-        }
+        setClassResources(res);
       },
       (err) => handleFirestoreError(err, OperationType.GET, `classes/${activeClassId}/resources`)
     );
@@ -549,9 +492,7 @@ export default function App() {
       (snapshot) => {
         const msgs = snapshot.docs.map((d) => d.data() as ClassMessage);
         msgs.sort((a, b) => a.timestamp - b.timestamp);
-        if (msgs.length > 0) {
-          setClassMessages(msgs);
-        }
+        setClassMessages(msgs);
       },
       (err) => handleFirestoreError(err, OperationType.GET, `classes/${activeClassId}/messages`)
     );
@@ -561,11 +502,17 @@ export default function App() {
       unsubResources();
       unsubMessages();
     };
-  }, [currentUser, activeClassId]);
+  }, [currentUser, activeClassId, cloudModule, firestoreSdk]);
 
   // Listen to Submissions for each class assignment
   useEffect(() => {
-    if (!currentUser || !activeClassId || classAssignments.length === 0) return;
+    if (!currentUser || !activeClassId || !cloudModule || !firestoreSdk || classAssignments.length === 0) {
+      setClassSubmissions([]);
+      return;
+    }
+    const { collection, onSnapshot } = firestoreSdk;
+    const { db } = cloudModule;
+    setClassSubmissions([]);
 
     const unsubs = classAssignments.map((asgn) => {
       return onSnapshot(
@@ -589,7 +536,7 @@ export default function App() {
     return () => {
       unsubs.forEach((u) => u());
     };
-  }, [currentUser, activeClassId, classAssignments]);
+  }, [currentUser, activeClassId, classAssignments, cloudModule, firestoreSdk]);
 
   // Query & Practice pre-fill states for inter-tab navigation
   const [pendingTutorQuery, setPendingTutorQuery] = useState<string | undefined>(undefined);
@@ -673,10 +620,10 @@ export default function App() {
         name,
         subject,
         joinCode: code,
-        teacherId: "teacher-demo-id",
-        teacherName: "Demo Instructor",
-        teacherEmail: "instructor@portal.edu",
-        studentIds: ["mock-student-id"],
+        teacherId: "local-teacher",
+        teacherName: "Local teacher",
+        teacherEmail: "",
+        studentIds: [],
         createdAt: Date.now(),
       };
       setClassrooms((prev) => [newClass, ...prev]);
@@ -701,10 +648,10 @@ export default function App() {
       });
       setActiveClassId(joinedClass.id);
     } else {
-      // Offline fallback: check INITIAL_CLASSROOMS or local
+      // Offline fallback: join a class already created in this browser profile.
       const found = classrooms.find((c) => c.joinCode.toUpperCase() === formattedCode);
       if (!found) {
-        throw new Error(`No classroom found with Join Code "${formattedCode}". Try CALC101 or CS201.`);
+        throw new Error(`No classroom found with Join Code "${formattedCode}". Check the code with your teacher.`);
       }
       setActiveClassId(found.id);
     }
@@ -720,7 +667,7 @@ export default function App() {
         ...asgn,
         id: `asgn-${Date.now()}`,
         classId: activeClassId,
-        teacherId: activeClass?.teacherId || "teacher-demo",
+        teacherId: activeClass?.teacherId || "local-teacher",
         createdAt: Date.now(),
       };
       setClassAssignments((prev) => [newAsgn, ...prev]);
@@ -729,9 +676,9 @@ export default function App() {
 
   const handleSubmitClassAssignment = (assignmentId: string, text: string, note?: string) => {
     const studentUser = {
-      uid: currentUser?.uid || "mock-student-id",
-      displayName: currentUser?.displayName || "Alex Rivera",
-      email: currentUser?.email || "alex.student@portal.edu",
+      uid: currentUser?.uid || "local-learner",
+      displayName: currentUser?.displayName || "Local learner",
+      email: currentUser?.email || "",
     };
 
     if (currentUser) {
@@ -821,7 +768,7 @@ export default function App() {
         ...res,
         id: `res-${Date.now()}`,
         classId: activeClassId,
-        teacherId: activeClass?.teacherId || "teacher-demo",
+        teacherId: activeClass?.teacherId || "local-teacher",
         createdAt: Date.now(),
       };
       setClassResources((prev) => [newRes, ...prev]);
@@ -862,10 +809,10 @@ export default function App() {
       const newMsg: ClassMessage = {
         id: `msg-${Date.now()}`,
         classId: activeClassId,
-        studentId: "mock-student-id",
-        studentName: "Alex Rivera",
-        senderId: "mock-student-id",
-        senderName: "Alex Rivera",
+        studentId: "local-learner",
+        studentName: "Local learner",
+        senderId: "local-learner",
+        senderName: "Local learner",
         senderRole: "student",
         text,
         timestamp: Date.now(),
@@ -917,7 +864,7 @@ export default function App() {
   const unreadTeacherCount = classMessages.filter(
     (m) => !m.read && m.senderRole === "teacher"
   ).length;
-  const studentUid = currentUser?.uid || "mock-student-id";
+  const studentUid = currentUser?.uid || "local-learner";
   const openAssignmentsCount = classAssignments.filter(
     (a) => !classSubmissions.some((s) => s.assignmentId === a.id && s.studentId === studentUid)
   ).length;

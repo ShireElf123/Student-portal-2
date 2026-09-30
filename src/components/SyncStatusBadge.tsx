@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { CheckCircle2, RefreshCw, AlertTriangle, CloudOff, X } from "lucide-react";
 import { SyncStatusInfo } from "../types";
-import { subscribeToSyncStatus } from "../firebase";
+import { subscribeToSyncStatus } from "../firebaseCore";
 
 interface SyncStatusBadgeProps {
   initialStatus?: SyncStatusInfo;

@@ -6,7 +6,7 @@ import {
   fetchLearnerModelFromCloud,
   recordCloudLearningEvent,
   notifySyncStatus,
-} from "../firebase";
+} from "../firebaseCore";
 
 export type SyncState = "synced" | "syncing" | "offline" | "error";
 let currentSyncState: SyncState = "synced";
