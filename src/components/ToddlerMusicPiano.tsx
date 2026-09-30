@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import { Music, Sparkles, Star, RotateCcw, Volume2, Award, Play } from "lucide-react";
 import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
-import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
+import { awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 
 interface KeyConfig {
   note: string;
@@ -37,7 +37,7 @@ const SONGS: Song[] = [
     id: "twinkle",
     title: "Twinkle Twinkle Little Star",
     emoji: "⭐",
-    notes: ["C", "C", "G", "G", "A", "A", "G"],
+    notes: ["C", "C", "G", "G", "A", "A", "G", "F", "F", "E", "E", "D", "D", "C", "G", "G", "F", "F", "E", "E", "D", "G", "G", "F", "F", "E", "E", "D", "C", "C", "G", "G", "A", "A", "G", "F", "F", "E", "E", "D", "D", "C"],
   },
   {
     id: "mary",
@@ -49,13 +49,13 @@ const SONGS: Song[] = [
     id: "row",
     title: "Row Row Row Your Boat",
     emoji: "🚣",
-    notes: ["C", "C", "C", "D", "E", "E", "D", "E", "F", "G"],
+    notes: ["C", "C", "C", "D", "E", "E", "D", "E", "F", "G", "C+", "C+", "C+", "G", "G", "E", "E", "C", "C", "C"],
   },
   {
     id: "old-mac",
     title: "Old MacDonald Had a Farm",
     emoji: "🚜",
-    notes: ["G", "G", "G", "D", "E", "E", "D"],
+    notes: ["G", "G", "G", "E", "C", "C", "E", "G", "G", "E", "C", "C"],
   },
   {
     id: "wheels",
@@ -73,7 +73,7 @@ const SONGS: Song[] = [
     id: "baa",
     title: "Baa Baa Black Sheep",
     emoji: "🐑",
-    notes: ["C", "C", "G", "G", "A", "A", "G"],
+    notes: ["C", "C", "G", "G", "A", "A", "G", "F", "F", "E", "E", "D", "D", "C", "G", "G", "F", "F", "E", "E", "D", "G", "G", "F", "F", "E", "E", "D", "C", "C", "G", "G", "A", "A", "G", "F", "F", "E", "E", "D", "D", "C"],
   },
   {
     id: "jingle",
@@ -92,6 +92,44 @@ export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
   const [currentNoteIdx, setCurrentNoteIdx] = useState<number>(0);
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const [songCompleted, setSongCompleted] = useState<boolean>(false);
+  const [isPlayingDemo, setIsPlayingDemo] = useState(false);
+  const demoTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const stopDemo = () => {
+    demoTimers.current.forEach(clearTimeout);
+    demoTimers.current = [];
+    setIsPlayingDemo(false);
+    setActiveKey(null);
+  };
+
+  useEffect(() => () => demoTimers.current.forEach(clearTimeout), []);
+
+  const playSongDemo = () => {
+    if (!selectedSong || isPlayingDemo) return;
+    stopDemo();
+    setIsPlayingDemo(true);
+    // Start the first note synchronously in the click gesture to unlock Web Audio on iOS/Safari.
+    const firstKey = XYLOPHONE_KEYS.find((key) => key.note === selectedSong.notes[0]);
+    if (firstKey) {
+      soundEffects.playXylophoneKey(firstKey.freq);
+      setActiveKey(firstKey.note);
+    }
+    selectedSong.notes.forEach((note, index) => {
+      if (index === 0) return;
+      const timer = setTimeout(() => {
+        const key = XYLOPHONE_KEYS.find((candidate) => candidate.note === note);
+        if (key) { soundEffects.playXylophoneKey(key.freq); setActiveKey(key.note); }
+        if (index === selectedSong.notes.length - 1) {
+          const endTimer = setTimeout(() => { setActiveKey(null); setIsPlayingDemo(false); }, 450);
+          demoTimers.current.push(endTimer);
+        } else {
+          const offTimer = setTimeout(() => setActiveKey(null), 240);
+          demoTimers.current.push(offTimer);
+        }
+      }, index * 420);
+      demoTimers.current.push(timer);
+    });
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -105,6 +143,7 @@ export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
   }, []);
 
   const handleKeyPress = (k: KeyConfig) => {
+    if (isPlayingDemo) stopDemo();
     setActiveKey(k.note);
     soundEffects.playXylophoneKey(k.freq);
 
@@ -123,7 +162,6 @@ export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
           setSongCompleted(true);
           soundEffects.playFanfare();
           triggerCelebrationConfetti();
-          awardStars(2);
           awardXP(35, `Played ${selectedSong.title}`);
           if (onAddStar) onAddStar(2);
           speakText(`Bravo! You played ${selectedSong.title}! What a wonderful musician!`, {
@@ -136,6 +174,7 @@ export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
   };
 
   const handleSelectSong = (song: Song) => {
+    stopDemo();
     setSelectedSong(song);
     setCurrentNoteIdx(0);
     setSongCompleted(false);
@@ -165,6 +204,7 @@ export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
         <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
           <button
             onClick={() => {
+              stopDemo();
               setSelectedSong(null);
               setSongCompleted(false);
               soundEffects.playPop();
@@ -201,6 +241,11 @@ export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
       {/* Song Guided Notes Display Banner */}
       {selectedSong && (
         <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 text-center">
+          <div className="mb-3 flex flex-wrap justify-center gap-2">
+            <button type="button" onClick={playSongDemo} disabled={isPlayingDemo} className="rounded-xl bg-amber-400 px-4 py-2 text-xs font-black text-amber-950 disabled:opacity-50">▶ Hear the tune</button>
+            {isPlayingDemo && <button type="button" onClick={stopDemo} className="rounded-xl bg-white/15 px-4 py-2 text-xs font-bold text-white">Stop</button>}
+            <span className="self-center text-[11px] text-white/55">Instrumental xylophone notes (not singing)</span>
+          </div>
           <div className="text-xs text-white/60 mb-2 font-bold">
             Song Progress: {songCompleted ? "Completed! ⭐⭐⭐" : `Note ${currentNoteIdx + 1} of ${selectedSong.notes.length}`}
           </div>

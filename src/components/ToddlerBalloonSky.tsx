@@ -87,8 +87,8 @@ export function ToddlerBalloonSky({ onAddStar }: ToddlerBalloonSkyProps) {
 
     if (balloon.label === targetLabel) {
       soundEffects.playSuccessChime();
-      awardStars(1);
       if (onAddStar) onAddStar(1);
+      else awardStars(1);
 
       try {
         const isNum = !isNaN(Number(targetLabel));

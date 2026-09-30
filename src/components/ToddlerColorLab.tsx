@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sparkles, RotateCcw, Volume2, Star } from "lucide-react";
 import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
-import { awardXP, awardStars, triggerCelebrationConfetti } from "../utils/gamification";
+import { triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 
 interface ColorDrop {
@@ -37,9 +37,104 @@ const RECIPES: Record<string, MixResult> = {
   "blue+red": { title: "Royal Purple!", colorName: "Purple", bgGradient: "from-purple-500 to-indigo-600", emoji: "🍇", phrase: "Blue plus Red creates deep royal Purple!" },
 };
 
+const PAINT_COLORS = ["#ef4444", "#f59e0b", "#facc15", "#22c55e", "#06b6d4", "#3b82f6", "#8b5cf6", "#ec4899", "#78350f", "#111827"];
+
+function PaintCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const lastPoint = useRef<{ x: number; y: number } | null>(null);
+  const [color, setColor] = useState(PAINT_COLORS[0]);
+  const [brushSize, setBrushSize] = useState(12);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const resizeCanvas = () => {
+      const rect = canvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const previous = document.createElement("canvas");
+      previous.width = canvas.width;
+      previous.height = canvas.height;
+      previous.getContext("2d")?.drawImage(canvas, 0, 0);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = "#fffdf7";
+      ctx.fillRect(0, 0, rect.width, rect.height);
+      if (previous.width && previous.height) {
+        ctx.drawImage(previous, 0, 0, previous.width, previous.height, 0, 0, rect.width, rect.height);
+      }
+    };
+    resizeCanvas();
+    const observer = new ResizeObserver(resizeCanvas);
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, []);
+
+  const pointFromEvent = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  };
+  const startPaint = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    event.currentTarget.setPointerCapture(event.pointerId);
+    lastPoint.current = pointFromEvent(event);
+    const ctx = canvasRef.current?.getContext("2d");
+    if (ctx && lastPoint.current) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(lastPoint.current.x, lastPoint.current.y, brushSize / 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+  const paint = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    if (!lastPoint.current) return;
+    const next = pointFromEvent(event);
+    const ctx = canvasRef.current?.getContext("2d");
+    if (!ctx) return;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = brushSize;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(lastPoint.current.x, lastPoint.current.y);
+    ctx.lineTo(next.x, next.y);
+    ctx.stroke();
+    lastPoint.current = next;
+  };
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+    const rect = canvas.getBoundingClientRect();
+    ctx.fillStyle = "#fffdf7";
+    ctx.fillRect(0, 0, rect.width, rect.height);
+  };
+
+  return (
+    <section className="mt-6 rounded-3xl border border-pink-300/30 bg-gradient-to-br from-pink-500/10 to-violet-500/10 p-4 sm:p-5 text-left" aria-label="Paint studio">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+        <div><h4 className="text-lg font-black text-white">🖌️ Little Paint Studio</h4><p className="text-xs text-white/65">Choose a color, then draw with your finger or mouse. Your picture stays on this device.</p></div>
+        <div className="flex gap-2">
+          <button type="button" onClick={clearCanvas} className="rounded-xl bg-white/10 px-3 py-2 text-xs font-bold text-white hover:bg-white/20">Clear paper</button>
+          <button type="button" onClick={() => { const canvas = canvasRef.current; if (!canvas) return; const link = document.createElement("a"); link.download = "my-color-studio-picture.png"; link.href = canvas.toDataURL("image/png"); link.click(); }} className="rounded-xl bg-pink-500/25 px-3 py-2 text-xs font-bold text-white hover:bg-pink-500/40">Save picture</button>
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center gap-3 mb-3" role="group" aria-label="Paint colors">
+        {PAINT_COLORS.map((paintColor, index) => <button key={paintColor} type="button" aria-label={`Paint color ${index + 1}`} aria-pressed={color === paintColor} onClick={() => setColor(paintColor)} className={`h-9 w-9 rounded-full border-2 ${color === paintColor ? "border-white ring-2 ring-white/50 scale-110" : "border-white/40"}`} style={{ backgroundColor: paintColor }} />)}
+        <label className="flex items-center gap-2 text-xs font-bold text-white/80">Brush <input aria-label="Brush size" type="range" min="4" max="32" value={brushSize} onChange={(event) => setBrushSize(Number(event.target.value))} /></label>
+      </div>
+      <canvas ref={canvasRef} className="block h-56 w-full touch-none rounded-2xl border-2 border-white/30 shadow-inner sm:h-72" onPointerDown={startPaint} onPointerMove={paint} onPointerUp={() => { lastPoint.current = null; }} onPointerCancel={() => { lastPoint.current = null; }} aria-label="Blank paper for drawing" />
+    </section>
+  );
+}
+
 export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => void }) {
   const [selectedDrops, setSelectedDrops] = useState<ColorDrop[]>([]);
   const [currentResult, setCurrentResult] = useState<MixResult | null>(null);
+  const rewardPaid = useRef(false);
+  const resolutionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -49,6 +144,10 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
     }, 150);
 
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => () => {
+    if (resolutionTimer.current) clearTimeout(resolutionTimer.current);
   }, []);
 
   const handleSelectColor = (drop: ColorDrop) => {
@@ -64,14 +163,16 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
       const result = RECIPES[key];
 
       if (result) {
-        setTimeout(() => {
+        resolutionTimer.current = setTimeout(() => {
+          resolutionTimer.current = null;
           setCurrentResult(result);
           soundEffects.playSuccessChime();
           triggerCelebrationConfetti();
           speakText(result.phrase, { pitch: 1.3 });
-          awardXP(30);
-          awardStars(1);
-          onAddStar?.(1);
+          if (!rewardPaid.current) {
+            rewardPaid.current = true;
+            onAddStar?.(1);
+          }
 
           try {
             recordLearningEvent({
@@ -93,7 +194,8 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
       } else {
         // Same color mixed
         speakText(`Two ${next[0].name}s! Pick a different color to mix magic!`, { pitch: 1.2 });
-        setTimeout(() => {
+        resolutionTimer.current = setTimeout(() => {
+          resolutionTimer.current = null;
           setSelectedDrops([]);
         }, 1200);
       }
@@ -101,6 +203,10 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
   };
 
   const handleReset = () => {
+    if (resolutionTimer.current) {
+      clearTimeout(resolutionTimer.current);
+      resolutionTimer.current = null;
+    }
     setSelectedDrops([]);
     setCurrentResult(null);
     soundEffects.playPop();
@@ -200,6 +306,7 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
           );
         })}
       </div>
+      <PaintCanvas />
     </div>
   );
 }

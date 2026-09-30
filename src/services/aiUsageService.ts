@@ -1,7 +1,16 @@
 import { AIUsageStats, SubscriptionStatus, SubscriptionTier } from "../types";
 import { todayISO } from "../utils/dateUtils";
-import { db, auth } from "../firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { auth } from "../firebaseCore";
+
+function syncCloudUserFields(fields: Record<string, unknown>) {
+  const user = auth.currentUser;
+  if (!user) return;
+  void Promise.all([import("../firebase"), import("firebase/firestore")])
+    .then(([{ db }, { doc, updateDoc }]) => updateDoc(doc(db, "users", user.uid), fields))
+    .catch(() => {
+      // Local settings remain authoritative when cloud sync is unavailable.
+    });
+}
 
 const USAGE_STORAGE_KEY = "my_student_portal_ai_usage_v1";
 const SUB_STORAGE_KEY = "my_student_portal_subscription_v1";
@@ -143,15 +152,7 @@ export function recordAIConsumption(
   }
 
   // Cloud sync if signed in
-  if (auth.currentUser) {
-    const userRef = doc(db, "users", auth.currentUser.uid);
-    updateDoc(userRef, {
-      aiUsageToday: newCount,
-      aiUsageResetDate: today,
-    }).catch(() => {
-      // Ignore background firestore update errors
-    });
-  }
+  syncCloudUserFields({ aiUsageToday: newCount, aiUsageResetDate: today });
 
   notifyListeners();
   return getUsageStats();
@@ -171,15 +172,7 @@ export function setSubscriptionTier(tier: SubscriptionTier): AIUsageStats {
     // ignore
   }
 
-  if (auth.currentUser) {
-    const userRef = doc(db, "users", auth.currentUser.uid);
-    updateDoc(userRef, {
-      subscriptionTier: tier,
-      subscriptionStatus: updatedSub.status,
-    }).catch(() => {
-      // Ignore background firestore update errors
-    });
-  }
+  syncCloudUserFields({ subscriptionTier: tier, subscriptionStatus: updatedSub.status });
 
   notifyListeners();
   return getUsageStats();
@@ -197,15 +190,7 @@ export function resetDailyUsage(): AIUsageStats {
     // ignore
   }
 
-  if (auth.currentUser) {
-    const userRef = doc(db, "users", auth.currentUser.uid);
-    updateDoc(userRef, {
-      aiUsageToday: 0,
-      aiUsageResetDate: today,
-    }).catch(() => {
-      // Ignore background firestore update errors
-    });
-  }
+  syncCloudUserFields({ aiUsageToday: 0, aiUsageResetDate: today });
 
   notifyListeners();
   return getUsageStats();
@@ -216,6 +201,7 @@ export function resetDailyUsage(): AIUsageStats {
  */
 export async function syncUsageWithCloud(userId: string) {
   try {
+    const [{ db }, { doc, getDoc }] = await Promise.all([import("../firebase"), import("firebase/firestore")]);
     const userSnap = await getDoc(doc(db, "users", userId));
     if (userSnap.exists()) {
       const data = userSnap.data();

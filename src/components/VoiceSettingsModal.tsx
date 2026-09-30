@@ -3,9 +3,6 @@ import {
   Volume2,
   VolumeX,
   Sparkles,
-  Check,
-  Smartphone,
-  Monitor,
   RefreshCw,
   Play,
   Square,
@@ -99,13 +96,13 @@ export function VoiceSettingsModal({ isOpen, onClose }: VoiceSettingsModalProps)
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-lg font-black text-white">AI Voice Engine</h2>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                  Natural Male Priority
+                <h2 className="text-base sm:text-lg font-black text-white">Voice &amp; Speech</h2>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-sky-500/20 text-sky-200 border border-sky-500/30">
+                  System voice
                 </span>
               </div>
               <p className="text-xs text-slate-300 font-medium mt-0.5">
-                Powered by Microsoft Guy &amp; Natural Male synthesis
+                Voice quality depends on the voices installed in this browser or device.
               </p>
             </div>
           </div>
@@ -125,20 +122,8 @@ export function VoiceSettingsModal({ isOpen, onClose }: VoiceSettingsModalProps)
               <span className="text-[11px] font-black uppercase tracking-wider text-indigo-300 flex items-center gap-1.5">
                 <Sparkles size={14} className="text-amber-400" /> Active System Voice
               </span>
-              <span
-                className={`text-[11px] font-black px-2.5 py-0.5 rounded-full flex items-center gap-1 ${
-                  voiceInfo.isGuy
-                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                    : voiceInfo.isMale
-                    ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30"
-                    : "bg-slate-800 text-slate-300"
-                }`}
-              >
-                {voiceInfo.isGuy
-                  ? "🌟 Microsoft Guy (Natural Male)"
-                  : voiceInfo.isMale
-                  ? "🎙️ Natural Male Voice"
-                  : "Device Voice"}
+              <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full flex items-center gap-1 bg-slate-800 text-slate-300">
+                {preferredURI ? "Selected voice" : "Automatic voice"}
               </span>
             </div>
 
@@ -149,7 +134,7 @@ export function VoiceSettingsModal({ isOpen, onClose }: VoiceSettingsModalProps)
               <div className="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
                 <span>Language: {voiceInfo.lang}</span>
                 <span>•</span>
-                <span>Pitch: 0.98x (Anti-Robotic Normalization)</span>
+                <span>Voice provided by your browser or device</span>
               </div>
             </div>
 
@@ -207,19 +192,13 @@ export function VoiceSettingsModal({ isOpen, onClose }: VoiceSettingsModalProps)
               className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 transition-colors"
             >
               <option value="auto">
-                ⭐ Automatic: Microsoft Guy &amp; Natural Male Priority (Recommended)
+                Automatic: best available English voice on this device
               </option>
               {englishVoices.length > 0 && (
                 <optgroup label="English Voices (Installed on this device)">
                   {englishVoices.map((v) => {
-                    const isGuy = v.name.toLowerCase().includes("guy");
-                    const isMale =
-                      isGuy ||
-                      v.name.toLowerCase().includes("male") ||
-                      v.voiceURI.toLowerCase().includes("male");
                     return (
                       <option key={v.voiceURI} value={v.voiceURI}>
-                        {isGuy ? "🌟 " : isMale ? "🎙️ " : ""}
                         {v.name} ({v.lang})
                       </option>
                     );
@@ -238,26 +217,8 @@ export function VoiceSettingsModal({ isOpen, onClose }: VoiceSettingsModalProps)
             </select>
           </div>
 
-          {/* Vivo X50 Pro & Mobile Tuning Guide */}
-          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2.5">
-            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-cyan-400">
-              <Smartphone size={15} />
-              <span>Vivo X50 Pro &amp; Mobile Phone Optimization</span>
-            </div>
-            <p className="text-xs text-slate-300 leading-relaxed font-medium">
-              On PC, browsers include the advanced <strong>Microsoft Guy Online (Natural)</strong> neural voice by default. On Android devices like your <strong>Vivo X50 Pro</strong>, the system default was falling back to a female synthesizer with high pitch, causing it to sound robotic.
-            </p>
-            <div className="bg-slate-900/90 rounded-xl p-3 border border-slate-800 text-[11px] text-slate-300 space-y-1.5">
-              <div className="font-bold text-white flex items-center gap-1.5">
-                <Check size={14} className="text-emerald-400" /> What we updated for your phone:
-              </div>
-              <ul className="list-disc pl-4 space-y-1 text-slate-400">
-                <li>Locked voice selection to <strong>Microsoft Guy</strong> and Google Male neural voices.</li>
-                <li>Banned high-pitched artificial female synthetic fallbacks.</li>
-                <li>Tuned acoustic frequency to <strong>0.98x pitch</strong> (warm, deep, natural male resonance) so it never sounds like a screechy robotic toy.</li>
-                <li>Fixed Android WebSpeech audio-pause stalling on Chrome and Vivo browser.</li>
-              </ul>
-            </div>
+          <div className="rounded-2xl border border-slate-700 bg-slate-950 p-4 text-xs leading-relaxed text-slate-300">
+            Speech uses the voices installed by this browser and device. Voice sound and availability vary between devices; this app cannot guarantee a particular studio or singing voice. Choose a voice above and use the preview to compare. Your selection is saved in this browser.
           </div>
         </div>
 

@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import { getLearnerSummary, getLearnerModel } from "../utils/pedagogicalEngine";
 import { CURRICULUM_DOMAINS, CURRICULUM_SKILL_NODES } from "../data/curriculumUniverse";
-import { fetchEnrolledStudentsMastery } from "../firebase";
+import { fetchEnrolledStudentsMastery } from "../firebaseCore";
 import {
   Classroom,
   ClassAssignment,
@@ -135,7 +135,12 @@ export function TeacherView({
   const [newAsgnTitle, setNewAsgnTitle] = useState("");
   const [newAsgnSubject, setNewAsgnSubject] = useState(activeClass?.subject || "Mathematics");
   const [newAsgnDesc, setNewAsgnDesc] = useState("");
-  const [newAsgnDueDate, setNewAsgnDueDate] = useState("2026-09-28");
+  const [newAsgnDueDate, setNewAsgnDueDate] = useState(() => {
+    const date = new Date();
+    date.setDate(date.getDate() + 7);
+    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+    return localDate.toISOString().slice(0, 10);
+  });
 
   // Teacher add resource modal
   const [showAddResource, setShowAddResource] = useState(false);
@@ -288,7 +293,7 @@ export function TeacherView({
   };
 
   // Student perspective submission lookups
-  const studentUid = currentUser?.uid || "mock-student-id";
+  const studentUid = currentUser?.uid || "local-learner";
   const getStudentSubmission = (asgnId: string) => {
     return (
       submissions[asgnId] ||
@@ -342,7 +347,7 @@ export function TeacherView({
 
             <p className="text-xs sm:text-sm text-slate-400 mt-1.5 font-medium">
               Instructor: <span className="text-slate-200 font-bold">{activeClass?.teacherName || "Instructor"}</span>{" "}
-              • {activeClass?.studentIds?.length || 1} Enrolled Students
+              • {activeClass?.studentIds?.length ?? 0} learners enrolled
             </p>
           </div>
         </div>
@@ -393,7 +398,7 @@ export function TeacherView({
             <span>{activeClass?.name || "Academic Classroom"}</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1 font-medium">
-            Real-time assignment submissions, grading review, curriculum resources, and office hours
+            Assignments, learner progress, and class updates
           </p>
         </div>
 
@@ -455,7 +460,7 @@ export function TeacherView({
           }`}
         >
           <MessageSquare size={15} />
-          <span>Office Hours Thread</span>
+          <span>Messages</span>
           {unreadMessagesCount > 0 && (
             <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-indigo-500 text-white font-bold">
               {unreadMessagesCount}
@@ -472,7 +477,7 @@ export function TeacherView({
           }`}
         >
           <BookOpen size={15} />
-          <span>Course Handouts ({resources.length})</span>
+          <span>Resources ({resources.length})</span>
         </button>
 
         <button
@@ -900,11 +905,14 @@ export function TeacherView({
           </div>
 
           <div className="divide-y divide-slate-800 rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden shadow-inner">
-            {/* Display Enrolled Students */}
-            {(activeClass?.studentIds || ["mock-student-id"]).map((stuId, index) => {
+            {(activeClass?.studentIds || []).length === 0 && (
+              <p className="p-6 text-center text-sm text-slate-400">No learners are enrolled in this class yet.</p>
+            )}
+            {/* Display enrolled learners only; never invent roster records. */}
+            {(activeClass?.studentIds || []).map((stuId, index) => {
               const profile = activeClass?.studentProfiles?.[stuId] || {
-                displayName: `Student ${index + 1} (${stuId.slice(0, 6)})`,
-                email: `${stuId.slice(0, 8)}@portal.edu`,
+                displayName: `Learner ${index + 1}`,
+                email: "",
                 enrolledAt: activeClass?.createdAt || Date.now(),
               };
 
@@ -1121,7 +1129,7 @@ export function TeacherView({
                           : "bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700"
                       }`}
                     >
-                      👤 {stuId === "mock-student-id" ? "Student Scholar" : stuId.slice(0, 10)}
+                      👤 {stuId === "local-learner" ? "Student Scholar" : stuId.slice(0, 10)}
                     </button>
                   ))}
                 </div>

@@ -1,5 +1,3 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import {
   getFirestore,
   doc,
@@ -18,6 +16,8 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import firebaseConfig from "../firebase-applet-config.json";
+import { app, handleFirestoreError, notifySyncStatus, OperationType } from "./firebaseCore";
+export { auth, googleProvider, handleFirestoreError, notifySyncStatus, OperationType, subscribeToSyncStatus } from "./firebaseCore";
 import {
   Notebook,
   StudyPlanItem,
@@ -30,84 +30,10 @@ import {
   AssignmentSubmission,
   ClassResource,
   ClassMessage,
-  SyncStatusInfo,
 } from "./types";
 
-const app = initializeApp(firebaseConfig);
-
-// CRITICAL: Specifying firestoreDatabaseId is required by AI Studio environment
+// Firestore stays in this separately imported cloud module.
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
-
-export enum OperationType {
-  CREATE = "create",
-  UPDATE = "update",
-  DELETE = "delete",
-  LIST = "list",
-  GET = "get",
-  WRITE = "write",
-}
-
-export interface FirestoreErrorInfo {
-  error: string;
-  operationType: OperationType;
-  path: string | null;
-  authInfo: {
-    userId?: string | null;
-    email?: string | null;
-    emailVerified?: boolean | null;
-    isAnonymous?: boolean | null;
-    tenantId?: string | null;
-  };
-}
-
-// Global Sync Status Pub/Sub (Fixes #5: Silent Failures)
-type SyncListener = (info: SyncStatusInfo) => void;
-const syncListeners: Set<SyncListener> = new Set();
-
-export function subscribeToSyncStatus(listener: SyncListener) {
-  syncListeners.add(listener);
-  return () => {
-    syncListeners.delete(listener);
-  };
-}
-
-export function notifySyncStatus(info: SyncStatusInfo) {
-  syncListeners.forEach((fn) => {
-    try {
-      fn(info);
-    } catch {
-      // ignore
-    }
-  });
-}
-
-export function handleFirestoreError(
-  error: unknown,
-  operationType: OperationType,
-  path: string | null
-): never {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-  const errInfo: FirestoreErrorInfo = {
-    error: errorMessage,
-    authInfo: {
-      userId: auth.currentUser?.uid,
-      email: auth.currentUser?.email,
-      emailVerified: auth.currentUser?.emailVerified,
-      isAnonymous: auth.currentUser?.isAnonymous,
-      tenantId: auth.currentUser?.tenantId,
-    },
-    operationType,
-    path,
-  };
-  console.error("Firestore Error: ", JSON.stringify(errInfo));
-  notifySyncStatus({
-    state: "error",
-    message: `Cloud sync error on ${path || "operation"}: ${errorMessage.slice(0, 100)}`,
-  });
-  throw new Error(JSON.stringify(errInfo));
-}
 
 // Connection check on boot
 export async function testConnection() {
@@ -123,33 +49,6 @@ export async function testConnection() {
   }
 }
 testConnection();
-
-// Authentication helpers
-export async function signInWithGoogle() {
-  try {
-    return await signInWithPopup(auth, googleProvider);
-  } catch (err: any) {
-    console.error("Error signing in with Google:", err);
-    notifySyncStatus({
-      state: "error",
-      message: err.message || "Failed to sign in with Google",
-    });
-    throw err;
-  }
-}
-
-export async function logOut() {
-  try {
-    await signOut(auth);
-    notifySyncStatus({
-      state: "synced",
-      message: "Signed out successfully",
-    });
-  } catch (err) {
-    console.error("Error signing out:", err);
-    throw err;
-  }
-}
 
 // User Profile creation / synchronization
 export async function syncUserProfile(

@@ -83,7 +83,7 @@ export function DiagnosticPlacementModal({
             <div>
               <h2 className="text-base sm:text-lg font-black text-white">Diagnostic Placement Quest</h2>
               <p className="text-xs text-slate-400 font-medium">
-                3-minute calibration to benchmark grade level & skill tree pathways
+                A short skill snapshot to guide your next learning path
               </p>
             </div>
           </div>
@@ -187,7 +187,7 @@ export function DiagnosticPlacementModal({
               </div>
 
               <div>
-                <h3 className="text-xl sm:text-2xl font-black text-white">Diagnostic Calibrated!</h3>
+                <h3 className="text-xl sm:text-2xl font-black text-white">Your learning snapshot is ready</h3>
                 <p className="text-xs sm:text-sm text-slate-400 mt-1">
                   Overall Accuracy: {result.score} of {result.total} ({Math.round((result.score / result.total) * 100)}%)
                 </p>
@@ -204,8 +204,17 @@ export function DiagnosticPlacementModal({
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-200">
-                  Recommended Primary Focus: <strong>{result.recommendedDomainFocus}</strong>.
+                  A suggested place to begin: <strong>{result.recommendedDomainFocus}</strong>.
                 </p>
+                <p className="text-[11px] leading-relaxed text-slate-400">This brief screening is a starting point, not a formal grade-level assessment. Use the suggested band as a guide and adjust it based on how learning feels.</p>
+                <div className="grid grid-cols-3 gap-2 pt-1 text-[10px]">
+                  {Object.entries(result.gradeBandScores).map(([band, score]) => (
+                    <div key={band} className="rounded-lg border border-slate-800 bg-slate-950/60 p-2 text-center">
+                      <span className="block font-bold text-slate-400">Band {band}</span>
+                      <span className="mt-1 block font-black text-white">{score.correct}/{score.total}</span>
+                    </div>
+                  ))}
+                </div>
                 <div className="grid grid-cols-2 gap-2 pt-2 text-xs">
                   {Object.entries(result.disciplineScores).map(([disc, s]) => (
                     <div key={disc} className="p-2.5 rounded-xl bg-slate-950/70 border border-slate-800 flex justify-between">

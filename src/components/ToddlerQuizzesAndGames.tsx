@@ -62,6 +62,25 @@ interface QuizQuestion {
   }[];
 }
 
+const shuffleChoices = (questions: QuizQuestion[]) => questions
+  .map((question) => ({ ...question, options: [...question.options].sort(() => Math.random() - 0.5) }))
+  .sort(() => Math.random() - 0.5);
+
+const BONUS_EXPLORER_QUESTIONS: QuizQuestion[] = [
+  { id: "q15", prompt: "Which animal has a shell and moves very slowly?", spokenPrompt: "Can you find the slow little friend who carries a shell on its back?", correctId: "turtle", soundCue: "Slow and steady!", options: [{ id: "turtle", label: "Turtle", emoji: "🐢", soundText: "I carry my home wherever I go!" }, { id: "rabbit", label: "Rabbit", emoji: "🐰", soundText: "Hop hop!" }, { id: "fish", label: "Fish", emoji: "🐠", soundText: "Splash splash!" }, { id: "bird", label: "Bird", emoji: "🐦", soundText: "Tweet tweet!" }] },
+  { id: "q16", prompt: "Which tiny helper makes sweet honey?", spokenPrompt: "Which little buzzing friend visits flowers and helps make honey?", correctId: "bee", soundCue: "Bzzzz!", options: [{ id: "bee", label: "Busy Bee", emoji: "🐝", soundText: "Buzz buzz! I love flowers!" }, { id: "frog", label: "Frog", emoji: "🐸", soundText: "Ribbit ribbit!" }, { id: "duck", label: "Duck", emoji: "🦆", soundText: "Quack quack!" }, { id: "cat", label: "Kitten", emoji: "🐱", soundText: "Meow!" }] },
+  { id: "q17", prompt: "Which animal lives in a cold, icy place and waddles?", spokenPrompt: "Who wears a black and white coat and waddles across the chilly ice?", correctId: "penguin", soundCue: "Waddle waddle!", options: [{ id: "penguin", label: "Penguin", emoji: "🐧", soundText: "Waddle, slide, splash!" }, { id: "camel", label: "Camel", emoji: "🐫", soundText: "I walk in the warm desert!" }, { id: "monkey", label: "Monkey", emoji: "🐵", soundText: "Ooh ooh aah aah!" }, { id: "cow", label: "Cow", emoji: "🐮", soundText: "Moo!" }] },
+  { id: "q18", prompt: "What do plants need from the sky to help them grow?", spokenPrompt: "Plants drink rain and reach toward the warm sunshine. What shines in the daytime sky?", correctId: "sun", soundCue: "Shine bright!", options: [{ id: "sun", label: "Sunny Sun", emoji: "☀️", soundText: "Warm sunshine helps plants grow!" }, { id: "moon", label: "Moon", emoji: "🌙", soundText: "The moon glows at night!" }, { id: "snow", label: "Snowflake", emoji: "❄️", soundText: "Snow is cold and fluffy!" }, { id: "star", label: "Star", emoji: "⭐", soundText: "Stars twinkle at night!" }] },
+  { id: "q19", prompt: "Which shape has three straight sides?", spokenPrompt: "Let's count the sides together. One, two, three. Which shape has three sides?", correctId: "triangle", soundCue: "One, two, three!", options: [{ id: "triangle", label: "Triangle", emoji: "🔺", soundText: "Three sides make a triangle!" }, { id: "circle", label: "Circle", emoji: "🟠", soundText: "A circle is round!" }, { id: "square", label: "Square", emoji: "🟩", soundText: "A square has four sides!" }, { id: "star", label: "Star", emoji: "⭐", soundText: "A star has pointy tips!" }] },
+  { id: "q20", prompt: "Which one is the number three?", spokenPrompt: "Listen carefully. Which number comes after two: one, two, three?", correctId: "three", soundCue: "1, 2, 3!", options: [{ id: "one", label: "One", emoji: "1️⃣", soundText: "One little sun!" }, { id: "three", label: "Three", emoji: "3️⃣", soundText: "One, two, three!" }, { id: "five", label: "Five", emoji: "5️⃣", soundText: "Five little stars!" }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "One, two!" }] },
+  { id: "q21", prompt: "Which fruit is yellow and monkeys love to eat?", spokenPrompt: "Peel it, take a bite, and say yum! Which yellow fruit do monkeys love?", correctId: "banana", soundCue: "Yummy banana!", options: [{ id: "banana", label: "Banana", emoji: "🍌", soundText: "A tasty yellow banana!" }, { id: "apple", label: "Apple", emoji: "🍎", soundText: "Crunchy red apple!" }, { id: "grapes", label: "Grapes", emoji: "🍇", soundText: "Juicy grapes!" }, { id: "lemon", label: "Lemon", emoji: "🍋", soundText: "A sour yellow lemon!" }] },
+  { id: "q22", prompt: "What should you do before crossing a road?", spokenPrompt: "We keep safe near roads. Before crossing with a grown-up, what should we do?", correctId: "stop", soundCue: "Stop, look, listen!", options: [{ id: "stop", label: "Stop and Look", emoji: "🛑", soundText: "Hold a grown-up's hand and look both ways!" }, { id: "run", label: "Run fast", emoji: "🏃", soundText: "Let's stay safe and walk with a grown-up!" }, { id: "play", label: "Play ball", emoji: "⚽", soundText: "Roads are not a place to play!" }, { id: "hide", label: "Hide", emoji: "🙈", soundText: "We need to see and listen carefully!" }] },
+  { id: "q23", prompt: "Which animal is the tallest and has a very long neck?", spokenPrompt: "Who reaches the highest leaves with a long spotted neck?", correctId: "giraffe", soundCue: "Reach up high!", options: [{ id: "giraffe", label: "Giraffe", emoji: "🦒", soundText: "I reach the tallest leaves!" }, { id: "zebra", label: "Zebra", emoji: "🦓", soundText: "I have black and white stripes!" }, { id: "lion", label: "Lion", emoji: "🦁", soundText: "Roaaar!" }, { id: "hippo", label: "Hippo", emoji: "🦛", soundText: "Splash!" }] },
+  { id: "q24", prompt: "Which weather means we might need an umbrella?", spokenPrompt: "Drip drop! What falls from clouds and makes puddles?", correctId: "rain", soundCue: "Drip drop!", options: [{ id: "rain", label: "Rain", emoji: "🌧️", soundText: "Take an umbrella in the rain!" }, { id: "sun", label: "Sunshine", emoji: "☀️", soundText: "Bright sunny day!" }, { id: "wind", label: "Wind", emoji: "💨", soundText: "Whoosh goes the wind!" }, { id: "rainbow", label: "Rainbow", emoji: "🌈", soundText: "A rainbow can appear after rain!" }] },
+  { id: "q25", prompt: "Which one belongs in the ocean?", spokenPrompt: "Splash into the blue ocean. Which friendly creature swims in the sea?", correctId: "dolphin", soundCue: "Splash!", options: [{ id: "dolphin", label: "Dolphin", emoji: "🐬", soundText: "I swim and leap in the ocean!" }, { id: "chicken", label: "Chicken", emoji: "🐔", soundText: "Cluck cluck on the farm!" }, { id: "camel", label: "Camel", emoji: "🐫", soundText: "I walk in the desert!" }, { id: "sheep", label: "Sheep", emoji: "🐑", soundText: "Baa baa in the meadow!" }] },
+  { id: "q26", prompt: "What comes next: red, blue, red, blue...?", spokenPrompt: "Let's spot the repeating colors. Red, blue, red, blue. What comes next?", correctId: "red", soundCue: "Red, blue, red, blue!", options: [{ id: "red", label: "Red", emoji: "🔴", soundText: "The pattern starts again with red!" }, { id: "blue", label: "Blue", emoji: "🔵", soundText: "Blue was just before. What starts again?" }, { id: "green", label: "Green", emoji: "🟢", soundText: "Green is a lovely color, but not in this pattern!" }, { id: "yellow", label: "Yellow", emoji: "🟡", soundText: "Look at the repeating colors again!" }] },
+];
+
 const ANIMAL_QUIZ_QUESTIONS: QuizQuestion[] = [
   {
     id: "q1",
@@ -245,6 +264,7 @@ const ANIMAL_QUIZ_QUESTIONS: QuizQuestion[] = [
       { id: "cat", label: "Kitten", emoji: "🐱", soundText: "Purr meow!" },
     ],
   },
+  ...BONUS_EXPLORER_QUESTIONS,
 ];
 
 interface ShapeQuestion {
@@ -429,6 +449,9 @@ export function ToddlerQuizzesAndGames({
   const [voiceMuted, setVoiceMutedState] = useState<boolean>(() => isVoiceMuted());
 
   // Animal Quiz State
+  // Keep each playthrough fresh: a shuffled full-length round means familiar skills
+  // get revisited in a different order instead of feeling like a short fixed demo.
+  const [questionDeck, setQuestionDeck] = useState<QuizQuestion[]>(() => shuffleChoices(ANIMAL_QUIZ_QUESTIONS));
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [quizScore, setQuizScore] = useState<number>(0);
@@ -455,7 +478,7 @@ export function ToddlerQuizzesAndGames({
   const advanceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const promptTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const currentQuiz = ANIMAL_QUIZ_QUESTIONS[questionIndex];
+  const currentQuiz = questionDeck[questionIndex];
   const currentShape = SHAPE_QUESTIONS[shapeIndex];
 
   // Subscribe to speech activity to display speaking badge
@@ -577,7 +600,7 @@ export function ToddlerQuizzesAndGames({
       onAddStar(1);
       setQuizScore((prev) => prev + 1);
 
-      const isLast = questionIndex >= ANIMAL_QUIZ_QUESTIONS.length - 1;
+      const isLast = questionIndex >= questionDeck.length - 1;
 
       // Telemetry into unified learner brain
       try {
@@ -651,7 +674,8 @@ export function ToddlerQuizzesAndGames({
       // Wrong option: warm, non-punitive gentle bounce
       soundEffects.playGentleBoing();
       setWrongShakeId(optionId);
-      speakText(`That's the ${chosen?.label}! Let's try to find ${currentQuiz.correctId}!`, {
+      const answerLabel = currentQuiz.options.find((option) => option.id === currentQuiz.correctId)?.label ?? "right answer";
+      speakText(`That's the ${chosen?.label}! Let's try to find ${answerLabel}!`, {
         pitch: 1.15,
         rate: 0.9,
       });
@@ -668,6 +692,12 @@ export function ToddlerQuizzesAndGames({
       clearTimeout(advanceTimerRef.current);
       advanceTimerRef.current = null;
     }
+    setQuestionDeck((previous) => {
+      const next = shuffleChoices(ANIMAL_QUIZ_QUESTIONS);
+      // Avoid starting two consecutive rounds with the same first question.
+      if (next.length > 1 && next[0]?.id === previous[0]?.id) [next[0], next[1]] = [next[1], next[0]];
+      return next;
+    });
     setQuestionIndex(0);
     setSelectedOptionId(null);
     setIsQuestionAnswered(false);
@@ -1090,22 +1120,10 @@ export function ToddlerQuizzesAndGames({
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <span className="px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 font-extrabold text-xs">
-                    Question {questionIndex + 1} of {ANIMAL_QUIZ_QUESTIONS.length}
+                    Question {questionIndex + 1} of {questionDeck.length}
                   </span>
-                  <div className="flex items-center gap-1">
-                    {ANIMAL_QUIZ_QUESTIONS.map((_, idx) => (
-                      <Star
-                        key={idx}
-                        size={16}
-                        className={
-                          idx < questionIndex
-                            ? "fill-amber-400 text-amber-400"
-                            : idx === questionIndex
-                            ? "fill-amber-400/40 text-amber-300 animate-pulse"
-                            : "text-white/20"
-                        }
-                      />
-                    ))}
+                  <div className="hidden sm:block w-24 h-2 overflow-hidden rounded-full bg-white/10" aria-label={`${questionIndex} of ${questionDeck.length} questions complete`}>
+                    <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-400 transition-all duration-500" style={{ width: `${(questionIndex / questionDeck.length) * 100}%` }} />
                   </div>
                 </div>
 
