@@ -4,7 +4,7 @@ import { Sparkles, Globe, Compass, Rocket, Award, Info, Scale, CheckCircle2, Che
 import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
 import { awardXP, awardStars, triggerCelebrationConfetti } from "../utils/gamification";
-import { recordLearningEvent } from "../utils/learnerBrain";
+import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 
 interface Planet {
   id: string;
@@ -216,7 +216,7 @@ export function PrimarySolarSystemLab() {
     speakText(`${planet.name}! ${planet.tag}. ${planet.funFact}`, { pitch: 1.1, rate: 0.95 });
     try {
       recordLearningEvent({
-        learnerId: "scholar-primary-1",
+        learnerId: getActiveLearnerId(),
         activityId: `solar-planet-${planet.id}`,
         activityType: "solar-system-explore",
         activityTitle: `Planet Exploration: ${planet.name}`,
@@ -256,7 +256,7 @@ export function PrimarySolarSystemLab() {
 
     try {
       recordLearningEvent({
-        learnerId: "scholar-primary-1",
+        learnerId: getActiveLearnerId(),
         activityId: `solar-quiz-q-${quizQuestionIdx}`,
         activityType: "solar-system-quiz",
         activityTitle: `Cosmic Astronomy: ${q.question.substring(0, 36)}...`,

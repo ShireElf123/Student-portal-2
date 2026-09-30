@@ -51,9 +51,11 @@ const COMPLETED_NODES_KEY = "my_student_portal_mastered_nodes_v1";
 
 interface MasterySkillTreeViewProps {
   onNavigateTab: (tab: any) => void;
+  recommendedNodeId?: string;
+  onRecommendationConsumed?: () => void;
 }
 
-export function MasterySkillTreeView({ onNavigateTab }: MasterySkillTreeViewProps) {
+export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecommendationConsumed }: MasterySkillTreeViewProps) {
   const [selectedDomain, setSelectedDomain] = useState<CurriculumDomain | "all">("all");
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelBand | "all">("all");
 
@@ -109,6 +111,31 @@ export function MasterySkillTreeView({ onNavigateTab }: MasterySkillTreeViewProp
     setHintLevel(0);
     setCorrectCount(0);
   };
+
+  useEffect(() => {
+    if (!recommendedNodeId) return;
+    const recommendedNode = CURRICULUM_SKILL_NODES.find((node) => node.id === recommendedNodeId);
+    if (!recommendedNode) {
+      onRecommendationConsumed?.();
+      return;
+    }
+    setSelectedDomain(recommendedNode.domain);
+    // If the recommended level is gated, start at the nearest unmet prerequisite
+    // instead of dropping the learner onto a locked activity.
+    let launchNode = recommendedNode;
+    let guard = 0;
+    while (launchNode.prerequisites.length > 0 && !launchNode.prerequisites.some((id) => masteredNodeIds.includes(id)) && guard < 8) {
+      const prerequisite = CURRICULUM_SKILL_NODES.find((node) => node.id === launchNode.prerequisites[0]);
+      if (!prerequisite) break;
+      launchNode = prerequisite;
+      guard += 1;
+    }
+    setSelectedGrade(launchNode.gradeBand);
+    handleOpenNode(launchNode);
+    onRecommendationConsumed?.();
+    // This is an intentional one-time response to a new route recommendation.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recommendedNodeId]);
 
   const handleStartPractice = () => {
     setIsPracticingNode(true);
@@ -759,8 +786,19 @@ export function MasterySkillTreeView({ onNavigateTab }: MasterySkillTreeViewProp
         isOpen={isDiagnosticModalOpen}
         onClose={() => setIsDiagnosticModalOpen(false)}
         onApplyRecommendation={(nodeId) => {
-          const match = CURRICULUM_SKILL_NODES.find((n) => n.id === nodeId);
-          if (match) handleOpenNode(match);
+          const match = CURRICULUM_SKILL_NODES.find((node) => node.id === nodeId);
+          if (!match) return;
+          let launchNode = match;
+          let guard = 0;
+          while (launchNode.prerequisites.length > 0 && !launchNode.prerequisites.some((id) => masteredNodeIds.includes(id)) && guard < 8) {
+            const prerequisite = CURRICULUM_SKILL_NODES.find((node) => node.id === launchNode.prerequisites[0]);
+            if (!prerequisite) break;
+            launchNode = prerequisite;
+            guard += 1;
+          }
+          setSelectedDomain(launchNode.domain);
+          setSelectedGrade(launchNode.gradeBand);
+          handleOpenNode(launchNode);
         }}
       />
 

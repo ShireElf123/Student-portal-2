@@ -1,9 +1,7 @@
 /**
  * Speech synthesis utility for Toddler and Primary school learning.
- * Prioritizes high-clarity, advanced natural male voices ("Microsoft Guy", "Google Male", "Natural Male")
- * with warm human-frequency acoustic tuning (anti-robotic pitch normalization),
- * structured VoiceProfile management, SpeechProvider abstraction,
- * and seamless Android / Vivo / PC cross-device support.
+ * Uses the best available English system voice with a user-selectable override.
+ * Speech quality depends on voices installed by the browser/operating system.
  */
 
 export interface VoiceProfile {
@@ -18,19 +16,16 @@ export interface VoiceProfile {
   volume: number;
 }
 
-export const DEFAULT_MALE_COACH_PROFILE: VoiceProfile = {
+export const DEFAULT_VOICE_PROFILE: VoiceProfile = {
   id: "guy-natural-coach",
-  label: "Friendly Guy Coach (Natural Male)",
+  label: "Friendly learning voice",
   preferredLanguage: "en-US",
-  preferredGender: "male",
-  preferredFamily: "guy",
+  preferredGender: "neutral",
+  preferredFamily: "system-default",
   fallbackOrder: [
-    "guy",
-    "microsoft guy",
-    "natural male",
-    "google us english male",
-    "en-us-x-iom",
-    "en-us-x-iol",
+    "natural",
+    "neural",
+    "en-us",
     "en-us",
     "en-gb",
   ],
@@ -67,122 +62,17 @@ export interface SpeechProvider {
   isSpeaking(): boolean;
 }
 
-/**
- * Evaluates and scores voices to strictly prioritize advanced natural male voices ("Guy", "Natural Male")
- * and prevent robotic/tinny female synthetic fallbacks on Android and PC.
- */
-export function scoreVoiceForMalePreference(voice: SpeechSynthesisVoice): number {
-  let score = 0;
+/** Scores language fit and signals of a higher-quality installed system voice. */
+export function scoreVoiceForNaturalSpeech(voice: SpeechSynthesisVoice): number {
   const name = (voice.name || "").toLowerCase();
-  const uri = (voice.voiceURI || "").toLowerCase();
   const lang = (voice.lang || "").toLowerCase();
-
-  // Primary preference for English speech in the learning app
-  if (!lang.startsWith("en")) {
-    return -9999;
-  }
-
-  // 1. Direct match for "Guy" - the PC Microsoft Guy (Natural) voice the user specifically requested!
-  if (name.includes("guy") || uri.includes("guy")) {
-    score += 8000;
-  }
-
-  // 2. High-quality Neural / Natural male voices
-  const isNatural = name.includes("natural") || name.includes("online") || name.includes("neural") || name.includes("wavenet");
-  if (isNatural) {
-    score += 1500;
-  }
-
-  // 3. Explicit Male indicators in voice name or URI (common in Android / Google Speech Services)
-  if (
-    name.includes("male") ||
-    uri.includes("male") ||
-    uri.includes("#male") ||
-    uri.includes("-male") ||
-    name.includes("(male)")
-  ) {
-    score += 3500;
-  }
-
-  // 4. Android Google TTS Male Voice IDs (e.g. on Vivo / Android devices)
-  if (
-    uri.includes("en-us-x-iom") ||
-    uri.includes("en-us-x-iol") ||
-    uri.includes("en-us-x-tpd") ||
-    uri.includes("en-gb-x-rjs") ||
-    uri.includes("en-au-x-afh")
-  ) {
-    score += 3000;
-  }
-
-  // 5. Popular high-quality English male voices
-  const malePersonas = [
-    "christopher",
-    "ryan",
-    "eric",
-    "david",
-    "daniel",
-    "george",
-    "oliver",
-    "arthur",
-    "james",
-    "matthew",
-    "brian",
-    "alex",
-    "aaron",
-    "richard",
-    "fred",
-    "tom",
-    "mark",
-    "stephen",
-  ];
-  for (const persona of malePersonas) {
-    if (name.includes(persona) || uri.includes(persona)) {
-      score += 2000;
-      break;
-    }
-  }
-
-  // Dialect affinity (en-US slightly preferred for curricular consistency)
-  if (lang.startsWith("en-us")) {
-    score += 100;
-  } else if (lang.startsWith("en-gb") || lang.startsWith("en-au")) {
-    score += 60;
-  }
-
-  // 6. HEAVY PENALTIES FOR FEMALE / ROBOTIC IDENTIFIERS
-  // Prevents Android from falling back to robotic/metallic female voices
-  const femaleIndicators = [
-    "female",
-    "woman",
-    "samantha",
-    "victoria",
-    "karen",
-    "jenny",
-    "zira",
-    "hazel",
-    "susan",
-    "linda",
-    "catherine",
-    "helen",
-    "fiona",
-    "moira",
-    "tessa",
-    "alice",
-    "aria",
-    "ava",
-    "emma",
-    "en-us-x-sfg#female",
-    "en-us-x-sfg",
-    "#female",
-  ];
-  for (const fIndicator of femaleIndicators) {
-    if (name.includes(fIndicator) || uri.includes(fIndicator)) {
-      score -= 5000;
-      break;
-    }
-  }
-
+  if (!lang.startsWith("en")) return -9999;
+  let score = 100;
+  if (lang.startsWith("en-us")) score += 30;
+  else if (lang.startsWith("en-gb") || lang.startsWith("en-au") || lang.startsWith("en-za")) score += 20;
+  if (voice.default) score += 40;
+  if (name.includes("natural") || name.includes("neural") || name.includes("online") || name.includes("wavenet")) score += 250;
+  if (name.includes("compact") || name.includes("legacy")) score -= 50;
   return score;
 }
 
@@ -196,7 +86,7 @@ class SpeechCoordinator {
   private isVoiceMuted: boolean = false;
   private cachedVoices: SpeechSynthesisVoice[] = [];
   private preferredVoiceURI: string | null = null;
-  private activeProfile: VoiceProfile = { ...DEFAULT_MALE_COACH_PROFILE };
+  private activeProfile: VoiceProfile = { ...DEFAULT_VOICE_PROFILE };
 
   constructor() {
     if (typeof window !== "undefined") {
@@ -293,7 +183,7 @@ class SpeechCoordinator {
   }
 
   /**
-   * Selects the highest-rated natural male voice ("Guy" or equivalent).
+   * Selects a high-quality installed English voice unless the user chose one.
    */
   public getBestVoice(): SpeechSynthesisVoice | null {
     const voices = this.getAvailableVoices();
@@ -305,10 +195,10 @@ class SpeechCoordinator {
       if (explicit) return explicit;
     }
 
-    // 2. Score and sort all English voices by male/natural preference
+    // 2. Score available English voices by language fit and natural-speech hints
     const scored = voices
       .filter((v) => (v.lang || "").toLowerCase().startsWith("en"))
-      .map((v) => ({ voice: v, score: scoreVoiceForMalePreference(v) }))
+      .map((v) => ({ voice: v, score: scoreVoiceForNaturalSpeech(v) }))
       .sort((a, b) => b.score - a.score);
 
     if (scored.length > 0 && scored[0].score > -1000) {
@@ -343,8 +233,7 @@ class SpeechCoordinator {
     const isMale =
       isGuy ||
       nameLower.includes("male") ||
-      voice.voiceURI.toLowerCase().includes("male") ||
-      scoreVoiceForMalePreference(voice) >= 1500;
+      voice.voiceURI.toLowerCase().includes("male");
 
     return {
       name: voice.name,
@@ -461,7 +350,7 @@ class SpeechCoordinator {
         const utterance = new SpeechSynthesisUtterance(cleanText);
         this.activeUtterance = utterance;
 
-        // Choose best voice (prioritizing Microsoft Guy / Natural Male)
+        // Respect an explicit user choice; otherwise use the best installed English voice
         const selectedVoice = options?.voiceURI
           ? this.getAvailableVoices().find((v) => v.voiceURI === options.voiceURI) || this.getBestVoice()
           : this.getBestVoice();
@@ -473,18 +362,14 @@ class SpeechCoordinator {
           utterance.lang = options?.lang ?? "en-US";
         }
 
-        // ACOUSTIC NORMALIZATION (Anti-"Too AI" algorithm):
-        // Natural human male speech sits at ~100-120 Hz. High pitches (1.2-1.4) sound like robotic screeching.
-        // We set optimal warm baseline pitch at 0.98. If options.pitch is specified, we scale it gently
-        // so enthusiastic game lines sound cheerful without distorting into an artificial robot.
+        // Keep pitch within a comfortable range; browser voices vary considerably by device.
         let naturalPitch = 0.98;
         if (typeof options?.pitch === "number") {
-          // Scale requests (e.g. 1.25 -> 1.02, 1.1 -> 0.99)
-          naturalPitch = Math.max(0.92, Math.min(1.04, 0.96 + (options.pitch - 1.0) * 0.22));
+          naturalPitch = Math.max(0.85, Math.min(1.15, options.pitch));
         }
         utterance.pitch = naturalPitch;
 
-        // Conversational, articulate pacing
+        // Slightly slower default supports young listeners; callers may request a rate.
         let naturalRate = 0.94;
         if (typeof options?.rate === "number") {
           naturalRate = Math.max(0.85, Math.min(1.15, options.rate));

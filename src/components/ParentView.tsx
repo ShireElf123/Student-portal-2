@@ -57,6 +57,8 @@ import {
   subscribeLearnerModel,
   computeDomainMastery,
   getLearnerSummary,
+  getSavedDiagnosticResult,
+  DiagnosticResult,
   LearnerModel,
 } from "../utils/pedagogicalEngine";
 
@@ -69,30 +71,12 @@ interface ParentViewProps {
   assignmentSubmissions: Record<string, AssignmentSubmission>;
   onNavigate: (tab: NavigationTab) => void;
   onOpenSubscriptionModal: () => void;
+  onApplyDiagnosticRecommendation?: (nodeId: string) => void;
   assessmentResults?: AssessmentResult[];
   onStartAssessment?: (stage?: "toddler" | "primary") => void;
 }
 
-const DEFAULT_CHILDREN: LinkedStudent[] = [
-  {
-    id: "child-primary",
-    name: "Primary Scholar",
-    email: "scholar@student.portal",
-    gradeLevel: "3rd Grade (Primary)",
-    avatarUrl: "",
-    lastActive: Date.now() - 1000 * 60 * 25, // 25 mins ago
-    subjects: ["Primary Mathematics", "Reading & Writing", "Science Discovery", "Social Studies"],
-  },
-  {
-    id: "child-early",
-    name: "Early Learner",
-    email: "learner@student.portal",
-    gradeLevel: "Early Years (Age 4 • Pre-K)",
-    avatarUrl: "",
-    lastActive: Date.now() - 1000 * 60 * 60 * 2, // 2 hours ago
-    subjects: ["Toddler Phonics", "Animal Picture Books", "Early Numbers", "Sensory Discovery"],
-  },
-];
+const DEFAULT_CHILDREN: LinkedStudent[] = [];
 
 export function ParentView({
   notebooks,
@@ -103,25 +87,18 @@ export function ParentView({
   assignmentSubmissions,
   onNavigate,
   onOpenSubscriptionModal,
+  onApplyDiagnosticRecommendation,
   assessmentResults = [],
   onStartAssessment,
 }: ParentViewProps) {
-  const [children, setChildren] = useState<LinkedStudent[]>(() => {
-    try {
-      const saved = localStorage.getItem("my_student_portal_linked_children");
-      return saved ? JSON.parse(saved) : DEFAULT_CHILDREN;
-    } catch {
-      return DEFAULT_CHILDREN;
-    }
-  });
+  // Only show authenticated, real linked learners here. Placeholder/demo children
+  // from older local profiles are intentionally not treated as actual accounts.
+  const [children] = useState<LinkedStudent[]>(DEFAULT_CHILDREN);
 
   const [activeChildId, setActiveChildId] = useState<string>(
-    children[0]?.id || "child-maya"
+    children[0]?.id || "current-learner"
   );
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
-  const [linkCodeInput, setLinkCodeInput] = useState("");
-  const [linkError, setLinkError] = useState<string | null>(null);
-  const [linkSuccess, setLinkSuccess] = useState<string | null>(null);
 
   // Parental Control States
   const [screenTimeLimit, setScreenTimeLimit] = useState<number>(() => {
@@ -141,7 +118,6 @@ export function ParentView({
     }
   });
 
-  const [socraticStrictness, setSocraticStrictness] = useState<boolean>(true);
   const [parentActionToast, setParentActionToast] = useState<string | null>(null);
 
   const handleUpdateScreenTime = (mins: number) => {
@@ -149,7 +125,7 @@ export function ParentView({
     try {
       localStorage.setItem("parent_screentime_limit", mins.toString());
     } catch {}
-    setParentActionToast(`Daily screen time limit updated to ${mins} minutes`);
+    setParentActionToast(`Local screen-time preference saved: ${mins} minutes. App blocking is not enabled.`);
     setTimeout(() => setParentActionToast(null), 2500);
   };
 
@@ -159,7 +135,7 @@ export function ParentView({
     try {
       localStorage.setItem("parent_bedtime_lock", nextVal.toString());
     } catch {}
-    setParentActionToast(nextVal ? "Bedtime Lock enabled (8:00 PM)" : "Bedtime Lock disabled");
+    setParentActionToast(nextVal ? "Bedtime preference saved locally; no access block is active." : "Bedtime preference turned off locally.");
     setTimeout(() => setParentActionToast(null), 2500);
   };
 
@@ -170,7 +146,18 @@ export function ParentView({
   const [isWorksheetModalOpen, setIsWorksheetModalOpen] = useState(false);
   const [isDiagnosticModalOpen, setIsDiagnosticModalOpen] = useState(false);
   const [isMistakeModalOpen, setIsMistakeModalOpen] = useState(false);
+  const [selectedAssessmentStage, setSelectedAssessmentStage] = useState<"toddler" | "primary">("primary");
+  const [diagnosticSnapshot, setDiagnosticSnapshot] = useState<DiagnosticResult | null>(getSavedDiagnosticResult);
   const [dueMistakesCount, setDueMistakesCount] = useState(getDueMistakesCount());
+
+  useEffect(() => {
+    const handleDiagnosticUpdate = (event: Event) => {
+      const customEvent = event as CustomEvent<DiagnosticResult>;
+      if (customEvent.detail) setDiagnosticSnapshot(customEvent.detail);
+    };
+    window.addEventListener("diagnostic_profile_updated", handleDiagnosticUpdate);
+    return () => window.removeEventListener("diagnostic_profile_updated", handleDiagnosticUpdate);
+  }, []);
 
   useEffect(() => {
     const handleUpdate = () => setDueMistakesCount(getDueMistakesCount());
@@ -210,7 +197,7 @@ export function ParentView({
   };
 
   const activeChild = useMemo(
-    () => children.find((c) => c.id === activeChildId) || children[0],
+    () => children.find((c) => c.id === activeChildId) || children[0] || { id: "current-learner", name: "Current learner", email: "", gradeLevel: "This device", avatarUrl: "", lastActive: Date.now(), subjects: [] },
     [children, activeChildId]
   );
 
@@ -299,53 +286,6 @@ export function ParentView({
     return starters.slice(0, 3);
   }, [notebooks]);
 
-  // Child Linking Handler
-  const handleLinkChild = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLinkError(null);
-    setLinkSuccess(null);
-
-    const code = linkCodeInput.trim().toUpperCase();
-    if (!code) {
-      setLinkError("Please enter a student link code.");
-      return;
-    }
-
-    // Support simulated linking or demo codes
-    const newChildName = code.includes("EARLY")
-      ? "Early Learner"
-      : code.includes("PRIMARY")
-      ? "Primary Scholar"
-      : `Student (${code})`;
-
-    const newChild: LinkedStudent = {
-      id: `child-${Date.now()}`,
-      name: newChildName,
-      gradeLevel: "10th Grade",
-      avatarUrl: "",
-      lastActive: Date.now(),
-      subjects: ["Mathematics", "Science", "Literature"],
-    };
-
-    const updated = [...children, newChild];
-    setChildren(updated);
-    setActiveChildId(newChild.id);
-    try {
-      localStorage.setItem(
-        "my_student_portal_linked_children",
-        JSON.stringify(updated)
-      );
-    } catch {
-      // ignore
-    }
-
-    setLinkSuccess(`Successfully linked ${newChildName}!`);
-    setLinkCodeInput("");
-    setTimeout(() => {
-      setIsLinkModalOpen(false);
-      setLinkSuccess(null);
-    }, 1200);
-  };
 
   return (
     <div
@@ -380,11 +320,11 @@ export function ParentView({
               onChange={(e) => setActiveChildId(e.target.value)}
               className="appearance-none bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-white font-bold text-xs sm:text-sm rounded-xl py-2.5 pl-4 pr-10 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50 shadow-sm"
             >
-              {children.map((child) => (
+              {children.length ? children.map((child) => (
                 <option key={child.id} value={child.id}>
                   {child.name} • {child.gradeLevel || "Student"}
                 </option>
-              ))}
+              )) : <option value="current-learner">Current learner · this browser</option>}
             </select>
             <ChevronDown
               size={16}
@@ -396,10 +336,10 @@ export function ParentView({
             id="open-link-child-modal-btn"
             onClick={() => setIsLinkModalOpen(true)}
             className="p-2.5 sm:px-4 sm:py-2.5 text-xs sm:text-sm font-bold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700/80 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-sm"
-            title="Link another child account"
+            title="About family account linking"
           >
             <Plus size={16} />
-            <span className="hidden sm:inline">Link Child</span>
+            <span className="hidden sm:inline">Family accounts</span>
           </button>
         </div>
       </div>
@@ -416,10 +356,10 @@ export function ParentView({
                 {activeChild?.name || "Student"}
               </h2>
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">Active</span>
+              <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">This browser</span>
             </div>
             <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-medium">
-              {activeChild?.gradeLevel || "High School"} • Enrolled in {activeChild?.subjects?.length || 4} core courses
+              Local learner profile • {notebooks.length} subject {notebooks.length === 1 ? "notebook" : "notebooks"}
             </p>
           </div>
         </div>
@@ -428,21 +368,21 @@ export function ParentView({
           <div className="flex-1 md:flex-none p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-center min-w-[110px] shadow-inner">
             <span className="text-xs text-slate-400 block mb-1 font-bold">Today's Tasks</span>
             <span className="text-lg sm:text-xl font-black text-white">
-              {completedTasksCount} / {childTodayTasks.length || 3}
+              {completedTasksCount} / {childTodayTasks.length}
             </span>
           </div>
 
           <div className="flex-1 md:flex-none p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-center min-w-[110px] shadow-inner">
             <span className="text-xs text-slate-400 block mb-1 font-bold">Practice Accuracy</span>
             <span className="text-lg sm:text-xl font-black text-emerald-400">
-              {practiceMetrics.accuracy > 0 ? `${practiceMetrics.accuracy}%` : "84%"}
+              {practiceMetrics.totalQuestions > 0 ? `${practiceMetrics.accuracy}%` : "—"}
             </span>
           </div>
 
           <div className="flex-1 md:flex-none p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-center min-w-[110px] shadow-inner">
-            <span className="text-xs text-slate-400 block mb-1 font-bold">Study Focus</span>
+            <span className="text-xs text-slate-400 block mb-1 font-bold">Topic status</span>
             <span className="text-lg sm:text-xl font-black text-indigo-400">
-              {topicBreakdown.onTrack.length} Mastered
+              {topicBreakdown.onTrack.length} On track
             </span>
           </div>
         </div>
@@ -460,7 +400,7 @@ export function ParentView({
                 AI Parent Conversation Starters
               </h3>
               <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-medium">
-                Actionable discussion prompts derived from what {activeChild.name.split(" ")[0]} investigated with the AI Tutor.
+                {parentConversationStarters.some((starter) => starter.context.startsWith("Explored inquiry:")) ? `Conversation prompts based on this browser profile’s saved tutor questions for ${activeChild.name}.` : "Gentle conversation prompts for reflecting on learning together."}
               </p>
             </div>
           </div>
@@ -491,46 +431,25 @@ export function ParentView({
         </div>
       </div>
 
-      {/* PARENT NEXT OBVIOUS ACTION JOURNEY BANNER */}
-      <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-r from-emerald-900/80 via-teal-900/60 to-slate-900 border-2 border-emerald-500/40 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-5">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 border-2 border-emerald-400/40 flex items-center justify-center text-3xl shadow-inner flex-shrink-0">
-            {activeChildId === "child-leo" ? "🧸" : "🎒"}
-          </div>
-          <div>
-            <div className="text-xs font-black uppercase tracking-wider text-emerald-300">
-              Recommended Next Action for {activeChild.name.split(" ")[0]}
+      {/* Evidence-based next action */}
+      {learnerModel.recommendedNext[0] && (() => {
+        const nextAction = learnerModel.recommendedNext[0];
+        return (
+          <div className="flex flex-col justify-between gap-5 rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/70 via-teal-950/50 to-slate-900 p-6 shadow-xl sm:p-7 md:flex-row md:items-center">
+            <div className="flex items-center gap-4">
+              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-emerald-400/30 bg-emerald-400/10 text-3xl">🌱</div>
+              <div>
+                <p className="text-xs font-black uppercase tracking-wider text-emerald-300">Suggested next step · {nextAction.badge}</p>
+                <h3 className="mt-1 text-base font-black text-white sm:text-lg">{nextAction.title}</h3>
+                <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-300">{nextAction.reason}</p>
+              </div>
             </div>
-            <h3 className="text-base sm:text-lg font-black text-white mt-0.5">
-              {activeChildId === "child-early" || activeChildId === "child-leo"
-                ? "Run a 3-Minute Phonics & Auditory Milestone Check"
-                : "Verify Today's Homework & Check Teacher Feedback"}
-            </h3>
-            <p className="text-xs text-slate-300 font-medium mt-0.5">
-              {activeChildId === "child-early" || activeChildId === "child-leo"
-                ? `${activeChild.name} explored phonics activities earlier today. Run a quick auditory milestone assessment to track phonemic mastery.`
-                : `${activeChild.name} completed assignments today. Review submissions and check teacher notes to reinforce accountability.`}
-            </p>
+            <button onClick={() => nextAction.nodeId && onApplyDiagnosticRecommendation ? onApplyDiagnosticRecommendation(nextAction.nodeId) : onNavigate(nextAction.targetTab)} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border-b-2 border-emerald-700 bg-emerald-500 px-5 py-3 text-xs font-black text-slate-950 shadow-lg transition hover:bg-emerald-400">
+              Open suggested step <ChevronRight size={16}/>
+            </button>
           </div>
-        </div>
-
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <button
-            onClick={() => {
-              if (activeChildId === "child-early" || activeChildId === "child-leo") {
-                if (onStartAssessment) onStartAssessment("toddler");
-                else onNavigate("assessment");
-              } else {
-                onNavigate("homework");
-              }
-            }}
-            className="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm shadow-lg shadow-emerald-950/50 border-b-2 border-emerald-700 active:translate-y-0.5 transition-all cursor-pointer flex items-center gap-2"
-          >
-            <span>{activeChildId === "child-leo" ? "Start Toddler Check" : "View Homework Desk"}</span>
-            <ChevronRight size={16} />
-          </button>
-        </div>
-      </div>
+        );
+      })()}
 
       {/* PARENTAL CONTROLS & SCREEN SAFETY GATE */}
       <div className="bg-slate-900/90 border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-xl space-y-5">
@@ -541,10 +460,10 @@ export function ParentView({
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-black text-white">
-                Parental Controls &amp; Screen Safety Gates
+                Family preferences &amp; supervision
               </h3>
               <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-medium">
-                Set healthy screen time budgets, bedtime locks, and Socratic guidance constraints for {activeChild.name.split(" ")[0]}.
+                These preferences are stored on this browser; enforcement controls are not connected yet.
               </p>
             </div>
           </div>
@@ -556,12 +475,13 @@ export function ParentView({
           )}
         </div>
 
+        <div className="rounded-xl border border-amber-400/20 bg-amber-400/[.06] px-4 py-3 text-xs leading-relaxed text-amber-100/90">For transparency: screen-time and bedtime values below are saved preferences only. This build does not yet enforce a timer, block access at bedtime, or apply per-child controls. The AI tutor can also make mistakes; review important answers with your learner.</div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {/* Daily Screen Time Budget */}
           <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                <Clock size={14} className="text-indigo-400" /> Daily Screen Budget
+                <Clock size={14} className="text-indigo-400" /> Screen-time goal
               </span>
               <span className="text-xs font-black text-indigo-400">
                 {screenTimeLimit} mins
@@ -583,7 +503,7 @@ export function ParentView({
               ))}
             </div>
             <p className="text-[11px] text-slate-500 font-medium">
-              After time expires, child is prompted to take a physical break.
+              A planning preference only; reaching this value does not currently trigger a break or block.
             </p>
           </div>
 
@@ -591,12 +511,12 @@ export function ParentView({
           <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                <AlertCircle size={14} className="text-amber-400" /> Bedtime Screen Lock
+                <AlertCircle size={14} className="text-amber-400" /> Bedtime preference
               </span>
               <span className={`text-xs font-black px-2 py-0.5 rounded-full ${
                 bedtimeLockEnabled ? "bg-amber-500/20 text-amber-300" : "bg-slate-800 text-slate-500"
               }`}>
-                {bedtimeLockEnabled ? "Active (8 PM)" : "Off"}
+                {bedtimeLockEnabled ? "Saved (8 PM)" : "Off"}
               </span>
             </div>
             <button
@@ -607,10 +527,10 @@ export function ParentView({
                   : "bg-slate-900 border-slate-800 text-slate-400 hover:text-white"
               }`}
             >
-              {bedtimeLockEnabled ? "✓ Bedtime Gate Enabled (8:00 PM)" : "Enable Bedtime Gate"}
+              {bedtimeLockEnabled ? "✓ Preference: 8:00 PM" : "Set bedtime preference"}
             </button>
             <p className="text-[11px] text-slate-500 font-medium">
-              Automatically closes interactive activities at 8:00 PM for restful sleep.
+              Stored as a reminder preference only; no bedtime lock is currently applied.
             </p>
           </div>
 
@@ -618,18 +538,18 @@ export function ParentView({
           <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                <Brain size={14} className="text-emerald-400" /> Socratic AI Guard
+                <Brain size={14} className="text-emerald-400" /> Tutor approach
               </span>
               <span className="text-xs font-black px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">
-                Enforced
+                Guidance
               </span>
             </div>
             <div className="p-2.5 rounded-xl bg-slate-900 text-xs font-medium text-slate-300 border border-slate-800 flex items-center justify-between">
-              <span>Hints Only • No Direct Answers</span>
-              <span className="text-emerald-400 font-bold">✓ ON</span>
+              <span>Hint-first Socratic coaching</span>
+              <span className="text-emerald-400 font-bold">Default</span>
             </div>
             <p className="text-[11px] text-slate-500 font-medium">
-              Guarantees the AI coach only prompts the student to think through steps.
+              The tutor is prompted to guide reasoning, but it may still provide an incomplete or direct answer. Check important work together.
             </p>
           </div>
 
@@ -976,35 +896,46 @@ export function ParentView({
                 Guided Milestone Assessments ({activeChild?.name})
               </h3>
               <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-medium">
-                Standardized, age-targeted milestone evaluations for phonics, math fluency, and homework readiness.
+                Short interactive learning snapshots for early literacy, math and reasoning. Use these as a guide—not a formal or standardized assessment.
               </p>
             </div>
           </div>
-          <button
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="sr-only" htmlFor="parent-assessment-stage">Choose a learning stage</label>
+            <select id="parent-assessment-stage" value={selectedAssessmentStage} onChange={(event) => setSelectedAssessmentStage(event.target.value as "toddler" | "primary")} className="rounded-xl border border-slate-700 bg-slate-950 px-3 py-2.5 text-xs font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400">
+              <option value="toddler">Early learner · ages 2–5</option>
+              <option value="primary">Primary · ages 6–11</option>
+            </select>
+            <button
             onClick={() => {
-              if (onStartAssessment) {
-                const stage = activeChildId === "child-leo" ? "toddler" : "primary";
-                onStartAssessment(stage);
-              } else {
-                onNavigate("assessment");
-              }
+              if (onStartAssessment) onStartAssessment(selectedAssessmentStage);
+              else onNavigate("assessment");
             }}
             className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-amber-950/40 transition-all cursor-pointer active:scale-95"
           >
             <Sparkles size={16} />
             Start Guided Evaluation
           </button>
+          </div>
         </div>
 
-        {assessmentResults.length === 0 ? (
+        {!diagnosticSnapshot && assessmentResults.length === 0 ? (
           <div className="p-6 rounded-2xl bg-slate-950/80 border border-slate-800 text-center space-y-2">
-            <p className="text-xs sm:text-sm text-slate-300 font-bold">No completed milestone assessments yet this term.</p>
-            <p className="text-xs text-slate-400 max-w-lg mx-auto">
-              Run a 5-minute interactive check for {activeChild?.name} on phonemic awareness or primary math word problems to track progress!
-            </p>
+            <p className="text-xs sm:text-sm text-slate-300 font-bold">No learning snapshot has been saved in this browser yet.</p>
+            <p className="text-xs text-slate-400 max-w-lg mx-auto">Choose an age band above to take a short skill snapshot. Results are a guide, not a formal assessment.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {diagnosticSnapshot && (
+              <div className="rounded-2xl border border-indigo-500/30 bg-indigo-500/[.07] p-5 md:col-span-2">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div><p className="text-[10px] font-black uppercase tracking-wider text-indigo-200">Latest learning snapshot · {new Date(diagnosticSnapshot.completedAt).toLocaleDateString()}</p><h4 className="mt-1 text-base font-extrabold text-white">Suggested starting band: {diagnosticSnapshot.recommendedGradeBand}</h4><p className="mt-1 text-xs text-slate-300">Focus to explore: {diagnosticSnapshot.recommendedDomainFocus}</p></div>
+                  <span className="rounded-lg bg-slate-950/60 px-3 py-2 text-sm font-black text-white">{diagnosticSnapshot.score}/{diagnosticSnapshot.total} correct</span>
+                </div>
+                <div className="mt-4 grid grid-cols-3 gap-2">{Object.entries(diagnosticSnapshot.gradeBandScores).map(([band, result]) => <div key={band} className="rounded-lg border border-white/[.06] bg-slate-950/50 p-2 text-center"><span className="block text-[10px] text-slate-400">Band {band}</span><span className="text-sm font-bold text-white">{result.correct}/{result.total}</span></div>)}</div>
+                <p className="mt-3 text-[10px] leading-relaxed text-slate-500">Brief screening snapshot only—not a standardized test or definitive grade placement.</p>
+              </div>
+            )}
             {assessmentResults.slice(0, 4).map((res) => (
               <div
                 key={res.id}
@@ -1045,7 +976,7 @@ export function ParentView({
               Family & Homeschool Intelligence
             </h4>
             <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-medium">
-              Manage all your children under one account with centralized AI usage allowances and weekly email digests.
+              View saved learning activity for the learner profile on this browser. Secure multi-child linking and weekly email reports are not available yet.
             </p>
           </div>
         </div>
@@ -1053,78 +984,26 @@ export function ParentView({
           onClick={onOpenSubscriptionModal}
           className="shrink-0 px-5 py-2.5 text-xs sm:text-sm font-bold text-emerald-300 hover:text-white bg-emerald-500/10 hover:bg-emerald-600/30 border border-emerald-500/30 rounded-xl transition-all cursor-pointer shadow-sm"
         >
-          View Family Plan Options
+          View subscription settings
         </button>
       </div>
 
-      {/* Link Child Modal */}
+      {/* Transparent account-linking status: no fake codes or local-only accounts. */}
       {isLinkModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="w-full max-w-md bg-[#0f172a] border border-slate-700 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-labelledby="link-learner-title">
+          <div className="w-full max-w-md space-y-5 rounded-3xl border border-slate-700 bg-[#0f172a] p-6 shadow-2xl sm:p-8">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2.5">
-                <LinkIcon className="w-5 h-5 text-emerald-400" />
-                <h3 className="text-lg font-black text-white">Link Student Account</h3>
+                <LinkIcon className="h-5 w-5 text-emerald-400" />
+                <h3 id="link-learner-title" className="text-lg font-black text-white">Learner accounts</h3>
               </div>
-              <button
-                onClick={() => setIsLinkModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
-              >
-                <X size={18} />
-              </button>
+              <button onClick={() => setIsLinkModalOpen(false)} aria-label="Close learner account information" className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"><X size={18}/></button>
             </div>
-
-            <p className="text-xs sm:text-sm text-slate-400 font-medium">
-              Enter the Student Link Code provided on your child's profile or enter their student email address to connect accounts.
-            </p>
-
-            <form onSubmit={handleLinkChild} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">
-                  Student Link Code or UID
-                </label>
-                <input
-                  type="text"
-                  value={linkCodeInput}
-                  onChange={(e) => setLinkCodeInput(e.target.value)}
-                  placeholder="e.g. MSP-ALEX7 or LEO-2026"
-                  className="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-400/30 focus:border-emerald-400 shadow-inner"
-                  autoFocus
-                />
-              </div>
-
-              {linkError && (
-                <p className="text-xs sm:text-sm text-rose-400 flex items-center gap-1.5 font-bold">
-                  <AlertCircle size={15} /> {linkError}
-                </p>
-              )}
-              {linkSuccess && (
-                <p className="text-xs sm:text-sm text-emerald-400 flex items-center gap-1.5 font-bold">
-                  <CheckCircle2 size={15} /> {linkSuccess}
-                </p>
-              )}
-
-              <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-400 space-y-1">
-                <p className="font-bold text-slate-300">Demo Quick-Links:</p>
-                <p>Try entering <strong>LEO-2026</strong> or <strong>EMMA-2026</strong> to test multi-child account switching.</p>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setIsLinkModalOpen(false)}
-                  className="px-4 py-2 text-xs sm:text-sm font-bold text-slate-400 hover:text-white cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2.5 text-xs sm:text-sm font-black text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl transition-all shadow-md shadow-emerald-900/30 cursor-pointer active:scale-95"
-                >
-                  Link Account
-                </button>
-              </div>
-            </form>
+            <div className="rounded-2xl border border-amber-400/20 bg-amber-400/[.06] p-4">
+              <p className="text-sm font-bold text-amber-100">Secure family linking isn’t available yet.</p>
+              <p className="mt-2 text-xs leading-5 text-slate-300">This dashboard currently reflects learning data stored in this browser profile. It cannot verify or connect another student account. No link codes or student IDs are being collected here.</p>
+            </div>
+            <button onClick={() => setIsLinkModalOpen(false)} className="w-full rounded-xl bg-slate-800 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-700">Got it</button>
           </div>
         </div>
       )}
@@ -1145,6 +1024,7 @@ export function ParentView({
       <DiagnosticPlacementModal
         isOpen={isDiagnosticModalOpen}
         onClose={() => setIsDiagnosticModalOpen(false)}
+        onApplyRecommendation={onApplyDiagnosticRecommendation}
       />
 
       {/* Mistake Review Vault Modal */}

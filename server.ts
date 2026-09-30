@@ -160,17 +160,58 @@ Return a valid JSON array of question objects adhering strictly to this schema:
   }
 ]`;
 
-      const questions = await aiService.generateJSON<PracticeQuestion[]>(
+      const generated = await aiService.generateJSON<unknown>(
         prompt,
-        "You are an expert academic examiner and assessment author. Generate accurate questions with exactly 4 options each, one definitive correct answer, and clear pedagogical explanations."
+        "You are an expert academic examiner and assessment author. Generate accurate questions with exactly 4 options each, one definitive correct answer, and clear pedagogical explanations. Avoid ambiguous wording, trick questions, unsupported facts, and culturally narrow assumptions."
       );
+
+      // Treat model output as untrusted input: validate the full contract before
+      // exposing it to learners or recording scores against it.
+      const rawQuestions = Array.isArray(generated) ? generated : [];
+      const validQuestions: PracticeQuestion[] = [];
+      const seenPrompts = new Set<string>();
+      for (const candidate of rawQuestions) {
+        if (!candidate || typeof candidate !== "object") continue;
+        const q = candidate as Record<string, unknown>;
+        const question = typeof q.question === "string" ? q.question.trim() : "";
+        const explanation = typeof q.explanation === "string" ? q.explanation.trim() : "";
+        const hint = typeof q.hint === "string" ? q.hint.trim() : "";
+        const options = Array.isArray(q.options)
+          ? q.options.map((option) => typeof option === "string" ? option.trim() : "")
+          : [];
+        const answerIndex = Number(q.correctAnswerIndex);
+        const promptKey = question.toLocaleLowerCase();
+        const optionKeys = options.map((option) => option.toLocaleLowerCase());
+        const valid = question.length >= 8 && question.length <= 1400 &&
+          explanation.length >= 8 && explanation.length <= 2400 &&
+          hint.length >= 3 && hint.length <= 800 &&
+          options.length === 4 && options.every((option) => option.length > 0 && option.length <= 500) &&
+          new Set(optionKeys).size === options.length &&
+          Number.isInteger(answerIndex) && answerIndex >= 0 && answerIndex < options.length &&
+          !seenPrompts.has(promptKey);
+        if (!valid) continue;
+        seenPrompts.add(promptKey);
+        validQuestions.push({
+          id: `practice-${validQuestions.length + 1}-${Date.now().toString(36)}`,
+          question,
+          options,
+          correctAnswerIndex: answerIndex,
+          explanation,
+          hint,
+        });
+      }
+
+      if (validQuestions.length !== cleanCount) {
+        console.warn(`Practice generator returned ${validQuestions.length}/${cleanCount} valid questions.`);
+        return res.status(502).json({ error: "The question generator returned an incomplete or invalid set. Please try again." });
+      }
 
       return res.json({
         subject: cleanSubject,
         topic: cleanTopic,
         difficulty: cleanDifficulty,
-        count: Array.isArray(questions) ? questions.length : 0,
-        questions: Array.isArray(questions) ? questions : [],
+        count: validQuestions.length,
+        questions: validQuestions,
       });
     } catch (error: any) {
       console.error("Practice Generation Error:", error);
@@ -225,7 +266,7 @@ Where priority is one of: "high", "medium", "low". Duration is typically between
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
-      server: { middlewareMode: true },
+      server: { middlewareMode: true, allowedHosts: [".e2b.app"] },
       appType: "spa",
     });
     app.use(vite.middlewares);

@@ -144,6 +144,7 @@ export interface SkillMasteryRecord {
   hintsUsedTotal: number;
   currentDifficultyLevel: number; // 1 (Recognition) to 5 (Transfer)
   consecutiveSuccesses: number;
+  consecutiveUnassistedSuccesses: number;
   consecutiveStruggles: number;
   lastPracticedTimestamp: number;
   masteredTimestamp?: number;
@@ -215,7 +216,7 @@ function createDefaultSkillMastery(learnerId: string = DEFAULT_LEARNER_ID): Reco
   const mastery: Record<string, SkillMasteryRecord> = {};
 
   // Check if student already had completed nodes saved
-  let existingCompleted: string[] = ["math-k1-place-value", "read-k1-consonant-blends"];
+  let existingCompleted: string[] = [];
   try {
     const namespacedKey = getCompletedNodesStorageKey(learnerId);
     let saved = localStorage.getItem(namespacedKey);
@@ -234,13 +235,14 @@ function createDefaultSkillMastery(learnerId: string = DEFAULT_LEARNER_ID): Reco
       domain: node.domain,
       gradeBand: node.gradeBand,
       tier: isMastered ? "master" : node.prerequisites.length === 0 ? "novice" : "locked",
-      evidenceScore: isMastered ? 90 : node.prerequisites.length === 0 ? 25 : 0,
+      evidenceScore: isMastered ? 90 : 0,
       totalAttempts: isMastered ? 4 : 0,
       successfulAttempts: isMastered ? 4 : 0,
       strugglesCount: 0,
       hintsUsedTotal: 0,
       currentDifficultyLevel: isMastered ? 3 : 1,
       consecutiveSuccesses: isMastered ? 3 : 0,
+      consecutiveUnassistedSuccesses: isMastered ? 3 : 0,
       consecutiveStruggles: 0,
       lastPracticedTimestamp: isMastered ? Date.now() - 3600 * 1000 : 0,
       masteredTimestamp: isMastered ? Date.now() - 3600 * 1000 : undefined,
@@ -261,31 +263,13 @@ export function getInitialLearnerModel(learnerId: string = DEFAULT_LEARNER_ID): 
     learnerId,
     gradeBand: learnerId.includes("leo") || learnerId.includes("toddler") ? "K-1" : "2-3",
     skillMastery,
-    recentEvents: [
-      {
-        id: `evt-init-${Date.now()}`,
-        learnerId,
-        activityId: "math-k1-place-value",
-        activityType: "curriculum-quiz",
-        activityTitle: "Place Value Blocks",
-        skillId: "math-k1-place-value",
-        domain: "math",
-        gradeBand: "K-1",
-        result: "mastered",
-        score: 100,
-        maxScore: 100,
-        difficulty: "easy",
-        attempts: 1,
-        hintsUsed: 0,
-        timestamp: Date.now() - 3600 * 1000 * 4,
-      },
-    ],
-    totalLearningEventsCount: 1,
+    recentEvents: [],
+    totalLearningEventsCount: 0,
     weakSkills: [],
     strongSkills: strong,
-    completedMissions: ["Toothpick Tens Bundle"],
-    activeStreak: 4,
-    lastActiveTimestamp: Date.now(),
+    completedMissions: [],
+    activeStreak: 0,
+    lastActiveTimestamp: 0,
     recommendedNext: [],
   };
 
@@ -324,10 +308,14 @@ export function getLearnerModel(specificLearnerId?: string): LearnerModel {
             hintsUsedTotal: 0,
             currentDifficultyLevel: 1,
             consecutiveSuccesses: 0,
+            consecutiveUnassistedSuccesses: 0,
             consecutiveStruggles: 0,
             lastPracticedTimestamp: 0,
             needsReview: false,
           };
+        } else {
+          // Backfill this field for learner models created before hint-aware adaptation.
+          parsed.skillMastery[node.id].consecutiveUnassistedSuccesses ??= 0;
         }
       });
 
@@ -443,15 +431,16 @@ export function mergeLearnerModels(localModel: LearnerModel, cloudModel: Learner
         hintsUsedTotal: Math.max(localRec.hintsUsedTotal || 0, cloudRec.hintsUsedTotal || 0),
         currentDifficultyLevel: Math.max(localRec.currentDifficultyLevel || 1, cloudRec.currentDifficultyLevel || 1),
         consecutiveSuccesses: Math.max(localRec.consecutiveSuccesses || 0, cloudRec.consecutiveSuccesses || 0),
+        consecutiveUnassistedSuccesses: Math.max(localRec.consecutiveUnassistedSuccesses || 0, cloudRec.consecutiveUnassistedSuccesses || 0),
         consecutiveStruggles: Math.min(localRec.consecutiveStruggles || 0, cloudRec.consecutiveStruggles || 0),
         lastPracticedTimestamp: Math.max(localRec.lastPracticedTimestamp || 0, cloudRec.lastPracticedTimestamp || 0),
         masteredTimestamp: localRec.masteredTimestamp || cloudRec.masteredTimestamp,
         needsReview: localRec.needsReview || cloudRec.needsReview,
       };
     } else if (localRec) {
-      merged.skillMastery[skillId] = { ...localRec };
+      merged.skillMastery[skillId] = { ...localRec, consecutiveUnassistedSuccesses: localRec.consecutiveUnassistedSuccesses || 0 };
     } else if (cloudRec) {
-      merged.skillMastery[skillId] = { ...cloudRec };
+      merged.skillMastery[skillId] = { ...cloudRec, consecutiveUnassistedSuccesses: cloudRec.consecutiveUnassistedSuccesses || 0 };
     }
   });
 
@@ -663,6 +652,7 @@ export function recordLearningEvent(
         hintsUsedTotal: 0,
         currentDifficultyLevel: 1,
         consecutiveSuccesses: 0,
+        consecutiveUnassistedSuccesses: 0,
         consecutiveStruggles: 0,
         lastPracticedTimestamp: Date.now(),
         needsReview: false,
@@ -677,6 +667,7 @@ export function recordLearningEvent(
     if (event.result === "mastered" || event.result === "success") {
       record.successfulAttempts += 1;
       record.consecutiveSuccesses += 1;
+      record.consecutiveUnassistedSuccesses = event.hintsUsed === 0 ? record.consecutiveUnassistedSuccesses + 1 : 0;
       record.consecutiveStruggles = 0;
       record.needsReview = false;
 
@@ -688,14 +679,17 @@ export function recordLearningEvent(
 
       record.evidenceScore = Math.min(100, record.evidenceScore + evidenceGain);
 
-      // Graduated adaptive difficulty increase
-      if (record.consecutiveSuccesses >= 3 && record.currentDifficultyLevel < 5) {
+      // Increase challenge only after repeated independent success; using hints is
+      // productive learning, but should not by itself trigger a harder next round.
+      if (record.consecutiveUnassistedSuccesses >= 3 && record.currentDifficultyLevel < 5) {
         record.currentDifficultyLevel += 1;
+        record.consecutiveUnassistedSuccesses = 0;
       }
     } else if (event.result === "struggle") {
       record.strugglesCount += 1;
       record.consecutiveStruggles += 1;
       record.consecutiveSuccesses = 0;
+      record.consecutiveUnassistedSuccesses = 0;
 
       // Slight reduction in evidence score to flag need for reinforcement
       record.evidenceScore = Math.max(5, record.evidenceScore - 8);

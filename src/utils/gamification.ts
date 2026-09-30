@@ -16,13 +16,13 @@ export const DEFAULT_BUDDY: BuddyCompanionConfig = {
 };
 
 const DEFAULT_STATE: GamificationState = {
-  xp: 180,
-  level: 2,
-  streakDays: 4,
-  lastActiveDate: new Date().toISOString().split("T")[0],
-  starsCount: 24,
-  gemsCount: 65,
-  completedNodes: ["node-toddler-1", "node-toddler-2", "node-primary-1"],
+  xp: 0,
+  level: 1,
+  streakDays: 0,
+  lastActiveDate: "",
+  starsCount: 0,
+  gemsCount: 0,
+  completedNodes: [],
   buddy: DEFAULT_BUDDY,
   wonderlandTheme: "sunny-meadow",
 };
@@ -34,8 +34,30 @@ function loadState(): GamificationState {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_STATE;
-    const parsed = JSON.parse(raw);
-    return { ...DEFAULT_STATE, ...parsed };
+    const parsed = JSON.parse(raw) as Partial<GamificationState>;
+    if (localStorage.getItem("edu_gamification_schema_v2") === "true") {
+      return { ...DEFAULT_STATE, ...parsed };
+    }
+
+    // Older builds shipped fictional starter XP, streaks and unlocked nodes.
+    // Remove only that known baseline while preserving progress earned beyond it.
+    const xp = Math.max(0, (Number(parsed.xp) || 0) - 180);
+    const migrated: GamificationState = {
+      ...DEFAULT_STATE,
+      ...parsed,
+      xp,
+      level: calculateLevel(xp).level,
+      streakDays: 0, // the previous value included an invented four-day streak
+      lastActiveDate: "",
+      starsCount: Math.max(0, (Number(parsed.starsCount) || 0) - 24),
+      gemsCount: Math.max(0, (Number(parsed.gemsCount) || 0) - 65),
+      completedNodes: (Array.isArray(parsed.completedNodes) ? parsed.completedNodes : []).filter(
+        (id) => !["node-toddler-1", "node-toddler-2", "node-primary-1"].includes(id)
+      ),
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+    localStorage.setItem("edu_gamification_schema_v2", "true");
+    return migrated;
   } catch {
     return DEFAULT_STATE;
   }

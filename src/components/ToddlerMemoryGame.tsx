@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Star, RotateCcw, Volume2, Sparkles, Trophy } from "lucide-react";
 import { soundEffects } from "../utils/soundEffects";
@@ -23,29 +23,54 @@ const MEMORY_PAIRS = [
   { pairId: "apple", emoji: "🍎", name: "Apple", color: "from-rose-400 to-red-500" },
   { pairId: "bear", emoji: "🐻", name: "Teddy", color: "from-emerald-400 to-teal-500" },
   { pairId: "sun", emoji: "☀️", name: "Sunny", color: "from-amber-300 to-yellow-400" },
+  { pairId: "fish", emoji: "🐠", name: "Fish", color: "from-cyan-400 to-blue-500" },
+  { pairId: "frog", emoji: "🐸", name: "Frog", color: "from-lime-400 to-emerald-500" },
+  { pairId: "butterfly", emoji: "🦋", name: "Butterfly", color: "from-violet-400 to-fuchsia-500" },
+  { pairId: "rocket", emoji: "🚀", name: "Rocket", color: "from-sky-400 to-indigo-500" },
+  { pairId: "flower", emoji: "🌼", name: "Flower", color: "from-pink-400 to-rose-500" },
 ];
 
-function generateCards(): CardItem[] {
-  // Use 4 pairs (8 cards total for toddlers - perfect attention span)
-  const selected = MEMORY_PAIRS.slice(0, 4);
+function generateCards(pairCount: number): CardItem[] {
+  const selected = MEMORY_PAIRS.slice(0, pairCount);
   const deck: CardItem[] = [];
   let id = 1;
   selected.forEach((pair) => {
     deck.push({ id: id++, pairId: pair.pairId, emoji: pair.emoji, name: pair.name, color: pair.color, isFlipped: false, isMatched: false });
     deck.push({ id: id++, pairId: pair.pairId, emoji: pair.emoji, name: pair.name, color: pair.color, isFlipped: false, isMatched: false });
   });
-  return deck.sort(() => Math.random() - 0.5);
+  for (let i = deck.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  return deck;
 }
 
 export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) => void }) {
-  const [cards, setCards] = useState<CardItem[]>(generateCards);
+  const [pairCount, setPairCount] = useState(4);
+  const [cards, setCards] = useState<CardItem[]>(() => generateCards(4));
   const [flippedIds, setFlippedIds] = useState<number[]>([]);
   const [matchesCount, setMatchesCount] = useState<number>(0);
   const [isWon, setIsWon] = useState<boolean>(false);
   const [moves, setMoves] = useState<number>(0);
+  const gameTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  const resetGame = () => {
-    setCards(generateCards());
+  const scheduleGameTimer = (callback: () => void, delay: number) => {
+    const timer = setTimeout(() => {
+      gameTimers.current = gameTimers.current.filter((id) => id !== timer);
+      callback();
+    }, delay);
+    gameTimers.current.push(timer);
+  };
+
+  const clearGameTimers = () => {
+    gameTimers.current.forEach(clearTimeout);
+    gameTimers.current = [];
+  };
+
+  const resetGame = (nextPairCount = pairCount) => {
+    clearGameTimers();
+    setPairCount(nextPairCount);
+    setCards(generateCards(nextPairCount));
     setFlippedIds([]);
     setMatchesCount(0);
     setIsWon(false);
@@ -63,6 +88,8 @@ export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) =>
     }, 240);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => () => clearGameTimers(), []);
 
   const handleCardClick = (card: CardItem) => {
     if (card.isMatched || card.isFlipped || flippedIds.length >= 2) return;
@@ -85,10 +112,11 @@ export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) =>
         soundEffects.playSuccessChime();
         speakText(`Match! You found the ${secondCard.name}!`, { pitch: 1.3 });
         awardXP(20);
-        awardStars(1);
-        onAddStar?.(1);
+        if (onAddStar) onAddStar(1);
+        else awardStars(1);
 
-        setTimeout(() => {
+        const nextMatchCount = matchesCount + 1;
+        scheduleGameTimer(() => {
           setCards((prev) =>
             prev.map((c) =>
               c.id === firstCard.id || c.id === secondCard.id
@@ -97,44 +125,40 @@ export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) =>
             )
           );
           setFlippedIds([]);
-          setMatchesCount((count) => {
-            const next = count + 1;
-            if (next >= 4) {
-              // ALL MATCHED
-              setTimeout(() => {
-                setIsWon(true);
-                soundEffects.playFanfare();
-                triggerCelebrationConfetti();
-                speakText("Hooray! You matched all the friends! You are a superstar!", { pitch: 1.2 });
-                awardXP(50);
-                awardStars(3);
-                onAddStar?.(3);
+          setMatchesCount(nextMatchCount);
+          if (nextMatchCount >= pairCount) {
+            scheduleGameTimer(() => {
+              setIsWon(true);
+              soundEffects.playFanfare();
+              triggerCelebrationConfetti();
+              speakText("Hooray! You matched all the friends! You are a superstar!", { pitch: 1.2 });
+              awardXP(50);
+              if (onAddStar) onAddStar(3);
+              else awardStars(3);
 
-                try {
-                  recordLearningEvent({
-                    learnerId: getActiveLearnerId(),
-                    activityId: "toddler-memory-match",
-                    activityType: "toddler-memory",
-                    activityTitle: "Memory Match: Matched 4 Pairs",
-                    skillId: "logic-k1-patterns",
-                    domain: "logic",
-                    gradeBand: "toddler",
-                    result: "mastered",
-                    score: 100,
-                    difficulty: "easy",
-                    attempts: moves + 1,
-                    hintsUsed: 0,
-                  });
-                } catch {}
-              }, 400);
-            }
-            return next;
-          });
+              try {
+                recordLearningEvent({
+                  learnerId: getActiveLearnerId(),
+                  activityId: "toddler-memory-match",
+                  activityType: "toddler-memory",
+                  activityTitle: `Memory Match: Matched ${pairCount} Pairs`,
+                  skillId: "logic-k1-patterns",
+                  domain: "logic",
+                  gradeBand: "toddler",
+                  result: "mastered",
+                  score: 100,
+                  difficulty: "easy",
+                  attempts: moves + 1,
+                  hintsUsed: 0,
+                });
+              } catch {}
+            }, 400);
+          }
         }, 500);
       } else {
         // NO MATCH
         soundEffects.playGentleBoing();
-        setTimeout(() => {
+        scheduleGameTimer(() => {
           setCards((prev) =>
             prev.map((c) =>
               c.id === firstCard.id || c.id === secondCard.id
@@ -165,16 +189,31 @@ export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) =>
         <div className="flex items-center gap-2">
           <div className="px-3 py-1 bg-amber-500/15 border border-amber-400/30 rounded-xl text-amber-300 text-xs font-bold flex items-center gap-1">
             <Star size={14} className="fill-amber-400" />
-            <span>{matchesCount}/4 Pairs</span>
+            <span>{matchesCount}/{pairCount} Pairs</span>
           </div>
 
           <button
-            onClick={resetGame}
+            onClick={() => resetGame()}
             className="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-white/80 hover:text-white transition-all cursor-pointer"
             title="Shuffle & Play Again"
           >
             <RotateCcw size={16} />
           </button>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-white/[0.04] border border-white/10 px-3 py-2">
+        <div>
+          <p className="text-[11px] font-black uppercase tracking-wider text-white/50">Choose your challenge</p>
+          <p className="text-xs text-white/70">More pairs make the game trickier</p>
+        </div>
+        <div className="flex gap-2" role="group" aria-label="Memory game difficulty">
+          {[4, 6, 8].map((count) => (
+            <button key={count} onClick={() => resetGame(count)} aria-pressed={pairCount === count}
+              className={`rounded-xl px-3 py-2 text-xs font-black transition ${pairCount === count ? "bg-violet-500 text-white shadow-lg" : "bg-white/10 text-white/70 hover:bg-white/20"}`}>
+              {count === 4 ? "Cozy" : count === 6 ? "Explorer" : "Superstar"} · {count}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -232,7 +271,7 @@ export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) =>
             You matched all pairs in <strong className="text-white">{moves} turns</strong>! Earned <strong className="text-white">+3 Golden Stars</strong> &amp; <strong className="text-white">+50 XP</strong>!
           </p>
           <button
-            onClick={resetGame}
+            onClick={() => resetGame()}
             className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black text-sm border-b-4 border-orange-700 active:border-b-0 active:translate-y-1 shadow-lg transition-all cursor-pointer inline-flex items-center gap-2"
           >
             <RotateCcw size={16} /> Play Again

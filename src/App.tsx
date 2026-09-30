@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { lazy, Suspense, useState, useEffect, useRef } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import {
@@ -31,26 +31,28 @@ import {
 import { NavigationSidebar } from "./components/NavigationSidebar";
 import { MobileNavigation } from "./components/MobileNavigation";
 import { HomeDashboard } from "./components/HomeDashboard";
-import { ChatInterface } from "./components/ChatInterface";
-import { SubjectsView } from "./components/SubjectsView";
-import { StudyPlanView } from "./components/StudyPlanView";
-import { NotebooksView } from "./components/NotebooksView";
-import { PracticeView } from "./components/PracticeView";
-import { ProgressView } from "./components/ProgressView";
-import { TeacherView } from "./components/TeacherView";
-import { ParentView } from "./components/ParentView";
-import { TutorHubView } from "./components/TutorHubView";
-import { ToddlerWorldView } from "./components/ToddlerWorldView";
-import { PrimaryHomeworkView } from "./components/PrimaryHomeworkView";
-import { PrimaryLearningLab } from "./components/PrimaryLearningLab";
-import { LearningOdysseyMap } from "./components/LearningOdysseyMap";
 import { GamificationHeader } from "./components/GamificationHeader";
-import { GuidedAssessmentBridge } from "./components/GuidedAssessmentBridge";
 import { AgeStageModal } from "./components/AgeStageModal";
 import { SubscriptionModal } from "./components/SubscriptionModal";
 import { StartupGateway } from "./components/StartupGateway";
 import { ParentalGateModal } from "./components/ParentalGateModal";
 import { VoiceSettingsModal } from "./components/VoiceSettingsModal";
+
+// Route-sized bundles keep the first workspace load fast; specialist studios load on demand.
+const ChatInterface = lazy(() => import("./components/ChatInterface").then((module) => ({ default: module.ChatInterface })));
+const SubjectsView = lazy(() => import("./components/SubjectsView").then((module) => ({ default: module.SubjectsView })));
+const StudyPlanView = lazy(() => import("./components/StudyPlanView").then((module) => ({ default: module.StudyPlanView })));
+const NotebooksView = lazy(() => import("./components/NotebooksView").then((module) => ({ default: module.NotebooksView })));
+const PracticeView = lazy(() => import("./components/PracticeView").then((module) => ({ default: module.PracticeView })));
+const ProgressView = lazy(() => import("./components/ProgressView").then((module) => ({ default: module.ProgressView })));
+const TeacherView = lazy(() => import("./components/TeacherView").then((module) => ({ default: module.TeacherView })));
+const ParentView = lazy(() => import("./components/ParentView").then((module) => ({ default: module.ParentView })));
+const TutorHubView = lazy(() => import("./components/TutorHubView").then((module) => ({ default: module.TutorHubView })));
+const ToddlerWorldView = lazy(() => import("./components/ToddlerWorldView").then((module) => ({ default: module.ToddlerWorldView })));
+const PrimaryHomeworkView = lazy(() => import("./components/PrimaryHomeworkView").then((module) => ({ default: module.PrimaryHomeworkView })));
+const PrimaryLearningLab = lazy(() => import("./components/PrimaryLearningLab").then((module) => ({ default: module.PrimaryLearningLab })));
+const LearningOdysseyMap = lazy(() => import("./components/LearningOdysseyMap").then((module) => ({ default: module.LearningOdysseyMap })));
+const GuidedAssessmentBridge = lazy(() => import("./components/GuidedAssessmentBridge").then((module) => ({ default: module.GuidedAssessmentBridge })));
 import { soundEffects } from "./utils/soundEffects";
 import { todayISO } from "./utils/dateUtils";
 import {
@@ -208,7 +210,10 @@ export default function App() {
       const saved = localStorage.getItem(NOTEBOOKS_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed)) {
+          const starterIds = new Set(["math-primary-3", "reading-phonics-2", "stem-discovery", "flashcards-primary", "teach-planning"]);
+          return parsed.filter((notebook: Notebook) => !(starterIds.has(notebook.id) && notebook.messages?.length === 1 && notebook.messages[0]?.id?.startsWith("msg-init-")));
+        }
       }
     } catch {
       // ignore
@@ -217,7 +222,7 @@ export default function App() {
   });
 
   const [activeNotebookId, setActiveNotebookId] = useState<string>(() => {
-    return notebooks[0]?.id || INITIAL_NOTEBOOKS[0].id;
+    return notebooks[0]?.id || "";
   });
 
   // Fix #3: Persist and sync EVERY modified notebook to Firestore, not just the active one
@@ -241,46 +246,12 @@ export default function App() {
       const saved = localStorage.getItem(STUDY_PLAN_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed)) return parsed.filter((task: StudyPlanItem) => !task.id.startsWith("default-task-"));
       }
     } catch {
       // ignore
     }
-    const today = todayISO();
-    return [
-      {
-        id: "default-task-1",
-        title: "Review Derivatives & Chain Rule Formulas",
-        subject: "Mathematics",
-        durationMinutes: 30,
-        priority: "high",
-        reason: "Core foundation for upcoming calculus problem set.",
-        completed: false,
-        type: "ai_recommendation",
-        date: today,
-      },
-      {
-        id: "default-task-2",
-        title: "Practice Binary Search Tree Operations",
-        subject: "Computer Science",
-        durationMinutes: 45,
-        priority: "medium",
-        reason: "Active recall on tree balance invariants.",
-        completed: true,
-        type: "ai_recommendation",
-        date: today,
-      },
-      {
-        id: "default-task-3",
-        title: "Proofread Comparative Rhetoric Essay",
-        subject: "Humanities",
-        durationMinutes: 20,
-        priority: "medium",
-        completed: false,
-        type: "student_task",
-        date: today,
-      },
-    ];
+    return [];
   });
 
   useEffect(() => {
@@ -297,31 +268,12 @@ export default function App() {
       const saved = localStorage.getItem(PRACTICE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed)) return parsed.filter((session: PracticeSession) => !session.id.startsWith("prac-init-"));
       }
     } catch {
       // ignore
     }
-    return [
-      {
-        id: "prac-init-1",
-        subject: "Mathematics",
-        topic: "Differential Calculus",
-        difficulty: "medium",
-        totalQuestions: 5,
-        correctAnswers: 4,
-        timestamp: Date.now() - 3600000 * 20,
-      },
-      {
-        id: "prac-init-2",
-        subject: "Computer Science",
-        topic: "Binary Trees & Graph Theory",
-        difficulty: "medium",
-        totalQuestions: 5,
-        correctAnswers: 5,
-        timestamp: Date.now() - 3600000 * 40,
-      },
-    ];
+    return [];
   });
 
   useEffect(() => {
@@ -338,7 +290,7 @@ export default function App() {
       const saved = localStorage.getItem(CLASSROOMS_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed)) return parsed;
       }
     } catch {
       // ignore
@@ -645,6 +597,7 @@ export default function App() {
     subject: "",
     topic: "",
   });
+  const [recommendedSkillNodeId, setRecommendedSkillNodeId] = useState<string | undefined>();
 
   // Action handlers
   const handleAskTutor = (queryText: string) => {
@@ -983,6 +936,7 @@ export default function App() {
 
   return (
     <div className="h-screen w-screen bg-[#050507] text-white flex flex-col md:flex-row overflow-hidden font-sans selection:bg-indigo-500/30">
+      <a href="#workspace-main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:font-bold focus:text-slate-950">Skip to main content</a>
       {/* Desktop Sidebar Navigation - Hidden in Toddler mode for 100% immersive wonderland */}
       {!isToddlerActive && (
         <NavigationSidebar
@@ -1004,7 +958,7 @@ export default function App() {
       )}
 
       {/* Main Workspace Area */}
-      <main className={`flex-1 flex flex-col min-w-0 min-h-0 ${
+      <main id="workspace-main" tabIndex={-1} className={`flex-1 flex flex-col min-w-0 min-h-0 ${
         isToddlerActive 
           ? "bg-[#0c0d14]" 
           : learningStage === "primary"
@@ -1099,12 +1053,25 @@ export default function App() {
           </div>
         )}
 
+        <Suspense fallback={
+          <div className="flex-1 grid place-items-center p-8">
+            <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
+              <div className="h-2 w-20 animate-pulse rounded bg-sky-200" />
+              <div className="mt-5 h-5 w-3/4 animate-pulse rounded bg-slate-200" />
+              <div className="mt-3 h-3 w-full animate-pulse rounded bg-slate-100" />
+              <div className="mt-2 h-3 w-5/6 animate-pulse rounded bg-slate-100" />
+              <p className="mt-5 text-xs font-semibold text-slate-500">Opening your learning space…</p>
+            </div>
+          </div>
+        }>
         {/* LEARNING ODYSSEY MAP VIEW */}
         {activeTab === "odyssey" && (
           <div className="flex-1 overflow-y-auto">
             <LearningOdysseyMap
               onNavigateTab={(tab) => setActiveTab(tab)}
               onSelectStage={(stage) => setLearningStage(stage)}
+              recommendedNodeId={recommendedSkillNodeId}
+              onRecommendationConsumed={() => setRecommendedSkillNodeId(undefined)}
             />
           </div>
         )}
@@ -1185,6 +1152,10 @@ export default function App() {
             }}
             onAskTutor={handleAskTutor}
             onToggleTask={handleToggleTask}
+            onStartRecommendation={(tab, nodeId) => {
+              setRecommendedSkillNodeId(nodeId);
+              setActiveTab(tab);
+            }}
           />
         )}
 
@@ -1198,6 +1169,10 @@ export default function App() {
             assignmentSubmissions={submissionsByAsgn}
             onNavigate={setActiveTab}
             onOpenSubscriptionModal={() => setIsSubscriptionModalOpen(true)}
+            onApplyDiagnosticRecommendation={(nodeId) => {
+              setRecommendedSkillNodeId(nodeId);
+              setActiveTab("odyssey");
+            }}
             onStartAssessment={(stage) => {
               if (stage === "toddler") {
                 setSelectedAssessmentId("toddler-phonics-basics");
@@ -1321,6 +1296,7 @@ export default function App() {
             onAddResource={handleAddClassResource}
           />
         )}
+        </Suspense>
       </main>
 
       {/* Mobile Navigation Bar */}

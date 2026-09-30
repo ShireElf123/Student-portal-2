@@ -19,11 +19,20 @@ import {
 import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
 import { awardXP, awardStars, awardGems, triggerCelebrationConfetti } from "../utils/gamification";
-import { recordLearningEvent } from "../utils/learnerBrain";
+import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { PrimarySolarSystemLab } from "./PrimarySolarSystemLab";
 import { FloatingCloudDecoration } from "./landscape/LandscapeDecorations";
 
 type PrimaryActivity = "math-blitz" | "fraction-lab" | "word-forge" | "balance-scale" | "solar-system";
+
+function shuffle<T>(items: T[]): T[] {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
 
 export interface PrimaryLearningLabProps {
   onBack?: () => void;
@@ -188,6 +197,8 @@ function SpeedMathBlitzGame() {
   const [problem, setProblem] = useState<{ text: string; answer: number; choices: number[] }>({ text: "", answer: 0, choices: [] });
   const [isGameOver, setIsGameOver] = useState(false);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
+  const scoreRef = useRef(0);
+  const answeredThisProblem = useRef(false);
 
   const generateProblem = () => {
     const ops = ["+", "-", "×"];
@@ -200,7 +211,7 @@ function SpeedMathBlitzGame() {
       ans = a + b;
     } else if (op === "-") {
       a = Math.floor(Math.random() * 30) + 10;
-      b = Math.floor(Math.random() * a) + 2;
+      b = Math.floor(Math.random() * (a - 1)) + 1;
       ans = a - b;
     } else {
       a = Math.floor(Math.random() * 9) + 2;
@@ -219,13 +230,15 @@ function SpeedMathBlitzGame() {
     setProblem({
       text: `${a} ${op} ${b}`,
       answer: ans,
-      choices: Array.from(set).sort(() => Math.random() - 0.5),
+      choices: shuffle(Array.from(set)),
     });
   };
 
   const startGame = () => {
     setIsPlaying(true);
     setTimeLeft(45);
+    scoreRef.current = 0;
+    answeredThisProblem.current = false;
     setScore(0);
     setStreak(0);
     setIsGameOver(false);
@@ -243,18 +256,17 @@ function SpeedMathBlitzGame() {
           setIsPlaying(false);
           soundEffects.playFanfare();
           triggerCelebrationConfetti();
-          awardXP(100);
-          awardGems(15);
+          const finalScore = scoreRef.current;
           recordLearningEvent({
-            learnerId: "scholar-primary-1",
+            learnerId: getActiveLearnerId(),
             activityId: "speed-math-blitz-sprint",
             activityType: "math-blitz",
             activityTitle: "Speed Math Blitz Sprint",
             skillId: "math-k1-addition-subtraction",
             domain: "math",
             gradeBand: "2-3",
-            result: score >= 100 ? "mastered" : score >= 40 ? "success" : "practice",
-            score: Math.min(100, Math.round((score / 120) * 100)),
+            result: finalScore >= 100 ? "mastered" : finalScore >= 40 ? "success" : "practice",
+            score: Math.min(100, Math.round((finalScore / 120) * 100)),
             difficulty: "medium",
             attempts: 1,
             hintsUsed: 0,
@@ -269,22 +281,29 @@ function SpeedMathBlitzGame() {
   }, [isPlaying, isGameOver]);
 
   const handleChoice = (val: number) => {
+    if (!isPlaying || isGameOver || answeredThisProblem.current) return;
     if (val === problem.answer) {
+      answeredThisProblem.current = true;
       soundEffects.playSuccessChime();
-      setScore((s) => s + 10 * (streak >= 3 ? 2 : 1));
+      const points = 10 * (streak >= 3 ? 2 : 1);
+      scoreRef.current += points;
+      setScore(scoreRef.current);
       setStreak((st) => st + 1);
       setFeedback("correct");
       awardXP(5);
       setTimeout(() => {
         setFeedback(null);
+        answeredThisProblem.current = false;
         generateProblem();
       }, 300);
     } else {
+      answeredThisProblem.current = true;
       soundEffects.playGentleBoing();
       setStreak(0);
       setFeedback("wrong");
       setTimeout(() => {
         setFeedback(null);
+        answeredThisProblem.current = false;
       }, 400);
     }
   };
@@ -378,7 +397,7 @@ function SpeedMathBlitzGame() {
             Final Score: <strong className="text-slate-900">{score} Points</strong>!
           </p>
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-100 border-2 border-amber-300 text-amber-900 text-sm font-black shadow-sm">
-            <span>+100 XP Earned</span> • <span>+15 Gems 💎</span>
+            <span>{score} points earned during this sprint</span>
           </div>
           <div>
             <button
@@ -432,7 +451,7 @@ function TactileFractionLab() {
       awardStars(1);
       speakText(`Hooray! You built ${currentChallenge.label}! Excellent fraction mastery!`, { pitch: 1.1 });
       recordLearningEvent({
-        learnerId: "scholar-primary-1",
+        learnerId: getActiveLearnerId(),
         activityId: `fraction-challenge-${currentChallenge.targetNum}-${currentChallenge.targetDen}`,
         activityType: "fraction-lab",
         activityTitle: `Fraction Match: ${currentChallenge.label}`,
@@ -655,7 +674,7 @@ function WordForgeGame() {
   const [isWon, setIsWon] = useState(false);
 
   useEffect(() => {
-    const letters = current.word.split("").sort(() => Math.random() - 0.5);
+    const letters = shuffle(current.word.split(""));
     setScrambled(letters);
     setPlaced([]);
     setIsWon(false);
@@ -679,7 +698,7 @@ function WordForgeGame() {
         awardGems(5);
         speakText(`Correct! ${current.word}!`, { pitch: 1.1 });
         recordLearningEvent({
-          learnerId: "scholar-primary-1",
+          learnerId: getActiveLearnerId(),
           activityId: `word-forge-${current.word.toLowerCase()}`,
           activityType: "word-forge",
           activityTitle: `Word Forge: ${current.word}`,
@@ -696,7 +715,7 @@ function WordForgeGame() {
         soundEffects.playGentleBoing();
         speakText("Not quite! Let's reset the letters and try again!", { pitch: 1.1 });
         setTimeout(() => {
-          setScrambled(current.word.split("").sort(() => Math.random() - 0.5));
+          setScrambled(shuffle(current.word.split("")));
           setPlaced([]);
         }, 1000);
       }
@@ -830,7 +849,7 @@ function PhysicsBalanceScaleGame() {
       setScore((s) => s + 1);
       speakText(`Balanced! Target ${targetWeight} kilograms achieved! Great algebraic logic!`, { pitch: 1.1 });
       recordLearningEvent({
-        learnerId: "scholar-primary-1",
+        learnerId: getActiveLearnerId(),
         activityId: `balance-scale-level-${level}`,
         activityType: "balance-scale",
         activityTitle: `Balance Scale: ${targetWeight} KG Algebraic Balance`,

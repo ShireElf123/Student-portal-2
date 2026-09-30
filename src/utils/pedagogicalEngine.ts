@@ -1,5 +1,6 @@
 import { recordLearningEvent, getLearnerModel, saveLearnerModel, getActiveLearnerId } from "./learnerBrain";
 import { resolveSkillForActivity } from "../data/activitySkillRegistry";
+import { CURRICULUM_SKILL_NODES } from "../data/curriculumUniverse";
 export * from "./learnerBrain";
 
 export interface MistakeVaultItem {
@@ -207,6 +208,48 @@ export const DIAGNOSTIC_PLACEMENT_QUESTIONS: DiagnosticQuestion[] = [
     correctAnswerIndex: 0,
     explanation: "By transitive deductive logic: A is a subset of B, and B is a subset of C, so A is a subset of C.",
   },
+  {
+    id: "diag-6", discipline: "reading", targetGradeBand: "K-1",
+    prompt: "Which word rhymes with 'cake'?",
+    options: ["lake", "cup", "sun", "fish"], correctAnswerIndex: 0,
+    explanation: "Lake rhymes with cake because both words end with the same long-a sound and /k/ sound.",
+  },
+  {
+    id: "diag-7", discipline: "science", targetGradeBand: "K-1",
+    prompt: "Which part of a plant usually takes in water from the soil?",
+    options: ["Roots", "Flower petals", "Fruit", "Leaves only"], correctAnswerIndex: 0,
+    explanation: "Roots hold a plant in place and take in water and nutrients from the soil.",
+  },
+  {
+    id: "diag-8", discipline: "logic", targetGradeBand: "K-1",
+    prompt: "What comes next in this pattern: red, blue, red, blue, ...?",
+    options: ["Red", "Green", "Yellow", "Purple"], correctAnswerIndex: 0,
+    explanation: "The two-color pattern repeats: red, blue, red, blue, then red again.",
+  },
+  {
+    id: "diag-9", discipline: "math", targetGradeBand: "4-5",
+    prompt: "A ribbon is 3.5 metres long. You use 1.2 metres. How much ribbon remains?",
+    options: ["2.3 metres", "2.7 metres", "4.7 metres", "1.3 metres"], correctAnswerIndex: 0,
+    explanation: "Line up the decimal points and subtract: 3.5 − 1.2 = 2.3 metres.",
+  },
+  {
+    id: "diag-10", discipline: "reading", targetGradeBand: "4-5",
+    prompt: "Mia wore a coat because dark clouds gathered and the wind grew cold. What can you infer?",
+    options: ["Rain or colder weather may be coming", "It is definitely summer", "Mia is going swimming", "The wind has stopped"], correctAnswerIndex: 0,
+    explanation: "The dark clouds and colder wind are clues that rain or colder weather may be approaching.",
+  },
+  {
+    id: "diag-11", discipline: "logic", targetGradeBand: "2-3",
+    prompt: "A rule machine adds 3 to every number. What comes out when 5 goes in?",
+    options: ["8", "2", "15", "53"], correctAnswerIndex: 0,
+    explanation: "Apply the rule once: 5 + 3 = 8.",
+  },
+  {
+    id: "diag-12", discipline: "science", targetGradeBand: "2-3",
+    prompt: "Which change is most likely to help an ice cube melt faster?",
+    options: ["Place it in a warm sunny spot", "Wrap it in more ice", "Put it in a freezer", "Move it into a colder room"], correctAnswerIndex: 0,
+    explanation: "A warmer place transfers heat to the ice, so it melts faster.",
+  },
 ];
 
 export interface DiagnosticResult {
@@ -217,50 +260,48 @@ export interface DiagnosticResult {
   recommendedDomainFocus: string;
   recommendedStartingNodeId: string;
   disciplineScores: Record<string, { correct: number; total: number }>;
+  gradeBandScores: Record<"K-1" | "2-3" | "4-5", { correct: number; total: number }>;
 }
 
 export function evaluateDiagnosticAnswers(answers: Record<string, number>, learnerId?: string): DiagnosticResult {
   let score = 0;
   const disciplineScores: Record<string, { correct: number; total: number }> = {
-    math: { correct: 0, total: 0 },
-    reading: { correct: 0, total: 0 },
-    science: { correct: 0, total: 0 },
-    logic: { correct: 0, total: 0 },
+    math: { correct: 0, total: 0 }, reading: { correct: 0, total: 0 },
+    science: { correct: 0, total: 0 }, logic: { correct: 0, total: 0 },
+  };
+  const gradeBandScores: DiagnosticResult["gradeBandScores"] = {
+    "K-1": { correct: 0, total: 0 }, "2-3": { correct: 0, total: 0 }, "4-5": { correct: 0, total: 0 },
   };
 
-  DIAGNOSTIC_PLACEMENT_QUESTIONS.forEach(q => {
+  DIAGNOSTIC_PLACEMENT_QUESTIONS.forEach((q) => {
     disciplineScores[q.discipline].total += 1;
+    gradeBandScores[q.targetGradeBand].total += 1;
     if (answers[q.id] === q.correctAnswerIndex) {
       score += 1;
       disciplineScores[q.discipline].correct += 1;
+      gradeBandScores[q.targetGradeBand].correct += 1;
     }
   });
 
-  let recommendedGradeBand: "K-1" | "2-3" | "4-5" = "2-3";
-  let recommendedStartingNodeId = "math-23-multiplication";
+  // Treat this as a short screening snapshot, not a definitive grade-level label:
+  // advance through bands only when the learner shows evidence at each preceding band.
+  let recommendedGradeBand: DiagnosticResult["recommendedGradeBand"] = "K-1";
+  const meetsBandThreshold = (band: keyof DiagnosticResult["gradeBandScores"]) => {
+    const result = gradeBandScores[band];
+    return result.total > 0 && result.correct / result.total >= 0.5;
+  };
+  if (meetsBandThreshold("K-1")) recommendedGradeBand = "2-3";
+  if (meetsBandThreshold("K-1") && meetsBandThreshold("2-3")) recommendedGradeBand = "4-5";
 
-  if (score <= 2) {
-    recommendedGradeBand = "K-1";
-    recommendedStartingNodeId = "math-k1-place-value";
-  } else if (score >= 4) {
-    recommendedGradeBand = "4-5";
-    recommendedStartingNodeId = "math-45-decimals";
-  }
-
-  // Find weakest discipline
-  let lowestRate = 1.1;
-  let recommendedDomainFocus = "Mathematics & Operations";
-
-  Object.entries(disciplineScores).forEach(([disc, s]) => {
-    const rate = s.total > 0 ? s.correct / s.total : 1;
-    if (rate < lowestRate) {
-      lowestRate = rate;
-      if (disc === "math") recommendedDomainFocus = "Mathematics & Operations";
-      if (disc === "reading") recommendedDomainFocus = "Phonics & Reading Comprehension";
-      if (disc === "science") recommendedDomainFocus = "STEM & Natural Discovery";
-      if (disc === "logic") recommendedDomainFocus = "Logic & Computational Thinking";
-    }
-  });
+  const domainFocus: Record<string, string> = {
+    math: "Mathematics & Operations", reading: "Phonics & Reading Comprehension",
+    science: "STEM & Natural Discovery", logic: "Logic & Computational Thinking",
+  };
+  const weakestDomain = Object.entries(disciplineScores)
+    .sort(([, a], [, b]) => (a.total ? a.correct / a.total : 1) - (b.total ? b.correct / b.total : 1))[0]?.[0] || "math";
+  const recommendedDomainFocus = domainFocus[weakestDomain] || domainFocus.math;
+  const recommendedNode = CURRICULUM_SKILL_NODES.find((node) => node.domain === weakestDomain && node.gradeBand === recommendedGradeBand);
+  const recommendedStartingNodeId = recommendedNode?.id || (recommendedGradeBand === "K-1" ? "math-k1-place-value" : recommendedGradeBand === "2-3" ? "math-23-multiplication" : "math-45-decimals");
 
   const result: DiagnosticResult = {
     completedAt: Date.now(),
@@ -270,6 +311,7 @@ export function evaluateDiagnosticAnswers(answers: Record<string, number>, learn
     recommendedDomainFocus,
     recommendedStartingNodeId,
     disciplineScores,
+    gradeBandScores,
   };
 
   const targetId = learnerId || getActiveLearnerId();
@@ -280,6 +322,9 @@ export function evaluateDiagnosticAnswers(answers: Record<string, number>, learn
     if (targetId === "scholar-primary-1") {
       localStorage.setItem(DEFAULT_DIAGNOSTIC_PROFILE_KEY, JSON.stringify(result));
     }
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("diagnostic_profile_updated", { detail: result }));
+    }
     
     // Calibrate Learner Brain model with diagnostic result
     const model = getLearnerModel(targetId);
@@ -289,12 +334,14 @@ export function evaluateDiagnosticAnswers(answers: Record<string, number>, learn
       activityId: "diagnostic-placement-quest",
       activityType: "diagnostic-placement",
       activityTitle: `Diagnostic Calibration (${score}/${DIAGNOSTIC_PLACEMENT_QUESTIONS.length})`,
-      skillId: recommendedStartingNodeId,
-      domain: "math",
+      // A screening result is useful placement evidence, but must not silently grant
+      // mastery for one curriculum skill or one subject.
+      skillId: "unmapped-activity",
+      domain: "general",
       gradeBand: recommendedGradeBand,
-      result: score >= 4 ? "mastered" : score >= 2 ? "success" : "practice",
+      result: "practice",
       score: Math.round((score / DIAGNOSTIC_PLACEMENT_QUESTIONS.length) * 100),
-      difficulty: score >= 4 ? "hard" : "medium",
+      difficulty: "medium",
       attempts: 1,
       hintsUsed: 0,
     });

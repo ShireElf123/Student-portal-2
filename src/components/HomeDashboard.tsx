@@ -1,18 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Bot,
-  Target,
-  BookOpen,
-  GraduationCap,
-  ArrowRight,
-  CheckCircle2,
-  Circle,
-  Clock,
-  Send,
-  CalendarCheck,
-  Sparkles,
-  Brain,
-  Zap,
+  ArrowRight, BookOpen, Brain, CalendarCheck, CheckCircle2, ChevronRight,
+  Circle, Clock3, Flame, GraduationCap, Layers3, Send, Sparkles, Target, Zap,
 } from "lucide-react";
 import { NavigationTab, Notebook, PracticeSession, StudyPlanItem } from "../types";
 import { todayISO, formatDateLabel } from "../utils/dateUtils";
@@ -27,337 +16,121 @@ interface HomeDashboardProps {
   onSelectNotebook: (id: string) => void;
   onAskTutor: (query: string) => void;
   onToggleTask: (taskId: string) => void;
+  onStartRecommendation?: (tab: NavigationTab, nodeId?: string) => void;
 }
 
-export function HomeDashboard({
-  notebooks,
-  studyPlan,
-  practiceSessions,
-  onNavigate,
-  onSelectNotebook,
-  onAskTutor,
-  onToggleTask,
-}: HomeDashboardProps) {
+const dateKey = (timestamp: number) => new Date(timestamp).toLocaleDateString("en-CA");
+
+export function HomeDashboard({ notebooks, studyPlan, practiceSessions, onNavigate, onSelectNotebook, onAskTutor, onToggleTask, onStartRecommendation }: HomeDashboardProps) {
   const [quickQuery, setQuickQuery] = useState("");
   const [learnerModel, setLearnerModel] = useState<LearnerModel>(getLearnerModel);
+  useEffect(() => subscribeLearnerModel(setLearnerModel), []);
 
-  useEffect(() => {
-    return subscribeLearnerModel((model) => setLearnerModel(model));
-  }, []);
+  const now = new Date();
+  const greeting = now.getHours() < 12 ? "Good morning" : now.getHours() < 18 ? "Good afternoon" : "Good evening";
+  const today = todayISO();
+  const tasks = studyPlan.filter((task) => task.date === today);
+  const pending = tasks.find((task) => !task.completed);
+  const completedCount = tasks.filter((task) => task.completed).length;
+  const completion = tasks.length ? Math.round((completedCount / tasks.length) * 100) : 0;
+  const weekStart = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const thisWeek = practiceSessions.filter((session) => session.timestamp >= weekStart);
+  const attempted = thisWeek.reduce((sum, session) => sum + session.totalQuestions, 0);
+  const correct = thisWeek.reduce((sum, session) => sum + session.correctAnswers, 0);
+  const accuracy = attempted ? Math.round((correct / attempted) * 100) : 0;
+  const practiceDays = new Set(thisWeek.map((session) => dateKey(session.timestamp))).size;
+  const recentNotebooks = [...notebooks].sort((a, b) => (b.messages.at(-1)?.timestamp || b.createdAt) - (a.messages.at(-1)?.timestamp || a.createdAt));
+  const nextRec = learnerModel.recommendedNext[0];
 
-  const topRec = learnerModel.recommendedNext[0];
-
-  const hour = new Date().getHours();
-  const greeting =
-    hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
-
-  const handleQuickSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!quickQuery.trim()) return;
-    onAskTutor(quickQuery.trim());
+  const submitAsk = (event: React.FormEvent) => {
+    event.preventDefault();
+    const prompt = quickQuery.trim();
+    if (!prompt) return;
+    onAskTutor(prompt);
     setQuickQuery("");
   };
 
-  const todayStr = todayISO();
-  const todayTasks = studyPlan.filter((task) => task.date === todayStr);
-  const completedTodayCount = todayTasks.filter((t) => t.completed).length;
-  const nextPendingTask = todayTasks.find((t) => !t.completed);
-
-  const recentNotebooks = [...notebooks].sort((a, b) => {
-    const aTime = a.messages[a.messages.length - 1]?.timestamp || a.createdAt;
-    const bTime = b.messages[b.messages.length - 1]?.timestamp || b.createdAt;
-    return bTime - aTime;
-  });
-
-  let onTrackCount = 0;
-  let needsRevisitingCount = 0;
-  notebooks.forEach((nb) => {
-    const status = getNotebookTopicStatus(nb, practiceSessions);
-    if (status === "on_track") onTrackCount++;
-    else if (status === "needs_revisiting") needsRevisitingCount++;
-  });
-
-  const completionPercent = todayTasks.length > 0 
-    ? Math.round((completedTodayCount / todayTasks.length) * 100) 
-    : 0;
+  const openNotebook = (id: string) => {
+    onSelectNotebook(id);
+    onNavigate("tutor");
+  };
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-6 max-w-5xl mx-auto w-full text-slate-100">
-      {/* Top Greeting & Desk Baseline */}
-      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-4 border-b border-slate-800">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-            {greeting}, Scholar
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-            Academic Study Desk <span className="text-slate-600">·</span> {formatDateLabel(todayStr)}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 text-xs text-slate-400">
-          <span className="w-2 h-2 rounded-full bg-emerald-400" />
-          <span>Socratic AI Coach Online</span>
-        </div>
-      </div>
-
-      {/* SINGLE VISUAL BOLDNESS HERO: Today's Desk Progress Bar */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <section aria-label="Student overview" className="flex-1 min-h-full overflow-y-auto bg-[#080d18] text-slate-100">
+      <div className="mx-auto w-full max-w-[1440px] space-y-7 px-4 py-6 sm:px-7 sm:py-8 lg:px-10">
+        <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <div className="text-xs font-semibold text-blue-400">
-              Today's Focus
-            </div>
-            <h2 className="text-base sm:text-lg font-bold text-white tracking-tight mt-0.5">
-              {nextPendingTask
-                ? nextPendingTask.title
-                : todayTasks.length > 0
-                ? "All assignments completed for today!"
-                : "Your daily study queue is ready"}
-            </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              {nextPendingTask
-                ? `${nextPendingTask.subject} · Estimated ${nextPendingTask.durationMinutes} minutes`
-                : "Check your homework desk or start a practice session to reinforce concepts."}
-            </p>
+            <p className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[.18em] text-sky-300"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_12px_#34d399]" /> Your learning space</p>
+            <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">{greeting}, Scholar<span className="text-sky-300">.</span></h1>
+            <p className="mt-2 text-sm text-slate-400">{formatDateLabel(today)} <span className="px-1 text-slate-600">/</span> A little progress today builds big confidence tomorrow.</p>
           </div>
-
-          <div className="flex items-center gap-3 flex-shrink-0">
-            {nextPendingTask ? (
-              <button
-                type="button"
-                onClick={() => onToggleTask(nextPendingTask.id)}
-                className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-colors shadow-sm flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none cursor-pointer"
-              >
-                <CheckCircle2 size={15} />
-                <span>Mark Completed</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => onNavigate("homework")}
-                className="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-colors shadow-sm flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none cursor-pointer"
-              >
-                <span>View Homework Desk</span>
-                <ArrowRight size={14} />
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Progress Bar with Singular Amber/Blue Energy */}
-        {todayTasks.length > 0 && (
-          <div className="space-y-1.5 pt-1">
-            <div className="flex items-center justify-between text-xs text-slate-400">
-              <span>{completedTodayCount} of {todayTasks.length} tasks finished</span>
-              <span className="font-semibold text-amber-400">{completionPercent}%</span>
-            </div>
-            <div className="w-full h-2 rounded-full bg-slate-950 overflow-hidden border border-slate-800">
-              <div
-                className="h-full bg-blue-500 transition-all duration-300"
-                style={{ width: `${completionPercent}%` }}
-              />
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* UNIFIED LEARNING BRAIN: Adaptive Pedagogical Recommendation */}
-      {topRec && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-indigo-950/60 via-slate-900 to-purple-950/40 border border-indigo-800/40 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-start gap-3.5 min-w-0">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shrink-0 mt-0.5">
-              <Brain size={20} />
-            </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[10px] font-black uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">
-                  {topRec.badge}
-                </span>
-                <span className="text-[11px] text-slate-400 font-medium">
-                  Unified Learning Brain · Recommended Step
-                </span>
-              </div>
-              <h3 className="text-sm sm:text-base font-bold text-white mt-1 leading-snug">
-                {topRec.title}
-              </h3>
-              <p className="text-xs text-slate-300/80 mt-0.5 leading-relaxed">
-                {topRec.reason}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
-            <button
-              type="button"
-              onClick={() => onNavigate(topRec.targetTab)}
-              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all shadow-sm flex items-center gap-1.5 cursor-pointer focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:outline-none"
-            >
-              <span>Start Quest</span>
-              <ArrowRight size={14} />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Quick Socratic Ask Bar */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-2">
-        <label htmlFor="home-quick-ask" className="block text-xs font-semibold text-slate-300">
-          Ask Socratic Tutor for a Hint or Explanation
-        </label>
-        <form onSubmit={handleQuickSubmit} className="relative flex items-center">
-          <input
-            id="home-quick-ask"
-            type="text"
-            value={quickQuery}
-            onChange={(e) => setQuickQuery(e.target.value)}
-            placeholder="e.g. How do I solve two-step word problems or find the main idea?"
-            className="w-full pl-4 pr-12 py-3 bg-slate-950 border border-slate-800 rounded-xl text-xs sm:text-sm text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition-all"
-          />
-          <button
-            type="submit"
-            disabled={!quickQuery.trim()}
-            className="absolute right-2 p-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-30 text-white rounded-lg transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
-            title="Ask Tutor"
-            aria-label="Send question to AI tutor"
-          >
-            <Send size={15} />
+          <button onClick={() => onNavigate("study-plan")} className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[.04] px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-sky-300/40 hover:bg-sky-300/10">
+            <CalendarCheck size={16} className="text-sky-300" /> Study planner <ArrowRight size={14} />
           </button>
-        </form>
-      </div>
+        </header>
 
-      {/* Main Grid: Homework & Notebooks */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Cols: Recent Subject Notebooks */}
-        <div className="lg:col-span-2 space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white tracking-tight">Active Subject Notebooks</h3>
-            <button
-              type="button"
-              onClick={() => onNavigate("notebooks")}
-              className="text-xs text-blue-400 hover:text-blue-300 font-semibold flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none rounded cursor-pointer"
-            >
-              <span>View all ({notebooks.length})</span>
-              <ArrowRight size={13} />
-            </button>
-          </div>
-
-          <div className="space-y-2.5">
-            {recentNotebooks.slice(0, 3).map((nb) => {
-              const lastMsg = nb.messages[nb.messages.length - 1];
-              return (
-                <div
-                  key={nb.id}
-                  onClick={() => {
-                    onSelectNotebook(nb.id);
-                    onNavigate("tutor");
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      onSelectNotebook(nb.id);
-                      onNavigate("tutor");
-                    }
-                  }}
-                  tabIndex={0}
-                  role="button"
-                  className="p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
-                >
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-                      <span>{nb.subject}</span>
-                      <span className="text-slate-600">·</span>
-                      <span>{nb.messages.length} notes</span>
-                    </div>
-                    <h4 className="text-sm font-bold text-white tracking-tight mt-0.5 truncate">
-                      {nb.name}
-                    </h4>
-                    <p className="text-xs text-slate-400 truncate mt-0.5">
-                      {lastMsg?.content
-                        ? lastMsg.content.replace(/[*_#`]/g, "").slice(0, 110)
-                        : "Ready for your notes and tutor queries."}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-xs text-blue-400 font-semibold group-hover:underline flex items-center gap-1">
-                      <span>Open Notes</span>
-                      <ArrowRight size={13} />
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Right 1 Col: Quick Links & Summary */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white tracking-tight">Today's Study Plan</h3>
-            <button
-              type="button"
-              onClick={() => onNavigate("study-plan")}
-              className="text-xs text-blue-400 hover:text-blue-300 font-semibold focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none rounded cursor-pointer"
-            >
-              Full Schedule
-            </button>
-          </div>
-
-          <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-            {todayTasks.length === 0 ? (
-              <div className="py-6 text-center text-xs text-slate-400 space-y-2">
-                <p>No study tasks scheduled for today.</p>
-                <button
-                  type="button"
-                  onClick={() => onNavigate("study-plan")}
-                  className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none"
-                >
-                  Generate Study Schedule
-                </button>
+        <section className="relative isolate overflow-hidden rounded-[28px] border border-sky-300/15 bg-gradient-to-br from-[#14243a] via-[#101b30] to-[#17142d] p-6 shadow-2xl shadow-black/20 sm:p-9">
+          <div className="pointer-events-none absolute -right-10 -top-24 -z-10 h-80 w-80 rounded-full bg-sky-500/10 blur-3xl" />
+          <div className="pointer-events-none absolute bottom-[-8rem] right-[22%] -z-10 h-64 w-64 rounded-full bg-violet-500/10 blur-3xl" />
+          <div className="grid gap-8 lg:grid-cols-[1.35fr_.65fr] lg:items-center">
+            <div>
+              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-sky-200/15 bg-sky-200/[.07] px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-sky-200"><Sparkles size={13} /> Today’s mission</div>
+              <h2 className="max-w-2xl text-2xl font-black leading-tight tracking-tight text-white sm:text-4xl">{pending ? pending.title : tasks.length ? "You’ve cleared today’s mission." : "Ready to make your next breakthrough?"}</h2>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300">{pending ? `${pending.subject} · about ${pending.durationMinutes} minutes. Take it one step at a time; your coach is here if you get stuck.` : tasks.length ? "Take a moment to celebrate, then choose what you’d like to explore next." : "Start with a personalized learning quest or ask your AI tutor to make a tricky idea click."}</p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                {pending ? <button onClick={() => onToggleTask(pending.id)} className="inline-flex items-center gap-2 rounded-xl bg-sky-300 px-5 py-3 text-sm font-extrabold text-slate-950 shadow-lg shadow-sky-900/30 transition hover:-translate-y-0.5 hover:bg-sky-200"><CheckCircle2 size={17} /> Mark mission complete</button> : <button onClick={() => onNavigate("homework")} className="inline-flex items-center gap-2 rounded-xl bg-sky-300 px-5 py-3 text-sm font-extrabold text-slate-950 shadow-lg shadow-sky-900/30 transition hover:-translate-y-0.5 hover:bg-sky-200"><GraduationCap size={17} /> Open homework desk</button>}
+                <button onClick={() => nextRec && onStartRecommendation ? onStartRecommendation(nextRec.targetTab, nextRec.nodeId) : onNavigate(nextRec?.targetTab || "practice")} className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/[.06] px-5 py-3 text-sm font-bold text-white transition hover:bg-white/10"><Brain size={16} className="text-violet-300" /> {nextRec ? "Your next best step" : "Explore practice"}</button>
               </div>
-            ) : (
-              <div className="space-y-2">
-                {todayTasks.slice(0, 4).map((task) => (
-                  <div
-                    key={task.id}
-                    onClick={() => onToggleTask(task.id)}
-                    className="flex items-start gap-2.5 p-2 rounded-lg hover:bg-slate-800/60 transition-colors cursor-pointer"
-                  >
-                    <button
-                      type="button"
-                      className="mt-0.5 text-slate-400 hover:text-blue-400 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none rounded"
-                      aria-label={task.completed ? "Mark incomplete" : "Mark complete"}
-                    >
-                      {task.completed ? (
-                        <CheckCircle2 size={16} className="text-emerald-400" />
-                      ) : (
-                        <Circle size={16} />
-                      )}
-                    </button>
-                    <div className="min-w-0 flex-1">
-                      <p
-                        className={`text-xs font-medium leading-snug ${
-                          task.completed ? "line-through text-slate-500" : "text-slate-200"
-                        }`}
-                      >
-                        {task.title}
-                      </p>
-                      <div className="flex items-center gap-1.5 text-[11px] text-slate-400 mt-0.5">
-                        <span>{task.subject}</span>
-                        <span className="text-slate-600">·</span>
-                        <span className="flex items-center gap-0.5">
-                          <Clock size={11} />
-                          {task.durationMinutes}m
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-[#08111f]/65 p-5 backdrop-blur sm:p-6">
+              <div className="flex items-center justify-between gap-3"><div><p className="text-xs font-semibold text-slate-400">Today’s momentum</p><p className="mt-1 text-3xl font-black text-white">{completion}<span className="text-lg text-slate-500">%</span></p></div><div className="grid h-12 w-12 place-items-center rounded-2xl bg-sky-300/10 text-sky-200"><Target size={23}/></div></div>
+              <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-sky-400 to-cyan-200 transition-all duration-700" style={{width:`${completion}%`}}/></div>
+              <div className="mt-3 flex justify-between text-xs text-slate-400"><span>{completedCount} of {tasks.length} tasks complete</span><span>{tasks.length ? `${tasks.length - completedCount} to go` : "Your pace, your plan"}</span></div>
+              {nextRec && <div className="mt-5 flex items-start gap-3 border-t border-white/10 pt-4"><span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-violet-400/10 text-violet-200"><Zap size={15}/></span><div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-violet-200">Adaptive coach · {nextRec.badge}</p><p className="mt-1 text-sm font-bold text-white">{nextRec.title}</p><p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-400">{nextRec.reason}</p></div></div>}
+            </div>
           </div>
-        </div>
+        </section>
+
+        <section aria-label="Learning snapshot" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {[
+            { label: "Practice sessions", value: String(thisWeek.length), note: "this week", icon: <Layers3 size={18}/>, tone: "text-sky-200 bg-sky-300/10" },
+            { label: "Questions explored", value: String(attempted), note: "last 7 days", icon: <BookOpen size={18}/>, tone: "text-violet-200 bg-violet-300/10" },
+            { label: "Answer accuracy", value: attempted ? `${accuracy}%` : "—", note: attempted ? `${correct} correct answers` : "Start a practice round", icon: <Target size={18}/>, tone: "text-emerald-200 bg-emerald-300/10" },
+            { label: "Learning days", value: String(practiceDays), note: "out of the last 7", icon: <Flame size={18}/>, tone: "text-amber-200 bg-amber-300/10" },
+          ].map((metric) => <article key={metric.label} className="rounded-2xl border border-white/[.08] bg-[#101827] p-4 sm:p-5"><div className="flex items-center justify-between"><span className="text-xs font-semibold text-slate-400">{metric.label}</span><span className={`grid h-9 w-9 place-items-center rounded-xl ${metric.tone}`}>{metric.icon}</span></div><p className="mt-3 text-2xl font-black tracking-tight text-white">{metric.value}</p><p className="mt-1 text-[11px] text-slate-500">{metric.note}</p></article>)}
+        </section>
+
+        <section className="grid gap-6 xl:grid-cols-[1.15fr_.85fr]">
+          <div className="space-y-5">
+            <div className="flex items-end justify-between"><div><p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-500">Pick up where you left off</p><h3 className="mt-1 text-lg font-extrabold text-white">Your learning library</h3></div><button onClick={() => onNavigate("notebooks")} className="inline-flex items-center gap-1 text-xs font-bold text-sky-300 hover:text-sky-200">All notebooks <ChevronRight size={14}/></button></div>
+            {recentNotebooks.length ? <div className="grid gap-3 sm:grid-cols-2">{recentNotebooks.slice(0,4).map((notebook,index) => {
+              const latest = notebook.messages.at(-1);
+              const status = getNotebookTopicStatus(notebook, practiceSessions);
+              const statusLabel = status === "on_track" ? "On track" : status === "needs_revisiting" ? "Worth revisiting" : "Ready to explore";
+              const palette = ["from-sky-400/15 to-blue-500/5 border-sky-300/10", "from-violet-400/15 to-fuchsia-500/5 border-violet-300/10", "from-emerald-400/15 to-teal-500/5 border-emerald-300/10", "from-amber-400/15 to-orange-500/5 border-amber-300/10"][index];
+              return <button key={notebook.id} onClick={() => openNotebook(notebook.id)} className={`group rounded-2xl border bg-gradient-to-br ${palette} p-5 text-left transition hover:-translate-y-0.5 hover:border-white/20 hover:shadow-xl hover:shadow-black/20`}><div className="flex items-start justify-between gap-3"><span className="rounded-lg bg-black/20 px-2.5 py-1 text-[10px] font-bold text-slate-300">{notebook.subject}</span><ArrowRight size={16} className="text-slate-500 transition group-hover:translate-x-1 group-hover:text-white"/></div><h4 className="mt-4 line-clamp-1 text-base font-extrabold text-white">{notebook.name}</h4><p className="mt-1 line-clamp-2 min-h-10 text-xs leading-5 text-slate-400">{latest?.content?.replace(/[*_#`]/g, "").slice(0,100) || "Your notes, questions and tutor explanations live here."}</p><div className="mt-4 flex items-center justify-between border-t border-white/[.08] pt-3 text-[10px]"><span className="text-slate-500">{notebook.messages.length} saved notes</span><span className={status === "needs_revisiting" ? "text-amber-300" : status === "on_track" ? "text-emerald-300" : "text-sky-200"}>{statusLabel}</span></div></button>;
+            })}</div> : <div className="rounded-2xl border border-dashed border-white/15 bg-white/[.02] p-8 text-center"><BookOpen className="mx-auto text-slate-500"/><p className="mt-3 text-sm font-bold text-white">Your library is ready</p><p className="mt-1 text-xs text-slate-400">Create a subject notebook to save your learning journey.</p><button onClick={() => onNavigate("notebooks")} className="mt-4 rounded-xl bg-white/10 px-4 py-2 text-xs font-bold hover:bg-white/15">Browse notebooks</button></div>}
+
+            <div className="rounded-2xl border border-white/[.08] bg-[#101827] p-5 sm:p-6">
+              <div className="flex items-center justify-between"><div><p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-slate-500">Your agenda</p><h3 className="mt-1 text-lg font-extrabold text-white">Today’s study plan</h3></div><button onClick={() => onNavigate("study-plan")} className="rounded-lg p-2 text-slate-400 transition hover:bg-white/5 hover:text-white" aria-label="Open full study plan"><ArrowRight size={17}/></button></div>
+              {tasks.length ? <div className="mt-4 space-y-2">{tasks.slice(0,5).map((task) => <button key={task.id} onClick={() => onToggleTask(task.id)} className="flex w-full items-start gap-3 rounded-xl border border-transparent p-3 text-left transition hover:border-white/[.08] hover:bg-white/[.03]"><span className={`mt-0.5 ${task.completed ? "text-emerald-300" : "text-slate-500"}`}>{task.completed ? <CheckCircle2 size={18}/> : <Circle size={18}/>}</span><span className="min-w-0 flex-1"><span className={`block text-sm font-semibold ${task.completed ? "text-slate-500 line-through" : "text-slate-200"}`}>{task.title}</span><span className="mt-1 flex items-center gap-2 text-[11px] text-slate-500">{task.subject}<span>·</span><Clock3 size={12}/>{task.durationMinutes} min</span></span><span className={`rounded-md px-2 py-1 text-[9px] font-bold uppercase ${task.priority === "high" ? "bg-rose-400/10 text-rose-200" : task.priority === "medium" ? "bg-amber-300/10 text-amber-200" : "bg-slate-700/60 text-slate-400"}`}>{task.priority}</span></button>)}</div> : <div className="mt-4 rounded-xl bg-white/[.03] p-5 text-center"><p className="text-sm font-semibold text-slate-200">No tasks planned for today</p><p className="mt-1 text-xs text-slate-500">Build a realistic schedule that fits your day.</p><button onClick={() => onNavigate("study-plan")} className="mt-3 inline-flex items-center gap-2 rounded-lg bg-sky-300/10 px-3 py-2 text-xs font-bold text-sky-200 hover:bg-sky-300/15">Open planner <ArrowRight size={13}/></button></div>}
+            </div>
+          </div>
+
+          <aside className="space-y-5">
+            <div className="overflow-hidden rounded-2xl border border-violet-300/15 bg-gradient-to-br from-[#1b1832] to-[#111827] p-5 sm:p-6"><div className="flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-violet-300/10 text-violet-200"><Brain size={20}/></span><div><p className="text-[10px] font-extrabold uppercase tracking-[.16em] text-violet-200">Socratic tutor</p><h3 className="text-base font-extrabold text-white">Make a hard idea click.</h3></div></div><p className="mt-3 text-xs leading-5 text-slate-400">Get a hint, break down a question, or explore a topic together—without giving away the answer.</p><form onSubmit={submitAsk} className="mt-4"><label htmlFor="home-quick-ask" className="sr-only">Ask your tutor</label><div className="relative"><input id="home-quick-ask" value={quickQuery} onChange={(event) => setQuickQuery(event.target.value)} placeholder="What are you working on?" className="w-full rounded-xl border border-white/10 bg-[#0a1020] py-3 pl-4 pr-12 text-sm text-white placeholder:text-slate-600 outline-none transition focus:border-violet-300/50 focus:ring-2 focus:ring-violet-300/10"/><button type="submit" disabled={!quickQuery.trim()} aria-label="Ask tutor" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg bg-violet-400 p-2 text-slate-950 transition hover:bg-violet-300 disabled:opacity-30"><Send size={15}/></button></div></form><button onClick={() => onNavigate("tutor")} className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-violet-200 hover:text-white">Open tutor workspace <ArrowRight size={13}/></button></div>
+
+            <div className="rounded-2xl border border-white/[.08] bg-[#101827] p-5"><div className="flex items-center justify-between"><div><p className="text-[10px] font-extrabold uppercase tracking-[.16em] text-slate-500">Quick launch</p><h3 className="mt-1 text-base font-extrabold text-white">Choose your next move</h3></div><Zap size={18} className="text-amber-200"/></div><div className="mt-4 space-y-2">
+              {[
+                { title: "Practice a skill", subtitle: "Build fluency with focused rounds", tab: "practice" as NavigationTab, icon: <Target size={17}/>, tone: "text-emerald-200 bg-emerald-300/10" },
+                { title: "Explore subjects", subtitle: "Find a lesson or learning path", tab: "subjects" as NavigationTab, icon: <GraduationCap size={17}/>, tone: "text-sky-200 bg-sky-300/10" },
+                { title: "Review your progress", subtitle: "See strengths and next steps", tab: "progress" as NavigationTab, icon: <Sparkles size={17}/>, tone: "text-violet-200 bg-violet-300/10" },
+              ].map((item) => <button key={item.tab} onClick={() => onNavigate(item.tab)} className="group flex w-full items-center gap-3 rounded-xl border border-transparent p-3 text-left transition hover:border-white/[.08] hover:bg-white/[.03]"><span className={`grid h-9 w-9 place-items-center rounded-lg ${item.tone}`}>{item.icon}</span><span className="min-w-0 flex-1"><span className="block text-xs font-bold text-slate-200">{item.title}</span><span className="mt-0.5 block text-[10px] text-slate-500">{item.subtitle}</span></span><ChevronRight size={15} className="text-slate-600 transition group-hover:translate-x-0.5 group-hover:text-white"/></button>)}
+            </div></div>
+          </aside>
+        </section>
+        <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-white/[.06] pt-4 text-[10px] text-slate-600"><span>Small steps count. Your learning journey is yours.</span><span>Learning data shown from your saved practice and tasks.</span></footer>
       </div>
-    </div>
+    </section>
   );
 }

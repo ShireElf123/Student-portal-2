@@ -221,15 +221,19 @@ const ODYSSEY_NODES: OdysseyNode[] = [
 interface LearningOdysseyMapProps {
   onNavigateTab: (tab: NavigationTab) => void;
   onSelectStage: (stage: LearningStage) => void;
+  recommendedNodeId?: string;
+  onRecommendationConsumed?: () => void;
 }
 
 export function LearningOdysseyMap({
   onNavigateTab,
   onSelectStage,
+  recommendedNodeId,
+  onRecommendationConsumed,
 }: LearningOdysseyMapProps) {
   const [gamification, setGamification] = useState(getGamificationState);
   const [openedChest, setOpenedChest] = useState(false);
-  const [viewMode, setViewMode] = useState<"constellation" | "trail">("constellation");
+  const [viewMode, setViewMode] = useState<"constellation" | "trail">(() => recommendedNodeId ? "trail" : "constellation");
 
   useEffect(() => {
     return subscribeGamification(setGamification);
@@ -282,7 +286,7 @@ export function LearningOdysseyMap({
         </div>
 
         {/* Constellation Core Tree */}
-        <MasterySkillTreeView onNavigateTab={onNavigateTab} />
+        <MasterySkillTreeView onNavigateTab={onNavigateTab} recommendedNodeId={recommendedNodeId} onRecommendationConsumed={onRecommendationConsumed} />
       </div>
     );
   }

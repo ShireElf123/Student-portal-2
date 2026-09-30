@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Volume2, Star, RotateCcw, CheckCircle2, Music, Sparkles } from "lucide-react";
 import { soundEffects } from "../utils/soundEffects";
-import { speakText } from "../utils/speechUtils";
+import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { awardXP, awardStars, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 
@@ -220,6 +220,7 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [wrongShake, setWrongShake] = useState<string | null>(null);
+  const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const current = RHYME_QUESTIONS[index];
 
@@ -237,8 +238,14 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
     return () => clearTimeout(timer);
   }, [index]);
 
+  useEffect(() => () => {
+    if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+  }, []);
+
   const handleSelect = (option: { word: string; emoji: string; isCorrect: boolean }) => {
     if (isAnswered) return;
+    if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+    advanceTimerRef.current = null;
 
     setSelectedWord(option.word);
 
@@ -247,8 +254,8 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
       soundEffects.playSuccessChime();
       speakText(`Yes! ${current.targetWord} rhymes with ${option.word}! They sound like music!`, { pitch: 1.3 });
       awardXP(25);
-      awardStars(1);
-      onAddStar?.(1);
+      if (onAddStar) onAddStar(1);
+      else awardStars(1);
 
       try {
         recordLearningEvent({
@@ -267,7 +274,8 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
         });
       } catch {}
 
-      setTimeout(() => {
+      advanceTimerRef.current = setTimeout(() => {
+        advanceTimerRef.current = null;
         if (index < RHYME_QUESTIONS.length - 1) {
           setIndex(index + 1);
           setIsAnswered(false);
@@ -278,15 +286,16 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
           triggerCelebrationConfetti();
           speakText("Hooray! You are a master rhymer! Fantastic job!", { pitch: 1.25 });
           awardXP(50);
-          awardStars(3);
-          onAddStar?.(3);
+          if (onAddStar) onAddStar(3);
+          else awardStars(3);
         }
       }, 1500);
     } else {
       soundEffects.playGentleBoing();
       speakText(`Oops! Try again! Listen: ${current.targetWord}... what sounds like ${current.targetWord}?`, { pitch: 1.2 });
       setWrongShake(option.word);
-      setTimeout(() => {
+      advanceTimerRef.current = setTimeout(() => {
+        advanceTimerRef.current = null;
         setWrongShake(null);
         setSelectedWord(null);
       }, 800);
@@ -294,6 +303,9 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
   };
 
   const handleRestart = () => {
+    stopSpeaking();
+    if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
+    advanceTimerRef.current = null;
     setIndex(0);
     setIsAnswered(false);
     setIsCompleted(false);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   Target,
   Sparkles,
@@ -21,7 +21,7 @@ import {
   getDueMistakesCount,
   recordLearningEvent,
 } from "../utils/pedagogicalEngine";
-import { getAdaptiveDifficultyForSkill } from "../utils/learnerBrain";
+import { getAdaptiveDifficultyForSkill, subscribeLearnerModel } from "../utils/learnerBrain";
 import { resolveSkillForActivity } from "../data/activitySkillRegistry";
 import { MistakeReviewVaultModal } from "./MistakeReviewVaultModal";
 import { PrintableWorksheetGenerator } from "./PrintableWorksheetGenerator";
@@ -53,6 +53,9 @@ export function PracticeView({
   const [difficulty, setDifficulty] = useState<"easy" | "medium" | "hard">("medium");
   const [count, setCount] = useState<number>(5);
 
+  const [learnerRevision, setLearnerRevision] = useState(0);
+  useEffect(() => subscribeLearnerModel(() => setLearnerRevision((revision) => revision + 1)), []);
+
   // Dynamically resolve target standard node from central activity-skill registry
   const targetSkillInfo = useMemo(() => {
     return resolveSkillForActivity("practice-arena", subject, topic);
@@ -64,14 +67,7 @@ export function PracticeView({
     if (rawDiff === "beginner" || rawDiff === "easy") return "easy" as const;
     if (rawDiff === "hard" || rawDiff === "expert") return "hard" as const;
     return "medium" as const;
-  }, [targetSkillInfo.skillId, currentUserId]);
-
-  // Sync if prefilled changes and auto-calibrate difficulty from learner brain mastery level
-  useEffect(() => {
-    if (prefilledSubject) setSubject(prefilledSubject);
-    if (prefilledTopic) setTopic(prefilledTopic);
-    setDifficulty(brainAdaptiveLevel);
-  }, [prefilledSubject, prefilledTopic, brainAdaptiveLevel]);
+  }, [targetSkillInfo.skillId, currentUserId, learnerRevision]);
 
   // Session State
   const [loading, setLoading] = useState(false);
@@ -81,6 +77,15 @@ export function PracticeView({
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [hintLevel, setHintLevel] = useState<number>(0); // 0 = none, 1 = nudge, 2 = eliminate, 3 = worked
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
+  const [sessionId, setSessionId] = useState(() => `prac-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`);
+  const questionStartedAt = useRef(Date.now());
+
+  // Recalibrate between sessions, never mid-quiz, so each round stays internally consistent.
+  useEffect(() => {
+    if (prefilledSubject) setSubject(prefilledSubject);
+    if (prefilledTopic) setTopic(prefilledTopic);
+    if (questions.length === 0) setDifficulty(brainAdaptiveLevel);
+  }, [prefilledSubject, prefilledTopic, brainAdaptiveLevel, questions.length]);
 
   // Modals
   const [isMistakeVaultOpen, setIsMistakeVaultOpen] = useState(false);
@@ -115,6 +120,8 @@ export function PracticeView({
     setCurrentIndex(0);
     setHintLevel(0);
     setIsCompleted(false);
+    setSessionId(`prac-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`);
+    questionStartedAt.current = Date.now();
 
     try {
       const response = await fetch("/api/practice/generate", {
@@ -158,7 +165,7 @@ export function PracticeView({
     if (!isCorrect) {
       // Record mistake into spaced repetition review vault
       recordMistake({
-        questionId: q.id || `q-${currentIndex}-${Date.now()}`,
+        questionId: `${sessionId}-${q.id || `question-${currentIndex}`}`,
         domain: subject,
         topic: topic,
         question: q.question,
@@ -171,7 +178,6 @@ export function PracticeView({
         hintLevel3: q.explanation,
       });
       setDueMistakes(getDueMistakesCount());
-      setHintLevel((prev) => Math.min(3, prev + 1));
     }
 
     try {
@@ -188,6 +194,7 @@ export function PracticeView({
         difficulty: difficulty === "hard" ? "hard" : difficulty === "easy" ? "easy" : "medium",
         attempts: 1,
         hintsUsed: hintLevel,
+        timeSpentSeconds: Math.max(1, Math.round((Date.now() - questionStartedAt.current) / 1000)),
       });
     } catch {
       // ignore
@@ -200,7 +207,7 @@ export function PracticeView({
       }, 0);
 
       const session: PracticeSession = {
-        id: `prac-${Date.now()}`,
+        id: sessionId,
         subject: subject.trim(),
         topic: topic.trim(),
         difficulty,
@@ -570,6 +577,7 @@ export function PracticeView({
                   onClick={() => {
                     setCurrentIndex((prev) => prev + 1);
                     setHintLevel(0);
+                    questionStartedAt.current = Date.now();
                   }}
                   className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs sm:text-sm font-black flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer active:scale-95"
                 >
@@ -612,6 +620,12 @@ export function PracticeView({
             <p className="text-xs sm:text-sm text-slate-300 font-bold">
               Accuracy: {Math.round((totalScore / questions.length) * 100)}%
             </p>
+          </div>
+
+          <div className="rounded-2xl border border-indigo-500/30 bg-indigo-500/10 p-4 text-left">
+            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-indigo-200"><Brain size={15}/> Adaptive next step</div>
+            <p className="mt-2 text-sm font-bold text-white">Next round suggestion: {brainAdaptiveLevel}</p>
+            <p className="mt-1 text-xs leading-relaxed text-slate-300">Your next round uses the current skill record, including correct answers, retries and the hint level you chose. A hint is a learning tool—not a penalty.</p>
           </div>
 
           <div className="space-y-3 pt-2">

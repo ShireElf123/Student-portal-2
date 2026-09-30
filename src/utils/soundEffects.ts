@@ -175,44 +175,34 @@ class SoundEffectManager {
     }
   }
 
-  /**
-   * Resonant wooden/bell xylophone chime for musical keys
-   */
+  /** Soft, mallet-like tone with a short attack and inharmonic xylophone overtones. */
   playXylophoneKey(freq: number) {
     try {
       const ctx = this.getContext();
       if (!ctx) return;
-      const now = ctx.currentTime;
-
-      // Primary tone
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(freq, now);
-
-      // Sub harmonic for rich bell body
-      const subOsc = ctx.createOscillator();
-      const subGain = ctx.createGain();
-      subOsc.type = "triangle";
-      subOsc.frequency.setValueAtTime(freq * 2, now);
-
-      gain.gain.setValueAtTime(0.35, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
-
-      subGain.gain.setValueAtTime(0.12, now);
-      subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-
-      osc.connect(gain);
-      subOsc.connect(subGain);
-      gain.connect(ctx.destination);
-      subGain.connect(ctx.destination);
-
-      osc.start(now);
-      subOsc.start(now);
-      osc.stop(now + 0.86);
-      subOsc.stop(now + 0.42);
+      // Leave a small scheduling margin so the first note still sounds when a
+      // mobile browser has just resumed its suspended AudioContext.
+      const now = ctx.currentTime + 0.02;
+      const partials = [
+        { ratio: 1, level: 0.22, decay: 0.62 },
+        { ratio: 2.76, level: 0.075, decay: 0.19 },
+        { ratio: 5.4, level: 0.022, decay: 0.09 },
+      ];
+      partials.forEach(({ ratio, level, decay }) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq * ratio, now);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.linearRampToValueAtTime(level, now + 0.008);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + decay + 0.01);
+      });
     } catch {
-      // ignore
+      // AudioContext unavailable or blocked by browser policy.
     }
   }
 

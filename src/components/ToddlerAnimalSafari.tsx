@@ -111,7 +111,8 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
   }, [activeMode]);
 
   const startNewDetectiveRound = () => {
-    const nextTarget = SAFARI_ANIMALS[Math.floor(Math.random() * SAFARI_ANIMALS.length)];
+    const choices = SAFARI_ANIMALS.filter((animal) => animal.id !== targetAnimal.id);
+    const nextTarget = choices[Math.floor(Math.random() * choices.length)] ?? SAFARI_ANIMALS[0];
     setTargetAnimal(nextTarget);
     setSelectedAnimal(null);
     setShowCelebration(false);
@@ -128,8 +129,8 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
       setSelectedAnimal(animal);
       soundEffects.playSuccessChime();
       speakText(`${animal.call} ${animal.funFact}`, { pitch: 1.2, rate: 0.9 });
-      awardStars(1);
       if (onAddStar) onAddStar(1);
+      else awardStars(1);
       return;
     }
 
@@ -139,9 +140,9 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
       setShowCelebration(true);
       soundEffects.playFanfare();
       triggerCelebrationConfetti();
-      awardStars(2);
-      awardXP(25, `Identified ${animal.name}`);
       if (onAddStar) onAddStar(2);
+      else awardStars(2);
+      awardXP(25, `Identified ${animal.name}`);
       setScore((s) => s + 1);
 
       try {
