@@ -4,6 +4,7 @@ import { createServer as createViteServer } from "vite";
 import dotenv from "dotenv";
 import { aiService } from "./server/aiService";
 import { PracticeQuestion, StudyPlanTask } from "./server/types";
+import { validatePracticeRequest, validatePracticeQuestions } from "./server/practiceValidation";
 
 dotenv.config();
 
@@ -104,32 +105,13 @@ async function startServer() {
         return res.status(500).json({ error: "Academic intelligence core offline: GEMINI_API_KEY is missing." });
       }
 
-      // 1. Trim subject and topic
-      const cleanSubject = typeof req.body?.subject === "string" ? req.body.subject.trim() : "";
-      const cleanTopic = typeof req.body?.topic === "string" ? req.body.topic.trim() : "";
-
-      // 2. Reject empty subject or topic with HTTP 400
-      if (!cleanSubject) {
-        return res.status(400).json({ error: "Subject is required and cannot be empty." });
+      // 1-5. Validate and clean the request (see server/practiceValidation.ts).
+      const requestValidation = validatePracticeRequest(req.body);
+      if (requestValidation.ok === false) {
+        return res.status(400).json({ error: requestValidation.error });
       }
-      if (!cleanTopic) {
-        return res.status(400).json({ error: "Topic is required and cannot be empty." });
-      }
-
-      // 3. Validate difficulty against easy/medium/hard, reject invalid with HTTP 400
-      const rawDifficulty = typeof req.body?.difficulty === "string" ? req.body.difficulty.trim().toLowerCase() : "";
-      if (!["easy", "medium", "hard"].includes(rawDifficulty)) {
-        return res.status(400).json({ error: "Difficulty must be one of: 'easy', 'medium', 'hard'." });
-      }
-      const cleanDifficulty = rawDifficulty as "easy" | "medium" | "hard";
-
-      // 4. Non-numeric question count safely falls back to sensible default (5)
-      let parsedCount = Number(req.body?.count);
-      if (isNaN(parsedCount) || parsedCount <= 0) {
-        parsedCount = 5;
-      }
-      // 5. Clamp question count to 1–10
-      const cleanCount = Math.max(1, Math.min(10, Math.floor(parsedCount)));
+      const { subject: cleanSubject, topic: cleanTopic, difficulty: cleanDifficulty, count: cleanCount } =
+        requestValidation.request;
 
       // 6. Use strictly cleaned & clamped values in the AI prompt (never raw body)
       let difficultyGuidelines = "";
@@ -167,41 +149,9 @@ Return a valid JSON array of question objects adhering strictly to this schema:
 
       // Treat model output as untrusted input: validate the full contract before
       // exposing it to learners or recording scores against it.
-      const rawQuestions = Array.isArray(generated) ? generated : [];
-      const validQuestions: PracticeQuestion[] = [];
-      const seenPrompts = new Set<string>();
-      for (const candidate of rawQuestions) {
-        if (!candidate || typeof candidate !== "object") continue;
-        const q = candidate as Record<string, unknown>;
-        const question = typeof q.question === "string" ? q.question.trim() : "";
-        const explanation = typeof q.explanation === "string" ? q.explanation.trim() : "";
-        const hint = typeof q.hint === "string" ? q.hint.trim() : "";
-        const options = Array.isArray(q.options)
-          ? q.options.map((option) => typeof option === "string" ? option.trim() : "")
-          : [];
-        const answerIndex = Number(q.correctAnswerIndex);
-        const promptKey = question.toLocaleLowerCase();
-        const optionKeys = options.map((option) => option.toLocaleLowerCase());
-        const valid = question.length >= 8 && question.length <= 1400 &&
-          explanation.length >= 8 && explanation.length <= 2400 &&
-          hint.length >= 3 && hint.length <= 800 &&
-          options.length === 4 && options.every((option) => option.length > 0 && option.length <= 500) &&
-          new Set(optionKeys).size === options.length &&
-          Number.isInteger(answerIndex) && answerIndex >= 0 && answerIndex < options.length &&
-          !seenPrompts.has(promptKey);
-        if (!valid) continue;
-        seenPrompts.add(promptKey);
-        validQuestions.push({
-          id: `practice-${validQuestions.length + 1}-${Date.now().toString(36)}`,
-          question,
-          options,
-          correctAnswerIndex: answerIndex,
-          explanation,
-          hint,
-        });
-      }
+      const { valid, questions: validQuestions } = validatePracticeQuestions(generated, cleanCount);
 
-      if (validQuestions.length !== cleanCount) {
+      if (!valid) {
         console.warn(`Practice generator returned ${validQuestions.length}/${cleanCount} valid questions.`);
         return res.status(502).json({ error: "The question generator returned an incomplete or invalid set. Please try again." });
       }

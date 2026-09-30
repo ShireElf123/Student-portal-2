@@ -25,8 +25,9 @@ import { INITIAL_NOTEBOOKS, ACADEMIC_MODES } from "../data/defaultNotebooks";
 import { Sidebar } from "./Sidebar";
 import { MessageItem } from "./MessageItem";
 import { canConsumeAI, recordAIConsumption } from "../services/aiUsageService";
-
-const STORAGE_KEY = "my_student_portal_notebooks_v2";
+// Notebook persistence is owned by App (account-scoped v3 partition). This
+// view keeps no separate copy: the legacy unscoped v2 mirror previously
+// written here could resurface one account's notebooks inside another account.
 
 export const FRIENDLY_TUTOR_MODES: {
   id: FriendlyTutorMode;
@@ -91,21 +92,11 @@ export function ChatInterface({
   onClearInitialQuery,
   onOpenSubscriptionModal,
 }: ChatInterfaceProps) {
-  const [internalNotebooks, setInternalNotebooks] = useState<Notebook[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch {
-      // ignore
-    }
-    return INITIAL_NOTEBOOKS;
-  });
+  // Standalone fallback only: App always supplies notebooks + persistence.
+  const [internalNotebooks, setInternalNotebooks] = useState<Notebook[]>(() => [...INITIAL_NOTEBOOKS]);
 
   const [internalActiveNotebookId, setInternalActiveNotebookId] = useState<string>(() => {
-    return internalNotebooks[0]?.id || INITIAL_NOTEBOOKS[0].id;
+    return internalNotebooks[0]?.id || INITIAL_NOTEBOOKS[0]?.id || "";
   });
 
   const notebooks = propNotebooks || internalNotebooks;
@@ -122,13 +113,8 @@ export function ChatInterface({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(notebooks));
-    } catch (e) {
-      console.warn("Could not save to localStorage", e);
-    }
-  }, [notebooks]);
+  // Intentionally no local persistence here: App persists the account-scoped
+  // notebook partition (and syncs it to the cloud) on every change.
 
   const activeNotebook = notebooks.find((nb) => nb.id === activeNotebookId) || notebooks[0];
 

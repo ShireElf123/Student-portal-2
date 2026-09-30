@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   BookOpen,
@@ -39,6 +39,11 @@ import { speakText } from "../utils/speechUtils";
 import { awardXP, awardStars, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { resolveSkillForActivity } from "../data/activitySkillRegistry";
+import {
+  readScopedJSON,
+  writeScopedJSON,
+  subscribeAccountScope,
+} from "../utils/accountStorage";
 
 interface PrimaryHomeworkViewProps {
   onAskTutor: (prompt: string, attachment?: any) => void;
@@ -58,41 +63,21 @@ interface PrimaryHomeworkViewProps {
   currentUserId?: string;
 }
 
-const DEFAULT_HOMEWORK: HomeworkTask[] = [
-  {
-    id: "hw-1",
-    subject: "Mathematics",
-    title: "Page 42: Word Problems #1 to #5",
-    instructions: "Solve the two-step addition and subtraction problems. Show your work for each step.",
-    dueDate: todayISO(),
-    completed: false,
-    stage: "primary",
-    estimatedMinutes: 20,
-    parentSigned: false,
-  },
-  {
-    id: "hw-2",
-    subject: "Reading & English",
-    title: "Chapter 3: The Secret Garden & 3 New Vocabulary Words",
-    instructions: "Read pages 25-32 aloud to a parent or tutor. Write definitions for 'delighted', 'mysterious', and 'gloomy'.",
-    dueDate: todayISO(),
-    completed: true,
-    stage: "primary",
-    estimatedMinutes: 25,
-    parentSigned: true,
-  },
-  {
-    id: "hw-3",
-    subject: "Science",
-    title: "Draw & Label the Plant Life Cycle",
-    instructions: "Sketch the 4 stages of a bean plant: Seed, Germination, Seedling, and Adult Flowering Plant.",
-    dueDate: todayISO(),
-    completed: false,
-    stage: "primary",
-    estimatedMinutes: 15,
-    parentSigned: false,
-  },
-];
+const HOMEWORK_KEY = "my_student_portal_homework_v1";
+
+/**
+ * Loads this account's homework desk. The desk starts empty: demo tasks
+ * are never seeded, so a learner only ever sees their own real tasks.
+ */
+export function loadScopedHomeworkTasks(): HomeworkTask[] {
+  const saved = readScopedJSON<unknown>(HOMEWORK_KEY, null);
+  if (Array.isArray(saved)) {
+    return (saved as HomeworkTask[]).filter(
+      (task) => task && typeof task.id === "string"
+    );
+  }
+  return [];
+}
 
 export function PrimaryHomeworkView({
   onAskTutor,
@@ -107,15 +92,14 @@ export function PrimaryHomeworkView({
   activeClass,
   currentUserId,
 }: PrimaryHomeworkViewProps) {
-  const [tasks, setTasks] = useState<HomeworkTask[]>(() => {
-    try {
-      const saved = localStorage.getItem("my_student_portal_homework_v1");
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // ignore
-    }
-    return DEFAULT_HOMEWORK;
-  });
+  const [tasks, setTasks] = useState<HomeworkTask[]>(() => loadScopedHomeworkTasks());
+
+  // Reload this account's desk whenever sign-in/out/switch changes the scope.
+  useEffect(() => {
+    return subscribeAccountScope(() => {
+      setTasks(loadScopedHomeworkTasks());
+    });
+  }, []);
 
   const [homeworkQuestion, setHomeworkQuestion] = useState("");
   const [homeworkSubject, setHomeworkSubject] = useState("Mathematics");
@@ -133,11 +117,7 @@ export function PrimaryHomeworkView({
 
   const saveTasks = (updated: HomeworkTask[]) => {
     setTasks(updated);
-    try {
-      localStorage.setItem("my_student_portal_homework_v1", JSON.stringify(updated));
-    } catch {
-      // ignore
-    }
+    writeScopedJSON(HOMEWORK_KEY, updated);
   };
 
   const handleToggleCompleted = (id: string) => {

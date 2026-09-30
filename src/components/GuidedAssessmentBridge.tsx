@@ -22,6 +22,19 @@ import { GuidedAssessment, AssessmentItem, AssessmentScore, AssessmentResult } f
 import { GUIDED_ASSESSMENTS } from "../data/assessmentTemplates";
 import { speakText } from "../utils/speechUtils";
 import { todayISO } from "../utils/dateUtils";
+import { readScopedJSON, writeScopedJSON } from "../utils/accountStorage";
+
+const ASSESSMENTS_KEY = "my_student_portal_assessments_v1";
+
+export function loadScopedAssessmentResults(): AssessmentResult[] {
+  const saved = readScopedJSON<unknown>(ASSESSMENTS_KEY, null);
+  if (Array.isArray(saved)) {
+    return (saved as AssessmentResult[]).filter(
+      (result) => result && typeof result.id === "string"
+    );
+  }
+  return [];
+}
 
 interface GuidedAssessmentBridgeProps {
   initialAssessmentId?: string;
@@ -124,9 +137,9 @@ export function GuidedAssessmentBridge({
     setIsCompleted(true);
 
     try {
-      const savedResults = JSON.parse(localStorage.getItem("my_student_portal_assessments_v1") || "[]");
+      const savedResults = loadScopedAssessmentResults();
       savedResults.unshift(result);
-      localStorage.setItem("my_student_portal_assessments_v1", JSON.stringify(savedResults.slice(0, 50)));
+      writeScopedJSON(ASSESSMENTS_KEY, savedResults.slice(0, 50));
     } catch {
       // ignore
     }

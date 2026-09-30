@@ -1,8 +1,16 @@
 import confetti from "canvas-confetti";
 import { GamificationState, BuddyCompanionConfig } from "../types";
 import { soundEffects } from "./soundEffects";
+import {
+  getActiveAccountId,
+  readScopedJSON,
+  writeScopedJSON,
+  subscribeAccountScope,
+} from "./accountStorage";
 
 const STORAGE_KEY = "edu_gamification_state_v1";
+// One-time cleanup marker for the fictional starter baseline older builds shipped.
+const SCHEMA_MARKER_KEY = "edu_gamification_schema_v2";
 
 export const DEFAULT_BUDDY: BuddyCompanionConfig = {
   id: "buddy-pip",
@@ -30,12 +38,11 @@ const DEFAULT_STATE: GamificationState = {
 type Listener = (state: GamificationState) => void;
 const listeners = new Set<Listener>();
 
-function loadState(): GamificationState {
+function loadState(accountId: string = getActiveAccountId()): GamificationState {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_STATE;
-    const parsed = JSON.parse(raw) as Partial<GamificationState>;
-    if (localStorage.getItem("edu_gamification_schema_v2") === "true") {
+    const parsed = readScopedJSON<Partial<GamificationState> | null>(STORAGE_KEY, null, accountId);
+    if (!parsed) return { ...DEFAULT_STATE };
+    if (readScopedJSON<unknown>(SCHEMA_MARKER_KEY, null, accountId) === true) {
       return { ...DEFAULT_STATE, ...parsed };
     }
 
@@ -55,11 +62,11 @@ function loadState(): GamificationState {
         (id) => !["node-toddler-1", "node-toddler-2", "node-primary-1"].includes(id)
       ),
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-    localStorage.setItem("edu_gamification_schema_v2", "true");
+    writeScopedJSON(STORAGE_KEY, migrated, accountId);
+    writeScopedJSON(SCHEMA_MARKER_KEY, true, accountId);
     return migrated;
   } catch {
-    return DEFAULT_STATE;
+    return { ...DEFAULT_STATE };
   }
 }
 
@@ -67,13 +74,20 @@ let currentState: GamificationState = loadState();
 
 function saveState(state: GamificationState) {
   currentState = state;
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  } catch {
-    // ignore
-  }
+  writeScopedJSON(STORAGE_KEY, state);
   listeners.forEach((fn) => fn(currentState));
 }
+
+/** Reloads rewards state from the newly active account scope. */
+export function reloadGamificationScope(accountId: string = getActiveAccountId()): GamificationState {
+  currentState = loadState(accountId);
+  listeners.forEach((fn) => fn(currentState));
+  return currentState;
+}
+
+subscribeAccountScope((accountId) => {
+  reloadGamificationScope(accountId);
+});
 
 export function subscribeGamification(fn: Listener): () => void {
   listeners.add(fn);

@@ -265,7 +265,7 @@ function SpeedMathBlitzGame() {
             skillId: "math-k1-addition-subtraction",
             domain: "math",
             gradeBand: "2-3",
-            result: finalScore >= 100 ? "mastered" : finalScore >= 40 ? "success" : "practice",
+            result: finalScore >= 40 ? "success" : "practice",
             score: Math.min(100, Math.round((finalScore / 120) * 100)),
             difficulty: "medium",
             attempts: 1,

@@ -180,7 +180,7 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
               activityId: "toddler-color-magic",
               activityType: "toddler-color-lab",
               activityTitle: `Color Magic: Mixed ${result.colorName}`,
-              skillId: "sci-23-matter-energy",
+              skillId: "sci-23-matter-water",
               domain: "science",
               gradeBand: "toddler",
               result: "success",

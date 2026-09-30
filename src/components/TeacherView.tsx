@@ -28,7 +28,24 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { getLearnerSummary, getLearnerModel } from "../utils/pedagogicalEngine";
-import { CURRICULUM_DOMAINS, CURRICULUM_SKILL_NODES } from "../data/curriculumUniverse";
+import { CURRICULUM_DOMAINS, CURRICULUM_SKILL_NODES, SkillNode } from "../data/curriculumUniverse";
+import {
+  formatStandardReference,
+  getActiveCurriculumProfileId,
+  subscribeCurriculumProfile,
+} from "../data/curriculumProfiles";
+
+/**
+ * Teachers see regional standards codes only under a verified curriculum
+ * profile; every other lens shows the descriptive learning goal instead.
+ */
+function standardLabel(node: SkillNode | undefined, profileId: string, fallback: string): string {
+  if (!node) return fallback;
+  const ref = formatStandardReference(node, profileId);
+  if (ref.code) return `${ref.code} • Domain: ${node.domain}`;
+  if (!ref.verified) return `${ref.profile.authority} · mapping unverified • Domain: ${node.domain}`;
+  return `${ref.goal} • Domain: ${node.domain}`;
+}
 import { fetchEnrolledStudentsMastery } from "../firebaseCore";
 import {
   Classroom,
@@ -98,6 +115,12 @@ export function TeacherView({
   );
 
   // Classroom Modals & Join states
+  const [curriculumProfileId, setCurriculumProfileId] = useState(getActiveCurriculumProfileId);
+
+  useEffect(() => {
+    return subscribeCurriculumProfile(setCurriculumProfileId);
+  }, []);
+
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [joinCodeInput, setJoinCodeInput] = useState("");
   const [joinError, setJoinError] = useState<string | null>(null);
@@ -1227,7 +1250,7 @@ export function TeacherView({
                               <div key={node.id} className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between text-xs">
                                 <div className="min-w-0 pr-2">
                                   <p className="font-bold text-white truncate">{node.title}</p>
-                                  <p className="text-[11px] text-slate-400 mt-0.5">{node.standardCode} • Domain: {node.domain}</p>
+                                  <p className="text-[11px] text-slate-400 mt-0.5">{standardLabel(node, curriculumProfileId, node.id)}</p>
                                 </div>
                                 <div className="text-right shrink-0">
                                   <span className="text-rose-400 font-bold text-[11px]">{totalStruggles} Struggles</span>
@@ -1253,7 +1276,7 @@ export function TeacherView({
                               <div key={node.id} className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between text-xs">
                                 <div className="min-w-0 pr-2">
                                   <p className="font-bold text-white truncate">{node.title}</p>
-                                  <p className="text-[11px] text-slate-400 mt-0.5">{node.standardCode} • Domain: {node.domain}</p>
+                                  <p className="text-[11px] text-slate-400 mt-0.5">{standardLabel(node, curriculumProfileId, node.id)}</p>
                                 </div>
                                 <div className="text-right shrink-0">
                                   <span className="text-emerald-400 font-bold text-[11px]">{masteredCount} Mastered</span>
@@ -1380,7 +1403,7 @@ export function TeacherView({
                               return (
                                 <div key={skId} className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs">
                                   <p className="font-bold text-white truncate">{node?.title || skId}</p>
-                                  <p className="text-[10px] text-slate-400 mt-0.5">Domain: {node?.domain || "General"} • Standard: {node?.standardCode || skId}</p>
+                                  <p className="text-[10px] text-slate-400 mt-0.5">{standardLabel(node, curriculumProfileId, skId)}</p>
                                 </div>
                               );
                             })}

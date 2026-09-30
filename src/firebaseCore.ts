@@ -109,11 +109,23 @@ export const syncUserProfile = (...args: Parameters<CloudModule["syncUserProfile
 export const updateUserRole = (...args: Parameters<CloudModule["updateUserRole"]>): ReturnType<CloudModule["updateUserRole"]> =>
   import("./firebase").then((cloud) => cloud.updateUserRole(...args));
 
+export const fetchUserProfile = (...args: Parameters<CloudModule["fetchUserProfile"]>): ReturnType<CloudModule["fetchUserProfile"]> =>
+  import("./firebase").then((cloud) => cloud.fetchUserProfile(...args));
+
 export const generateParentLinkCode = (...args: Parameters<CloudModule["generateParentLinkCode"]>): ReturnType<CloudModule["generateParentLinkCode"]> =>
   import("./firebase").then((cloud) => cloud.generateParentLinkCode(...args));
 
 export const linkChildByCode = (...args: Parameters<CloudModule["linkChildByCode"]>): ReturnType<CloudModule["linkChildByCode"]> =>
   import("./firebase").then((cloud) => cloud.linkChildByCode(...args));
+
+export const unlinkChild = (...args: Parameters<CloudModule["unlinkChild"]>): ReturnType<CloudModule["unlinkChild"]> =>
+  import("./firebase").then((cloud) => cloud.unlinkChild(...args));
+
+export const fetchLinkedStudentProfiles = (...args: Parameters<CloudModule["fetchLinkedStudentProfiles"]>): ReturnType<CloudModule["fetchLinkedStudentProfiles"]> =>
+  import("./firebase").then((cloud) => cloud.fetchLinkedStudentProfiles(...args));
+
+export const fetchLinkedChildCollection = (...args: Parameters<CloudModule["fetchLinkedChildCollection"]>): ReturnType<CloudModule["fetchLinkedChildCollection"]> =>
+  import("./firebase").then((cloud) => cloud.fetchLinkedChildCollection(...args));
 
 export const saveNotebookToCloud = (...args: Parameters<CloudModule["saveNotebookToCloud"]>): ReturnType<CloudModule["saveNotebookToCloud"]> =>
   import("./firebase").then((cloud) => cloud.saveNotebookToCloud(...args));

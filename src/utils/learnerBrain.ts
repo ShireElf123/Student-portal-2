@@ -7,6 +7,10 @@ import {
   recordCloudLearningEvent,
   notifySyncStatus,
 } from "../firebaseCore";
+import {
+  GUEST_LEARNER_ID,
+  setActiveAccountId,
+} from "./accountStorage";
 
 export type SyncState = "synced" | "syncing" | "offline" | "error";
 let currentSyncState: SyncState = "synced";
@@ -189,6 +193,9 @@ export function getActiveLearnerId(): string {
 export function setActiveLearnerId(learnerId: string): void {
   if (!learnerId || learnerId === activeLearnerId) return;
   activeLearnerId = learnerId;
+  // Switching learners also switches the account storage scope, so every
+  // scoped partition (notebooks, homework, gamification, ...) follows.
+  setActiveAccountId(learnerId || GUEST_LEARNER_ID);
   cachedLearnerModel = null;
   const model = getLearnerModel(learnerId);
   listeners.forEach((fn) => fn(model));
@@ -201,51 +208,37 @@ function getLearnerStorageKey(learnerId: string): string {
   return `my_student_portal_learner_model_v1_${learnerId}`;
 }
 
-function getCompletedNodesStorageKey(learnerId: string): string {
-  return `my_student_portal_mastered_nodes_v1_${learnerId}`;
-}
-
 // Cache in memory
 let cachedLearnerModel: LearnerModel | null = null;
 const listeners = new Set<(model: LearnerModel) => void>();
 
 /**
- * Initializes baseline skill mastery records from curriculum universe
+ * Initializes baseline skill mastery records from curriculum universe.
+ * Every skill starts with zero evidence: mastery tiers are earned only
+ * through recorded learning events. Bare "completed node" ID lists from
+ * older versions are deliberately NOT converted into mastery — an ID in a
+ * list is not evidence of learning.
  */
-function createDefaultSkillMastery(learnerId: string = DEFAULT_LEARNER_ID): Record<string, SkillMasteryRecord> {
+function createDefaultSkillMastery(): Record<string, SkillMasteryRecord> {
   const mastery: Record<string, SkillMasteryRecord> = {};
 
-  // Check if student already had completed nodes saved
-  let existingCompleted: string[] = [];
-  try {
-    const namespacedKey = getCompletedNodesStorageKey(learnerId);
-    let saved = localStorage.getItem(namespacedKey);
-    if (!saved && (learnerId === DEFAULT_LEARNER_ID || learnerId === "child-maya")) {
-      saved = localStorage.getItem("my_student_portal_mastered_nodes_v1");
-    }
-    if (saved) {
-      existingCompleted = JSON.parse(saved);
-    }
-  } catch {}
-
   CURRICULUM_SKILL_NODES.forEach((node) => {
-    const isMastered = existingCompleted.includes(node.id);
     mastery[node.id] = {
       skillId: node.id,
       domain: node.domain,
       gradeBand: node.gradeBand,
-      tier: isMastered ? "master" : node.prerequisites.length === 0 ? "novice" : "locked",
-      evidenceScore: isMastered ? 90 : 0,
-      totalAttempts: isMastered ? 4 : 0,
-      successfulAttempts: isMastered ? 4 : 0,
+      tier: node.prerequisites.length === 0 ? "novice" : "locked",
+      evidenceScore: 0,
+      totalAttempts: 0,
+      successfulAttempts: 0,
       strugglesCount: 0,
       hintsUsedTotal: 0,
-      currentDifficultyLevel: isMastered ? 3 : 1,
-      consecutiveSuccesses: isMastered ? 3 : 0,
-      consecutiveUnassistedSuccesses: isMastered ? 3 : 0,
+      currentDifficultyLevel: 1,
+      consecutiveSuccesses: 0,
+      consecutiveUnassistedSuccesses: 0,
       consecutiveStruggles: 0,
-      lastPracticedTimestamp: isMastered ? Date.now() - 3600 * 1000 : 0,
-      masteredTimestamp: isMastered ? Date.now() - 3600 * 1000 : undefined,
+      lastPracticedTimestamp: 0,
+      masteredTimestamp: undefined,
       needsReview: false,
     };
   });
@@ -254,7 +247,7 @@ function createDefaultSkillMastery(learnerId: string = DEFAULT_LEARNER_ID): Reco
 }
 
 export function getInitialLearnerModel(learnerId: string = DEFAULT_LEARNER_ID): LearnerModel {
-  const skillMastery = createDefaultSkillMastery(learnerId);
+  const skillMastery = createDefaultSkillMastery();
   const strong = Object.values(skillMastery)
     .filter((s) => s.tier === "master" || s.tier === "practitioner")
     .map((s) => s.skillId);
@@ -284,11 +277,22 @@ export function getLearnerModel(specificLearnerId?: string): LearnerModel {
   }
 
   const storageKey = getLearnerStorageKey(targetId);
+  const LEGACY_MODEL_KEY = "my_student_portal_learner_model_v1";
   try {
     let raw = localStorage.getItem(storageKey);
-    // Legacy fallback for default scholar
+    // One-time legacy adoption for the active learner: pre-partition models
+    // move into this account's learner key and the unscoped original is
+    // removed, so no later account on this browser can see them.
     if (!raw && (targetId === DEFAULT_LEARNER_ID || !specificLearnerId)) {
-      raw = localStorage.getItem("my_student_portal_learner_model_v1");
+      raw = localStorage.getItem(LEGACY_MODEL_KEY);
+      if (raw && (!specificLearnerId || specificLearnerId === activeLearnerId)) {
+        try {
+          localStorage.setItem(storageKey, raw);
+          localStorage.removeItem(LEGACY_MODEL_KEY);
+        } catch {
+          // ignore adoption errors; the in-memory model below still works
+        }
+      }
     }
     if (raw) {
       const parsed = JSON.parse(raw) as LearnerModel;
@@ -341,17 +345,10 @@ export function saveLearnerModel(model: LearnerModel, specificLearnerId?: string
   const storageKey = getLearnerStorageKey(targetId);
   try {
     localStorage.setItem(storageKey, JSON.stringify(model));
-    // Also keep legacy keys synchronized for backward compatibility
-    if (targetId === DEFAULT_LEARNER_ID) {
-      localStorage.setItem("my_student_portal_learner_model_v1", JSON.stringify(model));
-    }
-    const masteredIds = Object.values(model.skillMastery)
-      .filter((s) => s.tier === "master")
-      .map((s) => s.skillId);
-    localStorage.setItem(getCompletedNodesStorageKey(targetId), JSON.stringify(masteredIds));
-    if (targetId === DEFAULT_LEARNER_ID) {
-      localStorage.setItem("my_student_portal_mastered_nodes_v1", JSON.stringify(masteredIds));
-    }
+    // Learner data stays partitioned: legacy unscoped mirrors are no longer
+    // written, so one account's model can never leak into another account.
+    // (Pre-existing unscoped copies are adopted into the first account's
+    // scope on read and then removed; see getLearnerModel above.)
   } catch (e) {
     console.warn("Failed to persist learner model:", e);
   }

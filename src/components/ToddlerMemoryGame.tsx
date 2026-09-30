@@ -145,7 +145,7 @@ export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) =>
                   skillId: "logic-k1-patterns",
                   domain: "logic",
                   gradeBand: "toddler",
-                  result: "mastered",
+                  result: "success",
                   score: 100,
                   difficulty: "easy",
                   attempts: moves + 1,

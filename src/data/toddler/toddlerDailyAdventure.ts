@@ -1,3 +1,5 @@
+import { readScopedJSON, writeScopedJSON } from "../../utils/accountStorage";
+
 export interface DailyMission {
   id: string;
   title: string;
@@ -151,18 +153,14 @@ export function getTodayAdventure(): DailySchedule {
 const MISSIONS_STORAGE_KEY = "toddler_daily_missions_completed_v1";
 
 export function getCompletedDailyMissionIds(): string[] {
-  try {
-    const raw = localStorage.getItem(MISSIONS_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    const today = new Date().toISOString().split("T")[0];
-    if (parsed.date === today && Array.isArray(parsed.ids)) {
-      return parsed.ids;
-    }
-    return [];
-  } catch {
-    return [];
+  const parsed = readScopedJSON<unknown>(MISSIONS_STORAGE_KEY, null);
+  if (!parsed || typeof parsed !== "object") return [];
+  const candidate = parsed as { date?: unknown; ids?: unknown };
+  const today = new Date().toISOString().split("T")[0];
+  if (candidate.date === today && Array.isArray(candidate.ids)) {
+    return candidate.ids.filter((id): id is string => typeof id === "string");
   }
+  return [];
 }
 
 export function markDailyMissionCompleted(missionId: string): { isFirstComplete: boolean; allCompleted: boolean } {
@@ -173,7 +171,7 @@ export function markDailyMissionCompleted(missionId: string): { isFirstComplete:
       return { isFirstComplete: false, allCompleted: existing.length >= 3 };
     }
     const updated = [...existing, missionId];
-    localStorage.setItem(MISSIONS_STORAGE_KEY, JSON.stringify({ date: today, ids: updated }));
+    writeScopedJSON(MISSIONS_STORAGE_KEY, { date: today, ids: updated });
     return { isFirstComplete: true, allCompleted: updated.length >= 3 };
   } catch {
     return { isFirstComplete: false, allCompleted: false };

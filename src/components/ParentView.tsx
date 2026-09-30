@@ -44,6 +44,7 @@ import { CURRICULUM_SKILL_NODES, CURRICULUM_DOMAINS } from "../data/curriculumUn
 import {
   getDueMistakesCount,
   getLearnerModel,
+  getInitialLearnerModel,
   subscribeLearnerModel,
   computeDomainMastery,
   getLearnerSummary,
@@ -51,6 +52,14 @@ import {
   DiagnosticResult,
   LearnerModel,
 } from "../utils/pedagogicalEngine";
+import {
+  fetchLinkedStudentProfiles,
+  fetchLinkedChildCollection,
+  fetchLearnerModelFromCloud,
+  linkChildByCode,
+  generateParentLinkCode,
+  unlinkChild,
+} from "../firebaseCore";
 
 interface ParentViewProps {
   notebooks: Notebook[];
@@ -64,9 +73,18 @@ interface ParentViewProps {
   onApplyDiagnosticRecommendation?: (nodeId: string) => void;
   assessmentResults?: AssessmentResult[];
   onStartAssessment?: (stage?: "toddler" | "primary") => void;
+  currentUserId?: string | null;
 }
 
-const DEFAULT_CHILDREN: LinkedStudent[] = [];
+/** Selector value for the learner profile stored in this browser. */
+const BROWSER_LEARNER_ID = "__browser__";
+
+const EMPTY_CHILD_CLOUD = {
+  notebooks: [] as Notebook[],
+  studyPlan: [] as StudyPlanItem[],
+  practiceSessions: [] as PracticeSession[],
+  model: null as LearnerModel | null,
+};
 
 export function ParentView({
   notebooks,
@@ -80,15 +98,108 @@ export function ParentView({
   onApplyDiagnosticRecommendation,
   assessmentResults = [],
   onStartAssessment,
+  currentUserId = null,
 }: ParentViewProps) {
-  // Only show authenticated, real linked learners here. Placeholder/demo children
-  // from older local profiles are intentionally not treated as actual accounts.
-  const [children] = useState<LinkedStudent[]>(DEFAULT_CHILDREN);
+  // Real linked learners resolve from the cloud family graph. Placeholder/demo
+  // children from older local profiles are never treated as actual accounts.
+  const [children, setChildren] = useState<LinkedStudent[]>([]);
+  const [childrenLoading, setChildrenLoading] = useState(false);
 
-  const [activeChildId, setActiveChildId] = useState<string>(
-    children[0]?.id || "current-learner"
-  );
+  const [activeChildId, setActiveChildId] = useState<string>(BROWSER_LEARNER_ID);
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+  const [linkModalTab, setLinkModalTab] = useState<"enter" | "issue" | "manage">("enter");
+  const [linkCodeInput, setLinkCodeInput] = useState("");
+  const [linkActionError, setLinkActionError] = useState<string | null>(null);
+  const [linkActionBusy, setLinkActionBusy] = useState(false);
+  const [linkSuccessName, setLinkSuccessName] = useState<string | null>(null);
+  const [issuedCode, setIssuedCode] = useState<string | null>(null);
+  const [issuedName, setIssuedName] = useState("");
+  const [unlinkingId, setUnlinkingId] = useState<string | null>(null);
+
+  const refreshChildren = async (selectId?: string) => {
+    if (!currentUserId) {
+      setChildren([]);
+      return;
+    }
+    setChildrenLoading(true);
+    try {
+      const profiles = await fetchLinkedStudentProfiles(currentUserId);
+      const next: LinkedStudent[] = profiles.map((profile) => ({
+        id: profile.id,
+        name: profile.name,
+        email: profile.email,
+        gradeLevel: profile.gradeLevel,
+        lastActive: profile.lastActive,
+      }));
+      setChildren(next);
+      if (selectId && next.some((child) => child.id === selectId)) {
+        setActiveChildId(selectId);
+      }
+    } catch {
+      setChildren([]);
+    } finally {
+      setChildrenLoading(false);
+    }
+  };
+
+  // Reload the family graph on sign-in/out/switch and reset the viewer to
+  // this browser's learner so one account never sees another's children.
+  useEffect(() => {
+    setActiveChildId(BROWSER_LEARNER_ID);
+    setLinkSuccessName(null);
+    setIssuedCode(null);
+    setLinkActionError(null);
+    refreshChildren();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUserId]);
+
+  const isViewingLinked = activeChildId !== BROWSER_LEARNER_ID;
+  const [childCloud, setChildCloud] = useState({ ...EMPTY_CHILD_CLOUD });
+  const [childLoading, setChildLoading] = useState(false);
+
+  // Load the linked learner's live cloud data whenever the selection changes.
+  useEffect(() => {
+    let cancelled = false;
+    if (!isViewingLinked || !currentUserId) {
+      setChildCloud({ ...EMPTY_CHILD_CLOUD });
+      setChildLoading(false);
+      return;
+    }
+    const studentId = activeChildId;
+    setChildLoading(true);
+    (async () => {
+      try {
+        const [cloudNotebooks, cloudStudy, cloudPractice, cloudModel] = await Promise.all([
+          fetchLinkedChildCollection(currentUserId, studentId, "notebooks"),
+          fetchLinkedChildCollection(currentUserId, studentId, "studyPlanItems"),
+          fetchLinkedChildCollection(currentUserId, studentId, "practiceSessions"),
+          fetchLearnerModelFromCloud(studentId),
+        ]);
+        if (cancelled) return;
+        const asNotebooks = (cloudNotebooks as unknown[]).filter(
+          (doc): doc is Notebook => !!doc && typeof (doc as Notebook).id === "string"
+        );
+        const asStudy = (cloudStudy as unknown[]).filter(
+          (doc): doc is StudyPlanItem => !!doc && typeof (doc as StudyPlanItem).id === "string"
+        );
+        const asPractice = (cloudPractice as unknown[]).filter(
+          (doc): doc is PracticeSession => !!doc && typeof (doc as PracticeSession).id === "string"
+        );
+        const model =
+          cloudModel && typeof cloudModel === "object" && (cloudModel as LearnerModel).skillMastery
+            ? (cloudModel as LearnerModel)
+            : null;
+        setChildCloud({ notebooks: asNotebooks, studyPlan: asStudy, practiceSessions: asPractice, model });
+      } catch {
+        if (!cancelled) setChildCloud({ ...EMPTY_CHILD_CLOUD });
+      } finally {
+        if (!cancelled) setChildLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeChildId, currentUserId, isViewingLinked]);
 
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
 
@@ -115,19 +226,27 @@ export function ParentView({
     return () => window.removeEventListener("mistake_vault_updated", handleUpdate);
   }, []);
   const [isVoiceTesting, setIsVoiceTesting] = useState(isSpeaking());
-  const [learnerModel, setLearnerModel] = useState<LearnerModel>(() => getLearnerModel(activeChildId));
+  // This browser's learner brain (live subscription to the active learner).
+  const [learnerModel, setLearnerModel] = useState<LearnerModel>(() => getLearnerModel());
 
   useEffect(() => {
-    setLearnerModel(getLearnerModel(activeChildId));
-  }, [activeChildId]);
+    setLearnerModel(getLearnerModel());
+    return subscribeLearnerModel(setLearnerModel);
+  }, [currentUserId]);
 
-  useEffect(() => {
-    return subscribeLearnerModel((model) => {
-      if (model.learnerId === activeChildId) {
-        setLearnerModel(model);
-      }
-    });
+  // What the dashboard displays: live cloud data for a linked learner, or
+  // this browser's local data otherwise. A linked learner with no cloud
+  // model yet shows honest zeros — never another profile's numbers.
+  const emptyLinkedModel = useMemo(() => {
+    const fresh = getInitialLearnerModel(activeChildId);
+    fresh.recommendedNext = [];
+    return fresh;
   }, [activeChildId]);
+  const displayModel = isViewingLinked ? childCloud.model || emptyLinkedModel : learnerModel;
+  const displayNotebooks = isViewingLinked ? childCloud.notebooks : notebooks;
+  const displayStudyPlan = isViewingLinked ? childCloud.studyPlan : studyPlan;
+  const displayPracticeSessions = isViewingLinked ? childCloud.practiceSessions : practiceSessions;
+  const hasLinkedCloudData = !isViewingLinked || childCloud.model !== null;
 
   useEffect(() => {
     const unsubSpeech = speechCoordinator.subscribe(setIsVoiceTesting);
@@ -144,36 +263,45 @@ export function ParentView({
     }
   };
 
-  const activeChild = useMemo(
-    () => children.find((c) => c.id === activeChildId) || children[0] || { id: "current-learner", name: "Current learner", email: "", gradeLevel: "This device", avatarUrl: "", lastActive: Date.now(), subjects: [] },
+  const activeChild: LinkedStudent = useMemo(
+    () =>
+      children.find((c) => c.id === activeChildId) || {
+        id: BROWSER_LEARNER_ID,
+        name: "Current learner",
+        email: "",
+        gradeLevel: "This browser",
+        avatarUrl: "",
+        lastActive: Date.now(),
+        subjects: [],
+      },
     [children, activeChildId]
   );
 
   // Today's Study Tasks for Child
   const todayStr = todayISO();
   const childTodayTasks = useMemo(
-    () => studyPlan.filter((task) => task.date === todayStr),
-    [studyPlan, todayStr]
+    () => displayStudyPlan.filter((task) => task.date === todayStr),
+    [displayStudyPlan, todayStr]
   );
   const completedTasksCount = childTodayTasks.filter((t) => t.completed).length;
 
   // Real Practice Accuracy & Stats
   const practiceMetrics = useMemo(() => {
-    if (practiceSessions.length === 0) {
+    if (displayPracticeSessions.length === 0) {
       return { totalQuestions: 0, correctAnswers: 0, accuracy: 0 };
     }
-    const totalQuestions = practiceSessions.reduce(
+    const totalQuestions = displayPracticeSessions.reduce(
       (acc, s) => acc + s.totalQuestions,
       0
     );
-    const correctAnswers = practiceSessions.reduce(
+    const correctAnswers = displayPracticeSessions.reduce(
       (acc, s) => acc + s.correctAnswers,
       0
     );
     const accuracy =
       totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
     return { totalQuestions, correctAnswers, accuracy };
-  }, [practiceSessions]);
+  }, [displayPracticeSessions]);
 
   // Topic Mastery Categorization from Real Notebooks
   const topicBreakdown = useMemo(() => {
@@ -181,8 +309,8 @@ export function ParentView({
     const needsReview: { name: string; subject: string }[] = [];
     const inProgress: { name: string; subject: string }[] = [];
 
-    notebooks.forEach((nb) => {
-      const status = getNotebookTopicStatus(nb, practiceSessions);
+    displayNotebooks.forEach((nb) => {
+      const status = getNotebookTopicStatus(nb, displayPracticeSessions);
       if (status === "on_track") {
         onTrack.push({ name: nb.name, subject: nb.subject });
       } else if (status === "needs_revisiting") {
@@ -193,7 +321,7 @@ export function ParentView({
     });
 
     return { onTrack, needsReview, inProgress };
-  }, [notebooks, practiceSessions]);
+  }, [displayNotebooks, displayPracticeSessions]);
 
   // AI Discussion Starters dynamically generated from the student's actual notebooks & practice
   const parentConversationStarters = useMemo(() => {
@@ -204,8 +332,8 @@ export function ParentView({
       context: string;
     }[] = [];
 
-    notebooks.forEach((nb) => {
-      const userQuestions = nb.messages
+    displayNotebooks.forEach((nb) => {
+      const userQuestions = (nb.messages || [])
         .filter((m) => m.role === "user")
         .map((m) => m.content);
 
@@ -232,7 +360,78 @@ export function ParentView({
     }
 
     return starters.slice(0, 3);
-  }, [notebooks]);
+  }, [displayNotebooks]);
+
+  const openLinkModal = (tab: "enter" | "issue" | "manage") => {
+    setLinkModalTab(tab);
+    setLinkActionError(null);
+    setLinkSuccessName(null);
+    setIsLinkModalOpen(true);
+  };
+
+  const handleClaimCode = async () => {
+    if (!currentUserId || linkActionBusy) return;
+    const code = linkCodeInput.trim().toUpperCase();
+    if (!code) {
+      setLinkActionError("Enter the link code from the learner's device.");
+      return;
+    }
+    setLinkActionBusy(true);
+    setLinkActionError(null);
+    setLinkSuccessName(null);
+    try {
+      const result = await linkChildByCode(currentUserId, code);
+      if (result.success && result.studentId) {
+        setLinkSuccessName(result.studentName || "Learner");
+        setLinkCodeInput("");
+        await refreshChildren(result.studentId);
+      } else {
+        setLinkActionError(result.error || "Could not link the learner account.");
+      }
+    } catch {
+      setLinkActionError("Could not link the learner account. Check your connection and try again.");
+    } finally {
+      setLinkActionBusy(false);
+    }
+  };
+
+  const handleIssueCode = async () => {
+    if (!currentUserId || linkActionBusy) return;
+    setLinkActionBusy(true);
+    setLinkActionError(null);
+    try {
+      const code = await generateParentLinkCode(currentUserId, issuedName.trim() || "Learner");
+      setIssuedCode(code);
+    } catch (error: any) {
+      setLinkActionError(error?.message || "Could not issue a link code right now.");
+    } finally {
+      setLinkActionBusy(false);
+    }
+  };
+
+  const handleCopyCode = async () => {
+    if (!issuedCode) return;
+    try {
+      await navigator.clipboard.writeText(issuedCode);
+    } catch {
+      // clipboard unavailable; the code stays visible for manual entry
+    }
+  };
+
+  const handleUnlink = async (studentId: string) => {
+    if (!currentUserId || unlinkingId) return;
+    setUnlinkingId(studentId);
+    setLinkActionError(null);
+    try {
+      await unlinkChild(currentUserId, studentId);
+      if (activeChildId === studentId) setActiveChildId(BROWSER_LEARNER_ID);
+      await refreshChildren();
+    } catch {
+      setLinkActionError("Could not remove the link. Check your connection and try again.");
+    } finally {
+      setUnlinkingId(null);
+    }
+  };
 
 
   return (
@@ -268,11 +467,13 @@ export function ParentView({
               onChange={(e) => setActiveChildId(e.target.value)}
               className="appearance-none bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-white font-bold text-xs sm:text-sm rounded-xl py-2.5 pl-4 pr-10 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500/50 shadow-sm"
             >
-              {children.length ? children.map((child) => (
+              <option value={BROWSER_LEARNER_ID}>Current learner · this browser</option>
+              {childrenLoading && <option disabled>Loading linked learners…</option>}
+              {children.map((child) => (
                 <option key={child.id} value={child.id}>
-                  {child.name} • {child.gradeLevel || "Student"}
+                  {child.name} • {child.gradeLevel || "Linked account"}
                 </option>
-              )) : <option value="current-learner">Current learner · this browser</option>}
+              ))}
             </select>
             <ChevronDown
               size={16}
@@ -282,9 +483,9 @@ export function ParentView({
 
           <button
             id="open-link-child-modal-btn"
-            onClick={() => setIsLinkModalOpen(true)}
+            onClick={() => openLinkModal(children.length > 0 ? "manage" : "enter")}
             className="p-2.5 sm:px-4 sm:py-2.5 text-xs sm:text-sm font-bold text-slate-200 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700/80 rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-sm"
-            title="About family account linking"
+            title="Link and manage family learner accounts"
           >
             <Plus size={16} />
             <span className="hidden sm:inline">Family accounts</span>
@@ -303,11 +504,21 @@ export function ParentView({
               <h2 className="text-lg sm:text-2xl font-black text-white">
                 {activeChild?.name || "Student"}
               </h2>
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs text-emerald-400 font-bold uppercase tracking-wider">This browser</span>
+              <span className={`w-2.5 h-2.5 rounded-full ${isViewingLinked ? "bg-sky-400" : "bg-emerald-400 animate-pulse"}`} />
+              <span className={`text-xs font-bold uppercase tracking-wider ${isViewingLinked ? "text-sky-300" : "text-emerald-400"}`}>
+                {isViewingLinked ? "Linked account" : "This browser"}
+              </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-medium">
-              Local learner profile • {notebooks.length} subject {notebooks.length === 1 ? "notebook" : "notebooks"}
+              {isViewingLinked ? (
+                childLoading
+                  ? `Loading ${activeChild?.name || "learner"}'s live progress…`
+                  : hasLinkedCloudData
+                    ? `${activeChild?.gradeLevel || "Student"} • Live from ${activeChild?.name || "learner"}'s signed-in account`
+                    : `${activeChild?.name || "Learner"} hasn't synced learning data yet — it appears after they sign in and practice.`
+              ) : (
+                <>Local learner profile • {displayNotebooks.length} subject {displayNotebooks.length === 1 ? "notebook" : "notebooks"}</>
+              )}
             </p>
           </div>
         </div>
@@ -348,7 +559,7 @@ export function ParentView({
                 Conversation starters
               </h3>
               <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-medium">
-                {parentConversationStarters.some((starter) => starter.context.startsWith("Explored inquiry:")) ? `Conversation prompts based on this browser profile’s saved tutor questions for ${activeChild.name}.` : "Gentle conversation prompts for reflecting on learning together."}
+                {parentConversationStarters.some((starter) => starter.context.startsWith("Explored inquiry:")) ? `Conversation prompts based on ${isViewingLinked ? `${activeChild.name}'s saved tutor questions` : `this browser profile's saved tutor questions for ${activeChild.name}`}.` : "Gentle conversation prompts for reflecting on learning together."}
               </p>
             </div>
           </div>
@@ -380,8 +591,8 @@ export function ParentView({
       </div>
 
       {/* Evidence-based next action */}
-      {learnerModel.recommendedNext[0] && (() => {
-        const nextAction = learnerModel.recommendedNext[0];
+      {displayModel.recommendedNext[0] && (() => {
+        const nextAction = displayModel.recommendedNext[0];
         return (
           <div className="flex flex-col justify-between gap-5 rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/70 via-teal-950/50 to-slate-900 p-6 shadow-xl sm:p-7 md:flex-row md:items-center">
             <div className="flex items-center gap-4">
@@ -405,7 +616,7 @@ export function ParentView({
           <div>
             <h3 className="text-base font-black text-white sm:text-lg">Family settings</h3>
             <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-400">
-              Progress shown here is from this browser profile. Secure multi-account linking and enforced screen-time or bedtime limits are not available yet.
+              Progress shown here is from this browser profile unless a linked learner is selected above. Enforced screen-time or bedtime limits are not available yet.
             </p>
           </div>
           <div className="flex shrink-0 gap-2">
@@ -434,8 +645,8 @@ export function ParentView({
           </div>
 
           <div className="space-y-3">
-            {notebooks.slice(0, 5).map((nb) => {
-              const status = getNotebookTopicStatus(nb, practiceSessions);
+            {displayNotebooks.slice(0, 5).map((nb) => {
+              const status = getNotebookTopicStatus(nb, displayPracticeSessions);
               const badge = getTopicStatusBadge(status);
               const msgCount = nb.messages?.length || 0;
 
@@ -615,8 +826,18 @@ export function ParentView({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {CURRICULUM_DOMAINS.map((domain) => {
             const domainNodes = CURRICULUM_SKILL_NODES.filter((n) => n.domain === domain.id);
-            // Real computed standard mastery from Unified Learning Brain for active child
-            const pct = computeDomainMastery(domain.id, activeChildId);
+            // Real computed mastery from the displayed model (linked cloud or this browser)
+            const pct = isViewingLinked
+              ? (() => {
+                  if (domainNodes.length === 0) return 0;
+                  let totalEvidence = 0;
+                  domainNodes.forEach((node) => {
+                    const record = displayModel.skillMastery[node.id];
+                    if (record) totalEvidence += record.tier === "master" ? 100 : record.evidenceScore;
+                  });
+                  return Math.min(100, Math.round(totalEvidence / domainNodes.length));
+                })()
+              : computeDomainMastery(domain.id);
             return (
               <div
                 key={domain.id}
@@ -642,18 +863,18 @@ export function ParentView({
         </div>
 
         {/* Identified Gap / Recommended Next Step Banner */}
-        {learnerModel.recommendedNext.length > 0 && (
+        {displayModel.recommendedNext.length > 0 && (
           <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs sm:text-sm">
             <div className="flex items-center gap-2.5 text-amber-200">
               <AlertCircle size={18} className="text-amber-400 shrink-0" />
               <span>
-                <strong>Smart Recommendation ({learnerModel.recommendedNext[0].badge}):</strong>{" "}
-                {learnerModel.recommendedNext[0].title} — {learnerModel.recommendedNext[0].reason}
+                <strong>Smart Recommendation ({displayModel.recommendedNext[0].badge}):</strong>{" "}
+                {displayModel.recommendedNext[0].title} — {displayModel.recommendedNext[0].reason}
               </span>
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <button
-                onClick={() => onNavigate(learnerModel.recommendedNext[0].targetTab)}
+                onClick={() => onNavigate(displayModel.recommendedNext[0].targetTab)}
                 className="px-3.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-bold text-xs transition-colors cursor-pointer"
               >
                 Start Recommended Task
@@ -669,14 +890,14 @@ export function ParentView({
         )}
 
         {/* Unified Learning Journey Event Stream */}
-        {learnerModel.recentEvents.length > 0 && (
+        {displayModel.recentEvents.length > 0 && (
           <div className="pt-2 border-t border-slate-800/80 space-y-2.5">
             <div className="flex items-center justify-between text-xs text-slate-400 font-bold">
-              <span>Recent Learning Milestones ({learnerModel.recentEvents.length} Recorded)</span>
-              <span className="text-emerald-400">{learnerModel.strongSkills.length} Strong Skills</span>
+              <span>Recent Learning Milestones ({displayModel.recentEvents.length} Recorded)</span>
+              <span className="text-emerald-400">{displayModel.strongSkills.length} Strong Skills</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-48 overflow-y-auto pr-1">
-              {learnerModel.recentEvents.slice(0, 6).map((evt) => (
+              {displayModel.recentEvents.slice(0, 6).map((evt) => (
                 <div
                   key={evt.id}
                   className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-xs flex items-center justify-between gap-2 shadow-sm"
@@ -795,7 +1016,7 @@ export function ParentView({
               Family & Homeschool Intelligence
             </h4>
             <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-medium">
-              View saved learning activity for the learner profile on this browser. Secure multi-child linking and weekly email reports are not available yet.
+              View saved learning activity for this browser's learner, or link family accounts above to follow each learner's live progress. Weekly email reports are not available yet.
             </p>
           </div>
         </div>
@@ -807,22 +1028,142 @@ export function ParentView({
         </button>
       </div>
 
-      {/* Transparent account-linking status: no fake codes or local-only accounts. */}
+      {/* Real family account linking: claim, issue, and manage verified links. */}
       {isLinkModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md" role="dialog" aria-modal="true" aria-labelledby="link-learner-title">
-          <div className="w-full max-w-md space-y-5 rounded-3xl border border-slate-700 bg-[#0f172a] p-6 shadow-2xl sm:p-8">
+          <div className="max-h-[92vh] w-full max-w-md space-y-5 overflow-y-auto rounded-3xl border border-slate-700 bg-[#0f172a] p-6 shadow-2xl sm:p-8">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2.5">
                 <LinkIcon className="h-5 w-5 text-emerald-400" />
-                <h3 id="link-learner-title" className="text-lg font-black text-white">Learner accounts</h3>
+                <h3 id="link-learner-title" className="text-lg font-black text-white">Family accounts</h3>
               </div>
-              <button onClick={() => setIsLinkModalOpen(false)} aria-label="Close learner account information" className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"><X size={18}/></button>
+              <button onClick={() => setIsLinkModalOpen(false)} aria-label="Close family account linking" className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-slate-800 hover:text-white"><X size={18}/></button>
             </div>
-            <div className="rounded-2xl border border-amber-400/20 bg-amber-400/[.06] p-4">
-              <p className="text-sm font-bold text-amber-100">Secure family linking isn’t available yet.</p>
-              <p className="mt-2 text-xs leading-5 text-slate-300">This dashboard currently reflects learning data stored in this browser profile. It cannot verify or connect another student account. No link codes or student IDs are being collected here.</p>
-            </div>
-            <button onClick={() => setIsLinkModalOpen(false)} className="w-full rounded-xl bg-slate-800 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-700">Got it</button>
+
+            {!currentUserId ? (
+              <div className="rounded-2xl border border-amber-400/20 bg-amber-400/[.06] p-4">
+                <p className="text-sm font-bold text-amber-100">Sign in to link family accounts.</p>
+                <p className="mt-2 text-xs leading-5 text-slate-300">Family linking connects verified signed-in accounts. Sign in with Google, then return here to enter a code or show one from the learner&apos;s device.</p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-3 gap-1 rounded-xl bg-slate-950/70 p-1 text-xs font-bold">
+                  {([["enter", "Enter code"], ["issue", "Get a code"], ["manage", `Linked (${children.length})`]] as const).map(([tab, label]) => (
+                    <button
+                      key={tab}
+                      onClick={() => { setLinkModalTab(tab); setLinkActionError(null); setLinkSuccessName(null); }}
+                      className={`rounded-lg px-2 py-2 transition-colors ${linkModalTab === tab ? "bg-emerald-500/20 text-emerald-200" : "text-slate-400 hover:text-white"}`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+
+                {linkModalTab === "enter" && (
+                  <div className="space-y-3">
+                    <p className="text-xs leading-5 text-slate-300">On the learner&apos;s signed-in device, open Family accounts → Get a code. Enter that code here to connect their live progress to this dashboard.</p>
+                    <label className="block">
+                      <span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-slate-400">Link code</span>
+                      <input
+                        value={linkCodeInput}
+                        onChange={(event) => setLinkCodeInput(event.target.value.toUpperCase())}
+                        onKeyDown={(event) => { if (event.key === "Enter") handleClaimCode(); }}
+                        placeholder="P-XXXXXX"
+                        maxLength={16}
+                        className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-center text-lg font-black tracking-[0.2em] text-white placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                      />
+                    </label>
+                    <button
+                      onClick={handleClaimCode}
+                      disabled={linkActionBusy}
+                      className="w-full rounded-xl bg-emerald-500 px-4 py-3 text-sm font-black text-slate-950 transition hover:bg-emerald-400 disabled:opacity-50"
+                    >
+                      {linkActionBusy ? "Linking…" : "Link learner account"}
+                    </button>
+                    <p className="text-[11px] leading-4 text-slate-500">Codes expire after 24 hours and work exactly once. Each learner needs their own code.</p>
+                  </div>
+                )}
+
+                {linkModalTab === "issue" && (
+                  <div className="space-y-3">
+                    <p className="text-xs leading-5 text-slate-300">Generate a code for the learner signed in on <strong>this device right now</strong>. Read it to the parent, who enters it under Family accounts → Enter code.</p>
+                    <label className="block">
+                      <span className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-slate-400">Learner name (shown to the parent)</span>
+                      <input
+                        value={issuedName}
+                        onChange={(event) => setIssuedName(event.target.value)}
+                        placeholder="e.g. Amahle"
+                        maxLength={60}
+                        className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 text-sm font-bold text-white placeholder:text-slate-600 focus:border-emerald-400 focus:outline-none"
+                      />
+                    </label>
+                    {!issuedCode ? (
+                      <button
+                        onClick={handleIssueCode}
+                        disabled={linkActionBusy}
+                        className="w-full rounded-xl bg-emerald-500 px-4 py-3 text-sm font-black text-slate-950 transition hover:bg-emerald-400 disabled:opacity-50"
+                      >
+                        {linkActionBusy ? "Generating…" : "Generate one-time code"}
+                      </button>
+                    ) : (
+                      <div className="space-y-2 rounded-2xl border border-emerald-500/30 bg-emerald-500/[.07] p-4 text-center">
+                        <p className="text-3xl font-black tracking-[0.15em] text-white">{issuedCode}</p>
+                        <p className="text-[11px] text-slate-400">Expires in 24 hours · one-time use</p>
+                        <div className="flex gap-2">
+                          <button onClick={handleCopyCode} className="flex-1 rounded-xl bg-slate-800 px-3 py-2 text-xs font-bold text-white hover:bg-slate-700">Copy code</button>
+                          <button onClick={() => setIssuedCode(null)} className="flex-1 rounded-xl bg-slate-800 px-3 py-2 text-xs font-bold text-slate-300 hover:bg-slate-700">New code</button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {linkModalTab === "manage" && (
+                  <div className="space-y-2">
+                    {childrenLoading && <p className="text-xs text-slate-400">Loading linked learners…</p>}
+                    {!childrenLoading && children.length === 0 && (
+                      <p className="text-xs leading-5 text-slate-300">No learners linked yet. Use Enter code to connect a learner&apos;s account.</p>
+                    )}
+                    {children.map((child) => (
+                      <div key={child.id} className="flex items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-bold text-white">{child.name}</p>
+                          <p className="text-[11px] text-slate-400">{child.gradeLevel || "Linked account"}</p>
+                        </div>
+                        <div className="flex shrink-0 gap-2">
+                          <button
+                            onClick={() => { setActiveChildId(child.id); setIsLinkModalOpen(false); }}
+                            className="rounded-lg bg-emerald-500/20 px-3 py-1.5 text-xs font-bold text-emerald-200 hover:bg-emerald-500/30"
+                          >
+                            View
+                          </button>
+                          <button
+                            onClick={() => handleUnlink(child.id)}
+                            disabled={unlinkingId === child.id}
+                            className="rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-bold text-slate-300 hover:bg-rose-500/30 hover:text-rose-200 disabled:opacity-50"
+                          >
+                            {unlinkingId === child.id ? "Removing…" : "Unlink"}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {linkSuccessName && (
+                  <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/[.08] p-3 text-xs font-bold text-emerald-200">
+                    ✓ {linkSuccessName} is now linked. Select them above to see live progress.
+                  </div>
+                )}
+                {linkActionError && (
+                  <div className="rounded-2xl border border-rose-500/30 bg-rose-500/[.08] p-3 text-xs font-bold text-rose-200">
+                    {linkActionError}
+                  </div>
+                )}
+              </>
+            )}
+
+            <button onClick={() => setIsLinkModalOpen(false)} className="w-full rounded-xl bg-slate-800 px-4 py-3 text-sm font-bold text-white transition hover:bg-slate-700">Done</button>
           </div>
         </div>
       )}

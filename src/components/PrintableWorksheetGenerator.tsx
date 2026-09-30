@@ -15,6 +15,10 @@ import {
   CurriculumDomain,
   GradeLevelBand,
 } from "../data/curriculumUniverse";
+import {
+  formatStandardReference,
+  getActiveCurriculumProfileId,
+} from "../data/curriculumProfiles";
 
 interface PrintableWorksheetGeneratorProps {
   isOpen: boolean;
@@ -167,9 +171,18 @@ export function PrintableWorksheetGenerator({
                   <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
                     {activeNode.title}
                   </h1>
-                  <p className="text-xs text-slate-600 font-medium">
-                    Standard Code: <strong>{activeNode.standardCode}</strong> • Grade {activeNode.gradeBand}
-                  </p>
+                  {(() => {
+                    const standardRef = formatStandardReference(activeNode, getActiveCurriculumProfileId());
+                    return (
+                      <p className="text-xs text-slate-600 font-medium">
+                        {standardRef.code ? (
+                          <>Standard Code: <strong>{standardRef.code}</strong> • Grade {activeNode.gradeBand}</>
+                        ) : (
+                          <>{standardRef.profile.label}: {standardRef.goal} • Grade {activeNode.gradeBand}</>
+                        )}
+                      </p>
+                    );
+                  })()}
                 </div>
                 <div className="text-right">
                   <span className="text-xs font-mono font-bold text-slate-500 uppercase">

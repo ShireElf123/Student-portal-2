@@ -98,7 +98,7 @@ export const ACTIVITY_SKILL_REGISTRY: Record<string, ActivitySkillMapping> = {
   },
   "toddler-color-magic": {
     activityId: "toddler-color-magic",
-    skillId: "sci-23-matter-energy",
+    skillId: "sci-23-matter-water",
     domain: "science",
     gradeBand: "toddler",
     displayName: "Color Mixing Cauldron",
@@ -211,11 +211,11 @@ export const ACTIVITY_SKILL_REGISTRY: Record<string, ActivitySkillMapping> = {
 const SUBJECT_TOPIC_SKILL_MAP: Record<string, { skillId: string; domain: CurriculumDomain; gradeBand: GradeLevelBand }> = {
   // Reading
   "reading-sight-words": { skillId: "read-23-sight-words", domain: "reading", gradeBand: "2-3" },
-  "reading-comprehension": { skillId: "read-23-reading-comprehension", domain: "reading", gradeBand: "2-3" },
+  "reading-comprehension": { skillId: "read-23-comprehension", domain: "reading", gradeBand: "2-3" },
   "reading-phonics": { skillId: "read-k1-phonemic-awareness", domain: "reading", gradeBand: "K-1" },
   "reading-blends": { skillId: "read-k1-consonant-blends", domain: "reading", gradeBand: "K-1" },
-  "reading-informational": { skillId: "read-45-informational-text", domain: "reading", gradeBand: "4-5" },
-  "reading-vocabulary": { skillId: "read-45-vocabulary-acquisition", domain: "reading", gradeBand: "4-5" },
+  "reading-informational": { skillId: "read-45-inference", domain: "reading", gradeBand: "4-5" },
+  "reading-vocabulary": { skillId: "read-45-grammar-syntax", domain: "reading", gradeBand: "4-5" },
 
   // Math
   "math-counting": { skillId: "math-k1-counting", domain: "math", gradeBand: "K-1" },
@@ -235,7 +235,7 @@ const SUBJECT_TOPIC_SKILL_MAP: Record<string, { skillId: string; domain: Curricu
   "science-habitats": { skillId: "sci-k1-habitats", domain: "science", gradeBand: "K-1" },
   "science-solarsystem": { skillId: "sci-23-solarsystem", domain: "science", gradeBand: "2-3" },
   "science-space": { skillId: "sci-23-solarsystem", domain: "science", gradeBand: "2-3" },
-  "science-matter": { skillId: "sci-23-matter-energy", domain: "science", gradeBand: "2-3" },
+  "science-matter": { skillId: "sci-23-matter-water", domain: "science", gradeBand: "2-3" },
   "science-energy": { skillId: "sci-45-energy-circuits", domain: "science", gradeBand: "4-5" },
   "science-ecosystems": { skillId: "sci-45-ecosystems-web", domain: "science", gradeBand: "4-5" },
 

@@ -51,12 +51,19 @@ import { soundEffects } from "./utils/soundEffects";
 import { todayISO } from "./utils/dateUtils";
 import {
   auth, signInWithGoogle, logOut, handleFirestoreError, OperationType,
-  syncUserProfile, updateUserRole, saveNotebookToCloud, syncAllNotebooksToCloud,
+  syncUserProfile, updateUserRole, fetchUserProfile, saveNotebookToCloud, syncAllNotebooksToCloud,
   deleteNotebookFromCloud, saveStudyPlanItemToCloud, deleteStudyPlanItemFromCloud,
   savePracticeSessionToCloud, createClassroom, joinClassroomByCode,
   createClassAssignment, submitClassAssignment, gradeClassSubmission,
   addClassResource, sendClassMessage,
 } from "./firebaseCore";
+import {
+  GUEST_LEARNER_ID,
+  getActiveAccountId,
+  migrateLegacyAccountData,
+  readScopedJSON,
+  writeScopedJSON,
+} from "./utils/accountStorage";
 import {
   setActiveLearnerId,
   saveLearnerModel,
@@ -69,6 +76,59 @@ import { resolveSkillForActivity } from "./data/activitySkillRegistry";
 const NOTEBOOKS_KEY = "my_student_portal_notebooks_v3";
 const STUDY_PLAN_KEY = "my_student_portal_study_plan_v3";
 const PRACTICE_KEY = "my_student_portal_practice_v3";
+const USER_ROLE_KEY = "my_student_portal_user_role";
+
+const STARTER_NOTEBOOK_IDS = new Set([
+  "math-primary-3",
+  "reading-phonics-2",
+  "stem-discovery",
+  "flashcards-primary",
+  "teach-planning",
+]);
+
+/** Loads the notebook partition for `accountId` (defaults to active scope). */
+function loadScopedNotebooks(accountId: string = getActiveAccountId()): Notebook[] {
+  const saved = readScopedJSON<unknown>(NOTEBOOKS_KEY, null, accountId);
+  if (Array.isArray(saved)) {
+    return (saved as Notebook[]).filter(
+      (notebook) =>
+        notebook &&
+        !(STARTER_NOTEBOOK_IDS.has(notebook.id) &&
+          notebook.messages?.length === 1 &&
+          notebook.messages[0]?.id?.startsWith("msg-init-"))
+    );
+  }
+  return [...INITIAL_NOTEBOOKS];
+}
+
+/** Loads the study-plan partition for `accountId` (defaults to active scope). */
+function loadScopedStudyPlan(accountId: string = getActiveAccountId()): StudyPlanItem[] {
+  const saved = readScopedJSON<unknown>(STUDY_PLAN_KEY, null, accountId);
+  if (Array.isArray(saved)) {
+    return (saved as StudyPlanItem[]).filter((task) => task && !task.id.startsWith("default-task-"));
+  }
+  return [];
+}
+
+/** Loads the practice-session partition for `accountId` (defaults to active scope). */
+function loadScopedPracticeSessions(accountId: string = getActiveAccountId()): PracticeSession[] {
+  const saved = readScopedJSON<unknown>(PRACTICE_KEY, null, accountId);
+  if (Array.isArray(saved)) {
+    return (saved as PracticeSession[]).filter((session) => session && !session.id.startsWith("prac-init-"));
+  }
+  return [];
+}
+
+const VALID_ROLES: UserRole[] = ["student", "parent", "teacher", "tutor"];
+
+/** Loads the persisted role for `accountId` (defaults to active scope). */
+function loadScopedRole(accountId: string = getActiveAccountId()): UserRole {
+  const saved = readScopedJSON<unknown>(USER_ROLE_KEY, null, accountId);
+  if (typeof saved === "string" && (VALID_ROLES as string[]).includes(saved)) {
+    return saved as UserRole;
+  }
+  return "student";
+}
 
 export default function App() {
   const [learningStage, setLearningStage] = useState<LearningStage>(() => {
@@ -109,17 +169,7 @@ export default function App() {
 
   const [selectedAssessmentId, setSelectedAssessmentId] = useState<string>("toddler-phonics-basics");
 
-  const [userRole, setUserRole] = useState<UserRole>(() => {
-    try {
-      const saved = localStorage.getItem("my_student_portal_user_role");
-      if (saved && ["student", "parent", "teacher", "tutor"].includes(saved)) {
-        return saved as UserRole;
-      }
-    } catch {
-      // ignore
-    }
-    return "student";
-  });
+  const [userRole, setUserRole] = useState<UserRole>(() => loadScopedRole(getActiveAccountId()));
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState<boolean>(false);
   const [isAgeModalOpen, setIsAgeModalOpen] = useState<boolean>(false);
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState<boolean>(false);
@@ -165,7 +215,7 @@ export default function App() {
   const handleSelectRole = (newRole: UserRole) => {
     setUserRole(newRole);
     try {
-      localStorage.setItem("my_student_portal_user_role", newRole);
+      writeScopedJSON(USER_ROLE_KEY, newRole);
     } catch {
       // ignore
     }
@@ -183,22 +233,8 @@ export default function App() {
     }
   };
 
-  // 1. Notebooks State (Fix #3: Multi-Notebook Cloud Persistence)
-  const [notebooks, setNotebooks] = useState<Notebook[]>(() => {
-    try {
-      const saved = localStorage.getItem(NOTEBOOKS_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
-          const starterIds = new Set(["math-primary-3", "reading-phonics-2", "stem-discovery", "flashcards-primary", "teach-planning"]);
-          return parsed.filter((notebook: Notebook) => !(starterIds.has(notebook.id) && notebook.messages?.length === 1 && notebook.messages[0]?.id?.startsWith("msg-init-")));
-        }
-      }
-    } catch {
-      // ignore
-    }
-    return INITIAL_NOTEBOOKS;
-  });
+  // 1. Notebooks State (partitioned per account; Fix #3: Multi-Notebook Cloud Persistence)
+  const [notebooks, setNotebooks] = useState<Notebook[]>(() => loadScopedNotebooks(getActiveAccountId()));
 
   const [activeNotebookId, setActiveNotebookId] = useState<string>(() => {
     return notebooks[0]?.id || "";
@@ -207,7 +243,7 @@ export default function App() {
   // Fix #3: Persist and sync EVERY modified notebook to Firestore, not just the active one
   useEffect(() => {
     try {
-      localStorage.setItem(NOTEBOOKS_KEY, JSON.stringify(notebooks));
+      writeScopedJSON(NOTEBOOKS_KEY, notebooks);
       if (currentUser) {
         // Sync all updated notebooks to cloud
         notebooks.forEach((nb) => {
@@ -219,45 +255,23 @@ export default function App() {
     }
   }, [notebooks, currentUser]);
 
-  // 2. Study Plan State
-  const [studyPlan, setStudyPlan] = useState<StudyPlanItem[]>(() => {
-    try {
-      const saved = localStorage.getItem(STUDY_PLAN_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed.filter((task: StudyPlanItem) => !task.id.startsWith("default-task-"));
-      }
-    } catch {
-      // ignore
-    }
-    return [];
-  });
+  // 2. Study Plan State (partitioned per account)
+  const [studyPlan, setStudyPlan] = useState<StudyPlanItem[]>(() => loadScopedStudyPlan(getActiveAccountId()));
 
   useEffect(() => {
     try {
-      localStorage.setItem(STUDY_PLAN_KEY, JSON.stringify(studyPlan));
+      writeScopedJSON(STUDY_PLAN_KEY, studyPlan);
     } catch (e) {
       console.warn("Error persisting study plan", e);
     }
   }, [studyPlan]);
 
-  // 3. Practice Sessions State
-  const [practiceSessions, setPracticeSessions] = useState<PracticeSession[]>(() => {
-    try {
-      const saved = localStorage.getItem(PRACTICE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed.filter((session: PracticeSession) => !session.id.startsWith("prac-init-"));
-      }
-    } catch {
-      // ignore
-    }
-    return [];
-  });
+  // 3. Practice Sessions State (partitioned per account)
+  const [practiceSessions, setPracticeSessions] = useState<PracticeSession[]>(() => loadScopedPracticeSessions(getActiveAccountId()));
 
   useEffect(() => {
     try {
-      localStorage.setItem(PRACTICE_KEY, JSON.stringify(practiceSessions));
+      writeScopedJSON(PRACTICE_KEY, practiceSessions);
     } catch (e) {
       console.warn("Error persisting practice sessions", e);
     }
@@ -275,12 +289,36 @@ export default function App() {
   const [classResources, setClassResources] = useState<ClassResource[]>([]);
   const [classMessages, setClassMessages] = useState<ClassMessage[]>([]);
 
-  // Auth Lifecycle Setup
+  // Auth Lifecycle Setup. On every sign-in, sign-out, or account switch the
+  // previous account's UI state is cleared and reloaded from the new account's
+  // partition before it can be displayed, persisted, or synced to the cloud.
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+      const accountId = user?.uid || GUEST_LEARNER_ID;
+      // Adopt legacy unscoped browser data at most once, for the first account.
+      migrateLegacyAccountData(accountId);
+      // Cascades into the storage scope so cached services (gamification,
+      // toddler progress, AI usage, learner brain) reload from this account.
+      setActiveLearnerId(accountId);
+
+      // Immediately swap account-owned UI state to the new partition.
+      const scopedNotebooks = loadScopedNotebooks(accountId);
+      setNotebooks(scopedNotebooks);
+      setActiveNotebookId(scopedNotebooks[0]?.id || "");
+      setStudyPlan(loadScopedStudyPlan(accountId));
+      setPracticeSessions(loadScopedPracticeSessions(accountId));
+      setUserRole(loadScopedRole(accountId));
+      setClassrooms([]);
+      setActiveClassId("");
+      setClassAssignments([]);
+      setClassSubmissions([]);
+      setClassResources([]);
+      setClassMessages([]);
+      setPracticePrefill({ subject: "", topic: "" });
+      setPendingTutorQuery(undefined);
+
       setCurrentUser(user);
       if (user) {
-        setActiveLearnerId(user.uid);
         try {
           await syncUserProfile({
             uid: user.uid,
@@ -288,19 +326,19 @@ export default function App() {
             displayName: user.displayName,
             photoURL: user.photoURL,
           });
+          // Reload the persisted role (including Parent/Educator mode) so the
+          // workspace matches the signed-in profile instead of a stale device value.
+          const profile = await fetchUserProfile(user.uid);
+          const cloudRole = profile?.role;
+          if (cloudRole && ["student", "parent", "teacher", "tutor"].includes(cloudRole)) {
+            setUserRole(cloudRole);
+            writeScopedJSON(USER_ROLE_KEY, cloudRole, user.uid);
+          }
           // Deterministic merge-safe synchronization that protects local offline progress
           await syncLearnerBrainWithCloud(user.uid);
         } catch (err) {
           console.error("Failed to sync user profile or learner model", err);
         }
-      } else {
-        setActiveLearnerId("scholar-primary-1");
-        setClassrooms([]);
-        setActiveClassId("");
-        setClassAssignments([]);
-        setClassSubmissions([]);
-        setClassResources([]);
-        setClassMessages([]);
       }
     });
 
@@ -367,7 +405,7 @@ export default function App() {
       collection(db, "users", uid, "studyPlanItems"),
       (snapshot) => {
         if (snapshot.empty) {
-          studyPlan.forEach((item) => saveStudyPlanItemToCloud(uid, item));
+          loadScopedStudyPlan(uid).forEach((item) => saveStudyPlanItemToCloud(uid, item));
         } else {
           const loaded: StudyPlanItem[] = [];
           snapshot.forEach((docSnap) => {
@@ -387,7 +425,7 @@ export default function App() {
       collection(db, "users", uid, "practiceSessions"),
       (snapshot) => {
         if (snapshot.empty) {
-          practiceSessions.forEach((p) => savePracticeSessionToCloud(uid, p));
+          loadScopedPracticeSessions(uid).forEach((p) => savePracticeSessionToCloud(uid, p));
         } else {
           const loaded: PracticeSession[] = [];
           snapshot.forEach((docSnap) => {
@@ -724,7 +762,7 @@ export default function App() {
         skillId: resolved.skillId,
         domain: resolved.domain,
         gradeBand: resolved.gradeBand,
-        result: isHighGrade ? "mastered" : "practice",
+        result: isHighGrade ? "success" : "practice",
         score: isHighGrade ? 100 : 70,
         difficulty: "medium",
         attempts: 1,
@@ -1108,6 +1146,7 @@ export default function App() {
 
         {activeTab === "parent" && (
           <ParentView
+            currentUserId={currentUser?.uid || null}
             notebooks={notebooks}
             studyPlan={studyPlan}
             practiceSessions={practiceSessions}

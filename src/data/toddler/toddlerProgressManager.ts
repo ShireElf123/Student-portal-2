@@ -1,6 +1,12 @@
 import { ALL_TODDLER_WORLDS, ToddlerWorld, ToddlerArea } from "./toddlerWorldsArchitecture";
 import { recordLearningEvent, getActiveLearnerId } from "../../utils/learnerBrain";
 import { resolveSkillForActivity } from "../activitySkillRegistry";
+import {
+  getActiveAccountId,
+  readScopedJSON,
+  writeScopedJSON,
+  subscribeAccountScope,
+} from "../../utils/accountStorage";
 
 export interface CompletedActivityRecord {
   completedAt: number;
@@ -49,46 +55,60 @@ export function getInitialToddlerProgress(): ToddlerWorldProgressState {
 }
 
 let cachedProgress: ToddlerWorldProgressState | null = null;
+let cachedAccountId: string | null = null;
 const listeners = new Set<(state: ToddlerWorldProgressState) => void>();
 
-export function getToddlerProgress(): ToddlerWorldProgressState {
-  if (cachedProgress) return cachedProgress;
-
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      // Ensure starter areas are unlocked
-      const unlocked = { ...parsed.unlockedAreas };
-      DEFAULT_STARTER_AREAS.forEach((id) => {
-        unlocked[id] = true;
-      });
-
-      cachedProgress = {
-        completedActivities: parsed.completedActivities || {},
-        completedMissions: parsed.completedMissions || {},
-        unlockedAreas: unlocked,
-        worldStars: parsed.worldStars || {},
-        lastVisitedWorldId: parsed.lastVisitedWorldId,
-        lastVisitedAreaId: parsed.lastVisitedAreaId,
-      };
-      return cachedProgress;
-    }
-  } catch (e) {
-    console.error("Failed to load toddler progress from localStorage:", e);
+function parseProgressState(parsed: unknown): ToddlerWorldProgressState | null {
+  if (!parsed || typeof parsed !== "object") return null;
+  const candidate = parsed as Partial<ToddlerWorldProgressState>;
+  if (
+    (candidate.completedActivities !== undefined && typeof candidate.completedActivities !== "object") ||
+    (candidate.completedMissions !== undefined && typeof candidate.completedMissions !== "object") ||
+    (candidate.unlockedAreas !== undefined && typeof candidate.unlockedAreas !== "object") ||
+    (candidate.worldStars !== undefined && typeof candidate.worldStars !== "object")
+  ) {
+    return null;
   }
+  // Ensure starter areas are unlocked
+  const unlocked = { ...(candidate.unlockedAreas || {}) };
+  DEFAULT_STARTER_AREAS.forEach((id) => {
+    unlocked[id] = true;
+  });
+  return {
+    completedActivities: candidate.completedActivities || {},
+    completedMissions: candidate.completedMissions || {},
+    unlockedAreas: unlocked,
+    worldStars: candidate.worldStars || {},
+    lastVisitedWorldId: candidate.lastVisitedWorldId,
+    lastVisitedAreaId: candidate.lastVisitedAreaId,
+  };
+}
 
-  cachedProgress = getInitialToddlerProgress();
+export function getToddlerProgress(accountId: string = getActiveAccountId()): ToddlerWorldProgressState {
+  if (cachedProgress && cachedAccountId === accountId) return cachedProgress;
+
+  const stored = readScopedJSON<unknown>(STORAGE_KEY, null, accountId);
+  cachedAccountId = accountId;
+  cachedProgress = parseProgressState(stored) || getInitialToddlerProgress();
   return cachedProgress;
 }
 
+/** Reloads cached progress from the newly active account scope. */
+export function reloadToddlerProgressScope(accountId: string = getActiveAccountId()): ToddlerWorldProgressState {
+  cachedProgress = null;
+  const next = getToddlerProgress(accountId);
+  listeners.forEach((fn) => fn(next));
+  return next;
+}
+
+subscribeAccountScope((accountId) => {
+  reloadToddlerProgressScope(accountId);
+});
+
 export function saveToddlerProgress(nextState: ToddlerWorldProgressState) {
+  cachedAccountId = getActiveAccountId();
   cachedProgress = nextState;
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
-  } catch (e) {
-    console.error("Failed to persist toddler progress:", e);
-  }
+  writeScopedJSON(STORAGE_KEY, nextState);
   listeners.forEach((fn) => fn(nextState));
 }
 
@@ -179,7 +199,7 @@ export function recordActivityCompletion(
       skillId: resolved.skillId,
       domain: resolved.domain,
       gradeBand: resolved.gradeBand,
-      result: isFirstCompletion ? "mastered" : "success",
+      result: "success",
       score: 100,
       difficulty: "easy",
       attempts: 1,
@@ -252,7 +272,7 @@ export function recordMissionCompletion(
       skillId: resolvedMission.skillId,
       domain: resolvedMission.domain,
       gradeBand: resolvedMission.gradeBand,
-      result: "mastered",
+      result: "success",
       score: 100,
       difficulty: "medium",
       attempts: 1,

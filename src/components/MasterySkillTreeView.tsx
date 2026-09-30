@@ -41,13 +41,41 @@ import {
   getLearnerModel,
   subscribeLearnerModel,
   RecommendedAction,
+  LearnerModel,
 } from "../utils/pedagogicalEngine";
 import { getActiveLearnerId } from "../utils/learnerBrain";
+import {
+  CURRICULUM_PROFILES,
+  formatStandardReference,
+  getActiveCurriculumProfileId,
+  setActiveCurriculumProfileId,
+  subscribeCurriculumProfile,
+} from "../data/curriculumProfiles";
 import { MistakeReviewVaultModal } from "./MistakeReviewVaultModal";
 import { DiagnosticPlacementModal } from "./DiagnosticPlacementModal";
 import { PrintableWorksheetGenerator } from "./PrintableWorksheetGenerator";
 
-const COMPLETED_NODES_KEY = "my_student_portal_mastered_nodes_v1";
+/**
+ * Mastery and unlocks derive exclusively from learner-model evidence tiers.
+ * No seeded badges and no isolated localStorage flags: a node shows
+ * "Mastered" only when the learner brain holds tier "master" for it, and a
+ * node unlocks when every prerequisite has practitioner-level evidence.
+ */
+function getNodeTier(model: LearnerModel, nodeId: string): string {
+  return model.skillMastery[nodeId]?.tier || "locked";
+}
+
+function isNodeMastered(model: LearnerModel, nodeId: string): boolean {
+  return getNodeTier(model, nodeId) === "master";
+}
+
+function isNodeUnlocked(model: LearnerModel, node: SkillNode): boolean {
+  if (node.prerequisites.length === 0) return true;
+  return node.prerequisites.every((prereq) => {
+    const tier = getNodeTier(model, prereq);
+    return tier === "practitioner" || tier === "master";
+  });
+}
 
 interface MasterySkillTreeViewProps {
   onNavigateTab: (tab: any) => void;
@@ -58,15 +86,6 @@ interface MasterySkillTreeViewProps {
 export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecommendationConsumed }: MasterySkillTreeViewProps) {
   const [selectedDomain, setSelectedDomain] = useState<CurriculumDomain | "all">("all");
   const [selectedGrade, setSelectedGrade] = useState<GradeLevelBand | "all">("all");
-
-  const [masteredNodeIds, setMasteredNodeIds] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem(COMPLETED_NODES_KEY);
-      if (saved) return JSON.parse(saved);
-    } catch {}
-    // Seed initial completed nodes so student doesn't start at empty
-    return ["math-k1-place-value", "read-k1-consonant-blends"];
-  });
 
   const [activeModalNode, setActiveModalNode] = useState<SkillNode | null>(null);
   const [isPracticingNode, setIsPracticingNode] = useState(false);
@@ -81,9 +100,14 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
   const [isWorksheetModalOpen, setIsWorksheetModalOpen] = useState(false);
   const [dueMistakes, setDueMistakes] = useState(getDueMistakesCount());
   const [learnerModel, setLearnerModel] = useState(getLearnerModel);
+  const [curriculumProfileId, setCurriculumProfileId] = useState(getActiveCurriculumProfileId);
 
   useEffect(() => {
     return subscribeLearnerModel(setLearnerModel);
+  }, []);
+
+  useEffect(() => {
+    return subscribeCurriculumProfile(setCurriculumProfileId);
   }, []);
 
   useEffect(() => {
@@ -93,12 +117,8 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
   }, []);
 
   const handleOpenNode = (node: SkillNode) => {
-    // Check prerequisites
-    const isUnlocked =
-      node.prerequisites.length === 0 ||
-      node.prerequisites.some((prereq) => masteredNodeIds.includes(prereq));
-
-    if (!isUnlocked) {
+    // Prerequisite gating follows learner-model evidence, not local flags.
+    if (!isNodeUnlocked(learnerModel, node)) {
       soundEffects.playGentleBoing();
       return;
     }
@@ -124,7 +144,8 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
     // instead of dropping the learner onto a locked activity.
     let launchNode = recommendedNode;
     let guard = 0;
-    while (launchNode.prerequisites.length > 0 && !launchNode.prerequisites.some((id) => masteredNodeIds.includes(id)) && guard < 8) {
+    const refreshedModel = getLearnerModel();
+    while (!isNodeUnlocked(refreshedModel, launchNode) && guard < 8) {
       const prerequisite = CURRICULUM_SKILL_NODES.find((node) => node.id === launchNode.prerequisites[0]);
       if (!prerequisite) break;
       launchNode = prerequisite;
@@ -205,22 +226,14 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
       setSelectedAnswer(null);
       setHintLevel(0);
     } else {
-      // Completed node!
+      // Completed node! Practice always earns score-scaled XP; the crown,
+      // gems and fanfare arrive only when learner-model evidence actually
+      // flips the skill tier to master.
       const total = activeModalNode.questions.length;
       const finalCorrect = correctCount + (selectedAnswer === activeModalNode.questions[questionIdx].correctAnswerIndex ? 1 : 0);
-      const isMastered = finalCorrect >= total * 0.5;
-
-      if (isMastered && !masteredNodeIds.includes(activeModalNode.id)) {
-        const nextMastered = [...masteredNodeIds, activeModalNode.id];
-        setMasteredNodeIds(nextMastered);
-        try {
-          localStorage.setItem(COMPLETED_NODES_KEY, JSON.stringify(nextMastered));
-        } catch {}
-        awardXP(activeModalNode.xpReward);
-        awardGems(activeModalNode.starsReward);
-        triggerCelebrationConfetti();
-        soundEffects.playFanfare();
-      }
+      const accuracy = total > 0 ? finalCorrect / total : 0;
+      const completionResult = accuracy >= 0.8 ? "success" : accuracy >= 0.5 ? "practice" : "struggle";
+      const tierBefore = getNodeTier(getLearnerModel(), activeModalNode.id);
 
       try {
         recordLearningEvent({
@@ -231,14 +244,26 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
           skillId: activeModalNode.id,
           domain: activeModalNode.domain,
           gradeBand: activeModalNode.gradeBand,
-          result: isMastered ? "mastered" : "practice",
-          score: Math.round((finalCorrect / total) * 100),
+          result: completionResult,
+          score: Math.round(accuracy * 100),
           difficulty: "medium",
           attempts: 1,
           hintsUsed: 0,
         });
       } catch {
         // ignore
+      }
+
+      awardXP(Math.max(10, Math.round(activeModalNode.xpReward * accuracy)), `${activeModalNode.title} Quest`);
+      const tierAfter = getNodeTier(getLearnerModel(), activeModalNode.id);
+      if (tierBefore !== "master" && tierAfter === "master") {
+        awardGems(activeModalNode.starsReward);
+        triggerCelebrationConfetti();
+        soundEffects.playFanfare();
+      } else if (accuracy >= 0.8) {
+        soundEffects.playSuccessChime();
+      } else {
+        soundEffects.playGentleBoing();
       }
 
       setIsPracticingNode(false);
@@ -254,11 +279,15 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
   });
 
   const masteredCount = CURRICULUM_SKILL_NODES.filter((n) =>
-    masteredNodeIds.includes(n.id)
+    isNodeMastered(learnerModel, n.id)
   ).length;
   const overallMasteryPct = Math.round(
     (masteredCount / CURRICULUM_SKILL_NODES.length) * 100
   );
+  const activeProfileRef = formatStandardReference(
+    CURRICULUM_SKILL_NODES[0],
+    curriculumProfileId
+  ).profile;
 
   return (
     <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 space-y-6 max-w-7xl mx-auto w-full">
@@ -353,11 +382,25 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
 
         <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80">
           <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider block">
-            Standards Alignment
+            Curriculum Lens
           </span>
-          <p className="text-xl sm:text-2xl font-black text-purple-400 mt-1">
-            CCSS & NGSS
+          <p className="text-base sm:text-lg font-black text-purple-400 mt-1 leading-tight" title={activeProfileRef.description}>
+            {activeProfileRef.label}
           </p>
+          <label className="mt-2 block">
+            <span className="sr-only">Choose a curriculum profile</span>
+            <select
+              value={curriculumProfileId}
+              onChange={(event) => setActiveCurriculumProfileId(event.target.value)}
+              className="w-full rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 text-xs font-bold text-white focus:outline-none focus:border-purple-400"
+            >
+              {CURRICULUM_PROFILES.map((profile) => (
+                <option key={profile.id} value={profile.id}>
+                  {profile.label}{profile.verifiedMapping ? "" : " (mapping unverified)"}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
       </div>
 
@@ -456,10 +499,9 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
       {/* Skill Constellation Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
         {filteredNodes.map((node, idx) => {
-          const isMastered = masteredNodeIds.includes(node.id);
-          const isUnlocked =
-            node.prerequisites.length === 0 ||
-            node.prerequisites.some((prereq) => masteredNodeIds.includes(prereq));
+          const isMastered = isNodeMastered(learnerModel, node.id);
+          const isUnlocked = isNodeUnlocked(learnerModel, node);
+          const standardRef = formatStandardReference(node, curriculumProfileId);
 
           return (
             <motion.div
@@ -482,9 +524,15 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
                       {node.iconEmoji}
                     </span>
                     <div>
-                      <span className="text-[10px] font-mono font-bold text-slate-400 uppercase block">
-                        {node.standardCode}
-                      </span>
+                      {standardRef.code ? (
+                        <span className="text-[10px] font-mono font-bold text-slate-400 uppercase block">
+                          {standardRef.code}
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold text-slate-400 block" title={standardRef.profile.description}>
+                          {standardRef.verified ? "Global learning goal" : `${standardRef.profile.authority} · mapping unverified`}
+                        </span>
+                      )}
                       <span className="text-xs font-bold text-indigo-300">
                         Grades {node.gradeBand}
                       </span>
@@ -544,10 +592,19 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
                   {activeModalNode.iconEmoji}
                 </span>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-bold text-indigo-400 uppercase">
-                      {activeModalNode.standardCode}
-                    </span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {(() => {
+                      const modalRef = formatStandardReference(activeModalNode, curriculumProfileId);
+                      return modalRef.code ? (
+                        <span className="text-xs font-mono font-bold text-indigo-400 uppercase">
+                          {modalRef.code}
+                        </span>
+                      ) : (
+                        <span className="text-xs font-bold text-indigo-300" title={modalRef.profile.description}>
+                          {modalRef.verified ? "Global learning goal" : `${modalRef.profile.authority} · mapping unverified`}
+                        </span>
+                      );
+                    })()}
                     <span className="text-xs text-slate-400 font-bold">
                       • Grade {activeModalNode.gradeBand}
                     </span>
@@ -601,7 +658,7 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
 
                   <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-xs text-slate-400 font-bold">
                     <span>Target Challenges: {activeModalNode.questions.length} questions</span>
-                    <span>Reward: +{activeModalNode.xpReward} XP & 👑 Gold Crown</span>
+                    <span>Reward: up to +{activeModalNode.xpReward} XP · 👑 crown when mastery evidence is earned</span>
                   </div>
                 </div>
               ) : (
@@ -790,7 +847,8 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
           if (!match) return;
           let launchNode = match;
           let guard = 0;
-          while (launchNode.prerequisites.length > 0 && !launchNode.prerequisites.some((id) => masteredNodeIds.includes(id)) && guard < 8) {
+          const refreshedModel = getLearnerModel();
+          while (!isNodeUnlocked(refreshedModel, launchNode) && guard < 8) {
             const prerequisite = CURRICULUM_SKILL_NODES.find((node) => node.id === launchNode.prerequisites[0]);
             if (!prerequisite) break;
             launchNode = prerequisite;

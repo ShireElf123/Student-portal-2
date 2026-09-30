@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Compass,
   CheckCircle2,
@@ -35,17 +35,32 @@ export function DiagnosticPlacementModal({
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [result, setResult] = useState<DiagnosticResult | null>(null);
 
+  // Shuffle answer positions every time the quest opens so the correct
+  // choice cannot be guessed from its position. Answers are stored as
+  // original option indices, so evaluation stays unchanged.
+  const deck = useMemo(() => {
+    return DIAGNOSTIC_PLACEMENT_QUESTIONS.map((question) => {
+      const displayOrder = question.options.map((_, index) => index);
+      for (let i = displayOrder.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [displayOrder[i], displayOrder[j]] = [displayOrder[j], displayOrder[i]];
+      }
+      return { ...question, displayOrder };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
-  const currentQ = DIAGNOSTIC_PLACEMENT_QUESTIONS[currentIdx];
+  const currentQ = deck[currentIdx];
   const hasAnsweredCurrent = currentQ && answers[currentQ.id] !== undefined;
 
-  const handleSelectOption = (optIdx: number) => {
-    if (hasAnsweredCurrent) return;
-    const nextAnswers = { ...answers, [currentQ.id]: optIdx };
+  const handleSelectOption = (originalIdx: number) => {
+    if (hasAnsweredCurrent || !currentQ) return;
+    const nextAnswers = { ...answers, [currentQ.id]: originalIdx };
     setAnswers(nextAnswers);
 
-    if (optIdx === currentQ.correctAnswerIndex) {
+    if (originalIdx === currentQ.correctAnswerIndex) {
       soundEffects.playPop();
     } else {
       soundEffects.playGentleBoing();
@@ -53,7 +68,7 @@ export function DiagnosticPlacementModal({
   };
 
   const handleNext = () => {
-    if (currentIdx < DIAGNOSTIC_PLACEMENT_QUESTIONS.length - 1) {
+    if (currentIdx < deck.length - 1) {
       setCurrentIdx((prev) => prev + 1);
     } else {
       // Evaluate!
@@ -102,7 +117,7 @@ export function DiagnosticPlacementModal({
               {/* Progress Tracker */}
               <div className="flex items-center justify-between text-xs text-slate-400 font-semibold">
                 <span>
-                  Question {currentIdx + 1} of {DIAGNOSTIC_PLACEMENT_QUESTIONS.length}
+                  Question {currentIdx + 1} of {deck.length}
                 </span>
                 <span className="uppercase tracking-wider px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-bold text-[11px]">
                   {currentQ.discipline} • Grade {currentQ.targetGradeBand}
@@ -114,7 +129,7 @@ export function DiagnosticPlacementModal({
                 <div
                   className="h-full bg-indigo-500 transition-all duration-300"
                   style={{
-                    width: `${((currentIdx + 1) / DIAGNOSTIC_PLACEMENT_QUESTIONS.length) * 100}%`,
+                    width: `${((currentIdx + 1) / deck.length) * 100}%`,
                   }}
                 />
               </div>
@@ -128,9 +143,10 @@ export function DiagnosticPlacementModal({
 
               {/* Options */}
               <div className="space-y-2.5">
-                {currentQ.options.map((opt, oIdx) => {
-                  const isSelected = answers[currentQ.id] === oIdx;
-                  const isCorrect = oIdx === currentQ.correctAnswerIndex;
+                {currentQ.displayOrder.map((originalIdx, position) => {
+                  const opt = currentQ.options[originalIdx];
+                  const isSelected = answers[currentQ.id] === originalIdx;
+                  const isCorrect = originalIdx === currentQ.correctAnswerIndex;
 
                   let style = "bg-slate-900 border-slate-700/80 text-white hover:border-slate-500";
                   if (hasAnsweredCurrent) {
@@ -145,14 +161,14 @@ export function DiagnosticPlacementModal({
 
                   return (
                     <button
-                      key={oIdx}
+                      key={originalIdx}
                       disabled={hasAnsweredCurrent}
-                      onClick={() => handleSelectOption(oIdx)}
+                      onClick={() => handleSelectOption(originalIdx)}
                       className={`w-full p-4 rounded-xl border text-left text-xs sm:text-sm font-bold flex items-center justify-between gap-3 transition-all cursor-pointer ${style}`}
                     >
                       <div className="flex items-center gap-3">
                         <span className="w-7 h-7 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 flex items-center justify-center text-xs font-black">
-                          {String.fromCharCode(65 + oIdx)}
+                          {String.fromCharCode(65 + position)}
                         </span>
                         <span>{opt}</span>
                       </div>
@@ -206,7 +222,7 @@ export function DiagnosticPlacementModal({
                 <p className="text-xs sm:text-sm text-slate-200">
                   A suggested place to begin: <strong>{result.recommendedDomainFocus}</strong>.
                 </p>
-                <p className="text-[11px] leading-relaxed text-slate-400">This brief screening is a starting point, not a formal grade-level assessment. Use the suggested band as a guide and adjust it based on how learning feels.</p>
+                <p className="text-[11px] leading-relaxed text-slate-400">This brief screening asks only {Math.round(result.total / 12)} questions per subject-and-grade area, so treat it as a rough starting point — not a formal grade-level assessment and not proof of mastery. Adjust the suggested band based on how learning feels.</p>
                 <div className="grid grid-cols-3 gap-2 pt-1 text-[10px]">
                   {Object.entries(result.gradeBandScores).map(([band, score]) => (
                     <div key={band} className="rounded-lg border border-slate-800 bg-slate-950/60 p-2 text-center">
@@ -260,7 +276,7 @@ export function DiagnosticPlacementModal({
                 onClick={handleNext}
                 className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition-all cursor-pointer active:scale-95"
               >
-                <span>{currentIdx < DIAGNOSTIC_PLACEMENT_QUESTIONS.length - 1 ? "Next Question" : "See Diagnostic Report"}</span>
+                <span>{currentIdx < deck.length - 1 ? "Next Question" : "See Diagnostic Report"}</span>
                 <ArrowRight size={16} />
               </button>
             )}

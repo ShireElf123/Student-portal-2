@@ -40,12 +40,23 @@ function getDiagnosticProfileKey(learnerId?: string): string {
 // ==========================================
 
 export function getMistakeVault(learnerId?: string): MistakeVaultItem[] {
-  const key = getMistakeVaultKey(learnerId);
+  const targetId = learnerId || getActiveLearnerId();
+  const key = getMistakeVaultKey(targetId);
   try {
     let raw = localStorage.getItem(key);
-    // Legacy fallback for default scholar
+    // One-time legacy adoption for the active learner: the unscoped vault is
+    // moved into this account's learner key and then removed, so no later
+    // account on this browser can see it.
     if (!raw && (!learnerId || learnerId === "scholar-primary-1" || learnerId === "child-maya")) {
       raw = localStorage.getItem(DEFAULT_MISTAKE_VAULT_KEY);
+      if (raw && targetId === getActiveLearnerId()) {
+        try {
+          localStorage.setItem(key, raw);
+          localStorage.removeItem(DEFAULT_MISTAKE_VAULT_KEY);
+        } catch {
+          // ignore adoption errors; the in-memory items below still work
+        }
+      }
     }
     if (!raw) return [];
     return JSON.parse(raw);
@@ -59,9 +70,9 @@ export function saveMistakeVault(items: MistakeVaultItem[], learnerId?: string):
   const key = getMistakeVaultKey(targetId);
   try {
     localStorage.setItem(key, JSON.stringify(items));
-    if (targetId === "scholar-primary-1") {
-      localStorage.setItem(DEFAULT_MISTAKE_VAULT_KEY, JSON.stringify(items));
-    }
+    // No unscoped mirror: vaults stay partitioned per learner. The one-time
+    // accountStorage migration adopts legacy unscoped copies into the first
+    // account's scope and then removes them.
     window.dispatchEvent(new CustomEvent("mistake_vault_updated", { detail: items }));
   } catch {
     // ignore
@@ -250,6 +261,78 @@ export const DIAGNOSTIC_PLACEMENT_QUESTIONS: DiagnosticQuestion[] = [
     options: ["Place it in a warm sunny spot", "Wrap it in more ice", "Put it in a freezer", "Move it into a colder room"], correctAnswerIndex: 0,
     explanation: "A warmer place transfers heat to the ice, so it melts faster.",
   },
+  {
+    id: "diag-13", discipline: "math", targetGradeBand: "K-1",
+    prompt: "Which number is the greatest?",
+    options: ["27", "17", "72", "71"], correctAnswerIndex: 2,
+    explanation: "Compare the tens first: 72 has the most tens, so 72 is the greatest.",
+  },
+  {
+    id: "diag-14", discipline: "reading", targetGradeBand: "2-3",
+    prompt: "Which word has a suffix that means 'full of'?",
+    options: ["quickly", "reread", "unhappy", "joyful"], correctAnswerIndex: 3,
+    explanation: "The suffix '-ful' means 'full of', so 'joyful' means full of joy.",
+  },
+  {
+    id: "diag-15", discipline: "math", targetGradeBand: "2-3",
+    prompt: "A farmer picks 3 baskets with 9 apples in each basket. How many apples is that?",
+    options: ["27", "12", "36", "18"], correctAnswerIndex: 0,
+    explanation: "3 groups of 9 is 3 × 9 = 27 apples.",
+  },
+  {
+    id: "diag-16", discipline: "science", targetGradeBand: "4-5",
+    prompt: "Which force pulls a dropped ball toward the ground?",
+    options: ["Magnetism", "Gravity", "Friction", "A push from the air"], correctAnswerIndex: 1,
+    explanation: "Gravity pulls objects toward the Earth, so the ball falls down.",
+  },
+  {
+    id: "diag-17", discipline: "logic", targetGradeBand: "4-5",
+    prompt: "A secret code moves every letter 2 steps forward (A→C, B→D, C→E). What does D become?",
+    options: ["B", "C", "F", "E"], correctAnswerIndex: 2,
+    explanation: "Apply the rule once more: D is the 4th letter, and 4 + 2 = 6, which is F.",
+  },
+  {
+    id: "diag-18", discipline: "reading", targetGradeBand: "K-1",
+    prompt: "Which word starts with the same sound as 'map'?",
+    options: ["sun", "top", "dog", "moon"], correctAnswerIndex: 3,
+    explanation: "'Map' and 'moon' both start with the /m/ sound.",
+  },
+  {
+    id: "diag-19", discipline: "science", targetGradeBand: "K-1",
+    prompt: "What do green plants need to grow?",
+    options: ["Sunlight, water, and air", "Candy and toys", "Sand only", "Darkness only"], correctAnswerIndex: 0,
+    explanation: "Plants use sunlight, water, and air to make their food and grow.",
+  },
+  {
+    id: "diag-20", discipline: "logic", targetGradeBand: "K-1",
+    prompt: "An apple and a banana are both examples of which group?",
+    options: ["Vegetables", "Fruits", "Animals", "Tools"], correctAnswerIndex: 1,
+    explanation: "Apples and bananas both grow from flowering plants, so they are fruits.",
+  },
+  {
+    id: "diag-21", discipline: "math", targetGradeBand: "4-5",
+    prompt: "What is 1/4 written as a decimal?",
+    options: ["0.14", "0.41", "0.25", "4.0"], correctAnswerIndex: 2,
+    explanation: "1 ÷ 4 = 0.25, so one quarter is 0.25.",
+  },
+  {
+    id: "diag-22", discipline: "reading", targetGradeBand: "4-5",
+    prompt: "'The classroom was a zoo this morning.' What does the author most likely mean?",
+    options: ["Real animals visited the class", "It was quiet and calm", "Everyone sat perfectly still", "It was noisy and chaotic"], correctAnswerIndex: 3,
+    explanation: "This is a metaphor: like a zoo, the classroom was noisy and full of movement.",
+  },
+  {
+    id: "diag-23", discipline: "logic", targetGradeBand: "2-3",
+    prompt: "Follow the steps: 1) wash hands, 2) dry hands, 3) eat snack, 4) clear plate. Which is step 3?",
+    options: ["Eat snack", "Wash hands", "Dry hands", "Clear plate"], correctAnswerIndex: 0,
+    explanation: "Run the sequence in order: step 1, step 2, then step 3 is 'eat snack'.",
+  },
+  {
+    id: "diag-24", discipline: "science", targetGradeBand: "2-3",
+    prompt: "What happens to liquid water when it freezes?",
+    options: ["It becomes steam", "It becomes solid ice", "It disappears completely", "It turns into salt"], correctAnswerIndex: 1,
+    explanation: "Freezing cools water below 0°C, turning the liquid into solid ice.",
+  },
 ];
 
 export interface DiagnosticResult {
@@ -319,9 +402,9 @@ export function evaluateDiagnosticAnswers(answers: Record<string, number>, learn
   try {
     const key = getDiagnosticProfileKey(targetId);
     localStorage.setItem(key, JSON.stringify(result));
-    if (targetId === "scholar-primary-1") {
-      localStorage.setItem(DEFAULT_DIAGNOSTIC_PROFILE_KEY, JSON.stringify(result));
-    }
+    // No unscoped mirror: diagnostic profiles stay partitioned per learner.
+    // (Pre-existing unscoped copies are adopted into the first account's
+    // scope on read and then removed; see getSavedDiagnosticResult.)
     if (typeof window !== "undefined") {
       window.dispatchEvent(new CustomEvent("diagnostic_profile_updated", { detail: result }));
     }
@@ -357,8 +440,17 @@ export function getSavedDiagnosticResult(learnerId?: string): DiagnosticResult |
   const key = getDiagnosticProfileKey(targetId);
   try {
     let raw = localStorage.getItem(key);
+    // One-time legacy adoption for the active learner (see getMistakeVault).
     if (!raw && (!learnerId || learnerId === "scholar-primary-1" || learnerId === "child-maya")) {
       raw = localStorage.getItem(DEFAULT_DIAGNOSTIC_PROFILE_KEY);
+      if (raw && targetId === getActiveLearnerId()) {
+        try {
+          localStorage.setItem(key, raw);
+          localStorage.removeItem(DEFAULT_DIAGNOSTIC_PROFILE_KEY);
+        } catch {
+          // ignore adoption errors; the parsed result below still works
+        }
+      }
     }
     return raw ? JSON.parse(raw) : null;
   } catch {

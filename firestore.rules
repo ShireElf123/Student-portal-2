@@ -21,42 +21,35 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Preserves designated developer/tester access for testing cross-role flows
-    function isDeveloper() {
-      return isSignedIn() && request.auth.token.email == 'rylandkeanan@gmail.com';
-    }
+    // No developer bypass: every caller is authorized by ownership, enrollment, or a verified link grant.
 
     function isOwner(userId) {
-      return isSignedIn() && (request.auth.uid == userId || isDeveloper());
+      return isSignedIn() && (request.auth.uid == userId);
     }
 
     function isTeacherOfClass(classId) {
       return isSignedIn() && (
-        isDeveloper() ||
         get(/databases/$(database)/documents/classes/$(classId)).data.teacherId == request.auth.uid
       );
     }
 
     function isEnrolledInClass(classId) {
       return isSignedIn() && (
-        isDeveloper() ||
         request.auth.uid in get(/databases/$(database)/documents/classes/$(classId)).data.studentIds ||
         get(/databases/$(database)/documents/classes/$(classId)).data.teacherId == request.auth.uid
       );
     }
 
+    // A parent may read a child's data only when a verified link grant exists.
+    // Grants are created exclusively by claiming a live, unexpired link code,
+    // so editing one's own `linkedStudentIds` mirror can never unlock access.
     function isParentOfChild(childId) {
-      return isSignedIn() && (
-        isDeveloper() ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-         'linkedStudentIds' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data &&
-         childId in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.linkedStudentIds)
-      );
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(childId)/linkedParents/$(request.auth.uid));
     }
 
     function isTeacherOfEnrolledStudent(studentId) {
       return isSignedIn() && (
-        isDeveloper() ||
         (exists(/databases/$(database)/documents/users/$(studentId)) &&
          'teacherIds' in get(/databases/$(database)/documents/users/$(studentId)).data &&
          request.auth.uid in get(/databases/$(database)/documents/users/$(studentId)).data.teacherIds)
@@ -213,16 +206,31 @@ service cloud.firestore {
              data.createdAt is number;
     }
 
-    // 8c. Parent Link Code Direct Lookup Validator
+    // 8c. Parent Link Code Direct Lookup Validator (crypto-random, 24h, one-time)
     function isValidParentLinkCode(data) {
-      return data.keys().hasAll(['id', 'studentId', 'studentName', 'linkCode', 'createdAt']) &&
-             data.keys().toSet().hasOnly(['id', 'studentId', 'studentName', 'studentEmail', 'linkCode', 'createdAt']) &&
+      return data.keys().hasAll(['id', 'studentId', 'studentName', 'linkCode', 'createdAt', 'expiresAt', 'consumed']) &&
+             data.keys().toSet().hasOnly(['id', 'studentId', 'studentName', 'studentEmail', 'linkCode', 'createdAt', 'expiresAt', 'consumed', 'consumedBy', 'consumedAt']) &&
              data.id is string && data.id.size() <= 32 &&
              data.studentId is string && data.studentId.size() <= 128 &&
              data.studentName is string && data.studentName.size() <= 128 &&
              data.linkCode is string && data.linkCode.size() >= 4 && data.linkCode.size() <= 16 &&
              data.createdAt is number &&
-             (!('studentEmail' in data) || (data.studentEmail is string && data.studentEmail.size() <= 256));
+             data.expiresAt is timestamp &&
+             data.consumed is bool &&
+             (!('studentEmail' in data) || (data.studentEmail is string && data.studentEmail.size() <= 256)) &&
+             (!('consumedBy' in data) || (data.consumedBy is string && data.consumedBy.size() <= 128)) &&
+             (!('consumedAt' in data) || (data.consumedAt is number));
+    }
+
+    // 8d. Parent Link Grant Validator (proof that a live link code was claimed)
+    function isValidParentLinkGrant(data) {
+      return data.keys().hasAll(['id', 'studentId', 'parentId', 'code', 'createdAt']) &&
+             data.keys().toSet().hasOnly(['id', 'studentId', 'parentId', 'code', 'createdAt']) &&
+             data.id is string && data.id.size() <= 128 &&
+             data.studentId is string && data.studentId.size() <= 128 &&
+             data.parentId is string && data.parentId.size() <= 128 &&
+             data.code is string && data.code.size() >= 4 && data.code.size() <= 16 &&
+             data.createdAt is number;
     }
 
     // 9. Class Assignment Validator
@@ -297,7 +305,7 @@ service cloud.firestore {
     function isTeacherClassUpdate(classId) {
       return isSignedIn() &&
              isValidClassroom(incoming()) &&
-             (isDeveloper() || existing().teacherId == request.auth.uid) &&
+             (existing().teacherId == request.auth.uid) &&
              incoming().teacherId == existing().teacherId &&
              incoming().createdAt == existing().createdAt &&
              incoming().diff(existing()).affectedKeys().hasOnly([
@@ -414,6 +422,29 @@ service cloud.firestore {
         allow create, update: if isOwner(userId);
         allow delete: if isOwner(userId);
       }
+
+      // Verified Parent Link Grants: the ONLY basis for parental read access.
+      // A grant can be minted only while presenting a live, unexpired,
+      // unconsumed link code issued for this exact student — knowledge of the
+      // unguessable code is the proof of family consent.
+      match /linkedParents/{parentUid} {
+        allow get: if isOwner(userId) || (isSignedIn() && request.auth.uid == parentUid);
+        allow list: if isOwner(userId);
+        allow create: if isSignedIn() && isValidId(parentUid) &&
+          request.auth.uid == parentUid &&
+          isValidParentLinkGrant(incoming()) &&
+          incoming().id == parentUid &&
+          incoming().studentId == userId &&
+          incoming().parentId == parentUid &&
+          exists(/databases/$(database)/documents/parentLinkCodes/$(incoming().code)) &&
+          get(/databases/$(database)/documents/parentLinkCodes/$(incoming().code)).data.studentId == userId &&
+          get(/databases/$(database)/documents/parentLinkCodes/$(incoming().code)).data.consumed == false &&
+          get(/databases/$(database)/documents/parentLinkCodes/$(incoming().code)).data.expiresAt is timestamp &&
+          get(/databases/$(database)/documents/parentLinkCodes/$(incoming().code)).data.expiresAt > request.time;
+        allow update: if false;
+        // Either the student (revoke access) or the parent (leave the family) can delete.
+        allow delete: if isOwner(userId) || (isSignedIn() && request.auth.uid == parentUid);
+      }
     }
 
     // ==========================================
@@ -421,13 +452,38 @@ service cloud.firestore {
     // Prevents collection enumeration while allowing direct single-doc lookup by code
     // ==========================================
     match /parentLinkCodes/{code} {
+      // Direct single-doc lookup by code only; enumeration is forbidden.
       allow get: if isSignedIn() && isValidId(code);
-      allow list: if isDeveloper();
-      allow create: if isSignedIn() && isValidId(code) && isValidParentLinkCode(incoming()) && (
-        isDeveloper() || incoming().studentId == request.auth.uid
-      );
-      allow update: if false;
-      allow delete: if isSignedIn() && (isDeveloper() || existing().studentId == request.auth.uid);
+      allow list: if false;
+      // Only the student issues a code for themselves: fresh, unconsumed, ~24h expiry.
+      allow create: if isSignedIn() && isValidId(code) &&
+        isValidParentLinkCode(incoming()) &&
+        incoming().id == code &&
+        incoming().linkCode == code &&
+        incoming().studentId == request.auth.uid &&
+        incoming().consumed == false &&
+        !('consumedBy' in incoming()) &&
+        !('consumedAt' in incoming()) &&
+        incoming().expiresAt > request.time &&
+        incoming().expiresAt <= request.time + duration.value(25, 'h');
+      // Atomic one-time consumption by the claiming parent: the ONLY permitted
+      // update flips an unexpired, unconsumed code to consumed. The claim
+      // transaction writes the link grant + parent mirror in the same commit,
+      // so a code can never mint two families.
+      allow update: if isSignedIn() && isValidId(code) &&
+        isValidParentLinkCode(incoming()) &&
+        existing().consumed == false &&
+        existing().expiresAt is timestamp &&
+        existing().expiresAt > request.time &&
+        incoming().consumed == true &&
+        incoming().consumedBy == request.auth.uid &&
+        incoming().consumedAt is number &&
+        incoming().studentId == existing().studentId &&
+        incoming().linkCode == existing().linkCode &&
+        incoming().expiresAt == existing().expiresAt &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['consumed', 'consumedBy', 'consumedAt']);
+      // The student may revoke (delete) their own unclaimed code.
+      allow delete: if isSignedIn() && existing().studentId == request.auth.uid;
     }
 
     // ==========================================
@@ -438,15 +494,15 @@ service cloud.firestore {
       // Single-document retrieval allowed for authenticated users who know the code
       allow get: if isSignedIn() && isValidId(code);
       // Blanket listing of all join codes is strictly forbidden for ordinary users (Anti-Enumeration Guard)
-      allow list: if isDeveloper();
-      // Teachers (or developer) can register a join code for their class
+      allow list: if false;
+      // The teacher who owns the class registers its join code
       allow create: if isSignedIn() && isValidId(code) && isValidJoinCodeEntry(incoming()) && (
-        isDeveloper() || incoming().teacherId == request.auth.uid
+        incoming().teacherId == request.auth.uid
       );
       // Join codes are immutable once registered
       allow update: if false;
       // Teacher can delete their join code
-      allow delete: if isSignedIn() && (isDeveloper() || existing().teacherId == request.auth.uid);
+      allow delete: if isSignedIn() && (existing().teacherId == request.auth.uid);
     }
 
     // ==========================================
@@ -458,14 +514,13 @@ service cloud.firestore {
 
       // Query listing: Restricted to classes the user teaches or is enrolled in (Prevents blanket listing)
       allow list: if isSignedIn() && (
-        isDeveloper() ||
         resource.data.teacherId == request.auth.uid ||
         request.auth.uid in resource.data.studentIds
       );
 
-      // Only teacher (or developer) can create the class
+      // Only the teacher who owns the class can create it
       allow create: if isSignedIn() && isValidId(classId) && isValidClassroom(incoming()) && (
-        isDeveloper() || incoming().teacherId == request.auth.uid
+        incoming().teacherId == request.auth.uid
       );
 
       // Updates strictly partitioned between Teacher Management and Student Self-Join
@@ -474,9 +529,9 @@ service cloud.firestore {
         isStudentSelfJoin()
       );
 
-      // Only teacher (or developer) can delete the class
+      // Only the teacher who owns the class can delete it
       allow delete: if isSignedIn() && isValidId(classId) && (
-        isDeveloper() || existing().teacherId == request.auth.uid
+        existing().teacherId == request.auth.uid
       );
 
       // ==========================================
@@ -484,7 +539,7 @@ service cloud.firestore {
       // ==========================================
       match /assignments/{assignmentId} {
         allow get, list: if isEnrolledInClass(classId) && isValidId(assignmentId);
-        allow create: if isTeacherOfClass(classId) && isValidId(assignmentId) && isValidClassAssignment(incoming()) && incoming().classId == classId && (isDeveloper() || incoming().teacherId == request.auth.uid);
+        allow create: if isTeacherOfClass(classId) && isValidId(assignmentId) && isValidClassAssignment(incoming()) && incoming().classId == classId && (incoming().teacherId == request.auth.uid);
         allow update: if isTeacherOfClass(classId) && isValidId(assignmentId) && isValidClassAssignment(incoming()) && incoming().classId == existing().classId && incoming().teacherId == existing().teacherId && incoming().createdAt == existing().createdAt && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'subject', 'description', 'dueDate']);
         allow delete: if isTeacherOfClass(classId) && isValidId(assignmentId);
 
@@ -510,7 +565,7 @@ service cloud.firestore {
       // ==========================================
       match /resources/{resourceId} {
         allow get, list: if isEnrolledInClass(classId) && isValidId(resourceId);
-        allow create: if isTeacherOfClass(classId) && isValidId(resourceId) && isValidClassResource(incoming()) && incoming().classId == classId && (isDeveloper() || incoming().teacherId == request.auth.uid);
+        allow create: if isTeacherOfClass(classId) && isValidId(resourceId) && isValidClassResource(incoming()) && incoming().classId == classId && (incoming().teacherId == request.auth.uid);
         allow update: if isTeacherOfClass(classId) && isValidId(resourceId) && isValidClassResource(incoming()) && incoming().classId == existing().classId && incoming().teacherId == existing().teacherId && incoming().createdAt == existing().createdAt && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'subject', 'type', 'content', 'url']);
         allow delete: if isTeacherOfClass(classId) && isValidId(resourceId);
       }
