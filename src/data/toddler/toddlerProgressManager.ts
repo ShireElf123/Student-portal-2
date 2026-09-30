@@ -1,4 +1,5 @@
 import { ALL_TODDLER_WORLDS, ToddlerWorld, ToddlerArea } from "./toddlerWorldsArchitecture";
+import { completeActiveMissionIfMatches } from "./toddlerDailyAdventure";
 import { recordLearningEvent, getActiveLearnerId } from "../../utils/learnerBrain";
 import { resolveSkillForActivity } from "../activitySkillRegistry";
 import {
@@ -187,6 +188,13 @@ export function recordActivityCompletion(
 
   saveToddlerProgress(nextState);
 
+  // A genuine world-activity completion can finish the active daily mission.
+  try {
+    completeActiveMissionIfMatches("worlds", worldId);
+  } catch {
+    // Mission matching must never break progress saving.
+  }
+
   // Emit structured learning event into unified learner brain via registry
   try {
     const resolved = resolveSkillForActivity(activityId);
@@ -261,6 +269,13 @@ export function recordMissionCompletion(
   };
 
   saveToddlerProgress(nextState);
+
+  // A genuine world-mission completion can finish the active daily mission.
+  try {
+    completeActiveMissionIfMatches("worlds", worldId);
+  } catch {
+    // Mission matching must never break progress saving.
+  }
 
   try {
     const resolvedMission = resolveSkillForActivity(missionId);

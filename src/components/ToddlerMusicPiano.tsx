@@ -4,6 +4,10 @@ import { Music, Sparkles, Star, RotateCcw, Volume2, Award, Play } from "lucide-r
 import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
 import { awardXP, triggerCelebrationConfetti } from "../utils/gamification";
+import {
+  completeActiveMissionIfMatches,
+  recordDailyCount,
+} from "../data/toddler/toddlerDailyAdventure";
 
 interface KeyConfig {
   note: string;
@@ -162,12 +166,21 @@ export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
           setSongCompleted(true);
           soundEffects.playFanfare();
           triggerCelebrationConfetti();
-          awardXP(35, `Played ${selectedSong.title}`);
-          if (onAddStar) onAddStar(2);
+          // The first 3 finished songs each day earn rewards; encores after
+          // that are free play so replays cannot farm stars and XP.
+          if (recordDailyCount("rainbow-piano-song") <= 3) {
+            awardXP(35, `Played ${selectedSong.title}`);
+            if (onAddStar) onAddStar(2);
+          }
           speakText(`Bravo! You played ${selectedSong.title}! What a wonderful musician!`, {
             pitch: 1.3,
             rate: 0.95,
           });
+          try {
+            completeActiveMissionIfMatches("games", "rainbow-piano");
+          } catch {
+            // ignore
+          }
         }
       }
     }

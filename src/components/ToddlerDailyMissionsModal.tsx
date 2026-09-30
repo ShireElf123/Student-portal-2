@@ -12,34 +12,40 @@ import {
 import {
   getTodayAdventure,
   getCompletedDailyMissionIds,
-  markDailyMissionCompleted,
+  getActiveDailyMissionId,
+  startDailyMission,
+  ALL_MISSIONS_BONUS_STARS,
   DailyMission,
   DailySchedule,
 } from "../data/toddler/toddlerDailyAdventure";
 import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
-import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 
 interface ToddlerDailyMissionsModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectMissionTab: (tab: "books" | "phonics" | "counting" | "games" | "worlds" | "avatar-studio", subactivity?: string) => void;
-  onAddStar: (count: number) => void;
+  /**
+   * @deprecated Rewards are paid by the mission matcher when the linked
+   * activity genuinely completes. Kept so existing call sites keep working.
+   */
+  onAddStar?: (count: number) => void;
 }
 
 export function ToddlerDailyMissionsModal({
   isOpen,
   onClose,
   onSelectMissionTab,
-  onAddStar,
 }: ToddlerDailyMissionsModalProps) {
   const [schedule, setSchedule] = useState<DailySchedule>(getTodayAdventure());
   const [completedIds, setCompletedIds] = useState<string[]>(getCompletedDailyMissionIds());
+  const [activeMissionId, setActiveMissionId] = useState<string | null>(getActiveDailyMissionId());
 
   useEffect(() => {
     if (isOpen) {
       setSchedule(getTodayAdventure());
       setCompletedIds(getCompletedDailyMissionIds());
+      setActiveMissionId(getActiveDailyMissionId());
     }
   }, [isOpen]);
 
@@ -47,28 +53,16 @@ export function ToddlerDailyMissionsModal({
 
   const allCompleted = schedule.missions.every((m) => completedIds.includes(m.id));
 
+  // Starting a mission only navigates to its activity. Stars and XP are paid
+  // later, by the mission matcher, when the activity genuinely completes.
   const handleStartMission = (mission: DailyMission) => {
+    const isComplete = completedIds.includes(mission.id);
     soundEffects.playPop();
-    speakText(`Starting daily mission: ${mission.title}! ${mission.tagline}`, { pitch: 1.15 });
-
-    // Mark completed if not already
-    const res = markDailyMissionCompleted(mission.id);
-    if (res.isFirstComplete) {
-      soundEffects.playSuccessChime();
-      soundEffects.playStarSparkle();
-      onAddStar(mission.starsReward);
-      awardXP(mission.xpReward, `Completed daily mission: ${mission.title}`);
-      setCompletedIds(getCompletedDailyMissionIds());
-
-      if (res.allCompleted) {
-        soundEffects.playFanfare();
-        triggerCelebrationConfetti();
-        onAddStar(5);
-        awardXP(100, "Completed all daily missions bonus");
-        speakText("Hooray! You completed all 3 daily missions for today! You earned 5 extra golden stars!", {
-          pitch: 1.2,
-        });
-      }
+    if (!isComplete) {
+      startDailyMission(mission.id);
+      speakText(`Starting daily mission: ${mission.title}! ${mission.tagline}`, { pitch: 1.15 });
+    } else {
+      speakText(`Let's play ${mission.title} again for fun!`, { pitch: 1.15 });
     }
 
     onClose();
@@ -119,18 +113,21 @@ export function ToddlerDailyMissionsModal({
           {/* Missions List */}
           <div className="p-4 sm:p-6 space-y-4">
             <div className="text-xs text-white/70">
-              Theme: <span className="font-bold text-amber-300">{schedule.themeTitle}</span>. Finish all 3 to earn bonus stars!
+              Theme: <span className="font-bold text-amber-300">{schedule.themeTitle}</span>. Finish all 3 to earn {ALL_MISSIONS_BONUS_STARS} bonus stars! Rewards are paid when each activity is really done.
             </div>
 
             <div className="space-y-3">
               {schedule.missions.map((mission, idx) => {
                 const isComplete = completedIds.includes(mission.id);
+                const isActive = !isComplete && activeMissionId === mission.id;
                 return (
                   <div
                     key={mission.id}
                     className={`p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
                       isComplete
                         ? "bg-emerald-950/30 border-emerald-500/40"
+                        : isActive
+                        ? "bg-indigo-950/40 border-indigo-400/50"
                         : "bg-white/[0.04] border-white/10 hover:border-white/20"
                     }`}
                   >
@@ -151,6 +148,7 @@ export function ToddlerDailyMissionsModal({
                           {mission.tagline}
                         </p>
                         <div className="mt-1 flex items-center gap-2 text-[11px] font-bold text-amber-300">
+                          <span className="text-white/50 font-semibold">Reward:</span>
                           <span className="flex items-center gap-0.5">
                             <Star size={11} fill="currentColor" /> +{mission.starsReward} Stars
                           </span>
@@ -162,15 +160,21 @@ export function ToddlerDailyMissionsModal({
 
                     <button
                       onClick={() => handleStartMission(mission)}
-                      className={`px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer ${
+                      className={`px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
                         isComplete
-                          ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/30"
+                          ? "bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 hover:bg-emerald-500/30"
+                          : isActive
+                          ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 text-white shadow-md shadow-amber-500/30"
                           : "bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 text-white shadow-md shadow-indigo-500/30"
                       }`}
                     >
                       {isComplete ? (
                         <>
-                          <CheckCircle2 size={14} /> Completed
+                          <CheckCircle2 size={14} /> Play Again
+                        </>
+                      ) : isActive ? (
+                        <>
+                          Resume <ArrowRight size={14} />
                         </>
                       ) : (
                         <>

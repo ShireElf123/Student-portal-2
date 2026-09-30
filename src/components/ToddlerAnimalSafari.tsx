@@ -5,6 +5,11 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import {
+  completeActiveMissionIfMatches,
+  recordDailyCount,
+  recordDailySetMember,
+} from "../data/toddler/toddlerDailyAdventure";
 
 interface Animal {
   id: string;
@@ -129,20 +134,37 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
       setSelectedAnimal(animal);
       soundEffects.playSuccessChime();
       speakText(`${animal.call} ${animal.funFact}`, { pitch: 1.2, rate: 0.9 });
-      if (onAddStar) onAddStar(1);
-      else awardStars(1);
+      // Discovery stars: the first tap on each animal each day earns a star;
+      // repeats are free play so stars cannot be farmed from one animal.
+      if (recordDailySetMember("safari-explore", animal.id).isNew) {
+        if (onAddStar) onAddStar(1);
+        else awardStars(1);
+      }
       return;
     }
 
-    // Detective quiz mode
+    // Detective quiz mode: each mystery pays once — solve it, then press Next.
+    if (showCelebration) return;
     if (animal.id === targetAnimal.id) {
       setSelectedAnimal(animal);
       setShowCelebration(true);
       soundEffects.playFanfare();
       triggerCelebrationConfetti();
-      if (onAddStar) onAddStar(2);
-      else awardStars(2);
-      awardXP(25, `Identified ${animal.name}`);
+      // The first 5 detective solves each day earn stars and XP; endless
+      // rounds after that stay playable as free practice without pay.
+      const solvesToday = recordDailyCount("safari-detective-solve");
+      if (solvesToday <= 5) {
+        if (onAddStar) onAddStar(2);
+        else awardStars(2);
+        awardXP(25, `Identified ${animal.name}`);
+      }
+      if (solvesToday === 3) {
+        try {
+          completeActiveMissionIfMatches("games", "animal-safari");
+        } catch {
+          // ignore
+        }
+      }
       setScore((s) => s + 1);
 
       try {
@@ -194,7 +216,7 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
           Savanna Animal Detective
         </h2>
         <p className="text-white/70 text-xs sm:text-sm max-w-lg mx-auto">
-          Hear realistic animal calls, meet friendly creatures, and solve safari mystery sounds!
+          Hear friendly animal voices, meet cute creatures, and solve safari mystery sounds!
         </p>
 
         {/* Mode Toggle */}
@@ -233,8 +255,13 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
       {/* Detective Prompt Box */}
       {activeMode === "detective" && (
         <div className="p-6 rounded-3xl bg-amber-500/10 border-2 border-amber-400/40 text-center space-y-3">
-          <div className="text-xs font-black text-amber-300 uppercase tracking-widest">
-            Mystery Animal Call
+          <div className="flex items-center justify-center gap-2">
+            <div className="text-xs font-black text-amber-300 uppercase tracking-widest">
+              Mystery Animal Call
+            </div>
+            <div className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-black text-xs">
+              🕵️ Solved: {score}
+            </div>
           </div>
           <div className="text-2xl sm:text-3xl font-black text-white flex items-center justify-center gap-3">
             <span>🔊</span>

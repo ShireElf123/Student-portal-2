@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sparkles, Star, Volume2, RotateCcw, Award } from "lucide-react";
 import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
 import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import { getDailyCount, recordDailyCount } from "../data/toddler/toddlerDailyAdventure";
 
 interface Balloon {
   id: number;
@@ -31,15 +32,23 @@ interface ToddlerBalloonSkyProps {
   onAddStar?: (amount?: number) => void;
 }
 
+const DAILY_TARGET_STAR_GOAL = 10;
+
 export function ToddlerBalloonSky({ onAddStar }: ToddlerBalloonSkyProps) {
   const [balloons, setBalloons] = useState<Balloon[]>([]);
   const [targetLabel, setTargetLabel] = useState<string>("A");
   const [poppedCount, setPoppedCount] = useState(0);
+  const [targetPopsToday, setTargetPopsToday] = useState<number>(() => getDailyCount("balloon-target"));
+  // Ref mirror so the every-10-pops celebration fires exactly on time even
+  // when taps land faster than React re-renders.
+  const poppedRef = useRef(0);
 
   // Initialize and spawn balloons
-  const spawnBalloon = () => {
-    const isLetter = Math.random() > 0.4;
-    const label = isLetter
+  const spawnBalloon = (forcedLabel?: string) => {
+    const isLetter = forcedLabel ? isNaN(Number(forcedLabel)) : Math.random() > 0.4;
+    const label = forcedLabel
+      ? forcedLabel
+      : isLetter
       ? LETTERS[Math.floor(Math.random() * LETTERS.length)]
       : NUMBERS[Math.floor(Math.random() * NUMBERS.length)];
     const colorInfo = BALLOON_COLORS[Math.floor(Math.random() * BALLOON_COLORS.length)];
@@ -58,11 +67,14 @@ export function ToddlerBalloonSky({ onAddStar }: ToddlerBalloonSkyProps) {
   };
 
   useEffect(() => {
-    // Initial batch of balloons
-    for (let i = 0; i < 6; i++) {
-      setTimeout(() => spawnBalloon(), i * 300);
+    // Initial batch of balloons. The first balloon always carries the target
+    // so the opening request is immediately answerable.
+    const spawnTimers: ReturnType<typeof setTimeout>[] = [];
+    spawnTimers.push(setTimeout(() => spawnBalloon("A"), 100));
+    for (let i = 1; i < 6; i++) {
+      spawnTimers.push(setTimeout(() => spawnBalloon(), i * 300));
     }
-    const interval = setInterval(spawnBalloon, 2200);
+    const interval = setInterval(() => spawnBalloon(), 2200);
 
     const speechTimer = setTimeout(() => {
       speakText(`Welcome to Balloon Sky! Can you find and pop balloon ${targetLabel}?`, {
@@ -74,21 +86,29 @@ export function ToddlerBalloonSky({ onAddStar }: ToddlerBalloonSkyProps) {
     return () => {
       clearInterval(interval);
       clearTimeout(speechTimer);
+      spawnTimers.forEach(clearTimeout);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePop = (balloon: Balloon) => {
     soundEffects.playBalloonPop();
     setBalloons((prev) => prev.filter((b) => b.id !== balloon.id));
-    setPoppedCount((c) => c + 1);
+    poppedRef.current += 1;
+    setPoppedCount(poppedRef.current);
 
     // Speak letter or number
     speakText(balloon.label, { pitch: 1.3, rate: 1.0 });
 
     if (balloon.label === targetLabel) {
       soundEffects.playSuccessChime();
-      if (onAddStar) onAddStar(1);
-      else awardStars(1);
+      // Target pops earn stars up to the daily goal; beyond that, free play.
+      const targetTotal = recordDailyCount("balloon-target");
+      setTargetPopsToday(targetTotal);
+      if (targetTotal <= DAILY_TARGET_STAR_GOAL) {
+        if (onAddStar) onAddStar(1);
+        else awardStars(1);
+      }
 
       try {
         const isNum = !isNaN(Number(targetLabel));
@@ -108,17 +128,23 @@ export function ToddlerBalloonSky({ onAddStar }: ToddlerBalloonSkyProps) {
         });
       } catch {}
 
-      // pick new target
+      // pick new target and release a balloon carrying it, so the new
+      // request is always answerable instead of hoping random spawns help.
       const nextLetters = [...LETTERS, ...NUMBERS];
       const nextTarget = nextLetters[Math.floor(Math.random() * nextLetters.length)];
       setTargetLabel(nextTarget);
+      spawnBalloon(nextTarget);
       speakText(`Great job! Now can you pop ${nextTarget}?`, { pitch: 1.3, rate: 0.95 });
     }
 
-    if (poppedCount > 0 && poppedCount % 10 === 0) {
+    if (poppedRef.current > 0 && poppedRef.current % 10 === 0) {
       soundEffects.playFanfare();
       triggerCelebrationConfetti();
-      awardXP(30, "Popped 10 Balloons");
+      // Milestone XP pays out at most 3 times a day; the celebration itself
+      // keeps firing so popping marathons still feel festive.
+      if (recordDailyCount("balloon-xp-milestone") <= 3) {
+        awardXP(30, "Popped 10 Balloons");
+      }
     }
   };
 
@@ -202,7 +228,9 @@ export function ToddlerBalloonSky({ onAddStar }: ToddlerBalloonSkyProps) {
           <span>🎈 Total Popped:</span>
           <span className="text-base font-black text-amber-300">{poppedCount}</span>
         </div>
-        <div>Earn 1 Star for each target pop! ⭐</div>
+        <div>
+          Target pops today: {Math.min(targetPopsToday, DAILY_TARGET_STAR_GOAL)}/{DAILY_TARGET_STAR_GOAL} ⭐
+        </div>
       </div>
     </div>
   );

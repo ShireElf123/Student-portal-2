@@ -1,4 +1,7 @@
 import { readScopedJSON, writeScopedJSON } from "../../utils/accountStorage";
+import { awardStars, awardXP, triggerCelebrationConfetti } from "../../utils/gamification";
+import { soundEffects } from "../../utils/soundEffects";
+import { speakText } from "../../utils/speechUtils";
 
 export interface DailyMission {
   id: string;
@@ -138,7 +141,7 @@ const WEEKLY_SCHEDULES: Record<number, DailySchedule> = {
     themeTitle: "Rainbow Bubbles & Memory",
     themeBannerEmoji: "🎈",
     missions: [
-      { id: "sat-1", title: "Pop Floating Bubbles", tagline: "Tap bubbles before they float away", emoji: "🎈", targetTab: "games", targetSubactivity: "bubble-pop", starsReward: 2, xpReward: 30 },
+      { id: "sat-1", title: "Pop Floating Bubbles", tagline: "Pop 10 floating rainbow bubbles", emoji: "🎈", targetTab: "games", targetSubactivity: "bubble-pop", starsReward: 2, xpReward: 30 },
       { id: "sat-2", title: "Memory Card Match", tagline: "Flip and find cute matching friends", emoji: "🃏", targetTab: "games", targetSubactivity: "memory-match", starsReward: 2, xpReward: 30 },
       { id: "sat-3", title: "Style Your Learning Buddy", tagline: "Put on astronaut helmets or capes!", emoji: "🐾", targetTab: "avatar-studio", starsReward: 3, xpReward: 50 },
     ],
@@ -176,4 +179,238 @@ export function markDailyMissionCompleted(missionId: string): { isFirstComplete:
   } catch {
     return { isFirstComplete: false, allCompleted: false };
   }
+}
+
+// ---------------------------------------------------------------------------
+// Active-mission tracking: starting a mission only navigates. Completion (and
+// its rewards) is granted when the linked activity reports a REAL completion
+// via completeActiveMissionIfMatches(). Rewards are never paid for pressing
+// Start. All state is account-scoped and resets automatically each day.
+// ---------------------------------------------------------------------------
+
+function todayKey(): string {
+  return new Date().toISOString().split("T")[0];
+}
+
+const ACTIVE_MISSION_STORAGE_KEY = "toddler_daily_mission_active_v1";
+
+export function getActiveDailyMissionId(): string | null {
+  const parsed = readScopedJSON<unknown>(ACTIVE_MISSION_STORAGE_KEY, null);
+  if (!parsed || typeof parsed !== "object") return null;
+  const candidate = parsed as { date?: unknown; missionId?: unknown };
+  if (candidate.date === todayKey() && typeof candidate.missionId === "string") {
+    return candidate.missionId;
+  }
+  return null;
+}
+
+export function startDailyMission(missionId: string): void {
+  try {
+    writeScopedJSON(ACTIVE_MISSION_STORAGE_KEY, { date: todayKey(), missionId });
+  } catch {
+    // Mission start is best-effort; navigation still works without tracking.
+  }
+}
+
+export function clearActiveDailyMission(): void {
+  try {
+    writeScopedJSON(ACTIVE_MISSION_STORAGE_KEY, { date: todayKey(), missionId: null });
+  } catch {
+    // ignore
+  }
+}
+
+export function getMissionById(missionId: string): DailyMission | null {
+  const schedule = getTodayAdventure();
+  return schedule.missions.find((m) => m.id === missionId) || null;
+}
+
+// ---------------------------------------------------------------------------
+// Daily counters and distinct-item sets. Used to cap replay farming (stars are
+// for fresh effort, not for tapping the same tile forever) and to detect
+// multi-step mission goals such as "tap letters A, B and C".
+// ---------------------------------------------------------------------------
+
+const DAILY_COUNTS_STORAGE_KEY = "toddler_daily_counts_v1";
+
+function readDailyCounts(): Record<string, number> {
+  const parsed = readScopedJSON<unknown>(DAILY_COUNTS_STORAGE_KEY, null);
+  if (!parsed || typeof parsed !== "object") return {};
+  const candidate = parsed as { date?: unknown; counts?: unknown };
+  if (candidate.date !== todayKey() || !candidate.counts || typeof candidate.counts !== "object") {
+    return {};
+  }
+  const out: Record<string, number> = {};
+  for (const [key, value] of Object.entries(candidate.counts as Record<string, unknown>)) {
+    if (typeof value === "number" && Number.isFinite(value)) {
+      out[key] = value;
+    }
+  }
+  return out;
+}
+
+export function getDailyCount(key: string): number {
+  return readDailyCounts()[key] || 0;
+}
+
+/** Increment a daily counter and return the new total for today. */
+export function recordDailyCount(key: string, increment = 1): number {
+  const counts = readDailyCounts();
+  const next = (counts[key] || 0) + increment;
+  try {
+    writeScopedJSON(DAILY_COUNTS_STORAGE_KEY, { date: todayKey(), counts: { ...counts, [key]: next } });
+  } catch {
+    // ignore
+  }
+  return next;
+}
+
+const DAILY_SETS_STORAGE_KEY = "toddler_daily_sets_v1";
+
+function readDailySets(): Record<string, string[]> {
+  const parsed = readScopedJSON<unknown>(DAILY_SETS_STORAGE_KEY, null);
+  if (!parsed || typeof parsed !== "object") return {};
+  const candidate = parsed as { date?: unknown; sets?: unknown };
+  if (candidate.date !== todayKey() || !candidate.sets || typeof candidate.sets !== "object") {
+    return {};
+  }
+  const out: Record<string, string[]> = {};
+  for (const [key, value] of Object.entries(candidate.sets as Record<string, unknown>)) {
+    if (Array.isArray(value)) {
+      out[key] = value.filter((v): v is string => typeof v === "string");
+    }
+  }
+  return out;
+}
+
+export function getDailySetMembers(kind: string): string[] {
+  return readDailySets()[kind] || [];
+}
+
+/** Record a distinct item tapped today. Returns whether it was new today. */
+export function recordDailySetMember(kind: string, value: string): { isNew: boolean; size: number } {
+  const sets = readDailySets();
+  const existing = sets[kind] || [];
+  if (existing.includes(value)) {
+    return { isNew: false, size: existing.length };
+  }
+  const updated = [...existing, value];
+  try {
+    writeScopedJSON(DAILY_SETS_STORAGE_KEY, { date: todayKey(), sets: { ...sets, [kind]: updated } });
+  } catch {
+    // ignore
+  }
+  return { isNew: true, size: updated.length };
+}
+
+// ---------------------------------------------------------------------------
+// Mission completion matcher. Games and activities call this when the learner
+// genuinely finishes something. If (and only if) it matches the active
+// mission, the mission completes and pays its advertised rewards exactly once.
+// ---------------------------------------------------------------------------
+
+export interface MissionMatchResult {
+  mission: DailyMission;
+  isFirstComplete: boolean;
+  allCompleted: boolean;
+  /** True when this completion also triggered the finish-all-three bonus. */
+  bonusPaid: boolean;
+}
+
+export const ALL_MISSIONS_BONUS_STARS = 5;
+export const ALL_MISSIONS_BONUS_XP = 100;
+
+export function completeActiveMissionIfMatches(
+  tab: DailyMission["targetTab"],
+  subactivity?: string | null
+): MissionMatchResult | null {
+  const activeId = getActiveDailyMissionId();
+  if (!activeId) return null;
+  const mission = getMissionById(activeId);
+  if (!mission) {
+    clearActiveDailyMission();
+    return null;
+  }
+  if (mission.targetTab !== tab) return null;
+  // Missions that name a subactivity only match that exact activity. Missions
+  // without one match any genuine completion inside their tab; multi-step tab
+  // goals (phonics letters, counting cards) are enforced by their recorders.
+  if (mission.targetSubactivity && mission.targetSubactivity !== (subactivity || "")) {
+    return null;
+  }
+
+  const result = markDailyMissionCompleted(mission.id);
+  clearActiveDailyMission();
+  if (!result.isFirstComplete) {
+    return { mission, isFirstComplete: false, allCompleted: result.allCompleted, bonusPaid: false };
+  }
+
+  awardStars(mission.starsReward);
+  awardXP(mission.xpReward, `Daily mission: ${mission.title}`);
+  soundEffects.playFanfare();
+  triggerCelebrationConfetti();
+  speakText(`Mission complete! ${mission.title}! You earned ${mission.starsReward} stars!`, {
+    pitch: 1.25,
+  });
+
+  let bonusPaid = false;
+  if (result.allCompleted) {
+    bonusPaid = true;
+    awardStars(ALL_MISSIONS_BONUS_STARS);
+    awardXP(ALL_MISSIONS_BONUS_XP, "All daily missions complete");
+    soundEffects.playFanfare();
+    triggerCelebrationConfetti();
+    setTimeout(() => {
+      speakText("Wow! You finished all three missions today! You are a true Learning Champion!", {
+        pitch: 1.3,
+      });
+    }, 2600);
+  }
+
+  return { mission, isFirstComplete: true, allCompleted: result.allCompleted, bonusPaid };
+}
+
+// ---------------------------------------------------------------------------
+// Effort-based tap recorders for the phonics soundboard and counting safari.
+// Distinct taps each earn one star per day; repeats are free play without
+// rewards so stars cannot be farmed by tapping one tile forever.
+// ---------------------------------------------------------------------------
+
+const PHONICS_MISSION_LETTERS = ["A", "B", "C"];
+const COUNTING_MISSION_CARDS = ["1", "2", "3", "4", "5"];
+
+export function recordPhonicsLetterTapped(letter: string): {
+  earnedStar: boolean;
+  missionResult: MissionMatchResult | null;
+} {
+  const { isNew } = recordDailySetMember("phonics-letters", letter.toUpperCase());
+  let earnedStar = false;
+  if (isNew) {
+    awardStars(1);
+    earnedStar = true;
+  }
+  let missionResult: MissionMatchResult | null = null;
+  const tapped = getDailySetMembers("phonics-letters");
+  if (PHONICS_MISSION_LETTERS.every((l) => tapped.includes(l))) {
+    missionResult = completeActiveMissionIfMatches("phonics");
+  }
+  return { earnedStar, missionResult };
+}
+
+export function recordCountingCardTapped(num: number): {
+  earnedStar: boolean;
+  missionResult: MissionMatchResult | null;
+} {
+  const { isNew } = recordDailySetMember("counting-cards", String(num));
+  let earnedStar = false;
+  if (isNew) {
+    awardStars(1);
+    earnedStar = true;
+  }
+  let missionResult: MissionMatchResult | null = null;
+  const tapped = getDailySetMembers("counting-cards");
+  if (COUNTING_MISSION_CARDS.every((n) => tapped.includes(n))) {
+    missionResult = completeActiveMissionIfMatches("counting");
+  }
+  return { earnedStar, missionResult };
 }

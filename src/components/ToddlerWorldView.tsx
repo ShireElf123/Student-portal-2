@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Volume2,
@@ -37,6 +37,9 @@ import {
   getExplorerRank,
   getTodayAdventure,
   getCompletedDailyMissionIds,
+  completeActiveMissionIfMatches,
+  recordPhonicsLetterTapped,
+  recordCountingCardTapped,
   TODDLER_STICKERS,
 } from "../data/toddler/toddlerDailyAdventure";
 import {
@@ -112,6 +115,10 @@ export function ToddlerWorldView({
   const [isDailyMissionsOpen, setIsDailyMissionsOpen] = useState<boolean>(false);
   const [isStickerAlbumOpen, setIsStickerAlbumOpen] = useState<boolean>(false);
   const [initialWorldTarget, setInitialWorldTarget] = useState<string | null>(null);
+  const [initialGameTarget, setInitialGameTarget] = useState<string | null>(null);
+  // Pages already visited in the current book session. Page-turn stars are
+  // paid once per page so flipping back and forth cannot farm stars.
+  const visitedBookPagesRef = useRef<Set<number>>(new Set());
 
   const currentRank = getExplorerRank(starsCount);
   const todayAdventure = getTodayAdventure();
@@ -176,7 +183,10 @@ export function ToddlerWorldView({
       const nextIdx = currentPageIndex + 1;
       setCurrentPageIndex(nextIdx);
       speakText(selectedBook.pages[nextIdx].narration);
-      addStar(1);
+      if (!visitedBookPagesRef.current.has(nextIdx)) {
+        visitedBookPagesRef.current.add(nextIdx);
+        addStar(1);
+      }
     } else {
       // Completed book!
       setIsBookCompleted(true);
@@ -187,6 +197,11 @@ export function ToddlerWorldView({
         pitch: 1.25,
         rate: 0.9,
       });
+      try {
+        completeActiveMissionIfMatches("books");
+      } catch {
+        // ignore
+      }
     }
   };
 
@@ -206,6 +221,8 @@ export function ToddlerWorldView({
     }
   };
 
+  // Stars for the soundboard and counting cards reward fresh discovery: each
+  // distinct tile earns one star per day, repeats are free play without pay.
   const handlePhonicsClick = (tile: typeof PHONICS_TILES[0]) => {
     setActivePhonicsLetter(tile.letter);
     speakText(tile.sound, {
@@ -215,7 +232,7 @@ export function ToddlerWorldView({
         // slight pause
       },
     });
-    addStar(1);
+    recordPhonicsLetterTapped(tile.letter);
   };
 
   const handleCountingClick = (card: typeof COUNTING_CARDS[0]) => {
@@ -223,7 +240,7 @@ export function ToddlerWorldView({
       pitch: 1.2,
       rate: 0.85,
     });
-    addStar(1);
+    recordCountingCardTapped(card.num);
   };
 
   const activePage: PictureBookPage | null = selectedBook
@@ -964,6 +981,7 @@ export function ToddlerWorldView({
               starsCount={starsCount}
               onAddStar={addStar}
               onBackToBooks={() => setActiveTab("books")}
+              targetActivity={initialGameTarget}
             />
           </div>
         )}
@@ -984,6 +1002,9 @@ export function ToddlerWorldView({
           setActiveTab(tab);
           if (subactivity && tab === "worlds") {
             setInitialWorldTarget(subactivity);
+          }
+          if (subactivity && tab === "games") {
+            setInitialGameTarget(subactivity);
           }
         }}
         onAddStar={addStar}

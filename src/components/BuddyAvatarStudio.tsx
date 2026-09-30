@@ -32,6 +32,11 @@ import {
 } from "../utils/gamification";
 import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
+import {
+  completeActiveMissionIfMatches,
+  getDailyCount,
+  recordDailyCount,
+} from "../data/toddler/toddlerDailyAdventure";
 
 interface BuddyAvatarStudioProps {
   onDone?: () => void;
@@ -122,7 +127,10 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
 
   const handleSaveBuddy = () => {
     saveBuddyCompanion(buddy);
-    awardXP(50, "Designed Learning Buddy");
+    // Designing the buddy pays 50 XP the first save of the day; re-saves
+    // earn a small encore so the button cannot farm XP.
+    const xp = recordDailyCount("buddy-save") === 1 ? 50 : 5;
+    awardXP(xp, "Designed Learning Buddy");
     setIsSavedRecently(true);
     soundEffects.playFanfare();
     triggerCelebrationConfetti();
@@ -130,10 +138,17 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
       pitch: 1.3,
       rate: 0.95,
     });
+    try {
+      completeActiveMissionIfMatches("avatar-studio");
+    } catch {
+      // ignore
+    }
     setTimeout(() => {
       if (onDone) onDone();
     }, 1800);
   };
+
+  const saveXpToday = getDailyCount("buddy-save") === 0 ? 50 : 5;
 
   const handleRandomize = () => {
     soundEffects.playPop();
@@ -524,7 +539,7 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
                   className="px-8 py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-orange-500 to-pink-500 hover:from-amber-300 hover:to-pink-400 text-white font-black text-sm border-b-4 border-rose-800 shadow-xl shadow-orange-500/30 cursor-pointer inline-flex items-center gap-2 active:border-b-0 active:translate-y-1"
                 >
                   <Sparkles size={18} />
-                  <span>{isSavedRecently ? "Saved! ✨" : "Save & Make My Learning Buddy (+50 XP)"}</span>
+                  <span>{isSavedRecently ? "Saved! ✨" : `Save & Make My Learning Buddy (+${saveXpToday} XP)`}</span>
                 </button>
               </div>
             </div>
