@@ -118,8 +118,33 @@ export function ToddlerBubblePopGame({ onAddStar, onBack }: ToddlerBubblePopGame
     setPoppedCount(nextCount);
     awardXP(5);
 
+    // Every deliberate bubble choice is a phonics response, including a missed target.
+    const isTargetMatch = bubble.letter === targetLetter;
+    try {
+      recordLearningEvent({
+        learnerId: getActiveLearnerId(),
+        activityId: "toddler-bubble-pop-phonics",
+        experienceId: "bubble-pop-phonics",
+        contentId: `${targetLetter}:${bubble.id}`,
+        eventType: "question_answered",
+        activityType: "phonics-pop",
+        activityTitle: `Bubble Pop Phonics: ${isTargetMatch ? "Found" : "Missed"} ${targetLetter}`,
+        skillId: "read-k1-alphabet-letters",
+        domain: "reading",
+        gradeBand: "toddler",
+        result: isTargetMatch ? "success" : "struggle",
+        score: isTargetMatch ? 100 : 0,
+        difficulty: "easy",
+        attempts: 1,
+        hintsUsed: 0,
+        metadata: { selectedLetter: bubble.letter, targetLetter },
+      });
+    } catch (error) {
+      console.error("Failed to record bubble phonics response:", error);
+    }
+
     // Check if target letter matched
-    if (bubble.letter === targetLetter) {
+    if (isTargetMatch) {
       soundEffects.playSuccessChime();
       awardStars(1);
       onAddStar?.(1);
@@ -131,20 +156,6 @@ export function ToddlerBubblePopGame({ onAddStar, onBack }: ToddlerBubblePopGame
       triggerCelebrationConfetti();
       awardStars(2);
       onAddStar?.(2);
-      recordLearningEvent({
-        learnerId: getActiveLearnerId(),
-        activityId: "toddler-bubble-pop-phonics",
-        activityType: "phonics-pop",
-        activityTitle: "Bubble Pop Phonics Blast",
-        skillId: "read-k1-alphabet-letters",
-        domain: "reading",
-        gradeBand: "K-1",
-        result: "success",
-        score: 100,
-        difficulty: "easy",
-        attempts: 1,
-        hintsUsed: 0,
-      });
     }
 
     // If all popped on screen, spawn next wave

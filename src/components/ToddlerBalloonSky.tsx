@@ -100,7 +100,34 @@ export function ToddlerBalloonSky({ onAddStar }: ToddlerBalloonSkyProps) {
     // Speak letter or number
     speakText(balloon.label, { pitch: 1.3, rate: 1.0 });
 
-    if (balloon.label === targetLabel) {
+    const targetIsNumber = !isNaN(Number(targetLabel));
+    const targetSkillId = targetIsNumber ? "math-k1-counting" : "read-k1-alphabet-letters";
+    const targetDomain = targetIsNumber ? "math" : "reading";
+    const isCorrectTarget = balloon.label === targetLabel;
+    try {
+      recordLearningEvent({
+        learnerId: getActiveLearnerId(),
+        activityId: "toddler-balloon-sky",
+        experienceId: "balloon-sky",
+        contentId: `${targetLabel}:${balloon.id}`,
+        eventType: "question_answered",
+        activityType: targetIsNumber ? "toddler-counting" : "phonics-pop",
+        activityTitle: `Balloon Carnival: ${isCorrectTarget ? "Found" : "Missed"} Target ${targetLabel}`,
+        skillId: targetSkillId,
+        domain: targetDomain,
+        gradeBand: "toddler",
+        result: isCorrectTarget ? "success" : "struggle",
+        score: isCorrectTarget ? 100 : 0,
+        difficulty: "easy",
+        attempts: 1,
+        hintsUsed: 0,
+        metadata: { selectedBalloon: balloon.label, target: targetLabel },
+      });
+    } catch (error) {
+      console.error("Failed to record balloon response:", error);
+    }
+
+    if (isCorrectTarget) {
       soundEffects.playSuccessChime();
       // Target pops earn stars up to the daily goal; beyond that, free play.
       const targetTotal = recordDailyCount("balloon-target");
@@ -109,24 +136,6 @@ export function ToddlerBalloonSky({ onAddStar }: ToddlerBalloonSkyProps) {
         if (onAddStar) onAddStar(1);
         else awardStars(1);
       }
-
-      try {
-        const isNum = !isNaN(Number(targetLabel));
-        recordLearningEvent({
-          learnerId: getActiveLearnerId(),
-          activityId: "toddler-balloon-sky",
-          activityType: isNum ? "toddler-counting" : "toddler-rhyme",
-          activityTitle: `Balloon Carnival: Popped Target ${targetLabel}`,
-          skillId: isNum ? "math-k1-counting" : "read-k1-phonemic-awareness",
-          domain: isNum ? "math" : "reading",
-          gradeBand: "toddler",
-          result: "success",
-          score: 100,
-          difficulty: "easy",
-          attempts: 1,
-          hintsUsed: 0,
-        });
-      } catch {}
 
       // pick new target and release a balloon carrying it, so the new
       // request is always answerable instead of hoping random spawns help.

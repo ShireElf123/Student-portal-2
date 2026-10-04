@@ -182,6 +182,7 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
       // Record mistake to spaced repetition engine!
       recordMistake({
         questionId: currentQ.id,
+        skillId: activeModalNode.id,
         domain: activeModalNode.domain,
         topic: activeModalNode.title,
         question: currentQ.question,
@@ -198,10 +199,14 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
       setHintLevel((prev) => Math.min(3, prev + 1));
     }
 
+    const tierBeforeResponse = getNodeTier(getLearnerModel(), activeModalNode.id);
     try {
       recordLearningEvent({
         learnerId: getActiveLearnerId(),
-        activityId: `skill-q-${currentQ.id}`,
+        activityId: "curriculum-skill-practice",
+        experienceId: "curriculum-skill-tree",
+        contentId: `${activeModalNode.id}:${currentQ.id}`,
+        eventType: "question_answered",
         activityType: "curriculum-quiz",
         activityTitle: `${activeModalNode.title}: Question ${questionIdx + 1}`,
         skillId: activeModalNode.id,
@@ -213,8 +218,14 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
         attempts: 1,
         hintsUsed: hintLevel,
       });
-    } catch {
-      // ignore
+      const tierAfterResponse = getNodeTier(getLearnerModel(), activeModalNode.id);
+      if (tierBeforeResponse !== "master" && tierAfterResponse === "master") {
+        awardGems(activeModalNode.starsReward);
+        triggerCelebrationConfetti();
+        soundEffects.playFanfare();
+      }
+    } catch (error) {
+      console.error("Failed to record curriculum question evidence:", error);
     }
   };
 
@@ -232,35 +243,30 @@ export function MasterySkillTreeView({ onNavigateTab, recommendedNodeId, onRecom
       const total = activeModalNode.questions.length;
       const finalCorrect = correctCount + (selectedAnswer === activeModalNode.questions[questionIdx].correctAnswerIndex ? 1 : 0);
       const accuracy = total > 0 ? finalCorrect / total : 0;
-      const completionResult = accuracy >= 0.8 ? "success" : accuracy >= 0.5 ? "practice" : "struggle";
-      const tierBefore = getNodeTier(getLearnerModel(), activeModalNode.id);
-
       try {
         recordLearningEvent({
           learnerId: getActiveLearnerId(),
-          activityId: `skill-node-${activeModalNode.id}`,
+          activityId: "curriculum-skill-practice",
+          experienceId: "curriculum-skill-tree",
+          contentId: `completed-session:${activeModalNode.id}:${Date.now()}`,
+          eventType: "session_summary",
           activityType: "curriculum-quiz",
-          activityTitle: `${activeModalNode.title} Mastery Quest`,
+          activityTitle: `${activeModalNode.title} Mastery Quest Completed`,
           skillId: activeModalNode.id,
           domain: activeModalNode.domain,
           gradeBand: activeModalNode.gradeBand,
-          result: completionResult,
+          result: "explored",
           score: Math.round(accuracy * 100),
           difficulty: "medium",
-          attempts: 1,
+          attempts: total,
           hintsUsed: 0,
         });
-      } catch {
-        // ignore
+      } catch (error) {
+        console.error("Failed to record curriculum session summary:", error);
       }
 
       awardXP(Math.max(10, Math.round(activeModalNode.xpReward * accuracy)), `${activeModalNode.title} Quest`);
-      const tierAfter = getNodeTier(getLearnerModel(), activeModalNode.id);
-      if (tierBefore !== "master" && tierAfter === "master") {
-        awardGems(activeModalNode.starsReward);
-        triggerCelebrationConfetti();
-        soundEffects.playFanfare();
-      } else if (accuracy >= 0.8) {
+      if (accuracy >= 0.8) {
         soundEffects.playSuccessChime();
       } else {
         soundEffects.playGentleBoing();

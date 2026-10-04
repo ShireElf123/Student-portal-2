@@ -52,10 +52,31 @@ function shuffle<T>(items: T[]): T[] {
 export interface PrimaryLearningLabProps {
   onBack?: () => void;
   onAskTutor?: (prompt: string) => void;
+  /** Registry launch target ID, not a curriculum skill or content ID. */
+  initialActivityId?: string;
 }
 
-export function PrimaryLearningLab({ onBack, onAskTutor }: PrimaryLearningLabProps) {
-  const [activeActivity, setActiveActivity] = useState<PrimaryActivity>("math-blitz");
+const PRIMARY_ACTIVITY_TARGETS: Record<string, PrimaryActivity> = {
+  "speed-math-blitz-sprint": "math-blitz",
+  "fraction-lab": "fraction-lab",
+  "word-forge": "word-forge",
+  "balance-scale": "balance-scale",
+  "solar-system": "solar-system",
+  "solar-system:cosmic-quiz": "solar-system",
+  "tangram-geometry": "geometry-builder",
+  "cyber-rover-code-runner": "code-runner",
+  "times-matrix": "times-matrix",
+};
+
+export function PrimaryLearningLab({ onBack, onAskTutor, initialActivityId }: PrimaryLearningLabProps) {
+  const [activeActivity, setActiveActivity] = useState<PrimaryActivity>(
+    () => PRIMARY_ACTIVITY_TARGETS[initialActivityId || ""] || "math-blitz"
+  );
+
+  useEffect(() => {
+    const targetedActivity = PRIMARY_ACTIVITY_TARGETS[initialActivityId || ""];
+    if (targetedActivity) setActiveActivity(targetedActivity);
+  }, [initialActivityId]);
 
   // Welcome speech for each activity on start
   useEffect(() => {
@@ -243,7 +264,9 @@ export function PrimaryLearningLab({ onBack, onAskTutor }: PrimaryLearningLabPro
         {activeActivity === "fraction-lab" && <TactileFractionLab />}
         {activeActivity === "word-forge" && <WordForgeGame />}
         {activeActivity === "balance-scale" && <PhysicsBalanceScaleGame />}
-        {activeActivity === "solar-system" && <PrimarySolarSystemLab />}
+        {activeActivity === "solar-system" && (
+          <PrimarySolarSystemLab initialTab={initialActivityId === "solar-system:cosmic-quiz" ? "cosmic-quiz" : "explorer"} />
+        )}
         {activeActivity === "geometry-builder" && <GeometryTangramArchitectGame />}
         {activeActivity === "code-runner" && <CyberRoverCodeRunnerGame />}
         {activeActivity === "times-matrix" && <MultiplicationMatrixGame />}
@@ -260,11 +283,12 @@ function SpeedMathBlitzGame() {
   const [timeLeft, setTimeLeft] = useState(45);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
-  const [problem, setProblem] = useState<{ text: string; answer: number; choices: number[] }>({ text: "", answer: 0, choices: [] });
+  const [problem, setProblem] = useState<{ id: string; text: string; answer: number; choices: number[] }>({ id: "", text: "", answer: 0, choices: [] });
   const [isGameOver, setIsGameOver] = useState(false);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const scoreRef = useRef(0);
   const answeredThisProblem = useRef(false);
+  const questionCounter = useRef(0);
 
   const generateProblem = () => {
     const ops = ["+", "-", "×"];
@@ -293,7 +317,9 @@ function SpeedMathBlitzGame() {
       if (cand >= 0 && cand !== ans) set.add(cand);
     }
 
+    questionCounter.current += 1;
     setProblem({
+      id: `question-${questionCounter.current}`,
       text: `${a} ${op} ${b}`,
       answer: ans,
       choices: shuffle(Array.from(set)),
@@ -304,6 +330,7 @@ function SpeedMathBlitzGame() {
     setIsPlaying(true);
     setTimeLeft(45);
     scoreRef.current = 0;
+    questionCounter.current = 0;
     answeredThisProblem.current = false;
     setScore(0);
     setStreak(0);
@@ -326,16 +353,19 @@ function SpeedMathBlitzGame() {
           recordLearningEvent({
             learnerId: getActiveLearnerId(),
             activityId: "speed-math-blitz-sprint",
+            experienceId: "speed-math-blitz-sprint",
+            contentId: `sprint-${Date.now()}`,
+            eventType: "activity_completed",
             activityType: "math-blitz",
-            activityTitle: "Speed Math Blitz Sprint",
-            skillId: "math-k1-addition-subtraction",
-            domain: "math",
+            activityTitle: "Speed Math Blitz Sprint Completed",
+            domain: "general",
             gradeBand: "2-3",
-            result: finalScore >= 40 ? "success" : "practice",
+            result: "explored",
             score: Math.min(100, Math.round((finalScore / 120) * 100)),
             difficulty: "medium",
             attempts: 1,
             hintsUsed: 0,
+            metadata: { points: finalScore },
           });
           return 0;
         }
@@ -348,7 +378,27 @@ function SpeedMathBlitzGame() {
 
   const handleChoice = (val: number) => {
     if (!isPlaying || isGameOver || answeredThisProblem.current) return;
-    if (val === problem.answer) {
+    const isCorrect = val === problem.answer;
+    const skillId = problem.text.includes("×") ? "math-23-multiplication" : "math-k1-addition-subtraction";
+    recordLearningEvent({
+      learnerId: getActiveLearnerId(),
+      activityId: "speed-math-blitz-sprint",
+      experienceId: "speed-math-blitz-sprint",
+      contentId: `${problem.id}:choice-${val}`,
+      eventType: "question_answered",
+      activityType: "math-blitz",
+      activityTitle: `Speed Math: ${problem.text}`,
+      skillId,
+      domain: "math",
+      gradeBand: "2-3",
+      result: isCorrect ? "success" : "struggle",
+      score: isCorrect ? 100 : 0,
+      difficulty: "medium",
+      attempts: 1,
+      hintsUsed: 0,
+      metadata: { expression: problem.text, selectedAnswer: val, correctAnswer: problem.answer },
+    });
+    if (isCorrect) {
       answeredThisProblem.current = true;
       soundEffects.playSuccessChime();
       const points = 10 * (streak >= 3 ? 2 : 1);
@@ -518,7 +568,10 @@ function TactileFractionLab() {
       speakText(`Hooray! You built ${currentChallenge.label}! Excellent fraction mastery!`, { pitch: 1.1 });
       recordLearningEvent({
         learnerId: getActiveLearnerId(),
-        activityId: `fraction-challenge-${currentChallenge.targetNum}-${currentChallenge.targetDen}`,
+        activityId: "primary-lab-fraction-slices",
+        experienceId: "fraction-lab",
+        contentId: `${currentChallenge.targetNum}/${currentChallenge.targetDen}`,
+        eventType: "question_answered",
         activityType: "fraction-lab",
         activityTitle: `Fraction Match: ${currentChallenge.label}`,
         skillId: "math-23-fractions",
@@ -765,7 +818,10 @@ function WordForgeGame() {
         speakText(`Correct! ${current.word}!`, { pitch: 1.1 });
         recordLearningEvent({
           learnerId: getActiveLearnerId(),
-          activityId: `word-forge-${current.word.toLowerCase()}`,
+          activityId: "primary-lab-word-forge",
+          experienceId: "word-forge",
+          contentId: current.word.toLowerCase(),
+          eventType: "question_answered",
           activityType: "word-forge",
           activityTitle: `Word Forge: ${current.word}`,
           skillId: "read-23-sight-words",
@@ -779,6 +835,24 @@ function WordForgeGame() {
         });
       } else {
         soundEffects.playGentleBoing();
+        recordLearningEvent({
+          learnerId: getActiveLearnerId(),
+          activityId: "primary-lab-word-forge",
+          experienceId: "word-forge",
+          contentId: `${current.word.toLowerCase()}:${newPlaced.join("").toLowerCase()}`,
+          eventType: "question_answered",
+          activityType: "word-forge",
+          activityTitle: `Word Forge: Incorrect attempt for ${current.word}`,
+          skillId: "read-23-sight-words",
+          domain: "reading",
+          gradeBand: "2-3",
+          result: "struggle",
+          score: 0,
+          difficulty: "medium",
+          attempts: 1,
+          hintsUsed: 0,
+          metadata: { answer: newPlaced.join("") },
+        });
         speakText("Not quite! Let's reset the letters and try again!", { pitch: 1.1 });
         setTimeout(() => {
           setScrambled(shuffle(current.word.split("")));
@@ -916,7 +990,10 @@ function PhysicsBalanceScaleGame() {
       speakText(`Balanced! Target ${targetWeight} kilograms achieved! Great algebraic logic!`, { pitch: 1.1 });
       recordLearningEvent({
         learnerId: getActiveLearnerId(),
-        activityId: `balance-scale-level-${level}`,
+        activityId: "primary-lab-balance-scale",
+        experienceId: "balance-scale",
+        contentId: `level-${level}-target-${targetWeight}`,
+        eventType: "question_answered",
         activityType: "balance-scale",
         activityTitle: `Balance Scale: ${targetWeight} KG Algebraic Balance`,
         skillId: "math-45-equations",
@@ -1147,7 +1224,10 @@ function GeometryTangramArchitectGame() {
 
       recordLearningEvent({
         learnerId: getActiveLearnerId(),
-        activityId: `tangram-${currentBlueprint.id}`,
+        activityId: "primary-lab-tangram-geometry",
+        experienceId: "tangram-geometry",
+        contentId: currentBlueprint.id,
+        eventType: "activity_completed",
         activityType: "geometry-tangram",
         activityTitle: `Tangram Geometry: ${currentBlueprint.title}`,
         skillId: "math-k1-shapes",
@@ -1340,6 +1420,26 @@ function CyberRoverCodeRunnerGame() {
     setErrorMessage(null);
   };
 
+  const recordRoverOutcome = (contentId: string, result: "success" | "struggle", title: string) => {
+    recordLearningEvent({
+      learnerId: getActiveLearnerId(),
+      activityId: "code-rover-martian-maze",
+      experienceId: "cyber-rover-code-runner",
+      contentId,
+      eventType: "activity_completed",
+      activityType: "code-runner",
+      activityTitle: title,
+      skillId: "logic-23-algorithms",
+      domain: "logic",
+      gradeBand: "2-3",
+      result,
+      score: result === "success" ? 100 : 0,
+      difficulty: "medium",
+      attempts: 1,
+      hintsUsed: 0,
+    });
+  };
+
   const handleRunProgram = async () => {
     if (isRunning || program.length === 0) return;
     setIsRunning(true);
@@ -1374,6 +1474,7 @@ function CyberRoverCodeRunnerGame() {
 
         // Boundary check
         if (nextX < 0 || nextX >= GRID_SIZE || nextY < 0 || nextY >= GRID_SIZE) {
+          recordRoverOutcome(`run-${program.join("-")}-boundary-${i}`, "struggle", "Cyber Rover: Boundary Collision");
           soundEffects.playGentleBoing();
           setErrorMessage("Rover drove off Martian boundary! Check your code!");
           setIsRunning(false);
@@ -1384,6 +1485,7 @@ function CyberRoverCodeRunnerGame() {
         // Crater collision check
         const inCrater = CRATERS.some((c) => c.x === nextX && c.y === nextY);
         if (inCrater && cmd !== "jump") {
+          recordRoverOutcome(`run-${program.join("-")}-crater-${i}`, "struggle", "Cyber Rover: Crater Collision");
           soundEffects.playGentleBoing();
           setErrorMessage("Rover fell into a crater! Use 'Jump Obstacle' to leap over it!");
           setIsRunning(false);
@@ -1417,21 +1519,9 @@ function CyberRoverCodeRunnerGame() {
       awardXP(50);
       speakText("Mission accomplished! Rover reached the rocket launchpad!", { pitch: 1.15 });
 
-      recordLearningEvent({
-        learnerId: getActiveLearnerId(),
-        activityId: "code-rover-martian-maze",
-        activityType: "code-runner",
-        activityTitle: "Cyber Rover Algorithmic Runner",
-        skillId: "logic-23-algorithms",
-        domain: "logic",
-        gradeBand: "2-3",
-        result: "success",
-        score: 100,
-        difficulty: "medium",
-        attempts: 1,
-        hintsUsed: 0,
-      });
+      recordRoverOutcome(`run-${program.join("-")}-success`, "success", "Cyber Rover Algorithmic Runner");
     } else {
+      recordRoverOutcome(`run-${program.join("-")}-${current.x}-${current.y}`, "struggle", "Cyber Rover: Incomplete Program");
       setErrorMessage("Program finished, but rover hasn't reached the rocket yet. Add more steps!");
     }
   };
@@ -1606,11 +1696,12 @@ function MultiplicationMatrixGame() {
   const [timeLeft, setTimeLeft] = useState(45);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
-  const [problem, setProblem] = useState<{ a: number; b: number; answer: number; choices: number[] }>({ a: 0, b: 0, answer: 0, choices: [] });
+  const [problem, setProblem] = useState<{ id: string; a: number; b: number; answer: number; choices: number[] }>({ id: "", a: 0, b: 0, answer: 0, choices: [] });
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [isGameOver, setIsGameOver] = useState(false);
   const scoreRef = useRef(0);
   const answeredRef = useRef(false);
+  const questionCounter = useRef(0);
 
   const generateFact = () => {
     const a = Math.floor(Math.random() * 11) + 2; // 2 to 12
@@ -1626,7 +1717,9 @@ function MultiplicationMatrixGame() {
       else set.add(ans + (Math.floor(Math.random() * 10) + 1));
     }
 
+    questionCounter.current += 1;
     setProblem({
+      id: `fact-${questionCounter.current}`,
       a,
       b,
       answer: ans,
@@ -1638,6 +1731,7 @@ function MultiplicationMatrixGame() {
     setIsPlaying(true);
     setTimeLeft(45);
     scoreRef.current = 0;
+    questionCounter.current = 0;
     setScore(0);
     setStreak(0);
     setIsGameOver(false);
@@ -1660,16 +1754,19 @@ function MultiplicationMatrixGame() {
           recordLearningEvent({
             learnerId: getActiveLearnerId(),
             activityId: "times-table-matrix-battle",
+            experienceId: "times-matrix",
+            contentId: `sprint-${Date.now()}`,
+            eventType: "activity_completed",
             activityType: "times-matrix",
-            activityTitle: "Multiplication Matrix Sprint",
-            skillId: "math-23-multiplication",
-            domain: "math",
+            activityTitle: "Multiplication Matrix Sprint Completed",
+            domain: "general",
             gradeBand: "2-3",
-            result: finalScore >= 50 ? "success" : "practice",
-            score: Math.min(100, Math.round((finalScore / 100) * 100)),
+            result: "explored",
+            score: Math.min(100, finalScore),
             difficulty: "medium",
             attempts: 1,
             hintsUsed: 0,
+            metadata: { points: finalScore },
           });
           return 0;
         }
@@ -1682,7 +1779,26 @@ function MultiplicationMatrixGame() {
 
   const handleChoice = (val: number) => {
     if (!isPlaying || isGameOver || answeredRef.current) return;
-    if (val === problem.answer) {
+    const isCorrect = val === problem.answer;
+    recordLearningEvent({
+      learnerId: getActiveLearnerId(),
+      activityId: "times-table-matrix-battle",
+      experienceId: "times-matrix",
+      contentId: `${problem.id}:choice-${val}`,
+      eventType: "question_answered",
+      activityType: "times-matrix",
+      activityTitle: `Multiplication Matrix: ${problem.a} times ${problem.b}`,
+      skillId: "math-23-multiplication",
+      domain: "math",
+      gradeBand: "2-3",
+      result: isCorrect ? "success" : "struggle",
+      score: isCorrect ? 100 : 0,
+      difficulty: "medium",
+      attempts: 1,
+      hintsUsed: 0,
+      metadata: { factorA: problem.a, factorB: problem.b, selectedAnswer: val, correctAnswer: problem.answer },
+    });
+    if (isCorrect) {
       answeredRef.current = true;
       soundEffects.playSuccessChime();
       const mult = streak >= 5 ? 3 : streak >= 3 ? 2 : 1;

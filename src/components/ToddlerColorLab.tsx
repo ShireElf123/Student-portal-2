@@ -178,18 +178,21 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
             recordLearningEvent({
               learnerId: getActiveLearnerId(),
               activityId: "toddler-color-magic",
+              experienceId: "color-magic",
+              contentId: `mixed-${result.colorName.toLowerCase()}`,
+              eventType: "creative_interaction",
               activityType: "toddler-color-lab",
               activityTitle: `Color Magic: Mixed ${result.colorName}`,
-              skillId: "sci-23-matter-energy",
-              domain: "science",
+              domain: "general",
               gradeBand: "toddler",
-              result: "success",
-              score: 100,
+              result: "explored",
               difficulty: "easy",
               attempts: 1,
               hintsUsed: 0,
             });
-          } catch {}
+          } catch (error) {
+            console.error("Failed to record color-mixing engagement:", error);
+          }
         }, 500);
       } else {
         // Same color mixed

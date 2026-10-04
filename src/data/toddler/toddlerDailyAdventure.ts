@@ -1,3 +1,5 @@
+import { getActiveLearnerId } from "../../utils/learnerBrain";
+
 export interface DailyMission {
   id: string;
   title: string;
@@ -150,9 +152,21 @@ export function getTodayAdventure(): DailySchedule {
 
 const MISSIONS_STORAGE_KEY = "toddler_daily_missions_completed_v1";
 
+function scopedDailyKey(key: string): string {
+  return `${key}_${getActiveLearnerId()}`;
+}
+
 export function getCompletedDailyMissionIds(): string[] {
   try {
-    const raw = localStorage.getItem(MISSIONS_STORAGE_KEY);
+    const key = scopedDailyKey(MISSIONS_STORAGE_KEY);
+    let raw = localStorage.getItem(key);
+    if (!raw && getActiveLearnerId() === "scholar-primary-1") {
+      raw = localStorage.getItem(MISSIONS_STORAGE_KEY);
+      if (raw) {
+        localStorage.setItem(key, raw);
+        localStorage.removeItem(MISSIONS_STORAGE_KEY);
+      }
+    }
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     const today = new Date().toISOString().split("T")[0];
@@ -173,7 +187,7 @@ export function markDailyMissionCompleted(missionId: string): { isFirstComplete:
       return { isFirstComplete: false, allCompleted: existing.length >= 3 };
     }
     const updated = [...existing, missionId];
-    localStorage.setItem(MISSIONS_STORAGE_KEY, JSON.stringify({ date: today, ids: updated }));
+    localStorage.setItem(scopedDailyKey(MISSIONS_STORAGE_KEY), JSON.stringify({ date: today, ids: updated }));
     return { isFirstComplete: true, allCompleted: updated.length >= 3 };
   } catch {
     return { isFirstComplete: false, allCompleted: false };
@@ -184,7 +198,7 @@ export function getDailyCount(counterKey: string): number {
   if (typeof window === "undefined") return 0;
   try {
     const today = new Date().toISOString().split("T")[0];
-    const raw = localStorage.getItem(`toddler_daily_count_${counterKey}_${today}`);
+    const raw = localStorage.getItem(scopedDailyKey(`toddler_daily_count_${counterKey}_${today}`));
     return raw ? parseInt(raw, 10) || 0 : 0;
   } catch {
     return 0;
@@ -195,7 +209,7 @@ export function recordDailyCount(counterKey: string): number {
   if (typeof window === "undefined") return 1;
   try {
     const today = new Date().toISOString().split("T")[0];
-    const key = `toddler_daily_count_${counterKey}_${today}`;
+    const key = scopedDailyKey(`toddler_daily_count_${counterKey}_${today}`);
     const current = getDailyCount(counterKey);
     const next = current + 1;
     localStorage.setItem(key, String(next));
@@ -212,7 +226,7 @@ export function recordDailySetMember(
   if (typeof window === "undefined") return { isNew: true, count: 1 };
   try {
     const today = new Date().toISOString().split("T")[0];
-    const key = `toddler_daily_set_${bucket}_${today}`;
+    const key = scopedDailyKey(`toddler_daily_set_${bucket}_${today}`);
     const raw = localStorage.getItem(key);
     const set: string[] = raw ? JSON.parse(raw) : [];
 

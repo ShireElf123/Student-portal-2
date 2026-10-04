@@ -38,7 +38,6 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
 import { awardXP, awardStars, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
-import { resolveSkillForActivity } from "../data/activitySkillRegistry";
 import {
   readScopedJSON,
   writeScopedJSON,
@@ -132,23 +131,25 @@ export function PrimaryHomeworkView({
       speakText("Awesome work! One more task completed!", { pitch: 1.15, rate: 1.0 });
 
       try {
-        const resolved = resolveSkillForActivity("primary-homework", task?.subject, task?.title);
         recordLearningEvent({
           learnerId: currentUserId || getActiveLearnerId(),
-          activityId: `hw-${id}-${Date.now()}`,
+          activityId: "primary-homework",
+          experienceId: "homework-desk",
+          contentId: `task-${id}`,
+          eventType: "activity_completed",
           activityType: "homework-submission",
-          activityTitle: `Homework: ${task?.title || "Daily Task"}`,
-          skillId: resolved.skillId,
-          domain: resolved.domain,
-          gradeBand: resolved.gradeBand,
-          result: "practice",
-          score: 80,
+          activityTitle: `Homework Checklist: ${task?.title || "Daily Task"}`,
+          domain: "general",
+          gradeBand: "2-3",
+          result: "explored",
           difficulty: "medium",
           attempts: 1,
           hintsUsed: 0,
-          metadata: { taskCompleted: true },
+          metadata: { taskCompleted: true, completionIsNotScoredEvidence: true },
         });
-      } catch {}
+      } catch (error) {
+        console.error("Failed to record homework checklist event:", error);
+      }
     } else {
       soundEffects.playPop();
     }
@@ -238,26 +239,29 @@ export function PrimaryHomeworkView({
         speakText("Great job! Your assignment has been turned in to your teacher!", { pitch: 1.15, rate: 1.0 });
 
         try {
-          const resolved = resolveSkillForActivity("class-assignment", activeAssignmentToSolve.subject, activeAssignmentToSolve.title);
           recordLearningEvent({
             learnerId: currentUserId || getActiveLearnerId(),
-            activityId: `asgn-sub-${activeAssignmentToSolve.id}-${Date.now()}`,
+            activityId: "primary-homework",
+            experienceId: "homework-desk",
+            contentId: `assignment-${activeAssignmentToSolve.id}`,
+            eventType: "activity_completed",
             activityType: "homework-submission",
             activityTitle: `Class Assignment Submitted: ${activeAssignmentToSolve.title}`,
-            skillId: resolved.skillId,
-            domain: resolved.domain,
-            gradeBand: resolved.gradeBand,
-            result: "practice",
-            score: 75,
+            domain: "general",
+            gradeBand: "2-3",
+            result: "explored",
             difficulty: "medium",
             attempts: 1,
             hintsUsed: 0,
             metadata: {
               status: "submitted",
               answerLength: studentAnswerText.length,
+              submissionIsNotScoredEvidence: true,
             },
           });
-        } catch {}
+        } catch (error) {
+          console.error("Failed to record assignment submission event:", error);
+        }
 
         setSubmissionSuccessCelebration(true);
         setTimeout(() => {

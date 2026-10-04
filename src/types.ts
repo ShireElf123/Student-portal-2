@@ -298,6 +298,14 @@ export interface SyncStatusInfo {
 // Age & Learning Stage Architecture
 export type LearningStage = "toddler" | "primary" | "educator";
 
+export interface BookLearningInteraction {
+  id: string;
+  prompt: string;
+  options: string[];
+  correctOptionIndex: number;
+  skillId: string;
+}
+
 export interface PictureBookPage {
   pageNumber: number;
   title: string;
@@ -309,6 +317,7 @@ export interface PictureBookPage {
   wordHighlights?: string[];
   interactivePrompt: string; // e.g. "Can you tap the red apple?"
   soundEffectText?: string;
+  learningInteraction?: BookLearningInteraction;
 }
 
 export interface PictureBook {
@@ -328,6 +337,8 @@ export type AssessmentScore = "mastered" | "developing" | "needs_practice" | "no
 
 export interface AssessmentItem {
   id: string;
+  /** Optional precise curriculum mapping; unrepresented concepts stay unmapped rather than receiving false mastery evidence. */
+  skillId?: string;
   prompt: string;
   category: string;
   demonstrationGuide: string; // Instructions for the parent or tutor

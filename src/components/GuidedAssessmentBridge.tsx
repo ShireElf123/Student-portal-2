@@ -23,6 +23,8 @@ import { GUIDED_ASSESSMENTS } from "../data/assessmentTemplates";
 import { speakText } from "../utils/speechUtils";
 import { todayISO } from "../utils/dateUtils";
 import { readScopedJSON, writeScopedJSON } from "../utils/accountStorage";
+import { getActiveLearnerId } from "../utils/learnerBrain";
+import { recordAssessmentResultEvidence } from "../utils/assessmentEvidence";
 
 const ASSESSMENTS_KEY = "my_student_portal_assessments_v1";
 
@@ -142,6 +144,12 @@ export function GuidedAssessmentBridge({
       writeScopedJSON(ASSESSMENTS_KEY, savedResults.slice(0, 50));
     } catch {
       // ignore
+    }
+
+    try {
+      recordAssessmentResultEvidence(activeAssessment, result, getActiveLearnerId());
+    } catch (error) {
+      console.error("Assessment result was saved, but a mapped evidence event could not be recorded:", error);
     }
 
     if (onAssessmentCompleted) {

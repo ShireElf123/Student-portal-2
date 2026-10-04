@@ -1,6 +1,5 @@
 import { CurriculumDomain, GradeLevelBand, CURRICULUM_SKILL_NODES } from "../data/curriculumUniverse";
 import { NavigationTab } from "../types";
-import { getDueMistakesCount } from "./pedagogicalEngine";
 import {
   saveLearnerModelToCloud,
   fetchLearnerModelFromCloud,
@@ -11,6 +10,8 @@ import {
   GUEST_LEARNER_ID,
   setActiveAccountId,
 } from "./accountStorage";
+import { getActivitiesForSkill, resolveActivityDefinition } from "../data/activitySkillRegistry";
+import { markDailyRouteEvidenceComplete } from "./dailyLearningRoute";
 
 export type SyncState = "synced" | "syncing" | "offline" | "error";
 let currentSyncState: SyncState = "synced";
@@ -37,7 +38,7 @@ function setSyncState(state: SyncState) {
   }
 }
 
-const PENDING_EVENTS_QUEUE_KEY = "my_student_portal_pending_events_queue_v1";
+const PENDING_EVENTS_QUEUE_KEY_PREFIX = "my_student_portal_pending_events_queue_v1_";
 
 interface QueuedEvent {
   learnerId: string;
@@ -46,23 +47,23 @@ interface QueuedEvent {
   queuedAt: number;
 }
 
-function getPendingEventQueue(): QueuedEvent[] {
+function getPendingEventQueue(learnerId: string): QueuedEvent[] {
   try {
-    const raw = localStorage.getItem(PENDING_EVENTS_QUEUE_KEY);
+    const raw = localStorage.getItem(`${PENDING_EVENTS_QUEUE_KEY_PREFIX}${learnerId}`);
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
   }
 }
 
-function savePendingEventQueue(queue: QueuedEvent[]) {
+function savePendingEventQueue(learnerId: string, queue: QueuedEvent[]) {
   try {
-    localStorage.setItem(PENDING_EVENTS_QUEUE_KEY, JSON.stringify(queue));
+    localStorage.setItem(`${PENDING_EVENTS_QUEUE_KEY_PREFIX}${learnerId}`, JSON.stringify(queue));
   } catch {}
 }
 
 function enqueuePendingEvent(learnerId: string, event: LearningEvent) {
-  const queue = getPendingEventQueue();
+  const queue = getPendingEventQueue(learnerId);
   if (!queue.some((q) => q.event.id === event.id)) {
     queue.push({
       learnerId,
@@ -70,12 +71,12 @@ function enqueuePendingEvent(learnerId: string, event: LearningEvent) {
       retryCount: 0,
       queuedAt: Date.now(),
     });
-    savePendingEventQueue(queue);
+    savePendingEventQueue(learnerId, queue);
   }
 }
 
-export async function flushPendingEventsQueue(): Promise<void> {
-  const queue = getPendingEventQueue();
+export async function flushPendingEventsQueue(learnerId: string = getActiveLearnerId()): Promise<void> {
+  const queue = getPendingEventQueue(learnerId);
   if (queue.length === 0) return;
 
   const remaining: QueuedEvent[] = [];
@@ -91,7 +92,7 @@ export async function flushPendingEventsQueue(): Promise<void> {
     }
   }
 
-  savePendingEventQueue(remaining);
+  savePendingEventQueue(learnerId, remaining);
   setSyncState(remaining.length === 0 ? "synced" : "offline");
 }
 
@@ -118,18 +119,47 @@ export type ActivityType =
   | "geometry-tangram"
   | "code-runner"
   | "times-matrix"
-  | "phonics-pop";
+  | "phonics-pop"
+  | "storybook-interaction"
+  | "guided-assessment"
+  | "world-activity"
+  | "world-mission"
+  | "engagement";
 
+export type LearningEventType =
+  | "question_answered"
+  | "learner_response"
+  | "activity_completed"
+  | "assessment_response"
+  | "practice_response"
+  | "session_summary"
+  | "content_explored"
+  | "experience_opened"
+  | "story_interaction"
+  | "mission_completed"
+  | "creative_interaction"
+  | "diagnostic_summary";
+
+export type LearningEventOutcome = "correct" | "incorrect" | "partial" | "explored";
+
+/**
+ * A persisted learner-evidence event. Event, activity, experience, content, and skill IDs
+ * intentionally have separate fields and lifecycles.
+ */
 export interface LearningEvent {
   id: string;
   learnerId: string;
   activityId: string;
+  experienceId: string;
+  contentId?: string;
+  eventType: LearningEventType;
   activityType: ActivityType;
   activityTitle: string;
-  skillId: string;
+  skillId?: string;
   domain: CurriculumDomain | "general";
   gradeBand: GradeLevelBand | "toddler";
   result: "mastered" | "success" | "struggle" | "practice" | "explored";
+  outcome: LearningEventOutcome;
   score?: number; // 0 - 100 percentage or raw points
   maxScore?: number;
   difficulty: "beginner" | "easy" | "medium" | "hard" | "expert";
@@ -140,12 +170,21 @@ export interface LearningEvent {
   metadata?: Record<string, any>;
 }
 
+export type LearningEventInput = Omit<LearningEvent, "id" | "timestamp" | "experienceId" | "eventType" | "outcome"> & {
+  id?: string;
+  timestamp?: number;
+  experienceId?: string;
+  eventType?: LearningEventType;
+  outcome?: LearningEventOutcome;
+};
+
 export interface SkillMasteryRecord {
   skillId: string;
   domain: CurriculumDomain;
   gradeBand: GradeLevelBand | "toddler";
   tier: "locked" | "novice" | "practitioner" | "master";
   evidenceScore: number; // 0 - 100 continuous score
+  confidence: number; // 0 - 100 confidence derived from meaningful response evidence
   totalAttempts: number;
   successfulAttempts: number;
   strugglesCount: number;
@@ -159,17 +198,22 @@ export interface SkillMasteryRecord {
   needsReview: boolean;
 }
 
+export type RecommendationReason = "recent-mistake" | "needs-practice" | "near-mastery" | "new-skill";
+
 export interface RecommendedAction {
   id: string;
   type: "mistake-review" | "curriculum-skill" | "mastery-challenge" | "lab-mission" | "toddler-world" | "practice";
   title: string;
   reason: string;
   badge: string;
+  reasonCode: RecommendationReason;
   targetTab: NavigationTab;
-  skillId?: string;
-  domain?: CurriculumDomain;
+  skillId: string;
+  domain: CurriculumDomain;
   nodeId?: string;
-  activityId?: string;
+  activityId: string;
+  experienceId: string;
+  targetId: string;
   urgency: "high" | "medium" | "low";
 }
 
@@ -178,6 +222,7 @@ export interface LearnerModel {
   gradeBand: GradeLevelBand | "toddler";
   skillMastery: Record<string, SkillMasteryRecord>;
   recentEvents: LearningEvent[]; // last 50 events
+  processedEventIds: string[]; // idempotency window for offline retries
   totalLearningEventsCount: number;
   weakSkills: string[]; // skill IDs needing review or low evidence
   strongSkills: string[]; // skill IDs with practitioner or master tier
@@ -188,6 +233,7 @@ export interface LearnerModel {
 }
 
 const DEFAULT_LEARNER_ID = "scholar-primary-1";
+const curriculumById = new Map(CURRICULUM_SKILL_NODES.map((node) => [node.id, node]));
 let activeLearnerId = DEFAULT_LEARNER_ID;
 
 export function getActiveLearnerId(): string {
@@ -233,6 +279,7 @@ function createDefaultSkillMastery(): Record<string, SkillMasteryRecord> {
       gradeBand: node.gradeBand,
       tier: node.prerequisites.length === 0 ? "novice" : "locked",
       evidenceScore: 0,
+      confidence: 0,
       totalAttempts: 0,
       successfulAttempts: 0,
       strugglesCount: 0,
@@ -261,6 +308,7 @@ export function getInitialLearnerModel(learnerId: string = DEFAULT_LEARNER_ID): 
     gradeBand: learnerId.includes("leo") || learnerId.includes("toddler") ? "K-1" : "2-3",
     skillMastery,
     recentEvents: [],
+    processedEventIds: [],
     totalLearningEventsCount: 0,
     weakSkills: [],
     strongSkills: strong,
@@ -287,9 +335,11 @@ export function getLearnerModel(specificLearnerId?: string): LearnerModel {
     // One-time legacy adoption for the active learner: pre-partition models
     // move into this account's learner key and the unscoped original is
     // removed, so no later account on this browser can see them.
-    if (!raw && (targetId === DEFAULT_LEARNER_ID || !specificLearnerId)) {
+    // Historical unscoped model data belongs only to the original default learner;
+    // a newly active account must never adopt it as its own mastery history.
+    if (!raw && targetId === DEFAULT_LEARNER_ID) {
       raw = localStorage.getItem(LEGACY_MODEL_KEY);
-      if (raw && (!specificLearnerId || specificLearnerId === activeLearnerId)) {
+      if (raw) {
         try {
           localStorage.setItem(storageKey, raw);
           localStorage.removeItem(LEGACY_MODEL_KEY);
@@ -301,6 +351,13 @@ export function getLearnerModel(specificLearnerId?: string): LearnerModel {
     if (raw) {
       const parsed = JSON.parse(raw) as LearnerModel;
       parsed.learnerId = targetId;
+      parsed.skillMastery = Object.fromEntries(
+        Object.entries(parsed.skillMastery || {}).filter(([skillId]) => curriculumById.has(skillId))
+      );
+      parsed.recentEvents = Array.isArray(parsed.recentEvents) ? parsed.recentEvents : [];
+      parsed.processedEventIds = Array.isArray(parsed.processedEventIds)
+        ? parsed.processedEventIds
+        : parsed.recentEvents.map((event) => event.id).filter(Boolean);
       // Reconcile with any new curriculum nodes added to curriculumUniverse
       CURRICULUM_SKILL_NODES.forEach((node) => {
         if (!parsed.skillMastery[node.id]) {
@@ -309,7 +366,8 @@ export function getLearnerModel(specificLearnerId?: string): LearnerModel {
             domain: node.domain,
             gradeBand: node.gradeBand,
             tier: node.prerequisites.length === 0 ? "novice" : "locked",
-            evidenceScore: node.prerequisites.length === 0 ? 20 : 0,
+            evidenceScore: 0,
+            confidence: 0,
             totalAttempts: 0,
             successfulAttempts: 0,
             strugglesCount: 0,
@@ -324,9 +382,14 @@ export function getLearnerModel(specificLearnerId?: string): LearnerModel {
         } else {
           // Backfill this field for learner models created before hint-aware adaptation.
           parsed.skillMastery[node.id].consecutiveUnassistedSuccesses ??= 0;
+          parsed.skillMastery[node.id].confidence ??= 0;
         }
       });
 
+      parsed.totalLearningEventsCount = Number.isFinite(parsed.totalLearningEventsCount) ? parsed.totalLearningEventsCount : parsed.recentEvents.length;
+      parsed.completedMissions = Array.isArray(parsed.completedMissions) ? parsed.completedMissions : [];
+      parsed.weakSkills = Array.isArray(parsed.weakSkills) ? parsed.weakSkills.filter((skillId) => curriculumById.has(skillId)) : [];
+      parsed.strongSkills = Array.isArray(parsed.strongSkills) ? parsed.strongSkills.filter((skillId) => curriculumById.has(skillId)) : [];
       parsed.recommendedNext = computeRecommendations(parsed);
       if (!specificLearnerId) cachedLearnerModel = parsed;
       return parsed;
@@ -343,6 +406,7 @@ export function getLearnerModel(specificLearnerId?: string): LearnerModel {
 export function saveLearnerModel(model: LearnerModel, specificLearnerId?: string): void {
   const targetId = specificLearnerId || model.learnerId || activeLearnerId;
   model.learnerId = targetId;
+  model.processedEventIds = Array.isArray(model.processedEventIds) ? model.processedEventIds.slice(-500) : [];
   if (!specificLearnerId || specificLearnerId === activeLearnerId) {
     cachedLearnerModel = model;
   }
@@ -392,6 +456,7 @@ export function mergeLearnerModels(localModel: LearnerModel, cloudModel: Learner
     gradeBand: localModel.gradeBand || cloudModel.gradeBand || "2-3",
     skillMastery: { ...localModel.skillMastery },
     recentEvents: [],
+    processedEventIds: [],
     totalLearningEventsCount: Math.max(localModel.totalLearningEventsCount || 0, cloudModel.totalLearningEventsCount || 0),
     weakSkills: [],
     strongSkills: [],
@@ -426,6 +491,7 @@ export function mergeLearnerModels(localModel: LearnerModel, cloudModel: Learner
         gradeBand: localRec.gradeBand || cloudRec.gradeBand,
         tier: winnerTier,
         evidenceScore: Math.max(localRec.evidenceScore || 0, cloudRec.evidenceScore || 0),
+        confidence: Math.max(localRec.confidence || 0, cloudRec.confidence || 0),
         totalAttempts: Math.max(localRec.totalAttempts || 0, cloudRec.totalAttempts || 0),
         successfulAttempts: Math.max(localRec.successfulAttempts || 0, cloudRec.successfulAttempts || 0),
         strugglesCount: Math.max(localRec.strugglesCount || 0, cloudRec.strugglesCount || 0),
@@ -438,10 +504,10 @@ export function mergeLearnerModels(localModel: LearnerModel, cloudModel: Learner
         masteredTimestamp: localRec.masteredTimestamp || cloudRec.masteredTimestamp,
         needsReview: localRec.needsReview || cloudRec.needsReview,
       };
-    } else if (localRec) {
-      merged.skillMastery[skillId] = { ...localRec, consecutiveUnassistedSuccesses: localRec.consecutiveUnassistedSuccesses || 0 };
-    } else if (cloudRec) {
-      merged.skillMastery[skillId] = { ...cloudRec, consecutiveUnassistedSuccesses: cloudRec.consecutiveUnassistedSuccesses || 0 };
+    } else if (localRec && curriculumById.has(skillId)) {
+      merged.skillMastery[skillId] = { ...localRec, confidence: localRec.confidence || 0, consecutiveUnassistedSuccesses: localRec.consecutiveUnassistedSuccesses || 0 };
+    } else if (cloudRec && curriculumById.has(skillId)) {
+      merged.skillMastery[skillId] = { ...cloudRec, confidence: cloudRec.confidence || 0, consecutiveUnassistedSuccesses: cloudRec.consecutiveUnassistedSuccesses || 0 };
     }
   });
 
@@ -459,6 +525,11 @@ export function mergeLearnerModels(localModel: LearnerModel, cloudModel: Learner
   merged.recentEvents = Array.from(eventMap.values())
     .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
     .slice(0, 50);
+  merged.processedEventIds = Array.from(new Set([
+    ...(localModel.processedEventIds || []),
+    ...(cloudModel.processedEventIds || []),
+    ...merged.recentEvents.map((event) => event.id),
+  ])).slice(-500);
 
   // Recompute strong & weak skill groupings
   merged.strongSkills = Object.values(merged.skillMastery)
@@ -495,7 +566,7 @@ export async function syncLearnerBrainWithCloud(userId: string): Promise<Learner
       setSyncState("synced");
       notifySyncStatus({ state: "synced", message: "Learner brain synchronized" });
       // Flush any queued offline events
-      flushPendingEventsQueue().catch(() => {});
+      flushPendingEventsQueue(userId).catch(() => {});
       return merged;
     } else {
       // First time cloud creation: upload local model to seed cloud profile
@@ -520,254 +591,321 @@ export function subscribeLearnerModel(callback: (model: LearnerModel) => void): 
   };
 }
 
-/**
- * Computes deterministic, high-value pedagogical recommendations
- */
+/** Returns a real, launchable learning activity linked to the requested skill. */
+function selectActivityForSkill(skillId: string, gradeBand: LearnerModel["gradeBand"], preferredActivityId?: string) {
+  const candidates = getActivitiesForSkill(skillId).filter((activity) =>
+    activity.skillIds.includes(skillId) &&
+    !["engagement", "assessment", "homework", "picture-book"].includes(activity.experienceType) &&
+    (activity.experienceType !== "toddler-world" || (activity.minimumWorldStars ?? 0) === 0)
+  );
+  const preferred = preferredActivityId
+    ? candidates.find((activity) => activity.id === preferredActivityId)
+    : undefined;
+  if (preferred) return preferred;
+
+  const gradeMatch = (activity: ReturnType<typeof getActivitiesForSkill>[number]) =>
+    gradeBand === "toddler"
+      ? activity.gradeBand === "toddler" ? 0 : 1
+      : activity.gradeBand === gradeBand ? 0 : activity.experienceType === "curriculum-quest" ? 2 : 1;
+  const sorted = [...candidates].sort((a, b) => {
+    const aGeneric = a.experienceType === "curriculum-quest" ? 1 : 0;
+    const bGeneric = b.experienceType === "curriculum-quest" ? 1 : 0;
+    return gradeMatch(a) - gradeMatch(b) || aGeneric - bGeneric || a.id.localeCompare(b.id);
+  });
+  const selected = sorted[0];
+  if (!selected) throw new Error(`No launchable activity is registered for skill ${skillId}`);
+  return selected;
+}
+
+function createRecommendation(
+  model: LearnerModel,
+  skillId: string,
+  reasonCode: RecommendationReason,
+  urgency: RecommendedAction["urgency"],
+  preferredActivityId?: string
+): RecommendedAction {
+  const node = curriculumById.get(skillId);
+  if (!node) throw new Error(`Recommendation references unknown skill ${skillId}`);
+  const activity = selectActivityForSkill(skillId, model.gradeBand, preferredActivityId);
+  const labels: Record<RecommendationReason, { type: RecommendedAction["type"]; badge: string; title: string; reason: string }> = {
+    "recent-mistake": {
+      type: "practice",
+      badge: "Recent Challenge",
+      title: `Try Again: ${node.title}`,
+      reason: "A recent response showed this concept may benefit from another supported practice round.",
+    },
+    "needs-practice": {
+      type: "practice",
+      badge: "Needs Practice",
+      title: `Reinforce: ${node.title}`,
+      reason: "Strengthen this concept with a focused activity before moving to a more advanced standard.",
+    },
+    "near-mastery": {
+      type: "mastery-challenge",
+      badge: "Almost There",
+      title: `Mastery Challenge: ${node.title}`,
+      reason: "Build on demonstrated progress with one more targeted challenge.",
+    },
+    "new-skill": {
+      type: "curriculum-skill",
+      badge: "Next Skill",
+      title: `Next Standard: ${node.title}`,
+      reason: `Start this ${node.gradeBand} curriculum skill, aligned to ${node.standardCode}.`,
+    },
+  };
+  const label = labels[reasonCode];
+  return {
+    id: `rec-${reasonCode}-${skillId}-${activity.id}`,
+    type: label.type,
+    title: label.title,
+    reason: label.reason,
+    badge: label.badge,
+    reasonCode,
+    targetTab: activity.launch.route,
+    skillId,
+    domain: node.domain,
+    nodeId: skillId,
+    activityId: activity.id,
+    experienceId: activity.experienceId,
+    targetId: activity.launch.targetId,
+    urgency,
+  };
+}
+
+/** Computes deterministic recommendations entirely from the learner's own model. */
 export function computeRecommendations(model: LearnerModel): RecommendedAction[] {
   const actions: RecommendedAction[] = [];
-
-  // 1. Spaced Repetition Due Mistakes Check
-  const dueMistakes = getDueMistakesCount();
-  if (dueMistakes > 0) {
-    actions.push({
-      id: "rec-mistake-recovery",
-      type: "mistake-review",
-      title: `Review Vault: ${dueMistakes} Concepts Ready for Redemption`,
-      reason: "Conquer past misconceptions with hint scaffolding to earn redemption crowns.",
-      badge: "Spaced Repetition",
-      targetTab: "practice",
-      urgency: "high",
-    });
-  }
-
-  // 2. Weak Skills Needing Reinforcement
-  const weakSkillRecord = Object.values(model.skillMastery).find(
-    (s) => s.needsReview || (s.strugglesCount > 1 && s.tier !== "master")
+  const now = Date.now();
+  const recentFailure = (model.recentEvents || []).find((event) =>
+    event.result === "struggle" && event.skillId && curriculumById.has(event.skillId) &&
+    now - (event.timestamp || 0) <= 30 * 24 * 60 * 60 * 1000
   );
-  if (weakSkillRecord) {
-    const node = CURRICULUM_SKILL_NODES.find((n) => n.id === weakSkillRecord.skillId);
-    actions.push({
-      id: `rec-weak-${weakSkillRecord.skillId}`,
-      type: "practice",
-      title: `Reinforce: ${node?.title || "Skill Target"}`,
-      reason: "Strengthen this concept with graduated difficulty before moving to advanced standards.",
-      badge: "Needs Practice",
-      targetTab: "odyssey",
-      skillId: weakSkillRecord.skillId,
-      domain: weakSkillRecord.domain,
-      nodeId: weakSkillRecord.skillId,
-      urgency: "high",
-    });
+  if (recentFailure?.skillId) {
+    actions.push(createRecommendation(model, recentFailure.skillId, "recent-mistake", "high", recentFailure.activityId));
   }
 
-  // 3. Practitioner Near-Mastery Challenge
-  const nearMastery = Object.values(model.skillMastery).find(
-    (s) => s.tier === "practitioner" && s.evidenceScore >= 65
-  );
-  if (nearMastery) {
-    const node = CURRICULUM_SKILL_NODES.find((n) => n.id === nearMastery.skillId);
-    actions.push({
-      id: `rec-mastery-${nearMastery.skillId}`,
-      type: "mastery-challenge",
-      title: `Mastery Challenge: ${node?.title || "Target"}`,
-      reason: "You are close to full standard mastery! Complete the challenge to unlock the crown.",
-      badge: "Mastery Quest",
-      targetTab: "odyssey",
-      skillId: nearMastery.skillId,
-      domain: nearMastery.domain,
-      nodeId: nearMastery.skillId,
-      urgency: "medium",
-    });
+  const weakSkill = Object.values(model.skillMastery || {})
+    .filter((record) => curriculumById.has(record.skillId) && record.tier !== "master" && (record.needsReview || record.strugglesCount > 0))
+    .sort((a, b) => Number(b.needsReview) - Number(a.needsReview) || b.strugglesCount - a.strugglesCount || b.lastPracticedTimestamp - a.lastPracticedTimestamp || a.skillId.localeCompare(b.skillId))[0];
+  if (weakSkill && !actions.some((action) => action.skillId === weakSkill.skillId)) {
+    actions.push(createRecommendation(model, weakSkill.skillId, "needs-practice", "high"));
   }
 
-  // 4. Next Unlocked Curriculum Standard
+  const nearMastery = Object.values(model.skillMastery || {})
+    .filter((record) => record.tier === "practitioner" && record.evidenceScore >= 65 && curriculumById.has(record.skillId))
+    .sort((a, b) => b.evidenceScore - a.evidenceScore || a.skillId.localeCompare(b.skillId))[0];
+  if (nearMastery && !actions.some((action) => action.skillId === nearMastery.skillId)) {
+    actions.push(createRecommendation(model, nearMastery.skillId, "near-mastery", "medium"));
+  }
+
   const nextUnlocked = CURRICULUM_SKILL_NODES.find((node) => {
     const record = model.skillMastery[node.id];
-    if (record?.tier === "master") return false;
-    // Check prerequisites
-    const prereqsMet =
-      node.prerequisites.length === 0 ||
-      node.prerequisites.every((pid) => model.skillMastery[pid]?.tier === "master");
-    return prereqsMet;
-  });
-
-  if (nextUnlocked) {
-    actions.push({
-      id: `rec-curriculum-${nextUnlocked.id}`,
-      type: "curriculum-skill",
-      title: `Next Standard: ${nextUnlocked.title}`,
-      reason: `Explore this ${nextUnlocked.gradeBand} curriculum node aligned to ${nextUnlocked.standardCode}.`,
-      badge: "Curriculum Journey",
-      targetTab: "odyssey",
-      skillId: nextUnlocked.id,
-      domain: nextUnlocked.domain,
-      nodeId: nextUnlocked.id,
-      urgency: "medium",
+    if (!record || record.tier === "master" || record.totalAttempts > 0) return false;
+    return node.prerequisites.every((prerequisiteId) => {
+      const prerequisite = model.skillMastery[prerequisiteId];
+      return prerequisite?.tier === "practitioner" || prerequisite?.tier === "master";
     });
+  });
+  if (nextUnlocked && !actions.some((action) => action.skillId === nextUnlocked.id)) {
+    actions.push(createRecommendation(model, nextUnlocked.id, "new-skill", "medium"));
   }
 
-  // 5. Interactive Lab Mission
-  actions.push({
-    id: "rec-lab-discovery",
-    type: "lab-mission",
-    title: "Primary STEM Lab: Planetary Exploration & Fractions",
-    reason: "Engage in hands-on science experiments, balance scales, and tactile fraction manipulation.",
-    badge: "Interactive Lab",
-    targetTab: "primary-lab",
-    urgency: "low",
-  });
+  return actions.slice(0, 4);
+}
 
-  return actions;
+function outcomeForResult(result: LearningEvent["result"]): LearningEventOutcome {
+  if (result === "mastered" || result === "success") return "correct";
+  if (result === "struggle") return "incorrect";
+  if (result === "practice") return "partial";
+  return "explored";
+}
+
+function eventCanUpdateMastery(event: LearningEvent): boolean {
+  return ["question_answered", "learner_response", "activity_completed", "assessment_response", "practice_response", "session_summary"].includes(event.eventType) &&
+    event.outcome !== "explored";
+}
+
+function calculateConfidence(record: SkillMasteryRecord): number {
+  const observedResponses = record.successfulAttempts + record.strugglesCount;
+  if (observedResponses === 0) return 0;
+  const coverage = observedResponses / (observedResponses + 2);
+  const accuracy = (record.successfulAttempts + 1) / (observedResponses + 2);
+  return Math.round(coverage * (0.5 + accuracy * 0.5) * 100);
+}
+
+function updateLearningStreak(model: LearnerModel, eventTimestamp: number): void {
+  if (eventTimestamp <= model.lastActiveTimestamp) return;
+  const previousDate = model.lastActiveTimestamp ? new Date(model.lastActiveTimestamp).toISOString().slice(0, 10) : "";
+  const currentDate = new Date(eventTimestamp).toISOString().slice(0, 10);
+  if (!previousDate) {
+    model.activeStreak = 1;
+  } else if (previousDate === currentDate) {
+    model.activeStreak = Math.max(1, model.activeStreak);
+  } else {
+    const previousDay = new Date(`${previousDate}T00:00:00.000Z`).getTime();
+    const currentDay = new Date(`${currentDate}T00:00:00.000Z`).getTime();
+    model.activeStreak = currentDay - previousDay === 24 * 60 * 60 * 1000 ? model.activeStreak + 1 : 1;
+  }
+  model.lastActiveTimestamp = eventTimestamp;
 }
 
 /**
- * Main Event Gateway: Every meaningful learning activity calls this function
+ * Main event gateway. It rejects unknown activities/skills and records mastery only
+ * for a scored learner response, never for merely opening or exploring an experience.
  */
-export function recordLearningEvent(
-  eventInput: Omit<LearningEvent, "id" | "timestamp"> & { id?: string; timestamp?: number }
-): LearningEvent {
+export function recordLearningEvent(eventInput: LearningEventInput): LearningEvent {
   const targetLearnerId = eventInput.learnerId || getActiveLearnerId();
-  const model = getLearnerModel(targetLearnerId);
+  const definition = resolveActivityDefinition(eventInput.activityId);
+  const eventType = eventInput.eventType || (eventInput.result === "explored" ? "content_explored" : "learner_response");
+  const outcome = eventInput.outcome || outcomeForResult(eventInput.result);
+  const experienceId = eventInput.experienceId || definition.experienceId;
+  if (experienceId !== definition.experienceId) {
+    throw new Error(`Activity ${definition.id} belongs to experience ${definition.experienceId}, not ${experienceId}`);
+  }
+  const skillId = eventInput.skillId;
+  const masteryAffecting = eventCanUpdateMastery({
+    ...eventInput,
+    id: eventInput.id || "pending-event-validation",
+    learnerId: targetLearnerId,
+    activityId: definition.id,
+    experienceId,
+    eventType,
+    outcome,
+    timestamp: eventInput.timestamp ?? 0,
+  } as LearningEvent);
+
+  if (eventInput.outcome && eventInput.outcome !== outcomeForResult(eventInput.result)) {
+    throw new Error(`Learning event outcome ${eventInput.outcome} conflicts with result ${eventInput.result}`);
+  }
+  if (skillId) {
+    const skill = curriculumById.get(skillId);
+    if (!skill) throw new Error(`Learning event references unknown curriculum skill: ${skillId}`);
+    if (!definition.skillIds.includes(skillId)) {
+      throw new Error(`Activity ${definition.id} is not mapped to curriculum skill ${skillId}`);
+    }
+    if (eventInput.domain !== "general" && eventInput.domain !== skill.domain) {
+      throw new Error(`Activity ${definition.id} reports ${eventInput.domain} evidence for ${skill.domain} skill ${skillId}`);
+    }
+  }
+  if (masteryAffecting && !skillId) {
+    throw new Error(`Mastery-affecting event ${definition.id} must reference a canonical skillId`);
+  }
+  if (!masteryAffecting && skillId && !definition.skillIds.includes(skillId)) {
+    throw new Error(`Engagement event ${definition.id} references unrelated skill ${skillId}`);
+  }
+  if (masteryAffecting && definition.skillIds.length === 0) {
+    throw new Error(`Engagement-only activity ${definition.id} cannot update mastery`);
+  }
+
   const event: LearningEvent = {
     ...eventInput,
     learnerId: targetLearnerId,
+    activityId: definition.id,
+    experienceId,
+    contentId: eventInput.contentId,
+    eventType,
+    skillId,
+    domain: skillId ? curriculumById.get(skillId)!.domain : "general",
+    gradeBand: eventInput.gradeBand,
+    outcome,
     id: eventInput.id || `evt-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-    timestamp: eventInput.timestamp || Date.now(),
+    timestamp: eventInput.timestamp ?? Date.now(),
+    attempts: Math.max(1, Math.min(100, Math.floor(eventInput.attempts || 1))),
+    hintsUsed: Math.max(0, Math.floor(eventInput.hintsUsed || 0)),
   };
+  const model = getLearnerModel(targetLearnerId);
+  if (model.processedEventIds?.includes(event.id) || model.recentEvents.some((previous) => previous.id === event.id)) {
+    return model.recentEvents.find((previous) => previous.id === event.id) || event;
+  }
 
-  const isUnmapped = !event.skillId || event.skillId === "unmapped-activity";
+  if (masteryAffecting && skillId) {
+    const skill = curriculumById.get(skillId)!;
+    const record = model.skillMastery[skillId];
+    if (!record) throw new Error(`Learner model has no canonical mastery record for ${skillId}`);
+    record.totalAttempts += event.attempts;
+    record.hintsUsedTotal += event.hintsUsed * event.attempts;
+    record.lastPracticedTimestamp = Math.max(record.lastPracticedTimestamp, event.timestamp);
 
-  // Only attribute skill evidence if this activity corresponds to a legitimate curriculum standard
-  if (!isUnmapped) {
-    let record = model.skillMastery[event.skillId];
-    if (!record) {
-      record = {
-        skillId: event.skillId,
-        domain: event.domain === "general" ? "math" : event.domain,
-        gradeBand: event.gradeBand,
-        tier: "novice",
-        evidenceScore: 10,
-        totalAttempts: 0,
-        successfulAttempts: 0,
-        strugglesCount: 0,
-        hintsUsedTotal: 0,
-        currentDifficultyLevel: 1,
-        consecutiveSuccesses: 0,
-        consecutiveUnassistedSuccesses: 0,
-        consecutiveStruggles: 0,
-        lastPracticedTimestamp: Date.now(),
-        needsReview: false,
-      };
-    }
-
-    record.totalAttempts += 1;
-    record.hintsUsedTotal += event.hintsUsed;
-    record.lastPracticedTimestamp = Date.now();
-
-    // Pedagogical Mastery & Difficulty Update Algorithm
-    if (event.result === "mastered" || event.result === "success") {
-      record.successfulAttempts += 1;
+    if (event.outcome === "correct") {
+      record.successfulAttempts += event.attempts;
       record.consecutiveSuccesses += 1;
       record.consecutiveUnassistedSuccesses = event.hintsUsed === 0 ? record.consecutiveUnassistedSuccesses + 1 : 0;
       record.consecutiveStruggles = 0;
       record.needsReview = false;
-
-      // Hints scale evidence: unassisted answers provide stronger evidence
-      let evidenceGain = 18;
-      if (event.hintsUsed === 0) evidenceGain = 24;
-      else if (event.hintsUsed === 1) evidenceGain = 15;
-      else if (event.hintsUsed >= 2) evidenceGain = 8;
-
+      const hintFactor = event.hintsUsed === 0 ? 1 : event.hintsUsed === 1 ? 0.65 : 0.4;
+      const scoreFactor = Math.max(0.35, Math.min(1, (event.score ?? 100) / 100));
+      const repetitionFactor = Math.min(1.35, Math.sqrt(event.attempts));
+      const evidenceGain = Math.round(24 * hintFactor * scoreFactor * repetitionFactor);
       record.evidenceScore = Math.min(100, record.evidenceScore + evidenceGain);
 
-      // Increase challenge only after repeated independent success; using hints is
-      // productive learning, but should not by itself trigger a harder next round.
       if (record.consecutiveUnassistedSuccesses >= 3 && record.currentDifficultyLevel < 5) {
         record.currentDifficultyLevel += 1;
         record.consecutiveUnassistedSuccesses = 0;
       }
-    } else if (event.result === "struggle") {
-      record.strugglesCount += 1;
+    } else if (event.outcome === "incorrect") {
+      record.strugglesCount += event.attempts;
       record.consecutiveStruggles += 1;
       record.consecutiveSuccesses = 0;
       record.consecutiveUnassistedSuccesses = 0;
-
-      // Slight reduction in evidence score to flag need for reinforcement
-      record.evidenceScore = Math.max(5, record.evidenceScore - 8);
-
-      // If struggling repeatedly, scaffold by easing difficulty level
+      record.evidenceScore = Math.max(0, record.evidenceScore - Math.min(16, 8 * event.attempts));
       if (record.consecutiveStruggles >= 2 && record.currentDifficultyLevel > 1) {
         record.currentDifficultyLevel -= 1;
       }
       record.needsReview = true;
-    } else if (event.result === "explored" || event.result === "practice") {
-      // Practice and exploration build familiarity without sudden leaps
-      record.evidenceScore = Math.min(100, record.evidenceScore + 4);
+    } else if (event.outcome === "partial") {
+      const scoreFactor = Math.max(0, Math.min(1, (event.score ?? 50) / 100));
+      record.evidenceScore = Math.min(100, record.evidenceScore + Math.max(1, Math.round(12 * scoreFactor)));
+      record.consecutiveSuccesses = 0;
+      record.consecutiveUnassistedSuccesses = 0;
     }
 
-    // Update Tier based on evidence
+    record.confidence = calculateConfidence(record);
     if (record.evidenceScore >= 80 && record.successfulAttempts >= 2) {
-      if (record.tier !== "master") {
-        record.tier = "master";
-        record.masteredTimestamp = Date.now();
-      }
-    } else if (record.evidenceScore >= 45) {
-      if (record.tier !== "master") {
-        record.tier = "practitioner";
-      }
-    } else if (record.evidenceScore > 0) {
-      if (record.tier === "locked") {
-        record.tier = "novice";
-      }
+      if (record.tier !== "master") record.masteredTimestamp = event.timestamp;
+      record.tier = "master";
+    } else if (record.evidenceScore >= 45 && record.tier !== "master") {
+      record.tier = "practitioner";
+    } else if (record.tier === "locked" && event.outcome !== "explored") {
+      record.tier = "novice";
     }
-
-    model.skillMastery[event.skillId] = record;
+    record.domain = skill.domain;
+    record.gradeBand = skill.gradeBand;
   }
 
-  // Deduplicate: avoid appending same event ID twice
-  const existingIdx = model.recentEvents.findIndex((e) => e.id === event.id);
-  if (existingIdx >= 0) {
-    model.recentEvents[existingIdx] = event;
-  } else {
-    model.recentEvents = [event, ...model.recentEvents.slice(0, 49)];
-    model.totalLearningEventsCount += 1;
-  }
-  model.lastActiveTimestamp = Date.now();
+  model.recentEvents = [event, ...model.recentEvents.filter((previous) => previous.id !== event.id)].slice(0, 50);
+  model.processedEventIds = [...(model.processedEventIds || []).filter((id) => id !== event.id), event.id].slice(-500);
+  model.totalLearningEventsCount += 1;
+  updateLearningStreak(model, event.timestamp);
 
-  // Recompute strong & weak skill groupings
   model.strongSkills = Object.values(model.skillMastery)
-    .filter((s) => s.tier === "master" || s.tier === "practitioner")
-    .map((s) => s.skillId);
-
+    .filter((record) => record.tier === "master" || record.tier === "practitioner")
+    .map((record) => record.skillId);
   model.weakSkills = Object.values(model.skillMastery)
-    .filter((s) => s.needsReview || (s.strugglesCount > 0 && s.tier !== "master"))
-    .map((s) => s.skillId);
+    .filter((record) => record.needsReview || (record.strugglesCount > 0 && record.tier !== "master"))
+    .map((record) => record.skillId);
 
-  // Unlock downstream nodes whose prerequisites are now met
+  // A downstream node unlocks at practitioner level, matching the skill-tree UI.
   CURRICULUM_SKILL_NODES.forEach((node) => {
-    const existing = model.skillMastery[node.id];
-    if (existing && existing.tier === "locked") {
-      const allPrereqsMet = node.prerequisites.every(
-        (pid) => model.skillMastery[pid]?.tier === "master"
-      );
-      if (allPrereqsMet) {
-        existing.tier = "novice";
-        existing.evidenceScore = 15;
-      }
+    const record = model.skillMastery[node.id];
+    if (record?.tier === "locked" && node.prerequisites.every((id) => {
+      const prerequisite = model.skillMastery[id];
+      return prerequisite?.tier === "practitioner" || prerequisite?.tier === "master";
+    })) {
+      record.tier = "novice";
+      record.evidenceScore = 0;
+      record.confidence = 0;
     }
   });
 
-  // Recompute recommended actions
   model.recommendedNext = computeRecommendations(model);
-
-  // Persist local and cloud
   saveLearnerModel(model, targetLearnerId);
+  if (masteryAffecting && skillId) {
+    markDailyRouteEvidenceComplete(targetLearnerId, event.activityId, skillId, event.timestamp);
+  }
 
-  // Dispatch cloud telemetry event asynchronously with local retry queue fallback
   recordCloudLearningEvent(event.learnerId, event).catch(() => {
     enqueuePendingEvent(event.learnerId, event);
   });
-
   return event;
 }
 

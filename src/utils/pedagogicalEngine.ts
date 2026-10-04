@@ -8,6 +8,7 @@ export interface MistakeVaultItem {
   questionId: string;
   domain: string;
   topic: string;
+  skillId?: string;
   question: string;
   options: string[];
   correctAnswerIndex: number;
@@ -40,12 +41,17 @@ function getDiagnosticProfileKey(learnerId?: string): string {
 // ==========================================
 
 export function getMistakeVault(learnerId?: string): MistakeVaultItem[] {
-  const key = getMistakeVaultKey(learnerId);
+  const targetId = learnerId || getActiveLearnerId();
+  const key = getMistakeVaultKey(targetId);
   try {
     let raw = localStorage.getItem(key);
-    // Legacy fallback for default scholar
-    if (!raw && (!learnerId || learnerId === "scholar-primary-1" || learnerId === "child-maya")) {
+    // Adopt old unscoped data for the historical default learner only.
+    if (!raw && targetId === "scholar-primary-1") {
       raw = localStorage.getItem(DEFAULT_MISTAKE_VAULT_KEY);
+      if (raw) {
+        localStorage.setItem(key, raw);
+        localStorage.removeItem(DEFAULT_MISTAKE_VAULT_KEY);
+      }
     }
     if (!raw) return [];
     return JSON.parse(raw);
@@ -59,9 +65,6 @@ export function saveMistakeVault(items: MistakeVaultItem[], learnerId?: string):
   const key = getMistakeVaultKey(targetId);
   try {
     localStorage.setItem(key, JSON.stringify(items));
-    if (targetId === "scholar-primary-1") {
-      localStorage.setItem(DEFAULT_MISTAKE_VAULT_KEY, JSON.stringify(items));
-    }
     window.dispatchEvent(new CustomEvent("mistake_vault_updated", { detail: items }));
   } catch {
     // ignore
@@ -83,6 +86,7 @@ export function recordMistake(
     current[existingIdx].timesMissed += 1;
     current[existingIdx].masteredOnReview = false;
     current[existingIdx].selectedAnswerIndex = item.selectedAnswerIndex;
+    current[existingIdx].skillId = item.skillId;
     current[existingIdx].nextReviewTimestamp = Date.now() + ONE_DAY_MS;
     current[existingIdx].timestamp = Date.now();
   } else {
@@ -111,25 +115,31 @@ export function resolveMistakeWithRedemption(id: string, learnerId?: string): { 
   item.nextReviewTimestamp = Date.now() + 7 * 24 * 60 * 60 * 1000;
   saveMistakeVault(current, targetId);
 
-  // Report redemption learning event into unified learner brain using central registry
+  // Attribute redemption only to the skill captured when the mistake was made.
   try {
-    const resolved = resolveSkillForActivity("mistake-review", item.domain, item.topic);
+    const resolved = item.skillId
+      ? resolveSkillForActivity(item.skillId)
+      : resolveSkillForActivity("mistake-review", item.domain, item.topic);
     recordLearningEvent({
       learnerId: targetId,
-      activityId: `mistake-${item.id}`,
+      activityId: "mistake-review",
+      experienceId: "mistake-review-vault",
+      contentId: item.questionId,
+      eventType: resolved.skillId ? "practice_response" : "content_explored",
       activityType: "mistake-review",
       activityTitle: `Redeemed: ${item.topic}`,
       skillId: resolved.skillId,
       domain: resolved.domain,
       gradeBand: resolved.gradeBand,
-      result: "success",
-      score: 100,
+      result: resolved.skillId ? "success" : "explored",
+      score: resolved.skillId ? 100 : undefined,
       difficulty: "medium",
       attempts: 1,
       hintsUsed: 1,
+      metadata: { mistakeId: item.id, sourceQuestionId: item.questionId },
     });
   } catch (e) {
-    console.warn("Could not log redemption event:", e);
+    console.error("Could not log mistake redemption evidence:", e);
   }
 
   return { success: true, crownsAwarded: 1 };
@@ -145,7 +155,7 @@ export function getDueMistakesCount(learnerId?: string): number {
   const targetId = learnerId || getActiveLearnerId();
   const items = getMistakeVault(targetId);
   const now = Date.now();
-  return items.filter(i => !i.masteredOnReview || i.nextReviewTimestamp <= now).length;
+  return items.filter((item) => item.nextReviewTimestamp <= now).length;
 }
 
 // ==========================================
@@ -156,6 +166,7 @@ export interface DiagnosticQuestion {
   id: string;
   discipline: "math" | "reading" | "science" | "logic";
   targetGradeBand: "K-1" | "2-3" | "4-5";
+  skillId?: string;
   prompt: string;
   options: string[];
   correctAnswerIndex: number;
@@ -165,6 +176,7 @@ export interface DiagnosticQuestion {
 export const DIAGNOSTIC_PLACEMENT_QUESTIONS: DiagnosticQuestion[] = [
   {
     id: "diag-1",
+    skillId: "math-k1-addition-subtraction",
     discipline: "math",
     targetGradeBand: "K-1",
     prompt: "If you have 10 building blocks and give away 4, how many blocks are left?",
@@ -174,6 +186,7 @@ export const DIAGNOSTIC_PLACEMENT_QUESTIONS: DiagnosticQuestion[] = [
   },
   {
     id: "diag-2",
+    skillId: "read-23-vocabulary-morphology",
     discipline: "reading",
     targetGradeBand: "2-3",
     prompt: "Which prefix can you add to 'happy' to make it mean 'not happy'?",
@@ -183,6 +196,7 @@ export const DIAGNOSTIC_PLACEMENT_QUESTIONS: DiagnosticQuestion[] = [
   },
   {
     id: "diag-3",
+    skillId: "math-23-multiplication",
     discipline: "math",
     targetGradeBand: "2-3",
     prompt: "What is 7 multiplied by 8?",
@@ -192,6 +206,7 @@ export const DIAGNOSTIC_PLACEMENT_QUESTIONS: DiagnosticQuestion[] = [
   },
   {
     id: "diag-4",
+    skillId: "sci-45-ecosystems",
     discipline: "science",
     targetGradeBand: "4-5",
     prompt: "During photosynthesis, what gas do green leaves absorb from the air to make plant food?",
@@ -201,6 +216,7 @@ export const DIAGNOSTIC_PLACEMENT_QUESTIONS: DiagnosticQuestion[] = [
   },
   {
     id: "diag-5",
+    skillId: "logic-45-deduction",
     discipline: "logic",
     targetGradeBand: "4-5",
     prompt: "If all Zips are Zops, and all Zops are Zaps, are all Zips definitely Zaps?",
@@ -209,43 +225,50 @@ export const DIAGNOSTIC_PLACEMENT_QUESTIONS: DiagnosticQuestion[] = [
     explanation: "By transitive deductive logic: A is a subset of B, and B is a subset of C, so A is a subset of C.",
   },
   {
-    id: "diag-6", discipline: "reading", targetGradeBand: "K-1",
+    id: "diag-6",
+    skillId: "read-k1-phonemic-awareness", discipline: "reading", targetGradeBand: "K-1",
     prompt: "Which word rhymes with 'cake'?",
     options: ["lake", "cup", "sun", "fish"], correctAnswerIndex: 0,
     explanation: "Lake rhymes with cake because both words end with the same long-a sound and /k/ sound.",
   },
   {
-    id: "diag-7", discipline: "science", targetGradeBand: "K-1",
+    id: "diag-7",
+    skillId: "sci-k1-habitats", discipline: "science", targetGradeBand: "K-1",
     prompt: "Which part of a plant usually takes in water from the soil?",
     options: ["Roots", "Flower petals", "Fruit", "Leaves only"], correctAnswerIndex: 0,
     explanation: "Roots hold a plant in place and take in water and nutrients from the soil.",
   },
   {
-    id: "diag-8", discipline: "logic", targetGradeBand: "K-1",
+    id: "diag-8",
+    skillId: "logic-k1-patterns", discipline: "logic", targetGradeBand: "K-1",
     prompt: "What comes next in this pattern: red, blue, red, blue, ...?",
     options: ["Red", "Green", "Yellow", "Purple"], correctAnswerIndex: 0,
     explanation: "The two-color pattern repeats: red, blue, red, blue, then red again.",
   },
   {
-    id: "diag-9", discipline: "math", targetGradeBand: "4-5",
+    id: "diag-9",
+    skillId: "math-45-decimals", discipline: "math", targetGradeBand: "4-5",
     prompt: "A ribbon is 3.5 metres long. You use 1.2 metres. How much ribbon remains?",
     options: ["2.3 metres", "2.7 metres", "4.7 metres", "1.3 metres"], correctAnswerIndex: 0,
     explanation: "Line up the decimal points and subtract: 3.5 − 1.2 = 2.3 metres.",
   },
   {
-    id: "diag-10", discipline: "reading", targetGradeBand: "4-5",
+    id: "diag-10",
+    skillId: "read-45-inference", discipline: "reading", targetGradeBand: "4-5",
     prompt: "Mia wore a coat because dark clouds gathered and the wind grew cold. What can you infer?",
     options: ["Rain or colder weather may be coming", "It is definitely summer", "Mia is going swimming", "The wind has stopped"], correctAnswerIndex: 0,
     explanation: "The dark clouds and colder wind are clues that rain or colder weather may be approaching.",
   },
   {
-    id: "diag-11", discipline: "logic", targetGradeBand: "2-3",
+    id: "diag-11",
+    skillId: "logic-23-algorithms", discipline: "logic", targetGradeBand: "2-3",
     prompt: "A rule machine adds 3 to every number. What comes out when 5 goes in?",
     options: ["8", "2", "15", "53"], correctAnswerIndex: 0,
     explanation: "Apply the rule once: 5 + 3 = 8.",
   },
   {
-    id: "diag-12", discipline: "science", targetGradeBand: "2-3",
+    id: "diag-12",
+    skillId: "sci-23-matter-water", discipline: "science", targetGradeBand: "2-3",
     prompt: "Which change is most likely to help an ice cube melt faster?",
     options: ["Place it in a warm sunny spot", "Wrap it in more ice", "Put it in a freezer", "Move it into a colder room"], correctAnswerIndex: 0,
     explanation: "A warmer place transfers heat to the ice, so it melts faster.",
@@ -326,27 +349,54 @@ export function evaluateDiagnosticAnswers(answers: Record<string, number>, learn
       window.dispatchEvent(new CustomEvent("diagnostic_profile_updated", { detail: result }));
     }
     
-    // Calibrate Learner Brain model with diagnostic result
+    // Calibrate the learner's stage, then retain each mapped response as its own evidence event.
     const model = getLearnerModel(targetId);
     model.gradeBand = recommendedGradeBand;
+    saveLearnerModel(model, targetId);
+    DIAGNOSTIC_PLACEMENT_QUESTIONS.forEach((question) => {
+      if (!question.skillId || answers[question.id] === undefined) return;
+      const correct = answers[question.id] === question.correctAnswerIndex;
+      recordLearningEvent({
+        id: `diagnostic-${result.completedAt}-${question.id}`,
+        learnerId: targetId,
+        activityId: "diagnostic-question",
+        experienceId: "diagnostic-placement",
+        contentId: question.id,
+        eventType: "assessment_response",
+        activityType: "diagnostic-placement",
+        activityTitle: `Diagnostic: ${question.prompt.slice(0, 64)}`,
+        skillId: question.skillId,
+        domain: question.discipline,
+        gradeBand: question.targetGradeBand,
+        result: correct ? "success" : "struggle",
+        score: correct ? 100 : 0,
+        difficulty: "medium",
+        attempts: 1,
+        hintsUsed: 0,
+        timestamp: result.completedAt,
+      });
+    });
     recordLearningEvent({
+      id: `diagnostic-summary-${result.completedAt}`,
       learnerId: targetId,
-      activityId: "diagnostic-placement-quest",
+      activityId: "diagnostic-assessment-summary",
+      experienceId: "diagnostic-placement",
+      contentId: `score-${score}-of-${DIAGNOSTIC_PLACEMENT_QUESTIONS.length}`,
+      eventType: "diagnostic_summary",
       activityType: "diagnostic-placement",
       activityTitle: `Diagnostic Calibration (${score}/${DIAGNOSTIC_PLACEMENT_QUESTIONS.length})`,
-      // A screening result is useful placement evidence, but must not silently grant
-      // mastery for one curriculum skill or one subject.
-      skillId: "unmapped-activity",
       domain: "general",
       gradeBand: recommendedGradeBand,
-      result: "practice",
+      result: "explored",
       score: Math.round((score / DIAGNOSTIC_PLACEMENT_QUESTIONS.length) * 100),
       difficulty: "medium",
       attempts: 1,
       hintsUsed: 0,
+      timestamp: result.completedAt,
+      metadata: { recommendedStartingNodeId, recommendedGradeBand },
     });
-  } catch {
-    // ignore
+  } catch (error) {
+    console.error("Failed to persist diagnostic result or learning evidence:", error);
   }
 
   return result;
@@ -357,7 +407,7 @@ export function getSavedDiagnosticResult(learnerId?: string): DiagnosticResult |
   const key = getDiagnosticProfileKey(targetId);
   try {
     let raw = localStorage.getItem(key);
-    if (!raw && (!learnerId || learnerId === "scholar-primary-1" || learnerId === "child-maya")) {
+    if (!raw && targetId === "scholar-primary-1") {
       raw = localStorage.getItem(DEFAULT_DIAGNOSTIC_PROFILE_KEY);
     }
     return raw ? JSON.parse(raw) : null;

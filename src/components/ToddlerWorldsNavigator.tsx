@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Sparkles,
@@ -50,6 +50,8 @@ import {
 import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { awardXP, triggerCelebrationConfetti } from "../utils/gamification";
+import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import { resolveSkillForActivity } from "../data/activitySkillRegistry";
 import { ToddlerColorLab } from "./ToddlerColorLab";
 import { ToddlerMusicPiano } from "./ToddlerMusicPiano";
 
@@ -122,6 +124,8 @@ export function ToddlerWorldsNavigator({
 
   // Persistent world progression state
   const [progress, setProgress] = useState<ToddlerWorldProgressState>(() => getToddlerProgress());
+  const progressRef = useRef(progress);
+  progressRef.current = progress;
 
   // Activity execution states
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
@@ -149,13 +153,36 @@ export function ToddlerWorldsNavigator({
     });
   }, []);
 
-  // Sync initialWorldId if changed from parent
+  // Sync a world choice or a full registry route from the parent. Full routes
+  // select the actual activity and initialize its specialized counting/sorting state.
   useEffect(() => {
-    if (initialWorldId) {
-      setSelectedWorldId(initialWorldId);
-      setSelectedAreaId(null);
-      setActiveActivity(null);
+    if (!initialWorldId) return;
+    if (initialWorldId.startsWith("world:")) {
+      const [, worldId, areaId, activityId] = initialWorldId.split(":");
+      const targetWorld = ALL_TODDLER_WORLDS.find((world) => world.id === worldId);
+      const targetArea = targetWorld?.areas.find((area) => area.id === areaId);
+      const targetActivity = targetArea?.activities.find((activity) => activity.id === activityId);
+      if (!targetWorld || !targetArea || !targetActivity) {
+        console.error(`Cannot launch unresolved toddler world route: ${initialWorldId}`);
+        return;
+      }
+      setSelectedWorldId(worldId);
+      setActiveMission(null);
+      if (!isAreaUnlocked(targetArea, progressRef.current)) {
+        setSelectedAreaId(null);
+        setActiveActivity(null);
+        speakText(`This area is locked! ${targetArea.unlockRequirementText || "Earn more stars to unlock it!"}`, { pitch: 1.15 });
+        return;
+      }
+      setSelectedAreaId(areaId);
+      handleStartActivity(targetActivity);
+      return;
     }
+
+    setSelectedWorldId(initialWorldId);
+    setSelectedAreaId(null);
+    setActiveActivity(null);
+    setActiveMission(null);
   }, [initialWorldId]);
 
   // Clean audio on unmount
@@ -398,6 +425,31 @@ export function ToddlerWorldsNavigator({
       });
     } else {
       soundEffects.playGentleBoing();
+      const resolved = resolveSkillForActivity(activeActivity.id);
+      if (resolved.skillId) {
+        try {
+          recordLearningEvent({
+            learnerId: getActiveLearnerId(),
+            activityId: activeActivity.id,
+            experienceId: "toddler-worlds-navigator",
+            contentId: `${activeActivity.id}:${optionId}`,
+            eventType: "question_answered",
+            activityType: "world-activity",
+            activityTitle: `${activeActivity.title}: Incorrect Choice`,
+            skillId: resolved.skillId,
+            domain: resolved.domain,
+            gradeBand: "toddler",
+            result: "struggle",
+            score: 0,
+            difficulty: "easy",
+            attempts: 1,
+            hintsUsed: 0,
+            metadata: { selectedOptionId: optionId },
+          });
+        } catch (error) {
+          console.error("Failed to record toddler-world response:", error);
+        }
+      }
       speakText(`That is ${chosen.label}! ${chosen.feedback} Let's try again!`, { pitch: 1.15 });
       setTimeout(() => setSelectedOptionId(null), 1200);
     }

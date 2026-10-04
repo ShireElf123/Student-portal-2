@@ -4,6 +4,8 @@ import {
   Circle, Clock3, Flame, GraduationCap, Layers3, Send, Sparkles, Target, Zap,
 } from "lucide-react";
 import { NavigationTab, Notebook, PracticeSession, StudyPlanItem } from "../types";
+import { RecommendedAction } from "../utils/learnerBrain";
+import { DailyLearningRoute, DailyRouteItem, getOrCreateDailyLearningRoute } from "../utils/dailyLearningRoute";
 import { todayISO, formatDateLabel } from "../utils/dateUtils";
 import { getNotebookTopicStatus } from "../utils/topicStatus";
 import { getLearnerModel, subscribeLearnerModel, LearnerModel } from "../utils/pedagogicalEngine";
@@ -16,19 +18,37 @@ interface HomeDashboardProps {
   onSelectNotebook: (id: string) => void;
   onAskTutor: (query: string) => void;
   onToggleTask: (taskId: string) => void;
-  onStartRecommendation?: (tab: NavigationTab, nodeId?: string) => void;
+  onStartRecommendation?: (recommendation: RecommendedAction) => void;
+  onStartRouteItem?: (item: DailyRouteItem) => void;
 }
 
 const dateKey = (timestamp: number) => new Date(timestamp).toLocaleDateString("en-CA");
 
-export function HomeDashboard({ notebooks, studyPlan, practiceSessions, onNavigate, onSelectNotebook, onAskTutor, onToggleTask, onStartRecommendation }: HomeDashboardProps) {
+export function HomeDashboard({ notebooks, studyPlan, practiceSessions, onNavigate, onSelectNotebook, onAskTutor, onToggleTask, onStartRecommendation, onStartRouteItem }: HomeDashboardProps) {
   const [quickQuery, setQuickQuery] = useState("");
   const [learnerModel, setLearnerModel] = useState<LearnerModel>(getLearnerModel);
-  useEffect(() => subscribeLearnerModel(setLearnerModel), []);
+  const today = todayISO();
+  const [dailyRoute, setDailyRoute] = useState(() => getOrCreateDailyLearningRoute(getLearnerModel(), today));
+  useEffect(() => subscribeLearnerModel((model) => {
+    setLearnerModel(model);
+    setDailyRoute(getOrCreateDailyLearningRoute(model, todayISO()));
+  }), []);
+  useEffect(() => {
+    setDailyRoute(getOrCreateDailyLearningRoute(learnerModel, today));
+  }, [learnerModel.learnerId, learnerModel.totalLearningEventsCount, today]);
+  useEffect(() => {
+    const handleRouteUpdate = (event: Event) => {
+      const route = (event as CustomEvent<DailyLearningRoute>).detail;
+      if (route?.learnerId === learnerModel.learnerId && route.date === today) {
+        setDailyRoute(route);
+      }
+    };
+    window.addEventListener("daily_learning_route_updated", handleRouteUpdate);
+    return () => window.removeEventListener("daily_learning_route_updated", handleRouteUpdate);
+  }, [learnerModel.learnerId, today]);
 
   const now = new Date();
   const greeting = now.getHours() < 12 ? "Good morning" : now.getHours() < 18 ? "Good afternoon" : "Good evening";
-  const today = todayISO();
   const tasks = studyPlan.filter((task) => task.date === today);
   const pending = tasks.find((task) => !task.completed);
   const completedCount = tasks.filter((task) => task.completed).length;
@@ -79,7 +99,7 @@ export function HomeDashboard({ notebooks, studyPlan, practiceSessions, onNaviga
               <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300">{pending ? `${pending.subject} · about ${pending.durationMinutes} minutes. Take it one step at a time; your coach is here if you get stuck.` : tasks.length ? "Take a moment to celebrate, then choose what you’d like to explore next." : "Start with a personalized learning quest or ask your AI tutor to make a tricky idea click."}</p>
               <div className="mt-6 flex flex-wrap gap-3">
                 {pending ? <button onClick={() => onToggleTask(pending.id)} className="inline-flex items-center gap-2 rounded-xl bg-sky-300 px-5 py-3 text-sm font-extrabold text-slate-950 shadow-lg shadow-sky-900/30 transition hover:-translate-y-0.5 hover:bg-sky-200"><CheckCircle2 size={17} /> Mark mission complete</button> : <button onClick={() => onNavigate("homework")} className="inline-flex items-center gap-2 rounded-xl bg-sky-300 px-5 py-3 text-sm font-extrabold text-slate-950 shadow-lg shadow-sky-900/30 transition hover:-translate-y-0.5 hover:bg-sky-200"><GraduationCap size={17} /> Open homework desk</button>}
-                <button onClick={() => nextRec && onStartRecommendation ? onStartRecommendation(nextRec.targetTab, nextRec.nodeId) : onNavigate(nextRec?.targetTab || "practice")} className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/[.06] px-5 py-3 text-sm font-bold text-white transition hover:bg-white/10"><Brain size={16} className="text-violet-300" /> {nextRec ? "Your next best step" : "Explore practice"}</button>
+                <button onClick={() => nextRec && onStartRecommendation ? onStartRecommendation(nextRec) : onNavigate(nextRec?.targetTab || "practice")} className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/[.06] px-5 py-3 text-sm font-bold text-white transition hover:bg-white/10"><Brain size={16} className="text-violet-300" /> {nextRec ? "Your next best step" : "Explore practice"}</button>
               </div>
             </div>
             <div className="rounded-2xl border border-white/10 bg-[#08111f]/65 p-5 backdrop-blur sm:p-6">
@@ -89,6 +109,50 @@ export function HomeDashboard({ notebooks, studyPlan, practiceSessions, onNaviga
               {nextRec && <div className="mt-5 flex items-start gap-3 border-t border-white/10 pt-4"><span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-violet-400/10 text-violet-200"><Zap size={15}/></span><div className="min-w-0"><p className="text-[10px] font-extrabold uppercase tracking-wider text-violet-200">Adaptive coach · {nextRec.badge}</p><p className="mt-1 text-sm font-bold text-white">{nextRec.title}</p><p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-400">{nextRec.reason}</p></div></div>}
             </div>
           </div>
+        </section>
+
+        <section aria-label="Today’s learning route" className="rounded-2xl border border-emerald-300/15 bg-gradient-to-br from-[#10231f] to-[#111a27] p-5 shadow-xl sm:p-6">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-emerald-200"><CalendarCheck size={14} /> Personalized daily route</p>
+              <h2 className="mt-1 text-lg font-extrabold text-white">Three focused steps, saved for today</h2>
+              <p className="mt-1 text-xs text-slate-400">Built from your learning evidence and stored for this learner and date.</p>
+            </div>
+            <span className="rounded-full border border-emerald-200/15 bg-emerald-200/[.06] px-3 py-1.5 text-xs font-bold text-emerald-100">
+              {dailyRoute.items.filter((item) => item.completed).length}/{dailyRoute.items.length} complete
+            </span>
+          </div>
+          {dailyRoute.items.length ? (
+            <ol className="grid gap-3 lg:grid-cols-3">
+              {dailyRoute.items.map((item) => (
+                <li key={item.id} className={`rounded-xl border p-4 ${item.completed ? "border-emerald-300/20 bg-emerald-300/[.05]" : "border-white/[.08] bg-black/15"}`}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-start gap-3">
+                      <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg text-xs font-black ${item.completed ? "bg-emerald-300/15 text-emerald-200" : "bg-sky-300/10 text-sky-200"}`}>
+                        {item.completed ? <CheckCircle2 size={17} /> : item.slot}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-200">{item.reason.replace(/-/g, " ")}</p>
+                        <h3 className="mt-1 line-clamp-2 text-sm font-bold text-white">{item.title}</h3>
+                        <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-400">{item.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={item.completed || !onStartRouteItem}
+                    onClick={() => onStartRouteItem?.(item)}
+                    className="mt-4 w-full rounded-lg bg-white/[.08] px-3 py-2 text-xs font-bold text-white transition hover:bg-emerald-300/15 disabled:cursor-default disabled:opacity-60"
+                  >
+                    {item.completed ? "Completed" : `Start step ${item.slot}`}
+                    {!item.completed && <ArrowRight size={13} className="ml-1 inline" />}
+                  </button>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="rounded-xl border border-dashed border-white/15 p-4 text-sm text-slate-400">Your daily route will appear when a curriculum skill is available to practice.</p>
+          )}
         </section>
 
         <section aria-label="Learning snapshot" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
