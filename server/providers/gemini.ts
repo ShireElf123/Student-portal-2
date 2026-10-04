@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { AIProvider, ChatOptions, ChatResponse } from "../types";
+import firebaseConfig from "../../firebase-applet-config.json";
 
 export const SYSTEM_INSTRUCTIONS: Record<string, string> = {
   socratic:
@@ -17,9 +18,9 @@ export const SYSTEM_INSTRUCTIONS: Record<string, string> = {
 };
 
 export const RESILIENT_MODELS = [
-  "gemini-3.6-flash",
-  "gemini-3.7-flash",
   "gemini-3.8-flash",
+  "gemini-3.7-flash",
+  "gemini-3.6-flash",
   "gemini-flash-latest",
   "gemini-3.1-flash-lite",
 ];
@@ -77,7 +78,11 @@ export class GeminiProvider implements AIProvider {
 
   private getClient(): GoogleGenAI {
     if (!this.ai) {
-      const apiKey = process.env.GEMINI_API_KEY || "";
+      const apiKey =
+        process.env.GEMINI_API_KEY ||
+        process.env.API_KEY ||
+        (firebaseConfig as any)?.apiKey ||
+        "";
       this.ai = new GoogleGenAI({ apiKey });
     }
     return this.ai;

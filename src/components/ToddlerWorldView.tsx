@@ -21,11 +21,20 @@ import {
   Compass,
   MapPin,
   Calendar,
+  Mic,
+  MicOff,
+  Trash2,
 } from "lucide-react";
 import { PictureBook, PictureBookPage } from "../types";
 import { PICTURE_BOOKS } from "../data/pictureBooksData";
 import { speakText, stopSpeaking, speechCoordinator } from "../utils/speechUtils";
 import { soundEffects } from "../utils/soundEffects";
+import {
+  savePageAudio,
+  getPageAudio,
+  deletePageAudio,
+  PageAudioRecord,
+} from "../utils/parentAudioStorage";
 import { ToddlerQuizzesAndGames } from "./ToddlerQuizzesAndGames";
 import { ToddlerWorldsNavigator } from "./ToddlerWorldsNavigator";
 import { ToddlerDailyMissionsModal } from "./ToddlerDailyMissionsModal";
@@ -103,6 +112,7 @@ export function ToddlerWorldView({
   const [gameState, setGameState] = useState(() => getGamificationState());
   const [selectedBook, setSelectedBook] = useState<PictureBook | null>(null);
   const [currentPageIndex, setCurrentPageIndex] = useState<number>(0);
+  const activePage: PictureBookPage | null = selectedBook ? selectedBook.pages[currentPageIndex] || null : null;
   const [isBookCompleted, setIsBookCompleted] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(() => speechCoordinator.isMuted());
@@ -147,13 +157,51 @@ export function ToddlerWorldView({
     return unsub;
   }, []);
 
+  // Custom Parent Storyteller Voice Recording State
+  const [parentAudioRecord, setParentAudioRecord] = useState<PageAudioRecord | null>(null);
+  const [isRecordingParentVoice, setIsRecordingParentVoice] = useState(false);
+  const [isPlayingParentAudio, setIsPlayingParentAudio] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioPlayerRef = useRef<HTMLAudioElement | null>(null);
+
   // Stop any active speech whenever active tab changes or component unmounts
   useEffect(() => {
     stopSpeaking();
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current = null;
+      setIsPlayingParentAudio(false);
+    }
     return () => {
       stopSpeaking();
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current = null;
+      }
     };
   }, [activeTab]);
+
+  // Load custom parent audio recording for current book page if one exists
+  useEffect(() => {
+    if (!selectedBook || !activePage) {
+      setParentAudioRecord(null);
+      return;
+    }
+    let isCancelled = false;
+    getPageAudio(selectedBook.id, activePage.pageNumber).then((rec) => {
+      if (!isCancelled) {
+        setParentAudioRecord(rec);
+      }
+    });
+    return () => {
+      isCancelled = true;
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current = null;
+      }
+      setIsPlayingParentAudio(false);
+    };
+  }, [selectedBook?.id, activePage?.pageNumber]);
 
   const addStar = (amount = 1) => {
     awardStars(amount);
@@ -164,14 +212,46 @@ export function ToddlerWorldView({
     setCurrentPageIndex(0);
     setIsBookCompleted(false);
     stopSpeaking();
-    // Auto narrate the first page
-    if (book.pages[0]) {
-      speakText(book.pages[0].narration);
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current = null;
+      setIsPlayingParentAudio(false);
     }
+    // Check if first page has parent recording, else auto narrate
+    getPageAudio(book.id, 1).then((rec) => {
+      setParentAudioRecord(rec);
+      if (rec?.audioBlob) {
+        const url = URL.createObjectURL(rec.audioBlob);
+        const aud = new Audio(url);
+        audioPlayerRef.current = aud;
+        setIsPlayingParentAudio(true);
+        aud.onended = () => {
+          setIsPlayingParentAudio(false);
+          audioPlayerRef.current = null;
+        };
+        aud.play().catch(() => {
+          setIsPlayingParentAudio(false);
+          if (book.pages[0]) speakText(book.pages[0].narration);
+        });
+      } else if (book.pages[0]) {
+        speakText(book.pages[0].narration);
+      }
+    });
   };
 
   const handleCloseBook = () => {
     stopSpeaking();
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current = null;
+      setIsPlayingParentAudio(false);
+    }
+    if (mediaRecorderRef.current && isRecordingParentVoice) {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch {}
+      setIsRecordingParentVoice(false);
+    }
     setSelectedBook(null);
     setIsBookCompleted(false);
   };
@@ -179,10 +259,34 @@ export function ToddlerWorldView({
   const handleNextPage = () => {
     if (!selectedBook) return;
     stopSpeaking();
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current = null;
+      setIsPlayingParentAudio(false);
+    }
     if (currentPageIndex < selectedBook.pages.length - 1) {
       const nextIdx = currentPageIndex + 1;
       setCurrentPageIndex(nextIdx);
-      speakText(selectedBook.pages[nextIdx].narration);
+      const nextPageNum = nextIdx + 1;
+      getPageAudio(selectedBook.id, nextPageNum).then((rec) => {
+        setParentAudioRecord(rec);
+        if (rec?.audioBlob) {
+          const url = URL.createObjectURL(rec.audioBlob);
+          const aud = new Audio(url);
+          audioPlayerRef.current = aud;
+          setIsPlayingParentAudio(true);
+          aud.onended = () => {
+            setIsPlayingParentAudio(false);
+            audioPlayerRef.current = null;
+          };
+          aud.play().catch(() => {
+            setIsPlayingParentAudio(false);
+            speakText(selectedBook.pages[nextIdx].narration);
+          });
+        } else {
+          speakText(selectedBook.pages[nextIdx].narration);
+        }
+      });
       if (!visitedBookPagesRef.current.has(nextIdx)) {
         visitedBookPagesRef.current.add(nextIdx);
         addStar(1);
@@ -208,16 +312,125 @@ export function ToddlerWorldView({
   const handlePrevPage = () => {
     if (!selectedBook || currentPageIndex === 0) return;
     stopSpeaking();
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current = null;
+      setIsPlayingParentAudio(false);
+    }
     const prevIdx = currentPageIndex - 1;
     setCurrentPageIndex(prevIdx);
-    speakText(selectedBook.pages[prevIdx].narration);
+    const prevPageNum = prevIdx + 1;
+    getPageAudio(selectedBook.id, prevPageNum).then((rec) => {
+      setParentAudioRecord(rec);
+      if (rec?.audioBlob) {
+        const url = URL.createObjectURL(rec.audioBlob);
+        const aud = new Audio(url);
+        audioPlayerRef.current = aud;
+        setIsPlayingParentAudio(true);
+        aud.onended = () => {
+          setIsPlayingParentAudio(false);
+          audioPlayerRef.current = null;
+        };
+        aud.play().catch(() => {
+          setIsPlayingParentAudio(false);
+          speakText(selectedBook.pages[prevIdx].narration);
+        });
+      } else {
+        speakText(selectedBook.pages[prevIdx].narration);
+      }
+    });
   };
 
   const handleReadAloud = (text: string) => {
+    if (audioPlayerRef.current && isPlayingParentAudio) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current = null;
+      setIsPlayingParentAudio(false);
+      return;
+    }
+
     if (isSpeaking) {
       stopSpeaking();
-    } else {
-      speakText(text);
+      return;
+    }
+
+    // Play parent recording if available
+    if (parentAudioRecord?.audioBlob) {
+      stopSpeaking();
+      const url = URL.createObjectURL(parentAudioRecord.audioBlob);
+      const aud = new Audio(url);
+      audioPlayerRef.current = aud;
+      setIsPlayingParentAudio(true);
+      aud.onended = () => {
+        setIsPlayingParentAudio(false);
+        audioPlayerRef.current = null;
+      };
+      aud.onerror = () => {
+        setIsPlayingParentAudio(false);
+        audioPlayerRef.current = null;
+        speakText(text);
+      };
+      aud.play().catch(() => {
+        setIsPlayingParentAudio(false);
+        speakText(text);
+      });
+      return;
+    }
+
+    speakText(text);
+  };
+
+  const handleStartParentRecording = async () => {
+    try {
+      if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+        alert("Audio recording requires microphone access supported in your browser.");
+        return;
+      }
+      stopSpeaking();
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        setIsPlayingParentAudio(false);
+      }
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = recorder;
+      const chunks: BlobPart[] = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+      recorder.onstop = async () => {
+        const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+        stream.getTracks().forEach((t) => t.stop());
+        if (selectedBook && activePage) {
+          await savePageAudio(selectedBook.id, activePage.pageNumber, blob);
+          const rec = await getPageAudio(selectedBook.id, activePage.pageNumber);
+          setParentAudioRecord(rec);
+          soundEffects.playSuccessChime();
+        }
+        setIsRecordingParentVoice(false);
+      };
+      recorder.start();
+      setIsRecordingParentVoice(true);
+      soundEffects.playPop();
+    } catch (err) {
+      console.warn("Could not start recording:", err);
+      setIsRecordingParentVoice(false);
+    }
+  };
+
+  const handleStopParentRecording = () => {
+    if (mediaRecorderRef.current && isRecordingParentVoice) {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch {}
+    }
+  };
+
+  const handleDeleteParentRecording = async () => {
+    if (selectedBook && activePage) {
+      await deletePageAudio(selectedBook.id, activePage.pageNumber);
+      setParentAudioRecord(null);
+      soundEffects.playGentleBoing();
     }
   };
 
@@ -242,10 +455,6 @@ export function ToddlerWorldView({
     });
     recordCountingCardTapped(card.num);
   };
-
-  const activePage: PictureBookPage | null = selectedBook
-    ? selectedBook.pages[currentPageIndex] || null
-    : null;
 
   const isMeadow = gameState.wonderlandTheme === "sunny-meadow";
 
@@ -1045,18 +1254,71 @@ export function ToddlerWorldView({
                 </div>
 
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                  {/* Read to Me / Parent Voice Button */}
                   <button
                     onClick={() => handleReadAloud(activePage.narration)}
                     className={`flex items-center gap-1 sm:gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 shadow-md active:translate-y-1 ${
-                      isSpeaking
+                      isPlayingParentAudio
+                        ? "bg-rose-500 text-white border-rose-700 animate-pulse"
+                        : isSpeaking
                         ? "bg-amber-500 text-white border-amber-700 animate-pulse"
+                        : parentAudioRecord
+                        ? "bg-rose-100 hover:bg-rose-200 text-rose-900 border-rose-300"
                         : "bg-white text-slate-800 border-slate-300 hover:bg-slate-50"
                     }`}
                   >
-                    {isSpeaking ? <VolumeX size={15} /> : <Volume2 size={15} />}
-                    <span className="hidden sm:inline">{isSpeaking ? "Pause Narration" : "Read to Me"}</span>
-                    <span className="sm:hidden">{isSpeaking ? "Pause" : "Read"}</span>
+                    {isPlayingParentAudio ? (
+                      <VolumeX size={15} />
+                    ) : isSpeaking ? (
+                      <VolumeX size={15} />
+                    ) : parentAudioRecord ? (
+                      <Heart size={15} className="fill-rose-500 text-rose-500" />
+                    ) : (
+                      <Volume2 size={15} />
+                    )}
+                    <span className="hidden sm:inline">
+                      {isPlayingParentAudio
+                        ? "Playing Mom/Dad Voice"
+                        : isSpeaking
+                        ? "Pause Narration"
+                        : parentAudioRecord
+                        ? "Read by Mom/Dad ❤️"
+                        : "Read to Me"}
+                    </span>
+                    <span className="sm:hidden">
+                      {isPlayingParentAudio ? "Playing" : isSpeaking ? "Pause" : parentAudioRecord ? "Parent ❤️" : "Read"}
+                    </span>
                   </button>
+
+                  {/* Parent Voice Recorder Studio Button */}
+                  {isRecordingParentVoice ? (
+                    <button
+                      onClick={handleStopParentRecording}
+                      className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-2xl font-black text-xs bg-red-600 text-white border-b-4 border-red-800 animate-pulse shadow-md cursor-pointer"
+                    >
+                      <MicOff size={14} />
+                      <span>Stop (Done)</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleStartParentRecording}
+                      className="hidden md:flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-2xl font-black text-xs bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-700 border-b-3 border-slate-300 shadow-sm transition-colors cursor-pointer"
+                      title="Record parent voice narration for this page"
+                    >
+                      <Mic size={14} className="text-rose-500" />
+                      <span>{parentAudioRecord ? "Re-Record Voice" : "Record Voice"}</span>
+                    </button>
+                  )}
+
+                  {parentAudioRecord && !isRecordingParentVoice && (
+                    <button
+                      onClick={handleDeleteParentRecording}
+                      className="hidden lg:flex p-1.5 rounded-2xl bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 border-b-2 border-slate-200 shadow-sm transition-colors cursor-pointer"
+                      title="Remove custom recording"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
 
                   <button
                     onClick={handleCloseBook}

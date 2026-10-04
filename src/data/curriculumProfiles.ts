@@ -1,187 +1,133 @@
-import {
-  CurriculumDomain,
-  GradeLevelBand,
-  SkillNode,
-} from "./curriculumUniverse";
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { SkillNode } from "./curriculumUniverse";
 
 export interface CurriculumProfile {
   id: string;
   label: string;
-  region: string;
   authority: string;
   description: string;
-  /**
-   * True only when this profile's per-skill standards codes have been reviewed
-   * against the skill content. Regional codes are displayed ONLY for verified
-   * profiles; every other profile shows descriptive global goals instead.
-   */
   verifiedMapping: boolean;
 }
 
 export const CURRICULUM_PROFILES: CurriculumProfile[] = [
   {
-    id: "global-goals",
-    label: "Global Learning Goals",
-    region: "Worldwide",
-    authority: "My Student Portal",
-    description:
-      "Plain-language learning goals that travel across countries. No regional standards codes are claimed.",
+    id: "us-ccss",
+    label: "Common Core & NGSS (US)",
+    authority: "US State Standards / NGSS",
+    description: "US Common Core State Standards for Math & ELA and Next Generation Science Standards.",
     verifiedMapping: true,
   },
   {
-    id: "us-ccss-ngss",
-    label: "US Standards (CCSS · NGSS · CSTA)",
-    region: "United States",
-    authority: "CCSS / NGSS / CSTA",
-    description:
-      "Reviewed US standards references attached to each skill (math, reading, science, computing).",
-    verifiedMapping: true,
-  },
-  {
-    id: "za-caps",
-    label: "South Africa (CAPS)",
-    region: "South Africa",
-    authority: "CAPS",
-    description:
-      "Curriculum and Assessment Policy Statement alignment is planned but its per-skill mapping has not been verified yet.",
+    id: "uk-national",
+    label: "National Curriculum (England / UK)",
+    authority: "UK Dept for Education",
+    description: "Key Stages 1 & 2 programmes of study for Mathematics, English reading, and Science.",
     verifiedMapping: false,
   },
   {
-    id: "uk-nc",
-    label: "England (National Curriculum)",
-    region: "United Kingdom",
-    authority: "National Curriculum in England",
-    description:
-      "National Curriculum alignment is planned but its per-skill mapping has not been verified yet.",
+    id: "ib-pyp",
+    label: "IB Primary Years (Global / PYP)",
+    authority: "International Baccalaureate",
+    description: "Global transdisciplinary curriculum framework emphasizing conceptual inquiry and foundational competencies.",
     verifiedMapping: false,
   },
   {
-    id: "au-curriculum",
-    label: "Australia (Australian Curriculum)",
-    region: "Australia",
-    authority: "Australian Curriculum (ACARA)",
-    description:
-      "Australian Curriculum alignment is planned but its per-skill mapping has not been verified yet.",
+    id: "au-acara",
+    label: "Australian Curriculum (ACARA)",
+    authority: "ACARA",
+    description: "Australian Curriculum Foundation to Year 6 across Mathematics, English, and Science learning areas.",
     verifiedMapping: false,
   },
 ];
 
-export const DEFAULT_CURRICULUM_PROFILE_ID = "global-goals";
+const STORAGE_KEY = "my_student_portal_curriculum_profile_v1";
+let activeProfileId: string = "us-ccss";
+const listeners = new Set<(profileId: string) => void>();
 
-const PROFILE_STORAGE_KEY = "my_student_portal_curriculum_profile";
-
-export function getCurriculumProfile(profileId: string | null | undefined): CurriculumProfile {
-  const match = CURRICULUM_PROFILES.find((profile) => profile.id === profileId);
-  return match || CURRICULUM_PROFILES[0];
+export function getActiveCurriculumProfileId(): string {
+  if (typeof window !== "undefined") {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved && CURRICULUM_PROFILES.some((p) => p.id === saved)) {
+        activeProfileId = saved;
+      }
+    } catch {
+      // Ignore localStorage access failures
+    }
+  }
+  return activeProfileId;
 }
 
-/**
- * Descriptive global goals per domain and grade band. These are plain-language
- * learning intentions written for this app — not claimed standards codes.
- */
-const GLOBAL_GOALS: Record<CurriculumDomain, Record<GradeLevelBand, string>> = {
-  math: {
-    "K-1": "Build early number sense: count, compare, and add or subtract within 100.",
-    "2-3": "Master multiplication facts, fractions of a whole, telling time, and measurement.",
-    "4-5": "Work fluently with decimals, area and perimeter, and multi-step expressions.",
-  },
-  reading: {
-    "K-1": "Hear and blend sounds, decode simple words, and read short sentences with support.",
-    "2-3": "Read fluently, grow sight vocabulary, and retell stories with key details.",
-    "4-5": "Infer meaning, compare viewpoints, and write organized paragraphs with evidence.",
-  },
-  science: {
-    "K-1": "Observe habitats, weather, and seasons; ask questions and sort by properties.",
-    "2-3": "Explore the solar system, matter and water, and how living things grow.",
-    "4-5": "Investigate forces and energy, ecosystems, and cause-and-effect explanations.",
-  },
-  logic: {
-    "K-1": "Sort, match, and continue simple patterns using clear rules.",
-    "2-3": "Sequence steps, debug simple algorithms, and solve visual puzzles.",
-    "4-5": "Use deduction, conditional reasoning, and systematic problem-solving.",
-  },
-};
+export function setActiveCurriculumProfileId(profileId: string): void {
+  const matched = CURRICULUM_PROFILES.find((p) => p.id === profileId);
+  if (!matched || matched.id === activeProfileId) return;
 
-export function getGlobalGoal(domain: CurriculumDomain, gradeBand: GradeLevelBand): string {
-  return GLOBAL_GOALS[domain]?.[gradeBand] || "Keep practicing this skill with growing independence.";
+  activeProfileId = matched.id;
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem(STORAGE_KEY, activeProfileId);
+    } catch {
+      // Ignore
+    }
+  }
+
+  listeners.forEach((fn) => {
+    try {
+      fn(activeProfileId);
+    } catch (err) {
+      console.error("Error in curriculum profile listener:", err);
+    }
+  });
+
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent("curriculum_profile_changed", { detail: { profileId: activeProfileId } })
+    );
+  }
+}
+
+export function subscribeCurriculumProfile(callback: (profileId: string) => void): () => void {
+  listeners.add(callback);
+  return () => {
+    listeners.delete(callback);
+  };
 }
 
 export interface StandardReference {
-  /** Regional code, or null when the profile mapping is unverified. */
-  code: string | null;
-  /** Always-available descriptive goal text. */
-  goal: string;
-  /** Whether `code` (when present) comes from a verified mapping. */
+  code?: string;
   verified: boolean;
   profile: CurriculumProfile;
+  goal: string;
 }
 
 /**
- * Resolves what the UI may claim about a skill under a curriculum profile.
- * Unverified regional profiles never yield a code — the UI must show the
- * descriptive goal plus an "alignment unverified" note instead.
+ * Returns the authority-aligned standard reference or learning goal
+ * according to the selected curriculum profile lens.
  */
-export function formatStandardReference(node: SkillNode, profileId: string): StandardReference {
-  const profile = getCurriculumProfile(profileId);
-  const goal = getGlobalGoal(node.domain, node.gradeBand);
-  if (profile.id === "us-ccss-ngss" && profile.verifiedMapping) {
-    return { code: node.standardCode, goal, verified: true, profile };
+export function formatStandardReference(
+  node: SkillNode,
+  profileId: string = getActiveCurriculumProfileId()
+): StandardReference {
+  const profile =
+    CURRICULUM_PROFILES.find((p) => p.id === profileId) || CURRICULUM_PROFILES[0];
+
+  if (profile.id === "us-ccss" && node.standardCode) {
+    return {
+      code: node.standardCode,
+      verified: true,
+      profile,
+      goal: node.title,
+    };
   }
-  if (profile.id === "global-goals") {
-    return { code: null, goal, verified: true, profile };
-  }
-  return { code: null, goal, verified: false, profile };
-}
 
-// ---- Active profile selection (device display preference) ----
-
-export const CURRICULUM_PROFILE_CHANGED_EVENT = "curriculum_profile_changed";
-const profileListeners = new Set<(profileId: string) => void>();
-
-function readStoredProfileId(): string {
-  try {
-    const saved = localStorage.getItem(PROFILE_STORAGE_KEY);
-    if (saved && CURRICULUM_PROFILES.some((profile) => profile.id === saved)) {
-      return saved;
-    }
-  } catch {
-    // ignore
-  }
-  return DEFAULT_CURRICULUM_PROFILE_ID;
-}
-
-let activeProfileId: string = readStoredProfileId();
-
-export function getActiveCurriculumProfileId(): string {
-  return activeProfileId;
-}
-
-export function setActiveCurriculumProfileId(profileId: string): string {
-  const resolved = getCurriculumProfile(profileId).id;
-  if (resolved === activeProfileId) return activeProfileId;
-  activeProfileId = resolved;
-  try {
-    localStorage.setItem(PROFILE_STORAGE_KEY, resolved);
-  } catch {
-    // ignore
-  }
-  profileListeners.forEach((fn) => {
-    try {
-      fn(resolved);
-    } catch {
-      // ignore
-    }
-  });
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent(CURRICULUM_PROFILE_CHANGED_EVENT, { detail: resolved }));
-  }
-  return activeProfileId;
-}
-
-export function subscribeCurriculumProfile(fn: (profileId: string) => void): () => void {
-  profileListeners.add(fn);
-  fn(activeProfileId);
-  return () => {
-    profileListeners.delete(fn);
+  return {
+    code: profile.verifiedMapping ? node.standardCode : undefined,
+    verified: profile.verifiedMapping,
+    profile,
+    goal: node.title,
   };
 }

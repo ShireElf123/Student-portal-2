@@ -16,6 +16,67 @@ export interface VoiceProfile {
   volume: number;
 }
 
+export interface VoicePersona {
+  id: string;
+  name: string;
+  description: string;
+  emoji: string;
+  pitch: number;
+  rate: number;
+}
+
+export const VOICE_PERSONAS: VoicePersona[] = [
+  {
+    id: "storybook-grandparent",
+    name: "Warm Storyteller",
+    description: "Gentle, measured, and soothing for bedtime and picture books",
+    emoji: "📖",
+    pitch: 0.90,
+    rate: 0.88,
+  },
+  {
+    id: "playful-coach",
+    name: "Energetic Playmate",
+    description: "Upbeat, cheerful, and encouraging for math sprints and arcade games",
+    emoji: "⚡",
+    pitch: 1.12,
+    rate: 1.02,
+  },
+  {
+    id: "socratic-mentor",
+    name: "Gentle Homework Mentor",
+    description: "Clear, thoughtful, and patient for problem-solving",
+    emoji: "🦉",
+    pitch: 0.98,
+    rate: 0.92,
+  },
+  {
+    id: "cosmic-explorer",
+    name: "Cosmic Science Guide",
+    description: "Adventurous and vivid for space and science exploration",
+    emoji: "🚀",
+    pitch: 1.04,
+    rate: 0.96,
+  },
+];
+
+export function getActivePersona(): VoicePersona {
+  try {
+    const saved = localStorage.getItem("app_voice_persona_id");
+    if (saved) {
+      const found = VOICE_PERSONAS.find((p) => p.id === saved);
+      if (found) return found;
+    }
+  } catch {}
+  return VOICE_PERSONAS[0];
+}
+
+export function setActivePersona(personaId: string): void {
+  try {
+    localStorage.setItem("app_voice_persona_id", personaId);
+  } catch {}
+}
+
 export const DEFAULT_VOICE_PROFILE: VoiceProfile = {
   id: "guy-natural-coach",
   label: "Friendly learning voice",
@@ -293,8 +354,8 @@ class SpeechCoordinator {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       try {
         window.speechSynthesis.cancel();
-      } catch (err) {
-        console.warn("Error cancelling speech synthesis:", err);
+      } catch {
+        // Safely ignore cancel failures in restricted browser iframes
       }
     }
 
@@ -306,7 +367,7 @@ class SpeechCoordinator {
 
   public speak(text: string, options?: SpeakOptions): boolean {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      console.warn("Speech synthesis not supported in this browser environment.");
+      // Headless test or SSR environments - finish silently
       options?.onEnd?.();
       return false;
     }
@@ -362,17 +423,18 @@ class SpeechCoordinator {
           utterance.lang = options?.lang ?? "en-US";
         }
 
+        const persona = getActivePersona();
         // Keep pitch within a comfortable range; browser voices vary considerably by device.
-        let naturalPitch = 0.98;
+        let naturalPitch = persona.pitch;
         if (typeof options?.pitch === "number") {
-          naturalPitch = Math.max(0.85, Math.min(1.15, options.pitch));
+          naturalPitch = Math.max(0.80, Math.min(1.20, options.pitch));
         }
         utterance.pitch = naturalPitch;
 
-        // Slightly slower default supports young listeners; callers may request a rate.
-        let naturalRate = 0.94;
+        // Pacing based on selected persona; callers may request a custom rate.
+        let naturalRate = persona.rate;
         if (typeof options?.rate === "number") {
-          naturalRate = Math.max(0.85, Math.min(1.15, options.rate));
+          naturalRate = Math.max(0.80, Math.min(1.20, options.rate));
         }
         utterance.rate = naturalRate;
 
@@ -434,8 +496,11 @@ class SpeechCoordinator {
             return;
           }
 
-          if (e.error !== "canceled" && e.error !== "interrupted") {
-            console.warn("Speech synthesis utterance error:", e);
+          // Browser autoplay / sandbox restriction or normal interruption
+          if (e.error !== "canceled" && e.error !== "interrupted" && e.error !== "not-allowed") {
+            // Only report truly abnormal speech synthesis errors
+            options?.onError?.(e);
+          } else {
             options?.onError?.(e);
           }
           handleFinish();

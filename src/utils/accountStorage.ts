@@ -1,215 +1,144 @@
 /**
- * Account-scoped browser storage.
- *
- * All account-owned data (notebooks, study plan, practice sessions, homework,
- * AI usage/subscription state, learner models, mistakes, diagnostics,
- * gamification/rewards, toddler progress) is partitioned by the authenticated
- * UID, or by the shared guest learner id when nobody is signed in.
- *
- * Migration rule: pre-existing *unscoped* keys are copied only to the FIRST
- * account that opens this browser after the upgrade. They are then removed so
- * a later account can never read another account's data.
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
  */
-
-/** Learner id used for local-only (signed-out) learning. */
-export const GUEST_LEARNER_ID = "scholar-primary-1";
-
-/** Marker recording which account received the one-time legacy migration. */
-const MIGRATION_MARKER_KEY = "account_storage_v1_migrated_to";
-
-/** Broadcast when the active account scope changes (sign-in/out/switch). */
-export const ACCOUNT_SCOPE_CHANGED_EVENT = "account_scope_changed";
-
-let activeAccountId: string = GUEST_LEARNER_ID;
-const scopeListeners = new Set<(accountId: string) => void>();
-
-export function getActiveAccountId(): string {
-  return activeAccountId;
-}
-
-function sanitizeAccountId(raw: unknown): string {
-  if (typeof raw === "string" && raw.trim().length > 0 && raw.length <= 256) {
-    return raw.trim();
-  }
-  return GUEST_LEARNER_ID;
-}
 
 /**
- * Switches the active account scope. Callers (App, services) reload their
- * cached state from the newly scoped keys when this changes.
+ * Account-scoped local storage partitioning.
+ * Ensures data for different accounts/learners (notebooks, homework,
+ * study plans, assessments, roles) are cleanly isolated across sign-ins,
+ * switches, and guest sessions without cross-contamination.
  */
-export function setActiveAccountId(accountId: unknown): string {
-  const next = sanitizeAccountId(accountId);
-  if (next === activeAccountId) return activeAccountId;
-  activeAccountId = next;
-  scopeListeners.forEach((fn) => {
-    try {
-      fn(next);
-    } catch {
-      // A scope observer must not break account switching.
-    }
-  });
-  if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent(ACCOUNT_SCOPE_CHANGED_EVENT, { detail: next }));
-  }
-  return activeAccountId;
+
+export const GUEST_LEARNER_ID = "guest-learner";
+
+let currentAccountId: string = GUEST_LEARNER_ID;
+const accountListeners = new Set<(accountId: string) => void>();
+
+export function getActiveAccountId(): string {
+  return currentAccountId;
 }
 
-export function subscribeAccountScope(fn: (accountId: string) => void): () => void {
-  scopeListeners.add(fn);
+export function setActiveAccountId(accountId: string): void {
+  const normalized = (accountId || GUEST_LEARNER_ID).trim();
+  if (normalized === currentAccountId) return;
+  currentAccountId = normalized;
+
+  // Notify in-memory subscribers
+  accountListeners.forEach((fn) => {
+    try {
+      fn(currentAccountId);
+    } catch (err) {
+      console.error("Error in account scope listener:", err);
+    }
+  });
+
+  // Dispatch window event for cross-component reactivity
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent("account_scope_changed", { detail: { accountId: currentAccountId } })
+    );
+  }
+}
+
+export function subscribeAccountScope(listener: (accountId: string) => void): () => void {
+  accountListeners.add(listener);
   return () => {
-    scopeListeners.delete(fn);
+    accountListeners.delete(listener);
   };
 }
 
-function storage(): Storage | null {
-  try {
-    if (typeof localStorage !== "undefined") return localStorage;
-  } catch {
-    // Storage unavailable (private mode, SSR, tests without a stub).
-  }
-  return null;
+export function getScopedStorageKey(key: string, accountId?: string): string {
+  const targetId = (accountId || currentAccountId || GUEST_LEARNER_ID).trim();
+  return `${key}__${targetId}`;
 }
 
-/** Scoped key for an account-owned base key, e.g. `my_student_portal_notebooks_v3_<uid>`. */
-export function scopedKey(baseKey: string, accountId: string = activeAccountId): string {
-  return `${baseKey}_${sanitizeAccountId(accountId)}`;
-}
-
-function safeParse(raw: string | null): unknown {
-  if (raw === null || raw === undefined) return undefined;
+export function readScopedJSON<T>(key: string, defaultValue: T, accountId?: string): T {
+  if (typeof window === "undefined") return defaultValue;
   try {
-    return JSON.parse(raw);
-  } catch {
-    return undefined;
-  }
-}
+    const targetId = (accountId || currentAccountId || GUEST_LEARNER_ID).trim();
+    const primaryKey = getScopedStorageKey(key, targetId);
+    let raw = localStorage.getItem(primaryKey);
 
-function readRaw(key: string): string | null {
-  const store = storage();
-  if (!store) return null;
-  try {
-    return store.getItem(key);
-  } catch {
-    return null;
-  }
-}
+    // Fallback check for single underscore format
+    if (raw === null) {
+      raw = localStorage.getItem(`${key}_${targetId}`);
+    }
 
-function writeRaw(key: string, value: string): void {
-  const store = storage();
-  if (!store) return;
-  try {
-    store.setItem(key, value);
-  } catch {
-    // Quota or access errors must not crash learning flows.
+    // Fallback for guest or unscoped legacy data if not migrated yet
+    if (raw === null && targetId === GUEST_LEARNER_ID) {
+      raw = localStorage.getItem(key);
+    }
+
+    if (raw === null || raw === undefined) {
+      return defaultValue;
+    }
+
+    return JSON.parse(raw) as T;
+  } catch (err) {
+    console.warn(`Failed reading scoped storage key "${key}":`, err);
+    return defaultValue;
   }
 }
 
-function removeRaw(key: string): void {
-  const store = storage();
-  if (!store) return;
+export function writeScopedJSON<T>(key: string, value: T, accountId?: string): void {
+  if (typeof window === "undefined") return;
   try {
-    store.removeItem(key);
-  } catch {
-    // ignore
+    const targetId = (accountId || currentAccountId || GUEST_LEARNER_ID).trim();
+    const storageKey = getScopedStorageKey(key, targetId);
+    localStorage.setItem(storageKey, JSON.stringify(value));
+  } catch (err) {
+    console.warn(`Failed writing scoped storage key "${key}":`, err);
   }
 }
 
-/**
- * Reads account-scoped JSON. Malformed payloads resolve to `fallback` instead
- * of throwing, so one corrupt entry cannot break sign-in or navigation.
- */
-export function readScopedJSON<T>(baseKey: string, fallback: T, accountId: string = activeAccountId): T {
-  const parsed = safeParse(readRaw(scopedKey(baseKey, accountId)));
-  return (parsed === undefined ? fallback : parsed) as T;
-}
-
-export function writeScopedJSON(baseKey: string, value: unknown, accountId: string = activeAccountId): void {
+export function removeScopedItem(key: string, accountId?: string): void {
+  if (typeof window === "undefined") return;
   try {
-    writeRaw(scopedKey(baseKey, accountId), JSON.stringify(value));
-  } catch {
-    // ignore (circular structures, quota)
+    const targetId = (accountId || currentAccountId || GUEST_LEARNER_ID).trim();
+    localStorage.removeItem(getScopedStorageKey(key, targetId));
+    localStorage.removeItem(`${key}_${targetId}`);
+  } catch (err) {
+    console.warn(`Failed removing scoped storage key "${key}":`, err);
   }
 }
 
-export function removeScoped(baseKey: string, accountId: string = activeAccountId): void {
-  removeRaw(scopedKey(baseKey, accountId));
-}
-
-/** Reads an unscoped (legacy/global) JSON value with malformed-data tolerance. */
-export function readUnscopedJSON<T>(key: string, fallback: T): T {
-  const parsed = safeParse(readRaw(key));
-  return (parsed === undefined ? fallback : parsed) as T;
-}
-
-/**
- * Base keys whose legacy unscoped values may be migrated to the first account.
- * Keys that are already per-learner (learner model, mastered nodes, mistake
- * vault, diagnostic profile) are included so their legacy unscoped copies are
- * adopted once and then removed.
- */
-export const LEGACY_UNSCOPED_BASES: string[] = [
+const KNOWN_LEGACY_KEYS = [
   "my_student_portal_notebooks_v3",
   "my_student_portal_study_plan_v3",
   "my_student_portal_practice_v3",
+  "my_student_portal_user_role",
   "my_student_portal_homework_v1",
   "my_student_portal_assessments_v1",
-  "my_student_portal_ai_usage_v1",
-  "my_student_portal_subscription_v1",
-  "my_student_portal_learner_model_v1",
-  "my_student_portal_mastered_nodes_v1",
-  "my_student_portal_mistake_vault_v1",
-  "my_student_portal_diagnostic_profile_v1",
-  "my_student_portal_user_role",
-  "edu_gamification_state_v1",
-  "toddler_world_exploration_progress_v2",
-  "toddler_daily_missions_completed_v1",
 ];
 
-export function getMigrationOwner(): string | null {
-  const raw = readRaw(MIGRATION_MARKER_KEY);
-  if (!raw) return null;
-  try {
-    const parsed = JSON.parse(raw) as { accountId?: unknown };
-    return typeof parsed?.accountId === "string" && parsed.accountId ? parsed.accountId : null;
-  } catch {
-    return null;
-  }
-}
-
 /**
- * One-time adoption of legacy unscoped data into `accountId`'s scope.
- *
- * - Runs at most once per browser (guarded by the migration marker).
- * - Only the first account receives the data; every other account starts clean.
- * - Never overwrites an existing scoped value.
- * - Removes the unscoped originals afterwards so they cannot leak across accounts.
- *
- * Returns the list of base keys that were adopted.
+ * Adopts legacy unscoped browser data into the designated account partition.
+ * Safe to call repeatedly; marks migration completed for the target account.
  */
-export function migrateLegacyAccountData(accountId: string = activeAccountId): string[] {
-  const owner = sanitizeAccountId(accountId);
-  if (getMigrationOwner() !== null) return [];
-  const adopted: string[] = [];
-  for (const base of LEGACY_UNSCOPED_BASES) {
-    const legacyRaw = readRaw(base);
-    if (legacyRaw === null) continue;
-    // Validate before adopting: malformed payloads are dropped, never copied.
-    const parsed = safeParse(legacyRaw);
-    const target = scopedKey(base, owner);
-    if (parsed !== undefined && readRaw(target) === null) {
-      writeRaw(target, legacyRaw);
-      adopted.push(base);
-    }
-    // Always remove the unscoped original so no later account can read it.
-    removeRaw(base);
-  }
-  writeRaw(MIGRATION_MARKER_KEY, JSON.stringify({ accountId: owner, migratedAt: Date.now() }));
-  return adopted;
-}
+export function migrateLegacyAccountData(accountId: string): void {
+  if (typeof window === "undefined") return;
+  const targetId = (accountId || GUEST_LEARNER_ID).trim();
+  const migrationFlagKey = `my_student_portal_migrated_${targetId}`;
 
-/** Test/support helper: clears the in-memory scope without touching storage. */
-export function __resetAccountScopeForTests(): void {
-  activeAccountId = GUEST_LEARNER_ID;
-  scopeListeners.clear();
+  try {
+    if (localStorage.getItem(migrationFlagKey) === "true") {
+      return;
+    }
+
+    for (const legacyKey of KNOWN_LEGACY_KEYS) {
+      const unscopedVal = localStorage.getItem(legacyKey);
+      if (unscopedVal !== null) {
+        const scopedKey = getScopedStorageKey(legacyKey, targetId);
+        // Only adopt if the account does not already have partitioned data
+        if (localStorage.getItem(scopedKey) === null) {
+          localStorage.setItem(scopedKey, unscopedVal);
+        }
+      }
+    }
+
+    localStorage.setItem(migrationFlagKey, "true");
+  } catch (err) {
+    console.warn("Legacy account data migration warning:", err);
+  }
 }

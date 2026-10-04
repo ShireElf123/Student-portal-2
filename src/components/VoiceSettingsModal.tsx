@@ -21,6 +21,10 @@ import {
   setVoiceMuted,
   subscribeVoiceChange,
   speechCoordinator,
+  VOICE_PERSONAS,
+  getActivePersona,
+  setActivePersona,
+  VoicePersona,
 } from "../utils/speechUtils";
 
 interface VoiceSettingsModalProps {
@@ -32,10 +36,11 @@ export function VoiceSettingsModal({ isOpen, onClose }: VoiceSettingsModalProps)
   const [voiceInfo, setVoiceInfo] = useState(getActiveVoiceInfo());
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>(getAvailableVoices());
   const [preferredURI, setPreferredURI] = useState<string | null>(getPreferredVoiceURI());
+  const [selectedPersona, setSelectedPersona] = useState<VoicePersona>(() => getActivePersona());
   const [speaking, setSpeaking] = useState<boolean>(isSpeaking());
   const [muted, setMuted] = useState<boolean>(isVoiceMuted());
   const [testPhrase, setTestPhrase] = useState<string>(
-    "Hello there! I'm your AI learning coach. Today we are exploring math, science, and reading together!"
+    "Hello there! I'm your learning companion. Let's explore wonder, stories, and science together!"
   );
 
   useEffect(() => {
@@ -174,6 +179,56 @@ export function VoiceSettingsModal({ isOpen, onClose }: VoiceSettingsModalProps)
               >
                 {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
               </button>
+            </div>
+          </div>
+
+          {/* Voice Persona & Learning Tone Cards */}
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-black uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                <Sparkles size={14} className="text-amber-400" />
+                <span>Storyteller &amp; Coach Persona</span>
+              </label>
+              <span className="text-[10px] text-indigo-400 font-bold">
+                Controls pacing &amp; warmth
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {VOICE_PERSONAS.map((persona) => {
+                const isSelected = selectedPersona.id === persona.id;
+                return (
+                  <button
+                    key={persona.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedPersona(persona);
+                      setActivePersona(persona.id);
+                      testVoice(`I am your ${persona.name}. Ready to learn?`);
+                    }}
+                    className={`p-3 rounded-2xl text-left border-2 transition-all cursor-pointer flex items-start gap-2.5 ${
+                      isSelected
+                        ? "bg-indigo-600/30 border-indigo-400 text-white shadow-md ring-2 ring-indigo-400/30"
+                        : "bg-slate-950/60 border-slate-800 hover:border-slate-700 text-slate-300"
+                    }`}
+                  >
+                    <span className="text-2xl p-1.5 rounded-xl bg-slate-900 border border-slate-700 flex-shrink-0">
+                      {persona.emoji}
+                    </span>
+                    <div className="min-w-0">
+                      <div className="text-xs font-black text-white flex items-center gap-1.5">
+                        <span className="truncate">{persona.name}</span>
+                        {isSelected && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                        )}
+                      </div>
+                      <p className="text-[10px] text-slate-400 leading-tight mt-0.5 line-clamp-2">
+                        {persona.description}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
 

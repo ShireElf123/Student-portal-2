@@ -129,7 +129,7 @@ export function ParentView({
         name: profile.name,
         email: profile.email,
         gradeLevel: profile.gradeLevel,
-        lastActive: profile.lastActive,
+        lastActive: typeof profile.lastActive === "number" ? profile.lastActive : Date.now(),
       }));
       setChildren(next);
       if (selectId && next.some((child) => child.id === selectId)) {

@@ -43,6 +43,34 @@ export const ACTIVITY_SKILL_REGISTRY: Record<string, ActivitySkillMapping> = {
     gradeBand: "4-5",
     displayName: "Physics Balance Scale Equations",
   },
+  "primary-lab-tangram-geometry": {
+    activityId: "primary-lab-tangram-geometry",
+    skillId: "math-k1-shapes",
+    domain: "math",
+    gradeBand: "K-1",
+    displayName: "Tangram Geometry & Spatial Architect",
+  },
+  "code-rover-martian-maze": {
+    activityId: "code-rover-martian-maze",
+    skillId: "logic-23-algorithms",
+    domain: "logic",
+    gradeBand: "2-3",
+    displayName: "Cyber Rover Algorithmic Runner",
+  },
+  "times-table-matrix-battle": {
+    activityId: "times-table-matrix-battle",
+    skillId: "math-23-multiplication",
+    domain: "math",
+    gradeBand: "2-3",
+    displayName: "Multiplication Matrix Sprint",
+  },
+  "toddler-bubble-pop-phonics": {
+    activityId: "toddler-bubble-pop-phonics",
+    skillId: "read-k1-alphabet-letters",
+    domain: "reading",
+    gradeBand: "toddler",
+    displayName: "Bubble Pop Phonics Blast",
+  },
 
   // Primary Solar System Astronomy Lab
   "primary-solar-explore": {

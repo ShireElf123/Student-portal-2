@@ -15,6 +15,13 @@ import {
   ArrowRight,
   Star,
   Award,
+  Shapes,
+  Code,
+  Play,
+  Square,
+  RotateCw,
+  Grid,
+  Bot,
 } from "lucide-react";
 import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
@@ -23,7 +30,15 @@ import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { PrimarySolarSystemLab } from "./PrimarySolarSystemLab";
 import { FloatingCloudDecoration } from "./landscape/LandscapeDecorations";
 
-type PrimaryActivity = "math-blitz" | "fraction-lab" | "word-forge" | "balance-scale" | "solar-system";
+type PrimaryActivity =
+  | "math-blitz"
+  | "fraction-lab"
+  | "word-forge"
+  | "balance-scale"
+  | "solar-system"
+  | "geometry-builder"
+  | "code-runner"
+  | "times-matrix";
 
 function shuffle<T>(items: T[]): T[] {
   const result = [...items];
@@ -50,6 +65,9 @@ export function PrimaryLearningLab({ onBack, onAskTutor }: PrimaryLearningLabPro
       "word-forge": "Welcome to Word Forge! Unscramble the letters to forge essential STEM and science words!",
       "balance-scale": "Welcome to the Logic Balance Scale! Place weights on the scale to find balance and solve equations!",
       "solar-system": "Welcome to Cosmic Astronomy! Tap any planet to explore its orbit, atmosphere, and space secrets!",
+      "geometry-builder": "Welcome to Tangram Geometry! Combine shapes and rotate polygons to architect geometric creations!",
+      "code-runner": "Welcome to Cyber Rover Code Runner! Program your Mars Rover with directional commands to reach the rocket launchpad!",
+      "times-matrix": "Welcome to Times Table Matrix Battles! Test your multiplication speed, find factors, and build combos!",
     };
 
     const text = speechPrompts[activeActivity];
@@ -171,6 +189,51 @@ export function PrimaryLearningLab({ onBack, onAskTutor }: PrimaryLearningLabPro
             <span>🪐</span>
             <span>Solar System</span>
           </button>
+
+          <button
+            onClick={() => {
+              setActiveActivity("geometry-builder");
+              soundEffects.playPop();
+            }}
+            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none ${
+              activeActivity === "geometry-builder"
+                ? "bg-gradient-to-b from-rose-500 to-pink-600 border-pink-800 text-white shadow-pink-500/30 active:translate-y-1"
+                : "bg-white hover:bg-pink-50 border-slate-200 text-slate-700 hover:text-slate-900"
+            }`}
+          >
+            <Shapes size={16} className={activeActivity === "geometry-builder" ? "text-pink-200" : "text-rose-500"} />
+            <span>Tangram Geometry</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveActivity("code-runner");
+              soundEffects.playPop();
+            }}
+            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none ${
+              activeActivity === "code-runner"
+                ? "bg-gradient-to-b from-emerald-500 to-teal-700 border-teal-900 text-white shadow-teal-500/30 active:translate-y-1"
+                : "bg-white hover:bg-teal-50 border-slate-200 text-slate-700 hover:text-slate-900"
+            }`}
+          >
+            <Bot size={16} className={activeActivity === "code-runner" ? "text-teal-200" : "text-teal-600"} />
+            <span>Cyber Rover Code</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveActivity("times-matrix");
+              soundEffects.playPop();
+            }}
+            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none ${
+              activeActivity === "times-matrix"
+                ? "bg-gradient-to-b from-amber-500 to-yellow-600 border-yellow-800 text-white shadow-yellow-500/30 active:translate-y-1"
+                : "bg-white hover:bg-amber-50 border-slate-200 text-slate-700 hover:text-slate-900"
+            }`}
+          >
+            <Grid size={16} className={activeActivity === "times-matrix" ? "text-amber-200" : "text-amber-500"} />
+            <span>Times Matrix</span>
+          </button>
         </div>
       </div>
 
@@ -181,6 +244,9 @@ export function PrimaryLearningLab({ onBack, onAskTutor }: PrimaryLearningLabPro
         {activeActivity === "word-forge" && <WordForgeGame />}
         {activeActivity === "balance-scale" && <PhysicsBalanceScaleGame />}
         {activeActivity === "solar-system" && <PrimarySolarSystemLab />}
+        {activeActivity === "geometry-builder" && <GeometryTangramArchitectGame />}
+        {activeActivity === "code-runner" && <CyberRoverCodeRunnerGame />}
+        {activeActivity === "times-matrix" && <MultiplicationMatrixGame />}
       </div>
     </div>
   );
@@ -961,3 +1027,788 @@ function PhysicsBalanceScaleGame() {
     </div>
   );
 }
+
+// -------------------------------------------------------------
+// 5. TANGRAM GEOMETRY & SHAPE ARCHITECT
+// -------------------------------------------------------------
+interface TangramShape {
+  id: string;
+  name: string;
+  emoji: string;
+  sides: number;
+  internalAngles: string;
+  color: string;
+  borderColor: string;
+}
+
+const TANGRAM_SHAPES: TangramShape[] = [
+  { id: "tri-eq", name: "Equilateral Triangle", emoji: "▲", sides: 3, internalAngles: "60° each (180° total)", color: "from-amber-400 to-orange-500", borderColor: "#c2410c" },
+  { id: "square", name: "Square", emoji: "■", sides: 4, internalAngles: "90° right angles (360° total)", color: "from-blue-400 to-indigo-500", borderColor: "#3730a3" },
+  { id: "rhombus", name: "Rhombus Diamond", emoji: "◆", sides: 4, internalAngles: "Equal opposite angles", color: "from-pink-400 to-rose-500", borderColor: "#9f1239" },
+  { id: "hexagon", name: "Regular Hexagon", emoji: "⬡", sides: 6, internalAngles: "120° each (720° total)", color: "from-emerald-400 to-teal-500", borderColor: "#115e59" },
+  { id: "trapezoid", name: "Isosceles Trapezoid", emoji: "⏢", sides: 4, internalAngles: "One pair of parallel sides", color: "from-purple-400 to-indigo-600", borderColor: "#4338ca" },
+];
+
+const BLUEPRINTS = [
+  {
+    id: "rocket",
+    title: "Cosmic Rocket Explorer",
+    emoji: "🚀",
+    description: "Architect a deep space rocket using triangles, squares, and rhombuses!",
+    requiredSlots: [
+      { slotId: "tip", targetShape: "tri-eq", label: "Cone Tip (3-sided)" },
+      { slotId: "body1", targetShape: "square", label: "Upper Fuselage (Square)" },
+      { slotId: "body2", targetShape: "square", label: "Lower Fuselage (Square)" },
+      { slotId: "fin-left", targetShape: "rhombus", label: "Left Stabilizer (Rhombus)" },
+      { slotId: "fin-right", targetShape: "rhombus", label: "Right Stabilizer (Rhombus)" },
+    ],
+  },
+  {
+    id: "sailboat",
+    title: "Ocean Breeze Sailboat",
+    emoji: "⛵",
+    description: "Construct a buoyant sailboat with a hull and triangular sails!",
+    requiredSlots: [
+      { slotId: "hull", targetShape: "trapezoid", label: "Boat Hull (Trapezoid)" },
+      { slotId: "main-sail", targetShape: "tri-eq", label: "Main Sail (Triangle)" },
+      { slotId: "jib-sail", targetShape: "tri-eq", label: "Front Jib (Triangle)" },
+    ],
+  },
+  {
+    id: "fox",
+    title: "Clever Geometric Fox",
+    emoji: "🦊",
+    description: "Assemble a smart woodland fox using hexagonal and triangular polygons!",
+    requiredSlots: [
+      { slotId: "face", targetShape: "rhombus", label: "Fox Muzzle (Rhombus)" },
+      { slotId: "body", targetShape: "hexagon", label: "Fox Torso (Hexagon)" },
+      { slotId: "ear-left", targetShape: "tri-eq", label: "Left Ear (Triangle)" },
+      { slotId: "ear-right", targetShape: "tri-eq", label: "Right Ear (Triangle)" },
+    ],
+  },
+  {
+    id: "crown",
+    title: "Royal Stellar Crown",
+    emoji: "👑",
+    description: "Fashion a glittering crown with symmetrical geometric peaks!",
+    requiredSlots: [
+      { slotId: "base", targetShape: "square", label: "Crown Base (Square)" },
+      { slotId: "peak-left", targetShape: "tri-eq", label: "Left Peak (Triangle)" },
+      { slotId: "peak-mid", targetShape: "tri-eq", label: "Center Peak (Triangle)" },
+      { slotId: "peak-right", targetShape: "tri-eq", label: "Right Peak (Triangle)" },
+    ],
+  },
+];
+
+function GeometryTangramArchitectGame() {
+  const [blueprintIdx, setBlueprintIdx] = useState(0);
+  const currentBlueprint = BLUEPRINTS[blueprintIdx];
+  const [selectedShapeId, setSelectedShapeId] = useState<string>("tri-eq");
+  const [rotationAngle, setRotationAngle] = useState(0);
+  const [placedSlots, setPlacedSlots] = useState<Record<string, { shapeId: string; rotation: number }>>({});
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  const selectedShape = TANGRAM_SHAPES.find((s) => s.id === selectedShapeId) || TANGRAM_SHAPES[0];
+
+  useEffect(() => {
+    setPlacedSlots({});
+    setIsCompleted(false);
+  }, [blueprintIdx]);
+
+  const handleRotate = () => {
+    soundEffects.playPop();
+    setRotationAngle((prev) => (prev + 45) % 360);
+  };
+
+  const handlePlaceInSlot = (slotId: string, targetShape: string) => {
+    if (selectedShapeId !== targetShape) {
+      soundEffects.playGentleBoing();
+      speakText(`That slot needs a ${TANGRAM_SHAPES.find((s) => s.id === targetShape)?.name}! Try selecting that shape.`, { pitch: 1.1 });
+      return;
+    }
+
+    soundEffects.playSuccessChime();
+    const updated = {
+      ...placedSlots,
+      [slotId]: { shapeId: selectedShapeId, rotation: rotationAngle },
+    };
+    setPlacedSlots(updated);
+
+    // Check if blueprint complete
+    const allFilled = currentBlueprint.requiredSlots.every((s) => updated[s.slotId]);
+    if (allFilled) {
+      setIsCompleted(true);
+      soundEffects.playFanfare();
+      triggerCelebrationConfetti();
+      awardStars(2);
+      awardXP(45);
+      awardGems(5);
+      speakText(`Magnificent architecture! You assembled the ${currentBlueprint.title}!`, { pitch: 1.15 });
+
+      recordLearningEvent({
+        learnerId: getActiveLearnerId(),
+        activityId: `tangram-${currentBlueprint.id}`,
+        activityType: "geometry-tangram",
+        activityTitle: `Tangram Geometry: ${currentBlueprint.title}`,
+        skillId: "math-k1-shapes",
+        domain: "math",
+        gradeBand: "K-1",
+        result: "success",
+        score: 100,
+        difficulty: "medium",
+        attempts: 1,
+        hintsUsed: 0,
+      });
+    }
+  };
+
+  const handleNextBlueprint = () => {
+    soundEffects.playPop();
+    setBlueprintIdx((prev) => (prev + 1) % BLUEPRINTS.length);
+  };
+
+  return (
+    <div className="bg-white text-slate-900 border-4 border-rose-200 rounded-[2.5rem] p-6 sm:p-8 max-w-2xl mx-auto shadow-2xl space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span className="text-3xl p-2.5 bg-rose-100 rounded-2xl border border-rose-300 shadow-sm">{currentBlueprint.emoji}</span>
+          <div>
+            <h3 className="text-xl font-black text-slate-900 font-display">{currentBlueprint.title}</h3>
+            <p className="text-xs text-slate-600 font-semibold">{currentBlueprint.description}</p>
+          </div>
+        </div>
+
+        <button
+          onClick={handleNextBlueprint}
+          className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs transition-colors cursor-pointer border border-slate-300 shadow-sm flex items-center gap-1"
+        >
+          <span>Next Blueprint</span>
+          <ArrowRight size={13} />
+        </button>
+      </div>
+
+      {/* Assembly Blueprint Board */}
+      <div className="p-6 rounded-3xl bg-slate-950 text-white border-2 border-slate-800 shadow-inner flex flex-col items-center justify-center min-h-[220px] relative overflow-hidden">
+        <div className="text-[11px] font-black uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-1.5">
+          <Shapes size={14} className="text-rose-400" />
+          <span>Tap silhouette slots to snap selected shape:</span>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          {currentBlueprint.requiredSlots.map((slot) => {
+            const placed = placedSlots[slot.slotId];
+            const targetInfo = TANGRAM_SHAPES.find((s) => s.id === slot.targetShape);
+
+            return (
+              <motion.button
+                key={slot.slotId}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handlePlaceInSlot(slot.slotId, slot.targetShape)}
+                className={`p-3.5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col items-center justify-center min-w-[100px] min-h-[90px] ${
+                  placed
+                    ? `bg-gradient-to-tr ${targetInfo?.color} text-white border-white shadow-lg`
+                    : "bg-slate-900 border-dashed border-slate-700 hover:border-rose-400 text-slate-400 hover:text-white"
+                }`}
+              >
+                <span
+                  className="text-3xl filter drop-shadow transition-transform"
+                  style={{ transform: placed ? `rotate(${placed.rotation}deg)` : undefined }}
+                >
+                  {targetInfo?.emoji}
+                </span>
+                <span className="text-[10px] font-black mt-1 text-center truncate max-w-[90px]">
+                  {placed ? "Snapped!" : slot.label}
+                </span>
+              </motion.button>
+            );
+          })}
+        </div>
+
+        {isCompleted && (
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="mt-4 p-3 bg-emerald-500/20 border border-emerald-400 text-emerald-300 rounded-2xl text-xs font-black flex items-center gap-2"
+          >
+            <CheckCircle2 size={16} /> Blueprint Assembled! (+45 XP, +2 ⭐)
+          </motion.div>
+        )}
+      </div>
+
+      {/* Tangram Palette & Rotating Tool */}
+      <div className="p-4 rounded-2xl bg-rose-50/80 border-2 border-rose-200 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="text-xs font-black uppercase tracking-wider text-rose-950 flex items-center gap-1.5">
+            <span>Select Polygon to Build:</span>
+          </div>
+
+          <button
+            onClick={handleRotate}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white hover:bg-rose-100 text-rose-900 font-black text-xs border border-rose-300 shadow-sm cursor-pointer active:translate-y-0.5"
+          >
+            <RotateCw size={13} />
+            <span>Rotate ({rotationAngle}°)</span>
+          </button>
+        </div>
+
+        {/* Shapes Picker */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+          {TANGRAM_SHAPES.map((shape) => {
+            const isSelected = selectedShapeId === shape.id;
+            return (
+              <button
+                key={shape.id}
+                onClick={() => {
+                  setSelectedShapeId(shape.id);
+                  soundEffects.playPop();
+                  speakText(`${shape.name}! ${shape.sides} sides. ${shape.internalAngles}.`, { pitch: 1.1 });
+                }}
+                className={`p-2.5 rounded-2xl flex flex-col items-center justify-center border-2 transition-all cursor-pointer ${
+                  isSelected
+                    ? "bg-white border-rose-500 shadow-md ring-2 ring-rose-400/40 scale-103"
+                    : "bg-white/80 border-slate-200 hover:border-rose-300"
+                }`}
+              >
+                <span
+                  className="text-2xl transition-transform"
+                  style={{ transform: `rotate(${rotationAngle}deg)` }}
+                >
+                  {shape.emoji}
+                </span>
+                <span className="text-[11px] font-black text-slate-800 mt-1 truncate max-w-full">
+                  {shape.name}
+                </span>
+                <span className="text-[9px] font-bold text-slate-500">{shape.sides} sides</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Geometric Property Banner */}
+        <div className="p-2.5 rounded-xl bg-white border border-rose-200 text-xs text-rose-950 font-bold flex items-center gap-2">
+          <span>💡</span>
+          <span>
+            <strong>{selectedShape.name}</strong>: {selectedShape.sides} edges, {selectedShape.internalAngles}.
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
+// 6. CYBER ROVER ALGORITHMIC CODE RUNNER
+// -------------------------------------------------------------
+type RoverDirection = 0 | 90 | 180 | 270; // 0=East, 90=South, 180=West, 270=North
+type CodeCommand = "forward" | "turn-left" | "turn-right" | "jump";
+
+function CyberRoverCodeRunnerGame() {
+  const GRID_SIZE = 5;
+  const [rover, setRover] = useState<{ x: number; y: number; dir: RoverDirection }>({ x: 0, y: 0, dir: 0 });
+  const [program, setProgram] = useState<CodeCommand[]>([]);
+  const [isRunning, setIsRunning] = useState(false);
+  const [activeStep, setActiveStep] = useState<number | null>(null);
+  const [batteriesCollected, setBatteriesCollected] = useState<number>(0);
+  const [isWon, setIsWon] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const ROCKET_POS = { x: 4, y: 4 };
+  const BATTERIES = [{ x: 1, y: 2 }, { x: 3, y: 1 }];
+  const CRATERS = [{ x: 1, y: 1 }, { x: 3, y: 3 }];
+
+  const handleAddCommand = (cmd: CodeCommand) => {
+    if (isRunning) return;
+    if (program.length >= 14) {
+      speakText("Program memory full! Tap execute or clear to reset.", { pitch: 1.1 });
+      return;
+    }
+    soundEffects.playPop();
+    setProgram((prev) => [...prev, cmd]);
+    setErrorMessage(null);
+  };
+
+  const handleClear = () => {
+    soundEffects.playGentleBoing();
+    setProgram([]);
+    setRover({ x: 0, y: 0, dir: 0 });
+    setActiveStep(null);
+    setIsRunning(false);
+    setIsWon(false);
+    setBatteriesCollected(0);
+    setErrorMessage(null);
+  };
+
+  const handleRunProgram = async () => {
+    if (isRunning || program.length === 0) return;
+    setIsRunning(true);
+    setErrorMessage(null);
+    setIsWon(false);
+
+    let current = { x: 0, y: 0, dir: 0 as RoverDirection };
+    setRover(current);
+    let batteries = 0;
+    setBatteriesCollected(0);
+
+    for (let i = 0; i < program.length; i++) {
+      setActiveStep(i);
+      const cmd = program[i];
+      soundEffects.playPop();
+
+      await new Promise((res) => setTimeout(res, 480));
+
+      if (cmd === "turn-left") {
+        current.dir = ((current.dir + 270) % 360) as RoverDirection;
+      } else if (cmd === "turn-right") {
+        current.dir = ((current.dir + 90) % 360) as RoverDirection;
+      } else if (cmd === "forward" || cmd === "jump") {
+        const stepDist = cmd === "jump" ? 2 : 1;
+        let nextX = current.x;
+        let nextY = current.y;
+
+        if (current.dir === 0) nextX += stepDist;
+        else if (current.dir === 90) nextY += stepDist;
+        else if (current.dir === 180) nextX -= stepDist;
+        else if (current.dir === 270) nextY -= stepDist;
+
+        // Boundary check
+        if (nextX < 0 || nextX >= GRID_SIZE || nextY < 0 || nextY >= GRID_SIZE) {
+          soundEffects.playGentleBoing();
+          setErrorMessage("Rover drove off Martian boundary! Check your code!");
+          setIsRunning(false);
+          setActiveStep(null);
+          return;
+        }
+
+        // Crater collision check
+        const inCrater = CRATERS.some((c) => c.x === nextX && c.y === nextY);
+        if (inCrater && cmd !== "jump") {
+          soundEffects.playGentleBoing();
+          setErrorMessage("Rover fell into a crater! Use 'Jump Obstacle' to leap over it!");
+          setIsRunning(false);
+          setActiveStep(null);
+          return;
+        }
+
+        current.x = nextX;
+        current.y = nextY;
+
+        // Battery check
+        if (BATTERIES.some((b) => b.x === current.x && b.y === current.y)) {
+          soundEffects.playSuccessChime();
+          batteries += 1;
+          setBatteriesCollected(batteries);
+        }
+      }
+
+      setRover({ ...current });
+    }
+
+    setIsRunning(false);
+    setActiveStep(null);
+
+    // Check victory
+    if (current.x === ROCKET_POS.x && current.y === ROCKET_POS.y) {
+      setIsWon(true);
+      soundEffects.playFanfare();
+      triggerCelebrationConfetti();
+      awardStars(3);
+      awardXP(50);
+      speakText("Mission accomplished! Rover reached the rocket launchpad!", { pitch: 1.15 });
+
+      recordLearningEvent({
+        learnerId: getActiveLearnerId(),
+        activityId: "code-rover-martian-maze",
+        activityType: "code-runner",
+        activityTitle: "Cyber Rover Algorithmic Runner",
+        skillId: "logic-23-algorithms",
+        domain: "logic",
+        gradeBand: "2-3",
+        result: "success",
+        score: 100,
+        difficulty: "medium",
+        attempts: 1,
+        hintsUsed: 0,
+      });
+    } else {
+      setErrorMessage("Program finished, but rover hasn't reached the rocket yet. Add more steps!");
+    }
+  };
+
+  return (
+    <div className="bg-white text-slate-900 border-4 border-teal-200 rounded-[2.5rem] p-6 sm:p-8 max-w-2xl mx-auto shadow-2xl space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-3xl p-2.5 bg-teal-100 rounded-2xl border border-teal-300 shadow-sm">🤖</span>
+          <div>
+            <h3 className="text-xl font-black text-slate-900 font-display">Cyber Rover Code Runner</h3>
+            <p className="text-xs text-slate-600 font-semibold">Sequence commands to steer the rover past craters to the rocket!</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="px-3 py-1 bg-amber-100 border border-amber-300 rounded-xl text-amber-950 font-black text-xs">
+            🔋 {batteriesCollected}/{BATTERIES.length} Cells
+          </span>
+        </div>
+      </div>
+
+      {/* 5x5 Martian Terrain Grid */}
+      <div className="p-4 rounded-3xl bg-slate-950 border-3 border-teal-300 shadow-inner flex flex-col items-center">
+        <div className="grid grid-cols-5 gap-2 max-w-[340px] w-full aspect-square">
+          {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, idx) => {
+            const x = idx % GRID_SIZE;
+            const y = Math.floor(idx / GRID_SIZE);
+
+            const isRover = rover.x === x && rover.y === y;
+            const isRocket = ROCKET_POS.x === x && ROCKET_POS.y === y;
+            const isCrater = CRATERS.some((c) => c.x === x && c.y === y);
+            const isBattery = BATTERIES.some((b) => b.x === x && b.y === y);
+
+            return (
+              <div
+                key={`${x}-${y}`}
+                className={`rounded-2xl border flex items-center justify-center text-xl transition-all relative ${
+                  isRover
+                    ? "bg-teal-500/40 border-teal-400 shadow-[0_0_15px_rgba(20,184,166,0.6)]"
+                    : isRocket
+                    ? "bg-rose-500/20 border-rose-400"
+                    : isCrater
+                    ? "bg-amber-950/80 border-amber-700/60"
+                    : isBattery
+                    ? "bg-amber-400/20 border-amber-300/40"
+                    : "bg-slate-900/80 border-slate-800"
+                }`}
+              >
+                {isRover && (
+                  <motion.div
+                    animate={{ rotate: rover.dir }}
+                    className="text-2xl filter drop-shadow"
+                  >
+                    🤖
+                  </motion.div>
+                )}
+                {!isRover && isRocket && <span className="text-2xl animate-pulse">🚀</span>}
+                {!isRover && isCrater && <span className="text-sm">🕳️</span>}
+                {!isRover && isBattery && <span className="text-sm">🔋</span>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Error / Victory Banner */}
+      {errorMessage && (
+        <div className="p-3 rounded-xl bg-rose-100 border border-rose-300 text-rose-900 font-bold text-xs text-center">
+          ⚠️ {errorMessage}
+        </div>
+      )}
+      {isWon && (
+        <div className="p-3.5 rounded-2xl bg-emerald-100 border-2 border-emerald-400 text-emerald-950 font-black text-sm text-center flex items-center justify-center gap-2">
+          <CheckCircle2 size={18} className="text-emerald-600" /> Mission Complete! Rover docked with Rocket Launchpad! (+50 XP, +3 ⭐)
+        </div>
+      )}
+
+      {/* Code Sequence Tape */}
+      <div className="p-4 rounded-2xl bg-slate-100 border border-slate-200 space-y-2">
+        <div className="flex items-center justify-between text-xs font-black text-slate-700 uppercase tracking-wider">
+          <span>Program Sequence ({program.length}/14 blocks):</span>
+          {program.length > 0 && (
+            <button
+              onClick={handleClear}
+              className="text-rose-600 hover:text-rose-800 text-[11px] font-black cursor-pointer"
+            >
+              Clear Code
+            </button>
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-1.5 min-h-[42px] p-2 bg-white rounded-xl border border-slate-300">
+          {program.length === 0 ? (
+            <span className="text-slate-400 text-xs italic">Tap commands below to build your code...</span>
+          ) : (
+            program.map((cmd, i) => (
+              <span
+                key={i}
+                className={`px-2.5 py-1 rounded-lg text-xs font-black border transition-all ${
+                  activeStep === i
+                    ? "bg-amber-400 text-amber-950 border-amber-600 scale-110 shadow-md"
+                    : "bg-teal-100 border-teal-300 text-teal-900"
+                }`}
+              >
+                {cmd === "forward" && "⬆️ Step"}
+                {cmd === "turn-left" && "↩️ Left"}
+                {cmd === "turn-right" && "↪️ Right"}
+                {cmd === "jump" && "⤴️ Jump"}
+              </span>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Command Blocks Palette */}
+      <div className="space-y-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <button
+            onClick={() => handleAddCommand("forward")}
+            disabled={isRunning}
+            className="py-2.5 px-3 rounded-xl bg-teal-500 hover:bg-teal-400 text-white font-black text-xs border-b-3 border-teal-700 shadow-md cursor-pointer flex items-center justify-center gap-1 active:translate-y-0.5 disabled:opacity-50"
+          >
+            <span>⬆️ Forward</span>
+          </button>
+
+          <button
+            onClick={() => handleAddCommand("turn-left")}
+            disabled={isRunning}
+            className="py-2.5 px-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white font-black text-xs border-b-3 border-cyan-700 shadow-md cursor-pointer flex items-center justify-center gap-1 active:translate-y-0.5 disabled:opacity-50"
+          >
+            <span>↩️ Turn Left</span>
+          </button>
+
+          <button
+            onClick={() => handleAddCommand("turn-right")}
+            disabled={isRunning}
+            className="py-2.5 px-3 rounded-xl bg-blue-500 hover:bg-blue-400 text-white font-black text-xs border-b-3 border-blue-700 shadow-md cursor-pointer flex items-center justify-center gap-1 active:translate-y-0.5 disabled:opacity-50"
+          >
+            <span>↪️ Turn Right</span>
+          </button>
+
+          <button
+            onClick={() => handleAddCommand("jump")}
+            disabled={isRunning}
+            className="py-2.5 px-3 rounded-xl bg-purple-500 hover:bg-purple-400 text-white font-black text-xs border-b-3 border-purple-700 shadow-md cursor-pointer flex items-center justify-center gap-1 active:translate-y-0.5 disabled:opacity-50"
+          >
+            <span>⤴️ Jump (2x)</span>
+          </button>
+        </div>
+
+        {/* Big Run Button */}
+        <button
+          onClick={handleRunProgram}
+          disabled={isRunning || program.length === 0}
+          className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-black text-sm border-b-4 border-emerald-800 shadow-xl cursor-pointer flex items-center justify-center gap-2 active:translate-y-1 disabled:opacity-50"
+        >
+          <Play size={16} className="fill-white" />
+          <span>{isRunning ? "Executing Code Sequence..." : "Execute Program ▶️"}</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
+// 7. TIMES TABLE MATRIX BATTLES
+// -------------------------------------------------------------
+function MultiplicationMatrixGame() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(45);
+  const [score, setScore] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [problem, setProblem] = useState<{ a: number; b: number; answer: number; choices: number[] }>({ a: 0, b: 0, answer: 0, choices: [] });
+  const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
+  const [isGameOver, setIsGameOver] = useState(false);
+  const scoreRef = useRef(0);
+  const answeredRef = useRef(false);
+
+  const generateFact = () => {
+    const a = Math.floor(Math.random() * 11) + 2; // 2 to 12
+    const b = Math.floor(Math.random() * 11) + 2; // 2 to 12
+    const ans = a * b;
+
+    const set = new Set<number>();
+    set.add(ans);
+    while (set.size < 4) {
+      const delta = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 6) + 1);
+      const cand = ans + delta * Math.min(a, b);
+      if (cand > 0 && cand !== ans) set.add(cand);
+      else set.add(ans + (Math.floor(Math.random() * 10) + 1));
+    }
+
+    setProblem({
+      a,
+      b,
+      answer: ans,
+      choices: shuffle(Array.from(set)),
+    });
+  };
+
+  const startGame = () => {
+    setIsPlaying(true);
+    setTimeLeft(45);
+    scoreRef.current = 0;
+    setScore(0);
+    setStreak(0);
+    setIsGameOver(false);
+    answeredRef.current = false;
+    generateFact();
+    soundEffects.playPop();
+  };
+
+  useEffect(() => {
+    if (!isPlaying || isGameOver) return;
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setIsGameOver(true);
+          setIsPlaying(false);
+          soundEffects.playFanfare();
+          triggerCelebrationConfetti();
+          const finalScore = scoreRef.current;
+          recordLearningEvent({
+            learnerId: getActiveLearnerId(),
+            activityId: "times-table-matrix-battle",
+            activityType: "times-matrix",
+            activityTitle: "Multiplication Matrix Sprint",
+            skillId: "math-23-multiplication",
+            domain: "math",
+            gradeBand: "2-3",
+            result: finalScore >= 50 ? "success" : "practice",
+            score: Math.min(100, Math.round((finalScore / 100) * 100)),
+            difficulty: "medium",
+            attempts: 1,
+            hintsUsed: 0,
+          });
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isPlaying, isGameOver]);
+
+  const handleChoice = (val: number) => {
+    if (!isPlaying || isGameOver || answeredRef.current) return;
+    if (val === problem.answer) {
+      answeredRef.current = true;
+      soundEffects.playSuccessChime();
+      const mult = streak >= 5 ? 3 : streak >= 3 ? 2 : 1;
+      const pts = 10 * mult;
+      scoreRef.current += pts;
+      setScore(scoreRef.current);
+      setStreak((s) => s + 1);
+      setFeedback("correct");
+      awardXP(6);
+      setTimeout(() => {
+        setFeedback(null);
+        answeredRef.current = false;
+        generateFact();
+      }, 300);
+    } else {
+      answeredRef.current = true;
+      soundEffects.playGentleBoing();
+      setStreak(0);
+      setFeedback("wrong");
+      setTimeout(() => {
+        setFeedback(null);
+        answeredRef.current = false;
+      }, 400);
+    }
+  };
+
+  return (
+    <div className="bg-white text-slate-900 border-4 border-amber-200 rounded-[2.5rem] p-6 sm:p-8 max-w-xl mx-auto shadow-2xl text-center">
+      {/* HUD Bar */}
+      <div className="flex items-center justify-between p-4 bg-amber-50 rounded-2xl border-2 border-amber-200 mb-6 shadow-sm">
+        <div className="flex items-center gap-2">
+          <Timer className="text-amber-600" size={22} />
+          <span className="text-lg font-black text-slate-900">{timeLeft}s</span>
+        </div>
+
+        <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-100 border border-amber-300 rounded-xl text-amber-900 text-xs font-black">
+          <Flame size={15} className="text-orange-500 fill-orange-500" />
+          <span>{streak} Streak {streak >= 3 ? "(2x!)" : ""}</span>
+        </div>
+
+        <div className="flex items-center gap-1.5 px-3 py-1 bg-indigo-100 border border-indigo-300 rounded-xl text-indigo-900 text-xs font-black">
+          <Trophy size={15} className="text-indigo-600" />
+          <span>{score} PTS</span>
+        </div>
+      </div>
+
+      {!isPlaying && !isGameOver && (
+        <div className="py-8 space-y-4">
+          <div className="text-6xl animate-bounce">✖️</div>
+          <h3 className="text-2xl sm:text-3xl font-black text-slate-900 font-display">Times Table Matrix Battle</h3>
+          <p className="text-xs sm:text-sm text-slate-600 font-semibold max-w-md mx-auto">
+            Solve rapid multiplication facts across the 1–12 matrix in 45 seconds to unleash combo multipliers!
+          </p>
+          <button
+            onClick={startGame}
+            className="px-8 py-3.5 rounded-2xl bg-gradient-to-b from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-white font-black text-base border-b-4 border-orange-700 active:translate-y-1 shadow-xl transition-all cursor-pointer inline-flex items-center gap-2"
+          >
+            <Zap size={18} /> Start Matrix Sprint
+          </button>
+        </div>
+      )}
+
+      {isPlaying && !isGameOver && (
+        <div className="space-y-6">
+          {/* Equation Hero */}
+          <motion.div
+            key={`${problem.a}x${problem.b}`}
+            initial={{ scale: 0.85, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className={`py-8 px-6 rounded-3xl border-4 transition-all shadow-inner ${
+              feedback === "correct"
+                ? "bg-emerald-100 border-emerald-400"
+                : feedback === "wrong"
+                ? "bg-rose-100 border-rose-400"
+                : "bg-indigo-50 border-indigo-200"
+            }`}
+          >
+            <div className="text-4xl sm:text-5xl font-black text-slate-900 tracking-wider font-display">
+              {problem.a} × {problem.b} = ?
+            </div>
+
+            {/* Visual Array Grid Cue */}
+            <div className="mt-3 text-xs font-black text-indigo-900 flex items-center justify-center gap-1.5">
+              <span>Array model: {problem.a} rows of {problem.b}</span>
+            </div>
+          </motion.div>
+
+          {/* 4 Choices Grid */}
+          <div className="grid grid-cols-2 gap-3.5">
+            {problem.choices.map((val) => (
+              <motion.button
+                key={val}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleChoice(val)}
+                className="py-4 px-6 rounded-2xl bg-white hover:bg-amber-50 text-slate-800 hover:text-amber-900 font-black text-2xl border-2 border-slate-200 hover:border-amber-400 border-b-6 border-b-slate-300 hover:border-b-amber-500 active:translate-y-1 transition-all cursor-pointer shadow-md select-none"
+              >
+                {val}
+              </motion.button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {isGameOver && (
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="py-8 space-y-4"
+        >
+          <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-b from-amber-400 to-yellow-400 flex items-center justify-center text-5xl shadow-xl shadow-yellow-500/30 border-4 border-white animate-bounce">
+            🏆
+          </div>
+          <h3 className="text-3xl font-black text-slate-900 font-display">Matrix Battle Complete!</h3>
+          <p className="text-base text-amber-900 font-bold">
+            Score: <strong className="text-slate-900">{score} Points</strong>
+          </p>
+          <button
+            onClick={startGame}
+            className="px-6 py-3 rounded-2xl bg-gradient-to-b from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-white font-black text-sm border-b-4 border-orange-700 active:translate-y-1 shadow-xl transition-all cursor-pointer inline-flex items-center gap-2"
+          >
+            <RotateCcw size={16} /> Battle Again
+          </button>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+

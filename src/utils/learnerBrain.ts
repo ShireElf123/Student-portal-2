@@ -114,7 +114,11 @@ export type ActivityType =
   | "diagnostic-placement"
   | "mistake-review"
   | "homework-submission"
-  | "worksheet-practice";
+  | "worksheet-practice"
+  | "geometry-tangram"
+  | "code-runner"
+  | "times-matrix"
+  | "phonics-pop";
 
 export interface LearningEvent {
   id: string;

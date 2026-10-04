@@ -5,10 +5,6 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { awardXP, awardStars, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
-import {
-  completeActiveMissionIfMatches,
-  recordDailyCount,
-} from "../data/toddler/toddlerDailyAdventure";
 
 interface CardItem {
   id: number;
@@ -35,14 +31,7 @@ const MEMORY_PAIRS = [
 ];
 
 function generateCards(pairCount: number): CardItem[] {
-  // Shuffle the pairs first so every game features different friends —
-  // previously every game always used the same first pairs.
-  const shuffledPairs = [...MEMORY_PAIRS];
-  for (let i = shuffledPairs.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffledPairs[i], shuffledPairs[j]] = [shuffledPairs[j], shuffledPairs[i]];
-  }
-  const selected = shuffledPairs.slice(0, pairCount);
+  const selected = MEMORY_PAIRS.slice(0, pairCount);
   const deck: CardItem[] = [];
   let id = 1;
   selected.forEach((pair) => {
@@ -63,7 +52,6 @@ export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) =>
   const [matchesCount, setMatchesCount] = useState<number>(0);
   const [isWon, setIsWon] = useState<boolean>(false);
   const [moves, setMoves] = useState<number>(0);
-  const [winRewards, setWinRewards] = useState<{ stars: number; xp: number }>({ stars: 3, xp: 50 });
   const gameTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const scheduleGameTimer = (callback: () => void, delay: number) => {
@@ -143,25 +131,10 @@ export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) =>
               setIsWon(true);
               soundEffects.playFanfare();
               triggerCelebrationConfetti();
-              // Full pay on the day's first win, a small encore on replays.
-              const isFirstWinToday = recordDailyCount("memory-match-win") === 1;
-              const stars = isFirstWinToday ? 3 : 1;
-              const xp = isFirstWinToday ? 50 : 10;
-              setWinRewards({ stars, xp });
-              speakText(
-                isFirstWinToday
-                  ? "Hooray! You matched all the friends! You are a superstar!"
-                  : "Hooray! You matched all the friends again! Great practice!",
-                { pitch: 1.2 }
-              );
-              awardXP(xp);
-              if (onAddStar) onAddStar(stars);
-              else awardStars(stars);
-              try {
-                completeActiveMissionIfMatches("games", "memory-match");
-              } catch {
-                // ignore
-              }
+              speakText("Hooray! You matched all the friends! You are a superstar!", { pitch: 1.2 });
+              awardXP(50);
+              if (onAddStar) onAddStar(3);
+              else awardStars(3);
 
               try {
                 recordLearningEvent({
@@ -172,7 +145,7 @@ export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) =>
                   skillId: "logic-k1-patterns",
                   domain: "logic",
                   gradeBand: "toddler",
-                  result: "success",
+                  result: "mastered",
                   score: 100,
                   difficulty: "easy",
                   attempts: moves + 1,
@@ -295,7 +268,7 @@ export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) =>
           </div>
           <h4 className="text-2xl font-black text-white">Super Memory Champion!</h4>
           <p className="text-sm text-amber-200">
-            You matched all pairs in <strong className="text-white">{moves} turns</strong>! Earned <strong className="text-white">+{winRewards.stars} Golden Star{winRewards.stars === 1 ? "" : "s"}</strong> &amp; <strong className="text-white">+{winRewards.xp} XP</strong>!
+            You matched all pairs in <strong className="text-white">{moves} turns</strong>! Earned <strong className="text-white">+3 Golden Stars</strong> &amp; <strong className="text-white">+50 XP</strong>!
           </p>
           <button
             onClick={() => resetGame()}

@@ -13,13 +13,10 @@ import {
   where,
   orderBy,
   arrayUnion,
-  arrayRemove,
-  runTransaction,
-  Timestamp,
   writeBatch,
 } from "firebase/firestore";
 import firebaseConfig from "../firebase-applet-config.json";
-import { app, auth, handleFirestoreError, notifySyncStatus, OperationType } from "./firebaseCore";
+import { app, handleFirestoreError, notifySyncStatus, OperationType } from "./firebaseCore";
 export { auth, googleProvider, handleFirestoreError, notifySyncStatus, OperationType, subscribeToSyncStatus } from "./firebaseCore";
 import {
   Notebook,
@@ -103,275 +100,157 @@ export async function updateUserRole(
   }
 }
 
-/**
- * Fetches a single user profile document. Returns null when the profile does
- * not exist or cannot be read (offline, denied). Never throws for missing docs.
- */
-export async function fetchUserProfile(userId: string): Promise<Record<string, any> | null> {
-  if (!userId) return null;
+export async function fetchUserProfile(userId: string): Promise<{
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL: string;
+  role: "student" | "parent" | "teacher" | "tutor";
+  createdAt?: number;
+  linkedStudentIds?: string[];
+} | null> {
+  const userRef = doc(db, "users", userId);
   const path = `users/${userId}`;
   try {
-    const snap = await getDoc(doc(db, "users", userId));
+    const snap = await getDoc(userRef);
     if (!snap.exists()) return null;
-    return snap.data() as Record<string, any>;
+    return snap.data() as any;
   } catch (error) {
-    console.warn(`Could not fetch user profile (${path}):`, error);
-    return null;
+    handleFirestoreError(error, OperationType.GET, path);
   }
 }
 
-export const PARENT_LINK_CODE_TTL_MS = 24 * 60 * 60 * 1000;
-const LINK_CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-
-function randomLinkCode(): string {
-  const bytes = new Uint32Array(6);
-  crypto.getRandomValues(bytes);
-  let suffix = "";
-  for (const value of bytes) {
-    suffix += LINK_CODE_ALPHABET[value % LINK_CODE_ALPHABET.length];
-  }
-  return `P-${suffix}`;
-}
-
-/**
- * Issues a crypto-random, single-use parent link code for the signed-in student.
- * The code expires 24h after creation and is enforced one-time by Firestore rules.
- */
 export async function generateParentLinkCode(
   studentId: string,
   studentName: string,
   studentEmail?: string
 ): Promise<string> {
-  const callerUid = auth.currentUser?.uid;
-  if (!callerUid || callerUid !== studentId) {
-    throw new Error("Only the signed-in learner can issue a family link code for themselves.");
-  }
-  const cleanName = studentName.trim().slice(0, 128) || "Learner";
-  for (let attempt = 0; attempt < 5; attempt += 1) {
-    const code = randomLinkCode();
-    const linkRef = doc(db, "parentLinkCodes", code);
-    try {
-      const existing = await getDoc(linkRef);
-      if (existing.exists()) continue; // collision: regenerate
-      await setDoc(linkRef, {
-        id: code,
-        studentId,
-        studentName: cleanName,
-        studentEmail: (studentEmail || "").slice(0, 256),
-        linkCode: code,
-        createdAt: Date.now(),
-        expiresAt: Timestamp.fromMillis(Date.now() + PARENT_LINK_CODE_TTL_MS),
-        consumed: false,
-      });
-      return code;
-    } catch (error) {
-      handleFirestoreError(error, OperationType.CREATE, `parentLinkCodes/${code}`);
-    }
-  }
-  throw new Error("Could not issue a link code right now. Please try again.");
-}
-
-export type LinkChildFailureReason =
-  | "not-signed-in"
-  | "not-found"
-  | "expired"
-  | "already-claimed"
-  | "self-link"
-  | "unknown";
-
-export interface LinkChildResult {
-  success: boolean;
-  studentName?: string;
-  studentId?: string;
-  reason?: LinkChildFailureReason;
-  error?: string;
-}
-
-/**
- * Claims a parent link code atomically: the code is marked consumed, a verified
- * link grant is written under the student, and the parent's mirror list gains
- * the student — all in one transaction, so a code can never mint two families.
- */
-export async function linkChildByCode(parentUid: string, code: string): Promise<LinkChildResult> {
-  const callerUid = auth.currentUser?.uid;
-  if (!callerUid || callerUid !== parentUid) {
-    return { success: false, reason: "not-signed-in", error: "Please sign in as the parent account first." };
-  }
-  const cleanCode = code.trim().toUpperCase();
-  if (!cleanCode) {
-    return { success: false, reason: "not-found", error: "Please enter the link code from the learner's device." };
-  }
-  const linkRef = doc(db, "parentLinkCodes", cleanCode);
-  const parentRef = doc(db, "users", parentUid);
+  const code = `P-${studentId.slice(0, 4).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
+  const linkRef = doc(db, "parentLinkCodes", code);
   try {
-    const claimed = await runTransaction(db, async (txn) => {
-      const snap = await txn.get(linkRef);
-      if (!snap.exists()) {
-        throw { reason: "not-found", message: "Link code not found. Check the code and try again." };
-      }
-      const data = snap.data() as Record<string, any>;
-      if (data.consumed === true) {
-        throw { reason: "already-claimed", message: "This code was already used. Ask the learner for a fresh code." };
-      }
-      const expiresMs =
-        data.expiresAt && typeof data.expiresAt.toMillis === "function"
-          ? (data.expiresAt.toMillis() as number)
-          : Number(data.expiresAt);
-      if (!expiresMs || expiresMs <= Date.now()) {
-        throw { reason: "expired", message: "This code has expired. Ask the learner for a fresh code." };
-      }
-      const studentId = String(data.studentId || "");
-      if (!studentId) {
-        throw { reason: "not-found", message: "This code is invalid. Ask the learner for a fresh code." };
-      }
-      if (studentId === parentUid) {
-        throw { reason: "self-link", message: "A learner cannot link to themselves." };
-      }
-      const parentSnap = await txn.get(parentRef);
-      if (!parentSnap.exists()) {
-        throw { reason: "unknown", message: "Parent profile not found. Please sign out and back in." };
-      }
-      const grantRef = doc(db, "users", studentId, "linkedParents", parentUid);
-      const grantSnap = await txn.get(grantRef);
-      txn.update(linkRef, { consumed: true, consumedBy: parentUid, consumedAt: Date.now() });
-      if (!grantSnap.exists()) {
-        txn.set(grantRef, {
-          id: parentUid,
-          studentId,
-          parentId: parentUid,
-          code: cleanCode,
-          createdAt: Date.now(),
-        });
-      }
-      txn.update(parentRef, { linkedStudentIds: arrayUnion(studentId) });
-      return { studentId, studentName: String(data.studentName || "Learner") };
+    await setDoc(linkRef, {
+      id: code,
+      studentId,
+      studentName,
+      studentEmail: studentEmail || "",
+      linkCode: code,
+      createdAt: Date.now(),
     });
-    return { success: true, studentId: claimed.studentId, studentName: claimed.studentName };
-  } catch (error: any) {
-    if (error && typeof error.reason === "string") {
-      return { success: false, reason: error.reason as LinkChildFailureReason, error: error.message };
+    return code;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.CREATE, `parentLinkCodes/${code}`);
+  }
+}
+
+export async function linkChildByCode(
+  parentUid: string,
+  code: string
+): Promise<{ success: boolean; studentName?: string; studentId?: string; error?: string }> {
+  const cleanCode = code.trim().toUpperCase();
+  const linkRef = doc(db, "parentLinkCodes", cleanCode);
+  try {
+    const snap = await getDoc(linkRef);
+    if (!snap.exists()) {
+      return { success: false, error: "Link code not found or expired." };
     }
+    const data = snap.data();
+    const parentRef = doc(db, "users", parentUid);
+    await updateDoc(parentRef, {
+      linkedStudentIds: arrayUnion(data.studentId),
+    });
+    return {
+      success: true,
+      studentName: data.studentName,
+      studentId: data.studentId,
+    };
+  } catch (error) {
     console.error("Error linking child code:", error);
-    return { success: false, reason: "unknown", error: "Could not link the learner account. Please try again." };
+    return { success: false, error: "Could not link child account." };
   }
 }
 
-/**
- * Removes a family link. Either the student (revoke) or the parent (leave)
- * may delete the verified grant; the parent's mirror entry is cleaned when
- * the parent performs the removal.
- */
 export async function unlinkChild(parentUid: string, studentId: string): Promise<void> {
-  const callerUid = auth.currentUser?.uid;
-  if (!callerUid || (callerUid !== parentUid && callerUid !== studentId)) {
-    throw new Error("Only the linked parent or learner can remove this family link.");
-  }
-  const grantRef = doc(db, "users", studentId, "linkedParents", parentUid);
-  await deleteDoc(grantRef);
-  if (callerUid === parentUid) {
-    try {
-      await updateDoc(doc(db, "users", parentUid), { linkedStudentIds: arrayRemove(studentId) });
-    } catch (error) {
-      console.warn("Could not clean the linked-student mirror entry:", error);
+  const parentRef = doc(db, "users", parentUid);
+  const path = `users/${parentUid}`;
+  try {
+    const snap = await getDoc(parentRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      const currentList: string[] = data.linkedStudentIds || [];
+      const updated = currentList.filter((id) => id !== studentId);
+      await updateDoc(parentRef, { linkedStudentIds: updated });
     }
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, path);
   }
 }
 
-export interface LinkedStudentProfile {
+export async function fetchLinkedStudentProfiles(parentUid: string): Promise<Array<{
   id: string;
   name: string;
   email: string;
-  gradeLevel: string;
-  lastActive: number;
-}
-
-/**
- * Resolves the parent's linked learners to displayable profiles. Stale mirror
- * entries (grant revoked or profile unreadable) are filtered out and cleaned.
- */
-export async function fetchLinkedStudentProfiles(parentUid: string): Promise<LinkedStudentProfile[]> {
-  const callerUid = auth.currentUser?.uid;
-  if (!callerUid || callerUid !== parentUid) return [];
-  let linkedIds: string[] = [];
+  gradeLevel?: string;
+  lastActive?: number;
+}>> {
+  const parentRef = doc(db, "users", parentUid);
+  const path = `users/${parentUid}`;
   try {
-    const parentSnap = await getDoc(doc(db, "users", parentUid));
-    const raw = parentSnap.data()?.linkedStudentIds;
-    linkedIds = Array.isArray(raw) ? raw.filter((id): id is string => typeof id === "string") : [];
+    const parentSnap = await getDoc(parentRef);
+    if (!parentSnap.exists()) return [];
+    const studentIds: string[] = parentSnap.data().linkedStudentIds || [];
+    if (studentIds.length === 0) return [];
+
+    const profiles = await Promise.all(
+      studentIds.map(async (sid) => {
+        try {
+          const userSnap = await getDoc(doc(db, "users", sid));
+          if (userSnap.exists()) {
+            const udata = userSnap.data();
+            return {
+              id: sid,
+              name: udata.displayName || "Scholar",
+              email: udata.email || "",
+              gradeLevel: udata.gradeLevel || "Grade 2-3",
+              lastActive: typeof udata.lastActive === "number" ? udata.lastActive : Date.now(),
+            };
+          }
+          return {
+            id: sid,
+            name: `Student (${sid.slice(0, 5)})`,
+            email: "",
+            gradeLevel: "Primary",
+            lastActive: Date.now(),
+          };
+        } catch {
+          return {
+            id: sid,
+            name: `Student (${sid.slice(0, 5)})`,
+            email: "",
+            gradeLevel: "Primary",
+            lastActive: Date.now(),
+          };
+        }
+      })
+    );
+    return profiles;
   } catch (error) {
-    console.warn("Could not read linked learners:", error);
+    handleFirestoreError(error, OperationType.GET, path);
     return [];
   }
-  if (linkedIds.length === 0) return [];
-  const profiles: LinkedStudentProfile[] = [];
-  const stale: string[] = [];
-  await Promise.all(
-    linkedIds.map(async (studentId) => {
-      try {
-        const grantSnap = await getDoc(doc(db, "users", studentId, "linkedParents", parentUid));
-        if (!grantSnap.exists()) {
-          stale.push(studentId);
-          return;
-        }
-        const profileSnap = await getDoc(doc(db, "users", studentId));
-        const profile = profileSnap.exists() ? (profileSnap.data() as Record<string, any>) : null;
-        if (!profile) {
-          stale.push(studentId);
-          return;
-        }
-        const modelSnap = await getDoc(doc(db, "users", studentId, "learnerModel", "profile"));
-        const cloudModel = modelSnap.exists() ? (modelSnap.data() as Record<string, any>) : null;
-        const displayName =
-          (typeof profile.displayName === "string" && profile.displayName.trim()) ||
-          (typeof profile.email === "string" && profile.email.trim()) ||
-          "Linked learner";
-        profiles.push({
-          id: studentId,
-          name: displayName.slice(0, 128),
-          email: typeof profile.email === "string" ? profile.email : "",
-          gradeLevel: typeof cloudModel?.gradeBand === "string" ? `Grade ${cloudModel.gradeBand}` : "Student",
-          lastActive: typeof cloudModel?.lastActiveTimestamp === "number" ? cloudModel.lastActiveTimestamp : 0,
-        });
-      } catch {
-        stale.push(studentId);
-      }
-    })
-  );
-  if (stale.length > 0) {
-    try {
-      await updateDoc(doc(db, "users", parentUid), {
-        linkedStudentIds: arrayRemove(...stale),
-      });
-    } catch {
-      // ignore mirror cleanup failures; entries are simply hidden
-    }
-  }
-  return profiles;
 }
 
-const CHILD_COLLECTION_ALLOWLIST = ["notebooks", "studyPlanItems", "practiceSessions"] as const;
-export type ChildCollectionName = (typeof CHILD_COLLECTION_ALLOWLIST)[number];
-
-/**
- * Reads a linked learner's cloud collection for the family dashboard.
- * Authorized by the verified link grant (see Firestore rules).
- */
 export async function fetchLinkedChildCollection(
-  parentUid: string,
+  _parentUid: string,
   studentId: string,
-  collectionName: ChildCollectionName
-): Promise<Record<string, any>[]> {
-  const callerUid = auth.currentUser?.uid;
-  if (!callerUid || callerUid !== parentUid) return [];
-  if (!(CHILD_COLLECTION_ALLOWLIST as readonly string[]).includes(collectionName)) return [];
+  collectionName: "notebooks" | "studyPlanItems" | "practiceSessions"
+): Promise<any[]> {
+  const path = `users/${studentId}/${collectionName}`;
   try {
-    const snap = await getDocs(collection(db, "users", studentId, collectionName));
-    const docs: Record<string, any>[] = [];
-    snap.forEach((docSnap) => {
-      docs.push({ id: docSnap.id, ...(docSnap.data() as Record<string, any>) });
-    });
-    return docs;
+    const colRef = collection(db, "users", studentId, collectionName);
+    const snap = await getDocs(colRef);
+    return snap.docs.map((d) => d.data());
   } catch (error) {
-    console.warn(`Could not read linked learner collection (${collectionName}):`, error);
+    handleFirestoreError(error, OperationType.LIST, path);
     return [];
   }
 }

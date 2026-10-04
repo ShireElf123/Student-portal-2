@@ -6,7 +6,18 @@ import { aiService } from "./server/aiService";
 import { PracticeQuestion, StudyPlanTask } from "./server/types";
 import { validatePracticeRequest, validatePracticeQuestions } from "./server/practiceValidation";
 
+import firebaseConfig from "./firebase-applet-config.json";
+
 dotenv.config();
+
+function getApiKey(): string {
+  return (
+    process.env.GEMINI_API_KEY ||
+    process.env.API_KEY ||
+    (firebaseConfig as any)?.apiKey ||
+    ""
+  );
+}
 
 async function startServer() {
   const app = express();
@@ -19,12 +30,20 @@ async function startServer() {
     res.json({ status: "ok" });
   });
 
+  // Serve public static assets (favicons, manifest, etc.)
+  app.use(express.static(path.resolve(process.cwd(), "public")));
+
+  // Favicon fallback
+  app.get("/favicon.ico", (req, res) => {
+    res.type("image/svg+xml").sendFile(path.resolve(process.cwd(), "public/favicon.svg"));
+  });
+
   // Standard non-streaming chat endpoint
   app.post("/api/chat", async (req, res) => {
     try {
       const { message, previousInteractionId, mode = "general", attachment } = req.body;
 
-      if (!process.env.GEMINI_API_KEY) {
+      if (!getApiKey()) {
         return res.status(500).json({ error: "Academic intelligence core offline: GEMINI_API_KEY is missing." });
       }
 
@@ -58,7 +77,7 @@ async function startServer() {
     try {
       const { message, previousInteractionId, mode = "general", attachment } = req.body;
 
-      if (!process.env.GEMINI_API_KEY) {
+      if (!getApiKey()) {
         return res.status(500).json({ error: "Academic intelligence core offline: GEMINI_API_KEY is missing." });
       }
 
@@ -101,7 +120,7 @@ async function startServer() {
   // Practice generation endpoint with strict server-side validation
   app.post("/api/practice/generate", async (req, res) => {
     try {
-      if (!process.env.GEMINI_API_KEY) {
+      if (!getApiKey()) {
         return res.status(500).json({ error: "Academic intelligence core offline: GEMINI_API_KEY is missing." });
       }
 
@@ -174,7 +193,7 @@ Return a valid JSON array of question objects adhering strictly to this schema:
   // Study plan generation endpoint
   app.post("/api/study-plan/generate", async (req, res) => {
     try {
-      if (!process.env.GEMINI_API_KEY) {
+      if (!getApiKey()) {
         return res.status(500).json({ error: "Academic intelligence core offline: GEMINI_API_KEY is missing." });
       }
 
@@ -216,7 +235,7 @@ Where priority is one of: "high", "medium", "low". Duration is typically between
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
-      server: { middlewareMode: true, allowedHosts: [".e2b.app"] },
+      server: { middlewareMode: true, allowedHosts: [".e2b.app", ".run.app"] },
       appType: "spa",
     });
     app.use(vite.middlewares);

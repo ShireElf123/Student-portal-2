@@ -5,11 +5,6 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { awardXP, awardStars, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
-import {
-  completeActiveMissionIfMatches,
-  getDailyCount,
-  recordDailyCount,
-} from "../data/toddler/toddlerDailyAdventure";
 
 interface RhymeQuestion {
   id: string;
@@ -219,35 +214,15 @@ const RHYME_QUESTIONS: RhymeQuestion[] = [
   },
 ];
 
-function shuffleArray<T>(items: T[]): T[] {
-  const next = [...items];
-  for (let i = next.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [next[i], next[j]] = [next[j], next[i]];
-  }
-  return next;
-}
-
-// Every round uses a fresh order with shuffled answer positions, so the
-// correct rhyme is not always the first button and replays feel new.
-function buildShuffledDeck(): RhymeQuestion[] {
-  return shuffleArray(RHYME_QUESTIONS).map((q) => ({
-    ...q,
-    options: shuffleArray(q.options),
-  }));
-}
-
 export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => void }) {
-  const [deck, setDeck] = useState<RhymeQuestion[]>(buildShuffledDeck);
   const [index, setIndex] = useState(0);
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [wrongShake, setWrongShake] = useState<string | null>(null);
-  const [completionRewards, setCompletionRewards] = useState<{ stars: number; xp: number }>({ stars: 3, xp: 50 });
   const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const current = deck[index] || deck[0];
+  const current = RHYME_QUESTIONS[index];
 
   // AI Voice speaks welcome prompt on initial mount and questions smoothly
   useEffect(() => {
@@ -261,7 +236,7 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
     }, 240);
 
     return () => clearTimeout(timer);
-  }, [index, deck]);
+  }, [index]);
 
   useEffect(() => () => {
     if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
@@ -278,12 +253,9 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
       setIsAnswered(true);
       soundEffects.playSuccessChime();
       speakText(`Yes! ${current.targetWord} rhymes with ${option.word}! They sound like music!`, { pitch: 1.3 });
-      // Per-answer rewards only while working toward the day's first completion.
-      if (getDailyCount("rhyme-time-complete") === 0) {
-        awardXP(25);
-        if (onAddStar) onAddStar(1);
-        else awardStars(1);
-      }
+      awardXP(25);
+      if (onAddStar) onAddStar(1);
+      else awardStars(1);
 
       try {
         recordLearningEvent({
@@ -304,7 +276,7 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
 
       advanceTimerRef.current = setTimeout(() => {
         advanceTimerRef.current = null;
-        if (index < deck.length - 1) {
+        if (index < RHYME_QUESTIONS.length - 1) {
           setIndex(index + 1);
           setIsAnswered(false);
           setSelectedWord(null);
@@ -312,25 +284,10 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
           setIsCompleted(true);
           soundEffects.playFanfare();
           triggerCelebrationConfetti();
-          // Full pay on the day's first completion, a small encore on replays.
-          const isFirstToday = recordDailyCount("rhyme-time-complete") === 1;
-          const stars = isFirstToday ? 3 : 1;
-          const xp = isFirstToday ? 50 : 10;
-          setCompletionRewards({ stars, xp });
-          speakText(
-            isFirstToday
-              ? "Hooray! You are a master rhymer! Fantastic job!"
-              : "Hooray! You finished all the rhymes again! Great practice!",
-            { pitch: 1.25 }
-          );
-          awardXP(xp);
-          if (onAddStar) onAddStar(stars);
-          else awardStars(stars);
-          try {
-            completeActiveMissionIfMatches("games", "rhyme-time");
-          } catch {
-            // ignore
-          }
+          speakText("Hooray! You are a master rhymer! Fantastic job!", { pitch: 1.25 });
+          awardXP(50);
+          if (onAddStar) onAddStar(3);
+          else awardStars(3);
         }
       }, 1500);
     } else {
@@ -349,7 +306,6 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
     stopSpeaking();
     if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
     advanceTimerRef.current = null;
-    setDeck(buildShuffledDeck());
     setIndex(0);
     setIsAnswered(false);
     setIsCompleted(false);
@@ -421,7 +377,7 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
 
           {/* Progress dots */}
           <div className="flex items-center justify-center gap-2 pt-2">
-            {deck.map((_, i) => (
+            {RHYME_QUESTIONS.map((_, i) => (
               <div
                 key={i}
                 className={`h-2.5 rounded-full transition-all ${
@@ -439,7 +395,7 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
           </div>
           <h4 className="text-2xl font-black text-white">Rhyme Master!</h4>
           <p className="text-sm text-pink-200">
-            You completed all rhyming challenges! Earned <strong className="text-white">+{completionRewards.stars} Star{completionRewards.stars === 1 ? "" : "s"}</strong> &amp; <strong className="text-white">+{completionRewards.xp} XP</strong>!
+            You completed all rhyming challenges! Earned <strong className="text-white">+3 Stars</strong> &amp; <strong className="text-white">+50 XP</strong>!
           </p>
           <button
             onClick={handleRestart}

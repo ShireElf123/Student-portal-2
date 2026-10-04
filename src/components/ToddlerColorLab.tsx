@@ -5,10 +5,6 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
 import { triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
-import {
-  completeActiveMissionIfMatches,
-  recordDailyCount,
-} from "../data/toddler/toddlerDailyAdventure";
 
 interface ColorDrop {
   id: "red" | "yellow" | "blue";
@@ -137,6 +133,7 @@ function PaintCanvas() {
 export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => void }) {
   const [selectedDrops, setSelectedDrops] = useState<ColorDrop[]>([]);
   const [currentResult, setCurrentResult] = useState<MixResult | null>(null);
+  const rewardPaid = useRef(false);
   const resolutionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -172,15 +169,9 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
           soundEffects.playSuccessChime();
           triggerCelebrationConfetti();
           speakText(result.phrase, { pitch: 1.3 });
-          // The day's first successful mix earns a star; further mixes are
-          // free play so leaving and re-entering cannot farm stars.
-          if (recordDailyCount("color-magic-mix") === 1) {
+          if (!rewardPaid.current) {
+            rewardPaid.current = true;
             onAddStar?.(1);
-          }
-          try {
-            completeActiveMissionIfMatches("games", "color-magic");
-          } catch {
-            // ignore
           }
 
           try {
@@ -189,7 +180,7 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
               activityId: "toddler-color-magic",
               activityType: "toddler-color-lab",
               activityTitle: `Color Magic: Mixed ${result.colorName}`,
-              skillId: "sci-23-matter-water",
+              skillId: "sci-23-matter-energy",
               domain: "science",
               gradeBand: "toddler",
               result: "success",

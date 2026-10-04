@@ -1,11 +1,6 @@
 import { AIUsageStats, SubscriptionStatus, SubscriptionTier } from "../types";
 import { todayISO } from "../utils/dateUtils";
 import { auth } from "../firebaseCore";
-import {
-  readScopedJSON,
-  writeScopedJSON,
-  subscribeAccountScope,
-} from "../utils/accountStorage";
 
 function syncCloudUserFields(fields: Record<string, unknown>) {
   const user = auth.currentUser;
@@ -37,50 +32,47 @@ export const TIER_LABELS: Record<SubscriptionTier, string> = {
 type UsageListener = (stats: AIUsageStats) => void;
 const listeners: Set<UsageListener> = new Set();
 
-interface StoredSubscription {
+function getStoredSubscription(): {
   tier: SubscriptionTier;
   status: SubscriptionStatus;
   trialEndsAt: number;
-}
-
-function isStoredSubscription(value: unknown): value is StoredSubscription {
-  if (!value || typeof value !== "object") return false;
-  const candidate = value as Record<string, unknown>;
-  return (
-    typeof candidate.tier === "string" &&
-    ["free_trial", "student_pro", "family_basic", "educator_plus"].includes(candidate.tier) &&
-    typeof candidate.status === "string" &&
-    ["trialing", "active", "expired"].includes(candidate.status) &&
-    typeof candidate.trialEndsAt === "number"
-  );
-}
-
-function getStoredSubscription(): StoredSubscription {
-  const stored = readScopedJSON<unknown>(SUB_STORAGE_KEY, null);
-  if (isStoredSubscription(stored)) {
-    return stored;
+} {
+  try {
+    const raw = localStorage.getItem(SUB_STORAGE_KEY);
+    if (raw) {
+      return JSON.parse(raw);
+    }
+  } catch {
+    // fallback
   }
   // Default: 14 days trial from today
   const fourteenDaysMs = 14 * 24 * 60 * 60 * 1000;
-  const defaultSub: StoredSubscription = {
-    tier: "free_trial",
-    status: "trialing",
-    trialEndsAt: Date.now() + fourteenDaysMs,
+  const trialEndsAt = Date.now() + fourteenDaysMs;
+  const defaultSub = {
+    tier: "free_trial" as SubscriptionTier,
+    status: "trialing" as SubscriptionStatus,
+    trialEndsAt,
   };
-  writeScopedJSON(SUB_STORAGE_KEY, defaultSub);
+  try {
+    localStorage.setItem(SUB_STORAGE_KEY, JSON.stringify(defaultSub));
+  } catch {
+    // ignore
+  }
   return defaultSub;
 }
 
 function getStoredUsage(): { count: number; date: string } {
   const today = todayISO();
-  const parsed = readScopedJSON<unknown>(USAGE_STORAGE_KEY, null);
-  if (
-    parsed &&
-    typeof parsed === "object" &&
-    (parsed as { date?: unknown }).date === today &&
-    typeof (parsed as { count?: unknown }).count === "number"
-  ) {
-    return parsed as { count: number; date: string };
+  try {
+    const raw = localStorage.getItem(USAGE_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.date === today && typeof parsed.count === "number") {
+        return parsed;
+      }
+    }
+  } catch {
+    // fallback
   }
   return { count: 0, date: today };
 }
@@ -154,7 +146,7 @@ export function recordAIConsumption(
 
   const updated = { count: newCount, date: today };
   try {
-    writeScopedJSON(USAGE_STORAGE_KEY, updated);
+    localStorage.setItem(USAGE_STORAGE_KEY, JSON.stringify(updated));
   } catch {
     // ignore
   }
@@ -175,7 +167,7 @@ export function setSubscriptionTier(tier: SubscriptionTier): AIUsageStats {
   };
 
   try {
-    writeScopedJSON(SUB_STORAGE_KEY, updatedSub);
+    localStorage.setItem(SUB_STORAGE_KEY, JSON.stringify(updatedSub));
   } catch {
     // ignore
   }
@@ -193,7 +185,7 @@ export function resetDailyUsage(): AIUsageStats {
   const today = todayISO();
   const resetData = { count: 0, date: today };
   try {
-    writeScopedJSON(USAGE_STORAGE_KEY, resetData);
+    localStorage.setItem(USAGE_STORAGE_KEY, JSON.stringify(resetData));
   } catch {
     // ignore
   }
@@ -223,13 +215,16 @@ export async function syncUsageWithCloud(userId: string) {
           status: data.subscriptionStatus || "active",
           trialEndsAt: data.trialEndsAt || sub.trialEndsAt,
         };
-        writeScopedJSON(SUB_STORAGE_KEY, updated, userId);
+        localStorage.setItem(SUB_STORAGE_KEY, JSON.stringify(updated));
       }
 
       if (data.aiUsageResetDate === today && typeof data.aiUsageToday === "number") {
         const current = getStoredUsage();
         const highest = Math.max(current.count, data.aiUsageToday);
-        writeScopedJSON(USAGE_STORAGE_KEY, { count: highest, date: today }, userId);
+        localStorage.setItem(
+          USAGE_STORAGE_KEY,
+          JSON.stringify({ count: highest, date: today })
+        );
       }
       notifyListeners();
     }
@@ -237,9 +232,3 @@ export async function syncUsageWithCloud(userId: string) {
     console.warn("Could not sync AI usage from cloud:", error);
   }
 }
-
-// Account switching: quota/subscription UI must immediately reflect the new
-// account's scoped state instead of the previous account's numbers.
-subscribeAccountScope(() => {
-  notifyListeners();
-});

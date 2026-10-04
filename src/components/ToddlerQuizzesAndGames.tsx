@@ -23,11 +23,6 @@ import {
 } from "../utils/speechUtils";
 import { soundEffects } from "../utils/soundEffects";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
-import {
-  completeActiveMissionIfMatches,
-  getDailyCount,
-  recordDailyCount,
-} from "../data/toddler/toddlerDailyAdventure";
 import { ToddlerMemoryGame } from "./ToddlerMemoryGame";
 import { ToddlerRhymeGame } from "./ToddlerRhymeGame";
 import { ToddlerColorLab } from "./ToddlerColorLab";
@@ -39,8 +34,7 @@ interface ToddlerQuizzesAndGamesProps {
   starsCount: number;
   onAddStar: (amount?: number) => void;
   onBackToBooks?: () => void;
-  /** Deep-link target set by daily missions, e.g. "memory-match". */
-  targetActivity?: string | null;
+  targetActivity?: string;
 }
 
 type ToddlerActivity =
@@ -450,23 +444,25 @@ export function ToddlerQuizzesAndGames({
   onAddStar,
   targetActivity,
 }: ToddlerQuizzesAndGamesProps) {
-  const [currentActivity, setCurrentActivity] = useState<ToddlerActivity>("animal-quiz");
-
-  // Daily-mission deep link: jump straight to the mission's game.
-  useEffect(() => {
-    const valid: string[] = [
-      "rainbow-piano",
-      "animal-safari",
-      "balloon-sky",
-      "animal-quiz",
-      "shape-match",
-      "memory-match",
-      "rhyme-time",
-      "color-magic",
-      "bubble-pop",
-      "feed-animal",
+  const [currentActivity, setCurrentActivity] = useState<ToddlerActivity>(() => {
+    const validActivities: ToddlerActivity[] = [
+      "rainbow-piano", "animal-safari", "balloon-sky", "animal-quiz",
+      "shape-match", "memory-match", "rhyme-time", "color-magic",
+      "bubble-pop", "feed-animal"
     ];
-    if (targetActivity && valid.includes(targetActivity)) {
+    if (targetActivity && validActivities.includes(targetActivity as ToddlerActivity)) {
+      return targetActivity as ToddlerActivity;
+    }
+    return "animal-quiz";
+  });
+
+  useEffect(() => {
+    const validActivities: ToddlerActivity[] = [
+      "rainbow-piano", "animal-safari", "balloon-sky", "animal-quiz",
+      "shape-match", "memory-match", "rhyme-time", "color-magic",
+      "bubble-pop", "feed-animal"
+    ];
+    if (targetActivity && validActivities.includes(targetActivity as ToddlerActivity)) {
       setCurrentActivity(targetActivity as ToddlerActivity);
     }
   }, [targetActivity]);
@@ -624,10 +620,7 @@ export function ToddlerQuizzesAndGames({
       setIsQuestionAnswered(true);
       soundEffects.playSuccessChime();
       soundEffects.playStarSparkle();
-      // Per-answer stars only while working toward the day's first completion.
-      if (getDailyCount("animal-quiz-complete") === 0) {
-        onAddStar(1);
-      }
+      onAddStar(1);
       setQuizScore((prev) => prev + 1);
 
       const isLast = questionIndex >= questionDeck.length - 1;
@@ -642,7 +635,7 @@ export function ToddlerQuizzesAndGames({
           skillId: "sci-k1-habitats",
           domain: "science",
           gradeBand: "toddler",
-          result: "success",
+          result: isLast ? "mastered" : "success",
           score: 100,
           difficulty: "easy",
           attempts: 1,
@@ -672,8 +665,7 @@ export function ToddlerQuizzesAndGames({
         } else {
           setIsQuizCompleted(true);
           soundEffects.playFanfare();
-          // Full bonus on the day's first completion, one thank-you star on replays.
-          onAddStar(recordDailyCount("animal-quiz-complete") === 1 ? 3 : 1);
+          onAddStar(3);
           setTimeout(() => {
             speakText("Hooray! You finished the Little Explorer Quiz! You are an amazing animal champion!", {
               pitch: 1.2,
@@ -752,10 +744,7 @@ export function ToddlerQuizzesAndGames({
       setIsShapeAnswered(true);
       soundEffects.playSuccessChime();
       soundEffects.playStarSparkle();
-      // Per-answer stars only while working toward the day's first completion.
-      if (getDailyCount("shape-match-complete") === 0) {
-        onAddStar(1);
-      }
+      onAddStar(1);
 
       const isLast = shapeIndex >= SHAPE_QUESTIONS.length - 1;
 
@@ -769,7 +758,7 @@ export function ToddlerQuizzesAndGames({
           skillId: "logic-k1-sorting",
           domain: "logic",
           gradeBand: "toddler",
-          result: "success",
+          result: isLast ? "mastered" : "success",
           score: 100,
           difficulty: "easy",
           attempts: 1,
@@ -797,13 +786,7 @@ export function ToddlerQuizzesAndGames({
         } else {
           setIsShapeCompleted(true);
           soundEffects.playFanfare();
-          // Full bonus on the day's first completion, one thank-you star on replays.
-          onAddStar(recordDailyCount("shape-match-complete") === 1 ? 3 : 1);
-          try {
-            completeActiveMissionIfMatches("games", "shape-match");
-          } catch {
-            // ignore
-          }
+          onAddStar(3);
           setTimeout(() => {
             speakText("Hooray! You found all the beautiful shapes and colors! You are so smart!", {
               pitch: 1.25,
@@ -895,18 +878,7 @@ export function ToddlerQuizzesAndGames({
     soundEffects.playStarSparkle();
     setBubbles((prev) => prev.filter((b) => b.id !== bubble.id));
     setBubblesPoppedCount((prev) => prev + 1);
-    // The first 10 pops each day earn stars; after that popping is free play.
-    const popsToday = recordDailyCount("bubble-pop");
-    if (popsToday <= 10) {
-      onAddStar(1);
-    }
-    if (popsToday === 10) {
-      try {
-        completeActiveMissionIfMatches("games", "bubble-pop");
-      } catch {
-        // ignore
-      }
-    }
+    onAddStar(1);
 
     // Speak cheerful short sound
     const shortPhrases = ["Pop!", "Super!", "Yay!", "Sparkle!", "Wheee!"];
@@ -921,30 +893,16 @@ export function ToddlerQuizzesAndGames({
     soundEffects.playPop();
     const nextCount = carrotsFed + 1;
     setCarrotsFed(nextCount);
-    // Carrot stars only while working toward the day's first full feeding.
-    const earnCarrotStars = getDailyCount("feed-animal-complete") === 0;
-    if (earnCarrotStars) {
-      onAddStar(1);
-    }
+    onAddStar(1);
 
     if (nextCount < targetCarrots) {
       speakText(`${nextCount}! Munch munch munch! Yummy!`, { pitch: 1.3, rate: 0.95 });
     } else {
       soundEffects.playFanfare();
-      const isFirstFeedingToday = recordDailyCount("feed-animal-complete") === 1;
-      const bonusStars = isFirstFeedingToday ? 3 : 1;
-      onAddStar(bonusStars);
-      speakText(
-        isFirstFeedingToday
-          ? "Thank you so much! Benny Bunny is so full and happy! You earned three golden stars!"
-          : "Thank you so much! Benny Bunny is so full and happy again! You earned a shiny star!",
-        { pitch: 1.25 }
-      );
-      try {
-        completeActiveMissionIfMatches("games", "feed-animal");
-      } catch {
-        // ignore
-      }
+      onAddStar(3);
+      speakText("Thank you so much! Benny Bunny is so full and happy! You earned three golden stars!", {
+        pitch: 1.25,
+      });
 
       try {
         recordLearningEvent({
@@ -955,7 +913,7 @@ export function ToddlerQuizzesAndGames({
           skillId: "math-k1-counting",
           domain: "math",
           gradeBand: "toddler",
-          result: "success",
+          result: "mastered",
           score: 100,
           difficulty: "easy",
           attempts: 1,
@@ -969,9 +927,6 @@ export function ToddlerQuizzesAndGames({
     setCarrotsFed(0);
     speakText("Bunny is ready to eat again! Tap the crunchy carrots to feed bunny!", { pitch: 1.2 });
   };
-
-  // Recomputed every render so the feed button honestly shows when stars run out.
-  const earnCarrotStarsNow = getDailyCount("feed-animal-complete") === 0;
 
   return (
     <div className="space-y-6">
@@ -1473,7 +1428,7 @@ export function ToddlerQuizzesAndGames({
                   <span>🎈</span> Rainbow Bubble Popper
                 </h3>
                 <p className="text-white/60 text-xs">
-                  Pop the floating bubbles! The first 10 pops each day earn stars!
+                  Tap any floating bubble to pop it and collect stars!
                 </p>
               </div>
 
@@ -1604,7 +1559,7 @@ export function ToddlerQuizzesAndGames({
                 className="px-8 py-5 rounded-3xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-black text-lg shadow-xl shadow-orange-500/40 border-2 border-orange-300 transition-all cursor-pointer inline-flex items-center gap-3"
               >
                 <span className="text-3xl animate-bounce">🥕</span>
-                <span>{earnCarrotStarsNow ? "Tap to Feed a Carrot! (+1 ⭐)" : "Tap to Feed a Carrot!"}</span>
+                <span>Tap to Feed a Carrot! (+1 ⭐)</span>
               </motion.button>
             ) : (
               <div className="space-y-4">
