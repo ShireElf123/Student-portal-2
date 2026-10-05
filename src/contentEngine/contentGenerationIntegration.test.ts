@@ -137,6 +137,7 @@ describe("authenticated generated-content learning integration", () => {
       limiter: new ContentGenerationRateLimiter(3, 12),
       coordinator: new ContentGenerationCoordinator(),
       provider,
+      persistBlueprint: async () => true,
       apiKeyAvailable: () => true,
     }));
     const server: Server = app.listen(0, "127.0.0.1");

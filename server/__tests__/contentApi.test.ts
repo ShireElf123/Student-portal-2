@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { ContentGenerationCoordinator, createContentGenerationRouter } from "../contentApi";
 import { ContentGenerationRateLimiter } from "../contentRateLimit";
 import type { StructuredContentProvider } from "../../src/contentEngine/generation";
-import type { ContentGenerationRequest, SpeedMathPayload } from "../../src/contentEngine/types";
+import type { ContentGenerationRequest, GameBlueprint, SpeedMathPayload } from "../../src/contentEngine/types";
 
 const SPEED_PAYLOAD: SpeedMathPayload = {
   gameType: "speed-math",
@@ -46,7 +46,8 @@ interface TestServer {
 async function startTestServer(
   provider: StructuredContentProvider,
   limiter: ContentGenerationRateLimiter,
-  ipLimiter?: ContentGenerationRateLimiter
+  ipLimiter?: ContentGenerationRateLimiter,
+  persistBlueprint?: (blueprint: GameBlueprint) => Promise<boolean>
 ): Promise<TestServer> {
   const app = express();
   app.use(express.json());
@@ -58,6 +59,7 @@ async function startTestServer(
     ...(ipLimiter ? { ipLimiter } : {}),
     coordinator: new ContentGenerationCoordinator(),
     provider,
+    persistBlueprint: persistBlueprint ?? (async () => false),
     apiKeyAvailable: () => true,
   }));
   const server: Server = app.listen(0, "127.0.0.1");
@@ -136,6 +138,51 @@ describe("authenticated content-generation API", () => {
     expect(second.status).toBe(429);
     expect((await second.json() as { error: string }).error).toContain("network");
     expect(provider.generateStructuredContent).toHaveBeenCalledTimes(1);
+  });
+
+  it("persists only deterministically validated server output and reports persistence failure without losing the candidate", async () => {
+    const provider: StructuredContentProvider = {
+      name: "server-persistence-gemini-boundary",
+      generateStructuredContent: vi.fn(async () => JSON.stringify(SPEED_PAYLOAD)),
+    };
+    const persistBlueprint = vi.fn(async (_blueprint: GameBlueprint) => false);
+    const server = await startTestServer(
+      provider,
+      new ContentGenerationRateLimiter(2, 12),
+      undefined,
+      persistBlueprint
+    );
+    servers.push(server);
+
+    const response = await postContent(server.baseUrl, { request: request(), excludedFingerprints: [] }, "token-persistence-test");
+    expect(response.status).toBe(200);
+    expect(persistBlueprint).toHaveBeenCalledTimes(1);
+    const body = await response.json() as { blueprint: GameBlueprint; sharedPersisted: boolean };
+    expect(body.sharedPersisted).toBe(false);
+    expect(body.blueprint.metadata.validationStatus).toBe("valid");
+    expect(JSON.stringify(body.blueprint)).not.toContain("token-persistence-test");
+    expect(JSON.stringify(body.blueprint)).not.toContain("learnerContext");
+
+    const invalidPayload: SpeedMathPayload = {
+      ...SPEED_PAYLOAD,
+      rounds: SPEED_PAYLOAD.rounds.map((round, index) => index === 0 ? { ...round, answer: round.answer + 1 } : round),
+    };
+    const invalidProvider: StructuredContentProvider = {
+      name: "invalid-server-persistence-gemini-boundary",
+      generateStructuredContent: vi.fn(async () => JSON.stringify(invalidPayload)),
+    };
+    const invalidPersist = vi.fn(async (_blueprint: GameBlueprint) => true);
+    const invalidServer = await startTestServer(
+      invalidProvider,
+      new ContentGenerationRateLimiter(2, 12),
+      undefined,
+      invalidPersist
+    );
+    servers.push(invalidServer);
+
+    const rejected = await postContent(invalidServer.baseUrl, { request: request(), excludedFingerprints: [] }, "token-invalid-persistence");
+    expect(rejected.status).toBe(502);
+    expect(invalidPersist).not.toHaveBeenCalled();
   });
 
   it("coalesces concurrent equivalent requests so they spend one server admission and one provider generation", async () => {

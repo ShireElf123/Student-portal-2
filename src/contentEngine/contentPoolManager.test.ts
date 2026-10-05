@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { generateValidatedGameBlueprint } from "./generation";
 import { ContentPoolManager } from "./contentPoolManager";
 import { LocalStorageContentPoolRepository } from "./contentPoolRepository";
+import { FirestoreContentPoolRepository } from "./firestoreContentPoolRepository";
 import type { StructuredContentProvider } from "./generation";
 import type { ContentGenerationRequest, SpeedMathPayload } from "./types";
 import { clearGeneratedContentCacheForTests } from "./cache";
@@ -153,6 +154,19 @@ describe("validated content pool manager", () => {
     });
     expect(retry).toMatchObject({ generatedCount: 0, attemptedCount: 0 });
     expect(providerCalls).toBe(3);
+  });
+
+  it("keeps shared Firestore blueprint writes unavailable to browser clients", async () => {
+    const blueprint = await generateBlueprint(PAYLOADS[0]);
+    const repository = new FirestoreContentPoolRepository("account-owner");
+
+    await expect(repository.saveValidatedBlueprint(blueprint, 1_000, 61_000)).resolves.toMatchObject({
+      stored: false,
+      duplicate: false,
+      error: "Shared blueprint writes are restricted to the authenticated generation server.",
+    });
+    await expect(repository.saveValidatedBlueprint({ ...blueprint, objective: "A violent game." }, 1_000, 61_000))
+      .resolves.toMatchObject({ stored: false, duplicate: false });
   });
 
   it("allows only one concurrent reservation of the same blueprint for one learner", async () => {

@@ -34,8 +34,8 @@ function emptyFirestoreState(now: number): ContentPoolLearnerState {
 }
 
 /**
- * Firestore implementation for generic shared blueprints and account-owned usage state.
- * All values read from Firestore are revalidated before the pool manager can use them.
+ * Client Firestore implementation for reading server-approved shared blueprints and
+ * maintaining owner-scoped learner state. Shared blueprint writes are server-only.
  */
 export class FirestoreContentPoolRepository implements ContentPoolRepository {
   constructor(private readonly ownerUid: string) {
@@ -52,13 +52,14 @@ export class FirestoreContentPoolRepository implements ContentPoolRepository {
     const poolKey = buildContentPoolKey(request);
     const snapshots = await firestore.getDocs(firestore.query(
       firestore.collection(db, "generatedGameBlueprints"),
+      firestore.where("source", "==", "server-validated-v1"),
       firestore.where("poolKey", "==", poolKey),
       firestore.limit(LOCAL_MAX_CACHED_BLUEPRINTS)
     ));
     const entries: ContentPoolEntry[] = [];
     for (const snapshot of snapshots.docs) {
       const data: unknown = snapshot.data();
-      if (!isRecord(data) || data.poolKey !== poolKey || data.fingerprint !== snapshot.id ||
+      if (!isRecord(data) || data.source !== "server-validated-v1" || data.poolKey !== poolKey || data.fingerprint !== snapshot.id ||
         !FINGERPRINT_PATTERN.test(snapshot.id) || data.blueprintVersion !== GAME_BLUEPRINT_VERSION ||
         !Number.isFinite(data.createdAt) || !Number.isFinite(data.expiresAt)) continue;
       const validation = validateGameBlueprint(data.blueprint);
@@ -75,47 +76,17 @@ export class FirestoreContentPoolRepository implements ContentPoolRepository {
 
   async saveValidatedBlueprint(
     blueprint: GameBlueprint,
-    now: number,
-    expiresAt: number
+    _now: number,
+    _expiresAt: number
   ): Promise<PoolRepositorySaveResult> {
-    const validation = validateGameBlueprint(blueprint);
-    if (!validation.valid) {
+    if (!validateGameBlueprint(blueprint).valid) {
       return { stored: false, duplicate: false, error: "Only deterministically validated blueprints can be persisted." };
     }
-    const trustedBlueprint = validation.blueprint;
-    const fingerprint = trustedBlueprint.metadata.fingerprint;
-    const poolKey = buildBlueprintContentPoolKey(trustedBlueprint);
-    const [{ db }, firestore] = await Promise.all([import("../firebase"), import("firebase/firestore")]);
-    const reference = firestore.doc(db, "generatedGameBlueprints", fingerprint);
-    return firestore.runTransaction(db, async (transaction) => {
-      const existing = await transaction.get(reference);
-      if (existing.exists()) {
-        const value: unknown = existing.data();
-        if (isRecord(value)) {
-          const existingValidation = validateGameBlueprint(value.blueprint);
-          if (existingValidation.valid && existingValidation.blueprint.metadata.fingerprint === fingerprint) {
-            return { stored: false, duplicate: true, blueprint: existingValidation.blueprint };
-          }
-        }
-        return { stored: false, duplicate: false, error: "A non-valid document already occupies this content fingerprint." };
-      }
-      transaction.set(reference, {
-        fingerprint,
-        poolKey,
-        gameType: trustedBlueprint.gameType,
-        skillId: trustedBlueprint.skillId,
-        gradeBand: trustedBlueprint.gradeBand,
-        ageBand: trustedBlueprint.ageBand,
-        difficulty: trustedBlueprint.difficulty,
-        theme: trustedBlueprint.theme,
-        roundCount: trustedBlueprint.content.rounds.length,
-        blueprintVersion: GAME_BLUEPRINT_VERSION,
-        createdAt: now,
-        expiresAt,
-        blueprint: trustedBlueprint,
-      });
-      return { stored: true, duplicate: false, blueprint: trustedBlueprint };
-    });
+    return {
+      stored: false,
+      duplicate: false,
+      error: "Shared blueprint writes are restricted to the authenticated generation server.",
+    };
   }
 
   async getLearnerState(learnerId: string, now: number): Promise<ContentPoolLearnerState> {

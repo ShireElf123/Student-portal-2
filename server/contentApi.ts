@@ -6,7 +6,8 @@ import type { ContentAuthVerifier } from "./contentAuth";
 import { ContentGenerationRateLimiter } from "./contentRateLimit";
 import type { ContentRateLimitResult } from "./contentRateLimit";
 import { validateContentGenerationRequest, validateExcludedFingerprints } from "../src/contentEngine/validation";
-import type { GenerateBlueprintCommand } from "../src/contentEngine/types";
+import type { GameBlueprint, GenerateBlueprintCommand } from "../src/contentEngine/types";
+import { persistServerValidatedBlueprint } from "./contentPersistence";
 import type { BlueprintGenerationOutcome, StructuredContentProvider } from "../src/contentEngine/generation";
 import { CONTENT_GENERATION_LIMITS } from "../src/contentEngine/policy";
 
@@ -16,6 +17,7 @@ interface GenerationFlightResult {
   rateLimitScope?: "account" | "network";
   outcome?: BlueprintGenerationOutcome;
   providerFailed?: boolean;
+  sharedPersisted?: boolean;
 }
 
 /** Per-process request coalescing prevents duplicate Gemini calls during a refill race. */
@@ -39,6 +41,7 @@ export interface ContentGenerationRouterOptions {
   ipLimiter?: ContentGenerationRateLimiter;
   coordinator?: ContentGenerationCoordinator;
   provider?: StructuredContentProvider;
+  persistBlueprint?: (blueprint: GameBlueprint) => Promise<boolean>;
   apiKeyAvailable?: () => boolean;
 }
 
@@ -108,7 +111,14 @@ export function createContentGenerationRouter(options: ContentGenerationRouterOp
       if (!accountLimit.allowed) return { admitted: false, rateLimit: accountLimit, rateLimitScope: "account" };
       try {
         const outcome = await generateGameBlueprintWithProvider(command, options.provider);
-        return { admitted: true, outcome };
+        if (!outcome.valid) return { admitted: true, outcome, sharedPersisted: false };
+        let sharedPersisted = false;
+        try {
+          sharedPersisted = await (options.persistBlueprint ?? persistServerValidatedBlueprint)(outcome.blueprint);
+        } catch (persistenceError) {
+          console.warn("Validated content could not be synchronized to the shared pool.", persistenceError);
+        }
+        return { admitted: true, outcome, sharedPersisted };
       } catch (error) {
         console.error("Structured content generation failed inside the provider boundary:", error);
         return { admitted: true, providerFailed: true };
@@ -146,7 +156,11 @@ export function createContentGenerationRouter(options: ContentGenerationRouterOp
         errors: flightResult.outcome.errors,
       });
     }
-    return res.json({ blueprint: flightResult.outcome.blueprint, attempts: flightResult.outcome.attempts });
+    return res.json({
+      blueprint: flightResult.outcome.blueprint,
+      attempts: flightResult.outcome.attempts,
+      sharedPersisted: flightResult.sharedPersisted === true,
+    });
   });
 
   return router;
