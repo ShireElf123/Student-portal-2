@@ -249,6 +249,28 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
 
     setSelectedWord(option.word);
 
+    try {
+      recordLearningEvent({
+        learnerId: getActiveLearnerId(),
+        activityId: "toddler-rhyme-match",
+        experienceId: "rhyme-time",
+        contentId: `${current.id}:${option.word.toLowerCase()}`,
+        eventType: "question_answered",
+        activityType: "toddler-rhyme",
+        activityTitle: `Rhyme Match: ${current.targetWord} & ${option.word}`,
+        skillId: "read-k1-phonemic-awareness",
+        domain: "reading",
+        gradeBand: "toddler",
+        result: option.isCorrect ? "success" : "struggle",
+        score: option.isCorrect ? 100 : 0,
+        difficulty: "easy",
+        attempts: 1,
+        hintsUsed: 0,
+      });
+    } catch (error) {
+      console.error("Failed to record rhyme response:", error);
+    }
+
     if (option.isCorrect) {
       setIsAnswered(true);
       soundEffects.playSuccessChime();
@@ -256,23 +278,6 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
       awardXP(25);
       if (onAddStar) onAddStar(1);
       else awardStars(1);
-
-      try {
-        recordLearningEvent({
-          learnerId: getActiveLearnerId(),
-          activityId: `toddler-rhyme-${current.id}`,
-          activityType: "toddler-rhyme",
-          activityTitle: `Rhyme Match: ${current.targetWord} & ${option.word}`,
-          skillId: "read-k1-phonemic-awareness",
-          domain: "reading",
-          gradeBand: "toddler",
-          result: "success",
-          score: 100,
-          difficulty: "easy",
-          attempts: 1,
-          hintsUsed: 0,
-        });
-      } catch {}
 
       advanceTimerRef.current = setTimeout(() => {
         advanceTimerRef.current = null;

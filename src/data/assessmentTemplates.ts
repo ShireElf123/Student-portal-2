@@ -12,6 +12,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
     items: [
       {
         id: "item-1",
+        skillId: "read-k1-alphabet-letters",
         prompt: "Can the child make the letter sound for 'B' (as in Bear)?",
         category: "Phonics Sound Check",
         demonstrationGuide: "Parent/Tutor: Show the letter 'B' or picture of a Bear. Say: 'What sound does Bear start with?'",
@@ -22,6 +23,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "item-2",
+        skillId: "read-k1-phonemic-awareness",
         prompt: "Can the child identify the word that rhymes with 'CAT'?",
         category: "Rhyme Awareness",
         demonstrationGuide: "Parent/Tutor: Say: 'Cat, Hat, Dog. Which two sound alike at the end?'",
@@ -32,6 +34,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "item-3",
+        skillId: "read-k1-alphabet-letters",
         prompt: "Can the child point to the letter 'S' when shown three letters (S, M, T)?",
         category: "Visual Letter Recognition",
         demonstrationGuide: "Parent/Tutor: Ask: 'Can you point to the snake sound letter S?'",
@@ -42,6 +45,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "item-4",
+        skillId: "read-k1-phonemic-awareness",
         prompt: "Can the child isolate the beginning sound of their own first name?",
         category: "Personal Phonemic Awareness",
         demonstrationGuide: "Parent/Tutor: Say: 'Your name is [Child's Name]! What sound does it start with?'",
@@ -63,6 +67,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
     items: [
       {
         id: "math-item-1",
+        skillId: "math-k1-counting",
         prompt: "One-to-One Counting: Can the child count 3 physical objects or screen stars?",
         category: "Counting",
         demonstrationGuide: "Parent/Tutor: Place 3 blocks or point to 3 stars. Ask the child to touch and count: 1, 2, 3.",
@@ -73,6 +78,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "math-item-2",
+        skillId: "math-k1-shapes",
         prompt: "Shape Identification: Can the child distinguish a Circle from a Square?",
         category: "Geometry Basics",
         demonstrationGuide: "Parent/Tutor: Show a round plate/circle and a square box. Ask: 'Which one rolls like a ball?'",
@@ -83,6 +89,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "math-item-3",
+        skillId: "math-k1-counting",
         prompt: "Quantity Comparison: Can the child tell which group has 'MORE'?",
         category: "Magnitude Comparison",
         demonstrationGuide: "Parent/Tutor: Show a group of 5 apples vs 1 apple. Ask: 'Which group has MORE apples?'",
@@ -114,6 +121,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "pri-item-2",
+        skillId: "read-23-comprehension",
         prompt: "Main Idea Extraction: Can the student state what the story or paragraph was mostly about in their own words?",
         category: "Comprehension",
         demonstrationGuide: "Parent/Tutor: Ask: 'What was the big takeaway or problem solved in this reading?'",
@@ -145,6 +153,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
     items: [
       {
         id: "pri-math-1",
+        skillId: "math-k1-addition-subtraction",
         prompt: "Word Story Translation: 'A student had 12 pencils. They gave 4 to a friend and found 3 in their backpack. How many do they have now?'",
         category: "Equation Formulation",
         demonstrationGuide: "Parent/Tutor: Ask student to write out the equation: 12 - 4 + 3 = 11.",
@@ -155,6 +164,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "pri-math-2",
+        skillId: "math-23-multiplication",
         prompt: "Multiplication / Repeated Addition: Explaining 4 × 3 visually or with equal groups",
         category: "Conceptual Math",
         demonstrationGuide: "Parent/Tutor: Ask: 'What does 4 times 3 mean? Can you draw or describe groups?'",
@@ -176,6 +186,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
     items: [
       {
         id: "k-item-1",
+        skillId: "read-k1-phonemic-awareness",
         prompt: "Can the student blend CVC sounds: /k/ /æ/ /t/ -> 'CAT'?",
         category: "Phonemic Blending",
         demonstrationGuide: "Parent/Tutor: Say sounds separated: '/k/ ... /æ/ ... /t/'. Ask: 'What word does that make?'",
@@ -186,6 +197,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "k-item-2",
+        skillId: "math-k1-counting",
         prompt: "Can the student count aloud from 1 to 20 without skipping numbers?",
         category: "Number Sequence",
         demonstrationGuide: "Parent/Tutor: Say: 'Let's count as high as you can! Start at 1...'",
@@ -196,6 +208,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "k-item-3",
+        skillId: "read-k1-alphabet-letters",
         prompt: "Can the student match capital letters to lowercase letters (e.g. B to b, R to r)?",
         category: "Letter Matching",
         demonstrationGuide: "Parent/Tutor: Show cards or letters 'G' and 'g'. Ask: 'Are these the same letter family?'",
@@ -217,6 +230,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
     items: [
       {
         id: "g1-math-1",
+        skillId: "math-k1-addition-subtraction",
         prompt: "Number Bonds to 10: '7 + ___ = 10' and '10 - 4 = ___'",
         category: "Number Bonds",
         demonstrationGuide: "Teacher/Parent: Ask student for the missing number to complete 10.",
@@ -227,6 +241,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "g1-math-2",
+        skillId: "math-k1-place-value",
         prompt: "Place Value Tens & Ones: 'What is 1 ten and 4 ones?'",
         category: "Place Value",
         demonstrationGuide: "Teacher/Parent: Ask student: 'If I have a bundle of 10 sticks and 4 loose sticks, how many sticks do I have in total?'",
@@ -237,6 +252,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "g1-math-3",
+        skillId: "math-k1-addition-subtraction",
         prompt: "Word Story Problem: 'There were 8 birds on a branch. 5 more flew in. How many birds are there now?'",
         category: "Word Problem Formulation",
         demonstrationGuide: "Teacher/Parent: Read story. Ask student: 'Can you write the equation and solve?' (8 + 5 = 13)",
@@ -258,6 +274,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
     items: [
       {
         id: "g1-read-1",
+        skillId: "read-23-sight-words",
         prompt: "Sight Word Automaticity: Reading words 'where', 'there', 'could', 'because', 'their'",
         category: "Sight Words",
         demonstrationGuide: "Teacher/Parent: Flash words on screen or paper. Check if student recognizes within 2 seconds each.",
@@ -268,6 +285,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "g1-read-2",
+        skillId: "read-k1-consonant-blends",
         prompt: "Consonant Digraphs: Distinguishing SH (ship), CH (chin), TH (think), and WH (wheel)",
         category: "Phonics Digraphs",
         demonstrationGuide: "Teacher/Parent: Ask student to read: 'The ship has a white wheel.'",
@@ -289,6 +307,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
     items: [
       {
         id: "g2-math-1",
+        skillId: "math-k1-place-value",
         prompt: "Three-Digit Place Value: 'What digit is in the tens place in 742?' and 'What is the value of 7?'",
         category: "Place Value",
         demonstrationGuide: "Teacher/Parent: Ask student to identify tens digit (4) and the numerical value of 7 (700).",
@@ -299,6 +318,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "g2-math-2",
+        skillId: "math-k1-addition-subtraction",
         prompt: "Addition with Regrouping: Calculate 47 + 38 on paper or mentally",
         category: "Two-Digit Addition",
         demonstrationGuide: "Teacher/Parent: Ask student to show work: 7+8=15 (carry the 1 ten), 1+4+3=8 -> 85.",
@@ -309,6 +329,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "g2-math-3",
+        skillId: "math-k1-counting",
         prompt: "Skip Counting Sequences: 'Fill in the blanks: 45, 50, 55, ___, ___, 70'",
         category: "Number Patterns",
         demonstrationGuide: "Teacher/Parent: Ask student to identify pattern and write 60 and 65.",
@@ -330,6 +351,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
     items: [
       {
         id: "g3-math-1",
+        skillId: "math-23-multiplication",
         prompt: "Multiplication Recall: Rapid solve '6 × 7', '8 × 4', and '9 × 3'",
         category: "Fact Fluency",
         demonstrationGuide: "Teacher/Parent: Present problems. Check for recall within 3 seconds each (42, 32, 27).",
@@ -350,6 +372,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "g3-math-3",
+        skillId: "math-23-multiplication",
         prompt: "Area Array Model: 'A garden bed is 5 feet wide and 8 feet long. What is the total area in square feet?'",
         category: "Geometric Measurement",
         demonstrationGuide: "Teacher/Parent: Check if student explains that Area = Length × Width (5 × 8 = 40 sq ft).",
@@ -371,6 +394,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
     items: [
       {
         id: "g4-math-1",
+        skillId: "math-23-fractions",
         prompt: "Equivalent Fractions: 'Which fraction is equivalent to 3/4?' Options: 6/8, 3/8, 4/3, 5/10",
         category: "Fraction Equivalence",
         demonstrationGuide: "Teacher/Parent: Ask student to explain how multiplying numerator and denominator by 2 gives 6/8.",
@@ -381,6 +405,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "g4-math-2",
+        skillId: "math-23-fractions",
         prompt: "Fraction Addition: 'Calculate 2/7 + 3/7' and explain why the denominator stays 7",
         category: "Fraction Operations",
         demonstrationGuide: "Teacher/Parent: Check that student answers 5/7 and does NOT add denominators into 14.",
@@ -391,6 +416,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "g4-math-3",
+        skillId: "math-45-decimals",
         prompt: "Decimals to Fractions: 'Express 0.7 as a fraction and compare it to 0.65'",
         category: "Decimal Understanding",
         demonstrationGuide: "Teacher/Parent: Check if student converts 0.7 = 7/10 = 70/100 and verifies 0.7 > 0.65.",
@@ -412,6 +438,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
     items: [
       {
         id: "g5-math-1",
+        skillId: "math-45-decimals",
         prompt: "Decimal Multiplication: Calculate 4.2 × 1.5",
         category: "Decimal Operations",
         demonstrationGuide: "Teacher/Parent: Check work: 42 × 15 = 630, two decimal places gives 6.30 = 6.3.",
@@ -422,6 +449,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "g5-math-2",
+        skillId: "math-45-perimeter-area",
         prompt: "Volume of a Rectangular Prism: 'A storage box is 6 cm long, 4 cm wide, and 5 cm high. What is its volume in cm³?'",
         category: "3D Geometry & Volume",
         demonstrationGuide: "Teacher/Parent: Verify formula V = l × w × h -> 6 × 4 × 5 = 120 cm³.",
@@ -463,6 +491,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
       },
       {
         id: "g6-math-2",
+        skillId: "math-45-equations",
         prompt: "Two-Step Algebraic Equation: Solve for x in '2x + 7 = 23'",
         category: "Algebraic Equations",
         demonstrationGuide: "Teacher/Parent: Check algebraic inverse operations: 23 - 7 = 16, then 16 ÷ 2 = 8.",

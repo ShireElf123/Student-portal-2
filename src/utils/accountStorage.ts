@@ -65,8 +65,9 @@ export function readScopedJSON<T>(key: string, defaultValue: T, accountId?: stri
       raw = localStorage.getItem(`${key}_${targetId}`);
     }
 
-    // Fallback for guest or unscoped legacy data if not migrated yet
-    if (raw === null && targetId === GUEST_LEARNER_ID) {
+    // Anonymous use can read legacy keys only until a signed-in account claims
+    // that shared source. Once claimed, never expose leftovers to the guest scope.
+    if (raw === null && targetId === GUEST_LEARNER_ID && !localStorage.getItem(LEGACY_ACCOUNT_OWNER_KEY)) {
       raw = localStorage.getItem(key);
     }
 
@@ -103,6 +104,8 @@ export function removeScopedItem(key: string, accountId?: string): void {
   }
 }
 
+const LEGACY_ACCOUNT_OWNER_KEY = "my_student_portal_legacy_data_owner_v1";
+
 const KNOWN_LEGACY_KEYS = [
   "my_student_portal_notebooks_v3",
   "my_student_portal_study_plan_v3",
@@ -119,22 +122,48 @@ const KNOWN_LEGACY_KEYS = [
 export function migrateLegacyAccountData(accountId: string): void {
   if (typeof window === "undefined") return;
   const targetId = (accountId || GUEST_LEARNER_ID).trim();
-  const migrationFlagKey = `my_student_portal_migrated_${targetId}`;
+  // Anonymous use can continue reading legacy keys in place. Assigning them to
+  // a guest here would prevent a later first sign-in from adopting that user's data.
+  if (targetId === GUEST_LEARNER_ID) return;
 
+  const migrationFlagKey = `my_student_portal_migrated_${targetId}`;
   try {
-    if (localStorage.getItem(migrationFlagKey) === "true") {
+    let legacyOwner = localStorage.getItem(LEGACY_ACCOUNT_OWNER_KEY);
+    const migrationAlreadyComplete = localStorage.getItem(migrationFlagKey) === "true";
+
+    // Older releases used only per-account flags and left the unscoped source
+    // behind. If this account already completed that migration, make it the
+    // compatibility owner and clean up any shared leftovers.
+    if (migrationAlreadyComplete) {
+      if (!legacyOwner) {
+        localStorage.setItem(LEGACY_ACCOUNT_OWNER_KEY, targetId);
+        legacyOwner = targetId;
+      }
+      if (legacyOwner === targetId) KNOWN_LEGACY_KEYS.forEach((key) => localStorage.removeItem(key));
       return;
     }
 
+    if (legacyOwner && legacyOwner !== targetId) {
+      // Legacy browser data is never copied into a second signed-in account.
+      localStorage.setItem(migrationFlagKey, "true");
+      return;
+    }
+
+    // Claim the one-time source before copying any keys. If storage fails midway,
+    // the same owner may safely retry, while another signed-in account cannot
+    // adopt whatever shared legacy entries remain.
+    if (!legacyOwner) localStorage.setItem(LEGACY_ACCOUNT_OWNER_KEY, targetId);
+
     for (const legacyKey of KNOWN_LEGACY_KEYS) {
       const unscopedVal = localStorage.getItem(legacyKey);
-      if (unscopedVal !== null) {
-        const scopedKey = getScopedStorageKey(legacyKey, targetId);
-        // Only adopt if the account does not already have partitioned data
-        if (localStorage.getItem(scopedKey) === null) {
-          localStorage.setItem(scopedKey, unscopedVal);
-        }
+      if (unscopedVal === null) continue;
+      const scopedKey = getScopedStorageKey(legacyKey, targetId);
+      if (localStorage.getItem(scopedKey) === null) {
+        localStorage.setItem(scopedKey, unscopedVal);
       }
+      // The one-time owner now has a scoped copy; remove the shared source so
+      // a future account cannot adopt it independently.
+      localStorage.removeItem(legacyKey);
     }
 
     localStorage.setItem(migrationFlagKey, "true");

@@ -24,6 +24,7 @@ import {
 import { soundEffects } from "../utils/soundEffects";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { ToddlerMemoryGame } from "./ToddlerMemoryGame";
+import { ToddlerBubblePopGame } from "./ToddlerBubblePopGame";
 import { ToddlerRhymeGame } from "./ToddlerRhymeGame";
 import { ToddlerColorLab } from "./ToddlerColorLab";
 import { ToddlerMusicPiano } from "./ToddlerMusicPiano";
@@ -47,6 +48,7 @@ type ToddlerActivity =
   | "rhyme-time"
   | "color-magic"
   | "bubble-pop"
+  | "bubble-pop-phonics"
   | "feed-animal";
 
 interface QuizQuestion {
@@ -448,7 +450,7 @@ export function ToddlerQuizzesAndGames({
     const validActivities: ToddlerActivity[] = [
       "rainbow-piano", "animal-safari", "balloon-sky", "animal-quiz",
       "shape-match", "memory-match", "rhyme-time", "color-magic",
-      "bubble-pop", "feed-animal"
+      "bubble-pop", "bubble-pop-phonics", "feed-animal"
     ];
     if (targetActivity && validActivities.includes(targetActivity as ToddlerActivity)) {
       return targetActivity as ToddlerActivity;
@@ -460,7 +462,7 @@ export function ToddlerQuizzesAndGames({
     const validActivities: ToddlerActivity[] = [
       "rainbow-piano", "animal-safari", "balloon-sky", "animal-quiz",
       "shape-match", "memory-match", "rhyme-time", "color-magic",
-      "bubble-pop", "feed-animal"
+      "bubble-pop", "bubble-pop-phonics", "feed-animal"
     ];
     if (targetActivity && validActivities.includes(targetActivity as ToddlerActivity)) {
       setCurrentActivity(targetActivity as ToddlerActivity);
@@ -614,8 +616,30 @@ export function ToddlerQuizzesAndGames({
 
     setSelectedOptionId(optionId);
     const chosen = currentQuiz.options.find((o) => o.id === optionId);
+    const isCorrect = optionId === currentQuiz.correctId;
+    try {
+      recordLearningEvent({
+        learnerId: getActiveLearnerId(),
+        activityId: "toddler-animal-quiz",
+        experienceId: "animal-quiz",
+        contentId: `${currentQuiz.id}:${optionId}`,
+        eventType: "question_answered",
+        activityType: "toddler-quiz",
+        activityTitle: `Animal Safari Quiz: ${chosen?.label || "Animal"}`,
+        skillId: "sci-k1-habitats",
+        domain: "science",
+        gradeBand: "toddler",
+        result: isCorrect ? "success" : "struggle",
+        score: isCorrect ? 100 : 0,
+        difficulty: "easy",
+        attempts: 1,
+        hintsUsed: 0,
+      });
+    } catch (error) {
+      console.error("Failed to record animal quiz response:", error);
+    }
 
-    if (optionId === currentQuiz.correctId) {
+    if (isCorrect) {
       // Correct!
       setIsQuestionAnswered(true);
       soundEffects.playSuccessChime();
@@ -624,24 +648,6 @@ export function ToddlerQuizzesAndGames({
       setQuizScore((prev) => prev + 1);
 
       const isLast = questionIndex >= questionDeck.length - 1;
-
-      // Telemetry into unified learner brain
-      try {
-        recordLearningEvent({
-          learnerId: getActiveLearnerId(),
-          activityId: "toddler-animal-quiz",
-          activityType: "toddler-quiz",
-          activityTitle: `Animal Safari Quiz: Found ${chosen?.label || "Animal"}`,
-          skillId: "sci-k1-habitats",
-          domain: "science",
-          gradeBand: "toddler",
-          result: isLast ? "mastered" : "success",
-          score: 100,
-          difficulty: "easy",
-          attempts: 1,
-          hintsUsed: 0,
-        });
-      } catch {}
 
       // Perfectly synchronized transition: Wait for voice to finish, then advance smoothly!
       let hasCompleted = false;
@@ -739,8 +745,30 @@ export function ToddlerQuizzesAndGames({
 
     setSelectedShapeId(optionId);
     const chosen = currentShape.options.find((o) => o.id === optionId);
+    const isCorrect = optionId === currentShape.correctId;
+    try {
+      recordLearningEvent({
+        learnerId: getActiveLearnerId(),
+        activityId: "toddler-shape-quiz",
+        experienceId: "shape-quiz",
+        contentId: `${currentShape.id}:${optionId}`,
+        eventType: "question_answered",
+        activityType: "toddler-quiz",
+        activityTitle: `Shape & Color Quiz: ${chosen?.label || "Shape"}`,
+        skillId: "math-k1-shapes",
+        domain: "math",
+        gradeBand: "toddler",
+        result: isCorrect ? "success" : "struggle",
+        score: isCorrect ? 100 : 0,
+        difficulty: "easy",
+        attempts: 1,
+        hintsUsed: 0,
+      });
+    } catch (error) {
+      console.error("Failed to record shape quiz response:", error);
+    }
 
-    if (optionId === currentShape.correctId) {
+    if (isCorrect) {
       setIsShapeAnswered(true);
       soundEffects.playSuccessChime();
       soundEffects.playStarSparkle();
@@ -748,23 +776,6 @@ export function ToddlerQuizzesAndGames({
 
       const isLast = shapeIndex >= SHAPE_QUESTIONS.length - 1;
 
-      // Telemetry into unified learner brain
-      try {
-        recordLearningEvent({
-          learnerId: getActiveLearnerId(),
-          activityId: "toddler-shape-quiz",
-          activityType: "toddler-quiz",
-          activityTitle: `Shape & Color Quiz: Identified ${chosen?.label || "Shape"}`,
-          skillId: "logic-k1-sorting",
-          domain: "logic",
-          gradeBand: "toddler",
-          result: isLast ? "mastered" : "success",
-          score: 100,
-          difficulty: "easy",
-          attempts: 1,
-          hintsUsed: 0,
-        });
-      } catch {}
       let hasCompleted = false;
 
       const triggerAdvance = () => {
@@ -908,18 +919,23 @@ export function ToddlerQuizzesAndGames({
         recordLearningEvent({
           learnerId: getActiveLearnerId(),
           activityId: "toddler-feed-animal",
+          experienceId: "feed-animal",
+          contentId: `counted-${targetCarrots}-carrots`,
+          eventType: "activity_completed",
           activityType: "toddler-counting",
           activityTitle: `Feed Benny Bunny: Counted ${targetCarrots} Carrots`,
           skillId: "math-k1-counting",
           domain: "math",
           gradeBand: "toddler",
-          result: "mastered",
+          result: "success",
           score: 100,
           difficulty: "easy",
           attempts: 1,
           hintsUsed: 0,
         });
-      } catch {}
+      } catch (error) {
+        console.error("Failed to record counting-game response:", error);
+      }
     }
   };
 
@@ -966,8 +982,8 @@ export function ToddlerQuizzesAndGames({
         </button>
       </div>
 
-      {/* Game Selector Bar (Big, Touchable, Colorful - 10 Interactive Wonderland Games) */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-1.5 p-1.5 rounded-3xl bg-white/[0.04] border border-white/10 max-w-6xl mx-auto">
+      {/* Game Selector Bar (Big, Touchable, Colorful - 11 Interactive Wonderland Games) */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-11 gap-1.5 p-1.5 rounded-3xl bg-white/[0.04] border border-white/10 max-w-6xl mx-auto">
         <button
           onClick={() => {
             setCurrentActivity("rainbow-piano");
@@ -1105,6 +1121,21 @@ export function ToddlerQuizzesAndGames({
 
         <button
           onClick={() => {
+            setCurrentActivity("bubble-pop-phonics");
+            soundEffects.playPop();
+          }}
+          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+            currentActivity === "bubble-pop-phonics"
+              ? "bg-gradient-to-r from-sky-500 to-indigo-500 text-white border-indigo-700 shadow-md scale-102 ring-2 ring-sky-300/40"
+              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+          }`}
+        >
+          <span className="text-base sm:text-lg">🔤</span>
+          <span className="truncate">Phonics Pop</span>
+        </button>
+
+        <button
+          onClick={() => {
             setCurrentActivity("feed-animal");
             handleResetBunny();
           }}
@@ -1122,6 +1153,10 @@ export function ToddlerQuizzesAndGames({
       {/* ACTIVITY 0: RAINBOW XYLOPHONE */}
       {currentActivity === "rainbow-piano" && (
         <ToddlerMusicPiano onAddStar={onAddStar} />
+      )}
+
+      {currentActivity === "bubble-pop-phonics" && (
+        <ToddlerBubblePopGame onAddStar={onAddStar} />
       )}
 
       {/* ACTIVITY 0B: ANIMAL SAFARI SOUNDS */}

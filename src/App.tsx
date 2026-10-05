@@ -70,7 +70,10 @@ import {
   syncLearnerBrainWithCloud,
   recordLearningEvent,
 } from "./utils/learnerBrain";
-import { resolveSkillForActivity } from "./data/activitySkillRegistry";
+import { resolveActivityDefinition, resolveSkillForActivity } from "./data/activitySkillRegistry";
+import { CURRICULUM_SKILL_NODES } from "./data/curriculumUniverse";
+import type { RecommendedAction } from "./utils/learnerBrain";
+import type { DailyRouteItem } from "./utils/dailyLearningRoute";
 
 // Storage keys
 const NOTEBOOKS_KEY = "my_student_portal_notebooks_v3";
@@ -120,6 +123,12 @@ function loadScopedPracticeSessions(accountId: string = getActiveAccountId()): P
 }
 
 const VALID_ROLES: UserRole[] = ["student", "parent", "teacher", "tutor"];
+
+type LearningLaunchRequest = Pick<RecommendedAction, "activityId" | "experienceId" | "skillId" | "targetTab" | "targetId">;
+
+type PendingLearningLaunch = LearningLaunchRequest & {
+  nonce: number;
+};
 
 /** Loads the persisted role for `accountId` (defaults to active scope). */
 function loadScopedRole(accountId: string = getActiveAccountId()): UserRole {
@@ -316,6 +325,8 @@ export default function App() {
       setClassMessages([]);
       setPracticePrefill({ subject: "", topic: "" });
       setPendingTutorQuery(undefined);
+      setPendingLearningLaunch(null);
+      setRecommendedSkillNodeId(undefined);
 
       setCurrentUser(user);
       if (user) {
@@ -583,6 +594,13 @@ export default function App() {
     topic: "",
   });
   const [recommendedSkillNodeId, setRecommendedSkillNodeId] = useState<string | undefined>();
+  const [pendingLearningLaunch, setPendingLearningLaunch] = useState<PendingLearningLaunch | null>(null);
+
+  useEffect(() => {
+    if (pendingLearningLaunch && activeTab !== pendingLearningLaunch.targetTab) {
+      setPendingLearningLaunch(null);
+    }
+  }, [activeTab, pendingLearningLaunch?.targetTab]);
 
   // Action handlers
   const handleAskTutor = (queryText: string) => {
@@ -598,7 +616,26 @@ export default function App() {
 
   const handleStartPracticeForNotebook = (subject: string, topic: string) => {
     setPracticePrefill({ subject, topic });
+    setPendingLearningLaunch(null);
     setActiveTab("practice");
+  };
+
+  const handleLearningLaunch = (request: LearningLaunchRequest) => {
+    const activity = resolveActivityDefinition(request.activityId);
+    if (activity.experienceId !== request.experienceId || activity.launch.route !== request.targetTab ||
+      activity.launch.targetId !== request.targetId || !activity.skillIds.includes(request.skillId)) {
+      throw new Error(`Learning launch does not match registered activity ${request.activityId}`);
+    }
+    const skill = CURRICULUM_SKILL_NODES.find((node) => node.id === request.skillId);
+    if (!skill) throw new Error(`Learning launch references unknown curriculum skill ${request.skillId}`);
+
+    setPendingLearningLaunch({ ...request, nonce: Date.now() });
+    setRecommendedSkillNodeId(request.targetTab === "odyssey" ? request.skillId : undefined);
+    if (request.targetTab === "practice") {
+      const subject = skill.domain === "reading" ? "Reading" : skill.domain === "science" ? "Science" : skill.domain === "logic" ? "Logic" : "Mathematics";
+      setPracticePrefill({ subject, topic: skill.title });
+    }
+    setActiveTab(request.targetTab);
   };
 
   const handleToggleTask = (taskId: string) => {
@@ -752,18 +789,40 @@ export default function App() {
     // Record teacher-confirmed learning evidence for the reviewed student
     try {
       const asgn = classAssignments.find((a) => a.id === assignmentId);
-      const resolved = resolveSkillForActivity("class-assignment", asgn?.subject, asgn?.title);
-      const isHighGrade = grade.startsWith("A") || grade === "100" || grade === "Pass";
+      const resolved = resolveSkillForActivity("teacher-reviewed-assignment", asgn?.subject, asgn?.title);
+      const normalizedGrade = grade.trim().toUpperCase();
+      const numericGrade = Number.parseFloat(normalizedGrade.replace("%", ""));
+      const gradeScore = Number.isFinite(numericGrade)
+        ? Math.max(0, Math.min(100, numericGrade))
+        : normalizedGrade === "PASS"
+          ? 100
+          : normalizedGrade.startsWith("A")
+            ? 95
+            : normalizedGrade.startsWith("B")
+              ? 85
+              : normalizedGrade.startsWith("C")
+                ? 75
+                : normalizedGrade.startsWith("D")
+                  ? 60
+                  : normalizedGrade.startsWith("F")
+                    ? 40
+                    : undefined;
+      const result = gradeScore === undefined
+        ? "explored"
+        : gradeScore >= 85 ? "success" : gradeScore < 60 ? "struggle" : "practice";
       recordLearningEvent({
         learnerId: studentId,
-        activityId: `teacher-review-${assignmentId}-${studentId}`,
+        activityId: "teacher-reviewed-assignment",
+        experienceId: "homework-desk",
+        contentId: `assignment-${assignmentId}`,
+        eventType: resolved.skillId ? "assessment_response" : "content_explored",
         activityType: "homework-submission",
         activityTitle: `Teacher Reviewed: ${asgn?.title || "Class Assignment"} (Grade: ${grade})`,
         skillId: resolved.skillId,
-        domain: resolved.domain,
+        domain: resolved.skillId ? resolved.domain : "general",
         gradeBand: resolved.gradeBand,
-        result: isHighGrade ? "success" : "practice",
-        score: isHighGrade ? 100 : 70,
+        result: resolved.skillId ? result : "explored",
+        score: resolved.skillId ? gradeScore : undefined,
         difficulty: "medium",
         attempts: 1,
         hintsUsed: 0,
@@ -771,6 +830,7 @@ export default function App() {
           teacherGrade: grade,
           teacherFeedback: feedback,
           reviewedByTeacher: true,
+          mappedSkillId: resolved.skillId || null,
         },
       });
     } catch (e) {
@@ -1067,6 +1127,7 @@ export default function App() {
             <PrimaryLearningLab
               onBack={() => setActiveTab("homework")}
               onAskTutor={handleAskTutor}
+              initialActivityId={pendingLearningLaunch?.targetTab === "primary-lab" ? pendingLearningLaunch.targetId : undefined}
             />
           </div>
         )}
@@ -1075,6 +1136,7 @@ export default function App() {
         {activeTab === "toddler" && (
           <div className="flex-1 overflow-y-auto">
             <ToddlerWorldView
+              initialActivityId={pendingLearningLaunch?.targetTab === "toddler" ? pendingLearningLaunch.targetId : undefined}
               onStartAssessment={(asmtId) => {
                 setSelectedAssessmentId(asmtId);
                 setActiveTab("assessment");
@@ -1137,10 +1199,8 @@ export default function App() {
             }}
             onAskTutor={handleAskTutor}
             onToggleTask={handleToggleTask}
-            onStartRecommendation={(tab, nodeId) => {
-              setRecommendedSkillNodeId(nodeId);
-              setActiveTab(tab);
-            }}
+            onStartRecommendation={handleLearningLaunch}
+            onStartRouteItem={handleLearningLaunch}
           />
         )}
 
@@ -1238,11 +1298,13 @@ export default function App() {
             notebooks={notebooks}
             prefilledSubject={practicePrefill.subject}
             prefilledTopic={practicePrefill.topic}
-            currentUserId={currentUser?.uid || "scholar-primary-1"}
+            currentUserId={currentUser?.uid || getActiveAccountId()}
             onSaveSession={handleSavePracticeSession}
             onNavigate={setActiveTab}
             onAskTutor={handleAskTutor}
             onOpenSubscriptionModal={() => setIsSubscriptionModalOpen(true)}
+            initialActivityId={pendingLearningLaunch?.targetTab === "practice" ? pendingLearningLaunch.targetId : undefined}
+            initialSkillId={pendingLearningLaunch?.targetTab === "practice" ? pendingLearningLaunch.skillId : undefined}
           />
         )}
 

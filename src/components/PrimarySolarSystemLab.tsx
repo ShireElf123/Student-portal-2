@@ -138,10 +138,13 @@ const PLANETS: Planet[] = [
   },
 ];
 
-export function PrimarySolarSystemLab() {
+type SolarSystemTab = "explorer" | "gravity-lab" | "cosmic-quiz";
+
+export function PrimarySolarSystemLab({ initialTab = "explorer" }: { initialTab?: SolarSystemTab }) {
   const [selectedPlanet, setSelectedPlanet] = useState<Planet>(PLANETS[2]); // Earth default
   const [earthWeightInput, setEarthWeightInput] = useState<number>(35);
-  const [activeTab, setActiveTab] = useState<"explorer" | "gravity-lab" | "cosmic-quiz">("explorer");
+  const [activeTab, setActiveTab] = useState<SolarSystemTab>(initialTab);
+  useEffect(() => setActiveTab(initialTab), [initialTab]);
 
   // Welcome voice greeting on mount
   useEffect(() => {
@@ -217,14 +220,15 @@ export function PrimarySolarSystemLab() {
     try {
       recordLearningEvent({
         learnerId: getActiveLearnerId(),
-        activityId: `solar-planet-${planet.id}`,
+        activityId: "primary-solar-explore",
+        experienceId: "solar-system",
+        contentId: planet.id,
+        eventType: "content_explored",
         activityType: "solar-system-explore",
         activityTitle: `Planet Exploration: ${planet.name}`,
-        skillId: "sci-23-solarsystem",
-        domain: "science",
+        domain: "general",
         gradeBand: "2-3",
         result: "explored",
-        score: 50,
         difficulty: "easy",
         attempts: 1,
         hintsUsed: 0,
@@ -257,7 +261,10 @@ export function PrimarySolarSystemLab() {
     try {
       recordLearningEvent({
         learnerId: getActiveLearnerId(),
-        activityId: `solar-quiz-q-${quizQuestionIdx}`,
+        activityId: "primary-solar-quiz",
+        experienceId: "solar-system",
+        contentId: `question-${quizQuestionIdx + 1}`,
+        eventType: "question_answered",
         activityType: "solar-system-quiz",
         activityTitle: `Cosmic Astronomy: ${q.question.substring(0, 36)}...`,
         skillId: "sci-23-solarsystem",
@@ -268,6 +275,7 @@ export function PrimarySolarSystemLab() {
         difficulty: "medium",
         attempts: 1,
         hintsUsed: 0,
+        metadata: { question: q.question, selectedAnswer: q.options[idx] },
       });
     } catch {
       // ignore

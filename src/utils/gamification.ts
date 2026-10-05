@@ -1,8 +1,18 @@
 import confetti from "canvas-confetti";
 import { GamificationState, BuddyCompanionConfig } from "../types";
 import { soundEffects } from "./soundEffects";
+import { getActiveLearnerId } from "./learnerBrain";
 
 const STORAGE_KEY = "edu_gamification_state_v1";
+const SCHEMA_KEY = "edu_gamification_schema_v2";
+
+function getStateStorageKey(learnerId: string): string {
+  return `${STORAGE_KEY}_${learnerId}`;
+}
+
+function getSchemaStorageKey(learnerId: string): string {
+  return `${SCHEMA_KEY}_${learnerId}`;
+}
 
 export const DEFAULT_BUDDY: BuddyCompanionConfig = {
   id: "buddy-pip",
@@ -30,13 +40,26 @@ const DEFAULT_STATE: GamificationState = {
 type Listener = (state: GamificationState) => void;
 const listeners = new Set<Listener>();
 
-function loadState(): GamificationState {
+function loadState(learnerId: string = getActiveLearnerId()): GamificationState {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_STATE;
+    const storageKey = getStateStorageKey(learnerId);
+    let raw = localStorage.getItem(storageKey);
+    let adoptingLegacy = false;
+    if (!raw && learnerId === "scholar-primary-1") {
+      raw = localStorage.getItem(STORAGE_KEY);
+      adoptingLegacy = Boolean(raw);
+    }
+    if (!raw) return { ...DEFAULT_STATE, completedNodes: [] };
     const parsed = JSON.parse(raw) as Partial<GamificationState>;
-    if (localStorage.getItem("edu_gamification_schema_v2") === "true") {
-      return { ...DEFAULT_STATE, ...parsed };
+    const schemaIsCurrent = localStorage.getItem(getSchemaStorageKey(learnerId)) === "true" ||
+      (learnerId === "scholar-primary-1" && localStorage.getItem(SCHEMA_KEY) === "true");
+    if (schemaIsCurrent) {
+      const migrated = { ...DEFAULT_STATE, ...parsed, completedNodes: Array.isArray(parsed.completedNodes) ? parsed.completedNodes : [] };
+      if (adoptingLegacy) {
+        localStorage.setItem(storageKey, JSON.stringify(migrated));
+        localStorage.removeItem(STORAGE_KEY);
+      }
+      return migrated;
     }
 
     // Older builds shipped fictional starter XP, streaks and unlocked nodes.
@@ -47,7 +70,7 @@ function loadState(): GamificationState {
       ...parsed,
       xp,
       level: calculateLevel(xp).level,
-      streakDays: 0, // the previous value included an invented four-day streak
+      streakDays: 0,
       lastActiveDate: "",
       starsCount: Math.max(0, (Number(parsed.starsCount) || 0) - 24),
       gemsCount: Math.max(0, (Number(parsed.gemsCount) || 0) - 65),
@@ -55,20 +78,25 @@ function loadState(): GamificationState {
         (id) => !["node-toddler-1", "node-toddler-2", "node-primary-1"].includes(id)
       ),
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-    localStorage.setItem("edu_gamification_schema_v2", "true");
+    localStorage.setItem(storageKey, JSON.stringify(migrated));
+    localStorage.setItem(getSchemaStorageKey(learnerId), "true");
+    if (adoptingLegacy) {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(SCHEMA_KEY);
+    }
     return migrated;
   } catch {
-    return DEFAULT_STATE;
+    return { ...DEFAULT_STATE, completedNodes: [] };
   }
 }
-
-let currentState: GamificationState = loadState();
+let currentAccountId = getActiveLearnerId();
+let currentState: GamificationState = loadState(currentAccountId);
 
 function saveState(state: GamificationState) {
   currentState = state;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(getStateStorageKey(currentAccountId), JSON.stringify(state));
+    localStorage.setItem(getSchemaStorageKey(currentAccountId), "true");
   } catch {
     // ignore
   }
@@ -78,8 +106,17 @@ function saveState(state: GamificationState) {
 export function subscribeGamification(fn: Listener): () => void {
   listeners.add(fn);
   fn(currentState);
+  const accountChangeHandler = () => {
+    const nextAccountId = getActiveLearnerId();
+    if (nextAccountId === currentAccountId) return;
+    currentAccountId = nextAccountId;
+    currentState = loadState(currentAccountId);
+    listeners.forEach((listener) => listener(currentState));
+  };
+  if (typeof window !== "undefined") window.addEventListener("learner_model_updated", accountChangeHandler);
   return () => {
     listeners.delete(fn);
+    if (typeof window !== "undefined") window.removeEventListener("learner_model_updated", accountChangeHandler);
   };
 }
 

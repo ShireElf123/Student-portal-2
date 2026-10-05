@@ -21,7 +21,7 @@ import {
   getDueMistakesCount,
   recordLearningEvent,
 } from "../utils/pedagogicalEngine";
-import { getAdaptiveDifficultyForSkill, subscribeLearnerModel } from "../utils/learnerBrain";
+import { getActiveLearnerId, getAdaptiveDifficultyForSkill, subscribeLearnerModel } from "../utils/learnerBrain";
 import { resolveSkillForActivity } from "../data/activitySkillRegistry";
 import { MistakeReviewVaultModal } from "./MistakeReviewVaultModal";
 import { PrintableWorksheetGenerator } from "./PrintableWorksheetGenerator";
@@ -35,6 +35,8 @@ interface PracticeViewProps {
   onNavigate: (tab: NavigationTab) => void;
   onAskTutor: (prompt: string) => void;
   onOpenSubscriptionModal?: () => void;
+  initialActivityId?: string;
+  initialSkillId?: string;
 }
 
 export function PracticeView({
@@ -46,6 +48,8 @@ export function PracticeView({
   onNavigate,
   onAskTutor,
   onOpenSubscriptionModal,
+  initialActivityId,
+  initialSkillId,
 }: PracticeViewProps) {
   // Setup Form
   const [subject, setSubject] = useState(prefilledSubject || notebooks[0]?.subject || "Mathematics");
@@ -54,15 +58,21 @@ export function PracticeView({
   const [count, setCount] = useState<number>(5);
 
   const [learnerRevision, setLearnerRevision] = useState(0);
+  const [pinnedSkillId, setPinnedSkillId] = useState<string | undefined>(initialSkillId);
   useEffect(() => subscribeLearnerModel(() => setLearnerRevision((revision) => revision + 1)), []);
+  useEffect(() => setPinnedSkillId(initialSkillId), [initialSkillId]);
 
-  // Dynamically resolve target standard node from central activity-skill registry
+  // A route may pin one exact curriculum target; free-form practice resolves only
+  // from its actual subject/topic and never falls back to an unrelated skill.
   const targetSkillInfo = useMemo(() => {
-    return resolveSkillForActivity("practice-arena", subject, topic);
-  }, [subject, topic]);
+    return pinnedSkillId
+      ? resolveSkillForActivity(pinnedSkillId)
+      : resolveSkillForActivity("practice-session", subject, topic);
+  }, [pinnedSkillId, subject, topic]);
 
   // Query real adaptive difficulty calibration from the Learner Brain
   const brainAdaptiveLevel = useMemo(() => {
+    if (!targetSkillInfo.skillId) return "medium" as const;
     const rawDiff = getAdaptiveDifficultyForSkill(targetSkillInfo.skillId, currentUserId);
     if (rawDiff === "beginner" || rawDiff === "easy") return "easy" as const;
     if (rawDiff === "hard" || rawDiff === "expert") return "hard" as const;
@@ -89,6 +99,9 @@ export function PracticeView({
 
   // Modals
   const [isMistakeVaultOpen, setIsMistakeVaultOpen] = useState(false);
+  useEffect(() => {
+    setIsMistakeVaultOpen(initialActivityId === "mistake-review");
+  }, [initialActivityId]);
   const [isWorksheetModalOpen, setIsWorksheetModalOpen] = useState(false);
   const [dueMistakes, setDueMistakes] = useState(getDueMistakesCount());
 
@@ -176,28 +189,32 @@ export function PracticeView({
         hintLevel1: q.hint || "Review key terms and core concept principles.",
         hintLevel2: "Notice which choices can be ruled out by basic estimation.",
         hintLevel3: q.explanation,
+        skillId: targetSkillInfo.skillId,
       });
       setDueMistakes(getDueMistakesCount());
     }
 
     try {
       recordLearningEvent({
-        learnerId: currentUserId || "scholar-primary-1",
-        activityId: `practice-q-${currentIndex}-${Date.now()}`,
+        learnerId: getActiveLearnerId(),
+        activityId: "practice-session",
+        experienceId: "practice-arena",
+        contentId: `${sessionId}:question-${currentIndex + 1}`,
+        eventType: targetSkillInfo.skillId ? "practice_response" : "content_explored",
         activityType: "practice-session",
         activityTitle: `${topic}: Practice Question ${currentIndex + 1}`,
         skillId: targetSkillInfo.skillId,
         domain: targetSkillInfo.domain,
         gradeBand: targetSkillInfo.gradeBand,
-        result: isCorrect ? "success" : "struggle",
+        result: targetSkillInfo.skillId ? (isCorrect ? "success" : "struggle") : "explored",
         score: isCorrect ? 100 : 0,
         difficulty: difficulty === "hard" ? "hard" : difficulty === "easy" ? "easy" : "medium",
         attempts: 1,
         hintsUsed: hintLevel,
         timeSpentSeconds: Math.max(1, Math.round((Date.now() - questionStartedAt.current) / 1000)),
       });
-    } catch {
-      // ignore
+    } catch (error) {
+      console.error("Failed to record practice response evidence:", error);
     }
 
     // If this was the last question, conclude session and save

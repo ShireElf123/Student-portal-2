@@ -23,7 +23,12 @@ export interface ToddlerWorldProgressState {
   lastVisitedAreaId?: string;
 }
 
-const STORAGE_KEY = "toddler_world_exploration_progress_v2";
+const LEGACY_STORAGE_KEY = "toddler_world_exploration_progress_v2";
+const STORAGE_KEY_PREFIX = "toddler_world_exploration_progress_v2_";
+
+function getStorageKey(learnerId: string): string {
+  return `${STORAGE_KEY_PREFIX}${learnerId}`;
+}
 
 const DEFAULT_STARTER_AREAS = [
   "farm-valley",
@@ -49,13 +54,23 @@ export function getInitialToddlerProgress(): ToddlerWorldProgressState {
 }
 
 let cachedProgress: ToddlerWorldProgressState | null = null;
+let cachedProgressLearnerId: string | null = null;
 const listeners = new Set<(state: ToddlerWorldProgressState) => void>();
 
 export function getToddlerProgress(): ToddlerWorldProgressState {
-  if (cachedProgress) return cachedProgress;
+  const learnerId = getActiveLearnerId();
+  if (cachedProgress && cachedProgressLearnerId === learnerId) return cachedProgress;
 
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    let raw = localStorage.getItem(getStorageKey(learnerId));
+    // Only the historical default learner can adopt the old unscoped progress key.
+    if (!raw && learnerId === "scholar-primary-1") {
+      raw = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (raw) {
+        localStorage.setItem(getStorageKey(learnerId), raw);
+        localStorage.removeItem(LEGACY_STORAGE_KEY);
+      }
+    }
     if (raw) {
       const parsed = JSON.parse(raw);
       // Ensure starter areas are unlocked
@@ -72,6 +87,7 @@ export function getToddlerProgress(): ToddlerWorldProgressState {
         lastVisitedWorldId: parsed.lastVisitedWorldId,
         lastVisitedAreaId: parsed.lastVisitedAreaId,
       };
+      cachedProgressLearnerId = learnerId;
       return cachedProgress;
     }
   } catch (e) {
@@ -79,13 +95,16 @@ export function getToddlerProgress(): ToddlerWorldProgressState {
   }
 
   cachedProgress = getInitialToddlerProgress();
+  cachedProgressLearnerId = learnerId;
   return cachedProgress;
 }
 
 export function saveToddlerProgress(nextState: ToddlerWorldProgressState) {
+  const learnerId = getActiveLearnerId();
   cachedProgress = nextState;
+  cachedProgressLearnerId = learnerId;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
+    localStorage.setItem(getStorageKey(learnerId), JSON.stringify(nextState));
   } catch (e) {
     console.error("Failed to persist toddler progress:", e);
   }
@@ -94,8 +113,12 @@ export function saveToddlerProgress(nextState: ToddlerWorldProgressState) {
 
 export function subscribeToddlerProgress(callback: (state: ToddlerWorldProgressState) => void) {
   listeners.add(callback);
+  callback(getToddlerProgress());
+  const accountChangeHandler = () => callback(getToddlerProgress());
+  if (typeof window !== "undefined") window.addEventListener("learner_model_updated", accountChangeHandler);
   return () => {
     listeners.delete(callback);
+    if (typeof window !== "undefined") window.removeEventListener("learner_model_updated", accountChangeHandler);
   };
 }
 
@@ -167,27 +190,27 @@ export function recordActivityCompletion(
 
   saveToddlerProgress(nextState);
 
-  // Emit structured learning event into unified learner brain via registry
-  try {
-    const resolved = resolveSkillForActivity(activityId);
-
-    recordLearningEvent({
-      learnerId: getActiveLearnerId(),
-      activityId: `toddler-${activityId}`,
-      activityType: "toddler-quiz",
-      activityTitle: `Toddler Adventure: ${activityId.replace(/-/g, " ")}`,
-      skillId: resolved.skillId,
-      domain: resolved.domain,
-      gradeBand: resolved.gradeBand,
-      result: isFirstCompletion ? "mastered" : "success",
-      score: 100,
-      difficulty: "easy",
-      attempts: 1,
-      hintsUsed: 0,
-    });
-  } catch {
-    // ignore
-  }
+  // A correct answer in a mapped world activity is evidence; social/creative activities
+  // remain engagement-only until they have a legitimate curriculum skill.
+  const resolved = resolveSkillForActivity(activityId);
+  recordLearningEvent({
+    learnerId: getActiveLearnerId(),
+    activityId,
+    experienceId: "toddler-worlds-navigator",
+    contentId: activityId,
+    eventType: resolved.skillId ? "activity_completed" : "creative_interaction",
+    activityType: resolved.skillId ? "world-activity" : "engagement",
+    activityTitle: `Toddler Adventure: ${activityId.replace(/-/g, " ")}`,
+    skillId: resolved.skillId,
+    domain: resolved.domain,
+    gradeBand: resolved.gradeBand,
+    result: resolved.skillId ? "success" : "explored",
+    score: resolved.skillId ? 100 : undefined,
+    difficulty: "easy",
+    attempts: 1,
+    hintsUsed: 0,
+    metadata: { worldId, areaId, firstCompletion: isFirstCompletion },
+  });
 
   return {
     isFirstCompletion,
@@ -242,25 +265,22 @@ export function recordMissionCompletion(
 
   saveToddlerProgress(nextState);
 
-  try {
-    const resolvedMission = resolveSkillForActivity(missionId);
-    recordLearningEvent({
-      learnerId: getActiveLearnerId(),
-      activityId: `mission-${missionId}`,
-      activityType: "toddler-quiz",
-      activityTitle: `World Mission: ${badgeTitle}`,
-      skillId: resolvedMission.skillId,
-      domain: resolvedMission.domain,
-      gradeBand: resolvedMission.gradeBand,
-      result: "mastered",
-      score: 100,
-      difficulty: "medium",
-      attempts: 1,
-      hintsUsed: 0,
-    });
-  } catch {
-    // ignore
-  }
+  recordLearningEvent({
+    learnerId: getActiveLearnerId(),
+    activityId: "toddler-world-mission-completion",
+    experienceId: "toddler-worlds-navigator",
+    contentId: missionId,
+    eventType: "mission_completed",
+    activityType: "world-mission",
+    activityTitle: `World Mission: ${badgeTitle}`,
+    domain: "general",
+    gradeBand: "toddler",
+    result: "explored",
+    difficulty: "medium",
+    attempts: 1,
+    hintsUsed: 0,
+    metadata: { worldId, areaId, missionId, badgeEmoji, firstCompletion: isFirstCompletion },
+  });
 
   return {
     isFirstCompletion,

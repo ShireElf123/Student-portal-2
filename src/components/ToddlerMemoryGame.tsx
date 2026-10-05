@@ -140,18 +140,21 @@ export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) =>
                 recordLearningEvent({
                   learnerId: getActiveLearnerId(),
                   activityId: "toddler-memory-match",
-                  activityType: "toddler-memory",
+                  experienceId: "memory-match",
+                  contentId: `matched-${pairCount}-pairs`,
+                  eventType: "creative_interaction",
+                  activityType: "engagement",
                   activityTitle: `Memory Match: Matched ${pairCount} Pairs`,
-                  skillId: "logic-k1-patterns",
-                  domain: "logic",
+                  domain: "general",
                   gradeBand: "toddler",
-                  result: "mastered",
-                  score: 100,
+                  result: "explored",
                   difficulty: "easy",
                   attempts: moves + 1,
                   hintsUsed: 0,
                 });
-              } catch {}
+              } catch (error) {
+                console.error("Failed to record memory-game engagement:", error);
+              }
             }, 400);
           }
         }, 500);

@@ -28,6 +28,8 @@ import {
 import { PictureBook, PictureBookPage } from "../types";
 import { PICTURE_BOOKS } from "../data/pictureBooksData";
 import { speakText, stopSpeaking, speechCoordinator } from "../utils/speechUtils";
+import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import { resolveSkillForActivity } from "../data/activitySkillRegistry";
 import { soundEffects } from "../utils/soundEffects";
 import {
   savePageAudio,
@@ -59,6 +61,7 @@ import {
 } from "./landscape/LandscapeDecorations";
 
 interface ToddlerWorldViewProps {
+  initialActivityId?: string;
   onStartAssessment?: (assessmentId: string) => void;
   onSwitchToPrimary?: () => void;
   onSwitchToEducator?: () => void;
@@ -103,6 +106,7 @@ const COUNTING_CARDS = [
 ];
 
 export function ToddlerWorldView({
+  initialActivityId,
   onStartAssessment,
   onSwitchToPrimary,
   onSwitchToEducator,
@@ -112,6 +116,7 @@ export function ToddlerWorldView({
   const [gameState, setGameState] = useState(() => getGamificationState());
   const [selectedBook, setSelectedBook] = useState<PictureBook | null>(null);
   const [currentPageIndex, setCurrentPageIndex] = useState<number>(0);
+  const [bookInteractionAnswers, setBookInteractionAnswers] = useState<Record<string, number>>({});
   const activePage: PictureBookPage | null = selectedBook ? selectedBook.pages[currentPageIndex] || null : null;
   const [isBookCompleted, setIsBookCompleted] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
@@ -126,6 +131,31 @@ export function ToddlerWorldView({
   const [isStickerAlbumOpen, setIsStickerAlbumOpen] = useState<boolean>(false);
   const [initialWorldTarget, setInitialWorldTarget] = useState<string | null>(null);
   const [initialGameTarget, setInitialGameTarget] = useState<string | null>(null);
+
+  // Launch registry-selected toddler experiences into their exact existing surface.
+  useEffect(() => {
+    if (!initialActivityId) return;
+    stopSpeaking();
+    setSelectedBook(null);
+    if (initialActivityId === "books") {
+      setActiveTab("books");
+      setInitialGameTarget(null);
+      setInitialWorldTarget(null);
+    } else if (initialActivityId.startsWith("game:")) {
+      setActiveTab("games");
+      setInitialGameTarget(initialActivityId.slice("game:".length));
+      setInitialWorldTarget(null);
+    } else if (initialActivityId.startsWith("world:")) {
+      setActiveTab("worlds");
+      setInitialWorldTarget(initialActivityId);
+      setInitialGameTarget(null);
+    } else if (initialActivityId === "worlds") {
+      setActiveTab("worlds");
+      setInitialWorldTarget(null);
+      setInitialGameTarget(null);
+    }
+  }, [initialActivityId]);
+
   // Pages already visited in the current book session. Page-turn stars are
   // paid once per page so flipping back and forth cannot farm stars.
   const visitedBookPagesRef = useRef<Set<number>>(new Set());
@@ -207,10 +237,81 @@ export function ToddlerWorldView({
     awardStars(amount);
   };
 
+  const recordBookEngagement = (
+    book: PictureBook,
+    pageIndex: number,
+    eventType: "experience_opened" | "content_explored"
+  ) => {
+    const page = book.pages[pageIndex];
+    try {
+      recordLearningEvent({
+        learnerId: getActiveLearnerId(),
+        activityId: "picture-book-interaction",
+        experienceId: "picture-book-reader",
+        contentId: eventType === "experience_opened" ? book.id : `${book.id}:page-${page?.pageNumber ?? pageIndex + 1}`,
+        eventType,
+        activityType: "storybook-interaction",
+        activityTitle: eventType === "experience_opened" ? `Opened ${book.title}` : `Viewed ${book.title}, page ${page?.pageNumber ?? pageIndex + 1}`,
+        domain: "general",
+        gradeBand: "toddler",
+        result: "explored",
+        difficulty: "easy",
+        attempts: 1,
+        hintsUsed: 0,
+      });
+    } catch (error) {
+      console.error("Failed to record picture-book engagement:", error);
+    }
+  };
+
+  const handleBookInteractionAnswer = (optionIndex: number) => {
+    if (!selectedBook || !activePage?.learningInteraction) return;
+    const interaction = activePage.learningInteraction;
+    const key = `${selectedBook.id}:${activePage.pageNumber}:${interaction.id}`;
+    if (bookInteractionAnswers[key] !== undefined) return;
+    const resolved = resolveSkillForActivity(interaction.skillId);
+    if (!resolved.skillId) {
+      console.error(`Picture-book interaction ${interaction.id} has no valid curriculum skill mapping`);
+      return;
+    }
+    const isCorrect = optionIndex === interaction.correctOptionIndex;
+    try {
+      recordLearningEvent({
+        learnerId: getActiveLearnerId(),
+        activityId: "picture-book-interaction",
+        experienceId: "picture-book-reader",
+        contentId: `${selectedBook.id}:page-${activePage.pageNumber}:${interaction.id}:option-${optionIndex}`,
+        eventType: "question_answered",
+        activityType: "storybook-interaction",
+        activityTitle: `${selectedBook.title}: ${interaction.prompt}`,
+        skillId: resolved.skillId,
+        domain: resolved.domain,
+        gradeBand: "toddler",
+        result: isCorrect ? "success" : "struggle",
+        score: isCorrect ? 100 : 0,
+        difficulty: "easy",
+        attempts: 1,
+        hintsUsed: 0,
+        metadata: {
+          interactionId: interaction.id,
+          selectedAnswer: interaction.options[optionIndex],
+          correctAnswer: interaction.options[interaction.correctOptionIndex],
+        },
+      });
+      setBookInteractionAnswers((answers) => ({ ...answers, [key]: optionIndex }));
+    } catch (error) {
+      console.error("Failed to record picture-book response evidence:", error);
+    }
+  };
+
   const handleOpenBook = (book: PictureBook) => {
     setSelectedBook(book);
     setCurrentPageIndex(0);
+    setBookInteractionAnswers({});
+    visitedBookPagesRef.current.clear();
+    visitedBookPagesRef.current.add(0);
     setIsBookCompleted(false);
+    recordBookEngagement(book, 0, "experience_opened");
     stopSpeaking();
     if (audioPlayerRef.current) {
       audioPlayerRef.current.pause();
@@ -290,6 +391,7 @@ export function ToddlerWorldView({
       if (!visitedBookPagesRef.current.has(nextIdx)) {
         visitedBookPagesRef.current.add(nextIdx);
         addStar(1);
+        recordBookEngagement(selectedBook, nextIdx, "content_explored");
       }
     } else {
       // Completed book!
@@ -319,6 +421,10 @@ export function ToddlerWorldView({
     }
     const prevIdx = currentPageIndex - 1;
     setCurrentPageIndex(prevIdx);
+    if (!visitedBookPagesRef.current.has(prevIdx)) {
+      visitedBookPagesRef.current.add(prevIdx);
+      recordBookEngagement(selectedBook, prevIdx, "content_explored");
+    }
     const prevPageNum = prevIdx + 1;
     getPageAudio(selectedBook.id, prevPageNum).then((rec) => {
       setParentAudioRecord(rec);
@@ -1364,6 +1470,48 @@ export function ToddlerWorldView({
                         <span>👉</span>
                         <span>{activePage.interactivePrompt}</span>
                       </div>
+
+                      {activePage.learningInteraction && (() => {
+                        const interaction = activePage.learningInteraction;
+                        const answerKey = `${selectedBook.id}:${activePage.pageNumber}:${interaction.id}`;
+                        const selectedAnswer = bookInteractionAnswers[answerKey];
+                        return (
+                          <div className="rounded-2xl border-2 border-indigo-200 bg-indigo-50 p-4 text-left shadow-sm" aria-label="Picture book learning question">
+                            <p className="mb-3 text-sm font-black text-indigo-950">{interaction.prompt}</p>
+                            <div className="grid gap-2 sm:grid-cols-3">
+                              {interaction.options.map((option, optionIndex) => {
+                                const isSelected = selectedAnswer === optionIndex;
+                                const isCorrect = optionIndex === interaction.correctOptionIndex;
+                                const answered = selectedAnswer !== undefined;
+                                return (
+                                  <button
+                                    key={`${interaction.id}-${optionIndex}`}
+                                    type="button"
+                                    disabled={answered}
+                                    onClick={() => handleBookInteractionAnswer(optionIndex)}
+                                    className={`rounded-xl border-2 px-3 py-2.5 text-sm font-bold transition ${
+                                      answered && isCorrect
+                                        ? "border-emerald-500 bg-emerald-100 text-emerald-950"
+                                        : isSelected
+                                          ? "border-rose-400 bg-rose-100 text-rose-950"
+                                          : "border-indigo-200 bg-white text-indigo-950 hover:border-indigo-400 hover:bg-indigo-100 disabled:cursor-default"
+                                    }`}
+                                  >
+                                    {option}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                            {selectedAnswer !== undefined && (
+                              <p className={`mt-3 text-sm font-bold ${selectedAnswer === interaction.correctOptionIndex ? "text-emerald-800" : "text-rose-800"}`} role="status">
+                                {selectedAnswer === interaction.correctOptionIndex
+                                  ? "That’s right! Great thinking!"
+                                  : `Good try! The answer is ${interaction.options[interaction.correctOptionIndex]}.`}
+                              </p>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
 

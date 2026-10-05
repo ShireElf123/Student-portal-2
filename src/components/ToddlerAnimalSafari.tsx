@@ -171,6 +171,9 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
         recordLearningEvent({
           learnerId: getActiveLearnerId(),
           activityId: "toddler-safari-explorer",
+          experienceId: "animal-safari",
+          contentId: targetAnimal.id,
+          eventType: "question_answered",
           activityType: "toddler-safari",
           activityTitle: `Animal Safari Detective: Identified ${animal.name}`,
           skillId: "sci-k1-habitats",
@@ -182,7 +185,9 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
           attempts: 1,
           hintsUsed: 0,
         });
-      } catch {}
+      } catch (error) {
+        console.error("Failed to record safari response:", error);
+      }
 
       speakText(`Yes! Correct! It's the ${animal.name}! ${animal.call}`, {
         pitch: 1.25,
@@ -190,6 +195,27 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
       });
     } else {
       soundEffects.playGentleBoing();
+      try {
+        recordLearningEvent({
+          learnerId: getActiveLearnerId(),
+          activityId: "toddler-safari-explorer",
+          experienceId: "animal-safari",
+          contentId: `${targetAnimal.id}:${animal.id}`,
+          eventType: "question_answered",
+          activityType: "toddler-safari",
+          activityTitle: `Animal Safari Detective: Tried ${animal.name}`,
+          skillId: "sci-k1-habitats",
+          domain: "science",
+          gradeBand: "toddler",
+          result: "struggle",
+          score: 0,
+          difficulty: "easy",
+          attempts: 1,
+          hintsUsed: 0,
+        });
+      } catch (error) {
+        console.error("Failed to record safari response:", error);
+      }
       speakText(`That's the ${animal.name}! Listen again: ${targetAnimal.soundText}! Try finding the right one!`, {
         pitch: 1.2,
         rate: 0.9,

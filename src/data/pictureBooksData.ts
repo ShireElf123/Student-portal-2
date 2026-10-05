@@ -22,6 +22,7 @@ export const PICTURE_BOOKS: PictureBook[] = [
         letterHighlight: "A",
         wordHighlights: ["Alligator", "Apple"],
         interactivePrompt: "Tap the alligator to hear him chomp! /æ/, /æ/!",
+        learningInteraction: { id: "safari-letter-a", prompt: "Which word on this page begins with the letter A?", options: ["Alligator", "Bear", "Cat"], correctOptionIndex: 0, skillId: "read-k1-alphabet-letters" },
         soundEffectText: "Chomp! Chomp!",
       },
       {
@@ -107,6 +108,7 @@ export const PICTURE_BOOKS: PictureBook[] = [
         letterHighlight: "2",
         wordHighlights: ["Two", "Birds"],
         interactivePrompt: "Tap both birds to count: 1... 2!",
+        learningInteraction: { id: "garden-count-birds", prompt: "How many bluebirds are on this page?", options: ["One", "Two", "Three"], correctOptionIndex: 1, skillId: "math-k1-counting" },
         soundEffectText: "Tweet! Chirp!",
       },
       {
@@ -168,6 +170,7 @@ export const PICTURE_BOOKS: PictureBook[] = [
         letterHighlight: "Circle",
         wordHighlights: ["Red", "Circle", "Round"],
         interactivePrompt: "Draw a big circle in the air with your finger!",
+        learningInteraction: { id: "parade-circle-shape", prompt: "Which shape is round and has no corners?", options: ["Circle", "Square", "Triangle"], correctOptionIndex: 0, skillId: "math-k1-shapes" },
         soundEffectText: "Roll roll roll!",
       },
       {
@@ -229,6 +232,7 @@ export const PICTURE_BOOKS: PictureBook[] = [
         letterHighlight: "Sleep",
         wordHighlights: ["Warm", "Cozy", "Dream"],
         interactivePrompt: "Whisper: Goodnight, Little Bear! Sweet dreams!",
+        learningInteraction: { id: "bear-bedtime-sequence", prompt: "What does Little Bear do after brushing his teeth?", options: ["Puts on pajamas", "Goes swimming", "Eats breakfast"], correctOptionIndex: 0, skillId: "read-k1-listening-comprehension" },
         soundEffectText: "Yawn... hush.",
       },
     ],
