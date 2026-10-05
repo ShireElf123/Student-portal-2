@@ -11,6 +11,15 @@ export interface ContentRateLimitResult {
   reason?: "minute-limit" | "daily-limit";
 }
 
+/**
+ * Per-client fixed-window limiter for AI generation.
+ *
+ * State is in-memory and per-process by design for this single-node app: it resets on
+ * restart and is not shared across instances or serverless workers. Before scaling
+ * horizontally, back it with a shared store (Redis/Firestore) or the daily cap stops
+ * bounding cost. `clientKey` should be the verified account ID where available
+ * (see server/contentAuth.ts), falling back to a network address for anonymous callers.
+ */
 export class ContentGenerationRateLimiter {
   private readonly buckets = new Map<string, UsageBucket>();
 
@@ -39,7 +48,17 @@ export class ContentGenerationRateLimiter {
 
     if (bucket.dailyCount >= this.maxPerDay) {
       this.buckets.set(key, bucket);
-      return { allowed: false, retryAfterSeconds: 0, reason: "daily-limit" };
+      const startOfTodayUtc = Date.UTC(
+        new Date(now).getUTCFullYear(),
+        new Date(now).getUTCMonth(),
+        new Date(now).getUTCDate()
+      );
+      const nextUtcDay = startOfTodayUtc + 24 * 60 * 60 * 1000;
+      return {
+        allowed: false,
+        retryAfterSeconds: Math.max(1, Math.ceil((nextUtcDay - now) / 1000)),
+        reason: "daily-limit",
+      };
     }
     if (bucket.minuteCount >= this.maxPerMinute) {
       this.buckets.set(key, bucket);

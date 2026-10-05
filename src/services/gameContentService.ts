@@ -1,3 +1,4 @@
+import { auth } from "../firebaseCore";
 import { cacheValidatedGameBlueprint, findReusableGameBlueprint, getKnownBlueprintFingerprints } from "../contentEngine/cache";
 import { validateContentGenerationRequest, validateGameBlueprint } from "../contentEngine/validation";
 import type {
@@ -26,11 +27,27 @@ export class ContentGenerationServiceError extends Error {
   }
 }
 
+/** Firebase ID token for the signed-in account; the server rejects unauthenticated generation. */
+async function buildAuthorizationHeader(): Promise<Record<string, string>> {
+  const user = auth.currentUser;
+  if (!user) {
+    throw new ContentGenerationServiceError(
+      "Sign in to create new AI practice content. Saved activities remain available without signing in."
+    );
+  }
+  try {
+    const token = await user.getIdToken();
+    return { Authorization: `Bearer ${token}` };
+  } catch {
+    throw new ContentGenerationServiceError("Your sign-in could not be verified. Please sign in again to create new content.");
+  }
+}
+
 const httpContentTransport: ContentGenerationTransport = {
   async generate(command) {
     const response = await fetch("/api/content/generate", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...(await buildAuthorizationHeader()) },
       body: JSON.stringify(command),
     });
     let body: unknown;

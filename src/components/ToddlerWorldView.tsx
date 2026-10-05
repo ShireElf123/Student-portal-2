@@ -43,7 +43,7 @@ import { ToddlerDailyMissionsModal } from "./ToddlerDailyMissionsModal";
 import { ToddlerStickerAlbumModal } from "./ToddlerStickerAlbumModal";
 import { BuddyCompanionBadge } from "./BuddyCompanionBadge";
 import { BuddyAvatarStudio } from "./BuddyAvatarStudio";
-import { getGamificationState, setWonderlandTheme, subscribeGamification, awardStars } from "../utils/gamification";
+import { getGamificationState, setWonderlandTheme, subscribeGamification, awardStars, DEFAULT_BUDDY } from "../utils/gamification";
 import {
   getExplorerRank,
   getTodayAdventure,
@@ -114,6 +114,7 @@ export function ToddlerWorldView({
 }: ToddlerWorldViewProps) {
   const [activeTab, setActiveTab] = useState<"worlds" | "books" | "phonics" | "counting" | "games" | "avatar-studio">("worlds");
   const [gameState, setGameState] = useState(() => getGamificationState());
+  const activeBuddy = gameState.buddy ?? DEFAULT_BUDDY;
   const [selectedBook, setSelectedBook] = useState<PictureBook | null>(null);
   const [currentPageIndex, setCurrentPageIndex] = useState<number>(0);
   const [bookInteractionAnswers, setBookInteractionAnswers] = useState<Record<string, number>>({});
@@ -686,10 +687,10 @@ export function ToddlerWorldView({
               }`}
               title="Customize your Learning Buddy!"
             >
-              <BuddyCompanionBadge buddy={gameState.buddy} size="sm" animated />
+              <BuddyCompanionBadge buddy={activeBuddy} size="sm" animated />
               <div className="text-left hidden sm:block">
                 <div className="text-[9px] uppercase font-black text-pink-600">Buddy</div>
-                <div className="text-xs font-black text-slate-900">{gameState.buddy.name}</div>
+                <div className="text-xs font-black text-slate-900">{activeBuddy.name}</div>
               </div>
             </button>
 
@@ -858,21 +859,21 @@ export function ToddlerWorldView({
                 : "bg-white/[0.04] border-white/10 text-white"
             }`}>
               <div className="flex items-center gap-3 mb-3">
-                <BuddyCompanionBadge buddy={gameState.buddy} size="md" animated />
+                <BuddyCompanionBadge buddy={activeBuddy} size="md" animated />
                 <div>
                   <div className="text-[10px] font-black uppercase text-pink-500">Learning Coach</div>
-                  <h3 className="text-base font-black">{gameState.buddy.name}</h3>
+                  <h3 className="text-base font-black">{activeBuddy.name}</h3>
                   <div className="text-xs text-amber-500 font-bold">Level {gameState.level} Explorer</div>
                 </div>
               </div>
               <p className="text-xs italic bg-pink-500/10 p-2.5 rounded-2xl border border-pink-400/20 mb-3">
-                "{gameState.buddy.catchphrase || "Ready for another magical adventure!"}"
+                "{activeBuddy.catchphrase || "Ready for another magical adventure!"}"
               </p>
               <div className="flex gap-2">
                 <button
                   onClick={() => {
                     soundEffects.playPop();
-                    speakText(`Hello little explorer! I am ${gameState.buddy.name}! You are doing fantastic! Let's explore together!`, { pitch: 1.2 });
+                    speakText(`Hello little explorer! I am ${activeBuddy.name}! You are doing fantastic! Let's explore together!`, { pitch: 1.2 });
                   }}
                   className="flex-1 py-2 px-3 rounded-xl bg-pink-500 hover:bg-pink-400 text-white font-black text-xs text-center cursor-pointer shadow-sm transition-all"
                 >
@@ -1296,7 +1297,7 @@ export function ToddlerWorldView({
               starsCount={starsCount}
               onAddStar={addStar}
               onBackToBooks={() => setActiveTab("books")}
-              targetActivity={initialGameTarget}
+              targetActivity={initialGameTarget ?? undefined}
             />
           </div>
         )}

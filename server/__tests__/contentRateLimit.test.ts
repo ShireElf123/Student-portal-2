@@ -18,7 +18,9 @@ describe("ContentGenerationRateLimiter", () => {
     const limiter = new ContentGenerationRateLimiter(10, 2, () => now);
     expect(limiter.consume("shared-egress").allowed).toBe(true);
     expect(limiter.consume("shared-egress").allowed).toBe(true);
-    expect(limiter.consume("shared-egress")).toMatchObject({ allowed: false, reason: "daily-limit" });
+    const blocked = limiter.consume("shared-egress");
+    expect(blocked).toMatchObject({ allowed: false, reason: "daily-limit" });
+    expect(blocked.retryAfterSeconds).toBe(60);
     now += 2 * 60_000;
     expect(limiter.consume("shared-egress").allowed).toBe(true);
   });

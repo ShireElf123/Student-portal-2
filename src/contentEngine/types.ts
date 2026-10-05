@@ -193,6 +193,7 @@ export type BlueprintValidationCode =
   | "UNSAFE_CONTENT"
   | "INVALID_METADATA"
   | "REQUEST_MISMATCH"
+  | "PROVIDER_ERROR"
   | "INVALID_REQUEST";
 
 export interface BlueprintValidationError {

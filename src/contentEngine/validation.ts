@@ -5,7 +5,6 @@ import { getSupportedGameEngine, isSupportedGameType } from "./registry";
 import {
   BlueprintValidationError,
   BlueprintValidationResult,
-  ContentAgeBand,
   ContentDifficulty,
   ContentGenerationRequest,
   ContentTheme,
@@ -23,12 +22,51 @@ const DIFFICULTIES = new Set<ContentDifficulty>(["easy", "medium", "hard"]);
 const THEMES = new Set<ContentTheme>(["space", "garden", "ocean", "animals", "everyday"]);
 const MASTERY_BANDS = new Set<MasteryBand>(["new", "developing", "secure"]);
 
+/**
+ * Best-effort denylist for obviously unsafe child-facing text.
+ *
+ * This is deliberately NOT an allowlist and is not a complete moderation system.
+ * Structural constraints elsewhere in this module (exact prompt equality, the
+ * `/^[A-Za-z]{2,24}$/` bubble-word rule, numeric answer recomputation) carry most
+ * of the safety guarantee for the three supported engines. This filter catches
+ * common English profanity/violence/PII patterns, including simple obfuscation
+ * such as "k i l l" or "k1ll", but synonyms, non-English text, and novel
+ * obfuscation can still pass. Treat it as defence-in-depth, not as sufficient.
+ */
 const UNSAFE_CHILD_CONTENT = [
   /\b(?:kill|murder|blood|weapon|gun|knife|bomb|violent|violence|fight|porn|sex|nude|drugs|cocaine|heroin|suicide|self[- ]harm|racist|slur|hate speech|fuck|shit|bitch|damn|asshole|bastard)\b/i,
   /\b(?:password|home address|phone number|credit card|secret from (?:your )?parents|meet (?:me|someone) alone)\b/i,
   /<\s*\/?\s*[a-z][^>]*>|\b(?:https?:\/\/|www\.)/i,
   /\b(?:eval|javascript|firebase|typescript|react component|executable code)\b/i,
 ];
+
+/** Terms that receive the obfuscation-resistant check below (profanity, violence, self-harm, insults). */
+const OBFUSCATABLE_UNSAFE_TERMS = [
+  "kill", "murder", "blood", "weapon", "knife", "bomb", "violent", "violence",
+  "porn", "nude", "cocaine", "heroin", "suicide", "selfharm", "racist",
+  "fuck", "shit", "bitch", "damn", "bastard", "stupid", "idiot", "moron",
+];
+
+/** Per-letter classes covering common leetspeak substitutions. */
+const LEET_LETTER_CLASSES: Record<string, string> = {
+  a: "[a@4]", b: "[b8]", c: "[c(<]", d: "[d]", e: "[e3]", f: "[f]", g: "[g96]", h: "[h]",
+  i: "[i1!|]", j: "[j]", k: "[k]", l: "[l1|]", m: "[m]", n: "[n]", o: "[o0]", p: "[p]",
+  q: "[q9]", r: "[r]", s: "[s5$]", t: "[t7+]", u: "[uv0]", v: "[v]", w: "[w]", x: "[x]",
+  y: "[y]", z: "[z2]",
+};
+
+function buildObfuscatedUnsafePatterns(): RegExp[] {
+  const separator = "[\\s._*@#+-]{0,2}";
+  return OBFUSCATABLE_UNSAFE_TERMS.map((term) => {
+    const letters = [...term].map((letter, index) => {
+      const base = LEET_LETTER_CLASSES[letter] ?? letter.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return index === 0 ? base : `${separator}${base}`;
+    }).join("");
+    return new RegExp(`\\b${letters}(?:s|es|ed|ing)?\\b`, "i");
+  });
+}
+
+const OBFUSCATED_UNSAFE_PATTERNS = buildObfuscatedUnsafePatterns();
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -39,7 +77,9 @@ function isNonEmptyString(value: unknown, maxLength = 240): value is string {
 }
 
 function isSafeText(value: string): boolean {
-  return !UNSAFE_CHILD_CONTENT.some((pattern) => pattern.test(value));
+  if (UNSAFE_CHILD_CONTENT.some((pattern) => pattern.test(value))) return false;
+  const normalized = value.normalize("NFKC").toLocaleLowerCase("en-US");
+  return !OBFUSCATED_UNSAFE_PATTERNS.some((pattern) => pattern.test(normalized));
 }
 
 function addError(
@@ -56,7 +96,8 @@ function difficultyFactorMax(difficulty: ContentDifficulty): number {
 }
 
 function exactKeys(record: Record<string, unknown>, expected: readonly string[]): boolean {
-  return Object.keys(record).every((key) => expected.includes(key));
+  const keys = Object.keys(record);
+  return keys.length === expected.length && keys.every((key) => expected.includes(key));
 }
 
 export function validateContentGenerationRequest(input: unknown):
@@ -489,20 +530,4 @@ export function validateGameBlueprint(
   return errors.length
     ? { valid: false, errors }
     : { valid: true, blueprint: blueprint as unknown as GameBlueprint, errors: [] };
-}
-
-export function isContentDifficulty(value: unknown): value is ContentDifficulty {
-  return DIFFICULTIES.has(value as ContentDifficulty);
-}
-
-export function isContentTheme(value: unknown): value is ContentTheme {
-  return THEMES.has(value as ContentTheme);
-}
-
-export function getDifficultyFactorMaximum(difficulty: ContentDifficulty): number {
-  return difficultyFactorMax(difficulty);
-}
-
-export function isContentAgeBand(value: unknown): value is ContentAgeBand {
-  return typeof value === "string" && ["2-4", "5-7", "7-9", "9-11"].includes(value);
 }

@@ -20,6 +20,7 @@ import {
   awardXP,
   awardGems,
   triggerCelebrationConfetti,
+  DEFAULT_BUDDY,
 } from "../utils/gamification";
 import { BuddyCompanionBadge } from "./BuddyCompanionBadge";
 import {
@@ -234,6 +235,7 @@ export function LearningOdysseyMap({
   const [gamification, setGamification] = useState(getGamificationState);
   const [openedChest, setOpenedChest] = useState(false);
   const [viewMode, setViewMode] = useState<"constellation" | "trail">(() => recommendedNodeId ? "trail" : "constellation");
+  const activeBuddy = gamification.buddy ?? DEFAULT_BUDDY;
 
   useEffect(() => {
     return subscribeGamification(setGamification);
@@ -330,9 +332,9 @@ export function LearningOdysseyMap({
 
         {/* Buddy Companion Progress Card */}
         <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/95 border-3 border-emerald-300 shadow-xl mt-2">
-          <BuddyCompanionBadge buddy={gamification.buddy} size="sm" animated />
+          <BuddyCompanionBadge buddy={activeBuddy} size="sm" animated />
           <div className="text-left text-xs sm:text-sm">
-            <span className="text-emerald-800 font-black">{gamification.buddy.name}</span>{" "}
+            <span className="text-emerald-800 font-black">{activeBuddy.name}</span>{" "}
             <span className="text-slate-600 font-bold">is cheering you on! Total Stars:</span>{" "}
             <span className="text-amber-600 font-black">{gamification.starsCount} ⭐</span>
           </div>

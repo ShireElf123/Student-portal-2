@@ -32,12 +32,16 @@ export interface BlueprintGenerationOptions {
   now?: () => number;
   excludedFingerprints?: string[];
   maxAttempts?: number;
+  /** Hard timeout for a single provider call; timed-out calls are retried within the attempt budget. */
+  providerTimeoutMs?: number;
+  /** Injectable delay between provider-failure retries (tests pass a no-op). */
+  sleep?: (milliseconds: number) => Promise<void>;
 }
 
 export const MAX_GENERATION_ATTEMPTS = 2;
-export const MAX_GENERATED_ROUNDS = 5;
-export const MIN_GENERATED_ROUNDS = 3;
 export const MAX_PROVIDER_RESPONSE_CHARS = 30_000;
+export const DEFAULT_PROVIDER_TIMEOUT_MS = 20_000;
+const PROVIDER_FAILURE_BACKOFF_MS = [0, 300, 900] as const;
 
 const THEME_LABELS: ContentThemeLabel = {
   space: "friendly outer-space explorers",
@@ -62,6 +66,22 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function exactKeys(record: Record<string, unknown>, expected: readonly string[]): boolean {
   return Object.keys(record).length === expected.length && Object.keys(record).every((key) => expected.includes(key));
+}
+
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new Error("provider-timeout")), timeoutMs);
+    }),
+  ]).finally(() => {
+    if (timer) clearTimeout(timer);
+  });
+}
+
+function defaultSleep(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
 function parseProviderOutput(raw: unknown): { value?: unknown; error?: BlueprintValidationError } {
@@ -337,6 +357,10 @@ export async function generateValidatedGameBlueprint(
   }
   const rejected = new Set(excludedResult.fingerprints);
   const now = options.now ?? Date.now;
+  const providerTimeoutMs = Number.isFinite(options.providerTimeoutMs) && Number(options.providerTimeoutMs) > 0
+    ? Number(options.providerTimeoutMs)
+    : DEFAULT_PROVIDER_TIMEOUT_MS;
+  const sleep = options.sleep ?? defaultSleep;
   let attemptErrors: BlueprintValidationError[] = [];
   let avoidContent: string[] = [];
 
@@ -346,13 +370,19 @@ export async function generateValidatedGameBlueprint(
       : addRetryInstruction(buildContentGenerationPrompt(request, avoidContent), attemptErrors, avoidContent);
     let providerOutput: unknown;
     try {
-      providerOutput = await provider.generateStructuredContent(prompt, SYSTEM_INSTRUCTION);
-    } catch {
-      return {
-        valid: false,
-        attempts: attempt,
-        errors: [{ code: "INVALID_CONTENT", field: "provider", message: "The content provider could not complete the structured generation request." }],
-      };
+      providerOutput = await withTimeout(provider.generateStructuredContent(prompt, SYSTEM_INSTRUCTION), providerTimeoutMs);
+    } catch (error) {
+      const timedOut = error instanceof Error && error.message === "provider-timeout";
+      attemptErrors = [{
+        code: "PROVIDER_ERROR",
+        field: "provider",
+        message: timedOut
+          ? "The content provider timed out before returning a structured response."
+          : "The content provider could not complete the structured generation request.",
+      }];
+      if (attempt === maxAttempts) return { valid: false, attempts: attempt, errors: attemptErrors };
+      await sleep(PROVIDER_FAILURE_BACKOFF_MS[Math.min(attempt, PROVIDER_FAILURE_BACKOFF_MS.length - 1)]);
+      continue;
     }
 
     const parsed = parseProviderOutput(providerOutput);
@@ -407,21 +437,6 @@ export async function generateValidatedGameBlueprint(
       message: "No valid blueprint was produced within the configured retry limit.",
     }],
   };
-}
-
-export function getContentSystemInstruction(): string {
-  return SYSTEM_INSTRUCTION;
-}
-
-export function isGeneratedGamePayload(value: unknown): value is GeneratedGamePayload {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value) &&
-    "gameType" in value && isSupportedGameType(value.gameType);
-}
-
-export function validateGeneratedGamePayload(value: unknown, gameType: ContentGenerationRequest["gameType"]):
-  | { valid: true; payload: GeneratedGamePayload; errors: [] }
-  | { valid: false; errors: BlueprintValidationError[] } {
-  return validatePayloadShape(value, gameType);
 }
 
 export type { ContentGenerationRequest, GeneratedGamePayload, SpeedMathPayload, TimesMatrixPayload, BubblePopPayload };

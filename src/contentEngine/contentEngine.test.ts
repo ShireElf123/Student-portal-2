@@ -11,6 +11,7 @@ import { getOrGenerateGameBlueprint } from "../services/gameContentService";
 import type { ContentGenerationRequest, GameBlueprint, GeneratedGamePayload, SupportedGameType } from "./types";
 
 vi.mock("../firebaseCore", () => ({
+  auth: { currentUser: null },
   saveLearnerModelToCloud: vi.fn().mockResolvedValue(undefined),
   fetchLearnerModelFromCloud: vi.fn().mockResolvedValue(null),
   recordCloudLearningEvent: vi.fn().mockResolvedValue(undefined),
@@ -356,5 +357,100 @@ describe("Content Engine V1", () => {
       skillId: "read-k1-alphabet-letters",
       outcome: "correct",
     });
+  });
+
+  it("rejects extra unknown fields at every blueprint level (exact-schema contract)", async () => {
+    const valid = await generateFixture("speed-math");
+    expect(validateGameBlueprint({ ...valid, injectedFlag: true }).errors.some((error) => error.code === "INVALID_CONTENT")).toBe(true);
+
+    const extraRound = {
+      ...valid,
+      content: { rounds: [{ ...valid.content.rounds[0], injectedFlag: true }, ...valid.content.rounds.slice(1)] },
+    };
+    expect(validateGameBlueprint(extraRound).errors.some((error) => error.code === "INVALID_CONTENT")).toBe(true);
+
+    const extraMetadata = { ...valid, metadata: { ...valid.metadata, injectedFlag: true } };
+    expect(validateGameBlueprint(extraMetadata).errors.some((error) => error.code === "INVALID_METADATA")).toBe(true);
+
+    const extraFeedback = { ...valid, feedback: { ...valid.feedback, injectedFlag: "x" } };
+    expect(validateGameBlueprint(extraFeedback).errors.some((error) => error.code === "MISSING_FIELD")).toBe(true);
+
+    const extraVoice = { ...valid, voice: { ...valid.voice, injectedFlag: "x" } };
+    expect(validateGameBlueprint(extraVoice).errors.some((error) => error.code === "MISSING_FIELD")).toBe(true);
+
+    const bubbleBlueprint = await generateFixture("bubble-pop-phonics");
+    const extraBubble = {
+      ...bubbleBlueprint,
+      content: {
+        rounds: bubbleBlueprint.content.rounds.map((round, index) => index === 0
+          ? {
+              ...round,
+              bubbles: round.bubbles.map((bubble, bubbleIndex) =>
+                bubbleIndex === 0 ? { ...bubble, injectedFlag: true } : bubble
+              ),
+            }
+          : round),
+      },
+    };
+    expect(validateGameBlueprint(extraBubble).errors.some((error) => error.code === "INVALID_CONTENT")).toBe(true);
+  });
+
+  it("rejects simple obfuscation of unsafe child content without flagging ordinary school words", async () => {
+    const valid = await generateFixture("speed-math");
+    for (const unsafe of ["k i l l", "k1ll", "sh1t", "fvck", "b1tch", "m0rder"]) {
+      expect(
+        validateGameBlueprint({ ...valid, objective: unsafe }).errors.some((error) => error.code === "UNSAFE_CONTENT"),
+        unsafe
+      ).toBe(true);
+    }
+    for (const safe of ["Practice your skills.", "A class of happy animals.", "Grass and sunshine.", "Add the numbers."]) {
+      expect(
+        validateGameBlueprint({ ...valid, objective: safe }).errors.some((error) => error.code === "UNSAFE_CONTENT"),
+        safe
+      ).toBe(false);
+    }
+  });
+
+  it("retries a transient provider failure within the bounded attempt budget", async () => {
+    const provider: StructuredContentProvider = {
+      name: "flaky-provider",
+      generateStructuredContent: vi.fn()
+        .mockRejectedValueOnce(new Error("network reset"))
+        .mockResolvedValueOnce(JSON.stringify(SPEED_PAYLOAD)),
+    };
+    const outcome = await generateValidatedGameBlueprint(makeRequest(), provider, {
+      sleep: async () => {},
+      now: () => 1_790_000_000_000,
+    });
+    expect(outcome.valid).toBe(true);
+    expect(outcome.attempts).toBe(2);
+    expect(provider.generateStructuredContent).toHaveBeenCalledTimes(2);
+  });
+
+  it("returns structured PROVIDER_ERROR errors after the retry budget is exhausted", async () => {
+    const provider: StructuredContentProvider = {
+      name: "offline-provider",
+      generateStructuredContent: vi.fn().mockRejectedValue(new Error("provider outage")),
+    };
+    const outcome = await generateValidatedGameBlueprint(makeRequest(), provider, { sleep: async () => {} });
+    expect(outcome.valid).toBe(false);
+    expect(outcome.attempts).toBe(2);
+    expect(outcome.errors[0]).toMatchObject({ code: "PROVIDER_ERROR", field: "provider" });
+    expect(provider.generateStructuredContent).toHaveBeenCalledTimes(2);
+  });
+
+  it("times out a provider call that never settles instead of hanging the request", async () => {
+    const provider: StructuredContentProvider = {
+      name: "hanging-provider",
+      generateStructuredContent: vi.fn().mockImplementation(() => new Promise(() => {})),
+    };
+    const outcome = await generateValidatedGameBlueprint(makeRequest(), provider, {
+      providerTimeoutMs: 20,
+      sleep: async () => {},
+    });
+    expect(outcome.valid).toBe(false);
+    expect(outcome.attempts).toBe(2);
+    expect(outcome.errors[0].code).toBe("PROVIDER_ERROR");
+    expect(outcome.errors[0].message).toMatch(/timed out/i);
   });
 });

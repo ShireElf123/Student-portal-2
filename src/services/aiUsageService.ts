@@ -1,3 +1,4 @@
+import type { DocumentData, UpdateData } from "firebase/firestore";
 import { AIUsageStats, SubscriptionStatus, SubscriptionTier } from "../types";
 import { todayISO } from "../utils/dateUtils";
 import { auth } from "../firebaseCore";
@@ -6,7 +7,9 @@ function syncCloudUserFields(fields: Record<string, unknown>) {
   const user = auth.currentUser;
   if (!user) return;
   void Promise.all([import("../firebase"), import("firebase/firestore")])
-    .then(([{ db }, { doc, updateDoc }]) => updateDoc(doc(db, "users", user.uid), fields))
+    .then(([{ db }, { doc, updateDoc }]) =>
+      updateDoc(doc(db, "users", user.uid), fields as unknown as UpdateData<DocumentData>)
+    )
     .catch(() => {
       // Local settings remain authoritative when cloud sync is unavailable.
     });
