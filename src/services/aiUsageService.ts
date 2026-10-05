@@ -29,6 +29,8 @@ export const TIER_LABELS: Record<SubscriptionTier, string> = {
   educator_plus: "Educator Plus",
 };
 
+export type AIUsageAction = "chat" | "practice" | "study_plan" | "content";
+
 type UsageListener = (stats: AIUsageStats) => void;
 const listeners: Set<UsageListener> = new Set();
 
@@ -117,7 +119,7 @@ export function subscribeToAIUsage(listener: UsageListener): () => void {
   };
 }
 
-export function canConsumeAI(action: "chat" | "practice" | "study_plan"): {
+export function canConsumeAI(action: AIUsageAction): {
   allowed: boolean;
   remaining: number;
   reason?: string;
@@ -137,7 +139,7 @@ export function canConsumeAI(action: "chat" | "practice" | "study_plan"): {
 }
 
 export function recordAIConsumption(
-  action: "chat" | "practice" | "study_plan",
+  action: AIUsageAction,
   units = 1
 ): AIUsageStats {
   const today = todayISO();

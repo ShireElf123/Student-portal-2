@@ -5,6 +5,9 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
 import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import { markGameBlueprintCompleted } from "../contentEngine/cache";
+import { recordBlueprintSessionCompletion, recordBubblePopBlueprintResponse } from "../contentEngine/gameAdapters";
+import type { BubblePopBlueprint } from "../contentEngine/types";
 
 interface Bubble {
   id: string;
@@ -47,26 +50,68 @@ const GRADIENTS = [
 export interface ToddlerBubblePopGameProps {
   onAddStar?: (amount?: number) => void;
   onBack?: () => void;
+  blueprint?: BubblePopBlueprint;
+  blueprintLearnerId?: string;
+  onPlayingChange?: (isPlaying: boolean) => void;
 }
 
-export function ToddlerBubblePopGame({ onAddStar, onBack }: ToddlerBubblePopGameProps) {
+export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLearnerId, onPlayingChange }: ToddlerBubblePopGameProps) {
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [poppedCount, setPoppedCount] = useState(0);
   const [targetLetter, setTargetLetter] = useState("A");
   const [poppedParticles, setPoppedParticles] = useState<{ id: string; x: number; y: number; text: string }[]>([]);
   const [isWon, setIsWon] = useState(false);
+  const [responseFeedback, setResponseFeedback] = useState<string | null>(null);
   const bubbleIdCounter = useRef(0);
+  const blueprintRoundIndex = useRef(0);
 
-  // Spawn initial bubbles
+  // Spawn the first authored or generated round without changing the game engine.
   useEffect(() => {
-    speakText("Welcome to Bubble Pop Phonics! Tap the floating bubbles to hear their letter sounds!", {
+    blueprintRoundIndex.current = 0;
+    setPoppedCount(0);
+    setIsWon(false);
+    speakText(blueprint?.voice.introduction ?? "Welcome to Bubble Pop Phonics! Tap the floating bubbles to hear their letter sounds!", {
       pitch: 1.2,
       rate: 0.95,
     });
     spawnWave();
-  }, []);
+  }, [blueprint?.id]);
+
+  const finishGeneratedSession = () => {
+    if (!blueprint) return;
+    const learnerId = blueprintLearnerId ?? getActiveLearnerId();
+    recordBlueprintSessionCompletion(blueprint, learnerId);
+    markGameBlueprintCompleted(blueprint, learnerId);
+    onPlayingChange?.(false);
+  };
 
   const spawnWave = () => {
+    setResponseFeedback(null);
+    if (blueprint) {
+      const round = blueprint.content.rounds[blueprintRoundIndex.current];
+      if (!round) return;
+      const generatedBubbles = round.bubbles.map((item, index): Bubble => {
+        const style = GRADIENTS[index % GRADIENTS.length];
+        const curated = BUBBLE_CATALOG.find((entry) => entry.letter === item.letter);
+        return {
+          id: item.id,
+          letter: item.letter,
+          word: item.word,
+          emoji: curated?.emoji ?? "🔤",
+          xPercent: 8 + (index % 3) * 28 + (Math.random() * 8 - 4),
+          yPercent: 12 + Math.floor(index / 3) * 42 + (Math.random() * 8 - 4),
+          size: 78 + Math.floor(Math.random() * 16),
+          colorGradient: style.grad,
+          borderColor: style.border,
+          speed: 2 + Math.random() * 2,
+        };
+      });
+      setTargetLetter(round.targetLetter);
+      setBubbles(generatedBubbles);
+      setIsWon(false);
+      return;
+    }
+
     const newBubbles: Bubble[] = [];
     const usedLetters: string[] = [];
 
@@ -94,10 +139,22 @@ export function ToddlerBubblePopGame({ onAddStar, onBack }: ToddlerBubblePopGame
     setTargetLetter(chosen);
   };
 
+  const handleRefreshBubbles = () => {
+    if (blueprint && isWon) {
+      blueprintRoundIndex.current = 0;
+      setPoppedCount(0);
+      setIsWon(false);
+      onPlayingChange?.(true);
+    }
+    spawnWave();
+  };
+
   const handlePop = (bubble: Bubble) => {
     soundEffects.playPop();
     const item = BUBBLE_CATALOG.find((b) => b.letter === bubble.letter);
-    if (item) {
+    if (blueprint) {
+      speakText(`${bubble.letter} begins ${bubble.word}.`, { pitch: 1.25, rate: 0.92 });
+    } else if (item) {
       speakText(item.sound, { pitch: 1.25, rate: 0.92 });
     }
 
@@ -120,25 +177,37 @@ export function ToddlerBubblePopGame({ onAddStar, onBack }: ToddlerBubblePopGame
 
     // Every deliberate bubble choice is a phonics response, including a missed target.
     const isTargetMatch = bubble.letter === targetLetter;
+    if (blueprint) {
+      setResponseFeedback(isTargetMatch ? blueprint.feedback.correct : blueprint.feedback.incorrect);
+    }
     try {
-      recordLearningEvent({
-        learnerId: getActiveLearnerId(),
-        activityId: "toddler-bubble-pop-phonics",
-        experienceId: "bubble-pop-phonics",
-        contentId: `${targetLetter}:${bubble.id}`,
-        eventType: "question_answered",
-        activityType: "phonics-pop",
-        activityTitle: `Bubble Pop Phonics: ${isTargetMatch ? "Found" : "Missed"} ${targetLetter}`,
-        skillId: "read-k1-alphabet-letters",
-        domain: "reading",
-        gradeBand: "toddler",
-        result: isTargetMatch ? "success" : "struggle",
-        score: isTargetMatch ? 100 : 0,
-        difficulty: "easy",
-        attempts: 1,
-        hintsUsed: 0,
-        metadata: { selectedLetter: bubble.letter, targetLetter },
-      });
+      const learnerId = blueprint ? blueprintLearnerId ?? getActiveLearnerId() : getActiveLearnerId();
+      if (blueprint) {
+        const round = blueprint.content.rounds[blueprintRoundIndex.current];
+        const bubbleIndex = round?.bubbles.findIndex((item) => item.id === bubble.id) ?? -1;
+        if (bubbleIndex >= 0) {
+          recordBubblePopBlueprintResponse(blueprint, blueprintRoundIndex.current, bubbleIndex, learnerId);
+        }
+      } else {
+        recordLearningEvent({
+          learnerId,
+          activityId: "toddler-bubble-pop-phonics",
+          experienceId: "bubble-pop-phonics",
+          contentId: `${targetLetter}:${bubble.id}`,
+          eventType: "question_answered",
+          activityType: "phonics-pop",
+          activityTitle: `Bubble Pop Phonics: ${isTargetMatch ? "Found" : "Missed"} ${targetLetter}`,
+          skillId: "read-k1-alphabet-letters",
+          domain: "reading",
+          gradeBand: "toddler",
+          result: isTargetMatch ? "success" : "struggle",
+          score: isTargetMatch ? 100 : 0,
+          difficulty: "easy",
+          attempts: 1,
+          hintsUsed: 0,
+          metadata: { selectedLetter: bubble.letter, targetLetter },
+        });
+      }
     } catch (error) {
       console.error("Failed to record bubble phonics response:", error);
     }
@@ -158,11 +227,26 @@ export function ToddlerBubblePopGame({ onAddStar, onBack }: ToddlerBubblePopGame
       onAddStar?.(2);
     }
 
-    // If all popped on screen, spawn next wave
+    // A generated blueprint is a finite set of validated rounds; curated play remains endless.
     if (bubbles.length <= 1) {
-      setTimeout(() => {
-        spawnWave();
-      }, 350);
+      if (blueprint) {
+        blueprintRoundIndex.current += 1;
+        setTimeout(() => {
+          if (blueprintRoundIndex.current >= blueprint.content.rounds.length) {
+            setBubbles([]);
+            setIsWon(true);
+            speakText(blueprint.feedback.completion, { pitch: 1.1, rate: 0.95 });
+            finishGeneratedSession();
+            triggerCelebrationConfetti();
+          } else {
+            spawnWave();
+          }
+        }, 350);
+      } else {
+        setTimeout(() => {
+          spawnWave();
+        }, 350);
+      }
     }
   };
 
@@ -174,7 +258,14 @@ export function ToddlerBubblePopGame({ onAddStar, onBack }: ToddlerBubblePopGame
           <span className="text-3xl p-2.5 bg-amber-100 border border-amber-300 rounded-2xl shadow-sm">🫧</span>
           <div>
             <h3 className="text-base sm:text-lg font-black text-slate-900 font-display">Bubble Pop Phonics</h3>
-            <p className="text-xs text-indigo-900 font-semibold">Tap floating soap bubbles to hear letters and animal words!</p>
+            <p className="text-xs text-indigo-900 font-semibold">
+              {blueprint ? `${blueprint.objective} ${blueprint.instructions}` : "Tap floating soap bubbles to hear letters and animal words!"}
+            </p>
+            {blueprint && (
+              <p className="mt-1 text-[10px] font-black text-indigo-700">
+                Generated round {Math.min(blueprintRoundIndex.current + 1, blueprint.content.rounds.length)} of {blueprint.content.rounds.length}
+              </p>
+            )}
           </div>
         </div>
 
@@ -203,6 +294,15 @@ export function ToddlerBubblePopGame({ onAddStar, onBack }: ToddlerBubblePopGame
           )}
         </div>
       </div>
+
+      {(responseFeedback || isWon) && (
+        <p aria-live="polite" className="relative z-10 mt-3 rounded-2xl bg-white/95 px-4 py-2 text-center text-sm font-black text-indigo-900 shadow">
+          {isWon ? blueprint?.feedback.completion : responseFeedback}
+        </p>
+      )}
+      {blueprint?.hints[0] && !isWon && (
+        <p className="relative z-10 mt-2 text-center text-xs font-semibold text-white/90">Hint: {blueprint.hints[0]}</p>
+      )}
 
       {/* Floating Bubble Aquarium Arena */}
       <div className="relative flex-1 my-4 min-h-[300px] overflow-hidden rounded-3xl border-2 border-white/20 bg-white/10 backdrop-blur-xs">
@@ -268,13 +368,13 @@ export function ToddlerBubblePopGame({ onAddStar, onBack }: ToddlerBubblePopGame
 
       {/* Bottom Action Footer */}
       <div className="relative z-10 flex items-center justify-between text-xs font-black text-white/90 px-2">
-        <span>Tap any bubble to hear its phonics sound!</span>
+        <span>{blueprint ? "Tap a bubble to match the target letter." : "Tap any bubble to hear its phonics sound!"}</span>
         <button
-          onClick={spawnWave}
+          onClick={handleRefreshBubbles}
           className="px-3.5 py-1.5 rounded-2xl bg-white/20 hover:bg-white/30 text-white border border-white/30 cursor-pointer shadow-sm flex items-center gap-1.5"
         >
           <RotateCcw size={13} />
-          <span>New Bubbles</span>
+          <span>{blueprint ? (isWon ? "Replay Generated Set" : "Refresh Round") : "New Bubbles"}</span>
         </button>
       </div>
     </div>
