@@ -333,6 +333,89 @@ service cloud.firestore {
     }
 
     // ==========================================
+    // GENERATED CONTENT POOL VALIDATORS
+    // Shared documents contain only reusable curricula, never learner context.
+    // The client still runs the full deterministic validator on every read/write.
+    // ==========================================
+    function isContentFingerprint(value) {
+      return value is string && value.matches('^fnv1a64-[0-9a-f]{16}$');
+    }
+
+    function isContentPoolKey(value) {
+      return value is string && value.matches('^content-pool-v1:fnv1a64-[0-9a-f]{16}$');
+    }
+
+    function isValidSharedBlueprint(fingerprint, data) {
+      let blueprint = data.blueprint;
+      let metadata = blueprint.metadata;
+      let content = blueprint.content;
+      return blueprint is map &&
+        blueprint.keys().hasAll(['id', 'version', 'gameType', 'skillId', 'ageBand', 'gradeBand', 'difficulty', 'theme', 'objective', 'instructions', 'feedback', 'hints', 'voice', 'metadata', 'content']) &&
+        blueprint.keys().toSet().hasOnly(['id', 'version', 'gameType', 'skillId', 'ageBand', 'gradeBand', 'difficulty', 'theme', 'objective', 'instructions', 'feedback', 'hints', 'voice', 'metadata', 'content']) &&
+        blueprint.version == 'game-blueprint-v1' &&
+        blueprint.gameType == data.gameType && blueprint.skillId == data.skillId &&
+        blueprint.gradeBand == data.gradeBand && blueprint.ageBand == data.ageBand &&
+        blueprint.difficulty == data.difficulty && blueprint.theme == data.theme &&
+        blueprint.id is string && blueprint.id.size() <= 120 &&
+        blueprint.objective is string && blueprint.objective.size() > 0 && blueprint.objective.size() <= 240 &&
+        blueprint.instructions is string && blueprint.instructions.size() > 0 && blueprint.instructions.size() <= 400 &&
+        blueprint.feedback is map &&
+        blueprint.feedback.keys().hasAll(['correct', 'incorrect', 'completion']) &&
+        blueprint.feedback.keys().toSet().hasOnly(['correct', 'incorrect', 'completion']) &&
+        blueprint.feedback.correct is string && blueprint.feedback.correct.size() > 0 && blueprint.feedback.correct.size() <= 160 &&
+        blueprint.feedback.incorrect is string && blueprint.feedback.incorrect.size() > 0 && blueprint.feedback.incorrect.size() <= 160 &&
+        blueprint.feedback.completion is string && blueprint.feedback.completion.size() > 0 && blueprint.feedback.completion.size() <= 160 &&
+        blueprint.hints is list && blueprint.hints.size() >= 1 && blueprint.hints.size() <= 4 &&
+        blueprint.voice is map && blueprint.voice.keys().hasAll(['introduction']) &&
+        blueprint.voice.keys().toSet().hasOnly(['introduction']) &&
+        blueprint.voice.introduction is string && blueprint.voice.introduction.size() > 0 && blueprint.voice.introduction.size() <= 180 &&
+        metadata is map &&
+        metadata.keys().hasAll(['generatedAt', 'validatedAt', 'provider', 'curriculumVersion', 'contentVersion', 'validationStatus', 'fingerprint', 'cacheKey']) &&
+        metadata.keys().toSet().hasOnly(['generatedAt', 'validatedAt', 'provider', 'curriculumVersion', 'contentVersion', 'validationStatus', 'fingerprint', 'cacheKey']) &&
+        metadata.generatedAt is number && metadata.validatedAt is number &&
+        metadata.provider is string && metadata.provider.size() > 0 && metadata.provider.size() <= 40 &&
+        metadata.curriculumVersion == 'curriculum-universe-v1' &&
+        metadata.contentVersion == 'game-content-v1' && metadata.validationStatus == 'valid' &&
+        metadata.fingerprint == fingerprint && isContentFingerprint(metadata.fingerprint) &&
+        metadata.cacheKey is string && metadata.cacheKey.matches('^content-cache-v1:fnv1a64-[0-9a-f]{16}$') &&
+        content is map && content.keys().hasAll(['rounds']) &&
+        content.keys().toSet().hasOnly(['rounds']) &&
+        content.rounds is list && content.rounds.size() == data.roundCount &&
+        (((data.gameType == 'speed-math' || data.gameType == 'times-matrix') &&
+          content.rounds.size() >= 3 && content.rounds.size() <= 5) ||
+         (data.gameType == 'bubble-pop-phonics' && content.rounds.size() >= 3 && content.rounds.size() <= 5));
+    }
+
+    function isValidSharedBlueprintDocument(fingerprint, data) {
+      return isContentFingerprint(fingerprint) &&
+        data.keys().hasAll(['fingerprint', 'poolKey', 'gameType', 'skillId', 'gradeBand', 'ageBand', 'difficulty', 'theme', 'roundCount', 'blueprintVersion', 'createdAt', 'expiresAt', 'blueprint']) &&
+        data.keys().toSet().hasOnly(['fingerprint', 'poolKey', 'gameType', 'skillId', 'gradeBand', 'ageBand', 'difficulty', 'theme', 'roundCount', 'blueprintVersion', 'createdAt', 'expiresAt', 'blueprint']) &&
+        data.fingerprint == fingerprint && isContentPoolKey(data.poolKey) &&
+        data.gameType in ['speed-math', 'times-matrix', 'bubble-pop-phonics'] &&
+        ((data.gameType in ['speed-math', 'times-matrix'] && data.skillId == 'math-23-multiplication' && data.gradeBand == '2-3' && data.ageBand == '7-9') ||
+         (data.gameType == 'bubble-pop-phonics' && data.skillId == 'read-k1-alphabet-letters' && data.gradeBand == 'K-1' && data.ageBand == '2-4')) &&
+        data.difficulty in ['easy', 'medium', 'hard'] &&
+        data.theme in ['space', 'garden', 'ocean', 'animals', 'everyday'] &&
+        data.roundCount is int && data.roundCount >= 3 && data.roundCount <= 5 &&
+        data.blueprintVersion == 'game-blueprint-v1' &&
+        data.createdAt is number && data.expiresAt is number &&
+        data.createdAt > 0 && data.expiresAt > data.createdAt &&
+        data.expiresAt <= data.createdAt + 15552000000 &&
+        isValidSharedBlueprint(fingerprint, data);
+    }
+
+    function isValidGeneratedContentState(data) {
+      return data.keys().hasAll(['version', 'playedFingerprints', 'invalidFingerprints', 'reservations', 'refillTimes', 'updatedAt']) &&
+        data.keys().toSet().hasOnly(['version', 'playedFingerprints', 'invalidFingerprints', 'reservations', 'refillTimes', 'updatedAt']) &&
+        data.version == 'content-pool-learner-state-v1' &&
+        data.playedFingerprints is list && data.playedFingerprints.size() <= 200 &&
+        data.invalidFingerprints is list && data.invalidFingerprints.size() <= 100 &&
+        data.reservations is list && data.reservations.size() <= 20 &&
+        data.refillTimes is list && data.refillTimes.size() <= 40 &&
+        data.updatedAt is number;
+    }
+
+    // ==========================================
     // ROOT CATCH-ALL DEFAULT DENY
     // ==========================================
     match /{document=**} {
@@ -423,6 +506,14 @@ service cloud.firestore {
         allow delete: if isOwner(userId);
       }
 
+      // Generated-content consumption, reservations, and refill limits are private to the account owner.
+      match /generatedContentState/{learnerId} {
+        allow get: if isOwner(userId);
+        allow list: if false;
+        allow create, update: if isOwner(userId) && isValidGeneratedContentState(incoming());
+        allow delete: if false;
+      }
+
       // Verified Parent Link Grants: the ONLY basis for parental read access.
       // A grant can be minted only while presenting a live, unexpired,
       // unconsumed link code issued for this exact student — knowledge of the
@@ -445,6 +536,17 @@ service cloud.firestore {
         // Either the student (revoke access) or the parent (leave the family) can delete.
         allow delete: if isOwner(userId) || (isSignedIn() && request.auth.uid == parentUid);
       }
+    }
+
+    // ==========================================
+    // SHARED, NON-PII GENERATED BLUEPRINT POOL
+    // All signed-in readers revalidate each blueprint in the content engine before use.
+    // Validated content is immutable to prevent one client from replacing another's pool entry.
+    // ==========================================
+    match /generatedGameBlueprints/{fingerprint} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isValidSharedBlueprintDocument(fingerprint, incoming());
+      allow update, delete: if false;
     }
 
     // ==========================================

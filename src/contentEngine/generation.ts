@@ -1,5 +1,5 @@
 import { CURRICULUM_SKILL_NODES } from "../data/curriculumUniverse";
-import { buildContentCacheKey, fingerprintGameBlueprint, gameBlueprintId } from "./fingerprint";
+import { buildBlueprintCacheKey, fingerprintGameBlueprint, gameBlueprintId } from "./fingerprint";
 import { getSupportedGameEngine, isSupportedGameType } from "./registry";
 import { validateContentGenerationRequest, validateExcludedFingerprints, validateGameBlueprint } from "./validation";
 import {
@@ -32,7 +32,7 @@ export interface BlueprintGenerationOptions {
   now?: () => number;
   excludedFingerprints?: string[];
   maxAttempts?: number;
-  /** Hard timeout for a single provider call; timed-out calls are retried within the attempt budget. */
+  /** Caller timeout for a provider call; a timeout is not retried because upstream work may still be billable. */
   providerTimeoutMs?: number;
   /** Injectable delay between provider-failure retries (tests pass a no-op). */
   sleep?: (milliseconds: number) => Promise<void>;
@@ -320,7 +320,7 @@ function createBlueprintFromPayload(
       contentVersion: GAME_CONTENT_VERSION,
       validationStatus: "valid" as const,
       fingerprint: "pending",
-      cacheKey: buildContentCacheKey(request),
+      cacheKey: buildBlueprintCacheKey(request),
     },
   } as unknown as GameBlueprint;
   const fingerprint = fingerprintGameBlueprint(provisional);
@@ -380,7 +380,7 @@ export async function generateValidatedGameBlueprint(
           ? "The content provider timed out before returning a structured response."
           : "The content provider could not complete the structured generation request.",
       }];
-      if (attempt === maxAttempts) return { valid: false, attempts: attempt, errors: attemptErrors };
+      if (timedOut || attempt === maxAttempts) return { valid: false, attempts: attempt, errors: attemptErrors };
       await sleep(PROVIDER_FAILURE_BACKOFF_MS[Math.min(attempt, PROVIDER_FAILURE_BACKOFF_MS.length - 1)]);
       continue;
     }

@@ -132,7 +132,11 @@ export function HomeDashboard({ notebooks, studyPlan, practiceSessions, onNaviga
                         {item.completed ? <CheckCircle2 size={17} /> : item.slot}
                       </span>
                       <div className="min-w-0">
-                        <p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-200">{item.reason.replace(/-/g, " ")}</p>
+                        <p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-200">
+                          {item.reason.replace(/-/g, " ")} · {item.delivery?.kind === "generated-content"
+                            ? `generated ${item.delivery.gameType.replace(/-/g, " ")}`
+                            : "registered activity"}
+                        </p>
                         <h3 className="mt-1 line-clamp-2 text-sm font-bold text-white">{item.title}</h3>
                         <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-400">{item.description}</p>
                       </div>

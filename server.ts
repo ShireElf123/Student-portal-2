@@ -5,15 +5,19 @@ import dotenv from "dotenv";
 import { aiService } from "./server/aiService";
 import { PracticeQuestion, StudyPlanTask } from "./server/types";
 import { validatePracticeRequest, validatePracticeQuestions } from "./server/practiceValidation";
-import { validateContentGenerationRequest, validateExcludedFingerprints } from "./src/contentEngine/validation";
-import { ContentGenerationRateLimiter } from "./server/contentRateLimit";
-import { generateGameBlueprintWithProvider } from "./server/contentGeneration";
-import { createContentAuthMiddleware, createFirebaseContentAuthVerifier, getContentIdentity } from "./server/contentAuth";
+import { createContentGenerationRouter } from "./server/contentApi";
 
 dotenv.config();
 
-const contentGenerationLimiter = new ContentGenerationRateLimiter(3, 12);
-const requireContentAuth = createContentAuthMiddleware(createFirebaseContentAuthVerifier());
+function getTrustedProxyHops(): number | false {
+  const configured = process.env.TRUST_PROXY?.trim();
+  if (!configured || configured.toLowerCase() === "false") return false;
+  if (configured.toLowerCase() === "true") return 1;
+  const hops = Number(configured);
+  if (Number.isSafeInteger(hops) && hops >= 1) return hops;
+  console.warn("Ignoring invalid TRUST_PROXY; set it to a trusted proxy hop count or leave it unset.");
+  return false;
+}
 
 /**
  * Model credentials are server-side secrets only. The Firebase *web* API key shipped in
@@ -32,8 +36,8 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  // Only trust forwarded headers when explicitly configured, so req.ip cannot be spoofed by default.
-  app.set("trust proxy", process.env.TRUST_PROXY === "1" || process.env.TRUST_PROXY === "true");
+  // Use an explicit trusted-hop count; boolean `true` would trust spoofable X-Forwarded-For chains.
+  app.set("trust proxy", getTrustedProxyHops());
 
   app.use(express.json());
 
@@ -202,67 +206,8 @@ Return a valid JSON array of question objects adhering strictly to this schema:
     }
   });
 
-  // Structured game-content generation. Content is validated before it leaves the server;
-  // learner outcomes remain deterministic in the existing game/evidence pipeline.
-  app.post("/api/content/generate", requireContentAuth, async (req, res) => {
-    const body = req.body && typeof req.body === "object" && !Array.isArray(req.body)
-      ? req.body as Record<string, unknown>
-      : {};
-    let requestSize = 0;
-    try {
-      requestSize = JSON.stringify(body).length;
-    } catch {
-      requestSize = Number.POSITIVE_INFINITY;
-    }
-    if (requestSize > 32_000) {
-      return res.status(413).json({ error: "Content generation request is too large." });
-    }
-
-    const requestResult = validateContentGenerationRequest(body.request);
-    if (!requestResult.valid) {
-      return res.status(400).json({ error: "Content generation request is invalid.", errors: requestResult.errors });
-    }
-    const excludedResult = validateExcludedFingerprints(body.excludedFingerprints ?? []);
-    if (!excludedResult.valid) {
-      return res.status(400).json({ error: "Content de-duplication data is invalid.", errors: excludedResult.errors });
-    }
-    if (!getApiKey()) {
-      return res.status(503).json({ error: "Structured content generation is unavailable because GEMINI_API_KEY is not configured." });
-    }
-
-    const identity = getContentIdentity(res);
-    const rateLimit = contentGenerationLimiter.consume(identity?.uid || req.ip || req.socket.remoteAddress || "anonymous");
-    if (!rateLimit.allowed) {
-      if (rateLimit.retryAfterSeconds > 0) res.setHeader("Retry-After", String(rateLimit.retryAfterSeconds));
-      return res.status(429).json({
-        error: rateLimit.reason === "daily-limit"
-          ? "This address has reached today's content-generation limit. Try cached learning content or come back tomorrow."
-          : "Too many content-generation requests. Please wait before trying again.",
-      });
-    }
-
-    try {
-      const outcome = await generateGameBlueprintWithProvider({
-        request: requestResult.request,
-        excludedFingerprints: excludedResult.fingerprints,
-      });
-      if (!outcome.valid) {
-        console.warn(
-          `Structured content generation rejected for learner ${identity?.uid ?? "unknown"} after ${outcome.attempts} attempt(s): ` +
-          outcome.errors.map((error) => `${error.code}@${error.field}`).join(", ")
-        );
-        return res.status(502).json({
-          error: "The provider did not produce a valid, original game blueprint within the retry limit.",
-          attempts: outcome.attempts,
-          errors: outcome.errors,
-        });
-      }
-      return res.json({ blueprint: outcome.blueprint, attempts: outcome.attempts });
-    } catch (error: unknown) {
-      console.error("Structured content generation failed:", error);
-      return res.status(502).json({ error: "Structured content generation failed safely. Curated activities remain available." });
-    }
-  });
+  // Structured generation is extracted so authentication, admission limits, and the provider boundary can be integration-tested.
+  app.use(createContentGenerationRouter());
 
   // Study plan generation endpoint
   app.post("/api/study-plan/generate", async (req, res) => {

@@ -1,18 +1,21 @@
 import { readScopedJSON, writeScopedJSON } from "../utils/accountStorage";
-import { buildContentCacheKey, fingerprintGameBlueprint } from "./fingerprint";
+import { CONTENT_POOL_POLICY, CONTENT_POOL_REFILL_THRESHOLD } from "./policy";
+import { fingerprintGameBlueprint } from "./fingerprint";
 import { validateGameBlueprint } from "./validation";
 import type { ContentGenerationRequest, GameBlueprint } from "./types";
 
 const CACHE_STORAGE_KEY = "student_portal_generated_game_content_v1";
-const PLAYED_STORAGE_KEY = "student_portal_generated_game_content_played_v1";
+export const GENERATED_CONTENT_PLAYED_STORAGE_KEY = "student_portal_generated_game_content_played_v1";
+const PLAYED_STORAGE_KEY = GENERATED_CONTENT_PLAYED_STORAGE_KEY;
 const CACHE_DOCUMENT_VERSION = "generated-content-cache-v1" as const;
 export const MAX_CACHED_BLUEPRINTS = 40;
-export const CONTENT_POOL_REFILL_THRESHOLD = 3;
+export { CONTENT_POOL_REFILL_THRESHOLD } from "./policy";
 
-interface CachedBlueprintEntry {
+export interface CachedBlueprintEntry {
   cacheKey: string;
   blueprint: GameBlueprint;
   storedAt: number;
+  expiresAt?: number;
 }
 
 interface CachedBlueprintDocument {
@@ -52,10 +55,15 @@ function readDocument(): CachedBlueprintDocument {
       const validation = validateGameBlueprint(candidate.blueprint);
       if (!validation.valid || candidate.cacheKey !== validation.blueprint.metadata.cacheKey ||
         !Number.isFinite(candidate.storedAt)) continue;
+      const storedAt = Number(candidate.storedAt);
+      const expiresAt = Number.isFinite(candidate.expiresAt)
+        ? Number(candidate.expiresAt)
+        : storedAt + CONTENT_POOL_POLICY.contentLifetimeMs;
       entries.push({
         cacheKey: candidate.cacheKey,
         blueprint: validation.blueprint,
-        storedAt: Number(candidate.storedAt),
+        storedAt,
+        expiresAt,
       });
     }
     return { version: CACHE_DOCUMENT_VERSION, entries: entries.slice(0, MAX_CACHED_BLUEPRINTS) };
@@ -83,8 +91,12 @@ function getPlayedFingerprints(learnerId: string): string[] {
   return [...new Set(played.filter((item): item is string => typeof item === "string"))].slice(-200);
 }
 
+export function getCachedGameBlueprintEntries(): CachedBlueprintEntry[] {
+  return readDocument().entries;
+}
+
 export function getCachedGameBlueprints(): GameBlueprint[] {
-  return readDocument().entries.map((entry) => entry.blueprint);
+  return getCachedGameBlueprintEntries().map((entry) => entry.blueprint);
 }
 
 export function getKnownBlueprintFingerprints(): string[] {
@@ -95,10 +107,9 @@ export function findReusableGameBlueprint(
   request: ContentGenerationRequest,
   learnerId: string
 ): GameBlueprint | null {
-  const cacheKey = buildContentCacheKey(request);
   const played = new Set(getPlayedFingerprints(learnerId));
-  const entries = readDocument().entries
-    .filter((entry) => entry.cacheKey === cacheKey)
+  const entries = getCachedGameBlueprintEntries()
+    .filter((entry) => entry.expiresAt === undefined || entry.expiresAt > Date.now())
     .sort((left, right) => left.storedAt - right.storedAt);
 
   for (const entry of entries) {
@@ -113,10 +124,10 @@ export function getContentPoolStatus(
   learnerId: string,
   refillThreshold = CONTENT_POOL_REFILL_THRESHOLD
 ): ContentPoolStatus {
-  const cacheKey = buildContentCacheKey(request);
   const played = new Set(getPlayedFingerprints(learnerId));
-  const usableBlueprintCount = readDocument().entries.filter((entry) => {
-    if (entry.cacheKey !== cacheKey || played.has(entry.blueprint.metadata.fingerprint)) return false;
+  const usableBlueprintCount = getCachedGameBlueprintEntries().filter((entry) => {
+    if ((entry.expiresAt !== undefined && entry.expiresAt <= Date.now()) ||
+      played.has(entry.blueprint.metadata.fingerprint)) return false;
     return validateGameBlueprint(entry.blueprint, { expectedRequest: request }).valid;
   }).length;
   return {
@@ -127,7 +138,10 @@ export function getContentPoolStatus(
 }
 
 /** Persists only a fully validated blueprint; semantic duplicates are never written twice. */
-export function cacheValidatedGameBlueprint(input: unknown): CacheWriteResult {
+export function cacheValidatedGameBlueprint(
+  input: unknown,
+  options: { now?: number; expiresAt?: number } = {}
+): CacheWriteResult {
   const validation = validateGameBlueprint(input);
   if (!validation.valid) {
     return { stored: false, duplicate: false, error: validation.errors.map((error) => error.message).join(" ") };
@@ -142,9 +156,13 @@ export function cacheValidatedGameBlueprint(input: unknown): CacheWriteResult {
     return { stored: false, duplicate: true, blueprint: duplicate.blueprint };
   }
 
+  const storedAt = Number.isFinite(options.now) ? Number(options.now) : Date.now();
+  const expiresAt = Number.isFinite(options.expiresAt)
+    ? Number(options.expiresAt)
+    : storedAt + CONTENT_POOL_POLICY.contentLifetimeMs;
   const next: CachedBlueprintDocument = {
     version: CACHE_DOCUMENT_VERSION,
-    entries: [{ cacheKey: blueprint.metadata.cacheKey, blueprint, storedAt: Date.now() }, ...document.entries]
+    entries: [{ cacheKey: blueprint.metadata.cacheKey, blueprint, storedAt, expiresAt }, ...document.entries]
       .slice(0, MAX_CACHED_BLUEPRINTS),
   };
   const stored = writeDocument(next);
@@ -158,8 +176,9 @@ export function markGameBlueprintCompleted(blueprint: GameBlueprint, learnerId: 
   if (!validation.valid || !learnerId.trim()) return;
   const fingerprint = fingerprintGameBlueprint(validation.blueprint);
   const played = getPlayedFingerprints(learnerId);
-  if (played.includes(fingerprint)) return;
-  writeScopedJSON(PLAYED_STORAGE_KEY, [...played, fingerprint].slice(-200), learnerId);
+  if (!played.includes(fingerprint)) {
+    writeScopedJSON(PLAYED_STORAGE_KEY, [...played, fingerprint].slice(-200), learnerId);
+  }
 }
 
 export function clearGeneratedContentCacheForTests(): void {

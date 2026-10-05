@@ -51,7 +51,8 @@ export function buildContentGenerationRequest(
   gameType: SupportedGameType,
   skillId: string,
   theme: ContentTheme,
-  roundCount = 5
+  roundCount = 5,
+  difficultyOverride?: ContentDifficulty
 ): ContentGenerationRequest {
   const engine = getSupportedGameEngine(gameType);
   const skill = SKILL_BY_ID.get(skillId);
@@ -63,7 +64,7 @@ export function buildContentGenerationRequest(
     gameType,
     skillId,
     gradeBand: skill.gradeBand,
-    difficulty: getContentDifficultyForLearner(model, skillId),
+    difficulty: difficultyOverride ?? getContentDifficultyForLearner(model, skillId),
     theme,
     roundCount,
     learnerContext: buildLearnerGenerationContext(model, skillId),

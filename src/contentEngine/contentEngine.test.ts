@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getInitialLearnerModel, getLearnerModel, setActiveLearnerId } from "../utils/learnerBrain";
 import { buildContentGenerationRequest, buildLearnerGenerationContext } from "./learnerContext";
 import { cacheValidatedGameBlueprint, clearGeneratedContentCacheForTests, findReusableGameBlueprint, getContentPoolStatus, getKnownBlueprintFingerprints, markGameBlueprintCompleted } from "./cache";
-import { fingerprintGameBlueprint } from "./fingerprint";
+import { buildContentGenerationFlightKey, fingerprintGameBlueprint } from "./fingerprint";
 import { adaptSpeedMathRound, adaptTimesMatrixRound, recordBlueprintSessionCompletion, recordBubblePopBlueprintResponse, recordSpeedMathBlueprintResponse, recordTimesMatrixBlueprintResponse } from "./gameAdapters";
 import { generateValidatedGameBlueprint, StructuredContentProvider } from "./generation";
 import { validateContentGenerationRequest, validateGameBlueprint } from "./validation";
@@ -168,6 +168,30 @@ describe("Content Engine V1", () => {
     expect(validateGameBlueprint(outcome.blueprint, { expectedRequest: makeRequest("speed-math") }).valid).toBe(true);
   });
 
+  it("keeps learner-specific generation signals out of persisted shared blueprint keys", async () => {
+    const firstRequest = makeRequest("speed-math");
+    const secondRequest: ContentGenerationRequest = {
+      ...firstRequest,
+      learnerContext: {
+        ...firstRequest.learnerContext,
+        masteryBand: "developing",
+        currentDifficultyLevel: 3,
+        recentIncorrectCount: 2,
+        weakSkillIds: ["math-23-multiplication"],
+      },
+    };
+    const [first, second] = await Promise.all([
+      generateValidatedGameBlueprint(firstRequest, providerFor(SPEED_PAYLOAD), { now: () => 1_790_000_000_000 }),
+      generateValidatedGameBlueprint(secondRequest, providerFor(SPEED_PAYLOAD), { now: () => 1_790_000_000_000 }),
+    ]);
+
+    expect(first.valid).toBe(true);
+    expect(second.valid).toBe(true);
+    if (!first.valid || !second.valid) throw new Error("The context privacy fixture should produce valid blueprints.");
+    expect(first.blueprint.metadata.cacheKey).toBe(second.blueprint.metadata.cacheKey);
+    expect(buildContentGenerationFlightKey(firstRequest)).not.toBe(buildContentGenerationFlightKey(secondRequest));
+  });
+
   it("validates every supported discriminated content shape", async () => {
     for (const gameType of ["speed-math", "times-matrix", "bubble-pop-phonics"] as const) {
       const blueprint = await generateFixture(gameType);
@@ -275,12 +299,12 @@ describe("Content Engine V1", () => {
     expect(cacheValidatedGameBlueprint({ invalid: true }).stored).toBe(false);
 
     const transport = { generate: vi.fn() };
-    const beforeGenerate = vi.fn();
-    const result = await getOrGenerateGameBlueprint(makeRequest(), "learner-cache-hit", { transport, beforeGenerate });
+    const beforeRequest = vi.fn();
+    const result = await getOrGenerateGameBlueprint(makeRequest(), "learner-cache-hit", { transport, beforeRequest });
     expect(result.source).toBe("cache");
     expect(result.blueprint.id).toBe(blueprint.id);
     expect(transport.generate).not.toHaveBeenCalled();
-    expect(beforeGenerate).not.toHaveBeenCalled();
+    expect(beforeRequest).not.toHaveBeenCalled();
     expect(findReusableGameBlueprint(makeRequest(), "learner-cache-hit")?.id).toBe(blueprint.id);
   });
 
@@ -449,7 +473,8 @@ describe("Content Engine V1", () => {
       sleep: async () => {},
     });
     expect(outcome.valid).toBe(false);
-    expect(outcome.attempts).toBe(2);
+    expect(outcome.attempts).toBe(1);
+    expect(provider.generateStructuredContent).toHaveBeenCalledTimes(1);
     expect(outcome.errors[0].code).toBe("PROVIDER_ERROR");
     expect(outcome.errors[0].message).toMatch(/timed out/i);
   });

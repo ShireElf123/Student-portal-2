@@ -47,6 +47,7 @@ export interface GameBlueprintMetadata {
   contentVersion: typeof GAME_CONTENT_VERSION;
   validationStatus: "valid";
   fingerprint: string;
+  /** Content compatibility key only; never a hash of private learner-generation context. */
   cacheKey: string;
 }
 

@@ -122,6 +122,11 @@ export function subscribeToAIUsage(listener: UsageListener): () => void {
   };
 }
 
+/**
+ * Local experience-meter check only. localStorage and client-written profile fields are
+ * user controlled; paid-plan enforcement is intentionally not claimed here. The content
+ * API has a separate server-side per-UID rate limiter for generation abuse protection.
+ */
 export function canConsumeAI(action: AIUsageAction): {
   allowed: boolean;
   remaining: number;
@@ -147,7 +152,8 @@ export function recordAIConsumption(
 ): AIUsageStats {
   const today = todayISO();
   const current = getStoredUsage();
-  const newCount = (current.date === today ? current.count : 0) + units;
+  const safeUnits = Number.isFinite(units) ? Math.max(1, Math.min(100, Math.floor(units))) : 1;
+  const newCount = (current.date === today ? current.count : 0) + safeUnits;
 
   const updated = { count: newCount, date: today };
   try {

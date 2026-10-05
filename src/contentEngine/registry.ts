@@ -62,6 +62,13 @@ export function getSupportedGameEngine(gameType: SupportedGameType): SupportedGa
   return SUPPORTED_GAME_ENGINES[gameType];
 }
 
+/** Returns a generated-content renderer only when the canonical activity already supports it. */
+export function findSupportedGameTypeForActivity(activityId: string, skillId: string): SupportedGameType | null {
+  return Object.values(SUPPORTED_GAME_ENGINES).find((engine) =>
+    engine.activityId === activityId && engine.skillIds.includes(skillId)
+  )?.gameType ?? null;
+}
+
 export function validateSupportedGameEngineRegistry(): string[] {
   const issues: string[] = [];
   const skillsById = new Map(CURRICULUM_SKILL_NODES.map((skill) => [skill.id, skill]));

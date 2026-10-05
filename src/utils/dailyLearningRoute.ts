@@ -2,8 +2,20 @@ import { CURRICULUM_SKILL_NODES } from "../data/curriculumUniverse";
 import { getActivitiesForSkill, resolveActivityDefinition, LearningActivityDefinition } from "../data/activitySkillRegistry";
 import type { LearnerModel } from "./learnerBrain";
 import { todayISO } from "./dateUtils";
+import { findSupportedGameTypeForActivity, getSupportedGameEngine, isSupportedGameType } from "../contentEngine/registry";
+import { getContentDifficultyForLearner } from "../contentEngine/learnerContext";
+import type { ContentDifficulty, ContentTheme, SupportedGameType } from "../contentEngine/types";
 
 export type DailyRouteReason = "recent-mistake" | "reinforcement" | "new-skill" | "spaced-review";
+
+export type DailyRouteDelivery =
+  | { kind: "registered-activity" }
+  | {
+      kind: "generated-content";
+      gameType: SupportedGameType;
+      difficulty: ContentDifficulty;
+      theme: ContentTheme;
+    };
 
 export interface DailyRouteItem {
   id: string;
@@ -16,6 +28,8 @@ export interface DailyRouteItem {
   experienceId: string;
   targetTab: LearningActivityDefinition["launch"]["route"];
   targetId: string;
+  /** Optional for backwards compatibility with the persisted learning-route-v1 shape. */
+  delivery?: DailyRouteDelivery;
   completed: boolean;
 }
 
@@ -93,6 +107,15 @@ function createItem(
   const node = CURRICULUM_SKILL_NODES.find((candidate) => candidate.id === skillId);
   if (!node) throw new Error(`Daily route references unknown curriculum skill ${skillId}`);
   const activity = pickActivity(skillId, model.gradeBand);
+  const supportedGameType = findSupportedGameTypeForActivity(activity.id, skillId);
+  const delivery: DailyRouteDelivery = supportedGameType
+    ? {
+        kind: "generated-content",
+        gameType: supportedGameType,
+        difficulty: getContentDifficultyForLearner(model, skillId),
+        theme: supportedGameType === "bubble-pop-phonics" ? "garden" : "space",
+      }
+    : { kind: "registered-activity" };
   const descriptions: Record<DailyRouteReason, string> = {
     "recent-mistake": "Revisit a skill after a recent challenging response.",
     reinforcement: "Strengthen a skill that has needed extra support.",
@@ -110,6 +133,7 @@ function createItem(
     experienceId: activity.experienceId,
     targetTab: activity.launch.route,
     targetId: activity.launch.targetId,
+    delivery,
     completed,
   };
 }
@@ -299,6 +323,30 @@ export function validateDailyLearningRoute(route: DailyLearningRoute): string[] 
       }
     } catch (error) {
       issues.push(error instanceof Error ? error.message : `Unknown activity ${item.activityId}`);
+    }
+    if (item.delivery !== undefined) {
+      if (!item.delivery || typeof item.delivery !== "object" || Array.isArray(item.delivery)) {
+        issues.push(`Daily route item ${item.id} has invalid delivery metadata`);
+      } else if (item.delivery.kind === "registered-activity") {
+        // The route uses the canonical registered activity without generated content.
+      } else if (item.delivery.kind === "generated-content") {
+        if (!isSupportedGameType(item.delivery.gameType)) {
+          issues.push(`Daily route item ${item.id} references an unsupported generated game`);
+        } else {
+          const game = getSupportedGameEngine(item.delivery.gameType);
+          if (game.activityId !== item.activityId || !game.skillIds.includes(item.skillId)) {
+            issues.push(`Daily route item ${item.id} has a generated game incompatible with its registered activity or skill`);
+          }
+        }
+        if (!["easy", "medium", "hard"].includes(item.delivery.difficulty)) {
+          issues.push(`Daily route item ${item.id} has an invalid generated-content difficulty`);
+        }
+        if (!["space", "garden", "ocean", "animals", "everyday"].includes(item.delivery.theme)) {
+          issues.push(`Daily route item ${item.id} has an unsupported generated-content theme`);
+        }
+      } else {
+        issues.push(`Daily route item ${item.id} has an unknown delivery mode`);
+      }
     }
     if (typeof item.completed !== "boolean") issues.push(`Daily route item ${item.id} has invalid completion state`);
   }

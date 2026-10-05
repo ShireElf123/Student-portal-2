@@ -1,6 +1,6 @@
 import { getActivitiesForSkill, resolveActivityDefinition } from "../data/activitySkillRegistry";
 import { CURRICULUM_SKILL_NODES, GradeLevelBand } from "../data/curriculumUniverse";
-import { buildContentCacheKey, fingerprintGameBlueprint, gameBlueprintId } from "./fingerprint";
+import { fingerprintGameBlueprint, gameBlueprintId } from "./fingerprint";
 import { getSupportedGameEngine, isSupportedGameType } from "./registry";
 import {
   BlueprintValidationError,
@@ -107,6 +107,9 @@ export function validateContentGenerationRequest(input: unknown):
   if (!isRecord(input)) {
     return { valid: false, errors: [{ code: "INVALID_REQUEST", field: "request", message: "Generation request must be an object." }] };
   }
+  if (!exactKeys(input, ["gameType", "skillId", "gradeBand", "difficulty", "theme", "roundCount", "learnerContext"])) {
+    addError(errors, "INVALID_REQUEST", "request", "Generation request has missing or unsupported fields.");
+  }
 
   if (!isSupportedGameType(input.gameType)) {
     addError(errors, "UNSUPPORTED_GAME_TYPE", "gameType", "Select one of the registered content-compatible game engines.");
@@ -132,6 +135,9 @@ export function validateContentGenerationRequest(input: unknown):
   if (!isRecord(rawContext)) {
     addError(errors, "INVALID_REQUEST", "learnerContext", "Learner context must contain only validated learning signals.");
   } else {
+    if (!exactKeys(rawContext, ["gradeBand", "masteryBand", "currentDifficultyLevel", "recentIncorrectCount", "weakSkillIds"])) {
+      addError(errors, "INVALID_REQUEST", "learnerContext", "Learner context has missing or unsupported fields.");
+    }
     const weakSkillIds = rawContext.weakSkillIds;
     const validWeakSkillIds = Array.isArray(weakSkillIds) && weakSkillIds.length <= 5 && weakSkillIds.every(
       (skillId) => typeof skillId === "string" && SKILL_BY_ID.has(skillId)
@@ -302,6 +308,7 @@ function validateMathRounds(
   if (typeof blueprint.difficulty !== "string" || !DIFFICULTIES.has(blueprint.difficulty as ContentDifficulty)) return;
   const maxFactor = difficultyFactorMax(blueprint.difficulty as ContentDifficulty);
   const roundKeys = new Set<string>();
+  const roundIds = new Set<string>();
 
   rounds.forEach((candidate, index) => {
     const field = `content.rounds[${index}]`;
@@ -315,7 +322,13 @@ function validateMathRounds(
     if (!exactKeys(candidate, expectedKeys)) {
       addError(errors, "INVALID_CONTENT", field, "Round has missing or unsupported fields.");
     }
-    if (!isNonEmptyString(candidate.id, 80)) addError(errors, "MISSING_FIELD", `${field}.id`, "Round ID is required.");
+    if (!isNonEmptyString(candidate.id, 80)) {
+      addError(errors, "MISSING_FIELD", `${field}.id`, "Round ID is required.");
+    } else if (roundIds.has(candidate.id)) {
+      addError(errors, "DUPLICATE_CONTENT", `${field}.id`, "Round IDs must be unique within a blueprint.");
+    } else {
+      roundIds.add(candidate.id);
+    }
     const leftKey = gameType === "speed-math" ? "leftOperand" : "leftFactor";
     const rightKey = gameType === "speed-math" ? "rightOperand" : "rightFactor";
     const left = candidate[leftKey];
@@ -351,6 +364,7 @@ function validateBubbleRounds(rounds: unknown, blueprint: Record<string, unknown
   const minBubbles = blueprint.difficulty === "easy" ? 3 : blueprint.difficulty === "medium" ? 4 : 5;
   const maxBubbles = blueprint.difficulty === "easy" ? 4 : blueprint.difficulty === "medium" ? 5 : 6;
   const roundKeys = new Set<string>();
+  const roundIds = new Set<string>();
 
   rounds.forEach((candidate, index) => {
     const field = `content.rounds[${index}]`;
@@ -361,7 +375,13 @@ function validateBubbleRounds(rounds: unknown, blueprint: Record<string, unknown
     if (!exactKeys(candidate, ["id", "prompt", "targetLetter", "bubbles"])) {
       addError(errors, "INVALID_CONTENT", field, "Phonics round has missing or unsupported fields.");
     }
-    if (!isNonEmptyString(candidate.id, 80)) addError(errors, "MISSING_FIELD", `${field}.id`, "Round ID is required.");
+    if (!isNonEmptyString(candidate.id, 80)) {
+      addError(errors, "MISSING_FIELD", `${field}.id`, "Round ID is required.");
+    } else if (roundIds.has(candidate.id)) {
+      addError(errors, "DUPLICATE_CONTENT", `${field}.id`, "Round IDs must be unique within a blueprint.");
+    } else {
+      roundIds.add(candidate.id);
+    }
     const targetLetter = candidate.targetLetter;
     if (typeof targetLetter !== "string" || !/^[A-Z]$/.test(targetLetter)) {
       addError(errors, "INVALID_CONTENT", `${field}.targetLetter`, "Target must be one uppercase A-Z letter.");
@@ -374,6 +394,7 @@ function validateBubbleRounds(rounds: unknown, blueprint: Record<string, unknown
       return;
     }
     const letters = new Set<string>();
+    const bubbleIds = new Set<string>();
     let targetCount = 0;
     const pairs: string[] = [];
     candidate.bubbles.forEach((bubble, bubbleIndex) => {
@@ -382,7 +403,13 @@ function validateBubbleRounds(rounds: unknown, blueprint: Record<string, unknown
         addError(errors, "INVALID_CONTENT", bubbleField, "Bubble must contain only an ID, letter, and word.");
         return;
       }
-      if (!isNonEmptyString(bubble.id, 80)) addError(errors, "MISSING_FIELD", `${bubbleField}.id`, "Bubble ID is required.");
+      if (!isNonEmptyString(bubble.id, 80)) {
+        addError(errors, "MISSING_FIELD", `${bubbleField}.id`, "Bubble ID is required.");
+      } else if (bubbleIds.has(bubble.id)) {
+        addError(errors, "DUPLICATE_CONTENT", `${bubbleField}.id`, "Bubble IDs must be unique within a round.");
+      } else {
+        bubbleIds.add(bubble.id);
+      }
       if (typeof bubble.letter !== "string" || !/^[A-Z]$/.test(bubble.letter)) {
         addError(errors, "INVALID_CONTENT", `${bubbleField}.letter`, "Bubble letter must be one uppercase A-Z letter.");
         return;
@@ -520,10 +547,6 @@ export function validateGameBlueprint(
     }
     if (typedBlueprint.id !== gameBlueprintId(fingerprint)) {
       addError(errors, "INVALID_METADATA", "id", "Blueprint ID must be derived from its normalized content fingerprint.");
-    }
-    if (options.expectedRequest &&
-      typedBlueprint.metadata.cacheKey !== buildContentCacheKey(options.expectedRequest)) {
-      addError(errors, "INVALID_METADATA", "metadata.cacheKey", "Blueprint cache key does not match the normalized generation request.");
     }
   }
 

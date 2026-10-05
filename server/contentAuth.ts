@@ -77,7 +77,12 @@ export function createContentAuthMiddleware(verifier: ContentAuthVerifier): Requ
       res.status(401).json({ error: "Sign in is required to create AI practice content." });
       return;
     }
-    const identity = await verifier.verify(token);
+    let identity: ContentIdentity | null;
+    try {
+      identity = await verifier.verify(token);
+    } catch {
+      identity = null;
+    }
     if (!identity) {
       res.status(401).json({ error: "Your sign-in could not be verified. Please sign in again." });
       return;
