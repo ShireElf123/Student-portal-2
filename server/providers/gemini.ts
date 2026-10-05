@@ -1,6 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
 import { AIProvider, ChatOptions, ChatResponse } from "../types";
-import firebaseConfig from "../../firebase-applet-config.json";
 
 export const SYSTEM_INSTRUCTIONS: Record<string, string> = {
   socratic:
@@ -24,6 +23,13 @@ export const RESILIENT_MODELS = [
   "gemini-flash-latest",
   "gemini-3.1-flash-lite",
 ];
+
+/**
+ * Structured content generation walks a bounded subset of the fallback list so a single
+ * generation request cannot cascade through every model (cost/amplification guard).
+ * Interactive chat keeps the full list for user-facing resilience.
+ */
+export const STRUCTURED_CONTENT_MODELS = RESILIENT_MODELS.slice(0, 2);
 
 export function extractAndParseJSON<T>(raw: string): T {
   if (!raw || !raw.trim()) {
@@ -78,11 +84,8 @@ export class GeminiProvider implements AIProvider {
 
   private getClient(): GoogleGenAI {
     if (!this.ai) {
-      const apiKey =
-        process.env.GEMINI_API_KEY ||
-        process.env.API_KEY ||
-        (firebaseConfig as any)?.apiKey ||
-        "";
+      // Server-secret credentials only: the bundled Firebase web key is not a model credential.
+      const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY || "";
       this.ai = new GoogleGenAI({ apiKey });
     }
     return this.ai;
@@ -218,7 +221,7 @@ export class GeminiProvider implements AIProvider {
 
     const fullInstruction = `${systemInstruction ? systemInstruction + "\n" : ""}CRITICAL: You must return ONLY raw valid JSON adhering to the requested schema. Do not enclose in conversational text, preface, or outro.`;
 
-    for (const modelName of RESILIENT_MODELS) {
+    for (const modelName of STRUCTURED_CONTENT_MODELS) {
       try {
         const interaction = await ai.interactions.create({
           model: modelName,

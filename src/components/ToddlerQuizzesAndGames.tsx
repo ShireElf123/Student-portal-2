@@ -30,6 +30,8 @@ import { ToddlerColorLab } from "./ToddlerColorLab";
 import { ToddlerMusicPiano } from "./ToddlerMusicPiano";
 import { ToddlerAnimalSafari } from "./ToddlerAnimalSafari";
 import { ToddlerBalloonSky } from "./ToddlerBalloonSky";
+import { GeneratedContentPanel } from "./GeneratedContentPanel";
+import type { GameBlueprint, BubblePopBlueprint } from "../contentEngine/types";
 
 interface ToddlerQuizzesAndGamesProps {
   starsCount: number;
@@ -457,6 +459,30 @@ export function ToddlerQuizzesAndGames({
     }
     return "animal-quiz";
   });
+  const [generatedBubbleBlueprint, setGeneratedBubbleBlueprint] = useState<BubblePopBlueprint | null>(null);
+  const [generatedBubbleLearnerId, setGeneratedBubbleLearnerId] = useState<string | null>(null);
+  const [isGeneratedBubblePlaying, setIsGeneratedBubblePlaying] = useState(false);
+
+  useEffect(() => {
+    if (currentActivity !== "bubble-pop-phonics") {
+      setGeneratedBubbleBlueprint(null);
+      setGeneratedBubbleLearnerId(null);
+      setIsGeneratedBubblePlaying(false);
+    }
+  }, [currentActivity]);
+
+  useEffect(() => {
+    const clearContentOnLearnerSwitch = (event: Event) => {
+      const learnerId = (event as CustomEvent<{ learnerId?: string }>).detail?.learnerId;
+      if (learnerId && generatedBubbleLearnerId && learnerId !== generatedBubbleLearnerId) {
+        setGeneratedBubbleBlueprint(null);
+        setGeneratedBubbleLearnerId(null);
+        setIsGeneratedBubblePlaying(false);
+      }
+    };
+    window.addEventListener("learner_model_updated", clearContentOnLearnerSwitch);
+    return () => window.removeEventListener("learner_model_updated", clearContentOnLearnerSwitch);
+  }, [generatedBubbleLearnerId]);
 
   useEffect(() => {
     const validActivities: ToddlerActivity[] = [
@@ -1156,7 +1182,27 @@ export function ToddlerQuizzesAndGames({
       )}
 
       {currentActivity === "bubble-pop-phonics" && (
-        <ToddlerBubblePopGame onAddStar={onAddStar} />
+        <>
+          <GeneratedContentPanel
+            gameType="bubble-pop-phonics"
+            skillId="read-k1-alphabet-letters"
+            onBlueprint={(blueprint: GameBlueprint, learnerId: string) => {
+              if (blueprint.gameType === "bubble-pop-phonics") {
+                setGeneratedBubbleBlueprint(blueprint);
+                setGeneratedBubbleLearnerId(learnerId);
+                setIsGeneratedBubblePlaying(true);
+              }
+            }}
+            disabled={isGeneratedBubblePlaying}
+          />
+          <ToddlerBubblePopGame
+            key={`${getActiveLearnerId()}:${generatedBubbleLearnerId ?? "curated"}`}
+            onAddStar={onAddStar}
+            blueprint={generatedBubbleBlueprint && generatedBubbleLearnerId === getActiveLearnerId() ? generatedBubbleBlueprint : undefined}
+            blueprintLearnerId={generatedBubbleLearnerId ?? undefined}
+            onPlayingChange={setIsGeneratedBubblePlaying}
+          />
+        </>
       )}
 
       {/* ACTIVITY 0B: ANIMAL SAFARI SOUNDS */}

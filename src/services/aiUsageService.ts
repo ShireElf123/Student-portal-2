@@ -1,3 +1,4 @@
+import type { DocumentData, UpdateData } from "firebase/firestore";
 import { AIUsageStats, SubscriptionStatus, SubscriptionTier } from "../types";
 import { todayISO } from "../utils/dateUtils";
 import { auth } from "../firebaseCore";
@@ -6,7 +7,9 @@ function syncCloudUserFields(fields: Record<string, unknown>) {
   const user = auth.currentUser;
   if (!user) return;
   void Promise.all([import("../firebase"), import("firebase/firestore")])
-    .then(([{ db }, { doc, updateDoc }]) => updateDoc(doc(db, "users", user.uid), fields))
+    .then(([{ db }, { doc, updateDoc }]) =>
+      updateDoc(doc(db, "users", user.uid), fields as unknown as UpdateData<DocumentData>)
+    )
     .catch(() => {
       // Local settings remain authoritative when cloud sync is unavailable.
     });
@@ -28,6 +31,8 @@ export const TIER_LABELS: Record<SubscriptionTier, string> = {
   family_basic: "Family & Homeschool",
   educator_plus: "Educator Plus",
 };
+
+export type AIUsageAction = "chat" | "practice" | "study_plan" | "content";
 
 type UsageListener = (stats: AIUsageStats) => void;
 const listeners: Set<UsageListener> = new Set();
@@ -117,7 +122,7 @@ export function subscribeToAIUsage(listener: UsageListener): () => void {
   };
 }
 
-export function canConsumeAI(action: "chat" | "practice" | "study_plan"): {
+export function canConsumeAI(action: AIUsageAction): {
   allowed: boolean;
   remaining: number;
   reason?: string;
@@ -137,7 +142,7 @@ export function canConsumeAI(action: "chat" | "practice" | "study_plan"): {
 }
 
 export function recordAIConsumption(
-  action: "chat" | "practice" | "study_plan",
+  action: AIUsageAction,
   units = 1
 ): AIUsageStats {
   const today = todayISO();

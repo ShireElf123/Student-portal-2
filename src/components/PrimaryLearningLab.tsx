@@ -29,6 +29,10 @@ import { awardXP, awardStars, awardGems, triggerCelebrationConfetti } from "../u
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { PrimarySolarSystemLab } from "./PrimarySolarSystemLab";
 import { FloatingCloudDecoration } from "./landscape/LandscapeDecorations";
+import { GeneratedContentPanel } from "./GeneratedContentPanel";
+import { markGameBlueprintCompleted } from "../contentEngine/cache";
+import { adaptSpeedMathRound, adaptTimesMatrixRound, recordBlueprintSessionCompletion, recordSpeedMathBlueprintResponse, recordTimesMatrixBlueprintResponse } from "../contentEngine/gameAdapters";
+import type { GameBlueprint, SpeedMathBlueprint, TimesMatrixBlueprint } from "../contentEngine/types";
 
 type PrimaryActivity =
   | "math-blitz"
@@ -72,6 +76,30 @@ export function PrimaryLearningLab({ onBack, onAskTutor, initialActivityId }: Pr
   const [activeActivity, setActiveActivity] = useState<PrimaryActivity>(
     () => PRIMARY_ACTIVITY_TARGETS[initialActivityId || ""] || "math-blitz"
   );
+  const [generatedBlueprint, setGeneratedBlueprint] = useState<GameBlueprint | null>(null);
+  const [generatedBlueprintLearnerId, setGeneratedBlueprintLearnerId] = useState<string | null>(null);
+  const [isGamePlaying, setIsGamePlaying] = useState(false);
+
+  useEffect(() => {
+    setGeneratedBlueprint(null);
+    setGeneratedBlueprintLearnerId(null);
+    setIsGamePlaying(false);
+  }, [activeActivity]);
+
+  useEffect(() => {
+    const clearContentOnLearnerSwitch = (event: Event) => {
+      const learnerId = (event as CustomEvent<{ learnerId?: string }>).detail?.learnerId;
+      if (learnerId && generatedBlueprintLearnerId && learnerId !== generatedBlueprintLearnerId) {
+        setGeneratedBlueprint(null);
+        setGeneratedBlueprintLearnerId(null);
+        setIsGamePlaying(false);
+      }
+    };
+    window.addEventListener("learner_model_updated", clearContentOnLearnerSwitch);
+    return () => window.removeEventListener("learner_model_updated", clearContentOnLearnerSwitch);
+  }, [generatedBlueprintLearnerId]);
+
+  const activeLearnerId = getActiveLearnerId();
 
   useEffect(() => {
     const targetedActivity = PRIMARY_ACTIVITY_TARGETS[initialActivityId || ""];
@@ -260,7 +288,25 @@ export function PrimaryLearningLab({ onBack, onAskTutor, initialActivityId }: Pr
 
       {/* Main Content Areas */}
       <div className="max-w-6xl mx-auto relative z-10">
-        {activeActivity === "math-blitz" && <SpeedMathBlitzGame />}
+        {activeActivity === "math-blitz" && (
+          <>
+            <GeneratedContentPanel
+              gameType="speed-math"
+              skillId="math-23-multiplication"
+              onBlueprint={(blueprint, learnerId) => {
+                setGeneratedBlueprint(blueprint);
+                setGeneratedBlueprintLearnerId(learnerId);
+              }}
+              disabled={isGamePlaying}
+            />
+            <SpeedMathBlitzGame
+              key={`${activeLearnerId}:${generatedBlueprintLearnerId ?? "curated"}`}
+              blueprint={generatedBlueprint?.gameType === "speed-math" && generatedBlueprintLearnerId === activeLearnerId ? generatedBlueprint : undefined}
+              onPlayingChange={setIsGamePlaying}
+              blueprintLearnerId={generatedBlueprintLearnerId ?? undefined}
+            />
+          </>
+        )}
         {activeActivity === "fraction-lab" && <TactileFractionLab />}
         {activeActivity === "word-forge" && <WordForgeGame />}
         {activeActivity === "balance-scale" && <PhysicsBalanceScaleGame />}
@@ -269,7 +315,25 @@ export function PrimaryLearningLab({ onBack, onAskTutor, initialActivityId }: Pr
         )}
         {activeActivity === "geometry-builder" && <GeometryTangramArchitectGame />}
         {activeActivity === "code-runner" && <CyberRoverCodeRunnerGame />}
-        {activeActivity === "times-matrix" && <MultiplicationMatrixGame />}
+        {activeActivity === "times-matrix" && (
+          <>
+            <GeneratedContentPanel
+              gameType="times-matrix"
+              skillId="math-23-multiplication"
+              onBlueprint={(blueprint, learnerId) => {
+                setGeneratedBlueprint(blueprint);
+                setGeneratedBlueprintLearnerId(learnerId);
+              }}
+              disabled={isGamePlaying}
+            />
+            <MultiplicationMatrixGame
+              key={`${activeLearnerId}:${generatedBlueprintLearnerId ?? "curated"}`}
+              blueprint={generatedBlueprint?.gameType === "times-matrix" && generatedBlueprintLearnerId === activeLearnerId ? generatedBlueprint : undefined}
+              onPlayingChange={setIsGamePlaying}
+              blueprintLearnerId={generatedBlueprintLearnerId ?? undefined}
+            />
+          </>
+        )}
       </div>
     </div>
   );
@@ -278,7 +342,7 @@ export function PrimaryLearningLab({ onBack, onAskTutor, initialActivityId }: Pr
 // -------------------------------------------------------------
 // 1. SPEED MATH BLITZ SPRINT (60-sec rapid fire arithmetic)
 // -------------------------------------------------------------
-function SpeedMathBlitzGame() {
+function SpeedMathBlitzGame({ blueprint, onPlayingChange, blueprintLearnerId }: { blueprint?: SpeedMathBlueprint; onPlayingChange?: (isPlaying: boolean) => void; blueprintLearnerId?: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [timeLeft, setTimeLeft] = useState(45);
   const [score, setScore] = useState(0);
@@ -286,11 +350,35 @@ function SpeedMathBlitzGame() {
   const [problem, setProblem] = useState<{ id: string; text: string; answer: number; choices: number[] }>({ id: "", text: "", answer: 0, choices: [] });
   const [isGameOver, setIsGameOver] = useState(false);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
+  const [isHintVisible, setIsHintVisible] = useState(false);
   const scoreRef = useRef(0);
   const answeredThisProblem = useRef(false);
   const questionCounter = useRef(0);
 
+  useEffect(() => onPlayingChange?.(isPlaying), [isPlaying, onPlayingChange]);
+
+  const completeGeneratedSession = () => {
+    if (!blueprint) return;
+    const learnerId = blueprintLearnerId ?? getActiveLearnerId();
+    recordBlueprintSessionCompletion(blueprint, learnerId);
+    markGameBlueprintCompleted(blueprint, learnerId);
+  };
+
   const generateProblem = () => {
+    setIsHintVisible(false);
+    if (blueprint) {
+      const generatedRound = adaptSpeedMathRound(blueprint, questionCounter.current);
+      if (!generatedRound) return;
+      questionCounter.current += 1;
+      setProblem({
+        id: `${blueprint.id}:${generatedRound.id}`,
+        text: generatedRound.prompt,
+        answer: generatedRound.answer,
+        choices: shuffle(generatedRound.choices),
+      });
+      return;
+    }
+
     const ops = ["+", "-", "×"];
     const op = ops[Math.floor(Math.random() * ops.length)];
     let a = 0, b = 0, ans = 0;
@@ -336,6 +424,7 @@ function SpeedMathBlitzGame() {
     setStreak(0);
     setIsGameOver(false);
     generateProblem();
+    if (blueprint) speakText(blueprint.voice.introduction, { pitch: 1.04, rate: 0.94 });
     soundEffects.playPop();
   };
 
@@ -350,23 +439,27 @@ function SpeedMathBlitzGame() {
           soundEffects.playFanfare();
           triggerCelebrationConfetti();
           const finalScore = scoreRef.current;
-          recordLearningEvent({
-            learnerId: getActiveLearnerId(),
-            activityId: "speed-math-blitz-sprint",
-            experienceId: "speed-math-blitz-sprint",
-            contentId: `sprint-${Date.now()}`,
-            eventType: "activity_completed",
-            activityType: "math-blitz",
-            activityTitle: "Speed Math Blitz Sprint Completed",
-            domain: "general",
-            gradeBand: "2-3",
-            result: "explored",
-            score: Math.min(100, Math.round((finalScore / 120) * 100)),
-            difficulty: "medium",
-            attempts: 1,
-            hintsUsed: 0,
-            metadata: { points: finalScore },
-          });
+          if (blueprint) {
+            completeGeneratedSession();
+          } else {
+            recordLearningEvent({
+              learnerId: getActiveLearnerId(),
+              activityId: "speed-math-blitz-sprint",
+              experienceId: "speed-math-blitz-sprint",
+              contentId: `sprint-${Date.now()}`,
+              eventType: "activity_completed",
+              activityType: "math-blitz",
+              activityTitle: "Speed Math Blitz Sprint Completed",
+              domain: "general",
+              gradeBand: "2-3",
+              result: "explored",
+              score: Math.min(100, Math.round((finalScore / 120) * 100)),
+              difficulty: "medium",
+              attempts: 1,
+              hintsUsed: 0,
+              metadata: { points: finalScore },
+            });
+          }
           return 0;
         }
         return prev - 1;
@@ -374,30 +467,35 @@ function SpeedMathBlitzGame() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isPlaying, isGameOver]);
+  }, [isPlaying, isGameOver, blueprint]);
 
   const handleChoice = (val: number) => {
     if (!isPlaying || isGameOver || answeredThisProblem.current) return;
     const isCorrect = val === problem.answer;
-    const skillId = problem.text.includes("×") ? "math-23-multiplication" : "math-k1-addition-subtraction";
-    recordLearningEvent({
-      learnerId: getActiveLearnerId(),
-      activityId: "speed-math-blitz-sprint",
-      experienceId: "speed-math-blitz-sprint",
-      contentId: `${problem.id}:choice-${val}`,
-      eventType: "question_answered",
-      activityType: "math-blitz",
-      activityTitle: `Speed Math: ${problem.text}`,
-      skillId,
-      domain: "math",
-      gradeBand: "2-3",
-      result: isCorrect ? "success" : "struggle",
-      score: isCorrect ? 100 : 0,
-      difficulty: "medium",
-      attempts: 1,
-      hintsUsed: 0,
-      metadata: { expression: problem.text, selectedAnswer: val, correctAnswer: problem.answer },
-    });
+    const learnerId = blueprint ? blueprintLearnerId ?? getActiveLearnerId() : getActiveLearnerId();
+    if (blueprint) {
+      recordSpeedMathBlueprintResponse(blueprint, questionCounter.current - 1, val, learnerId, isHintVisible ? 1 : 0);
+    } else {
+      const skillId = problem.text.includes("×") ? "math-23-multiplication" : "math-k1-addition-subtraction";
+      recordLearningEvent({
+        learnerId,
+        activityId: "speed-math-blitz-sprint",
+        experienceId: "speed-math-blitz-sprint",
+        contentId: `${problem.id}:choice-${val}`,
+        eventType: "question_answered",
+        activityType: "math-blitz",
+        activityTitle: `Speed Math: ${problem.text}`,
+        skillId,
+        domain: "math",
+        gradeBand: "2-3",
+        result: isCorrect ? "success" : "struggle",
+        score: isCorrect ? 100 : 0,
+        difficulty: "medium",
+        attempts: 1,
+        hintsUsed: 0,
+        metadata: { expression: problem.text, selectedAnswer: val, correctAnswer: problem.answer },
+      });
+    }
     if (isCorrect) {
       answeredThisProblem.current = true;
       soundEffects.playSuccessChime();
@@ -409,6 +507,13 @@ function SpeedMathBlitzGame() {
       awardXP(5);
       setTimeout(() => {
         setFeedback(null);
+        if (blueprint && questionCounter.current >= blueprint.content.rounds.length) {
+          setIsPlaying(false);
+          setIsGameOver(true);
+          triggerCelebrationConfetti();
+          completeGeneratedSession();
+          return;
+        }
         answeredThisProblem.current = false;
         generateProblem();
       }, 300);
@@ -451,7 +556,7 @@ function SpeedMathBlitzGame() {
           </div>
           <h3 className="text-2xl font-black text-slate-900 font-display">Speed Math Blitz</h3>
           <p className="text-xs sm:text-sm text-slate-600 font-semibold max-w-sm mx-auto">
-            Solve as many arithmetic equations as you can before the 45-second timer runs out. Build combo streaks for 2X multipliers!
+            {blueprint ? `${blueprint.objective} ${blueprint.instructions}` : "Solve as many arithmetic equations as you can before the 45-second timer runs out. Build combo streaks for 2X multipliers!"}
           </p>
           <button
             onClick={startGame}
@@ -478,9 +583,27 @@ function SpeedMathBlitzGame() {
             }`}
           >
             <div className="text-4xl sm:text-5xl font-black text-slate-900 tracking-wider font-display">
-              {problem.text} = ?
+              {blueprint ? problem.text : `${problem.text} = ?`}
             </div>
           </motion.div>
+
+          {blueprint && (
+            <div className="space-y-2">
+              {feedback && (
+                <p aria-live="polite" className={`text-sm font-bold ${feedback === "correct" ? "text-emerald-700" : "text-rose-700"}`}>
+                  {feedback === "correct" ? blueprint.feedback.correct : blueprint.feedback.incorrect}
+                </p>
+              )}
+              <button type="button" onClick={() => setIsHintVisible(true)} className="rounded-xl bg-indigo-50 px-3 py-2 text-xs font-black text-indigo-800 hover:bg-indigo-100">
+                {isHintVisible ? "Hint shown" : "Show a hint"}
+              </button>
+              {isHintVisible && (
+                <p className="rounded-xl bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">
+                  {blueprint.content.rounds[questionCounter.current - 1]?.hint}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* 4 Choices Grid (Tactile 3D Buttons) */}
           <div className="grid grid-cols-2 gap-3.5">
@@ -512,6 +635,7 @@ function SpeedMathBlitzGame() {
           <p className="text-base text-amber-900 font-bold">
             Final Score: <strong className="text-slate-900">{score} Points</strong>!
           </p>
+          {blueprint && <p className="text-sm font-semibold text-emerald-800">{blueprint.feedback.completion}</p>}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-100 border-2 border-amber-300 text-amber-900 text-sm font-black shadow-sm">
             <span>{score} points earned during this sprint</span>
           </div>
@@ -1691,7 +1815,7 @@ function CyberRoverCodeRunnerGame() {
 // -------------------------------------------------------------
 // 7. TIMES TABLE MATRIX BATTLES
 // -------------------------------------------------------------
-function MultiplicationMatrixGame() {
+function MultiplicationMatrixGame({ blueprint, onPlayingChange, blueprintLearnerId }: { blueprint?: TimesMatrixBlueprint; onPlayingChange?: (isPlaying: boolean) => void; blueprintLearnerId?: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [timeLeft, setTimeLeft] = useState(45);
   const [score, setScore] = useState(0);
@@ -1699,11 +1823,37 @@ function MultiplicationMatrixGame() {
   const [problem, setProblem] = useState<{ id: string; a: number; b: number; answer: number; choices: number[] }>({ id: "", a: 0, b: 0, answer: 0, choices: [] });
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [isGameOver, setIsGameOver] = useState(false);
+  const [isHintVisible, setIsHintVisible] = useState(false);
   const scoreRef = useRef(0);
   const answeredRef = useRef(false);
   const questionCounter = useRef(0);
 
+  useEffect(() => onPlayingChange?.(isPlaying), [isPlaying, onPlayingChange]);
+
+  const completeGeneratedSession = () => {
+    if (!blueprint) return;
+    const learnerId = blueprintLearnerId ?? getActiveLearnerId();
+    recordBlueprintSessionCompletion(blueprint, learnerId);
+    markGameBlueprintCompleted(blueprint, learnerId);
+  };
+
   const generateFact = () => {
+    setIsHintVisible(false);
+    if (blueprint) {
+      const generatedRound = adaptTimesMatrixRound(blueprint, questionCounter.current);
+      const sourceRound = blueprint.content.rounds[questionCounter.current];
+      if (!generatedRound || !sourceRound) return;
+      questionCounter.current += 1;
+      setProblem({
+        id: generatedRound.id,
+        a: sourceRound.leftFactor,
+        b: sourceRound.rightFactor,
+        answer: generatedRound.answer,
+        choices: shuffle(generatedRound.choices),
+      });
+      return;
+    }
+
     const a = Math.floor(Math.random() * 11) + 2; // 2 to 12
     const b = Math.floor(Math.random() * 11) + 2; // 2 to 12
     const ans = a * b;
@@ -1737,6 +1887,7 @@ function MultiplicationMatrixGame() {
     setIsGameOver(false);
     answeredRef.current = false;
     generateFact();
+    if (blueprint) speakText(blueprint.voice.introduction, { pitch: 1.04, rate: 0.94 });
     soundEffects.playPop();
   };
 
@@ -1751,23 +1902,27 @@ function MultiplicationMatrixGame() {
           soundEffects.playFanfare();
           triggerCelebrationConfetti();
           const finalScore = scoreRef.current;
-          recordLearningEvent({
-            learnerId: getActiveLearnerId(),
-            activityId: "times-table-matrix-battle",
-            experienceId: "times-matrix",
-            contentId: `sprint-${Date.now()}`,
-            eventType: "activity_completed",
-            activityType: "times-matrix",
-            activityTitle: "Multiplication Matrix Sprint Completed",
-            domain: "general",
-            gradeBand: "2-3",
-            result: "explored",
-            score: Math.min(100, finalScore),
-            difficulty: "medium",
-            attempts: 1,
-            hintsUsed: 0,
-            metadata: { points: finalScore },
-          });
+          if (blueprint) {
+            completeGeneratedSession();
+          } else {
+            recordLearningEvent({
+              learnerId: getActiveLearnerId(),
+              activityId: "times-table-matrix-battle",
+              experienceId: "times-matrix",
+              contentId: `sprint-${Date.now()}`,
+              eventType: "activity_completed",
+              activityType: "times-matrix",
+              activityTitle: "Multiplication Matrix Sprint Completed",
+              domain: "general",
+              gradeBand: "2-3",
+              result: "explored",
+              score: Math.min(100, finalScore),
+              difficulty: "medium",
+              attempts: 1,
+              hintsUsed: 0,
+              metadata: { points: finalScore },
+            });
+          }
           return 0;
         }
         return prev - 1;
@@ -1775,29 +1930,34 @@ function MultiplicationMatrixGame() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isPlaying, isGameOver]);
+  }, [isPlaying, isGameOver, blueprint]);
 
   const handleChoice = (val: number) => {
     if (!isPlaying || isGameOver || answeredRef.current) return;
     const isCorrect = val === problem.answer;
-    recordLearningEvent({
-      learnerId: getActiveLearnerId(),
-      activityId: "times-table-matrix-battle",
-      experienceId: "times-matrix",
-      contentId: `${problem.id}:choice-${val}`,
-      eventType: "question_answered",
-      activityType: "times-matrix",
-      activityTitle: `Multiplication Matrix: ${problem.a} times ${problem.b}`,
-      skillId: "math-23-multiplication",
-      domain: "math",
-      gradeBand: "2-3",
-      result: isCorrect ? "success" : "struggle",
-      score: isCorrect ? 100 : 0,
-      difficulty: "medium",
-      attempts: 1,
-      hintsUsed: 0,
-      metadata: { factorA: problem.a, factorB: problem.b, selectedAnswer: val, correctAnswer: problem.answer },
-    });
+    const learnerId = blueprint ? blueprintLearnerId ?? getActiveLearnerId() : getActiveLearnerId();
+    if (blueprint) {
+      recordTimesMatrixBlueprintResponse(blueprint, questionCounter.current - 1, val, learnerId, isHintVisible ? 1 : 0);
+    } else {
+      recordLearningEvent({
+        learnerId,
+        activityId: "times-table-matrix-battle",
+        experienceId: "times-matrix",
+        contentId: `${problem.id}:choice-${val}`,
+        eventType: "question_answered",
+        activityType: "times-matrix",
+        activityTitle: `Multiplication Matrix: ${problem.a} times ${problem.b}`,
+        skillId: "math-23-multiplication",
+        domain: "math",
+        gradeBand: "2-3",
+        result: isCorrect ? "success" : "struggle",
+        score: isCorrect ? 100 : 0,
+        difficulty: "medium",
+        attempts: 1,
+        hintsUsed: 0,
+        metadata: { factorA: problem.a, factorB: problem.b, selectedAnswer: val, correctAnswer: problem.answer },
+      });
+    }
     if (isCorrect) {
       answeredRef.current = true;
       soundEffects.playSuccessChime();
@@ -1810,6 +1970,13 @@ function MultiplicationMatrixGame() {
       awardXP(6);
       setTimeout(() => {
         setFeedback(null);
+        if (blueprint && questionCounter.current >= blueprint.content.rounds.length) {
+          setIsPlaying(false);
+          setIsGameOver(true);
+          triggerCelebrationConfetti();
+          completeGeneratedSession();
+          return;
+        }
         answeredRef.current = false;
         generateFact();
       }, 300);
@@ -1850,7 +2017,7 @@ function MultiplicationMatrixGame() {
           <div className="text-6xl animate-bounce">✖️</div>
           <h3 className="text-2xl sm:text-3xl font-black text-slate-900 font-display">Times Table Matrix Battle</h3>
           <p className="text-xs sm:text-sm text-slate-600 font-semibold max-w-md mx-auto">
-            Solve rapid multiplication facts across the 1–12 matrix in 45 seconds to unleash combo multipliers!
+            {blueprint ? `${blueprint.objective} ${blueprint.instructions}` : "Solve rapid multiplication facts across the 1–12 matrix in 45 seconds to unleash combo multipliers!"}
           </p>
           <button
             onClick={startGame}
@@ -1886,6 +2053,24 @@ function MultiplicationMatrixGame() {
             </div>
           </motion.div>
 
+          {blueprint && (
+            <div className="space-y-2">
+              {feedback && (
+                <p aria-live="polite" className={`text-sm font-bold ${feedback === "correct" ? "text-emerald-700" : "text-rose-700"}`}>
+                  {feedback === "correct" ? blueprint.feedback.correct : blueprint.feedback.incorrect}
+                </p>
+              )}
+              <button type="button" onClick={() => setIsHintVisible(true)} className="rounded-xl bg-indigo-50 px-3 py-2 text-xs font-black text-indigo-800 hover:bg-indigo-100">
+                {isHintVisible ? "Hint shown" : "Show a hint"}
+              </button>
+              {isHintVisible && (
+                <p className="rounded-xl bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">
+                  {blueprint.content.rounds[questionCounter.current - 1]?.hint}
+                </p>
+              )}
+            </div>
+          )}
+
           {/* 4 Choices Grid */}
           <div className="grid grid-cols-2 gap-3.5">
             {problem.choices.map((val) => (
@@ -1916,6 +2101,7 @@ function MultiplicationMatrixGame() {
           <p className="text-base text-amber-900 font-bold">
             Score: <strong className="text-slate-900">{score} Points</strong>
           </p>
+          {blueprint && <p className="text-sm font-semibold text-emerald-800">{blueprint.feedback.completion}</p>}
           <button
             onClick={startGame}
             className="px-6 py-3 rounded-2xl bg-gradient-to-b from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-white font-black text-sm border-b-4 border-orange-700 active:translate-y-1 shadow-xl transition-all cursor-pointer inline-flex items-center gap-2"
