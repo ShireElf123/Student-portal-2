@@ -147,6 +147,42 @@ describe("authenticated content-generation API", () => {
     expect(provider.generateStructuredContent).toHaveBeenCalledTimes(1);
   });
 
+  it("rejects unsupported game types, malformed exclusion fingerprints, and oversized bodies before quota admission", async () => {
+    const provider: StructuredContentProvider = {
+      name: "invalid-input-gemini-boundary",
+      generateStructuredContent: vi.fn(async () => JSON.stringify(SPEED_PAYLOAD)),
+    };
+    const server = await startTestServer(provider, new ContentGenerationRateLimiter(1, 12));
+    servers.push(server);
+
+    const unsupported = await postContent(server.baseUrl, {
+      request: { ...request(), gameType: "unsupported-game" },
+      excludedFingerprints: [],
+    }, "token-account-validation");
+    expect(unsupported.status).toBe(400);
+
+    const invalidExclusions = await postContent(server.baseUrl, {
+      request: request(),
+      excludedFingerprints: ["not-a-valid-fingerprint"],
+    }, "token-account-validation");
+    expect(invalidExclusions.status).toBe(400);
+
+    const oversized = await postContent(server.baseUrl, {
+      request: request(),
+      excludedFingerprints: [],
+      extra: "x".repeat(32_000),
+    }, "token-account-validation");
+    expect(oversized.status).toBe(413);
+    expect(provider.generateStructuredContent).not.toHaveBeenCalled();
+
+    const valid = await postContent(server.baseUrl, {
+      request: request(),
+      excludedFingerprints: [],
+    }, "token-account-validation");
+    expect(valid.status).toBe(200);
+    expect(provider.generateStructuredContent).toHaveBeenCalledTimes(1);
+  });
+
   it("applies a network cap across different authenticated accounts", async () => {
     const provider: StructuredContentProvider = {
       name: "network-limit-gemini-boundary",
@@ -232,6 +268,30 @@ describe("authenticated content-generation API", () => {
 
     expect(personalRequest.status).toBe(200);
     expect(selectedOrganizationRequest.status).toBe(200);
+    expect(provider.generateStructuredContent).toHaveBeenCalledTimes(2);
+  });
+
+  it("keeps identical in-flight requests isolated between different authenticated learners", async () => {
+    const provider: StructuredContentProvider = {
+      name: "learner-isolation-gemini-boundary",
+      generateStructuredContent: vi.fn(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 25));
+        return JSON.stringify(SPEED_PAYLOAD);
+      }),
+    };
+    const server = await startTestServer(provider, new ContentGenerationRateLimiter(1, 12));
+    servers.push(server);
+    const body = { request: request(), excludedFingerprints: [] };
+
+    const [learnerA, learnerB] = await Promise.all([
+      postContent(server.baseUrl, body, "token-learner-a"),
+      postContent(server.baseUrl, body, "token-learner-b"),
+    ]);
+
+    expect(learnerA.status).toBe(200);
+    expect(learnerB.status).toBe(200);
+    expect(learnerA.headers.get("X-Content-Generation-Admitted")).toBe("true");
+    expect(learnerB.headers.get("X-Content-Generation-Admitted")).toBe("true");
     expect(provider.generateStructuredContent).toHaveBeenCalledTimes(2);
   });
 

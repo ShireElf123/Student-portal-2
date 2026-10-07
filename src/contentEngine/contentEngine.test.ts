@@ -291,6 +291,38 @@ describe("Content Engine V1", () => {
     expect(storage.getItem("student_portal_generated_game_content_v1")).toBeNull();
   });
 
+  it("revalidates untrusted localStorage cache rows and ignores forged provenance metadata", () => {
+    storage.setItem("student_portal_generated_game_content_v1", JSON.stringify({
+      version: "generated-content-cache-v1",
+      entries: [{
+        cacheKey: "forged-cache-key",
+        storedAt: Date.now(),
+        expiresAt: Date.now() + 60_000,
+        blueprint: {
+          id: "forged-blueprint",
+          gameType: "speed-math",
+          objective: "A forged activity.",
+          instructions: "Choose an answer.",
+          skillId: "math-23-multiplication",
+          ageBand: "7-9",
+          gradeBand: "2-3",
+          difficulty: "easy",
+          theme: "space",
+          rounds: [],
+          metadata: {
+            provider: "gemini",
+            validationStatus: "valid",
+            fingerprint: "fnv1a64-0123456789abcdef",
+            cacheKey: "forged-cache-key",
+          },
+        },
+      }],
+    }));
+
+    expect(findReusableGameBlueprint(makeRequest(), "cache-tamper-learner")).toBeNull();
+    expect(getContentPoolStatus(makeRequest(), "cache-tamper-learner").usableBlueprintCount).toBe(0);
+  });
+
   it("persists only validated blueprints, deduplicates them, and retrieves a cached set without another provider call", async () => {
     const blueprint = await generateFixture("speed-math");
     expect(cacheValidatedGameBlueprint(blueprint).stored).toBe(true);
