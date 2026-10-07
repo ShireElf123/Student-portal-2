@@ -24,7 +24,8 @@ import { Message, Notebook, AcademicMode, Attachment, FriendlyTutorMode } from "
 import { INITIAL_NOTEBOOKS, ACADEMIC_MODES } from "../data/defaultNotebooks";
 import { Sidebar } from "./Sidebar";
 import { MessageItem } from "./MessageItem";
-import { canConsumeAI, recordAIConsumption } from "../services/aiUsageService";
+import { canConsumeAI, recordAIConsumption, syncAIQuotaFromResponseHeaders } from "../services/aiUsageService";
+import { getAiAuthorizationHeader } from "../services/aiAuth";
 // Notebook persistence is owned by App (account-scoped v3 partition). This
 // view keeps no separate copy: the legacy unscoped v2 mirror previously
 // written here could resurface one account's notebooks inside another account.
@@ -139,8 +140,12 @@ export function ChatInterface({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      setError("Please select an image file (PNG, JPEG, WebP) of your homework problem or diagram.");
+    if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+      setError("Please select a PNG, JPEG, or WebP image of your homework problem or diagram.");
+      return;
+    }
+    if (file.size > 4 * 1024 * 1024) {
+      setError("Please choose an image smaller than 4 MB.");
       return;
     }
 
@@ -257,6 +262,14 @@ export function ChatInterface({
       return;
     }
 
+    let authorization: string;
+    try {
+      authorization = await getAiAuthorizationHeader();
+    } catch (authError) {
+      setError(authError instanceof Error ? authError.message : "Sign in to use AI features.");
+      return;
+    }
+
     const currentInput = input.trim();
     const currentAttachment = attachment;
     setInput("");
@@ -296,14 +309,13 @@ export function ChatInterface({
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/study-stream", {
+      const response = await fetch("/api/chat/stream", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: authorization },
         body: JSON.stringify({
           message: currentInput,
           mode: activeNotebook.mode,
-          subject: activeNotebook.subject,
-          interactionId: activeNotebook.lastInteractionId,
+          previousInteractionId: activeNotebook.lastInteractionId,
           attachment: currentAttachment
             ? {
                 mimeType: currentAttachment.mimeType,
@@ -312,53 +324,15 @@ export function ChatInterface({
             : undefined,
         }),
       });
+      syncAIQuotaFromResponseHeaders(response.headers);
 
       if (!response.ok) {
-        const fallbackRes = await fetch("/api/study", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: currentInput,
-            mode: activeNotebook.mode,
-            subject: activeNotebook.subject,
-            interactionId: activeNotebook.lastInteractionId,
-            attachment: currentAttachment
-              ? {
-                  mimeType: currentAttachment.mimeType,
-                  data: currentAttachment.data,
-                }
-              : undefined,
-          }),
-        });
-
-        if (!fallbackRes.ok) {
-          const errData = await fallbackRes.json().catch(() => ({}));
-          throw new Error(errData.error || "The Socratic tutor engine is temporarily unavailable. Please try again in a moment.");
-        }
-
-        const fallbackData = await fallbackRes.json();
-        recordAIConsumption("chat");
-        setNotebooks((prev) =>
-          prev.map((nb) =>
-            nb.id === targetNotebookId
-              ? {
-                  ...nb,
-                  messages: nb.messages.map((m) =>
-                    m.id === assistantMessageId
-                      ? {
-                          ...m,
-                          content: fallbackData.text || "No response received.",
-                          interactionId: fallbackData.interactionId,
-                          isStreaming: false,
-                        }
-                      : m
-                  ),
-                  lastInteractionId: fallbackData.interactionId || nb.lastInteractionId,
-                }
-              : nb
-          )
-        );
-        return;
+        const errorData: unknown = await response.json().catch(() => ({}));
+        const errorMessage = errorData && typeof errorData === "object" && !Array.isArray(errorData) &&
+          typeof (errorData as Record<string, unknown>).error === "string"
+          ? (errorData as Record<string, unknown>).error as string
+          : "The Socratic tutor engine is temporarily unavailable. Please try again in a moment.";
+        throw new Error(errorMessage);
       }
 
       const reader = response.body?.getReader();
@@ -386,33 +360,37 @@ export function ChatInterface({
           const jsonString = trimmed.replace(/^data:\s*/, "");
           if (!jsonString) continue;
 
+          let event: unknown;
           try {
-            const data = JSON.parse(jsonString);
-            if (data.type === "chunk" && data.text) {
-              accumulatedText += data.text;
-              setNotebooks((prev) =>
-                prev.map((nb) =>
-                  nb.id === targetNotebookId
-                    ? {
-                        ...nb,
-                        messages: nb.messages.map((m) =>
-                          m.id === assistantMessageId
-                            ? { ...m, content: accumulatedText, isStreaming: true }
-                            : m
-                        ),
-                      }
-                    : nb
-                )
-              );
-            } else if (data.type === "done") {
-              finalInteractionId = data.interactionId;
-            } else if (data.type === "error") {
-              throw new Error(data.error || "A streaming error occurred while generating guidance.");
+            event = JSON.parse(jsonString) as unknown;
+          } catch {
+            continue;
+          }
+          if (!event || typeof event !== "object" || Array.isArray(event)) continue;
+          const data = event as Record<string, unknown>;
+          if (data.type === "chunk" && typeof data.text === "string") {
+            if (accumulatedText.length + data.text.length > 60_000) {
+              throw new Error("The AI response was too long to display safely.");
             }
-          } catch (e: any) {
-            if (e.message && e.message.includes("streaming error")) {
-              throw e;
-            }
+            accumulatedText += data.text;
+            setNotebooks((prev) =>
+              prev.map((nb) =>
+                nb.id === targetNotebookId
+                  ? {
+                      ...nb,
+                      messages: nb.messages.map((m) =>
+                        m.id === assistantMessageId
+                          ? { ...m, content: accumulatedText, isStreaming: true }
+                          : m
+                      ),
+                    }
+                  : nb
+              )
+            );
+          } else if (data.type === "done") {
+            finalInteractionId = typeof data.interactionId === "string" ? data.interactionId : undefined;
+          } else if (data.type === "error") {
+            throw new Error(typeof data.error === "string" ? data.error : "A streaming error occurred while generating guidance.");
           }
         }
       }
@@ -438,8 +416,8 @@ export function ChatInterface({
             : nb
         )
       );
-    } catch (err: any) {
-      setError(err.message || "We were unable to reach the AI Tutor. Please check your connection and retry.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "We were unable to reach the AI Tutor. Please check your connection and retry.");
       setNotebooks((prev) =>
         prev.map((nb) =>
           nb.id === targetNotebookId

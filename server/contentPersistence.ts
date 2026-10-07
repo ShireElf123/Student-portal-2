@@ -1,14 +1,10 @@
-import { applicationDefault, getApps, initializeApp } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
-import firebaseConfig from "../firebase-applet-config.json";
 import { buildBlueprintContentPoolKey } from "../src/contentEngine/fingerprint";
 import { CONTENT_POOL_POLICY } from "../src/contentEngine/policy";
 import { validateGameBlueprint } from "../src/contentEngine/validation";
 import { GAME_BLUEPRINT_VERSION, type GameBlueprint } from "../src/contentEngine/types";
-import { resolveFirebaseProjectId } from "./contentAuth";
+import { getAdminFirestore } from "./adminFirestore";
 
 export const SERVER_VALIDATED_BLUEPRINT_SOURCE = "server-validated-v1" as const;
-const ADMIN_APP_NAME = "student-portal-content-pool-writer";
 const SHARED_BLUEPRINT_DOCUMENT_KEYS = [
   "source", "fingerprint", "poolKey", "gameType", "skillId", "gradeBand", "ageBand",
   "difficulty", "theme", "roundCount", "blueprintVersion", "createdAt", "expiresAt", "blueprint",
@@ -39,17 +35,6 @@ function isServerValidatedDocument(data: unknown, fingerprint: string): data is 
     typeof data.createdAt === "number" && Number.isFinite(data.createdAt) && data.createdAt > 0 &&
     typeof data.expiresAt === "number" && Number.isFinite(data.expiresAt) &&
     data.expiresAt > data.createdAt && data.expiresAt <= data.createdAt + CONTENT_POOL_POLICY.contentLifetimeMs;
-}
-
-function getAdminFirestore() {
-  const projectId = resolveFirebaseProjectId();
-  const databaseId = firebaseConfig.firestoreDatabaseId;
-  if (!projectId || !databaseId) throw new Error("Firebase project and Firestore database IDs are required for shared content persistence.");
-  const app = getApps().find((candidate) => candidate.name === ADMIN_APP_NAME) ?? initializeApp({
-    credential: applicationDefault(),
-    projectId,
-  }, ADMIN_APP_NAME);
-  return getFirestore(app, databaseId);
 }
 
 /**

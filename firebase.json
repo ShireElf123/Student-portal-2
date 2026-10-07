@@ -1,7 +1,8 @@
 {
   "firestore": {
     "database": "ai-studio-mystudentportal-b237a2d6-cd24-463c-9f05-3cf7d79d8a3b",
-    "rules": "firestore.rules"
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
   },
   "emulators": {
     "firestore": {

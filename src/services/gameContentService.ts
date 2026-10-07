@@ -1,4 +1,5 @@
-import { auth } from "../firebaseCore";
+import { getAiAuthorizationHeader } from "./aiAuth";
+import { syncAIQuotaFromResponseHeaders } from "./aiUsageService";
 import { buildContentPoolKey } from "../contentEngine/fingerprint";
 import { markGameBlueprintCompleted as markLocalGameBlueprintCompleted } from "../contentEngine/cache";
 import { getDefaultContentPoolManager } from "../contentEngine/contentPoolManager";
@@ -53,17 +54,12 @@ export async function markGameBlueprintCompleted(blueprint: GameBlueprint, learn
 
 /** Firebase ID token for the signed-in account; the server rejects unauthenticated generation. */
 async function buildAuthorizationHeader(): Promise<Record<string, string>> {
-  const user = auth.currentUser;
-  if (!user) {
-    throw new ContentGenerationServiceError(
-      "Sign in to create new AI practice content. Saved activities remain available without signing in."
-    );
-  }
   try {
-    const token = await user.getIdToken();
-    return { Authorization: `Bearer ${token}` };
-  } catch {
-    throw new ContentGenerationServiceError("Your sign-in could not be verified. Please sign in again to create new content.");
+    return { Authorization: await getAiAuthorizationHeader() };
+  } catch (error) {
+    throw new ContentGenerationServiceError(
+      error instanceof Error ? error.message : "Sign in to create new AI practice content."
+    );
   }
 }
 
@@ -77,6 +73,7 @@ const httpContentTransport: ContentGenerationTransport = {
       headers: { "Content-Type": "application/json", ...authorization },
       body: JSON.stringify(command),
     });
+    syncAIQuotaFromResponseHeaders(response.headers);
     if (response.headers.get("X-Content-Generation-Admitted") === "true") {
       await hooks.onGenerationAdmitted?.();
     }

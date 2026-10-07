@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { Notebook, StudyPlanItem } from "../types";
 import { todayISO, formatDateLabel } from "../utils/dateUtils";
+import { canConsumeAI, recordAIConsumption, syncAIQuotaFromResponseHeaders } from "../services/aiUsageService";
+import { getAiAuthorizationHeader } from "../services/aiAuth";
 
 interface StudyPlanViewProps {
   studyPlan: StudyPlanItem[];
@@ -23,6 +25,38 @@ interface StudyPlanViewProps {
   onAddTask: (task: StudyPlanItem) => void;
   onDeleteTask: (taskId: string) => void;
   onSetTasks: (tasks: StudyPlanItem[]) => void;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function normalizeGeneratedTasks(value: unknown, date: string): StudyPlanItem[] | null {
+  if (!Array.isArray(value) || value.length < 3 || value.length > 5) return null;
+  const tasks: StudyPlanItem[] = [];
+  for (const candidate of value) {
+    if (!isRecord(candidate)) return null;
+    const title = typeof candidate.title === "string" ? candidate.title.trim() : "";
+    const subject = typeof candidate.subject === "string" ? candidate.subject.trim() : "";
+    const reason = typeof candidate.reason === "string" ? candidate.reason.trim() : "";
+    const durationMinutes = candidate.durationMinutes;
+    const priority = candidate.priority;
+    if (!title || title.length > 160 || !subject || subject.length > 100 || !reason || reason.length > 500 ||
+      typeof durationMinutes !== "number" || !Number.isInteger(durationMinutes) || durationMinutes < 5 || durationMinutes > 120 ||
+      (priority !== "high" && priority !== "medium" && priority !== "low")) return null;
+    tasks.push({
+      id: `gen-${Date.now()}-${tasks.length}`,
+      title,
+      subject,
+      durationMinutes,
+      priority,
+      reason,
+      completed: false,
+      type: "ai_recommendation",
+      date,
+    });
+  }
+  return tasks;
 }
 
 export function StudyPlanView({
@@ -47,38 +81,46 @@ export function StudyPlanView({
   const completedCount = todayTasks.filter((t) => t.completed).length;
 
   const handleGeneratePlan = async () => {
+    const quotaCheck = canConsumeAI("study_plan");
+    if (!quotaCheck.allowed) {
+      setError(quotaCheck.reason || "Your daily AI usage limit has been reached.");
+      return;
+    }
     setIsGenerating(true);
     setError(null);
 
     try {
+      const authorization = await getAiAuthorizationHeader();
       const activeSubjects = Array.from(new Set(notebooks.map((nb) => nb.subject)));
       const response = await fetch("/api/study-plan/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: authorization },
         body: JSON.stringify({ subjects: activeSubjects }),
       });
+      syncAIQuotaFromResponseHeaders(response.headers);
 
       if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error || "The study plan engine is currently busy. Please try again in a moment.");
+        const errorData: unknown = await response.json().catch(() => ({}));
+        throw new Error(isRecord(errorData) && typeof errorData.error === "string"
+          ? errorData.error
+          : "The study plan engine is currently busy. Please try again in a moment.");
       }
 
-      const data = await response.json();
-      const generatedTasks: StudyPlanItem[] = (data.tasks || []).map((t: any, idx: number) => ({
-        id: `gen-${Date.now()}-${idx}`,
-        title: t.title || "Academic Study Task",
-        subject: t.subject || "General Studies",
-        durationMinutes: Number(t.durationMinutes) || 30,
-        priority: t.priority === "high" || t.priority === "low" ? t.priority : "medium",
-        reason: t.reason || "Targeted revision for curriculum mastery.",
-        completed: false,
-        type: "ai_recommendation",
-        date: todayStr,
-      }));
+      const responseData: unknown = await response.json();
+      const generatedTasks = normalizeGeneratedTasks(
+        isRecord(responseData) ? responseData.tasks : undefined,
+        todayStr
+      );
+      if (!generatedTasks) {
+        throw new Error("The study-plan service returned incomplete tasks. Please try again.");
+      }
 
-      onSetTasks([...studyPlan.filter((t) => t.date !== todayStr || t.type === "student_task"), ...generatedTasks]);
-    } catch (err: any) {
-      setError(err.message || "Failed to generate recommended study schedule. Please try again.");
+      recordAIConsumption("study_plan");
+      onSetTasks([...studyPlan.filter((task) => task.date !== todayStr || task.type === "student_task"), ...generatedTasks]);
+    } catch (generationError: unknown) {
+      setError(generationError instanceof Error
+        ? generationError.message
+        : "Failed to generate recommended study schedule. Please try again.");
     } finally {
       setIsGenerating(false);
     }

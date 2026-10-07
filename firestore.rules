@@ -374,6 +374,21 @@ service cloud.firestore {
       allow update: if isOwner(userId) && isValidId(userId) && isValidUserProfile(incoming()) && incoming().uid == existing().uid && incoming().createdAt == existing().createdAt && incoming().diff(existing()).affectedKeys().hasOnly(['email', 'displayName', 'photoURL', 'role', 'linkedStudentIds', 'subscriptionTier', 'subscriptionStatus', 'trialEndsAt', 'aiUsageToday', 'aiUsageResetDate']);
       allow delete: if false;
 
+      // Organization membership is server-provisioned. Users may inspect only their own
+      // membership metadata; entitlement and usage records are Admin-only and authoritative.
+      match /organizationMemberships/{organizationId} {
+        allow get, list: if isOwner(userId) && isValidId(organizationId);
+        allow create, update, delete: if false;
+      }
+
+      match /aiEntitlements/{entitlementId} {
+        allow read, write: if false;
+      }
+
+      match /aiUsageWindows/{windowId} {
+        allow read, write: if false;
+      }
+
       // Notebooks Subcollection
       match /notebooks/{notebookId} {
         allow get, list: if isOwner(userId) || isParentOfChild(userId);
@@ -472,6 +487,15 @@ service cloud.firestore {
         allow update: if false;
         // Either the student (revoke access) or the parent (leave the family) can delete.
         allow delete: if isOwner(userId) || (isSignedIn() && request.auth.uid == parentUid);
+      }
+    }
+
+    // Organization records and aggregate AI usage are managed only by trusted server-side provisioning.
+    match /organizations/{organizationId} {
+      allow read, write: if false;
+
+      match /aiUsageWindows/{windowId} {
+        allow read, write: if false;
       }
     }
 

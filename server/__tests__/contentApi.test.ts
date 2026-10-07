@@ -2,7 +2,9 @@ import express from "express";
 import type { Server } from "node:http";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ContentGenerationCoordinator, createContentGenerationRouter } from "../contentApi";
+import { createAiGateway } from "../aiGateway";
 import { ContentGenerationRateLimiter } from "../contentRateLimit";
+import type { AiQuotaStore } from "../aiQuota";
 import type { StructuredContentProvider } from "../../src/contentEngine/generation";
 import type { ContentGenerationRequest, GameBlueprint, SpeedMathPayload } from "../../src/contentEngine/types";
 
@@ -45,18 +47,43 @@ interface TestServer {
 
 async function startTestServer(
   provider: StructuredContentProvider,
-  limiter: ContentGenerationRateLimiter,
-  ipLimiter?: ContentGenerationRateLimiter,
+  accountQuotaBoundary: ContentGenerationRateLimiter,
+  networkLimiter?: ContentGenerationRateLimiter,
   persistBlueprint?: (blueprint: GameBlueprint) => Promise<boolean>
 ): Promise<TestServer> {
   const app = express();
   app.use(express.json());
-  app.use(createContentGenerationRouter({
+  const quotaStore: AiQuotaStore = {
+    async consume(request) {
+      const result = accountQuotaBoundary.consume(request.uid);
+      if (!result.allowed) {
+        return {
+          allowed: false,
+          status: 429,
+          code: "TEST_ACCOUNT_QUOTA_EXCEEDED",
+          error: "This account has reached its test quota.",
+          retryAfterSeconds: result.retryAfterSeconds,
+        };
+      }
+      return {
+        allowed: true,
+        organizationId: null,
+        scope: "user",
+        dailyLimitUnits: 20,
+        remainingDailyUnits: 19,
+        resetAt: request.now + 60_000,
+      };
+    },
+  };
+  const gateway = createAiGateway({
     verifier: {
       verify: async (token) => token.startsWith("token-") ? { uid: token.slice("token-".length) } : null,
     },
-    limiter,
-    ...(ipLimiter ? { ipLimiter } : {}),
+    quotaStore,
+    ...(networkLimiter ? { networkLimiter } : {}),
+  });
+  app.use(createContentGenerationRouter({
+    gateway,
     coordinator: new ContentGenerationCoordinator(),
     provider,
     persistBlueprint: persistBlueprint ?? (async () => false),
@@ -72,12 +99,13 @@ async function startTestServer(
   };
 }
 
-async function postContent(baseUrl: string, body: unknown, token?: string): Promise<Response> {
+async function postContent(baseUrl: string, body: unknown, token?: string, organizationId?: string): Promise<Response> {
   return fetch(`${baseUrl}/api/content/generate`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(organizationId !== undefined ? { "X-Organization-Id": organizationId } : {}),
     },
     body: JSON.stringify(body),
   });
@@ -183,6 +211,28 @@ describe("authenticated content-generation API", () => {
     const rejected = await postContent(invalidServer.baseUrl, { request: request(), excludedFingerprints: [] }, "token-invalid-persistence");
     expect(rejected.status).toBe(502);
     expect(invalidPersist).not.toHaveBeenCalled();
+  });
+
+  it("does not coalesce an omitted organization selection with an explicit organization ID", async () => {
+    const provider: StructuredContentProvider = {
+      name: "organization-selection-gemini-boundary",
+      generateStructuredContent: vi.fn(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 25));
+        return JSON.stringify(SPEED_PAYLOAD);
+      }),
+    };
+    const server = await startTestServer(provider, new ContentGenerationRateLimiter(2, 12));
+    servers.push(server);
+    const body = { request: request(), excludedFingerprints: [] };
+
+    const [personalRequest, selectedOrganizationRequest] = await Promise.all([
+      postContent(server.baseUrl, body, "token-selection-test"),
+      postContent(server.baseUrl, body, "token-selection-test", "automatic"),
+    ]);
+
+    expect(personalRequest.status).toBe(200);
+    expect(selectedOrganizationRequest.status).toBe(200);
+    expect(provider.generateStructuredContent).toHaveBeenCalledTimes(2);
   });
 
   it("coalesces concurrent equivalent requests so they spend one server admission and one provider generation", async () => {

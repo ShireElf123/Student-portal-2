@@ -2,7 +2,6 @@ import express from "express";
 import type { Server } from "node:http";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ContentGenerationCoordinator, createContentGenerationRouter } from "../../server/contentApi";
-import { ContentGenerationRateLimiter } from "../../server/contentRateLimit";
 import type { StructuredContentProvider } from "./generation";
 import { ContentPoolManager } from "./contentPoolManager";
 import { LocalStorageContentPoolRepository } from "./contentPoolRepository";
@@ -134,7 +133,16 @@ describe("authenticated generated-content learning integration", () => {
           return token === "verified-test-token" ? { uid: "firebase-account-integration" } : null;
         },
       },
-      limiter: new ContentGenerationRateLimiter(3, 12),
+      quotaStore: {
+        consume: async (request) => ({
+          allowed: true,
+          organizationId: request.organizationId ?? null,
+          scope: request.organizationId ? "user+organization" : "user",
+          dailyLimitUnits: 20,
+          remainingDailyUnits: 19,
+          resetAt: request.now + 60_000,
+        }),
+      },
       coordinator: new ContentGenerationCoordinator(),
       provider,
       persistBlueprint: async () => true,

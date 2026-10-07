@@ -1,20 +1,20 @@
 import express, { type Request, type Response, type Router } from "express";
 import { buildContentGenerationFlightKey } from "../src/contentEngine/fingerprint";
 import { generateGameBlueprintWithProvider } from "./contentGeneration";
-import { createContentAuthMiddleware, createFirebaseContentAuthVerifier } from "./contentAuth";
 import type { ContentAuthVerifier } from "./contentAuth";
 import { ContentGenerationRateLimiter } from "./contentRateLimit";
-import type { ContentRateLimitResult } from "./contentRateLimit";
+import { createAiGateway, sendAiQuotaDenial, setAiQuotaHeaders } from "./aiGateway";
+import type { AiGateway } from "./aiGateway";
+import type { AiQuotaAllowed, AiQuotaDecision, AiQuotaStore } from "./aiQuota";
 import { validateContentGenerationRequest, validateExcludedFingerprints } from "../src/contentEngine/validation";
 import type { GameBlueprint, GenerateBlueprintCommand } from "../src/contentEngine/types";
 import { persistServerValidatedBlueprint } from "./contentPersistence";
 import type { BlueprintGenerationOutcome, StructuredContentProvider } from "../src/contentEngine/generation";
-import { CONTENT_GENERATION_LIMITS } from "../src/contentEngine/policy";
 
 interface GenerationFlightResult {
   admitted: boolean;
-  rateLimit?: ContentRateLimitResult;
-  rateLimitScope?: "account" | "network";
+  admission?: AiQuotaAllowed;
+  denial?: AiQuotaDecision;
   outcome?: BlueprintGenerationOutcome;
   providerFailed?: boolean;
   sharedPersisted?: boolean;
@@ -36,8 +36,9 @@ export class ContentGenerationCoordinator {
 }
 
 export interface ContentGenerationRouterOptions {
+  gateway?: AiGateway;
   verifier?: ContentAuthVerifier;
-  limiter?: ContentGenerationRateLimiter;
+  quotaStore?: AiQuotaStore;
   ipLimiter?: ContentGenerationRateLimiter;
   coordinator?: ContentGenerationCoordinator;
   provider?: StructuredContentProvider;
@@ -54,21 +55,17 @@ const defaultCoordinator = new ContentGenerationCoordinator();
 /** Creates the production /api/content/generate route with injectable external boundaries. */
 export function createContentGenerationRouter(options: ContentGenerationRouterOptions = {}): Router {
   const router = express.Router();
-  const limiter = options.limiter ?? new ContentGenerationRateLimiter(
-    CONTENT_GENERATION_LIMITS.maxPerMinute,
-    CONTENT_GENERATION_LIMITS.maxPerDay
-  );
-  const ipLimiter = options.ipLimiter ?? new ContentGenerationRateLimiter(
-    CONTENT_GENERATION_LIMITS.maxPerIpMinute,
-    CONTENT_GENERATION_LIMITS.maxPerIpDay
-  );
+  const gateway = options.gateway ?? createAiGateway({
+    ...(options.verifier ? { verifier: options.verifier } : {}),
+    ...(options.quotaStore ? { quotaStore: options.quotaStore } : {}),
+    ...(options.ipLimiter ? { networkLimiter: options.ipLimiter } : {}),
+  });
   const coordinator = options.coordinator ?? defaultCoordinator;
-  const authMiddleware = createContentAuthMiddleware(options.verifier ?? createFirebaseContentAuthVerifier());
   const isProviderConfigured = options.apiKeyAvailable ?? (() =>
     Boolean(process.env.GEMINI_API_KEY || process.env.API_KEY)
   );
 
-  router.post("/api/content/generate", authMiddleware, async (req: Request, res: Response) => {
+  router.post("/api/content/generate", gateway.authenticate, async (req: Request, res: Response) => {
     const rawBody: unknown = req.body;
     const body = rawBody && typeof rawBody === "object" && !Array.isArray(rawBody)
       ? rawBody as Record<string, unknown>
@@ -101,43 +98,43 @@ export function createContentGenerationRouter(options: ContentGenerationRouterOp
       request: requestResult.request,
       excludedFingerprints: excludedResult.fingerprints,
     };
-    const remoteAddress = req.ip || req.socket.remoteAddress || "anonymous";
-    const flightKey = `${identity.uid}:${buildContentGenerationFlightKey(command.request)}:${command.excludedFingerprints.slice().sort().join(",")}`;
+    const organizationSelection = req.get("X-Organization-Id") ?? null;
+    const flightKey = JSON.stringify([
+      identity.uid,
+      organizationSelection,
+      buildContentGenerationFlightKey(command.request),
+      command.excludedFingerprints.slice().sort(),
+    ]);
 
     const flightResult = await coordinator.run(flightKey, async () => {
-      const networkLimit = ipLimiter.consume(`ip:${remoteAddress}`);
-      if (!networkLimit.allowed) return { admitted: false, rateLimit: networkLimit, rateLimitScope: "network" };
-      const accountLimit = limiter.consume(identity.uid);
-      if (!accountLimit.allowed) return { admitted: false, rateLimit: accountLimit, rateLimitScope: "account" };
+      const admission = await gateway.admit(req, res, "content", 1);
+      if (!admission.allowed) return { admitted: false, denial: admission };
       try {
         const outcome = await generateGameBlueprintWithProvider(command, options.provider);
-        if (!outcome.valid) return { admitted: true, outcome, sharedPersisted: false };
+        if (!outcome.valid) return { admitted: true, admission, outcome, sharedPersisted: false };
         let sharedPersisted = false;
         try {
           sharedPersisted = await (options.persistBlueprint ?? persistServerValidatedBlueprint)(outcome.blueprint);
         } catch (persistenceError) {
           console.warn("Validated content could not be synchronized to the shared pool.", persistenceError);
         }
-        return { admitted: true, outcome, sharedPersisted };
+        return { admitted: true, admission, outcome, sharedPersisted };
       } catch (error) {
         console.error("Structured content generation failed inside the provider boundary:", error);
-        return { admitted: true, providerFailed: true };
+        return { admitted: true, admission, providerFailed: true };
       }
     });
 
     if (!flightResult.admitted) {
-      const rateLimit = flightResult.rateLimit;
-      if (rateLimit && rateLimit.retryAfterSeconds > 0) {
-        res.setHeader("Retry-After", String(rateLimit.retryAfterSeconds));
-      }
-      return res.status(429).json({
-        error: flightResult.rateLimitScope === "network"
-          ? "Too many content-generation requests from this network. Please wait before trying again."
-          : rateLimit?.reason === "daily-limit"
-            ? "This account has reached today's server content-generation limit. Try cached learning content or come back tomorrow."
-            : "Too many content-generation requests. Please wait before trying again.",
+      return sendAiQuotaDenial(res, flightResult.denial ?? {
+        allowed: false,
+        status: 503,
+        code: "AI_QUOTA_UNAVAILABLE",
+        error: "AI services are temporarily unavailable. Please try again later.",
+        retryAfterSeconds: 30,
       });
     }
+    if (flightResult.admission) setAiQuotaHeaders(res, flightResult.admission);
 
     // Only the request that consumed the server admission increments the local UI meter.
     // Coalesced followers reuse its result without spending another model-generation slot.

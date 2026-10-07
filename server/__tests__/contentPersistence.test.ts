@@ -49,14 +49,8 @@ const persistenceMocks = vi.hoisted(() => {
   };
 });
 
-vi.mock("firebase-admin/app", () => ({
-  applicationDefault: vi.fn(() => ({ kind: "test-application-default" })),
-  getApps: vi.fn(() => []),
-  initializeApp: vi.fn(() => ({ name: "student-portal-content-pool-writer" })),
-}));
-
-vi.mock("firebase-admin/firestore", () => ({
-  getFirestore: persistenceMocks.getFirestore,
+vi.mock("../adminFirestore", () => ({
+  getAdminFirestore: persistenceMocks.getFirestore,
 }));
 
 const REQUEST: ContentGenerationRequest = {

@@ -17,6 +17,14 @@ function syncCloudUserFields(fields: Record<string, unknown>) {
 
 const USAGE_STORAGE_KEY = "my_student_portal_ai_usage_v1";
 const SUB_STORAGE_KEY = "my_student_portal_subscription_v1";
+const SERVER_QUOTA_STORAGE_KEY = "my_student_portal_server_ai_quota_v1";
+const AI_SERVER_DEFAULT_DAILY_LIMIT = 20;
+
+interface ServerQuotaSnapshot {
+  dailyLimit: number;
+  remaining: number;
+  resetAt: number;
+}
 
 export const TIER_LIMITS: Record<SubscriptionTier, number> = {
   free_trial: 20,
@@ -82,17 +90,37 @@ function getStoredUsage(): { count: number; date: string } {
   return { count: 0, date: today };
 }
 
+function getStoredServerQuota(): ServerQuotaSnapshot | null {
+  try {
+    const raw = localStorage.getItem(SERVER_QUOTA_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+    const quota = parsed as Record<string, unknown>;
+    if (typeof quota.dailyLimit !== "number" || !Number.isSafeInteger(quota.dailyLimit) || quota.dailyLimit < 0 ||
+      typeof quota.remaining !== "number" || !Number.isSafeInteger(quota.remaining) || quota.remaining < 0 || quota.remaining > quota.dailyLimit ||
+      typeof quota.resetAt !== "number" || !Number.isSafeInteger(quota.resetAt) || quota.resetAt <= Date.now()) return null;
+    return { dailyLimit: quota.dailyLimit, remaining: quota.remaining, resetAt: quota.resetAt };
+  } catch {
+    return null;
+  }
+}
+
 export function getUsageStats(): AIUsageStats {
   const sub = getStoredSubscription();
   const usage = getStoredUsage();
-  const dailyLimit = TIER_LIMITS[sub.tier] || 20;
-  const remaining = Math.max(0, dailyLimit - usage.count);
+  const serverQuota = getStoredServerQuota();
+  // A client-selected plan is display-only. Until the gateway returns its current quota,
+  // show the same conservative personal default used by the server, never a claimed tier cap.
+  const dailyLimit = serverQuota?.dailyLimit ?? AI_SERVER_DEFAULT_DAILY_LIMIT;
+  const remaining = serverQuota?.remaining ?? Math.max(0, dailyLimit - usage.count);
+  const usedToday = serverQuota ? dailyLimit - remaining : Math.min(dailyLimit, usage.count);
 
   const msRemaining = Math.max(0, sub.trialEndsAt - Date.now());
   const trialDaysRemaining = Math.ceil(msRemaining / (24 * 60 * 60 * 1000));
 
   return {
-    usedToday: usage.count,
+    usedToday,
     dailyLimit,
     remaining,
     tier: sub.tier,
@@ -124,26 +152,36 @@ export function subscribeToAIUsage(listener: UsageListener): () => void {
 
 /**
  * Local experience-meter check only. localStorage and client-written profile fields are
- * user controlled; paid-plan enforcement is intentionally not claimed here. The content
- * API has a separate server-side per-UID rate limiter for generation abuse protection.
+ * user controlled; this is never an authorization or billing decision. Every AI endpoint
+ * independently enforces authenticated, transactional server-side user/organization quotas.
  */
-export function canConsumeAI(action: AIUsageAction): {
+export function canConsumeAI(_action: AIUsageAction): {
   allowed: boolean;
   remaining: number;
   reason?: string;
 } {
-  const stats = getUsageStats();
-  if (stats.remaining <= 0) {
-    return {
-      allowed: false,
-      remaining: 0,
-      reason: `You have reached your daily quota of ${stats.dailyLimit} AI operations for the ${TIER_LABELS[stats.tier]} tier. It will reset tomorrow, or you can test upgrading your plan.`,
-    };
+  // This is a UX estimate only. A cached client value can be stale or user-edited, so
+  // only the authenticated server gateway may block a request on quota.
+  return { allowed: true, remaining: getUsageStats().remaining };
+}
+
+/** Updates the display meter from a server-authoritative response; never used to grant access. */
+export function syncAIQuotaFromResponseHeaders(headers: Pick<Headers, "get">): void {
+  const dailyLimitText = headers.get("X-AI-Quota-Daily-Limit");
+  const remainingText = headers.get("X-AI-Quota-Daily-Remaining");
+  const resetAtText = headers.get("X-AI-Quota-Reset-At");
+  const dailyLimit = dailyLimitText === null ? Number.NaN : Number(dailyLimitText);
+  const remaining = remainingText === null ? Number.NaN : Number(remainingText);
+  const resetAt = resetAtText === null ? Number.NaN : Number(resetAtText);
+  if (!Number.isSafeInteger(dailyLimit) || dailyLimit < 0 ||
+    !Number.isSafeInteger(remaining) || remaining < 0 || remaining > dailyLimit ||
+    !Number.isSafeInteger(resetAt) || resetAt <= Date.now()) return;
+  try {
+    localStorage.setItem(SERVER_QUOTA_STORAGE_KEY, JSON.stringify({ dailyLimit, remaining, resetAt }));
+  } catch {
+    // The server quota remains authoritative if local display persistence is unavailable.
   }
-  return {
-    allowed: true,
-    remaining: stats.remaining,
-  };
+  notifyListeners();
 }
 
 export function recordAIConsumption(
@@ -162,9 +200,7 @@ export function recordAIConsumption(
     // ignore
   }
 
-  // Cloud sync if signed in
-  syncCloudUserFields({ aiUsageToday: newCount, aiUsageResetDate: today });
-
+  // The local count is only a display estimate; the server persists and returns the real quota.
   notifyListeners();
   return getUsageStats();
 }
@@ -201,22 +237,18 @@ export function resetDailyUsage(): AIUsageStats {
     // ignore
   }
 
-  syncCloudUserFields({ aiUsageToday: 0, aiUsageResetDate: today });
-
+  // Resetting this local display meter does not reset server-side quota.
   notifyListeners();
   return getUsageStats();
 }
 
-/**
- * Initializes and synchronizes user's cloud subscription & usage if available
- */
+/** Restores display-only subscription metadata from the user profile; it does not load AI quotas. */
 export async function syncUsageWithCloud(userId: string) {
   try {
     const [{ db }, { doc, getDoc }] = await Promise.all([import("../firebase"), import("firebase/firestore")]);
     const userSnap = await getDoc(doc(db, "users", userId));
     if (userSnap.exists()) {
       const data = userSnap.data();
-      const today = todayISO();
 
       if (data.subscriptionTier) {
         const sub = getStoredSubscription();
@@ -227,15 +259,6 @@ export async function syncUsageWithCloud(userId: string) {
           trialEndsAt: data.trialEndsAt || sub.trialEndsAt,
         };
         localStorage.setItem(SUB_STORAGE_KEY, JSON.stringify(updated));
-      }
-
-      if (data.aiUsageResetDate === today && typeof data.aiUsageToday === "number") {
-        const current = getStoredUsage();
-        const highest = Math.max(current.count, data.aiUsageToday);
-        localStorage.setItem(
-          USAGE_STORAGE_KEY,
-          JSON.stringify({ count: highest, date: today })
-        );
       }
       notifyListeners();
     }

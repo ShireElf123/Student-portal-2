@@ -39,7 +39,7 @@ export function createFirebaseContentAuthVerifier(options: {
   const projectId = (options.projectId ?? resolveFirebaseProjectId()).trim();
   if (!projectId) {
     console.error(
-      "Firebase project ID is unavailable; AI content generation will reject requests until FIREBASE_PROJECT_ID is configured."
+      "Firebase project ID is unavailable; the AI gateway will reject requests until FIREBASE_PROJECT_ID is configured."
     );
     return { verify: async () => null };
   }
@@ -67,14 +67,14 @@ export function createFirebaseContentAuthVerifier(options: {
 }
 
 /**
- * Require a verified Firebase identity before the route runs.
+ * Require a verified Firebase identity before an AI route runs.
  * On success the identity is available via `getContentIdentity(res)`.
  */
 export function createContentAuthMiddleware(verifier: ContentAuthVerifier): RequestHandler {
   return async (req: Request, res: Response, next: NextFunction) => {
     const token = extractBearerToken(req.headers.authorization);
     if (!token) {
-      res.status(401).json({ error: "Sign in is required to create AI practice content." });
+      res.status(401).json({ error: "Sign in is required to use AI features." });
       return;
     }
     let identity: ContentIdentity | null;

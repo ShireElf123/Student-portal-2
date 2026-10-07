@@ -14,14 +14,11 @@ export interface ContentRateLimitResult {
 }
 
 /**
- * Per-client fixed-window limiter for AI generation.
- *
- * State is in-memory and per-process: it resets on restart and is not shared across
- * instances or serverless workers. Active daily buckets are never evicted to make room;
- * once the bounded tracker is full, new keys fail closed until the next UTC day. Before
- * scaling horizontally, use a shared store (Redis/Firestore) for consistent quotas.
- * `clientKey` should be the verified account ID (see server/contentAuth.ts), or a
- * network address for the network limiter.
+ * Bounded in-process fixed-window limiter used as a supplemental network-abuse guard
+ * (and by isolated tests). State resets on restart and is not shared across server instances;
+ * it is never authoritative for account or organization entitlements. The shared AI gateway
+ * persists those quotas transactionally in Firestore. `clientKey` should be a server-derived
+ * network address for production network limiting, not a client-supplied account claim.
  */
 export const MAX_TRACKED_CONTENT_RATE_LIMIT_CLIENTS = 10_000;
 
