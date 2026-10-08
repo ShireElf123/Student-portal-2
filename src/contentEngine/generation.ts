@@ -1,5 +1,5 @@
 import { CURRICULUM_SKILL_NODES } from "../data/curriculumUniverse";
-import { buildContentCacheKey, fingerprintGameBlueprint, gameBlueprintId } from "./fingerprint";
+import { buildBlueprintCacheKey, fingerprintGameBlueprint, gameBlueprintId } from "./fingerprint";
 import { getSupportedGameEngine, isSupportedGameType } from "./registry";
 import { validateContentGenerationRequest, validateExcludedFingerprints, validateGameBlueprint } from "./validation";
 import {
@@ -32,7 +32,7 @@ export interface BlueprintGenerationOptions {
   now?: () => number;
   excludedFingerprints?: string[];
   maxAttempts?: number;
-  /** Hard timeout for a single provider call; timed-out calls are retried within the attempt budget. */
+  /** Caller timeout for a provider call; a timeout is not retried because upstream work may still be billable. */
   providerTimeoutMs?: number;
   /** Injectable delay between provider-failure retries (tests pass a no-op). */
   sleep?: (milliseconds: number) => Promise<void>;
@@ -208,6 +208,19 @@ export function buildContentGenerationPrompt(
   if (!skill) throw new Error(`Cannot build content prompt for unknown skill ${request.skillId}`);
   const engine = getSupportedGameEngine(request.gameType);
   const context = request.learnerContext;
+  const scaffoldInstructions = [
+    "Keep the standard prompt clear, direct, and encouraging.",
+    "Add one visual or step cue without reducing the target skill.",
+    "Use a smaller worked step and a supportive hint; never reveal the answer before the learner responds.",
+  ];
+  const misconceptionLabels: Record<string, string> = {
+    "multiplication-operation-confusion": "distinguish multiplication from addition using equal groups",
+    "factor-as-product": "show how both factors combine to make the product",
+    "off-by-one-calculation": "encourage a quick count or arithmetic check before choosing",
+    "multiplication-fact-recall": "support recall with a small grouping or repeated-addition cue",
+    "letter-identification-confusion": "make the target letter visually clear and contrast it gently with distractors",
+  };
+  const signalGuidance = (context.misconceptionTags ?? []).map((tag) => misconceptionLabels[tag]).filter(Boolean);
   const avoidSection = avoidContent.length
     ? `\nDo not repeat these recently rejected or already-used question patterns:\n${avoidContent.slice(0, 20).map((item) => `- ${item}`).join("\n")}`
     : "";
@@ -217,8 +230,10 @@ export function buildContentGenerationPrompt(
     `Curriculum objective: ${skill.title}. ${skill.description}\n` +
     `Standard: ${skill.standardCode}; grade band: ${skill.gradeBand}; age band: ${engine.ageBandBySkill[skill.id]}.\n` +
     `Difficulty: ${request.difficulty}. Theme: ${THEME_LABELS[request.theme]}.\n` +
-    `Learner context (anonymous learning signals only): mastery ${context.masteryBand}; adaptive difficulty ${context.currentDifficultyLevel}/5; recent incorrect responses on target skill ${context.recentIncorrectCount}; weak skill IDs ${JSON.stringify(context.weakSkillIds)}.\n` +
-    "Use this context only to scaffold or extend the requested skill. Do not include learner names, IDs, personal data, or mastery judgments.\n";
+    `Learner context (anonymous learning signals only): mastery band ${context.masteryBand}; adaptive difficulty ${context.currentDifficultyLevel}/5; recent accuracy ${context.recentAccuracy === null || context.recentAccuracy === undefined ? "not available" : `${context.recentAccuracy}%`}; recent incorrect responses on target skill ${context.recentIncorrectCount}; weak skill IDs ${JSON.stringify(context.weakSkillIds)}.\n` +
+    `Scaffold level ${context.scaffoldLevel ?? 0}/2: ${scaffoldInstructions[context.scaffoldLevel ?? 0]}\n` +
+    `${signalGuidance.length ? `Support these response patterns gently: ${signalGuidance.join("; ")}.\n` : ""}` +
+    "Use these signals only to scaffold the requested skill. Do not label or diagnose the learner, reveal answers in advance, or include names, IDs, personal data, or mastery judgments.\n";
 
   if (request.gameType === "speed-math") {
     return `${common}${avoidSection}\nReturn exactly this JSON shape, with no extra keys:\n${JSON.stringify({
@@ -320,7 +335,7 @@ function createBlueprintFromPayload(
       contentVersion: GAME_CONTENT_VERSION,
       validationStatus: "valid" as const,
       fingerprint: "pending",
-      cacheKey: buildContentCacheKey(request),
+      cacheKey: buildBlueprintCacheKey(request),
     },
   } as unknown as GameBlueprint;
   const fingerprint = fingerprintGameBlueprint(provisional);
@@ -380,7 +395,7 @@ export async function generateValidatedGameBlueprint(
           ? "The content provider timed out before returning a structured response."
           : "The content provider could not complete the structured generation request.",
       }];
-      if (attempt === maxAttempts) return { valid: false, attempts: attempt, errors: attemptErrors };
+      if (timedOut || attempt === maxAttempts) return { valid: false, attempts: attempt, errors: attemptErrors };
       await sleep(PROVIDER_FAILURE_BACKOFF_MS[Math.min(attempt, PROVIDER_FAILURE_BACKOFF_MS.length - 1)]);
       continue;
     }

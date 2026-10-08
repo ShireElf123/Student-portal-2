@@ -3,7 +3,7 @@ import { Sparkles } from "lucide-react";
 import { getActiveLearnerId, getLearnerModel } from "../utils/learnerBrain";
 import { canConsumeAI, recordAIConsumption } from "../services/aiUsageService";
 import { buildContentGenerationRequest } from "../contentEngine/learnerContext";
-import { getContentPoolStatus } from "../contentEngine/cache";
+import { getDefaultContentPoolManager } from "../contentEngine/contentPoolManager";
 import { getOrGenerateGameBlueprint } from "../services/gameContentService";
 import type { ContentTheme, GameBlueprint, SupportedGameType } from "../contentEngine/types";
 
@@ -38,26 +38,25 @@ export function GeneratedContentPanel({ gameType, skillId, onBlueprint, disabled
     try {
       const learner = getLearnerModel(learnerId);
       const request = buildContentGenerationRequest(learner, gameType, skillId, theme);
-      const poolBefore = getContentPoolStatus(request, learnerId);
-      setPoolSummary(`${poolBefore.usableBlueprintCount} saved set${poolBefore.usableBlueprintCount === 1 ? "" : "s"} available; target pool ${poolBefore.refillThreshold}.`);
+      const pool = await getDefaultContentPoolManager();
+      const poolBefore = await pool.getPoolHealth(request, learnerId);
+      setPoolSummary(`${poolBefore.availableCount} saved set${poolBefore.availableCount === 1 ? "" : "s"} available; target pool ${poolBefore.targetPoolSize}.`);
       const result = await getOrGenerateGameBlueprint(request, learnerId, {
-        beforeGenerate: () => {
+        beforeRequest: () => {
           const quota = canConsumeAI("content");
           if (!quota.allowed) throw new Error(quota.reason || "The daily AI generation limit has been reached.");
-          recordAIConsumption("content");
         },
+        onGenerationAdmitted: () => { recordAIConsumption("content"); },
       });
       if (getActiveLearnerId() !== learnerId) {
         throw new Error("The selected learner changed while content was preparing. Please request content again.");
       }
       onBlueprint(result.blueprint, learnerId);
-      const poolAfter = getContentPoolStatus(request, learnerId);
-      setPoolSummary(`${poolAfter.usableBlueprintCount} saved set${poolAfter.usableBlueprintCount === 1 ? "" : "s"} available; target pool ${poolAfter.refillThreshold}.`);
+      const poolAfter = await pool.getPoolHealth(request, learnerId);
+      setPoolSummary(`${poolAfter.availableCount} saved set${poolAfter.availableCount === 1 ? "" : "s"} available; target pool ${poolAfter.targetPoolSize}.`);
       setStatus(result.source === "cache"
         ? "Loaded a saved, validated activity. No AI request was used."
-        : result.cached
-          ? "New activity generated, validated, and saved for offline reuse."
-          : "New activity generated and validated; local cache storage is unavailable.");
+        : "New activity generated, validated, and saved for reuse.");
     } catch (error) {
       setErrorMessage(error instanceof Error
         ? error.message

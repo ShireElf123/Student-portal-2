@@ -143,6 +143,15 @@ describe("Firebase content authentication", () => {
     );
     expect(nextCalled).toBe(true);
     expect(valid.locals.contentIdentity).toEqual({ uid: "learner-uid-1" });
+
+    const throwingVerifier = createContentAuthMiddleware({ verify: async () => { throw new Error("network failure"); } });
+    const unavailable = fakeResponse();
+    await throwingVerifier(
+      { headers: { authorization: "Bearer opaque-token" } } as unknown as Request,
+      unavailable as unknown as Response,
+      (() => { throw new Error("next must not be called"); }) as unknown as NextFunction
+    );
+    expect(unavailable.statusCode).toBe(401);
   });
 });
 

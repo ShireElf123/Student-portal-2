@@ -5,7 +5,7 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
 import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
-import { markGameBlueprintCompleted } from "../contentEngine/cache";
+import { markGameBlueprintCompleted } from "../services/gameContentService";
 import { recordBlueprintSessionCompletion, recordBubblePopBlueprintResponse } from "../contentEngine/gameAdapters";
 import type { BubblePopBlueprint } from "../contentEngine/types";
 

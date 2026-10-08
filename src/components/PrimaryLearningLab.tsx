@@ -30,7 +30,7 @@ import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { PrimarySolarSystemLab } from "./PrimarySolarSystemLab";
 import { FloatingCloudDecoration } from "./landscape/LandscapeDecorations";
 import { GeneratedContentPanel } from "./GeneratedContentPanel";
-import { markGameBlueprintCompleted } from "../contentEngine/cache";
+import { markGameBlueprintCompleted } from "../services/gameContentService";
 import { adaptSpeedMathRound, adaptTimesMatrixRound, recordBlueprintSessionCompletion, recordSpeedMathBlueprintResponse, recordTimesMatrixBlueprintResponse } from "../contentEngine/gameAdapters";
 import type { GameBlueprint, SpeedMathBlueprint, TimesMatrixBlueprint } from "../contentEngine/types";
 
@@ -58,6 +58,8 @@ export interface PrimaryLearningLabProps {
   onAskTutor?: (prompt: string) => void;
   /** Registry launch target ID, not a curriculum skill or content ID. */
   initialActivityId?: string;
+  initialBlueprint?: GameBlueprint;
+  initialBlueprintLearnerId?: string;
 }
 
 const PRIMARY_ACTIVITY_TARGETS: Record<string, PrimaryActivity> = {
@@ -72,15 +74,26 @@ const PRIMARY_ACTIVITY_TARGETS: Record<string, PrimaryActivity> = {
   "times-matrix": "times-matrix",
 };
 
-export function PrimaryLearningLab({ onBack, onAskTutor, initialActivityId }: PrimaryLearningLabProps) {
+export function PrimaryLearningLab({
+  onBack,
+  onAskTutor,
+  initialActivityId,
+  initialBlueprint,
+  initialBlueprintLearnerId,
+}: PrimaryLearningLabProps) {
   const [activeActivity, setActiveActivity] = useState<PrimaryActivity>(
     () => PRIMARY_ACTIVITY_TARGETS[initialActivityId || ""] || "math-blitz"
   );
-  const [generatedBlueprint, setGeneratedBlueprint] = useState<GameBlueprint | null>(null);
-  const [generatedBlueprintLearnerId, setGeneratedBlueprintLearnerId] = useState<string | null>(null);
+  const [generatedBlueprint, setGeneratedBlueprint] = useState<GameBlueprint | null>(() => initialBlueprint ?? null);
+  const [generatedBlueprintLearnerId, setGeneratedBlueprintLearnerId] = useState<string | null>(() => initialBlueprintLearnerId ?? null);
   const [isGamePlaying, setIsGamePlaying] = useState(false);
+  const activityEffectMounted = useRef(false);
 
   useEffect(() => {
+    if (!activityEffectMounted.current) {
+      activityEffectMounted.current = true;
+      return;
+    }
     setGeneratedBlueprint(null);
     setGeneratedBlueprintLearnerId(null);
     setIsGamePlaying(false);

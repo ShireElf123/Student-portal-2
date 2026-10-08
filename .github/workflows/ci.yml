@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.1
+      - name: Set up Node.js
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Type-check
+        run: npm run lint
+      - name: Run tests
+        run: npm test
+      - name: Set up Java for the Firestore emulator
+        uses: actions/setup-java@v6.0.1
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Verify Firestore security rules
+        run: npx --yes firebase-tools@15.32.1 emulators:exec --only firestore --project demo-student-portal-rules --non-interactive "FIRESTORE_RULES_EMULATOR=1 FIREBASE_PROJECT_ID=demo-student-portal-rules npm run test:firestore-rules"
+      - name: Build client and server
+        run: npm run build

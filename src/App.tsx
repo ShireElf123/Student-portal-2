@@ -65,6 +65,8 @@ import {
   writeScopedJSON,
 } from "./utils/accountStorage";
 import {
+  getActiveLearnerId,
+  getLearnerModel,
   setActiveLearnerId,
   saveLearnerModel,
   syncLearnerBrainWithCloud,
@@ -74,6 +76,9 @@ import { resolveActivityDefinition, resolveSkillForActivity } from "./data/activ
 import { CURRICULUM_SKILL_NODES } from "./data/curriculumUniverse";
 import type { RecommendedAction } from "./utils/learnerBrain";
 import type { DailyRouteItem } from "./utils/dailyLearningRoute";
+import type { GameBlueprint } from "./contentEngine/types";
+import { buildContentGenerationRequest } from "./contentEngine/learnerContext";
+import { canConsumeAI, recordAIConsumption } from "./services/aiUsageService";
 
 // Storage keys
 const NOTEBOOKS_KEY = "my_student_portal_notebooks_v3";
@@ -128,6 +133,8 @@ type LearningLaunchRequest = Pick<RecommendedAction, "activityId" | "experienceI
 
 type PendingLearningLaunch = LearningLaunchRequest & {
   nonce: number;
+  generatedBlueprint?: GameBlueprint;
+  generatedBlueprintLearnerId?: string;
 };
 
 /** Loads the persisted role for `accountId` (defaults to active scope). */
@@ -620,7 +627,11 @@ export default function App() {
     setActiveTab("practice");
   };
 
-  const handleLearningLaunch = (request: LearningLaunchRequest) => {
+  const launchLearning = (
+    request: LearningLaunchRequest,
+    generatedBlueprint?: GameBlueprint,
+    generatedBlueprintLearnerId?: string
+  ) => {
     const activity = resolveActivityDefinition(request.activityId);
     if (activity.experienceId !== request.experienceId || activity.launch.route !== request.targetTab ||
       activity.launch.targetId !== request.targetId || !activity.skillIds.includes(request.skillId)) {
@@ -629,13 +640,57 @@ export default function App() {
     const skill = CURRICULUM_SKILL_NODES.find((node) => node.id === request.skillId);
     if (!skill) throw new Error(`Learning launch references unknown curriculum skill ${request.skillId}`);
 
-    setPendingLearningLaunch({ ...request, nonce: Date.now() });
+    setPendingLearningLaunch({
+      ...request,
+      nonce: Date.now(),
+      ...(generatedBlueprint ? { generatedBlueprint } : {}),
+      ...(generatedBlueprintLearnerId ? { generatedBlueprintLearnerId } : {}),
+    });
     setRecommendedSkillNodeId(request.targetTab === "odyssey" ? request.skillId : undefined);
     if (request.targetTab === "practice") {
       const subject = skill.domain === "reading" ? "Reading" : skill.domain === "science" ? "Science" : skill.domain === "logic" ? "Logic" : "Mathematics";
       setPracticePrefill({ subject, topic: skill.title });
     }
     setActiveTab(request.targetTab);
+  };
+
+  const handleLearningLaunch = (request: LearningLaunchRequest) => launchLearning(request);
+
+  const handleStartRouteItem = (item: DailyRouteItem) => {
+    const delivery = item.delivery;
+    if (delivery?.kind !== "generated-content") {
+      handleLearningLaunch(item);
+      return;
+    }
+
+    const learnerId = getActiveLearnerId();
+    void (async () => {
+      try {
+        const { getOrGenerateGameBlueprint } = await import("./services/gameContentService");
+        if (getActiveLearnerId() !== learnerId) return;
+        const request = buildContentGenerationRequest(
+          getLearnerModel(learnerId),
+          delivery.gameType,
+          item.skillId,
+          delivery.theme,
+          5,
+          delivery.difficulty
+        );
+        const result = await getOrGenerateGameBlueprint(request, learnerId, {
+          beforeRequest: () => {
+            const quota = canConsumeAI("content");
+            if (!quota.allowed) throw new Error(quota.reason || "The daily AI generation limit has been reached.");
+          },
+          onGenerationAdmitted: () => { recordAIConsumption("content"); },
+        });
+        if (getActiveLearnerId() !== learnerId) return;
+        launchLearning(item, result.blueprint, learnerId);
+      } catch (error) {
+        if (getActiveLearnerId() !== learnerId) return;
+        console.warn("Daily route content was unavailable; opening the registered curated activity.", error);
+        launchLearning(item);
+      }
+    })();
   };
 
   const handleToggleTask = (taskId: string) => {
@@ -1128,6 +1183,8 @@ export default function App() {
               onBack={() => setActiveTab("homework")}
               onAskTutor={handleAskTutor}
               initialActivityId={pendingLearningLaunch?.targetTab === "primary-lab" ? pendingLearningLaunch.targetId : undefined}
+              initialBlueprint={pendingLearningLaunch?.targetTab === "primary-lab" ? pendingLearningLaunch.generatedBlueprint : undefined}
+              initialBlueprintLearnerId={pendingLearningLaunch?.targetTab === "primary-lab" ? pendingLearningLaunch.generatedBlueprintLearnerId : undefined}
             />
           </div>
         )}
@@ -1137,6 +1194,8 @@ export default function App() {
           <div className="flex-1 overflow-y-auto">
             <ToddlerWorldView
               initialActivityId={pendingLearningLaunch?.targetTab === "toddler" ? pendingLearningLaunch.targetId : undefined}
+              initialBlueprint={pendingLearningLaunch?.targetTab === "toddler" ? pendingLearningLaunch.generatedBlueprint : undefined}
+              initialBlueprintLearnerId={pendingLearningLaunch?.targetTab === "toddler" ? pendingLearningLaunch.generatedBlueprintLearnerId : undefined}
               onStartAssessment={(asmtId) => {
                 setSelectedAssessmentId(asmtId);
                 setActiveTab("assessment");
@@ -1200,7 +1259,7 @@ export default function App() {
             onAskTutor={handleAskTutor}
             onToggleTask={handleToggleTask}
             onStartRecommendation={handleLearningLaunch}
-            onStartRouteItem={handleLearningLaunch}
+            onStartRouteItem={handleStartRouteItem}
           />
         )}
 

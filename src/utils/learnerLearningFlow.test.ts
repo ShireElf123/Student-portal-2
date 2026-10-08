@@ -6,6 +6,7 @@ import { GUIDED_ASSESSMENTS } from "../data/assessmentTemplates";
 import { recordAssessmentResultEvidence } from "./assessmentEvidence";
 import { todayISO } from "./dateUtils";
 import { getOrCreateDailyLearningRoute, validateDailyLearningRoute } from "./dailyLearningRoute";
+import { getSupportedGameEngine } from "../contentEngine/registry";
 import {
   computeRecommendations,
   getInitialLearnerModel,
@@ -130,6 +131,28 @@ describe("learner evidence and persistence integration", () => {
     expect((routeEvents[0] as CustomEvent).detail.items[0].completed).toBe(true);
     expect(storage.getItem(`student_portal_daily_learning_route_v1_${activeTestLearnerId}_${date}`))
       .toContain('"completed":true');
+  });
+
+  it("attaches generated delivery only when the selected registered route activity has a compatible renderer", () => {
+    const learner = getInitialLearnerModel(activeTestLearnerId);
+    const targetSkillId = "math-23-multiplication";
+    const targetSkill = CURRICULUM_SKILL_NODES.find((node) => node.id === targetSkillId);
+    if (!targetSkill) throw new Error("Test skill is missing from the curriculum.");
+    for (const prerequisiteId of targetSkill.prerequisites) learner.skillMastery[prerequisiteId].tier = "practitioner";
+    learner.skillMastery[targetSkillId].needsReview = true;
+    learner.skillMastery[targetSkillId].strugglesCount = 1;
+
+    const route = getOrCreateDailyLearningRoute(learner, "2026-10-05");
+    const item = route.items.find((candidate) => candidate.skillId === targetSkillId);
+    expect(item?.delivery).toMatchObject({ kind: "generated-content", gameType: "speed-math" });
+    expect(validateDailyLearningRoute(route)).toEqual([]);
+    if (!item || item.delivery?.kind !== "generated-content") throw new Error("Expected a renderer-compatible route item.");
+    const engine = getSupportedGameEngine(item.delivery.gameType);
+    expect(engine.activityId).toBe(item.activityId);
+    expect(engine.experienceId).toBe(item.experienceId);
+    expect(engine.skillIds).toContain(item.skillId);
+    expect(engine.launchRoute).toBe(item.targetTab);
+    expect(engine.launchTargetId).toBe(item.targetId);
   });
 
   it("rejects impossible daily-route dates instead of persisting a malformed route", () => {

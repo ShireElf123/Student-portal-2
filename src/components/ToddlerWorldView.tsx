@@ -53,6 +53,7 @@ import {
   recordCountingCardTapped,
   TODDLER_STICKERS,
 } from "../data/toddler/toddlerDailyAdventure";
+import type { GameBlueprint } from "../contentEngine/types";
 import {
   RollingHillsDivider,
   FloatingCloudDecoration,
@@ -62,6 +63,8 @@ import {
 
 interface ToddlerWorldViewProps {
   initialActivityId?: string;
+  initialBlueprint?: GameBlueprint;
+  initialBlueprintLearnerId?: string;
   onStartAssessment?: (assessmentId: string) => void;
   onSwitchToPrimary?: () => void;
   onSwitchToEducator?: () => void;
@@ -107,6 +110,8 @@ const COUNTING_CARDS = [
 
 export function ToddlerWorldView({
   initialActivityId,
+  initialBlueprint,
+  initialBlueprintLearnerId,
   onStartAssessment,
   onSwitchToPrimary,
   onSwitchToEducator,
@@ -1298,6 +1303,8 @@ export function ToddlerWorldView({
               onAddStar={addStar}
               onBackToBooks={() => setActiveTab("books")}
               targetActivity={initialGameTarget ?? undefined}
+              initialBlueprint={initialBlueprint?.gameType === "bubble-pop-phonics" ? initialBlueprint : undefined}
+              initialBlueprintLearnerId={initialBlueprint?.gameType === "bubble-pop-phonics" ? initialBlueprintLearnerId : undefined}
             />
           </div>
         )}
