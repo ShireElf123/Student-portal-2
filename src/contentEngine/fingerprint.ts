@@ -122,6 +122,9 @@ export function buildContentGenerationFlightKey(request: ContentGenerationReques
       currentDifficultyLevel: request.learnerContext.currentDifficultyLevel,
       recentIncorrectCount: request.learnerContext.recentIncorrectCount,
       weakSkillIds: [...request.learnerContext.weakSkillIds].sort(),
+      recentAccuracy: request.learnerContext.recentAccuracy ?? null,
+      scaffoldLevel: request.learnerContext.scaffoldLevel ?? 0,
+      misconceptionTags: [...(request.learnerContext.misconceptionTags ?? [])].sort(),
     },
   };
   return `content-flight-v1:${stableHash(JSON.stringify(normalizedRequest))}`;

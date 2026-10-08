@@ -4,7 +4,8 @@ import { buildContentGenerationRequest, buildLearnerGenerationContext } from "./
 import { cacheValidatedGameBlueprint, clearGeneratedContentCacheForTests, findReusableGameBlueprint, getContentPoolStatus, getKnownBlueprintFingerprints, markGameBlueprintCompleted } from "./cache";
 import { buildContentGenerationFlightKey, fingerprintGameBlueprint } from "./fingerprint";
 import { adaptSpeedMathRound, adaptTimesMatrixRound, recordBlueprintSessionCompletion, recordBubblePopBlueprintResponse, recordSpeedMathBlueprintResponse, recordTimesMatrixBlueprintResponse } from "./gameAdapters";
-import { generateValidatedGameBlueprint, StructuredContentProvider } from "./generation";
+import { buildContentGenerationPrompt, generateValidatedGameBlueprint, StructuredContentProvider } from "./generation";
+import { deriveLearnerSkillState } from "../utils/adaptiveLearning";
 import { validateContentGenerationRequest, validateGameBlueprint } from "./validation";
 import { validateSupportedGameEngineRegistry } from "./registry";
 import { getOrGenerateGameBlueprint } from "../services/gameContentService";
@@ -178,7 +179,10 @@ describe("Content Engine V1", () => {
         currentDifficultyLevel: 3,
         recentIncorrectCount: 2,
         weakSkillIds: ["math-23-multiplication"],
-      },
+        recentAccuracy: 40,
+        scaffoldLevel: 2,
+        misconceptionTags: ["off-by-one-calculation"],
+      }
     };
     const [first, second] = await Promise.all([
       generateValidatedGameBlueprint(firstRequest, providerFor(SPEED_PAYLOAD), { now: () => 1_790_000_000_000 }),
@@ -190,6 +194,22 @@ describe("Content Engine V1", () => {
     if (!first.valid || !second.valid) throw new Error("The context privacy fixture should produce valid blueprints.");
     expect(first.blueprint.metadata.cacheKey).toBe(second.blueprint.metadata.cacheKey);
     expect(buildContentGenerationFlightKey(firstRequest)).not.toBe(buildContentGenerationFlightKey(secondRequest));
+  });
+
+  it("accepts only skill-compatible bounded scaffold and misconception signals", () => {
+    const request = makeRequest("speed-math");
+    expect(validateContentGenerationRequest({
+      ...request,
+      learnerContext: { ...request.learnerContext, scaffoldLevel: 3 },
+    }).valid).toBe(false);
+    expect(validateContentGenerationRequest({
+      ...request,
+      learnerContext: { ...request.learnerContext, misconceptionTags: ["letter-identification-confusion"] },
+    }).valid).toBe(false);
+    expect(validateContentGenerationRequest({
+      ...request,
+      learnerContext: { ...request.learnerContext, misconceptionTags: ["off-by-one-calculation"] },
+    }).valid).toBe(true);
   });
 
   it("validates every supported discriminated content shape", async () => {
@@ -413,6 +433,40 @@ describe("Content Engine V1", () => {
       skillId: "read-k1-alphabet-letters",
       outcome: "correct",
     });
+  });
+
+  it("passes response-derived scaffold signals through validation without storing learner context in shared content", async () => {
+    const learnerId = `adaptive-content-context-${learnerCounter++}`;
+    setActiveLearnerId(`content-reset-${learnerCounter}`);
+    setActiveLearnerId(learnerId);
+    const blueprint = await generateFixture("speed-math");
+
+    // For 2 × 3 = 6, choosing 5 deterministically signals both an additive
+    // operation confusion and an off-by-one calculation slip.
+    recordSpeedMathBlueprintResponse(blueprint, 0, 5, learnerId);
+    const model = getLearnerModel(learnerId);
+    const skillId = "math-23-multiplication";
+    const state = deriveLearnerSkillState(model, skillId);
+    expect(state.recentAccuracy).toBe(0);
+    expect(state.misconceptionSignals.map((signal) => signal.tag)).toEqual(expect.arrayContaining([
+      "multiplication-operation-confusion",
+      "off-by-one-calculation",
+    ]));
+
+    const request = buildContentGenerationRequest(model, "speed-math", skillId, "space", 3);
+    expect(request.learnerContext).toMatchObject({
+      recentAccuracy: 0,
+      scaffoldLevel: 1,
+      misconceptionTags: expect.arrayContaining(["off-by-one-calculation"]),
+    });
+    const validatedRequest = validateContentGenerationRequest(request);
+    expect(validatedRequest.valid).toBe(true);
+    if (!validatedRequest.valid) throw new Error("The response-derived generation context should pass deterministic validation.");
+    const prompt = buildContentGenerationPrompt(validatedRequest.request);
+    expect(prompt).toContain("Scaffold level 1/2");
+    expect(prompt).toContain("encourage a quick count or arithmetic check");
+    expect(prompt).not.toContain(learnerId);
+    expect(request.learnerContext).not.toHaveProperty("learnerId");
   });
 
   it("rejects extra unknown fields at every blueprint level (exact-schema contract)", async () => {

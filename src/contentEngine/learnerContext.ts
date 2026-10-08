@@ -1,6 +1,7 @@
 import { CURRICULUM_SKILL_NODES } from "../data/curriculumUniverse";
 import type { LearnerModel } from "../utils/learnerBrain";
 import { getSupportedGameEngine } from "./registry";
+import { deriveLearnerSkillState, getScaffoldLevel } from "../utils/adaptiveLearning";
 import type {
   ContentDifficulty,
   ContentGenerationRequest,
@@ -13,7 +14,7 @@ import type {
 const SKILL_BY_ID = new Map(CURRICULUM_SKILL_NODES.map((skill) => [skill.id, skill]));
 
 export function getContentDifficultyForLearner(model: LearnerModel, skillId: string): ContentDifficulty {
-  const level = model.skillMastery[skillId]?.currentDifficultyLevel ?? 1;
+  const level = deriveLearnerSkillState(model, skillId).difficultyLevel;
   if (level <= 2) return "easy";
   if (level <= 4) return "medium";
   return "hard";
@@ -24,6 +25,7 @@ export function buildLearnerGenerationContext(model: LearnerModel, skillId: stri
   const skill = SKILL_BY_ID.get(skillId);
   if (!skill) throw new Error(`Cannot build learner context for unknown skill ${skillId}`);
   const record = model.skillMastery[skillId];
+  const skillState = deriveLearnerSkillState(model, skillId);
   const masteryBand: MasteryBand = !record || record.totalAttempts === 0 || record.tier === "locked"
     ? "new"
     : record.tier === "master" || record.evidenceScore >= 70
@@ -43,6 +45,9 @@ export function buildLearnerGenerationContext(model: LearnerModel, skillId: stri
     currentDifficultyLevel: Math.max(1, Math.min(5, Math.floor(record?.currentDifficultyLevel ?? 1))),
     recentIncorrectCount,
     weakSkillIds,
+    recentAccuracy: skillState.recentAccuracy === null ? null : Math.round(skillState.recentAccuracy * 100),
+    scaffoldLevel: getScaffoldLevel(skillState),
+    misconceptionTags: [...skillState.misconceptionTags].slice(0, 4),
   };
 }
 

@@ -1,4 +1,8 @@
 import { recordLearningEvent } from "../utils/learnerBrain";
+import {
+  inferLetterIdentificationMisconceptionTags,
+  inferMultiplicationMisconceptionTags,
+} from "../utils/adaptiveLearning";
 import { getSupportedGameEngine } from "./registry";
 import type { BubblePopBlueprint, GameBlueprint, SpeedMathBlueprint, TimesMatrixBlueprint } from "./types";
 
@@ -64,6 +68,7 @@ export function recordSpeedMathBlueprintResponse(
     difficulty: blueprint.difficulty,
     attempts: 1,
     hintsUsed,
+    ...(!correct ? { misconceptionTags: inferMultiplicationMisconceptionTags(round.leftOperand, round.rightOperand, selectedAnswer, round.answer) } : {}),
     metadata: {
       blueprintId: blueprint.id,
       roundId: round.id,
@@ -102,6 +107,7 @@ export function recordTimesMatrixBlueprintResponse(
     difficulty: blueprint.difficulty,
     attempts: 1,
     hintsUsed,
+    ...(!correct ? { misconceptionTags: inferMultiplicationMisconceptionTags(round.leftFactor, round.rightFactor, selectedAnswer, round.answer) } : {}),
     metadata: {
       blueprintId: blueprint.id,
       roundId: round.id,
@@ -140,6 +146,7 @@ export function recordBubblePopBlueprintResponse(
     difficulty: blueprint.difficulty,
     attempts: 1,
     hintsUsed: 0,
+    ...(!correct ? { misconceptionTags: inferLetterIdentificationMisconceptionTags(bubble.letter, round.targetLetter) } : {}),
     metadata: {
       blueprintId: blueprint.id,
       roundId: round.id,

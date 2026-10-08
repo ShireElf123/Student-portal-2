@@ -92,9 +92,10 @@ describe("authenticated generated-content learning integration", () => {
     for (const prerequisiteId of targetSkill.prerequisites) {
       learner.skillMastery[prerequisiteId].tier = "practitioner";
     }
-    learner.skillMastery[targetSkillId].needsReview = true;
-    learner.skillMastery[targetSkillId].strugglesCount = 1;
+    learner.skillMastery[targetSkillId].needsReview = false;
+    learner.skillMastery[targetSkillId].strugglesCount = 0;
     learner.skillMastery[targetSkillId].totalAttempts = 1;
+    learner.skillMastery[targetSkillId].evidenceScore = 15;
     learner.skillMastery[targetSkillId].lastPracticedTimestamp = Date.now() - 24 * 60 * 60 * 1000;
     saveLearnerModel(learner, learnerId);
 
@@ -198,18 +199,26 @@ describe("authenticated generated-content learning integration", () => {
         prompt: result.blueprint.content.rounds[0].prompt,
         answer: result.blueprint.content.rounds[0].answer,
       });
-      recordSpeedMathBlueprintResponse(result.blueprint, 0, displayedRound.answer, learnerId);
+      const incorrectAnswer = displayedRound.choices.find((choice) => choice !== displayedRound.answer);
+      if (incorrectAnswer === undefined) throw new Error("The validated renderer round did not include a distractor.");
+      recordSpeedMathBlueprintResponse(result.blueprint, 0, incorrectAnswer, learnerId);
       recordBlueprintSessionCompletion(result.blueprint, learnerId);
 
       const updatedLearner = getLearnerModel(learnerId);
       expect(updatedLearner.skillMastery[targetSkillId].totalAttempts).toBe(2);
-      expect(updatedLearner.skillMastery[targetSkillId].successfulAttempts).toBe(1);
-      expect(updatedLearner.recentEvents.find((event) => event.eventType === "question_answered")).toMatchObject({
+      expect(updatedLearner.skillMastery[targetSkillId].successfulAttempts).toBe(0);
+      const responseEvidence = updatedLearner.recentEvents.find((event) => event.eventType === "question_answered");
+      expect(responseEvidence).toMatchObject({
         activityId: "primary-lab-speed-math",
         experienceId: "speed-math-blitz-sprint",
         skillId: targetSkillId,
         eventType: "question_answered",
-        outcome: "correct",
+        outcome: "incorrect",
+      });
+      expect(responseEvidence?.misconceptionTags?.length).toBeGreaterThan(0);
+      expect(updatedLearner.recommendedNext.find((action) => action.skillId === targetSkillId)).toMatchObject({
+        category: "recovery",
+        reasonCode: "recent-mistake",
       });
       expect(updatedLearner.recentEvents.find((event) => event.eventType === "activity_completed")).toMatchObject({
         activityId: "primary-lab-speed-math",
@@ -217,7 +226,14 @@ describe("authenticated generated-content learning integration", () => {
       });
       expect(updatedLearner.recentEvents.find((event) => event.eventType === "activity_completed")?.skillId).toBeUndefined();
       expect(getActiveLearnerId()).toBe(learnerId);
-      expect(getOrCreateDailyLearningRoute(updatedLearner, todayISO()).items.find((item) => item.skillId === targetSkillId)?.completed).toBe(true);
+      const refreshedRoute = getOrCreateDailyLearningRoute(updatedLearner, todayISO());
+      expect(refreshedRoute.items.find((item) => item.skillId === targetSkillId)).toMatchObject({
+        recommendationCategory: "recovery",
+        phase: "focus",
+        completed: false,
+        delivery: { kind: "generated-content", gameType: "speed-math" },
+      });
+      expect(validateDailyLearningRoute(refreshedRoute)).toEqual([]);
 
       await pool.markPlayed(learnerId, result.blueprint);
       expect((await pool.getAvailableContent(request, learnerId)).map((blueprint) => blueprint.metadata.fingerprint))

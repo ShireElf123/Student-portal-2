@@ -1,4 +1,5 @@
 import type { GradeLevelBand } from "../data/curriculumUniverse";
+import type { MisconceptionTag, ScaffoldLevel } from "../learning/adaptiveTypes";
 
 export const GAME_BLUEPRINT_VERSION = "game-blueprint-v1" as const;
 export const CURRICULUM_CONTENT_VERSION = "curriculum-universe-v1" as const;
@@ -17,6 +18,12 @@ export interface LearnerGenerationContext {
   currentDifficultyLevel: number;
   recentIncorrectCount: number;
   weakSkillIds: string[];
+  /** Recent scored accuracy percentage; null when no response evidence exists. */
+  recentAccuracy?: number | null;
+  /** Bounded prompt guidance only; never changes target skill or renderer logic. */
+  scaffoldLevel?: ScaffoldLevel;
+  /** Canonical tags from validated response adapters; no learner identity or free text. */
+  misconceptionTags?: MisconceptionTag[];
 }
 
 export interface ContentGenerationRequest {

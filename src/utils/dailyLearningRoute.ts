@@ -1,6 +1,8 @@
 import { CURRICULUM_SKILL_NODES } from "../data/curriculumUniverse";
 import { getActivitiesForSkill, resolveActivityDefinition, LearningActivityDefinition } from "../data/activitySkillRegistry";
-import type { LearnerModel } from "./learnerBrain";
+import { isAdaptiveRecommendationCategory, type AdaptiveRecommendationCategory, type AdaptiveRoutePhase } from "../learning/adaptiveTypes";
+import { deriveLearnerSkillState, getAdaptiveRecommendationCandidates } from "./adaptiveLearning";
+import type { LearnerModel, LearningEventOutcome } from "./learnerBrain";
 import { todayISO } from "./dateUtils";
 import { findSupportedGameTypeForActivity, getSupportedGameEngine, isSupportedGameType } from "../contentEngine/registry";
 import { getContentDifficultyForLearner } from "../contentEngine/learnerContext";
@@ -30,6 +32,10 @@ export interface DailyRouteItem {
   targetId: string;
   /** Optional for backwards compatibility with the persisted learning-route-v1 shape. */
   delivery?: DailyRouteDelivery;
+  /** Which deterministic recommendation signal selected this step. */
+  recommendationCategory?: AdaptiveRecommendationCategory;
+  /** Child-friendly route order, derived from the same learner evidence. */
+  phase?: AdaptiveRoutePhase;
   completed: boolean;
 }
 
@@ -56,24 +62,18 @@ function isValidDateKey(date: unknown): date is string {
   return Number.isFinite(parsedDate.getTime()) && parsedDate.toISOString().slice(0, 10) === date;
 }
 
-function hashSeed(value: string): number {
-  let hash = 2166136261;
-  for (let index = 0; index < value.length; index += 1) {
-    hash ^= value.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-  return hash >>> 0;
+interface DailyRouteStep {
+  skillId: string;
+  category: AdaptiveRecommendationCategory;
+  phase: AdaptiveRoutePhase;
+  preferredActivityId?: string;
 }
 
-function isUnlocked(model: LearnerModel, skillId: string): boolean {
-  const node = CURRICULUM_SKILL_NODES.find((candidate) => candidate.id === skillId);
-  return Boolean(node && node.prerequisites.every((id) => {
-    const tier = model.skillMastery[id]?.tier;
-    return tier === "practitioner" || tier === "master";
-  }));
-}
-
-function pickActivity(skillId: string, gradeBand: LearnerModel["gradeBand"]): LearningActivityDefinition {
+function pickActivity(
+  skillId: string,
+  gradeBand: LearnerModel["gradeBand"],
+  preferredActivityId?: string
+): LearningActivityDefinition {
   const candidates = getActivitiesForSkill(skillId).filter((activity) =>
     activity.experienceType !== "engagement" &&
     activity.experienceType !== "assessment" &&
@@ -82,7 +82,11 @@ function pickActivity(skillId: string, gradeBand: LearnerModel["gradeBand"]): Le
     activity.experienceType !== "picture-book" &&
     (activity.experienceType !== "toddler-world" || (activity.minimumWorldStars ?? 0) === 0)
   );
-  const preferred = [...candidates].sort((a, b) => {
+  const preferred = preferredActivityId
+    ? candidates.find((activity) => activity.id === preferredActivityId)
+    : undefined;
+  if (preferred) return preferred;
+  const selected = [...candidates].sort((a, b) => {
     const gradePreference = (activity: LearningActivityDefinition) => {
       if (gradeBand === "toddler") return activity.gradeBand === "toddler" ? 0 : activity.experienceType === "curriculum-quest" ? 2 : 1;
       if (activity.gradeBand === gradeBand) return 0;
@@ -92,131 +96,219 @@ function pickActivity(skillId: string, gradeBand: LearnerModel["gradeBand"]): Le
     const bGeneric = b.experienceType === "curriculum-quest" ? 1 : 0;
     return gradePreference(a) - gradePreference(b) || aGeneric - bGeneric || a.id.localeCompare(b.id);
   })[0];
-  if (!preferred) throw new Error(`Daily route has no launchable activity for skill ${skillId}`);
-  return preferred;
+  if (!selected) throw new Error(`Daily route has no launchable activity for skill ${skillId}`);
+  return selected;
+}
+
+function reasonForCategory(category: AdaptiveRecommendationCategory): DailyRouteReason {
+  switch (category) {
+    case "recovery": return "recent-mistake";
+    case "foundation":
+    case "practice": return "reinforcement";
+    case "review": return "spaced-review";
+    case "next":
+    case "challenge": return "new-skill";
+  }
+}
+
+function descriptionForStep(step: DailyRouteStep): string {
+  if (step.phase === "warm-up") return "Start with a quick refresher and build a little momentum.";
+  if (step.phase === "growth") {
+    return step.category === "challenge"
+      ? "You have opened a connected skill—see what new idea you can discover."
+      : "Explore a fresh skill that is ready for you.";
+  }
+  switch (step.category) {
+    case "recovery": return "Try a calmer round with a helpful clue and a fresh chance.";
+    case "foundation": return "Strengthen an earlier idea that supports your next steps.";
+    case "review": return "Bring a familiar skill back for a short refresh.";
+    case "practice": return "A few focused rounds can help this skill feel more familiar.";
+    case "next": return "Take one small step into a skill that is ready to explore.";
+    case "challenge": return "Stretch your thinking with a connected skill.";
+  }
 }
 
 function createItem(
   model: LearnerModel,
   date: string,
   slot: number,
-  reason: DailyRouteReason,
-  skillId: string,
-  completed: boolean
+  step: DailyRouteStep,
+  completed: boolean,
+  preferredActivityId?: string
 ): DailyRouteItem {
-  const node = CURRICULUM_SKILL_NODES.find((candidate) => candidate.id === skillId);
-  if (!node) throw new Error(`Daily route references unknown curriculum skill ${skillId}`);
-  const activity = pickActivity(skillId, model.gradeBand);
-  const supportedGameType = findSupportedGameTypeForActivity(activity.id, skillId);
+  const node = CURRICULUM_SKILL_NODES.find((candidate) => candidate.id === step.skillId);
+  if (!node) throw new Error(`Daily route references unknown curriculum skill ${step.skillId}`);
+  const activity = pickActivity(step.skillId, model.gradeBand, preferredActivityId ?? step.preferredActivityId);
+  const supportedGameType = findSupportedGameTypeForActivity(activity.id, step.skillId);
   const delivery: DailyRouteDelivery = supportedGameType
     ? {
         kind: "generated-content",
         gameType: supportedGameType,
-        difficulty: getContentDifficultyForLearner(model, skillId),
+        difficulty: getContentDifficultyForLearner(model, step.skillId),
         theme: supportedGameType === "bubble-pop-phonics" ? "garden" : "space",
       }
     : { kind: "registered-activity" };
-  const descriptions: Record<DailyRouteReason, string> = {
-    "recent-mistake": "Revisit a skill after a recent challenging response.",
-    reinforcement: "Strengthen a skill that has needed extra support.",
-    "new-skill": "Explore an unlocked curriculum skill you have not practiced yet.",
-    "spaced-review": "Refresh a previously practiced skill after a short break.",
-  };
   return {
-    id: `${date}:route-${slot}:${skillId}`,
+    id: `${date}:route-${slot}:${step.skillId}`,
     slot,
-    reason,
+    reason: reasonForCategory(step.category),
     title: node.title,
-    description: descriptions[reason],
-    skillId,
+    description: descriptionForStep(step),
+    skillId: step.skillId,
     activityId: activity.id,
     experienceId: activity.experienceId,
     targetTab: activity.launch.route,
     targetId: activity.launch.targetId,
     delivery,
+    recommendationCategory: step.category,
+    phase: step.phase,
     completed,
   };
 }
 
-function chooseSkillPlan(model: LearnerModel, date: string): Array<{ reason: DailyRouteReason; skillId: string }> {
-  const [year, month, day] = date.split("-").map(Number);
-  const dateEnd = new Date(year, month - 1, day + 1).getTime() - 1;
-  const recentMistakeCutoff = dateEnd - 30 * 24 * 60 * 60 * 1000;
-  const plan: Array<{ reason: DailyRouteReason; skillId: string }> = [];
-  const used = new Set<string>();
-  const add = (reason: DailyRouteReason, skillId?: string) => {
-    if (!skillId || used.has(skillId) || !model.skillMastery[skillId] || !isUnlocked(model, skillId)) return;
-    if (!CURRICULUM_SKILL_NODES.some((node) => node.id === skillId)) return;
-    used.add(skillId);
-    plan.push({ reason, skillId });
+function chooseSkillPlan(
+  model: LearnerModel,
+  date: string,
+  excludedSkillIds: ReadonlySet<string> = new Set()
+): DailyRouteStep[] {
+  const dateEnd = new Date(`${date}T23:59:59.999`).getTime();
+  const candidates = getAdaptiveRecommendationCandidates(model, {
+    now: dateEnd,
+    limit: CURRICULUM_SKILL_NODES.length,
+  });
+  const used = new Set(excludedSkillIds);
+  const plan: DailyRouteStep[] = [];
+  const take = (predicate: (candidate: (typeof candidates)[number]) => boolean) =>
+    candidates.find((candidate) => !used.has(candidate.skillId) && predicate(candidate));
+  const add = (candidate: (typeof candidates)[number] | undefined, phase: AdaptiveRoutePhase) => {
+    if (!candidate || used.has(candidate.skillId)) return false;
+    used.add(candidate.skillId);
+    plan.push({
+      skillId: candidate.skillId,
+      category: candidate.category,
+      phase,
+      ...(candidate.preferredActivityId ? { preferredActivityId: candidate.preferredActivityId } : {}),
+    });
+    return true;
+  };
+  const hasRecentRecall = (candidate: (typeof candidates)[number]) => {
+    const state = deriveLearnerSkillState(model, candidate.skillId, dateEnd);
+    return state.recentAccuracy === null || state.recentAccuracy >= 0.7;
   };
 
-  const latestMistake = (model.recentEvents || []).find((event) =>
-    event.result === "struggle" && event.skillId &&
-    event.timestamp >= recentMistakeCutoff && event.timestamp <= dateEnd
+  const warmUp = take((candidate) =>
+    candidate.category === "review" || candidate.category === "challenge" ||
+    candidate.category === "next" || (candidate.category === "practice" && hasRecentRecall(candidate))
   );
-  add("recent-mistake", latestMistake?.skillId);
+  add(warmUp ?? take(() => true), "warm-up");
 
-  const weak = Object.values(model.skillMastery || {})
-    .filter((record) => record.tier !== "master" && (record.needsReview || record.strugglesCount > 0))
-    .sort((a, b) => Number(b.needsReview) - Number(a.needsReview) || b.strugglesCount - a.strugglesCount || a.lastPracticedTimestamp - b.lastPracticedTimestamp || a.skillId.localeCompare(b.skillId));
-  for (const record of weak) {
-    if (plan.length >= ROUTE_LENGTH) break;
-    add("reinforcement", record.skillId);
+  const focus = take((candidate) => ["recovery", "foundation", "practice", "review"].includes(candidate.category));
+  add(focus ?? take((candidate) => candidate.category !== "recovery" && candidate.category !== "foundation"), "focus");
+
+  const growth = take((candidate) => candidate.category === "next" || candidate.category === "challenge");
+  add(growth ?? take(() => true), "growth");
+
+  const fallbackPhases: AdaptiveRoutePhase[] = ["warm-up", "focus", "growth"];
+  while (plan.length < ROUTE_LENGTH) {
+    const phase = fallbackPhases[plan.length] ?? "growth";
+    const fallback = take(() => true);
+    if (!add(fallback, phase)) break;
   }
 
-  const nodes = [...CURRICULUM_SKILL_NODES];
-  const offset = nodes.length ? hashSeed(`${model.learnerId}:${date}:new`) % nodes.length : 0;
-  const rotatedNodes = [...nodes.slice(offset), ...nodes.slice(0, offset)];
-  for (const node of rotatedNodes) {
-    if (plan.length >= ROUTE_LENGTH) break;
-    const record = model.skillMastery[node.id];
-    if (!record || record.totalAttempts > 0 || record.tier === "master") continue;
-    add("new-skill", node.id);
-  }
-
-  const reviewCandidates = Object.values(model.skillMastery || {})
-    .filter((record) => record.totalAttempts > 0 && record.lastPracticedTimestamp > 0 && record.tier !== "locked")
-    .sort((a, b) => a.lastPracticedTimestamp - b.lastPracticedTimestamp || a.skillId.localeCompare(b.skillId));
-  for (const record of reviewCandidates) {
-    if (plan.length >= ROUTE_LENGTH) break;
-    add("spaced-review", record.skillId);
-  }
-
-  // Keep a useful three-step route when a learner has little history or prerequisites.
-  for (const node of rotatedNodes) {
-    if (plan.length >= ROUTE_LENGTH) break;
-    add("new-skill", node.id);
+  if (plan.length < ROUTE_LENGTH) {
+    const retrievalCandidates = CURRICULUM_SKILL_NODES
+      .filter((node) => !used.has(node.id))
+      .map((node) => ({ node, state: deriveLearnerSkillState(model, node.id, dateEnd) }))
+      .filter(({ node, state }) => state.isUnlocked && getActivitiesForSkill(node.id).some((activity) =>
+        activity.experienceType !== "engagement" && activity.experienceType !== "assessment" &&
+        activity.experienceType !== "homework" && activity.experienceType !== "practice" &&
+        activity.experienceType !== "picture-book" &&
+        (activity.experienceType !== "toddler-world" || (activity.minimumWorldStars ?? 0) === 0)
+      ))
+      .sort((left, right) =>
+        (right.state.daysSinceLastPractice ?? Number.MAX_SAFE_INTEGER) -
+        (left.state.daysSinceLastPractice ?? Number.MAX_SAFE_INTEGER) || left.node.id.localeCompare(right.node.id)
+      );
+    for (const { node, state } of retrievalCandidates) {
+      if (plan.length >= ROUTE_LENGTH) break;
+      const category: AdaptiveRecommendationCategory = state.totalAttempts === 0
+        ? "next"
+        : state.tier === "master" || state.tier === "practitioner" ? "review" : "practice";
+      const phase = fallbackPhases[plan.length] ?? "growth";
+      add({
+        skillId: node.id,
+        category,
+        reasonCode: category === "next" ? "new-skill" : category === "review" ? "needs-practice" : "needs-practice",
+        urgency: "low",
+        priorityScore: 0,
+      }, phase);
+    }
   }
   return plan.slice(0, ROUTE_LENGTH);
 }
 
-/** Creates a route once per learner and date, then reuses its stored item identities offline. */
+/** Keeps completed route steps, but deterministically replans every unfinished slot when evidence changes. */
 export function getOrCreateDailyLearningRoute(model: LearnerModel, date: string = todayISO()): DailyLearningRoute {
   if (!isValidDateKey(date)) throw new Error(`Invalid daily route date: ${String(date)}`);
   const key = routeStorageKey(model.learnerId, date);
+  let previousRoute: DailyLearningRoute | undefined;
   try {
     const raw = localStorage.getItem(key);
     if (raw) {
       const parsed = JSON.parse(raw) as DailyLearningRoute;
       if (parsed?.learnerId === model.learnerId && parsed.date === date && parsed.version === "learning-route-v1" &&
         validateDailyLearningRoute(parsed).length === 0) {
-        return parsed;
+        if (parsed.generatedFromEventCount === model.totalLearningEventsCount) return parsed;
+        previousRoute = parsed;
       }
     }
   } catch {
     // If storage is blocked/corrupt, the same deterministic route is still produced in memory.
   }
 
-  const now = Date.now();
+  const latestOutcomeByActivitySkill = new Map<string, LearningEventOutcome>();
+  const latestActivityBySkill = new Map<string, string>();
+  const responsesForDate = [...(model.recentEvents || [])]
+    .filter((event) => event.skillId && event.outcome !== "explored" && todayISO(new Date(event.timestamp)) === date)
+    .sort((left, right) => right.timestamp - left.timestamp || right.id.localeCompare(left.id));
+  for (const event of responsesForDate) {
+    const key = `${event.activityId}::${event.skillId}`;
+    if (!latestOutcomeByActivitySkill.has(key)) latestOutcomeByActivitySkill.set(key, event.outcome);
+    if (event.skillId && !latestActivityBySkill.has(event.skillId)) latestActivityBySkill.set(event.skillId, event.activityId);
+  }
+
+  const completedBySlot = new Map<number, DailyRouteItem>();
+  for (const item of previousRoute?.items ?? []) {
+    const latestOutcome = latestOutcomeByActivitySkill.get(`${item.activityId}::${item.skillId}`);
+    const completed = latestOutcome === undefined ? item.completed : latestOutcome === "correct";
+    if (completed) completedBySlot.set(item.slot, { ...item, completed: true });
+  }
+  const completedSkillIds = new Set([...completedBySlot.values()].map((item) => item.skillId));
+  const plan = chooseSkillPlan(model, date, completedSkillIds);
+  const items: DailyRouteItem[] = [];
+  let planIndex = 0;
+  for (let slot = 1; slot <= ROUTE_LENGTH; slot += 1) {
+    const completedItem = completedBySlot.get(slot);
+    if (completedItem) {
+      items.push(completedItem);
+      continue;
+    }
+    const step = plan[planIndex++];
+    if (!step) throw new Error(`Adaptive route could not fill slot ${slot} for ${model.learnerId}`);
+    const preferredActivityId = latestActivityBySkill.get(step.skillId);
+    const item = createItem(model, date, slot, step, false, preferredActivityId);
+    if (latestOutcomeByActivitySkill.get(`${item.activityId}::${item.skillId}`) === "correct") item.completed = true;
+    items.push(item);
+  }
+
   const route: DailyLearningRoute = {
     id: `${model.learnerId}:${date}:learning-route-v1`,
     learnerId: model.learnerId,
     date,
     version: "learning-route-v1",
     generatedFromEventCount: model.totalLearningEventsCount,
-    items: chooseSkillPlan(model, date).map((step, index) => createItem(model, date, index + 1, step.reason, step.skillId, false)),
-    updatedAt: now,
+    items,
+    updatedAt: Date.now(),
   };
   persistRoute(route);
   return route;
@@ -230,13 +322,15 @@ function persistRoute(route: DailyLearningRoute): void {
   }
 }
 
-/** Marks a route step complete only when a meaningful event matches both its activity and skill. */
+/** Completes a route step only after a correct response matches both its activity and skill. */
 export function markDailyRouteEvidenceComplete(
   learnerId: string,
   activityId: string,
   skillId: string,
-  timestamp: number = Date.now()
+  timestamp: number = Date.now(),
+  outcome: LearningEventOutcome = "correct"
 ): void {
+  if (outcome !== "correct") return;
   const date = todayISO(new Date(timestamp));
   const key = routeStorageKey(learnerId, date);
   try {
@@ -297,6 +391,12 @@ export function validateDailyLearningRoute(route: DailyLearningRoute): string[] 
     }
     if (!["recent-mistake", "reinforcement", "new-skill", "spaced-review"].includes(item.reason)) {
       issues.push(`Daily route item ${item.id} has unknown reason ${String(item.reason)}`);
+    }
+    if (item.recommendationCategory !== undefined && !isAdaptiveRecommendationCategory(item.recommendationCategory)) {
+      issues.push(`Daily route item ${item.id} has an unknown recommendation category`);
+    }
+    if (item.phase !== undefined && !["warm-up", "focus", "growth"].includes(item.phase)) {
+      issues.push(`Daily route item ${item.id} has an unknown adaptive phase`);
     }
     if (typeof item.title !== "string" || typeof item.description !== "string" || !item.title.trim() || !item.description.trim()) {
       issues.push(`Daily route item ${item.id} is missing display text`);

@@ -1,5 +1,7 @@
 import { getActivitiesForSkill, resolveActivityDefinition } from "../data/activitySkillRegistry";
 import { CURRICULUM_SKILL_NODES, GradeLevelBand } from "../data/curriculumUniverse";
+import { getSkillGraphNode } from "../data/skillGraph";
+import { isMisconceptionTag, type MisconceptionTag } from "../learning/adaptiveTypes";
 import { fingerprintGameBlueprint, gameBlueprintId } from "./fingerprint";
 import { getSupportedGameEngine, isSupportedGameType } from "./registry";
 import {
@@ -100,6 +102,16 @@ function exactKeys(record: Record<string, unknown>, expected: readonly string[])
   return keys.length === expected.length && keys.every((key) => expected.includes(key));
 }
 
+function requiredAndAllowedKeys(
+  record: Record<string, unknown>,
+  required: readonly string[],
+  optional: readonly string[]
+): boolean {
+  const allowed = new Set([...required, ...optional]);
+  return required.every((key) => Object.prototype.hasOwnProperty.call(record, key)) &&
+    Object.keys(record).every((key) => allowed.has(key));
+}
+
 export function validateContentGenerationRequest(input: unknown):
   | { valid: true; request: ContentGenerationRequest; errors: [] }
   | { valid: false; errors: BlueprintValidationError[] } {
@@ -135,7 +147,9 @@ export function validateContentGenerationRequest(input: unknown):
   if (!isRecord(rawContext)) {
     addError(errors, "INVALID_REQUEST", "learnerContext", "Learner context must contain only validated learning signals.");
   } else {
-    if (!exactKeys(rawContext, ["gradeBand", "masteryBand", "currentDifficultyLevel", "recentIncorrectCount", "weakSkillIds"])) {
+    const requiredContextKeys = ["gradeBand", "masteryBand", "currentDifficultyLevel", "recentIncorrectCount", "weakSkillIds"] as const;
+    const optionalContextKeys = ["recentAccuracy", "scaffoldLevel", "misconceptionTags"] as const;
+    if (!requiredAndAllowedKeys(rawContext, requiredContextKeys, optionalContextKeys)) {
       addError(errors, "INVALID_REQUEST", "learnerContext", "Learner context has missing or unsupported fields.");
     }
     const weakSkillIds = rawContext.weakSkillIds;
@@ -157,15 +171,44 @@ export function validateContentGenerationRequest(input: unknown):
     if (!Number.isInteger(rawContext.recentIncorrectCount) || Number(rawContext.recentIncorrectCount) < 0 || Number(rawContext.recentIncorrectCount) > 10) {
       addError(errors, "INVALID_REQUEST", "learnerContext.recentIncorrectCount", "Recent incorrect-response count must be between 0 and 10.");
     }
+
+    const hasRecentAccuracy = Object.prototype.hasOwnProperty.call(rawContext, "recentAccuracy");
+    const recentAccuracy = rawContext.recentAccuracy;
+    const validRecentAccuracy = !hasRecentAccuracy || recentAccuracy === null ||
+      (Number.isInteger(recentAccuracy) && Number(recentAccuracy) >= 0 && Number(recentAccuracy) <= 100);
+    if (!validRecentAccuracy) {
+      addError(errors, "INVALID_REQUEST", "learnerContext.recentAccuracy", "Recent accuracy must be null or an integer percentage from 0 to 100.");
+    }
+    const hasScaffoldLevel = Object.prototype.hasOwnProperty.call(rawContext, "scaffoldLevel");
+    const scaffoldLevel = rawContext.scaffoldLevel;
+    const validScaffoldLevel = !hasScaffoldLevel || scaffoldLevel === 0 || scaffoldLevel === 1 || scaffoldLevel === 2;
+    if (!validScaffoldLevel) {
+      addError(errors, "INVALID_REQUEST", "learnerContext.scaffoldLevel", "Scaffold level must be 0, 1, or 2.");
+    }
+    const rawMisconceptionTags = rawContext.misconceptionTags;
+    const targetMisconceptionTags = typeof input.skillId === "string"
+      ? new Set(getSkillGraphNode(input.skillId)?.misconceptionTags ?? [])
+      : new Set();
+    const validMisconceptionTags = rawMisconceptionTags === undefined ||
+      (Array.isArray(rawMisconceptionTags) && rawMisconceptionTags.length <= 4 &&
+        rawMisconceptionTags.every((tag) => isMisconceptionTag(tag) && targetMisconceptionTags.has(tag)));
+    if (!validMisconceptionTags) {
+      addError(errors, "INVALID_REQUEST", "learnerContext.misconceptionTags", "Misconception context must contain at most four tags registered to the target skill.");
+    }
+
     if (validWeakSkillIds && GRADE_BANDS.has(rawContext.gradeBand as GradeLevelBand) &&
       MASTERY_BANDS.has(rawContext.masteryBand as MasteryBand) &&
-      Number.isInteger(rawContext.currentDifficultyLevel) && Number.isInteger(rawContext.recentIncorrectCount)) {
+      Number.isInteger(rawContext.currentDifficultyLevel) && Number.isInteger(rawContext.recentIncorrectCount) &&
+      validRecentAccuracy && validScaffoldLevel && validMisconceptionTags) {
       learnerContext = {
         gradeBand: rawContext.gradeBand as GradeLevelBand,
         masteryBand: rawContext.masteryBand as MasteryBand,
         currentDifficultyLevel: Number(rawContext.currentDifficultyLevel),
         recentIncorrectCount: Number(rawContext.recentIncorrectCount),
         weakSkillIds: [...new Set(weakSkillIds as string[])],
+        recentAccuracy: hasRecentAccuracy ? recentAccuracy as number | null : null,
+        scaffoldLevel: hasScaffoldLevel ? scaffoldLevel as 0 | 1 | 2 : 0,
+        misconceptionTags: Array.isArray(rawMisconceptionTags) ? [...new Set(rawMisconceptionTags as MisconceptionTag[])] : [],
       };
     }
   }
@@ -175,6 +218,12 @@ export function validateContentGenerationRequest(input: unknown):
     const skill = SKILL_BY_ID.get(input.skillId)!;
     if (!engine.skillIds.includes(input.skillId)) {
       addError(errors, "SKILL_GAME_MISMATCH", "skillId", `${input.gameType} is not registered to generate content for ${input.skillId}.`);
+    }
+    if (!engine.subjects.includes(skill.domain)) {
+      addError(errors, "SKILL_GAME_MISMATCH", "skillId", `${input.gameType} does not declare the ${skill.domain} subject.`);
+    }
+    if (!engine.gradeBands.includes(skill.gradeBand) || !engine.ageBandBySkill[input.skillId]) {
+      addError(errors, "GRADE_BAND_MISMATCH", "gradeBand", `${input.gameType} does not declare the target skill's grade and age bands.`);
     }
     if (input.gradeBand !== skill.gradeBand) {
       addError(errors, "GRADE_BAND_MISMATCH", "gradeBand", `Skill ${skill.id} belongs to grade band ${skill.gradeBand}.`);
