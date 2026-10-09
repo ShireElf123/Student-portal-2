@@ -219,20 +219,7 @@
   </div>
 </footer>
 
-<script>
-  document.querySelectorAll('.faq-q').forEach(function (q) {
-    q.addEventListener('click', function () {
-      var item = q.parentElement;
-      var isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(function (i) {
-        i.classList.remove('open');
-        var btn = i.querySelector('.faq-q');
-        if (btn) btn.setAttribute('aria-expanded', 'false');
-      });
-      if (!isOpen) { item.classList.add('open'); q.setAttribute('aria-expanded', 'true'); }
-    });
-  });
-</script>
+<script src="/site.js" defer></script>
 <script src="/tracker.js" defer></script>
 </body>
 </html>

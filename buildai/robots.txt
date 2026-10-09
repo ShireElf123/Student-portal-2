@@ -51,8 +51,9 @@ Disallow: /
 User-agent: Amazonbot
 Disallow: /
 
-# --- Cloaked affiliate redirects: never crawled ---
+# --- Cloaked affiliate redirects + utility pages: never crawled ---
 User-agent: *
 Disallow: /go/
+Disallow: /thanks.html
 
 Sitemap: https://lively-platypus-41e843.netlify.app/sitemap.xml

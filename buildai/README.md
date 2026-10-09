@@ -19,6 +19,7 @@ state-of-the-art 2026 playbook:
 | `/methodology/`, `/about/` | E-E-A-T trust pages |
 | `/affiliate-disclosure/`, `/privacy/`, `/terms/` | Compliance pages (FTC, GDPR/POPIA) |
 | `/go/{durable,dorik,framer,wix,10web}` | Cloaked affiliate redirects (see `_redirects`) |
+| `/thanks.html` | Lead-form success page (`noindex`, robots-blocked) |
 | `robots.txt`, `sitemap.xml`, `llms.txt` | Crawl / AI-readiness layer |
 
 ## Before you deploy — 4 things to configure
@@ -58,9 +59,16 @@ node dev-server.mjs        # emulates _redirects + _headers locally
 ## Analytics dashboard (no third-party scripts)
 
 `tracker.js` records every affiliate click (cloaked `/go/*` **and** any direct
-vendor link) three ways: browser console, a `localStorage` log you can inspect
-with `showClicks()` in DevTools, and the Netlify `click-tracking` form — so
-conversion data lives in Netlify Forms, GDPR-friendly, with zero cookies.
+vendor link), including middle-click / new-tab opens (`auxclick`). It logs
+three ways: browser console, a `localStorage` log you can inspect with
+`showClicks()` in DevTools, and the Netlify `click-tracking` form (fire-and-
+forget `fetch` with `keepalive`) — so conversion data lives in Netlify Forms,
+GDPR-friendly, with zero cookies. If you later install Plausible or GA4, the
+tracker automatically forwards `Affiliate Click` events to them too.
+
+`site.js` holds shared behaviour (the accessible FAQ accordion: `<button>` +
+`aria-expanded`, one-open-at-a-time). All lead forms post to Netlify and land
+on `/thanks.html`.
 
 ## The 2026 SEO playbook baked into this build (researched Oct 2026)
 

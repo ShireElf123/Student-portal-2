@@ -406,7 +406,7 @@
       <div class="eyebrow text-center">Free Resource</div>
       <h2>Get Our Full AI Tools Guide</h2>
       <p>We'll send you our private spreadsheet of the 20 best AI tools for building and growing an online business. No spam. Unsubscribe any time.</p>
-      <form name="lead" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="lead-form">
+      <form name="lead" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field" class="lead-form">
         <input type="hidden" name="form-name" value="lead" />
         <input type="text" name="bot-field" style="display:none;" aria-hidden="true" />
         <label for="lead-email" class="skip-link">Your email address</label>
@@ -478,24 +478,7 @@
   </div>
 </footer>
 
-<script>
-  // FAQ accordion (accessible: uses buttons + aria-expanded)
-  document.querySelectorAll('.faq-q').forEach(function (q) {
-    q.addEventListener('click', function () {
-      var item = q.parentElement;
-      var isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(function (i) {
-        i.classList.remove('open');
-        var btn = i.querySelector('.faq-q');
-        if (btn) btn.setAttribute('aria-expanded', 'false');
-      });
-      if (!isOpen) {
-        item.classList.add('open');
-        q.setAttribute('aria-expanded', 'true');
-      }
-    });
-  });
-</script>
+<script src="/site.js" defer></script>
 <script src="/tracker.js" defer></script>
 </body>
 </html>

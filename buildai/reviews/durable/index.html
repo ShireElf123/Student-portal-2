@@ -380,7 +380,7 @@
     <div class="lead-form-wrap">
       <h2>Get Our AI Tools Comparison Guide</h2>
       <p>A private breakdown of the best AI tools for building, growing, and monetising websites in 2026.</p>
-      <form name="review-lead" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="lead-form">
+      <form name="review-lead" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field" class="lead-form">
         <input type="hidden" name="form-name" value="review-lead" />
         <input type="text" name="bot-field" style="display:none;" aria-hidden="true" />
         <input type="email" name="email" placeholder="Your email address" aria-label="Your email address" required />
@@ -414,23 +414,7 @@
   </div>
 </footer>
 
-<script>
-  document.querySelectorAll('.faq-q').forEach(function (q) {
-    q.addEventListener('click', function () {
-      var item = q.parentElement;
-      var isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(function (i) {
-        i.classList.remove('open');
-        var btn = i.querySelector('.faq-q');
-        if (btn) btn.setAttribute('aria-expanded', 'false');
-      });
-      if (!isOpen) {
-        item.classList.add('open');
-        q.setAttribute('aria-expanded', 'true');
-      }
-    });
-  });
-</script>
+<script src="/site.js" defer></script>
 <script src="/tracker.js" defer></script>
 </body>
 </html>
