@@ -289,6 +289,8 @@ tr.highlighted { background: rgba(110, 231, 183, 0.05); }
 .faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
 .faq-q {
   display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  width: 100%; text-align: left;
+  background: none; border: none; color: var(--text); font-family: var(--font);
   padding: 18px 22px; font-weight: 700; font-size: 0.99rem; cursor: pointer;
   list-style: none; user-select: none;
 }
