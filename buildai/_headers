@@ -1,0 +1,19 @@
+# Cloaked affiliate links: never indexed, never followed
+/go/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+# Site-wide security headers
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# Static assets: cache politely (files change infrequently)
+/styles.css
+  Cache-Control: public, max-age=3600
+/tracker.js
+  Cache-Control: public, max-age=3600
+/img/*
+  Cache-Control: public, max-age=604800

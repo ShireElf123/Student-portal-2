@@ -1,0 +1,10 @@
+# BuildAI Reviews — Netlify configuration
+# Deploy the CONTENTS of this folder (buildai/) as the site root.
+# Netlify > Site settings > Build & deploy > Base directory: leave empty,
+# Publish directory: "." (or drag-and-drop this folder into Netlify Drop).
+#
+# Redirects live in _redirects, headers in _headers, and Netlify Forms are
+# auto-detected from the data-netlify="true" attributes in the HTML.
+
+[build]
+  publish = "."

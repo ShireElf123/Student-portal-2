@@ -1,0 +1,58 @@
+# BuildAI Reviews — robots.txt
+# Strategy (October 2026): allow all search engines AND AI *retrieval* bots so
+# our content can be cited in ChatGPT/Perplexity/Claude/AI Overviews, while
+# blocking pure training scrapers that consume bandwidth and return no traffic.
+
+# --- Classic search engines ---
+User-agent: Googlebot
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+# --- AI search / retrieval bots (ALLOW — these send citation traffic) ---
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# --- Training-only scrapers (BLOCK — high crawl, zero referral value) ---
+User-agent: GPTBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+# --- Cloaked affiliate redirects: never crawled ---
+User-agent: *
+Disallow: /go/
+
+Sitemap: https://buildaireviews.com/sitemap.xml

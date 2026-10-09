@@ -1,0 +1,7 @@
+# Cloaked affiliate redirects — 302 (not 301) so browsers don't cache the destination.
+# Replace YOURCODE with your real affiliate tracking URL for each program.
+/go/durable  https://durable.co?ref=YOURCODE  302
+/go/dorik    https://dorik.com?ref=YOURCODE   302
+/go/framer   https://framer.com?ref=YOURCODE  302
+/go/wix      https://wix.com?ref=YOURCODE     302
+/go/10web    https://10web.io?ref=YOURCODE    302
