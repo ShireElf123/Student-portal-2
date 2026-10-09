@@ -26,11 +26,12 @@ state-of-the-art 2026 playbook:
 1. **Affiliate codes.** In `_redirects`, replace every `YOURCODE` with your real
    affiliate/`ref` parameter for each program. Until you do, `/go/` links will
    send users to vendors without tracking.
-2. **Domain.** Canonical URLs are currently set to `https://buildaireviews.com`.
-   Search & replace `buildaireviews.com` with your real domain everywhere
-   (15 HTML files + `sitemap.xml` + `llms.txt` + `robots.txt`). After deploying,
-   add a `www → non-www` (or reverse) 301 in `_redirects` and submit the sitemap
-   in Google Search Console.
+2. **Domain.** All canonical/OG/schema URLs currently point at your live Netlify
+   deploy: `https://lively-platypus-41e843.netlify.app` (taken from your old
+   sitemap). When you buy a custom domain: add it in Netlify (Domain settings),
+   search & replace the netlify.app URL with your domain in the 15 HTML files +
+   `sitemap.xml` + `llms.txt` + `robots.txt`, and add a 301 from the old host in
+   `_redirects`. Then submit the sitemap in Google Search Console.
 3. **Author identity (important for E-E-A-T).** Pages currently credit the
    "BuildAI Reviews Editorial Team". Research strongly shows named human
    authors with bios + real names out-rank team bylines in 2026. When ready,
@@ -54,6 +55,13 @@ state-of-the-art 2026 playbook:
 node dev-server.mjs        # emulates _redirects + _headers locally
 ```
 
+## Analytics dashboard (no third-party scripts)
+
+`tracker.js` records every affiliate click (cloaked `/go/*` **and** any direct
+vendor link) three ways: browser console, a `localStorage` log you can inspect
+with `showClicks()` in DevTools, and the Netlify `click-tracking` form — so
+conversion data lives in Netlify Forms, GDPR-friendly, with zero cookies.
+
 ## The 2026 SEO playbook baked into this build (researched Oct 2026)
 
 - **E-E-A-T is the #1 ranking factor** — Dec 2025 core update; anonymous/faceless
@@ -76,9 +84,10 @@ node dev-server.mjs        # emulates _redirects + _headers locally
   BreadcrumbList site-wide, Organization + WebSite entity on home.
 - **Affiliate hygiene** — `rel="sponsored noopener"`, cloaked 302 `/go/`
   redirects (never cached, never indexed), quarterly link/price re-verification.
-- **Core Web Vitals by construction** — zero webfonts (system font stack), zero
-  external JS, one CSS file, static HTML, cached images. LCP/INP/CLS targets in
-  the green by default.
+- **Core Web Vitals by construction** — static HTML, no frameworks, one CSS file,
+  one tiny tracker script, cached images. The brand fonts (DM Serif Display +
+  DM Sans) load via a single Google Fonts request with swap — the only external
+  request on the page. LCP/INP/CLS stay in the green.
 
 ## Maintenance cadence (this is what keeps rankings)
 

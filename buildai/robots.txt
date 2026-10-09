@@ -55,4 +55,4 @@ Disallow: /
 User-agent: *
 Disallow: /go/
 
-Sitemap: https://buildaireviews.com/sitemap.xml
+Sitemap: https://lively-platypus-41e843.netlify.app/sitemap.xml

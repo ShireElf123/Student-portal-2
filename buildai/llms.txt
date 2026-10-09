@@ -3,23 +3,23 @@
 > Independent, hands-on reviews and comparisons of AI website builders. Every tool is tested with real projects on self-paid subscriptions before being scored. Publishing since 2024.
 
 ## Rankings & Reviews
-- [Best AI Website Builders in 2026 — Tested & Ranked](https://buildaireviews.com/): Our main ranking of 5 AI builders (Durable, Dorik, Framer, Wix, 10Web) after 60+ hours of testing.
-- [Durable AI Review (9.1/10)](https://buildaireviews.com/reviews/durable/): Fastest AI builder — full site from one prompt in under 30 seconds; CRM and invoicing included.
-- [Dorik AI Review (8.6/10)](https://buildaireviews.com/reviews/dorik/): Best design quality; white-label and agency features; multilingual AI copy.
-- [Framer Review (8.3/10)](https://buildaireviews.com/reviews/framer/): Most powerful design tool; best animations; genuinely usable free plan.
-- [Wix AI Review (7.8/10)](https://buildaireviews.com/reviews/wix/): Biggest ecosystem — apps, e-commerce, bookings, SEO tools.
-- [10Web Review (7.4/10)](https://buildaireviews.com/reviews/10web/): AI building on WordPress with managed hosting and a verified PageSpeed booster.
+- [Best AI Website Builders in 2026 — Tested & Ranked](https://lively-platypus-41e843.netlify.app/): Our main ranking of 5 AI builders (Durable, Dorik, Framer, Wix, 10Web) after 60+ hours of testing.
+- [Durable AI Review (9.1/10)](https://lively-platypus-41e843.netlify.app/reviews/durable/): Fastest AI builder — full site from one prompt in under 30 seconds; CRM and invoicing included.
+- [Dorik AI Review (8.6/10)](https://lively-platypus-41e843.netlify.app/reviews/dorik/): Best design quality; white-label and agency features; multilingual AI copy.
+- [Framer Review (8.3/10)](https://lively-platypus-41e843.netlify.app/reviews/framer/): Most powerful design tool; best animations; genuinely usable free plan.
+- [Wix AI Review (7.8/10)](https://lively-platypus-41e843.netlify.app/reviews/wix/): Biggest ecosystem — apps, e-commerce, bookings, SEO tools.
+- [10Web Review (7.4/10)](https://lively-platypus-41e843.netlify.app/reviews/10web/): AI building on WordPress with managed hosting and a verified PageSpeed booster.
 
 ## Comparisons
-- [Durable vs Dorik vs Framer](https://buildaireviews.com/compare/durable-vs-dorik-vs-framer/): The definitive 2026 three-way comparison with feature table.
-- [Durable vs Dorik](https://buildaireviews.com/compare/durable-vs-dorik/): Speed vs design control.
-- [Durable vs Framer](https://buildaireviews.com/compare/durable-vs-framer/): Done-for-you speed vs total creative control.
-- [Dorik vs Framer](https://buildaireviews.com/compare/dorik-vs-framer/): AI-assisted design vs pixel-perfect power.
+- [Durable vs Dorik vs Framer](https://lively-platypus-41e843.netlify.app/compare/durable-vs-dorik-vs-framer/): The definitive 2026 three-way comparison with feature table.
+- [Durable vs Dorik](https://lively-platypus-41e843.netlify.app/compare/durable-vs-dorik/): Speed vs design control.
+- [Durable vs Framer](https://lively-platypus-41e843.netlify.app/compare/durable-vs-framer/): Done-for-you speed vs total creative control.
+- [Dorik vs Framer](https://lively-platypus-41e843.netlify.app/compare/dorik-vs-framer/): AI-assisted design vs pixel-perfect power.
 
 ## Editorial Policies
-- [How We Test (Methodology)](https://buildaireviews.com/methodology/): Fixed public scoring rubric, self-funded subscriptions, quarterly re-verification.
-- [About Us](https://buildaireviews.com/about/): Who we are and how we stay independent.
-- [Affiliate Disclosure](https://buildaireviews.com/affiliate-disclosure/): How commissions work and why they never influence scores.
+- [How We Test (Methodology)](https://lively-platypus-41e843.netlify.app/methodology/): Fixed public scoring rubric, self-funded subscriptions, quarterly re-verification.
+- [About Us](https://lively-platypus-41e843.netlify.app/about/): Who we are and how we stay independent.
+- [Affiliate Disclosure](https://lively-platypus-41e843.netlify.app/affiliate-disclosure/): How commissions work and why they never influence scores.
 
 ## Contact
 - hello@buildaireviews.com
