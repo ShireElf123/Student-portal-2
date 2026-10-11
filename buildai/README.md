@@ -1,12 +1,12 @@
 # BuildAI Reviews — AI Website Builder Review & Affiliate Site
 
-Agency-level SEO / AI-SEO (GEO) ready affiliate review site, built to the
+Static AI website-builder review site with SEO foundations and evidence-led comparisons. Affiliate relationships must be verified before affiliate claims are published.
 state-of-the-art 2026 playbook:
 
 - **Trust layer**: named publisher, About page, evidence methodology, transparent dates, and a clear distinction between first-hand experience and research-based assessments.
 - **GEO / AI-search layer**: quick-answer extract boxes, question-style H2s, comparison tables, stat density with sources, `FAQPage` / `Review` / `Article` / `ItemList` / `BreadcrumbList` / `Organization` JSON-LD on every page, `llms.txt`, robots.txt that allows AI *retrieval* bots and blocks training-only scrapers
-- **FTC / legal layer**: disclosure banner above the first commercial CTA on every monetised page, `rel="sponsored"` on all affiliate links, dedicated Affiliate Disclosure / Privacy / Terms pages
-- **Conversion layer**: cloaked `/go/*` 302 redirects (noindexed), Netlify Forms lead capture + click tracking, per-tool CTAs
+- **Disclosure layer**: clear link status, dedicated Affiliate Disclosure / Privacy / Terms pages, and `rel="sponsored"` only when links are genuinely sponsored or affiliate links.
+- **Conversion layer**: direct provider redirects through `/go/*`, Netlify Forms configuration (requires live verification), outbound click tracking, per-tool CTAs
 
 ## Site map
 
@@ -18,7 +18,7 @@ state-of-the-art 2026 playbook:
 | `/compare/durable-vs-dorik/`, `/compare/durable-vs-framer/`, `/compare/dorik-vs-framer/` | Long-tail head-to-head pages |
 | `/methodology/`, `/about/` | E-E-A-T trust pages |
 | `/affiliate-disclosure/`, `/privacy/`, `/terms/` | Compliance pages (FTC, GDPR/POPIA) |
-| `/go/{durable,dorik,framer,wix,10web}` | Cloaked affiliate redirects (see `_redirects`) |
+| `/go/{durable,dorik,framer,wix,10web}` | Direct provider redirects (see `_redirects`) |
 | `/thanks.html` | Lead-form success page (`noindex`, robots-blocked) |
 | `robots.txt`, `sitemap.xml`, `llms.txt` | Crawl / AI-readiness layer |
 
@@ -58,7 +58,7 @@ node dev-server.mjs        # emulates _redirects + _headers locally
 
 ## Analytics dashboard (no third-party scripts)
 
-`tracker.js` records every affiliate click (cloaked `/go/*` **and** any direct
+`tracker.js` records outbound provider-link clicks (`/go/*` and direct provider links) **and
 vendor link), including middle-click / new-tab opens (`auxclick`). It logs
 three ways: browser console, a `localStorage` log you can inspect with
 `showClicks()` in DevTools, and the Netlify `click-tracking` form (fire-and-
