@@ -2,7 +2,8 @@ import { getActivitiesForSkill, resolveActivityDefinition } from "../data/activi
 import { CURRICULUM_SKILL_NODES, GradeLevelBand } from "../data/curriculumUniverse";
 import { getSkillGraphNode } from "../data/skillGraph";
 import { isMisconceptionTag, type MisconceptionTag } from "../learning/adaptiveTypes";
-import { fingerprintGameBlueprint, gameBlueprintId } from "./fingerprint";
+import { fingerprintGameBlueprint, gameBlueprintId, normalizeContentText } from "./fingerprint";
+import { getStorybookIllustration } from "./storybookAssets";
 import { getSupportedGameEngine, isSupportedGameType } from "./registry";
 import {
   BlueprintValidationError,
@@ -10,6 +11,7 @@ import {
   ContentDifficulty,
   ContentGenerationRequest,
   ContentTheme,
+  StorybookQuestionType,
   CURRICULUM_CONTENT_VERSION,
   GameBlueprint,
   GAME_BLUEPRINT_VERSION,
@@ -28,9 +30,9 @@ const MASTERY_BANDS = new Set<MasteryBand>(["new", "developing", "secure"]);
  * Best-effort denylist for obviously unsafe child-facing text.
  *
  * This is deliberately NOT an allowlist and is not a complete moderation system.
- * Structural constraints elsewhere in this module (exact prompt equality, the
- * `/^[A-Za-z]{2,24}$/` bubble-word rule, numeric answer recomputation) carry most
- * of the safety guarantee for the three supported engines. This filter catches
+ * Structural constraints elsewhere in this module (renderer-bound schemas,
+ * exact answer/evidence checks, numeric recomputation) carry most of the safety
+ * guarantee for the supported engines. This filter catches
  * common English profanity/violence/PII patterns, including simple obfuscation
  * such as "k i l l" or "k1ll", but synonyms, non-English text, and novel
  * obfuscation can still pass. Treat it as defence-in-depth, not as sufficient.
@@ -483,6 +485,131 @@ function validateBubbleRounds(rounds: unknown, blueprint: Record<string, unknown
   });
 }
 
+function validateStorybookRounds(rounds: unknown, blueprint: Record<string, unknown>, errors: BlueprintValidationError[]): void {
+  if (!isRecord(blueprint.content) || !exactKeys(blueprint.content, ["storyTitle", "storySummary", "rounds"])) {
+    addError(errors, "INVALID_CONTENT", "content", "Storybook content must contain only its title, summary, and validated pages.");
+    return;
+  }
+  if (!isNonEmptyString(blueprint.content.storyTitle, 100) || !isSafeText(String(blueprint.content.storyTitle))) {
+    addError(errors, "UNSAFE_CONTENT", "content.storyTitle", "Story title must be short, non-empty, and child-safe.");
+  }
+  if (!isNonEmptyString(blueprint.content.storySummary, 200) || !isSafeText(String(blueprint.content.storySummary))) {
+    addError(errors, "UNSAFE_CONTENT", "content.storySummary", "Story summary must be short, non-empty, and child-safe.");
+  }
+  if (!Array.isArray(rounds) || rounds.length < 3 || rounds.length > 5) {
+    addError(errors, "INVALID_CONTENT", "content.rounds", "A story must contain between 3 and 5 question pages.");
+    return;
+  }
+
+  const graphNode = typeof blueprint.skillId === "string" ? getSkillGraphNode(blueprint.skillId) : undefined;
+  const requiredTagByQuestionType: Record<StorybookQuestionType, MisconceptionTag> = {
+    "key-detail": "story-detail-recall",
+    "event-order": "event-order-confusion",
+  };
+  const seenIds = new Set<string>();
+  const seenQuestions = new Set<string>();
+  const seenPages = new Set<string>();
+  const themeIsSupported = THEMES.has(blueprint.theme as ContentTheme);
+  const minTextLength = blueprint.difficulty === "easy" ? 25 : blueprint.difficulty === "medium" ? 40 : 55;
+  const maxTextLength = blueprint.difficulty === "easy" ? 240 : blueprint.difficulty === "medium" ? 320 : 420;
+
+  rounds.forEach((candidate, index) => {
+    const field = `content.rounds[${index}]`;
+    if (!isRecord(candidate)) {
+      addError(errors, "INVALID_CONTENT", field, "A story page must be an object.");
+      return;
+    }
+    const expectedKeys = [
+      "id", "title", "text", "narration", "illustration", "prompt", "questionType", "options",
+      "correctOptionIndex", "evidenceText", "explanation", "hint",
+    ];
+    if (!exactKeys(candidate, expectedKeys)) {
+      addError(errors, "INVALID_CONTENT", field, "Story page has missing or unsupported fields.");
+    }
+    if (!isNonEmptyString(candidate.id, 80) || candidate.id !== `page-${index + 1}` || seenIds.has(String(candidate.id))) {
+      addError(errors, "DUPLICATE_CONTENT", `${field}.id`, "Story page IDs must be unique and use their canonical page order.");
+    }
+    seenIds.add(String(candidate.id));
+
+    if (!isNonEmptyString(candidate.title, 80) || !isSafeText(String(candidate.title))) {
+      addError(errors, "UNSAFE_CONTENT", `${field}.title`, "Page title must be short and child-safe.");
+    }
+    if (typeof candidate.text !== "string" || candidate.text.trim().length < minTextLength ||
+      candidate.text.trim().length > maxTextLength || !isSafeText(candidate.text)) {
+      addError(errors, "INVALID_CONTENT", `${field}.text`, `${blueprint.difficulty} page text must be concise, within its size limit, and child-safe.`);
+    }
+    if (typeof candidate.narration !== "string" || normalizeContentText(candidate.narration) !== normalizeContentText(String(candidate.text ?? ""))) {
+      addError(errors, "INVALID_CONTENT", `${field}.narration`, "Read-aloud narration must match the visible story text exactly.");
+    }
+    if (themeIsSupported && candidate.illustration !== getStorybookIllustration(blueprint.theme as ContentTheme, index)) {
+      addError(errors, "INVALID_CONTENT", `${field}.illustration`, "Page illustration must come from the registered, theme-safe renderer palette.");
+    }
+    if (!isNonEmptyString(candidate.prompt, 180) || !isSafeText(String(candidate.prompt))) {
+      addError(errors, "UNSAFE_CONTENT", `${field}.prompt`, "Question prompt must be short and child-safe.");
+    }
+
+    const questionType = candidate.questionType;
+    if (questionType !== "key-detail" && questionType !== "event-order") {
+      addError(errors, "INVALID_CONTENT", `${field}.questionType`, "Story questions must use a renderer-supported comprehension type.");
+    } else {
+      const requiredTag = requiredTagByQuestionType[questionType];
+      if (!graphNode?.misconceptionTags.includes(requiredTag)) {
+        addError(errors, "SKILL_GAME_MISMATCH", `${field}.questionType`, "Question signal is not registered for the target curriculum skill.");
+      }
+    }
+
+    if (!Array.isArray(candidate.options) || candidate.options.length !== 3) {
+      addError(errors, "INVALID_CONTENT", `${field}.options`, "Each story question must have exactly three answer choices.");
+    } else {
+      const normalizedOptions = new Set<string>();
+      candidate.options.forEach((option, optionIndex) => {
+        if (!isNonEmptyString(option, 80) || !isSafeText(String(option))) {
+          addError(errors, "UNSAFE_CONTENT", `${field}.options[${optionIndex}]`, "Answer choices must be short, non-empty, and child-safe.");
+          return;
+        }
+        const normalizedOption = normalizeContentText(option);
+        if (normalizedOptions.has(normalizedOption)) {
+          addError(errors, "DUPLICATE_CONTENT", `${field}.options`, "Story answer choices must be distinct.");
+        }
+        normalizedOptions.add(normalizedOption);
+      });
+    }
+    const validAnswerIndex = Number.isInteger(candidate.correctOptionIndex) &&
+      Number(candidate.correctOptionIndex) >= 0 && Number(candidate.correctOptionIndex) < 3;
+    if (!validAnswerIndex) {
+      addError(errors, "INVALID_CONTENT", `${field}.correctOptionIndex`, "Correct answer index must select exactly one of the three choices.");
+    }
+    if (!isNonEmptyString(candidate.evidenceText, 120) || !isSafeText(String(candidate.evidenceText)) ||
+      !normalizeContentText(String(candidate.text ?? "")).includes(normalizeContentText(String(candidate.evidenceText ?? "")))) {
+      addError(errors, "INVALID_CONTENT", `${field}.evidenceText`, "Answer evidence must be a short, child-safe, exact phrase from the visible page text.");
+    }
+    if (validAnswerIndex && Array.isArray(candidate.options) && isNonEmptyString(candidate.evidenceText, 120)) {
+      const correctOption = normalizeContentText(String(candidate.options[Number(candidate.correctOptionIndex)] ?? ""));
+      if (correctOption.length >= 4 && !normalizeContentText(candidate.evidenceText).includes(correctOption)) {
+        addError(errors, "INVALID_CONTENT", `${field}.correctOptionIndex`, "The correct choice must be stated word-for-word in its page evidence phrase.");
+      }
+    }
+    for (const key of ["explanation", "hint"] as const) {
+      if (!isNonEmptyString(candidate[key], key === "hint" ? 140 : 180) || !isSafeText(String(candidate[key]))) {
+        addError(errors, "UNSAFE_CONTENT", `${field}.${key}`, `Page ${key} must be short and child-safe.`);
+      }
+    }
+    if (validAnswerIndex && Array.isArray(candidate.options) && isNonEmptyString(candidate.hint, 140)) {
+      const correctOption = normalizeContentText(String(candidate.options[Number(candidate.correctOptionIndex)] ?? ""));
+      if (correctOption.length >= 4 && normalizeContentText(candidate.hint).includes(correctOption)) {
+        addError(errors, "INVALID_CONTENT", `${field}.hint`, "A page hint must support thinking without giving away the correct choice.");
+      }
+    }
+
+    const normalizedQuestion = normalizeContentText(String(candidate.prompt ?? ""));
+    const normalizedPage = normalizeContentText(String(candidate.text ?? ""));
+    if (seenQuestions.has(normalizedQuestion)) addError(errors, "DUPLICATE_CONTENT", `${field}.prompt`, "A story cannot repeat the same question.");
+    if (seenPages.has(normalizedPage)) addError(errors, "DUPLICATE_CONTENT", `${field}.text`, "A story cannot repeat an identical page.");
+    seenQuestions.add(normalizedQuestion);
+    seenPages.add(normalizedPage);
+  });
+}
+
 function validateBlueprintMetadata(blueprint: Record<string, unknown>, errors: BlueprintValidationError[]): void {
   const metadata = blueprint.metadata;
   if (!isRecord(metadata) || !exactKeys(metadata, [
@@ -566,12 +693,17 @@ export function validateGameBlueprint(
     }
 
     const content = blueprint.content;
-    if (!isRecord(content) || !exactKeys(content, ["rounds"])) {
-      addError(errors, "INVALID_CONTENT", "content", "Blueprint content must contain only its supported rounds.");
+    const expectedContentKeys = blueprint.gameType === "storybook-comprehension"
+      ? ["storyTitle", "storySummary", "rounds"]
+      : ["rounds"];
+    if (!isRecord(content) || !exactKeys(content, expectedContentKeys)) {
+      addError(errors, "INVALID_CONTENT", "content", "Blueprint content has missing or unsupported fields.");
     } else if (blueprint.gameType === "speed-math" || blueprint.gameType === "times-matrix") {
       validateMathRounds(content.rounds, blueprint, blueprint.gameType, errors);
-    } else {
+    } else if (blueprint.gameType === "bubble-pop-phonics") {
       validateBubbleRounds(content.rounds, blueprint, errors);
+    } else {
+      validateStorybookRounds(content.rounds, blueprint, errors);
     }
   }
 

@@ -4,7 +4,14 @@ import {
   inferMultiplicationMisconceptionTags,
 } from "../utils/adaptiveLearning";
 import { getSupportedGameEngine } from "./registry";
-import type { BubblePopBlueprint, GameBlueprint, SpeedMathBlueprint, TimesMatrixBlueprint } from "./types";
+import type {
+  BubblePopBlueprint,
+  GameBlueprint,
+  SpeedMathBlueprint,
+  StorybookComprehensionBlueprint,
+  StorybookQuestionType,
+  TimesMatrixBlueprint,
+} from "./types";
 
 export function createGameResponseSessionId(): string {
   const sessionId = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
@@ -180,13 +187,66 @@ export function recordBubblePopBlueprintResponse(
   });
 }
 
+const STORYBOOK_MISCONCEPTION_TAGS: Readonly<Record<StorybookQuestionType, "story-detail-recall" | "event-order-confusion">> = {
+  "key-detail": "story-detail-recall",
+  "event-order": "event-order-confusion",
+};
+
+/** Records a structured response from the existing narrated picture-book multiple-choice renderer. */
+export function recordStorybookComprehensionResponse(
+  blueprint: StorybookComprehensionBlueprint,
+  pageIndex: number,
+  selectedOptionIndex: number,
+  learnerId: string,
+  hintsUsed = 0,
+  responseId?: string
+) {
+  const round = blueprint.content.rounds[pageIndex];
+  if (!round) throw new Error(`Storybook blueprint has no page ${pageIndex}`);
+  if (!Number.isInteger(selectedOptionIndex) || selectedOptionIndex < 0 || selectedOptionIndex >= round.options.length) {
+    throw new Error(`Storybook page ${round.id} has no answer option ${selectedOptionIndex}`);
+  }
+  const engine = getSupportedGameEngine("storybook-comprehension");
+  const eventId = responseEventId(blueprint, round.id, responseId);
+  const correct = selectedOptionIndex === round.correctOptionIndex;
+  return recordLearningEvent({
+    ...(eventId ? { id: eventId } : {}),
+    learnerId,
+    activityId: engine.activityId,
+    experienceId: engine.experienceId,
+    contentId: `${blueprint.id}:${round.id}:option-${selectedOptionIndex}`,
+    eventType: "question_answered",
+    activityType: "storybook-interaction",
+    activityTitle: `${blueprint.content.storyTitle}: ${round.prompt}`,
+    skillId: blueprint.skillId,
+    domain: "reading",
+    gradeBand: blueprint.gradeBand,
+    result: correct ? "success" : "struggle",
+    score: correct ? 100 : 0,
+    difficulty: blueprint.difficulty,
+    attempts: 1,
+    hintsUsed,
+    ...(!correct ? { misconceptionTags: [STORYBOOK_MISCONCEPTION_TAGS[round.questionType]] } : {}),
+    metadata: {
+      blueprintId: blueprint.id,
+      roundId: round.id,
+      questionType: round.questionType,
+      selectedAnswer: round.options[selectedOptionIndex],
+      correctAnswer: round.options[round.correctOptionIndex],
+      evidenceText: round.evidenceText,
+    },
+  });
+}
+
 export function recordBlueprintSessionCompletion(blueprint: GameBlueprint, learnerId: string, sessionId?: string): void {
   const engine = getSupportedGameEngine(blueprint.gameType);
   const activityType = blueprint.gameType === "speed-math"
     ? "math-blitz"
     : blueprint.gameType === "times-matrix"
       ? "times-matrix"
-      : "phonics-pop";
+      : blueprint.gameType === "bubble-pop-phonics"
+        ? "phonics-pop"
+        : "storybook-interaction";
   const eventId = responseEventId(blueprint, "session-completed", sessionId);
   recordLearningEvent({
     ...(eventId ? { id: eventId } : {}),

@@ -53,6 +53,15 @@ const ENGINE_CONFIG: Record<SupportedGameType, {
     difficultyLevels: [1, 2, 3, 4, 5],
     interactionTypes: ["tap-to-select", "letter-recognition"],
   },
+  "storybook-comprehension": {
+    activityId: "picture-book-interaction",
+    skillIds: ["read-k1-listening-comprehension"],
+    subjects: ["reading"],
+    gradeBands: ["K-1"],
+    ageBandBySkill: { "read-k1-listening-comprehension": "5-7" },
+    difficultyLevels: [1, 2, 3, 4, 5],
+    interactionTypes: ["multiple-choice"],
+  },
 };
 
 function resolveEngine(gameType: SupportedGameType): SupportedGameEngine {
@@ -77,6 +86,7 @@ export const SUPPORTED_GAME_ENGINES: Readonly<Record<SupportedGameType, Supporte
   "speed-math": resolveEngine("speed-math"),
   "times-matrix": resolveEngine("times-matrix"),
   "bubble-pop-phonics": resolveEngine("bubble-pop-phonics"),
+  "storybook-comprehension": resolveEngine("storybook-comprehension"),
 };
 
 export function isSupportedGameType(value: unknown): value is SupportedGameType {
@@ -105,6 +115,9 @@ export function validateSupportedGameEngineRegistry(): string[] {
     }
     if (activity.launch.route !== engine.launchRoute || activity.launch.targetId !== engine.launchTargetId) {
       issues.push(`${engine.gameType} launch target does not match ${activity.id}`);
+    }
+    if (engine.gameType === "storybook-comprehension" && activity.experienceType !== "picture-book") {
+      issues.push("storybook-comprehension must use the existing picture-book renderer activity.");
     }
     if (engine.skillIds.length === 0) issues.push(`${engine.gameType} must expose at least one curriculum skill.`);
     if (engine.subjects.length === 0 || engine.gradeBands.length === 0 || engine.interactionTypes.length === 0) {

@@ -55,6 +55,13 @@ import {
 } from "../data/toddler/toddlerDailyAdventure";
 import type { GameBlueprint } from "../contentEngine/types";
 import {
+  createGameResponseSessionId,
+  recordBlueprintSessionCompletion,
+  recordStorybookComprehensionResponse,
+} from "../contentEngine/gameAdapters";
+import { adaptStorybookBlueprintToPictureBook, findStaticPictureBookForSkill } from "../contentEngine/storybookAdapter";
+import { markGameBlueprintCompleted } from "../services/gameContentService";
+import {
   RollingHillsDivider,
   FloatingCloudDecoration,
   CharacterAnchor,
@@ -63,6 +70,8 @@ import {
 
 interface ToddlerWorldViewProps {
   initialActivityId?: string;
+  initialLaunchNonce?: number;
+  initialSkillId?: string;
   initialBlueprint?: GameBlueprint;
   initialBlueprintLearnerId?: string;
   onStartAssessment?: (assessmentId: string) => void;
@@ -110,6 +119,8 @@ const COUNTING_CARDS = [
 
 export function ToddlerWorldView({
   initialActivityId,
+  initialLaunchNonce,
+  initialSkillId,
   initialBlueprint,
   initialBlueprintLearnerId,
   onStartAssessment,
@@ -123,7 +134,11 @@ export function ToddlerWorldView({
   const [selectedBook, setSelectedBook] = useState<PictureBook | null>(null);
   const [currentPageIndex, setCurrentPageIndex] = useState<number>(0);
   const [bookInteractionAnswers, setBookInteractionAnswers] = useState<Record<string, number>>({});
+  const [bookInteractionHints, setBookInteractionHints] = useState<Record<string, boolean>>({});
+  const storybookSessionIdRef = useRef<string | null>(null);
   const activePage: PictureBookPage | null = selectedBook ? selectedBook.pages[currentPageIndex] || null : null;
+  const activeGeneratedStoryBlueprint = initialBlueprint?.gameType === "storybook-comprehension" &&
+    selectedBook?.id === `generated-${initialBlueprint.id}` ? initialBlueprint : null;
   const [isBookCompleted, setIsBookCompleted] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(() => speechCoordinator.isMuted());
@@ -160,7 +175,7 @@ export function ToddlerWorldView({
       setInitialWorldTarget(null);
       setInitialGameTarget(null);
     }
-  }, [initialActivityId]);
+  }, [initialActivityId, initialLaunchNonce]);
 
   // Pages already visited in the current book session. Page-turn stars are
   // paid once per page so flipping back and forth cannot farm stars.
@@ -246,12 +261,16 @@ export function ToddlerWorldView({
   const recordBookEngagement = (
     book: PictureBook,
     pageIndex: number,
-    eventType: "experience_opened" | "content_explored"
+    eventType: "experience_opened" | "content_explored",
+    learnerId?: string
   ) => {
     const page = book.pages[pageIndex];
+    const generatedStory = initialBlueprint?.gameType === "storybook-comprehension" && book.id === `generated-${initialBlueprint.id}`
+      ? initialBlueprint
+      : null;
     try {
       recordLearningEvent({
-        learnerId: getActiveLearnerId(),
+        learnerId: learnerId ?? (generatedStory ? initialBlueprintLearnerId ?? getActiveLearnerId() : getActiveLearnerId()),
         activityId: "picture-book-interaction",
         experienceId: "picture-book-reader",
         contentId: eventType === "experience_opened" ? book.id : `${book.id}:page-${page?.pageNumber ?? pageIndex + 1}`,
@@ -259,7 +278,7 @@ export function ToddlerWorldView({
         activityType: "storybook-interaction",
         activityTitle: eventType === "experience_opened" ? `Opened ${book.title}` : `Viewed ${book.title}, page ${page?.pageNumber ?? pageIndex + 1}`,
         domain: "general",
-        gradeBand: "toddler",
+        gradeBand: generatedStory?.gradeBand ?? "toddler",
         result: "explored",
         difficulty: "easy",
         attempts: 1,
@@ -275,57 +294,73 @@ export function ToddlerWorldView({
     const interaction = activePage.learningInteraction;
     const key = `${selectedBook.id}:${activePage.pageNumber}:${interaction.id}`;
     if (bookInteractionAnswers[key] !== undefined) return;
-    const resolved = resolveSkillForActivity(interaction.skillId);
-    if (!resolved.skillId) {
-      console.error(`Picture-book interaction ${interaction.id} has no valid curriculum skill mapping`);
-      return;
-    }
     const isCorrect = optionIndex === interaction.correctOptionIndex;
     try {
-      recordLearningEvent({
-        learnerId: getActiveLearnerId(),
-        activityId: "picture-book-interaction",
-        experienceId: "picture-book-reader",
-        contentId: `${selectedBook.id}:page-${activePage.pageNumber}:${interaction.id}:option-${optionIndex}`,
-        eventType: "question_answered",
-        activityType: "storybook-interaction",
-        activityTitle: `${selectedBook.title}: ${interaction.prompt}`,
-        skillId: resolved.skillId,
-        domain: resolved.domain,
-        gradeBand: "toddler",
-        result: isCorrect ? "success" : "struggle",
-        score: isCorrect ? 100 : 0,
-        difficulty: "easy",
-        attempts: 1,
-        hintsUsed: 0,
-        metadata: {
-          interactionId: interaction.id,
-          selectedAnswer: interaction.options[optionIndex],
-          correctAnswer: interaction.options[interaction.correctOptionIndex],
-        },
-      });
+      if (activeGeneratedStoryBlueprint) {
+        const sessionId = storybookSessionIdRef.current ?? createGameResponseSessionId();
+        storybookSessionIdRef.current = sessionId;
+        recordStorybookComprehensionResponse(
+          activeGeneratedStoryBlueprint,
+          currentPageIndex,
+          optionIndex,
+          initialBlueprintLearnerId ?? getActiveLearnerId(),
+          bookInteractionHints[key] ? 1 : 0,
+          `${sessionId}:${interaction.id}`
+        );
+      } else {
+        const resolved = resolveSkillForActivity(interaction.skillId);
+        if (!resolved.skillId) {
+          console.error(`Picture-book interaction ${interaction.id} has no valid curriculum skill mapping`);
+          return;
+        }
+        recordLearningEvent({
+          learnerId: getActiveLearnerId(),
+          activityId: "picture-book-interaction",
+          experienceId: "picture-book-reader",
+          contentId: `${selectedBook.id}:page-${activePage.pageNumber}:${interaction.id}:option-${optionIndex}`,
+          eventType: "question_answered",
+          activityType: "storybook-interaction",
+          activityTitle: `${selectedBook.title}: ${interaction.prompt}`,
+          skillId: resolved.skillId,
+          domain: resolved.domain,
+          gradeBand: "toddler",
+          result: isCorrect ? "success" : "struggle",
+          score: isCorrect ? 100 : 0,
+          difficulty: "easy",
+          attempts: 1,
+          hintsUsed: 0,
+          metadata: {
+            interactionId: interaction.id,
+            selectedAnswer: interaction.options[optionIndex],
+            correctAnswer: interaction.options[interaction.correctOptionIndex],
+          },
+        });
+      }
       setBookInteractionAnswers((answers) => ({ ...answers, [key]: optionIndex }));
     } catch (error) {
       console.error("Failed to record picture-book response evidence:", error);
     }
   };
 
-  const handleOpenBook = (book: PictureBook) => {
+  const handleOpenBook = (book: PictureBook, pageIndex = 0, learnerId?: string) => {
+    const startingPage = book.pages[pageIndex];
+    if (!startingPage) return;
     setSelectedBook(book);
-    setCurrentPageIndex(0);
+    setCurrentPageIndex(pageIndex);
     setBookInteractionAnswers({});
+    setBookInteractionHints({});
     visitedBookPagesRef.current.clear();
-    visitedBookPagesRef.current.add(0);
+    visitedBookPagesRef.current.add(pageIndex);
     setIsBookCompleted(false);
-    recordBookEngagement(book, 0, "experience_opened");
+    recordBookEngagement(book, pageIndex, "experience_opened", learnerId);
     stopSpeaking();
     if (audioPlayerRef.current) {
       audioPlayerRef.current.pause();
       audioPlayerRef.current = null;
       setIsPlayingParentAudio(false);
     }
-    // Check if first page has parent recording, else auto narrate
-    getPageAudio(book.id, 1).then((rec) => {
+    // Check if this page has parent recording, else auto narrate.
+    getPageAudio(book.id, startingPage.pageNumber).then((rec) => {
       setParentAudioRecord(rec);
       if (rec?.audioBlob) {
         const url = URL.createObjectURL(rec.audioBlob);
@@ -338,13 +373,30 @@ export function ToddlerWorldView({
         };
         aud.play().catch(() => {
           setIsPlayingParentAudio(false);
-          if (book.pages[0]) speakText(book.pages[0].narration);
+          speakText(startingPage.narration);
         });
-      } else if (book.pages[0]) {
-        speakText(book.pages[0].narration);
+      } else {
+        speakText(startingPage.narration);
       }
     });
   };
+
+  useEffect(() => {
+    if (initialActivityId !== "books") return;
+    if (initialBlueprint?.gameType === "storybook-comprehension") {
+      storybookSessionIdRef.current = createGameResponseSessionId();
+      handleOpenBook(
+        adaptStorybookBlueprintToPictureBook(initialBlueprint),
+        0,
+        initialBlueprintLearnerId
+      );
+      return;
+    }
+    storybookSessionIdRef.current = null;
+    setSelectedBook(null);
+    const fallback = initialSkillId ? findStaticPictureBookForSkill(initialSkillId) : null;
+    if (fallback) handleOpenBook(fallback.book, fallback.pageIndex);
+  }, [initialActivityId, initialLaunchNonce, initialSkillId, initialBlueprint?.id, initialBlueprintLearnerId]);
 
   const handleCloseBook = () => {
     stopSpeaking();
@@ -360,6 +412,8 @@ export function ToddlerWorldView({
       setIsRecordingParentVoice(false);
     }
     setSelectedBook(null);
+    setBookInteractionHints({});
+    storybookSessionIdRef.current = null;
     setIsBookCompleted(false);
   };
 
@@ -400,7 +454,14 @@ export function ToddlerWorldView({
         recordBookEngagement(selectedBook, nextIdx, "content_explored");
       }
     } else {
-      // Completed book!
+      // Completing a generated book records exploration for content-pool freshness, never mastery.
+      if (activeGeneratedStoryBlueprint) {
+        const learnerId = initialBlueprintLearnerId ?? getActiveLearnerId();
+        const sessionId = storybookSessionIdRef.current ?? createGameResponseSessionId();
+        storybookSessionIdRef.current = sessionId;
+        recordBlueprintSessionCompletion(activeGeneratedStoryBlueprint, learnerId, sessionId);
+        void markGameBlueprintCompleted(activeGeneratedStoryBlueprint, learnerId).catch(() => {});
+      }
       setIsBookCompleted(true);
       soundEffects.playFanfare();
       soundEffects.playStarSparkle();
@@ -1483,9 +1544,23 @@ export function ToddlerWorldView({
                         const interaction = activePage.learningInteraction;
                         const answerKey = `${selectedBook.id}:${activePage.pageNumber}:${interaction.id}`;
                         const selectedAnswer = bookInteractionAnswers[answerKey];
+                        const hintVisible = bookInteractionHints[answerKey] === true;
                         return (
                           <div className="rounded-2xl border-2 border-indigo-200 bg-indigo-50 p-4 text-left shadow-sm" aria-label="Picture book learning question">
                             <p className="mb-3 text-sm font-black text-indigo-950">{interaction.prompt}</p>
+                            {interaction.hint && selectedAnswer === undefined && (
+                              <div className="mb-3">
+                                <button
+                                  type="button"
+                                  aria-expanded={hintVisible}
+                                  onClick={() => setBookInteractionHints((hints) => ({ ...hints, [answerKey]: true }))}
+                                  className="rounded-lg border border-indigo-200 bg-white px-3 py-1.5 text-xs font-bold text-indigo-800 hover:bg-indigo-100"
+                                >
+                                  {hintVisible ? "Clue" : "Need a clue?"}
+                                </button>
+                                {hintVisible && <p className="mt-2 text-sm font-semibold text-indigo-800" role="note">{interaction.hint}</p>}
+                              </div>
+                            )}
                             <div className="grid gap-2 sm:grid-cols-3">
                               {interaction.options.map((option, optionIndex) => {
                                 const isSelected = selectedAnswer === optionIndex;
@@ -1511,11 +1586,12 @@ export function ToddlerWorldView({
                               })}
                             </div>
                             {selectedAnswer !== undefined && (
-                              <p className={`mt-3 text-sm font-bold ${selectedAnswer === interaction.correctOptionIndex ? "text-emerald-800" : "text-rose-800"}`} role="status">
-                                {selectedAnswer === interaction.correctOptionIndex
-                                  ? "That’s right! Great thinking!"
-                                  : `Good try! The answer is ${interaction.options[interaction.correctOptionIndex]}.`}
-                              </p>
+                              <div className={`mt-3 text-sm font-bold ${selectedAnswer === interaction.correctOptionIndex ? "text-emerald-800" : "text-rose-800"}`} role="status">
+                                <p>{selectedAnswer === interaction.correctOptionIndex
+                                  ? activeGeneratedStoryBlueprint?.feedback.correct ?? "That’s right! Great thinking!"
+                                  : `${activeGeneratedStoryBlueprint?.feedback.incorrect ?? "Good try!"} The answer is ${interaction.options[interaction.correctOptionIndex]}.`}</p>
+                                {interaction.explanation && <p className="mt-1 font-semibold">{interaction.explanation}</p>}
+                              </div>
                             )}
                           </div>
                         );

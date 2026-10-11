@@ -43,6 +43,17 @@ export function fingerprintGameBlueprint(blueprint: GameBlueprint): string {
         return `${normalizeContentText(round.targetLetter)}|${pairs.join("|")}`;
       });
       break;
+    case "storybook-comprehension":
+      normalizedRounds = blueprint.content.rounds.map((round) => JSON.stringify({
+        title: normalizeContentText(round.title),
+        text: normalizeContentText(round.text),
+        questionType: round.questionType,
+        prompt: normalizeContentText(round.prompt),
+        options: round.options.map(normalizeContentText),
+        correctOptionIndex: round.correctOptionIndex,
+        evidenceText: normalizeContentText(round.evidenceText),
+      }));
+      break;
   }
 
   const semanticContent = JSON.stringify({
@@ -50,7 +61,11 @@ export function fingerprintGameBlueprint(blueprint: GameBlueprint): string {
     skillId: blueprint.skillId,
     gradeBand: blueprint.gradeBand,
     difficulty: blueprint.difficulty,
-    rounds: normalizedRounds.sort(),
+    ...(blueprint.gameType === "storybook-comprehension" ? {
+      storyTitle: normalizeContentText(blueprint.content.storyTitle),
+      storySummary: normalizeContentText(blueprint.content.storySummary),
+    } : {}),
+    rounds: blueprint.gameType === "storybook-comprehension" ? normalizedRounds : normalizedRounds.sort(),
   });
   return stableHash(semanticContent);
 }

@@ -602,6 +602,7 @@ export default function App() {
   });
   const [recommendedSkillNodeId, setRecommendedSkillNodeId] = useState<string | undefined>();
   const [pendingLearningLaunch, setPendingLearningLaunch] = useState<PendingLearningLaunch | null>(null);
+  const learningLaunchNonce = useRef(0);
 
   useEffect(() => {
     if (pendingLearningLaunch && activeTab !== pendingLearningLaunch.targetTab) {
@@ -642,7 +643,7 @@ export default function App() {
 
     setPendingLearningLaunch({
       ...request,
-      nonce: Date.now(),
+      nonce: ++learningLaunchNonce.current,
       ...(generatedBlueprint ? { generatedBlueprint } : {}),
       ...(generatedBlueprintLearnerId ? { generatedBlueprintLearnerId } : {}),
     });
@@ -1194,6 +1195,8 @@ export default function App() {
           <div className="flex-1 overflow-y-auto">
             <ToddlerWorldView
               initialActivityId={pendingLearningLaunch?.targetTab === "toddler" ? pendingLearningLaunch.targetId : undefined}
+              initialLaunchNonce={pendingLearningLaunch?.targetTab === "toddler" ? pendingLearningLaunch.nonce : undefined}
+              initialSkillId={pendingLearningLaunch?.targetTab === "toddler" ? pendingLearningLaunch.skillId : undefined}
               initialBlueprint={pendingLearningLaunch?.targetTab === "toddler" ? pendingLearningLaunch.generatedBlueprint : undefined}
               initialBlueprintLearnerId={pendingLearningLaunch?.targetTab === "toddler" ? pendingLearningLaunch.generatedBlueprintLearnerId : undefined}
               onStartAssessment={(asmtId) => {

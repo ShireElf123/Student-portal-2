@@ -50,6 +50,7 @@ const MISCONCEPTION_TAGS_BY_SKILL: Readonly<Record<string, readonly Misconceptio
     "multiplication-fact-recall",
   ],
   "read-k1-alphabet-letters": ["letter-identification-confusion"],
+  "read-k1-listening-comprehension": ["story-detail-recall", "event-order-confusion"],
 };
 
 const CURRICULUM_IDS = new Set(CURRICULUM_SKILL_NODES.map((node) => node.id));

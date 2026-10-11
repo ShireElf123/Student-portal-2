@@ -18,6 +18,7 @@ import {
   setActiveAccountId,
 } from "./accountStorage";
 import { getActivitiesForSkill, resolveActivityDefinition } from "../data/activitySkillRegistry";
+import { findSupportedGameTypeForActivity } from "../contentEngine/registry";
 import { markDailyRouteEvidenceComplete } from "./dailyLearningRoute";
 
 export type SyncState = "synced" | "syncing" | "offline" | "error";
@@ -606,7 +607,8 @@ export function subscribeLearnerModel(callback: (model: LearnerModel) => void): 
 function selectActivityForSkill(skillId: string, gradeBand: LearnerModel["gradeBand"], preferredActivityId?: string) {
   const candidates = getActivitiesForSkill(skillId).filter((activity) =>
     activity.skillIds.includes(skillId) &&
-    !["engagement", "assessment", "homework", "picture-book"].includes(activity.experienceType) &&
+    !["engagement", "assessment", "homework"].includes(activity.experienceType) &&
+    (activity.experienceType !== "picture-book" || findSupportedGameTypeForActivity(activity.id, skillId) !== null) &&
     (activity.experienceType !== "toddler-world" || (activity.minimumWorldStars ?? 0) === 0)
   );
   const preferred = preferredActivityId
@@ -618,10 +620,12 @@ function selectActivityForSkill(skillId: string, gradeBand: LearnerModel["gradeB
     gradeBand === "toddler"
       ? activity.gradeBand === "toddler" ? 0 : 1
       : activity.gradeBand === gradeBand ? 0 : activity.experienceType === "curriculum-quest" ? 2 : 1;
+  const pictureBookRank = (activity: ReturnType<typeof getActivitiesForSkill>[number]) =>
+    activity.experienceType === "picture-book" && findSupportedGameTypeForActivity(activity.id, skillId) ? 0 : 1;
   const sorted = [...candidates].sort((a, b) => {
     const aGeneric = a.experienceType === "curriculum-quest" ? 1 : 0;
     const bGeneric = b.experienceType === "curriculum-quest" ? 1 : 0;
-    return gradeMatch(a) - gradeMatch(b) || aGeneric - bGeneric || a.id.localeCompare(b.id);
+    return pictureBookRank(a) - pictureBookRank(b) || gradeMatch(a) - gradeMatch(b) || aGeneric - bGeneric || a.id.localeCompare(b.id);
   });
   const selected = sorted[0];
   if (!selected) throw new Error(`No launchable activity is registered for skill ${skillId}`);

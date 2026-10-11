@@ -70,19 +70,19 @@ interface DailyRouteStep {
   preferredActivityId?: string;
 }
 
+function isRouteActivityForSkill(activity: LearningActivityDefinition, skillId: string): boolean {
+  return activity.skillIds.includes(skillId) &&
+    !["engagement", "assessment", "homework", "practice"].includes(activity.experienceType) &&
+    (activity.experienceType !== "picture-book" || findSupportedGameTypeForActivity(activity.id, skillId) !== null) &&
+    (activity.experienceType !== "toddler-world" || (activity.minimumWorldStars ?? 0) === 0);
+}
+
 function pickActivity(
   skillId: string,
   gradeBand: LearnerModel["gradeBand"],
   preferredActivityId?: string
 ): LearningActivityDefinition {
-  const candidates = getActivitiesForSkill(skillId).filter((activity) =>
-    activity.experienceType !== "engagement" &&
-    activity.experienceType !== "assessment" &&
-    activity.experienceType !== "homework" &&
-    activity.experienceType !== "practice" &&
-    activity.experienceType !== "picture-book" &&
-    (activity.experienceType !== "toddler-world" || (activity.minimumWorldStars ?? 0) === 0)
-  );
+  const candidates = getActivitiesForSkill(skillId).filter((activity) => isRouteActivityForSkill(activity, skillId));
   const preferred = preferredActivityId
     ? candidates.find((activity) => activity.id === preferredActivityId)
     : undefined;
@@ -93,12 +93,22 @@ function pickActivity(
       if (activity.gradeBand === gradeBand) return 0;
       return activity.experienceType === "curriculum-quest" ? 2 : 1;
     };
+    const generatedPictureBookRank = (activity: LearningActivityDefinition) =>
+      activity.experienceType === "picture-book" && findSupportedGameTypeForActivity(activity.id, skillId) ? 0 : 1;
     const aGeneric = a.experienceType === "curriculum-quest" ? 1 : 0;
     const bGeneric = b.experienceType === "curriculum-quest" ? 1 : 0;
-    return gradePreference(a) - gradePreference(b) || aGeneric - bGeneric || a.id.localeCompare(b.id);
+    return generatedPictureBookRank(a) - generatedPictureBookRank(b) ||
+      gradePreference(a) - gradePreference(b) || aGeneric - bGeneric || a.id.localeCompare(b.id);
   })[0];
   if (!selected) throw new Error(`Daily route has no launchable activity for skill ${skillId}`);
   return selected;
+}
+
+const STORYBOOK_ROUTE_THEMES: readonly ContentTheme[] = ["animals", "garden", "ocean", "space", "everyday"];
+
+function storybookThemeForRoute(date: string, slot: number): ContentTheme {
+  const dateNumber = Number(date.replace(/-/g, ""));
+  return STORYBOOK_ROUTE_THEMES[(dateNumber + slot) % STORYBOOK_ROUTE_THEMES.length];
 }
 
 function reasonForCategory(category: AdaptiveRecommendationCategory): DailyRouteReason {
@@ -146,7 +156,11 @@ function createItem(
         kind: "generated-content",
         gameType: supportedGameType,
         difficulty: getContentDifficultyForLearner(model, step.skillId),
-        theme: supportedGameType === "bubble-pop-phonics" ? "garden" : "space",
+        theme: supportedGameType === "bubble-pop-phonics"
+          ? "garden"
+          : supportedGameType === "storybook-comprehension"
+            ? storybookThemeForRoute(date, slot)
+            : "space",
       }
     : { kind: "registered-activity" };
   return {
@@ -221,10 +235,7 @@ function chooseSkillPlan(
       .filter((node) => !used.has(node.id))
       .map((node) => ({ node, state: deriveLearnerSkillState(model, node.id, dateEnd) }))
       .filter(({ node, state }) => state.isUnlocked && getActivitiesForSkill(node.id).some((activity) =>
-        activity.experienceType !== "engagement" && activity.experienceType !== "assessment" &&
-        activity.experienceType !== "homework" && activity.experienceType !== "practice" &&
-        activity.experienceType !== "picture-book" &&
-        (activity.experienceType !== "toddler-world" || (activity.minimumWorldStars ?? 0) === 0)
+        isRouteActivityForSkill(activity, node.id)
       ))
       .sort((left, right) =>
         (right.state.daysSinceLastPractice ?? Number.MAX_SAFE_INTEGER) -
@@ -417,7 +428,8 @@ export function validateDailyLearningRoute(route: DailyLearningRoute): string[] 
         issues.push(`${item.activityId} launch target ${activity.launch.route}:${activity.launch.targetId} does not match route item ${item.targetTab}:${item.targetId}`);
       }
       if (activity.experienceType === "engagement" || activity.experienceType === "assessment" ||
-        activity.experienceType === "homework" || activity.experienceType === "practice" || activity.experienceType === "picture-book") {
+        activity.experienceType === "homework" || activity.experienceType === "practice" ||
+        (activity.experienceType === "picture-book" && findSupportedGameTypeForActivity(activity.id, item.skillId) === null)) {
         issues.push(`${item.activityId} is not a focused route learning activity`);
       }
       if (activity.experienceType === "toddler-world" && (activity.minimumWorldStars ?? 0) > 0) {

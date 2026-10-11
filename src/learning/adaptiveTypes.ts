@@ -4,6 +4,8 @@ export const MISCONCEPTION_TAGS = [
   "off-by-one-calculation",
   "multiplication-fact-recall",
   "letter-identification-confusion",
+  "story-detail-recall",
+  "event-order-confusion",
 ] as const;
 
 export type MisconceptionTag = (typeof MISCONCEPTION_TAGS)[number];

@@ -8,7 +8,8 @@ export const GAME_CONTENT_VERSION = "game-content-v1" as const;
 export type ContentDifficulty = "easy" | "medium" | "hard";
 export type ContentAgeBand = "2-4" | "5-7" | "7-9" | "9-11";
 export type ContentTheme = "space" | "garden" | "ocean" | "animals" | "everyday";
-export type SupportedGameType = "speed-math" | "times-matrix" | "bubble-pop-phonics";
+export type SupportedGameType = "speed-math" | "times-matrix" | "bubble-pop-phonics" | "storybook-comprehension";
+export type StorybookQuestionType = "key-detail" | "event-order";
 export type MasteryBand = "new" | "developing" | "secure";
 
 export interface LearnerGenerationContext {
@@ -125,7 +126,27 @@ export interface BubblePopBlueprint extends GameBlueprintBase {
   content: { rounds: BubblePopRound[] };
 }
 
-export type GameBlueprint = SpeedMathBlueprint | TimesMatrixBlueprint | BubblePopBlueprint;
+export interface StorybookComprehensionRound {
+  id: string;
+  title: string;
+  text: string;
+  narration: string;
+  illustration: string;
+  prompt: string;
+  questionType: StorybookQuestionType;
+  options: string[];
+  correctOptionIndex: number;
+  evidenceText: string;
+  explanation: string;
+  hint: string;
+}
+
+export interface StorybookComprehensionBlueprint extends GameBlueprintBase {
+  gameType: "storybook-comprehension";
+  content: { storyTitle: string; storySummary: string; rounds: StorybookComprehensionRound[] };
+}
+
+export type GameBlueprint = SpeedMathBlueprint | TimesMatrixBlueprint | BubblePopBlueprint | StorybookComprehensionBlueprint;
 
 export interface ArithmeticRoundDraft {
   leftOperand: number;
@@ -155,6 +176,18 @@ export interface BubblePopRoundDraft {
   bubbles: BubblePopItemDraft[];
 }
 
+export interface StorybookComprehensionRoundDraft {
+  title: string;
+  text: string;
+  prompt: string;
+  questionType: StorybookQuestionType;
+  options: string[];
+  correctOptionIndex: number;
+  evidenceText: string;
+  explanation: string;
+  hint: string;
+}
+
 interface GeneratedPayloadBase {
   objective: string;
   instructions: string;
@@ -178,7 +211,14 @@ export interface BubblePopPayload extends GeneratedPayloadBase {
   rounds: BubblePopRoundDraft[];
 }
 
-export type GeneratedGamePayload = SpeedMathPayload | TimesMatrixPayload | BubblePopPayload;
+export interface StorybookComprehensionPayload extends GeneratedPayloadBase {
+  gameType: "storybook-comprehension";
+  storyTitle: string;
+  storySummary: string;
+  rounds: StorybookComprehensionRoundDraft[];
+}
+
+export type GeneratedGamePayload = SpeedMathPayload | TimesMatrixPayload | BubblePopPayload | StorybookComprehensionPayload;
 
 export interface GenerateBlueprintCommand {
   request: ContentGenerationRequest;

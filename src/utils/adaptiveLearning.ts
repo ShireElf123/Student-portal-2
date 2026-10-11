@@ -1,6 +1,7 @@
 import { getSkillGraphNode, getSkillGraphNodes } from "../data/skillGraph";
 import type { GradeLevelBand } from "../data/curriculumUniverse";
 import { getActivitiesForSkill } from "../data/activitySkillRegistry";
+import { findSupportedGameTypeForActivity } from "../contentEngine/registry";
 import { isMasteryEvidenceEventType } from "../learning/eventEvidence";
 import type {
   AdaptiveRecommendationCategory,
@@ -236,7 +237,8 @@ export function getScaffoldLevel(state: LearnerSkillState): ScaffoldLevel {
 function hasLaunchableActivity(skillId: string): boolean {
   return getActivitiesForSkill(skillId).some((activity) =>
     activity.skillIds.includes(skillId) &&
-    !["engagement", "assessment", "homework", "picture-book"].includes(activity.experienceType) &&
+    !["engagement", "assessment", "homework"].includes(activity.experienceType) &&
+    (activity.experienceType !== "picture-book" || findSupportedGameTypeForActivity(activity.id, skillId) !== null) &&
     (activity.experienceType !== "toddler-world" || (activity.minimumWorldStars ?? 0) === 0)
   );
 }
