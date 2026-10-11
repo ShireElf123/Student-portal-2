@@ -24,7 +24,7 @@ state-of-the-art 2026 playbook:
 
 ## Before you deploy — 4 things to configure
 
-1. **Affiliate codes.** In `_redirects`, replace every `YOURCODE` with your real
+1. **Affiliate destinations.** The current `_redirects` file uses direct provider URLs until actual affiliate destinations are verified.
    affiliate/`ref` parameter for each program. Until you do, `/go/` links will
    send users to vendors without tracking.
 2. **Domain.** All canonical/OG/schema URLs currently point at your live Netlify
