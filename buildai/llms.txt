@@ -3,7 +3,7 @@
 > AI website builder comparisons published by The Tech GUY. First-hand experience and research-based assessments are labelled separately; current plan details should be confirmed with providers.
 
 ## Rankings & Reviews
-- [Best AI Website Builders in 2026 — Tested & Ranked](https://lively-platypus-41e843.netlify.app/): A comparison of five AI builders, with evidence limitations and use-case trade-offs explained.
+- [Best AI Website Builders in 2026 — Reviews & Comparisons](https://lively-platypus-41e843.netlify.app/): A comparison of five AI builders, with evidence limitations and use-case trade-offs explained.
 - [Durable AI Review (9.1/10)](https://lively-platypus-41e843.netlify.app/reviews/durable/): First-hand client-project experience: Durable handled much of the initial build and the client was happy. Observed traffic is not attributed to Durable without analytics evidence.
 - [Dorik AI Review (8.6/10)](https://lively-platypus-41e843.netlify.app/reviews/dorik/): Research-based assessment: check current design controls, agency features, language support and plan restrictions with Dorik.
 - [Framer Review (8.3/10)](https://lively-platypus-41e843.netlify.app/reviews/framer/): Research-based assessment: compare Framer’s design workflow, interactions, publishing and current free/paid plan limits.
