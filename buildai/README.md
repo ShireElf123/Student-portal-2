@@ -38,7 +38,7 @@ state-of-the-art 2026 playbook:
    authors with bios + real names out-rank team bylines in 2026. When ready,
    add a real name to each byline and the `author` field in each page's schema
    (Person type), and link author pages.
-4. **Email address.** Replace `hello@buildaireviews.com` with your real inbox.
+4. **Email address.** Replace `Public project issue tracker: https://github.com/ShireElf123/Student-portal-2/issues` with your real inbox.
 
 ## Deploy to Netlify
 
