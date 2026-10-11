@@ -1,114 +1,58 @@
-# BuildAI Reviews — AI Website Builder Review & Affiliate Site
+# BuildAI Reviews
 
-Static AI website-builder review site with SEO foundations and evidence-led comparisons. Affiliate relationships must be verified before affiliate claims are published.
-state-of-the-art 2026 playbook:
+Static website-builder review and comparison site published from the `buildai/` directory. Public canonical URLs currently use:
 
-- **Trust layer**: named publisher, About page, evidence methodology, transparent dates, and a clear distinction between first-hand experience and research-based assessments.
-- **GEO / AI-search layer**: quick-answer extract boxes, question-style H2s, comparison tables, stat density with sources, `FAQPage` / `Review` / `Article` / `ItemList` / `BreadcrumbList` / `Organization` JSON-LD on every page, `llms.txt`, robots.txt that allows AI *retrieval* bots and blocks training-only scrapers
-- **Disclosure layer**: clear link status, dedicated Affiliate Disclosure / Privacy / Terms pages, and `rel="sponsored"` only when links are genuinely sponsored or affiliate links.
-- **Conversion layer**: direct provider redirects through `/go/*`, Netlify Forms configuration (requires live verification), outbound click tracking, per-tool CTAs
+`https://lively-platypus-41e843.netlify.app/`
 
-## Site map
+## Editorial standards
 
-| URL | Purpose |
-| --- | --- |
-| `/` | Pillar page: "Best AI Website Builders 2026" ranking + ItemList + FAQ schema |
-| `/reviews/durable/` … `/reviews/10web/` | 5 deep reviews (Review + FAQ + Breadcrumb schema) |
-| `/compare/durable-vs-dorik-vs-framer/` | 3-way comparison hub (Article + FAQ schema) |
-| `/compare/durable-vs-dorik/`, `/compare/durable-vs-framer/`, `/compare/dorik-vs-framer/` | Long-tail head-to-head pages |
-| `/methodology/`, `/about/` | E-E-A-T trust pages |
-| `/affiliate-disclosure/`, `/privacy/`, `/terms/` | Compliance pages (FTC, GDPR/POPIA) |
-| `/go/{durable,dorik,framer,wix,10web}` | Direct provider redirects (see `_redirects`) |
-| `/thanks.html` | Lead-form success page (`noindex`, robots-blocked) |
-| `robots.txt`, `sitemap.xml`, `llms.txt` | Crawl / AI-readiness layer |
+- Publisher identity: The Tech GUY.
+- Durable: includes first-hand experience from a client website project. The observed traffic is not attributed to Durable without analytics evidence.
+- Dorik, Framer, Wix and 10Web: research-based assessments unless a page explicitly documents first-hand evidence.
+- Scores are provisional editorial judgments, not controlled benchmark results. Do not describe them as measured or reproducible unless the underlying category scores and evidence are published.
+- Product prices, feature availability, affiliate relationships, form delivery and performance claims must be verified before they are described as current or confirmed.
+- Do not publish a personal email address unless the publisher explicitly approves it. The current site does not publish one.
 
-## Before you deploy — 4 things to configure
+## Main routes
 
-1. **Affiliate destinations.** The current `_redirects` file uses direct provider URLs. Only add real affiliate destinations after confirming the actual approved URLs and updating the disclosure copy.
-   affiliate/`ref` parameter for each program. Until you do, `/go/` links will
-   send users to vendors without tracking.
-2. **Domain.** All canonical/OG/schema URLs currently point at your live Netlify
-   deploy: `https://lively-platypus-41e843.netlify.app` (taken from your old
-   sitemap). When you buy a custom domain: add it in Netlify (Domain settings),
-   search & replace the netlify.app URL with your domain in the 15 HTML files +
-   `sitemap.xml` + `llms.txt` + `robots.txt`, and add a 301 from the old host in
-   `_redirects`. Then submit the sitemap in Google Search Console.
-3. **Author identity (important for E-E-A-T).** Pages currently credit the
-   "BuildAI Reviews Editorial Team". Research strongly shows named human
-   authors with bios + real names out-rank team bylines in 2026. When ready,
-   add a real name to each byline and the `author` field in each page's schema
-   (Person type), and link author pages.
-4. **Email address.** Replace `Public project issue tracker: https://github.com/ShireElf123/Student-portal-2/issues` with your real inbox.
+- `/` — comparison hub
+- `/reviews/durable/`, `/reviews/dorik/`, `/reviews/framer/`, `/reviews/wix/`, `/reviews/10web/` — product reviews
+- `/compare/durable-vs-dorik-vs-framer/`, `/compare/durable-vs-dorik/`, `/compare/durable-vs-framer/`, `/compare/dorik-vs-framer/` — comparison articles
+- `/about/`, `/methodology/` — publisher and evaluation approach
+- `/affiliate-disclosure/`, `/privacy/`, `/terms/` — disclosure and policy pages
+- `/thanks.html` — form success page
+- `/robots.txt`, `/sitemap.xml`, `/llms.txt` — crawl and machine-readable resources
 
-## Deploy to Netlify
+## Outbound links and tracking
 
-1. Create a new Netlify site. Set **publish directory** to this `buildai/` folder
-   (or drag the folder onto Netlify Drop).
-2. `_redirects`, `_headers`, and Netlify Forms (`lead`, `review-lead`,
-   `compare-lead`, `click-tracking`) are detected automatically — no extra setup.
-3. After deploy: verify in Netlify Forms that `click-tracking` submissions appear
-   when you click any `/go/` link (that's your analytics — privacy-friendly, no
-   third-party scripts).
+The `_redirects` file currently routes `/go/{durable,dorik,framer,wix,10web}` directly to provider websites. No placeholder affiliate IDs are used. Do not describe these as affiliate links or add `rel="sponsored"` unless an actual approved affiliate destination is confirmed and the disclosure is updated.
 
-## Run locally / preview
+`tracker.js` records outbound provider-link clicks in browser local storage and attempts to submit click details to Netlify Forms. It can forward events to Plausible or GA4 if those functions are present. Verify the deployed configuration, data access and retention before promising analytics or privacy outcomes.
 
-```bash
-node dev-server.mjs        # emulates _redirects + _headers locally
-```
+## Before production release
 
-## Analytics dashboard (no third-party scripts)
+1. Review this branch's draft pull request and merge only after code review.
+2. Confirm Netlify's publish directory is `buildai/`.
+3. Deploy a preview and verify all routes, images, CSS, mobile layout and internal links.
+4. Confirm Netlify Forms receives only the expected submissions for `lead`, `review-lead`, `compare-lead`, `click-tracking` and `privacy-request`; test success and error states.
+5. Check the `/go/*` redirects go to the intended official provider URLs and do not contain placeholder affiliate parameters.
+6. Validate JSON-LD, sitemap URLs, canonical URLs, robots rules, page titles, meta descriptions and the deployed `llms.txt`.
+7. Test with Google Search Console URL Inspection and Bing Webmaster Tools after deployment; request indexing only for live, final URLs.
+8. Measure mobile Core Web Vitals on the deployed site. Do not claim a performance score without recorded measurements.
+9. Verify current vendor prices/features from official sources before adding a date-stamped claim.
+10. Recheck the privacy notice against the live form and click-tracking configuration before collecting user data.
 
-`tracker.js` records outbound provider-link clicks (`/go/*` and direct provider links) **and
-vendor link), including middle-click / new-tab opens (`auxclick`). It logs
-three ways: browser console, a `localStorage` log you can inspect with
-`showClicks()` in DevTools, and the Netlify `click-tracking` form (fire-and-
-forget `fetch` with `keepalive`) — so conversion data lives in Netlify Forms,
-GDPR-friendly, with zero cookies. If you later install Plausible or GA4, the
-tracker automatically forwards `Affiliate Click` events to them too.
+## Search and AI discovery principles
 
-`site.js` holds shared behaviour (the accessible FAQ accordion: `<button>` +
-`aria-expanded`, one-open-at-a-time). All lead forms post to Netlify and land
-on `/thanks.html`.
+- Prioritise useful, original, well-supported content and clear authorship over attempts to game GEO/AEO.
+- E-E-A-T is a quality framework, not a single published ranking factor.
+- `llms.txt` is supplementary and does not guarantee AI citations.
+- `OAI-SearchBot` and `GPTBot` serve different purposes; review crawler policies deliberately.
+- Structured data must accurately reflect visible content. Do not add rating/review markup for unverified scores or imply that research-based assessments were hands-on tests.
+- Keep the sitemap limited to canonical, indexable URLs. Update `lastmod` only when a page materially changes.
 
-## The 2026 SEO playbook baked into this build (researched Oct 2026)
+## Maintenance
 
-- **E-E-A-T is the #1 ranking factor** — Dec 2025 core update; anonymous/faceless
-  affiliate content gets buried. Handled by: About + Methodology + bylines +
-  dated verifications + "we paid for our own subscriptions" experience claims.
-- **Product Reviews / review guidelines** — Google bans undisclosed incentivised
-  & non-experiential review markup; manual actions possible. Handled by: visible
-  disclosures near every CTA, pros/cons on all tools including the #1 pick,
-  methodology with scoring weights.
-- **GEO (Generative Engine Optimization)** — 97% of AI Overview citations come
-  from top-20 organic results; LLMs then prefer extractable content: direct
-  40–60-word answers up top (`.quick-answer`), question-form H2s, stats with
-  sources, clean semantic HTML (no heavy JS framework — pages are static HTML).
-- **AI crawlers** — retrieval bots allowed (OAI-SearchBot, ChatGPT-User,
-  Claude-SearchBot, Claude-User, PerplexityBot, Perplexity-User); training-only
-  scrapers blocked (GPTBot, Google-Extended, CCBot, Meta-ExternalAgent,
-  Bytespider, Amazonbot). `/go/*` is `noindex, nofollow` via `X-Robots-Tag`.
-- **Schema for citation + rich results** — Review + SoftwareApplication per
-  review, ItemList on the pillar, Article + FAQPage on comparisons,
-  BreadcrumbList site-wide, Organization + WebSite entity on home.
-- **Affiliate hygiene** — `rel="sponsored noopener"`, cloaked 302 `/go/`
-  redirects (never cached, never indexed), quarterly link/price re-verification.
-- **Core Web Vitals by construction** — static HTML, no frameworks, one CSS file,
-  one tiny tracker script, cached images. The brand fonts (DM Serif Display +
-  DM Sans) load via a single Google Fonts request with swap — the only external
-  request on the page. LCP/INP/CLS stay in the green.
-
-## Maintenance cadence (this is what keeps rankings)
-
-- Quarterly: re-verify all prices/claims, update `dateModified` + visible
-  "verified" stamps, refresh `sitemap.xml` lastmod.
-- Monthly: check Netlify click-tracking + form conversions; scan server logs for
-  AI-crawler activity; manual citation checks ("best AI website builder" in
-  ChatGPT/Perplexity/AI Overviews — are we cited?).
-- Every new tool: new review + add to ItemList, sitemap, llms.txt, and internal
-  links (topic clusters).
-
-## Content growth queue (next pages to publish)
-
-1. `/guides/how-to-build-a-website-with-ai/` (informational funnel)
-2. `/compare/wix-vs-durable/`, `/compare/10web-vs-durable/`
-3. `/guides/ai-websites-seo/` (owns the "are AI builders good for SEO" query)
+- On every material update: run link and JSON-LD checks, update visible copy and structured dates, and refresh sitemap `lastmod` only for the pages changed.
+- Regularly: verify pricing, plan restrictions, affiliate relationships, form handling and crawler access.
+- For each genuinely hands-on review, keep a dated record of the brief, plan, region, steps, screenshots, edits and measurements. If that evidence does not exist, label the assessment as research-based.
