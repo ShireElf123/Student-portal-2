@@ -42,7 +42,7 @@ const ENGINE_CONFIG: Record<SupportedGameType, {
     gradeBands: ["2-3"],
     ageBandBySkill: { "math-23-multiplication": "7-9" },
     difficultyLevels: [1, 2, 3, 4, 5],
-    interactionTypes: ["multiple-choice", "visual-grid"],
+    interactionTypes: ["multiple-choice", "timed-response"],
   },
   "bubble-pop-phonics": {
     activityId: "toddler-bubble-pop-phonics",

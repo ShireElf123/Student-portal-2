@@ -1,6 +1,7 @@
 import { CurriculumDomain, GradeLevelBand, CURRICULUM_SKILL_NODES } from "../data/curriculumUniverse";
 import { getSkillGraphNode, getSkillGraphNodes } from "../data/skillGraph";
 import { isMisconceptionTag, type AdaptiveRecommendationCategory, type MisconceptionTag } from "../learning/adaptiveTypes";
+import { isMasteryEvidenceEventType } from "../learning/eventEvidence";
 import {
   getAdaptiveRecommendationCandidates,
   type AdaptiveRecommendationCandidate,
@@ -708,15 +709,19 @@ function outcomeForResult(result: LearningEvent["result"]): LearningEventOutcome
 }
 
 function eventCanUpdateMastery(event: LearningEvent): boolean {
-  return ["question_answered", "learner_response", "activity_completed", "assessment_response", "practice_response", "session_summary"].includes(event.eventType) &&
-    event.outcome !== "explored";
+  return isMasteryEvidenceEventType(event.eventType) && event.outcome !== "explored";
 }
 
 function calculateConfidence(record: SkillMasteryRecord): number {
-  const observedResponses = record.successfulAttempts + record.strugglesCount;
-  if (observedResponses === 0) return 0;
-  const coverage = observedResponses / (observedResponses + 2);
-  const accuracy = (record.successfulAttempts + 1) / (observedResponses + 2);
+  const totalAttempts = Math.max(0, Number(record.totalAttempts) || 0);
+  if (totalAttempts === 0) return 0;
+  const successfulAttempts = Math.max(0, Math.min(totalAttempts, Number(record.successfulAttempts) || 0));
+  const struggleAttempts = Math.max(0, Math.min(totalAttempts - successfulAttempts, Number(record.strugglesCount) || 0));
+  const partialAttempts = totalAttempts - successfulAttempts - struggleAttempts;
+  const coverage = totalAttempts / (totalAttempts + 2);
+  const accuracy = Math.max(0, Math.min(1,
+    (successfulAttempts + partialAttempts * 0.5 + 1) / (totalAttempts + 2)
+  ));
   return Math.round(coverage * (0.5 + accuracy * 0.5) * 100);
 }
 
@@ -861,6 +866,7 @@ export function recordLearningEvent(eventInput: LearningEventInput): LearningEve
       record.evidenceScore = Math.min(100, record.evidenceScore + Math.max(1, Math.round(12 * scoreFactor)));
       record.consecutiveSuccesses = 0;
       record.consecutiveUnassistedSuccesses = 0;
+      record.consecutiveStruggles = 0;
     }
 
     record.confidence = calculateConfidence(record);

@@ -19,6 +19,7 @@ export const ADAPTIVE_RECOMMENDATION_CATEGORIES = [
 
 export type AdaptiveRecommendationCategory = (typeof ADAPTIVE_RECOMMENDATION_CATEGORIES)[number];
 export type AdaptiveRoutePhase = "warm-up" | "focus" | "growth";
+export type EvidenceFreshness = "unseen" | "fresh" | "aging" | "due" | "unknown";
 export type ScaffoldLevel = 0 | 1 | 2;
 export type DifficultyLevel = 1 | 2 | 3 | 4 | 5;
 

@@ -31,7 +31,7 @@ import { PrimarySolarSystemLab } from "./PrimarySolarSystemLab";
 import { FloatingCloudDecoration } from "./landscape/LandscapeDecorations";
 import { GeneratedContentPanel } from "./GeneratedContentPanel";
 import { markGameBlueprintCompleted } from "../services/gameContentService";
-import { adaptSpeedMathRound, adaptTimesMatrixRound, recordBlueprintSessionCompletion, recordSpeedMathBlueprintResponse, recordTimesMatrixBlueprintResponse } from "../contentEngine/gameAdapters";
+import { adaptSpeedMathRound, adaptTimesMatrixRound, createGameResponseSessionId, recordBlueprintSessionCompletion, recordSpeedMathBlueprintResponse, recordTimesMatrixBlueprintResponse } from "../contentEngine/gameAdapters";
 import type { GameBlueprint, SpeedMathBlueprint, TimesMatrixBlueprint } from "../contentEngine/types";
 
 type PrimaryActivity =
@@ -367,13 +367,15 @@ function SpeedMathBlitzGame({ blueprint, onPlayingChange, blueprintLearnerId }: 
   const scoreRef = useRef(0);
   const answeredThisProblem = useRef(false);
   const questionCounter = useRef(0);
+  const responseSessionId = useRef("");
+  const responseSequence = useRef(0);
 
   useEffect(() => onPlayingChange?.(isPlaying), [isPlaying, onPlayingChange]);
 
   const completeGeneratedSession = () => {
     if (!blueprint) return;
     const learnerId = blueprintLearnerId ?? getActiveLearnerId();
-    recordBlueprintSessionCompletion(blueprint, learnerId);
+    recordBlueprintSessionCompletion(blueprint, learnerId, responseSessionId.current || undefined);
     markGameBlueprintCompleted(blueprint, learnerId);
   };
 
@@ -432,6 +434,8 @@ function SpeedMathBlitzGame({ blueprint, onPlayingChange, blueprintLearnerId }: 
     setTimeLeft(45);
     scoreRef.current = 0;
     questionCounter.current = 0;
+    responseSessionId.current = createGameResponseSessionId();
+    responseSequence.current = 0;
     answeredThisProblem.current = false;
     setScore(0);
     setStreak(0);
@@ -487,7 +491,8 @@ function SpeedMathBlitzGame({ blueprint, onPlayingChange, blueprintLearnerId }: 
     const isCorrect = val === problem.answer;
     const learnerId = blueprint ? blueprintLearnerId ?? getActiveLearnerId() : getActiveLearnerId();
     if (blueprint) {
-      recordSpeedMathBlueprintResponse(blueprint, questionCounter.current - 1, val, learnerId, isHintVisible ? 1 : 0);
+      const responseId = `${responseSessionId.current}:response-${responseSequence.current++}`;
+      recordSpeedMathBlueprintResponse(blueprint, questionCounter.current - 1, val, learnerId, isHintVisible ? 1 : 0, responseId);
     } else {
       const skillId = problem.text.includes("×") ? "math-23-multiplication" : "math-k1-addition-subtraction";
       recordLearningEvent({
@@ -1840,13 +1845,15 @@ function MultiplicationMatrixGame({ blueprint, onPlayingChange, blueprintLearner
   const scoreRef = useRef(0);
   const answeredRef = useRef(false);
   const questionCounter = useRef(0);
+  const responseSessionId = useRef("");
+  const responseSequence = useRef(0);
 
   useEffect(() => onPlayingChange?.(isPlaying), [isPlaying, onPlayingChange]);
 
   const completeGeneratedSession = () => {
     if (!blueprint) return;
     const learnerId = blueprintLearnerId ?? getActiveLearnerId();
-    recordBlueprintSessionCompletion(blueprint, learnerId);
+    recordBlueprintSessionCompletion(blueprint, learnerId, responseSessionId.current || undefined);
     markGameBlueprintCompleted(blueprint, learnerId);
   };
 
@@ -1895,6 +1902,8 @@ function MultiplicationMatrixGame({ blueprint, onPlayingChange, blueprintLearner
     setTimeLeft(45);
     scoreRef.current = 0;
     questionCounter.current = 0;
+    responseSessionId.current = createGameResponseSessionId();
+    responseSequence.current = 0;
     setScore(0);
     setStreak(0);
     setIsGameOver(false);
@@ -1950,7 +1959,8 @@ function MultiplicationMatrixGame({ blueprint, onPlayingChange, blueprintLearner
     const isCorrect = val === problem.answer;
     const learnerId = blueprint ? blueprintLearnerId ?? getActiveLearnerId() : getActiveLearnerId();
     if (blueprint) {
-      recordTimesMatrixBlueprintResponse(blueprint, questionCounter.current - 1, val, learnerId, isHintVisible ? 1 : 0);
+      const responseId = `${responseSessionId.current}:response-${responseSequence.current++}`;
+      recordTimesMatrixBlueprintResponse(blueprint, questionCounter.current - 1, val, learnerId, isHintVisible ? 1 : 0, responseId);
     } else {
       recordLearningEvent({
         learnerId,

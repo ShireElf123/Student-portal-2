@@ -1,5 +1,6 @@
 import { CURRICULUM_SKILL_NODES } from "../data/curriculumUniverse";
 import type { LearnerModel } from "../utils/learnerBrain";
+import { isMasteryEvidenceEventType } from "../learning/eventEvidence";
 import { getSupportedGameEngine } from "./registry";
 import { deriveLearnerSkillState, getScaffoldLevel } from "../utils/adaptiveLearning";
 import type {
@@ -32,7 +33,8 @@ export function buildLearnerGenerationContext(model: LearnerModel, skillId: stri
       ? "secure"
       : "developing";
   const recentIncorrectCount = Math.min(10, (model.recentEvents || []).filter((event) =>
-    event.skillId === skillId && (event.outcome === "incorrect" || event.result === "struggle")
+    event.skillId === skillId && isMasteryEvidenceEventType(event.eventType) &&
+    (event.outcome === "incorrect" || event.result === "struggle")
   ).length);
   const weakSkillIds = [...new Set((model.weakSkills || []).filter((weakSkillId) => {
     const weakSkill = SKILL_BY_ID.get(weakSkillId);

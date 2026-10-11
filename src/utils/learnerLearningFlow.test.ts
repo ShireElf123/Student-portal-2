@@ -206,6 +206,71 @@ describe("learner evidence and persistence integration", () => {
     expect(getLearnerModel(learnerId).recentEvents[0].outcome).toBe("correct");
   });
 
+  it("does not treat activity completion as mastery or daily-route completion", () => {
+    const learner = getInitialLearnerModel(activeTestLearnerId);
+    const date = "2026-10-07";
+    const route = getOrCreateDailyLearningRoute(learner, date);
+    const target = route.items[0];
+    const skill = CURRICULUM_SKILL_NODES.find((node) => node.id === target.skillId)!;
+
+    recordLearningEvent({
+      id: "completion-is-not-mastery",
+      learnerId: activeTestLearnerId,
+      activityId: target.activityId,
+      experienceId: target.experienceId,
+      contentId: "completion-only-session",
+      eventType: "activity_completed",
+      activityType: "curriculum-quiz",
+      activityTitle: `${target.title} completed`,
+      skillId: target.skillId,
+      domain: skill.domain,
+      gradeBand: skill.gradeBand,
+      result: "success",
+      score: 100,
+      difficulty: "medium",
+      attempts: 10,
+      hintsUsed: 0,
+      timestamp: new Date(`${date}T12:00:00`).getTime(),
+    });
+
+    const updated = getLearnerModel(activeTestLearnerId);
+    expect(updated.skillMastery[target.skillId].totalAttempts).toBe(0);
+    expect(updated.skillMastery[target.skillId].successfulAttempts).toBe(0);
+    expect(updated.recentEvents[0]).toMatchObject({ outcome: "correct", eventType: "activity_completed" });
+    expect(getOrCreateDailyLearningRoute(updated, date).items.find((item) => item.skillId === target.skillId)?.completed).toBe(false);
+  });
+
+  it("deduplicates a replayed event ID per learner without blocking another learner's evidence", () => {
+    const learnerId = activeTestLearnerId;
+    const event = {
+      id: "stable-response-event-1",
+      learnerId,
+      activityId: "primary-lab-speed-math",
+      experienceId: "speed-math-blitz-sprint",
+      contentId: "blueprint-round-1",
+      eventType: "question_answered" as const,
+      activityType: "math-blitz" as const,
+      activityTitle: "Multiplication response",
+      skillId: "math-23-multiplication",
+      domain: "math" as const,
+      gradeBand: "2-3" as const,
+      result: "success" as const,
+      score: 100,
+      difficulty: "medium" as const,
+      attempts: 1,
+      hintsUsed: 0,
+    };
+
+    recordLearningEvent(event);
+    recordLearningEvent(event);
+    expect(getLearnerModel(learnerId).skillMastery[event.skillId].totalAttempts).toBe(1);
+    expect(getLearnerModel(learnerId).totalLearningEventsCount).toBe(1);
+
+    recordLearningEvent({ ...event, learnerId: "duplicate-event-other-learner" });
+    expect(getLearnerModel("duplicate-event-other-learner").skillMastery[event.skillId].totalAttempts).toBe(1);
+    expect(getLearnerModel(learnerId).skillMastery[event.skillId].totalAttempts).toBe(1);
+  });
+
   it("records each scored guided-assessment item as skill-specific evidence", () => {
     const assessment = GUIDED_ASSESSMENTS.find((entry) => entry.id === "toddler-phonics-basics")!;
     const item = assessment.items.find((entry) => entry.skillId)!;
@@ -308,7 +373,7 @@ describe("learner evidence and persistence integration", () => {
     expect(storage.getItem(getScopedStorageKey(legacyKey, secondLearner))).toBeNull();
   });
 
-  it("records all 37 toddler-world completions as mapped mastery evidence or explicit engagement", () => {
+  it("records all 37 toddler-world completions without treating completion as scored mastery evidence", () => {
     for (const world of ALL_TODDLER_WORLDS) {
       for (const area of world.areas) {
         for (const activity of area.activities) {
@@ -328,14 +393,15 @@ describe("learner evidence and persistence integration", () => {
           const event = eventsByActivity.get(activity.id);
           expect(event, `${activity.id} did not create learner evidence`).toBeDefined();
           expect(event?.experienceId).toBe("toddler-worlds-navigator");
+          expect(event?.eventType).toBe(definition.skillIds.length ? "activity_completed" : "creative_interaction");
+          expect(event?.outcome).toBe("explored");
           if (definition.skillIds.length) {
             mappedCount += 1;
             expect(event?.skillId).toBe(definition.skillIds[0]);
-            expect(event?.outcome).toBe("correct");
+            expect(model.skillMastery[definition.skillIds[0]].totalAttempts).toBe(0);
           } else {
             engagementCount += 1;
             expect(event?.skillId).toBeUndefined();
-            expect(event?.outcome).toBe("explored");
           }
         }
       }

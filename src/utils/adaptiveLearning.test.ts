@@ -7,6 +7,8 @@ import { todayISO } from "./dateUtils";
 import {
   deriveLearnerSkillState,
   getAdaptiveRecommendationCandidates,
+  getScaffoldLevel,
+  getSpacedReviewIntervalDays,
 } from "./adaptiveLearning";
 import { getOrCreateDailyLearningRoute, validateDailyLearningRoute } from "./dailyLearningRoute";
 import {
@@ -39,6 +41,41 @@ class MemoryStorage {
 let storage: MemoryStorage;
 let learnerId = "adaptive-test-learner";
 let learnerCount = 0;
+const MULTIPLICATION_SKILL_ID = "math-23-multiplication";
+
+function unlockMultiplicationPrerequisites(targetLearnerId: string): void {
+  const learner = getLearnerModel(targetLearnerId);
+  const skill = CURRICULUM_SKILL_NODES.find((node) => node.id === MULTIPLICATION_SKILL_ID)!;
+  for (const prerequisiteId of skill.prerequisites) learner.skillMastery[prerequisiteId].tier = "practitioner";
+  saveLearnerModel(learner, targetLearnerId);
+}
+
+function recordMultiplicationResponse(
+  id: string,
+  result: "success" | "struggle" | "practice",
+  timestamp: number,
+  hintsUsed = 0
+): void {
+  recordLearningEvent({
+    id,
+    learnerId,
+    activityId: "primary-lab-speed-math",
+    experienceId: "speed-math-blitz-sprint",
+    contentId: `${id}:content`,
+    eventType: "question_answered",
+    activityType: "math-blitz",
+    activityTitle: "Adaptive test multiplication response",
+    skillId: MULTIPLICATION_SKILL_ID,
+    domain: "math",
+    gradeBand: "2-3",
+    result,
+    score: result === "success" ? 100 : result === "practice" ? 50 : 0,
+    difficulty: "medium",
+    attempts: 1,
+    hintsUsed,
+    timestamp,
+  });
+}
 
 describe("evidence-driven adaptive learning", () => {
   beforeEach(() => {
@@ -71,9 +108,11 @@ describe("evidence-driven adaptive learning", () => {
       expect(engine.subjects).toContain("math");
       expect(engine.gradeBands).toContain("2-3");
       expect(engine.difficultyLevels).toEqual([1, 2, 3, 4, 5]);
-      expect(engine.interactionTypes.length).toBeGreaterThan(0);
+      expect(engine.interactionTypes).toEqual(["multiple-choice", "timed-response"]);
+      expect(engine.interactionTypes).not.toContain("visual-grid");
       expect(engine.skillIds).toContain(multiplication?.id);
     }
+    expect(getSupportedGameEngine("bubble-pop-phonics").interactionTypes).toEqual(["tap-to-select", "letter-recognition"]);
   });
 
   it("routes an incorrect response through learner state, recovery recommendation, and a refreshed compatible route", () => {
@@ -218,5 +257,114 @@ describe("evidence-driven adaptive learning", () => {
     ]);
     expect(state.difficultyLevel).toBe(graph.difficultyRange.max);
     expect(updated.skillMastery[skillId].currentDifficultyLevel).toBe(graph.difficultyRange.max);
+  });
+
+  it("keeps prerequisite readiness explicit and prefers NEXT skills aligned to the learner's grade band", () => {
+    const model = getInitialLearnerModel(learnerId);
+    const skill = CURRICULUM_SKILL_NODES.find((node) => node.id === MULTIPLICATION_SKILL_ID)!;
+    expect(deriveLearnerSkillState(model, skill.id).isUnlocked).toBe(false);
+    expect(deriveLearnerSkillState(model, skill.id).prerequisiteReadiness).toBe(0);
+
+    for (const prerequisiteId of skill.prerequisites) model.skillMastery[prerequisiteId].tier = "practitioner";
+    expect(deriveLearnerSkillState(model, skill.id).isUnlocked).toBe(true);
+    expect(deriveLearnerSkillState(model, skill.id).prerequisiteReadiness).toBe(100);
+
+    const earlyPrimary = getInitialLearnerModel(`${learnerId}-grade-k1`);
+    earlyPrimary.gradeBand = "K-1";
+    saveLearnerModel(earlyPrimary, earlyPrimary.learnerId);
+    const nextCandidates = getAdaptiveRecommendationCandidates(earlyPrimary, { limit: 100 })
+      .filter((candidate) => candidate.category === "next");
+    expect(nextCandidates.length).toBeGreaterThan(0);
+    expect(getSkillGraphNode(nextCandidates[0].skillId)?.gradeBand).toBe("K-1");
+  });
+
+  it("requires multiple successful responses before mastery can open a challenge", () => {
+    unlockMultiplicationPrerequisites(learnerId);
+    const start = Date.now() - 1_000;
+    recordMultiplicationResponse("mastery-evidence-1", "success", start);
+    let model = getLearnerModel(learnerId);
+    expect(model.skillMastery[MULTIPLICATION_SKILL_ID].tier).not.toBe("master");
+    expect(getAdaptiveRecommendationCandidates(model).some((candidate) => candidate.category === "challenge")).toBe(false);
+
+    for (let index = 2; index <= 4; index += 1) {
+      recordMultiplicationResponse(`mastery-evidence-${index}`, "success", start + index);
+    }
+    model = getLearnerModel(learnerId);
+    expect(model.skillMastery[MULTIPLICATION_SKILL_ID]).toMatchObject({
+      tier: "master",
+      successfulAttempts: 4,
+      evidenceScore: 96,
+    });
+    expect(model.skillMastery[MULTIPLICATION_SKILL_ID].confidence).toBeGreaterThanOrEqual(55);
+    const challenge = getAdaptiveRecommendationCandidates(model).find((candidate) => candidate.category === "challenge");
+    expect(challenge).toBeDefined();
+    expect(getSkillGraphNode(challenge!.skillId)?.prerequisiteSkillIds).toContain(MULTIPLICATION_SKILL_ID);
+  });
+
+  it("raises difficulty after sustained unassisted success, holds mixed evidence, and lowers after repeated struggle", () => {
+    unlockMultiplicationPrerequisites(learnerId);
+    const start = Date.now() - 10_000;
+    recordMultiplicationResponse("difficulty-success-1", "success", start);
+    recordMultiplicationResponse("difficulty-success-2", "success", start + 1);
+    expect(getLearnerModel(learnerId).skillMastery[MULTIPLICATION_SKILL_ID].currentDifficultyLevel).toBe(1);
+    recordMultiplicationResponse("difficulty-success-3", "success", start + 2);
+    expect(getLearnerModel(learnerId).skillMastery[MULTIPLICATION_SKILL_ID].currentDifficultyLevel).toBe(2);
+
+    recordMultiplicationResponse("difficulty-mixed-success", "success", start + 3);
+    recordMultiplicationResponse("difficulty-mixed-error", "struggle", start + 4);
+    expect(getLearnerModel(learnerId).skillMastery[MULTIPLICATION_SKILL_ID].currentDifficultyLevel).toBe(2);
+    recordMultiplicationResponse("difficulty-partial", "practice", start + 5);
+    recordMultiplicationResponse("difficulty-error-1", "struggle", start + 6);
+    expect(getLearnerModel(learnerId).skillMastery[MULTIPLICATION_SKILL_ID].currentDifficultyLevel).toBe(2);
+    recordMultiplicationResponse("difficulty-error-2", "struggle", start + 7);
+
+    const model = getLearnerModel(learnerId);
+    const state = deriveLearnerSkillState(model, MULTIPLICATION_SKILL_ID);
+    expect(model.skillMastery[MULTIPLICATION_SKILL_ID].currentDifficultyLevel).toBe(1);
+    expect(state.difficultyLevel).toBeGreaterThanOrEqual(getSkillGraphNode(MULTIPLICATION_SKILL_ID)!.difficultyRange.min);
+    expect(state.difficultyLevel).toBeLessThanOrEqual(getSkillGraphNode(MULTIPLICATION_SKILL_ID)!.difficultyRange.max);
+    expect(getScaffoldLevel(state)).toBe(2);
+  });
+
+  it("marks evidence freshness and recommends spaced REVIEW at a confidence-adjusted interval", () => {
+    const model = getInitialLearnerModel(learnerId);
+    const initialState = deriveLearnerSkillState(model, MULTIPLICATION_SKILL_ID);
+    expect(initialState).toMatchObject({ evidenceFreshness: "unseen", reviewIntervalDays: 3 });
+    expect(getSpacedReviewIntervalDays({
+      tier: "novice",
+      totalAttempts: 1,
+      confidence: 10,
+      recentAccuracy: 0,
+      consistency: 0,
+      struggleScore: 0.8,
+    })).toBe(2);
+
+    unlockMultiplicationPrerequisites(learnerId);
+    const practicedAt = 1_790_000_000_000;
+    recordMultiplicationResponse("review-success-1", "success", practicedAt);
+    recordMultiplicationResponse("review-success-2", "success", practicedAt + 1);
+    const practicedModel = getLearnerModel(learnerId);
+    const practicedState = deriveLearnerSkillState(practicedModel, MULTIPLICATION_SKILL_ID, practicedAt + 1);
+    expect(practicedState).toMatchObject({ tier: "practitioner", reviewIntervalDays: 7, evidenceFreshness: "fresh" });
+
+    const agingNow = practicedAt + 6 * 24 * 60 * 60 * 1000;
+    expect(deriveLearnerSkillState(practicedModel, MULTIPLICATION_SKILL_ID, agingNow).evidenceFreshness).toBe("aging");
+    const dueNow = practicedAt + 8 * 24 * 60 * 60 * 1000;
+    const dueState = deriveLearnerSkillState(practicedModel, MULTIPLICATION_SKILL_ID, dueNow);
+    expect(dueState.evidenceFreshness).toBe("due");
+    expect(getAdaptiveRecommendationCandidates(practicedModel, { now: dueNow })
+      .find((candidate) => candidate.skillId === MULTIPLICATION_SKILL_ID)?.category).toBe("review");
+    const reviewRoute = getOrCreateDailyLearningRoute(practicedModel, todayISO(new Date(dueNow)));
+    expect(reviewRoute.items.some((item) => item.skillId === MULTIPLICATION_SKILL_ID &&
+      item.recommendationCategory === "review")).toBe(true);
+    expect(validateDailyLearningRoute(reviewRoute)).toEqual([]);
+    expect(getSpacedReviewIntervalDays({
+      tier: "master",
+      totalAttempts: 4,
+      confidence: 60,
+      recentAccuracy: 1,
+      consistency: 1,
+      struggleScore: 0,
+    })).toBe(14);
   });
 });

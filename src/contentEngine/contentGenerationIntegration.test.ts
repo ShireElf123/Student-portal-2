@@ -201,12 +201,19 @@ describe("authenticated generated-content learning integration", () => {
       });
       const incorrectAnswer = displayedRound.choices.find((choice) => choice !== displayedRound.answer);
       if (incorrectAnswer === undefined) throw new Error("The validated renderer round did not include a distractor.");
-      recordSpeedMathBlueprintResponse(result.blueprint, 0, incorrectAnswer, learnerId);
-      recordBlueprintSessionCompletion(result.blueprint, learnerId);
+      const responseId = "integration-session-1:round-0:attempt-1";
+      const responseEvent = recordSpeedMathBlueprintResponse(result.blueprint, 0, incorrectAnswer, learnerId, 0, responseId);
+      const replayedResponse = recordSpeedMathBlueprintResponse(result.blueprint, 0, incorrectAnswer, learnerId, 0, responseId);
+      expect(replayedResponse.id).toBe(responseEvent.id);
+      recordBlueprintSessionCompletion(result.blueprint, learnerId, "integration-session-1");
+      recordBlueprintSessionCompletion(result.blueprint, learnerId, "integration-session-1");
 
       const updatedLearner = getLearnerModel(learnerId);
       expect(updatedLearner.skillMastery[targetSkillId].totalAttempts).toBe(2);
       expect(updatedLearner.skillMastery[targetSkillId].successfulAttempts).toBe(0);
+      expect(updatedLearner.totalLearningEventsCount).toBe(2);
+      expect(updatedLearner.recentEvents.filter((event) => event.eventType === "question_answered")).toHaveLength(1);
+      expect(updatedLearner.recentEvents.filter((event) => event.eventType === "activity_completed")).toHaveLength(1);
       const responseEvidence = updatedLearner.recentEvents.find((event) => event.eventType === "question_answered");
       expect(responseEvidence).toMatchObject({
         activityId: "primary-lab-speed-math",

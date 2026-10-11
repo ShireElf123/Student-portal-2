@@ -1,6 +1,7 @@
 import { CURRICULUM_SKILL_NODES } from "../data/curriculumUniverse";
 import { getActivitiesForSkill, resolveActivityDefinition, LearningActivityDefinition } from "../data/activitySkillRegistry";
 import { isAdaptiveRecommendationCategory, type AdaptiveRecommendationCategory, type AdaptiveRoutePhase } from "../learning/adaptiveTypes";
+import { isMasteryEvidenceEventType } from "../learning/eventEvidence";
 import { deriveLearnerSkillState, getAdaptiveRecommendationCandidates } from "./adaptiveLearning";
 import type { LearnerModel, LearningEventOutcome } from "./learnerBrain";
 import { todayISO } from "./dateUtils";
@@ -269,7 +270,8 @@ export function getOrCreateDailyLearningRoute(model: LearnerModel, date: string 
   const latestOutcomeByActivitySkill = new Map<string, LearningEventOutcome>();
   const latestActivityBySkill = new Map<string, string>();
   const responsesForDate = [...(model.recentEvents || [])]
-    .filter((event) => event.skillId && event.outcome !== "explored" && todayISO(new Date(event.timestamp)) === date)
+    .filter((event) => event.skillId && event.outcome !== "explored" && isMasteryEvidenceEventType(event.eventType) &&
+      todayISO(new Date(event.timestamp)) === date)
     .sort((left, right) => right.timestamp - left.timestamp || right.id.localeCompare(left.id));
   for (const event of responsesForDate) {
     const key = `${event.activityId}::${event.skillId}`;

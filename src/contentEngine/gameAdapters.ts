@@ -6,6 +6,20 @@ import {
 import { getSupportedGameEngine } from "./registry";
 import type { BubblePopBlueprint, GameBlueprint, SpeedMathBlueprint, TimesMatrixBlueprint } from "./types";
 
+export function createGameResponseSessionId(): string {
+  const sessionId = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+    ? crypto.randomUUID()
+    : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+  return `session-${sessionId}`;
+}
+
+function responseEventId(blueprint: GameBlueprint, roundId: string, responseId?: string): string | undefined {
+  const normalizedResponseId = responseId?.trim();
+  if (!normalizedResponseId) return undefined;
+  if (normalizedResponseId.length > 100) throw new Error("Generated-game response IDs must be at most 100 characters.");
+  return `game-response-v1:${blueprint.metadata.fingerprint}:${encodeURIComponent(roundId)}:${encodeURIComponent(normalizedResponseId)}`;
+}
+
 export interface RenderableMathQuestion {
   id: string;
   prompt: string;
@@ -46,13 +60,16 @@ export function recordSpeedMathBlueprintResponse(
   roundIndex: number,
   selectedAnswer: number,
   learnerId: string,
-  hintsUsed = 0
+  hintsUsed = 0,
+  responseId?: string
 ) {
   const round = blueprint.content.rounds[roundIndex];
   if (!round) throw new Error(`Speed Math blueprint has no round ${roundIndex}`);
   const engine = getSupportedGameEngine("speed-math");
+  const eventId = responseEventId(blueprint, round.id, responseId);
   const correct = selectedAnswer === round.answer;
   return recordLearningEvent({
+    ...(eventId ? { id: eventId } : {}),
     learnerId,
     activityId: engine.activityId,
     experienceId: engine.experienceId,
@@ -85,13 +102,16 @@ export function recordTimesMatrixBlueprintResponse(
   roundIndex: number,
   selectedAnswer: number,
   learnerId: string,
-  hintsUsed = 0
+  hintsUsed = 0,
+  responseId?: string
 ) {
   const round = blueprint.content.rounds[roundIndex];
   if (!round) throw new Error(`Times Matrix blueprint has no round ${roundIndex}`);
   const engine = getSupportedGameEngine("times-matrix");
+  const eventId = responseEventId(blueprint, round.id, responseId);
   const correct = selectedAnswer === round.answer;
   return recordLearningEvent({
+    ...(eventId ? { id: eventId } : {}),
     learnerId,
     activityId: engine.activityId,
     experienceId: engine.experienceId,
@@ -123,14 +143,17 @@ export function recordBubblePopBlueprintResponse(
   blueprint: BubblePopBlueprint,
   roundIndex: number,
   bubbleIndex: number,
-  learnerId: string
+  learnerId: string,
+  responseId?: string
 ) {
   const round = blueprint.content.rounds[roundIndex];
   const bubble = round?.bubbles[bubbleIndex];
   if (!round || !bubble) throw new Error(`Bubble Pop blueprint has no bubble ${roundIndex}:${bubbleIndex}`);
   const engine = getSupportedGameEngine("bubble-pop-phonics");
+  const eventId = responseEventId(blueprint, round.id, responseId);
   const correct = bubble.letter === round.targetLetter;
   return recordLearningEvent({
+    ...(eventId ? { id: eventId } : {}),
     learnerId,
     activityId: engine.activityId,
     experienceId: engine.experienceId,
@@ -157,14 +180,16 @@ export function recordBubblePopBlueprintResponse(
   });
 }
 
-export function recordBlueprintSessionCompletion(blueprint: GameBlueprint, learnerId: string): void {
+export function recordBlueprintSessionCompletion(blueprint: GameBlueprint, learnerId: string, sessionId?: string): void {
   const engine = getSupportedGameEngine(blueprint.gameType);
   const activityType = blueprint.gameType === "speed-math"
     ? "math-blitz"
     : blueprint.gameType === "times-matrix"
       ? "times-matrix"
       : "phonics-pop";
+  const eventId = responseEventId(blueprint, "session-completed", sessionId);
   recordLearningEvent({
+    ...(eventId ? { id: eventId } : {}),
     learnerId,
     activityId: engine.activityId,
     experienceId: engine.experienceId,

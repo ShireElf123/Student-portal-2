@@ -1,8 +1,11 @@
 import { getSkillGraphNode, getSkillGraphNodes } from "../data/skillGraph";
+import type { GradeLevelBand } from "../data/curriculumUniverse";
 import { getActivitiesForSkill } from "../data/activitySkillRegistry";
+import { isMasteryEvidenceEventType } from "../learning/eventEvidence";
 import type {
   AdaptiveRecommendationCategory,
   DifficultyLevel,
+  EvidenceFreshness,
   MisconceptionTag,
   ScaffoldLevel,
 } from "../learning/adaptiveTypes";
@@ -11,7 +14,6 @@ import type { LearnerModel, RecommendationReason } from "./learnerBrain";
 const RECENT_EVIDENCE_LIMIT = 5;
 const MISCONCEPTION_WINDOW = 10;
 const DAY_MS = 24 * 60 * 60 * 1000;
-const REVIEW_AFTER_DAYS = 7;
 
 export interface MisconceptionSignal {
   tag: MisconceptionTag;
@@ -35,6 +37,8 @@ export interface LearnerSkillState {
   consistency: number;
   lastPracticedAt: number | null;
   daysSinceLastPractice: number | null;
+  reviewIntervalDays: number;
+  evidenceFreshness: EvidenceFreshness;
   needsReview: boolean;
   isUnlocked: boolean;
   prerequisiteReadiness: number;
@@ -76,9 +80,34 @@ function eventValue(outcome: string, score?: number): number {
   return 0;
 }
 
+/** Deterministic spacing interval: struggling skills return sooner; secure skills wait longer. */
+export function getSpacedReviewIntervalDays(
+  state: Pick<LearnerSkillState, "tier" | "totalAttempts" | "confidence" | "recentAccuracy" | "consistency" | "struggleScore">
+): number {
+  if ((state.recentAccuracy !== null && state.recentAccuracy <= 0.4) || state.struggleScore >= 0.55) return 2;
+  if (state.tier === "master" && state.confidence >= 55 &&
+    (state.recentAccuracy === null || state.recentAccuracy >= 0.8) && state.consistency >= 0.5) return 14;
+  if (state.tier === "practitioner" && state.confidence >= 40 &&
+    (state.recentAccuracy === null || state.recentAccuracy >= 0.65)) return 7;
+  if (state.totalAttempts <= 2) return 3;
+  return 5;
+}
+
+function evidenceFreshnessFor(
+  totalAttempts: number,
+  daysSinceLastPractice: number | null,
+  reviewIntervalDays: number
+): EvidenceFreshness {
+  if (totalAttempts <= 0) return "unseen";
+  if (daysSinceLastPractice === null) return "unknown";
+  if (daysSinceLastPractice >= reviewIntervalDays) return "due";
+  return daysSinceLastPractice >= Math.max(1, Math.floor(reviewIntervalDays * 0.7)) ? "aging" : "fresh";
+}
+
 function getSkillEvents(model: LearnerModel, skillId: string, now: number) {
   return (model.recentEvents || [])
-    .filter((event) => event.skillId === skillId && event.outcome !== "explored" && event.timestamp <= now)
+    .filter((event) => event.skillId === skillId && event.outcome !== "explored" &&
+      isMasteryEvidenceEventType(event.eventType) && event.timestamp <= now)
     .sort((left, right) => right.timestamp - left.timestamp || right.id.localeCompare(left.id));
 }
 
@@ -155,13 +184,23 @@ export function deriveLearnerSkillState(
   const daysSinceLastPractice = lastPracticedAt === null
     ? null
     : Math.max(0, Math.floor((now - lastPracticedAt) / DAY_MS));
+  const totalAttempts = Math.max(0, Number(record.totalAttempts) || 0);
+  const reviewIntervalDays = getSpacedReviewIntervalDays({
+    tier: record.tier,
+    totalAttempts,
+    confidence,
+    recentAccuracy,
+    consistency,
+    struggleScore,
+  });
+  const evidenceFreshness = evidenceFreshnessFor(totalAttempts, daysSinceLastPractice, reviewIntervalDays);
 
   return {
     skillId,
     tier: record.tier,
     evidenceScore,
     confidence,
-    totalAttempts: Math.max(0, Number(record.totalAttempts) || 0),
+    totalAttempts,
     successfulAttempts: Math.max(0, Number(record.successfulAttempts) || 0),
     struggleAttempts: Math.max(0, Number(record.strugglesCount) || 0),
     difficultyLevel,
@@ -172,6 +211,8 @@ export function deriveLearnerSkillState(
     consistency,
     lastPracticedAt,
     daysSinceLastPractice,
+    reviewIntervalDays,
+    evidenceFreshness,
     needsReview: Boolean(record.needsReview),
     isUnlocked: isMasteryReady(model, skillId),
     prerequisiteReadiness,
@@ -198,6 +239,22 @@ function hasLaunchableActivity(skillId: string): boolean {
     !["engagement", "assessment", "homework", "picture-book"].includes(activity.experienceType) &&
     (activity.experienceType !== "toddler-world" || (activity.minimumWorldStars ?? 0) === 0)
   );
+}
+
+const GRADE_BAND_ORDER: readonly GradeLevelBand[] = ["K-1", "2-3", "4-5"];
+
+/** Prefer new/extension skills aligned to the learner's profile; keep remediation available. */
+function gradeBandPriorityAdjustment(
+  learnerGradeBand: LearnerModel["gradeBand"],
+  skillGradeBand: GradeLevelBand,
+  category: AdaptiveRecommendationCategory
+): number {
+  if (category !== "next" && category !== "challenge") return 0;
+  const learnerBand = learnerGradeBand === "toddler" ? "K-1" : learnerGradeBand;
+  const difference = GRADE_BAND_ORDER.indexOf(skillGradeBand) - GRADE_BAND_ORDER.indexOf(learnerBand);
+  if (difference === 0) return 6;
+  if (difference < 0) return Math.max(-8, difference * 2);
+  return category === "challenge" ? -5 * difference : -16 * difference;
 }
 
 function addCandidate(
@@ -250,7 +307,8 @@ export function getAdaptiveRecommendationCandidates(
     const record = model.skillMastery[node.id];
 
     if (record.totalAttempts > 0 && record.tier !== "master" &&
-      (record.needsReview || record.strugglesCount > 0 || record.evidenceScore < node.practitionerThreshold)) {
+      (state.needsReview || (state.recentAccuracy !== null && state.recentAccuracy < 0.65) ||
+        record.evidenceScore < node.practitionerThreshold)) {
       const foundations = unmasteredAvailableFoundations(model, node.id);
       foundations.forEach((foundation, index) => {
         const foundationState = states.get(foundation.skillId) ?? deriveLearnerSkillState(model, foundation.skillId, now);
@@ -269,7 +327,7 @@ export function getAdaptiveRecommendationCandidates(
     const mostRecentIncorrect = skillEvents.find((event) => event.outcome === "incorrect");
     const hasRecordedStruggle = record.strugglesCount > 0 || state.recentIncorrectCount > 0;
 
-    if (record.tier !== "master" && record.totalAttempts > 0 && hasRecordedStruggle &&
+    if (record.totalAttempts > 0 && hasRecordedStruggle &&
       (record.needsReview || state.recentAccuracy !== null && state.recentAccuracy <= 0.4 || record.consecutiveStruggles >= 2)) {
       addCandidate(candidates, {
         skillId: node.id,
@@ -279,7 +337,7 @@ export function getAdaptiveRecommendationCandidates(
         priorityScore: 120 + state.struggleScore * 10 + Math.min(8, state.misconceptionSignals.length * 2),
         ...(mostRecentIncorrect ? { preferredActivityId: mostRecentIncorrect.activityId } : {}),
       });
-    } else if (record.tier !== "master" && record.totalAttempts > 0 &&
+    } else if (record.tier !== "master" && record.totalAttempts > 0 && state.evidenceFreshness !== "due" &&
       (record.evidenceScore < node.masteryThreshold || record.confidence < 70) &&
       (record.needsReview || state.daysSinceLastPractice !== 0 || state.recentAccuracy === null || state.recentAccuracy < 0.8)) {
       addCandidate(candidates, {
@@ -291,19 +349,22 @@ export function getAdaptiveRecommendationCandidates(
       });
     }
 
-    const reviewDue = record.totalAttempts > 0 && state.daysSinceLastPractice !== null &&
-      state.daysSinceLastPractice >= REVIEW_AFTER_DAYS && record.tier !== "locked";
+    const reviewDue = record.totalAttempts > 0 && state.evidenceFreshness === "due" && record.tier !== "locked";
     if (reviewDue) {
+      const daysOverdue = Math.max(0, (state.daysSinceLastPractice ?? 0) - state.reviewIntervalDays);
       addCandidate(candidates, {
         skillId: node.id,
         category: "review",
         reasonCode: "needs-practice",
         urgency: "medium",
-        priorityScore: 62 + Math.min(20, state.daysSinceLastPractice! - REVIEW_AFTER_DAYS),
+        priorityScore: 62 + Math.min(20, daysOverdue),
       });
     }
 
-    if (record.tier === "master") {
+    const hasSufficientChallengeEvidence = record.tier === "master" && record.successfulAttempts >= node.masteryMinimumSuccessfulAttempts &&
+      record.confidence >= 55 && !state.needsReview &&
+      (state.recentAccuracy === null || state.recentEvidenceCount >= 2 && state.recentAccuracy >= 0.8 && state.consistency >= 0.5);
+    if (hasSufficientChallengeEvidence) {
       const extension = node.extensionSkillIds
         .filter((extensionId) => {
           const extensionRecord = model.skillMastery[extensionId];
@@ -311,12 +372,13 @@ export function getAdaptiveRecommendationCandidates(
         })
         .sort((left, right) => left.localeCompare(right))[0];
       if (extension) {
+        const extensionGradeBand = getSkillGraphNode(extension)?.gradeBand ?? node.gradeBand;
         addCandidate(candidates, {
           skillId: extension,
           category: "challenge",
           reasonCode: "near-mastery",
           urgency: "medium",
-          priorityScore: 58,
+          priorityScore: 58 + gradeBandPriorityAdjustment(model.gradeBand, extensionGradeBand, "challenge"),
         });
       }
     }
@@ -327,7 +389,8 @@ export function getAdaptiveRecommendationCandidates(
         category: "next",
         reasonCode: "new-skill",
         urgency: "low",
-        priorityScore: 50 + node.extensionSkillIds.length * 0.1,
+        priorityScore: 50 + node.extensionSkillIds.length * 0.1 +
+          gradeBandPriorityAdjustment(model.gradeBand, node.gradeBand, "next"),
       });
     }
   }
