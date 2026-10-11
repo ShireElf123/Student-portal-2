@@ -87,6 +87,28 @@ export function createContentAuthMiddleware(verifier: ContentAuthVerifier): Requ
   };
 }
 
+/**
+ * Attach a verified Firebase identity when a valid Bearer token is present,
+ * but never reject the request. Used by routes that intentionally support
+ * signed-out (guest) learners: verified users get per-account rate limits,
+ * anonymous traffic is limited by network address instead. Invalid or missing
+ * tokens simply fall through to the anonymous tier — the caller can never
+ * influence the identity except through a token this project's Firebase
+ * project actually issued.
+ */
+export function createOptionalIdentityMiddleware(verifier: ContentAuthVerifier): RequestHandler {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const token = extractBearerToken(req.headers.authorization);
+    if (token) {
+      const identity = await verifier.verify(token);
+      if (identity) {
+        res.locals.contentIdentity = identity;
+      }
+    }
+    next();
+  };
+}
+
 export function getContentIdentity(res: Response): ContentIdentity | null {
   const identity = res.locals.contentIdentity as ContentIdentity | undefined;
   return identity && typeof identity.uid === "string" && identity.uid ? identity : null;

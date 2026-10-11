@@ -25,6 +25,8 @@ import { INITIAL_NOTEBOOKS, ACADEMIC_MODES } from "../data/defaultNotebooks";
 import { Sidebar } from "./Sidebar";
 import { MessageItem } from "./MessageItem";
 import { canConsumeAI, recordAIConsumption } from "../services/aiUsageService";
+import { prepareImageAttachment } from "../utils/imageAttachment";
+import { auth } from "../firebaseCore";
 // Notebook persistence is owned by App (account-scoped v3 partition). This
 // view keeps no separate copy: the legacy unscoped v2 mirror previously
 // written here could resurface one account's notebooks inside another account.
@@ -135,29 +137,22 @@ export function ChatInterface({
     }
   }, [pendingInitialQuery, onClearInitialQuery]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      setError("Please select an image file (PNG, JPEG, WebP) of your homework problem or diagram.");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      const base64Data = result.split(",")[1];
-      setAttachment({
-        name: file.name,
-        mimeType: file.type,
-        data: base64Data,
-        previewUrl: result,
-      });
+    // Homework photos are downscaled + re-compressed in the browser before
+    // upload (see utils/imageAttachment). Raw camera photos exceed the
+    // JSON body budget of the chat API and previously failed with HTTP 413.
+    try {
+      const prepared = await prepareImageAttachment(file);
+      setAttachment(prepared);
       setError(null);
-    };
-    reader.readAsDataURL(file);
-    e.target.value = "";
+    } catch (err) {
+      setAttachment(null);
+      setError(err instanceof Error ? err.message : "That image could not be prepared. Please try a different photo.");
+    }
   };
 
   const removeAttachment = () => {
@@ -247,6 +242,22 @@ export function ChatInterface({
     URL.revokeObjectURL(url);
   };
 
+  // Attach the signed-in learner's Firebase ID token when available so the
+  // server can apply per-account rate limits. Signed-out learners stay
+  // supported (guest tier); the request simply carries no Authorization header.
+  const buildChatHeaders = async (): Promise<Record<string, string>> => {
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        headers.Authorization = `Bearer ${await user.getIdToken()}`;
+      }
+    } catch {
+      // Token refresh failed — continue as guest rather than blocking the learner.
+    }
+    return headers;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if ((!input.trim() && !attachment) || isLoading) return;
@@ -296,14 +307,15 @@ export function ChatInterface({
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/study-stream", {
+      const chatHeaders = await buildChatHeaders();
+      const response = await fetch("/api/chat/stream", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: chatHeaders,
         body: JSON.stringify({
           message: currentInput,
           mode: activeNotebook.mode,
           subject: activeNotebook.subject,
-          interactionId: activeNotebook.lastInteractionId,
+          previousInteractionId: activeNotebook.lastInteractionId,
           attachment: currentAttachment
             ? {
                 mimeType: currentAttachment.mimeType,
@@ -314,14 +326,14 @@ export function ChatInterface({
       });
 
       if (!response.ok) {
-        const fallbackRes = await fetch("/api/study", {
+        const fallbackRes = await fetch("/api/chat", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: chatHeaders,
           body: JSON.stringify({
             message: currentInput,
             mode: activeNotebook.mode,
             subject: activeNotebook.subject,
-            interactionId: activeNotebook.lastInteractionId,
+            previousInteractionId: activeNotebook.lastInteractionId,
             attachment: currentAttachment
               ? {
                   mimeType: currentAttachment.mimeType,
