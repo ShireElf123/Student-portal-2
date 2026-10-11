@@ -3,7 +3,7 @@
 Agency-level SEO / AI-SEO (GEO) ready affiliate review site, built to the
 state-of-the-art 2026 playbook:
 
-- **E-E-A-T layer**: named editorial author, About page, public testing Methodology, dated "last verified" stamps, hands-on experience claims per review
+- **Trust layer**: named publisher, About page, evidence methodology, transparent dates, and a clear distinction between first-hand experience and research-based assessments.
 - **GEO / AI-search layer**: quick-answer extract boxes, question-style H2s, comparison tables, stat density with sources, `FAQPage` / `Review` / `Article` / `ItemList` / `BreadcrumbList` / `Organization` JSON-LD on every page, `llms.txt`, robots.txt that allows AI *retrieval* bots and blocks training-only scrapers
 - **FTC / legal layer**: disclosure banner above the first commercial CTA on every monetised page, `rel="sponsored"` on all affiliate links, dedicated Affiliate Disclosure / Privacy / Terms pages
 - **Conversion layer**: cloaked `/go/*` 302 redirects (noindexed), Netlify Forms lead capture + click tracking, per-tool CTAs
