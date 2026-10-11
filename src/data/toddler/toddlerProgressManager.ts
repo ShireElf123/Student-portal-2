@@ -190,8 +190,8 @@ export function recordActivityCompletion(
 
   saveToddlerProgress(nextState);
 
-  // A correct answer in a mapped world activity is evidence; social/creative activities
-  // remain engagement-only until they have a legitimate curriculum skill.
+  // Completion earns the existing world rewards, but without a scored response it
+  // remains engagement-only for mastery, even when the activity has a skill mapping.
   const resolved = resolveSkillForActivity(activityId);
   recordLearningEvent({
     learnerId: getActiveLearnerId(),
@@ -204,8 +204,7 @@ export function recordActivityCompletion(
     skillId: resolved.skillId,
     domain: resolved.domain,
     gradeBand: resolved.gradeBand,
-    result: resolved.skillId ? "success" : "explored",
-    score: resolved.skillId ? 100 : undefined,
+    result: "explored",
     difficulty: "easy",
     attempts: 1,
     hintsUsed: 0,

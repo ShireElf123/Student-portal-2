@@ -2,11 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getInitialLearnerModel, getLearnerModel, setActiveLearnerId } from "../utils/learnerBrain";
 import { buildContentGenerationRequest, buildLearnerGenerationContext } from "./learnerContext";
 import { cacheValidatedGameBlueprint, clearGeneratedContentCacheForTests, findReusableGameBlueprint, getContentPoolStatus, getKnownBlueprintFingerprints, markGameBlueprintCompleted } from "./cache";
-import { fingerprintGameBlueprint } from "./fingerprint";
-import { adaptSpeedMathRound, adaptTimesMatrixRound, recordBlueprintSessionCompletion, recordBubblePopBlueprintResponse, recordSpeedMathBlueprintResponse, recordTimesMatrixBlueprintResponse } from "./gameAdapters";
-import { generateValidatedGameBlueprint, StructuredContentProvider } from "./generation";
+import { buildContentGenerationFlightKey, fingerprintGameBlueprint } from "./fingerprint";
+import { adaptSpeedMathRound, adaptTimesMatrixRound, recordBlueprintSessionCompletion, recordBubblePopBlueprintResponse, recordSpeedMathBlueprintResponse, recordStorybookComprehensionResponse, recordTimesMatrixBlueprintResponse } from "./gameAdapters";
+import { adaptStorybookBlueprintToPictureBook, findStaticPictureBookForSkill } from "./storybookAdapter";
+import { getSkillGraphNode, validateSkillGraph } from "../data/skillGraph";
+import { buildContentGenerationPrompt, generateValidatedGameBlueprint, StructuredContentProvider } from "./generation";
+import { deriveLearnerSkillState } from "../utils/adaptiveLearning";
 import { validateContentGenerationRequest, validateGameBlueprint } from "./validation";
-import { validateSupportedGameEngineRegistry } from "./registry";
+import { getSupportedGameEngine, validateSupportedGameEngineRegistry } from "./registry";
 import { getOrGenerateGameBlueprint } from "../services/gameContentService";
 import type { ContentGenerationRequest, GameBlueprint, GeneratedGamePayload, SupportedGameType } from "./types";
 
@@ -82,21 +85,76 @@ const BUBBLE_PAYLOAD: GeneratedGamePayload = {
   ],
 };
 
+const STORYBOOK_PAYLOAD: GeneratedGamePayload = {
+  gameType: "storybook-comprehension",
+  objective: "Listen for important details in a story.",
+  instructions: "Listen to each story page, then choose the answer supported by the story.",
+  feedback: {
+    correct: "You remembered an important story detail!",
+    incorrect: "Good try. Let's look back at the story together.",
+    completion: "You finished the story detective adventure!",
+  },
+  hints: ["Listen for the details that help answer the question."],
+  voice: { introduction: "Let's listen to a story and remember its important details." },
+  storyTitle: "Mila and the Golden Acorn",
+  storySummary: "Mila follows a golden acorn through the garden and shares it with a friend.",
+  rounds: [
+    {
+      title: "A Small Treasure",
+      text: "Mila the squirrel finds a golden acorn beside the old oak tree.",
+      prompt: "What does Mila find beside the oak tree?",
+      questionType: "key-detail",
+      options: ["A golden acorn", "A blue shell", "A red scarf"],
+      correctOptionIndex: 0,
+      evidenceText: "a golden acorn",
+      explanation: "The page says Mila finds a golden acorn beside the tree.",
+      hint: "Listen for the small treasure Mila found.",
+    },
+    {
+      title: "Along the Path",
+      text: "Mila follows a bright leaf along the path before the rain begins to fall.",
+      prompt: "What happens before the rain begins?",
+      questionType: "event-order",
+      options: ["Mila follows a bright leaf", "The stars come out", "Mila eats breakfast"],
+      correctOptionIndex: 0,
+      evidenceText: "Mila follows a bright leaf along the path",
+      explanation: "First, Mila follows the leaf. Then the rain begins.",
+      hint: "Think about what Mila does first on the path.",
+    },
+    {
+      title: "A Shared Acorn",
+      text: "At the garden gate, Mila shares the acorn with Pip, and they plant it together.",
+      prompt: "Who plants the acorn with Mila?",
+      questionType: "key-detail",
+      options: ["Pip", "A sleepy owl", "A little fish"],
+      correctOptionIndex: 0,
+      evidenceText: "Mila shares the acorn with Pip",
+      explanation: "Mila and Pip plant the acorn together.",
+      hint: "Listen for Mila's friend at the garden gate.",
+    },
+  ],
+};
+
 const PAYLOADS: Record<SupportedGameType, GeneratedGamePayload> = {
   "speed-math": SPEED_PAYLOAD,
   "times-matrix": MATRIX_PAYLOAD,
   "bubble-pop-phonics": BUBBLE_PAYLOAD,
+  "storybook-comprehension": STORYBOOK_PAYLOAD,
 };
 
 function makeRequest(gameType: SupportedGameType = "speed-math"): ContentGenerationRequest {
-  const skillId = gameType === "bubble-pop-phonics" ? "read-k1-alphabet-letters" : "math-23-multiplication";
-  const gradeBand = gameType === "bubble-pop-phonics" ? "K-1" : "2-3";
+  const skillId = gameType === "bubble-pop-phonics"
+    ? "read-k1-alphabet-letters"
+    : gameType === "storybook-comprehension"
+      ? "read-k1-listening-comprehension"
+      : "math-23-multiplication";
+  const gradeBand = gameType === "bubble-pop-phonics" || gameType === "storybook-comprehension" ? "K-1" : "2-3";
   return {
     gameType,
     skillId,
     gradeBand,
     difficulty: "easy",
-    theme: gameType === "bubble-pop-phonics" ? "garden" : "space",
+    theme: gameType === "bubble-pop-phonics" ? "garden" : gameType === "storybook-comprehension" ? "animals" : "space",
     roundCount: 3,
     learnerContext: {
       gradeBand,
@@ -145,8 +203,22 @@ describe("Content Engine V1", () => {
     vi.clearAllMocks();
   });
 
-  it("keeps the three supported renderers bound to real registered activities and skills", () => {
+  it("keeps all supported renderers bound to real registered activities and skills, including the picture-book reader", () => {
     expect(validateSupportedGameEngineRegistry()).toEqual([]);
+    const storybookEngine = getSupportedGameEngine("storybook-comprehension");
+    expect(storybookEngine).toMatchObject({
+      activityId: "picture-book-interaction",
+      experienceId: "picture-book-reader",
+      skillIds: ["read-k1-listening-comprehension"],
+      gradeBands: ["K-1"],
+      interactionTypes: ["multiple-choice"],
+    });
+    const comprehensionNode = getSkillGraphNode("read-k1-listening-comprehension");
+    expect(comprehensionNode?.prerequisiteSkillIds).toEqual([]);
+    expect(comprehensionNode?.compatibleGameTypes).toEqual(["storybook-comprehension"]);
+    expect(comprehensionNode?.compatibleActivityIds).toContain("picture-book-interaction");
+    expect(comprehensionNode?.assessmentCapabilities).toContain("picture-book-response");
+    expect(validateSkillGraph()).toEqual([]);
   });
 
   it("parses provider JSON and validates a versioned Speed Math blueprint", async () => {
@@ -168,12 +240,89 @@ describe("Content Engine V1", () => {
     expect(validateGameBlueprint(outcome.blueprint, { expectedRequest: makeRequest("speed-math") }).valid).toBe(true);
   });
 
+  it("keeps learner-specific generation signals out of persisted shared blueprint keys", async () => {
+    const firstRequest = makeRequest("speed-math");
+    const secondRequest: ContentGenerationRequest = {
+      ...firstRequest,
+      learnerContext: {
+        ...firstRequest.learnerContext,
+        masteryBand: "developing",
+        currentDifficultyLevel: 3,
+        recentIncorrectCount: 2,
+        weakSkillIds: ["math-23-multiplication"],
+        recentAccuracy: 40,
+        scaffoldLevel: 2,
+        misconceptionTags: ["off-by-one-calculation"],
+      }
+    };
+    const [first, second] = await Promise.all([
+      generateValidatedGameBlueprint(firstRequest, providerFor(SPEED_PAYLOAD), { now: () => 1_790_000_000_000 }),
+      generateValidatedGameBlueprint(secondRequest, providerFor(SPEED_PAYLOAD), { now: () => 1_790_000_000_000 }),
+    ]);
+
+    expect(first.valid).toBe(true);
+    expect(second.valid).toBe(true);
+    if (!first.valid || !second.valid) throw new Error("The context privacy fixture should produce valid blueprints.");
+    expect(first.blueprint.metadata.cacheKey).toBe(second.blueprint.metadata.cacheKey);
+    expect(buildContentGenerationFlightKey(firstRequest)).not.toBe(buildContentGenerationFlightKey(secondRequest));
+  });
+
+  it("accepts only skill-compatible bounded scaffold and misconception signals", () => {
+    const request = makeRequest("speed-math");
+    expect(validateContentGenerationRequest({
+      ...request,
+      learnerContext: { ...request.learnerContext, scaffoldLevel: 3 },
+    }).valid).toBe(false);
+    expect(validateContentGenerationRequest({
+      ...request,
+      learnerContext: { ...request.learnerContext, misconceptionTags: ["letter-identification-confusion"] },
+    }).valid).toBe(false);
+    expect(validateContentGenerationRequest({
+      ...request,
+      learnerContext: { ...request.learnerContext, misconceptionTags: ["off-by-one-calculation"] },
+    }).valid).toBe(true);
+  });
+
   it("validates every supported discriminated content shape", async () => {
-    for (const gameType of ["speed-math", "times-matrix", "bubble-pop-phonics"] as const) {
+    for (const gameType of ["speed-math", "times-matrix", "bubble-pop-phonics", "storybook-comprehension"] as const) {
       const blueprint = await generateFixture(gameType);
       const result = validateGameBlueprint(blueprint, { expectedRequest: makeRequest(gameType) });
       expect(result.valid, gameType).toBe(true);
     }
+  });
+
+  it("requires grounded storybook questions, distinct choices, and safe page content", async () => {
+    const valid = await generateFixture("storybook-comprehension");
+    const firstRound = valid.content.rounds[0];
+    const unsupportedQuestion = {
+      ...valid,
+      content: { ...valid.content, rounds: [{ ...firstRound, questionType: "free-response" }, ...valid.content.rounds.slice(1)] },
+    } as unknown as GameBlueprint;
+    expect(validateGameBlueprint(unsupportedQuestion).errors.some((error) => error.code === "INVALID_CONTENT")).toBe(true);
+
+    const unsupportedEvidence = {
+      ...valid,
+      content: { ...valid.content, rounds: [{ ...firstRound, evidenceText: "Mila goes to the moon" }, ...valid.content.rounds.slice(1)] },
+    };
+    expect(validateGameBlueprint(unsupportedEvidence).errors.some((error) => error.field.endsWith("evidenceText"))).toBe(true);
+
+    const duplicateChoices = {
+      ...valid,
+      content: { ...valid.content, rounds: [{ ...firstRound, options: ["A golden acorn", "A golden acorn", "A red scarf"] }, ...valid.content.rounds.slice(1)] },
+    };
+    expect(validateGameBlueprint(duplicateChoices).errors.some((error) => error.field.endsWith("options"))).toBe(true);
+
+    const unsupportedCorrectAnswer = {
+      ...valid,
+      content: { ...valid.content, rounds: [{ ...firstRound, correctOptionIndex: 1 }, ...valid.content.rounds.slice(1)] },
+    };
+    expect(validateGameBlueprint(unsupportedCorrectAnswer).errors.some((error) => error.field.endsWith("correctOptionIndex"))).toBe(true);
+
+    const unsafeStory = {
+      ...valid,
+      content: { ...valid.content, rounds: [{ ...firstRound, text: "Mila finds a knife beside the oak tree." }, ...valid.content.rounds.slice(1)] },
+    };
+    expect(validateGameBlueprint(unsafeStory).errors.some((error) => error.field.endsWith(".text") && error.code === "INVALID_CONTENT")).toBe(true);
   });
 
   it("rejects unknown skills, unsupported game types, invalid difficulty, and incompatible age/grade", async () => {
@@ -202,6 +351,39 @@ describe("Content Engine V1", () => {
 
     expect(validateGameBlueprint({ ...valid, instructions: "  " }).errors.some((error) => error.code === "MISSING_FIELD")).toBe(true);
     expect(validateGameBlueprint({ ...valid, objective: "A violent game" }).errors.some((error) => error.code === "UNSAFE_CONTENT")).toBe(true);
+  });
+
+  it("adapts a validated storybook to the existing picture-book renderer and records deduplicated evidence", async () => {
+    const learnerId = `storybook-response-${learnerCounter++}`;
+    setActiveLearnerId(`content-reset-${learnerCounter}`);
+    setActiveLearnerId(learnerId);
+    const blueprint = await generateFixture("storybook-comprehension");
+    const book = adaptStorybookBlueprintToPictureBook(blueprint);
+    expect(book.pages).toHaveLength(3);
+    expect(book.pages[0].narration).toContain("Mila");
+    expect(book.pages[0].learningInteraction).toMatchObject({
+      questionType: "key-detail",
+      skillId: "read-k1-listening-comprehension",
+    });
+    expect(findStaticPictureBookForSkill("read-k1-listening-comprehension")).toMatchObject({
+      book: { pages: expect.arrayContaining([expect.objectContaining({ learningInteraction: expect.objectContaining({ skillId: "read-k1-listening-comprehension" }) })]) },
+    });
+
+    recordStorybookComprehensionResponse(blueprint, 0, 1, learnerId, 1, "storybook-session:page-1");
+    recordStorybookComprehensionResponse(blueprint, 0, 1, learnerId, 1, "storybook-session:page-1");
+    const model = getLearnerModel(learnerId);
+    expect(model.skillMastery["read-k1-listening-comprehension"].totalAttempts).toBe(1);
+    expect(model.recentEvents[0]).toMatchObject({
+      activityId: "picture-book-interaction",
+      experienceId: "picture-book-reader",
+      skillId: "read-k1-listening-comprehension",
+      outcome: "incorrect",
+      misconceptionTags: ["story-detail-recall"],
+      hintsUsed: 1,
+      metadata: { questionType: "key-detail", evidenceText: "a golden acorn" },
+    });
+    recordBlueprintSessionCompletion(blueprint, learnerId, "storybook-session");
+    expect(getLearnerModel(learnerId).skillMastery["read-k1-listening-comprehension"].totalAttempts).toBe(1);
   });
 
   it("rejects a model response that changes a curriculum or engine identity", async () => {
@@ -267,6 +449,38 @@ describe("Content Engine V1", () => {
     expect(storage.getItem("student_portal_generated_game_content_v1")).toBeNull();
   });
 
+  it("revalidates untrusted localStorage cache rows and ignores forged provenance metadata", () => {
+    storage.setItem("student_portal_generated_game_content_v1", JSON.stringify({
+      version: "generated-content-cache-v1",
+      entries: [{
+        cacheKey: "forged-cache-key",
+        storedAt: Date.now(),
+        expiresAt: Date.now() + 60_000,
+        blueprint: {
+          id: "forged-blueprint",
+          gameType: "speed-math",
+          objective: "A forged activity.",
+          instructions: "Choose an answer.",
+          skillId: "math-23-multiplication",
+          ageBand: "7-9",
+          gradeBand: "2-3",
+          difficulty: "easy",
+          theme: "space",
+          rounds: [],
+          metadata: {
+            provider: "gemini",
+            validationStatus: "valid",
+            fingerprint: "fnv1a64-0123456789abcdef",
+            cacheKey: "forged-cache-key",
+          },
+        },
+      }],
+    }));
+
+    expect(findReusableGameBlueprint(makeRequest(), "cache-tamper-learner")).toBeNull();
+    expect(getContentPoolStatus(makeRequest(), "cache-tamper-learner").usableBlueprintCount).toBe(0);
+  });
+
   it("persists only validated blueprints, deduplicates them, and retrieves a cached set without another provider call", async () => {
     const blueprint = await generateFixture("speed-math");
     expect(cacheValidatedGameBlueprint(blueprint).stored).toBe(true);
@@ -275,12 +489,12 @@ describe("Content Engine V1", () => {
     expect(cacheValidatedGameBlueprint({ invalid: true }).stored).toBe(false);
 
     const transport = { generate: vi.fn() };
-    const beforeGenerate = vi.fn();
-    const result = await getOrGenerateGameBlueprint(makeRequest(), "learner-cache-hit", { transport, beforeGenerate });
+    const beforeRequest = vi.fn();
+    const result = await getOrGenerateGameBlueprint(makeRequest(), "learner-cache-hit", { transport, beforeRequest });
     expect(result.source).toBe("cache");
     expect(result.blueprint.id).toBe(blueprint.id);
     expect(transport.generate).not.toHaveBeenCalled();
-    expect(beforeGenerate).not.toHaveBeenCalled();
+    expect(beforeRequest).not.toHaveBeenCalled();
     expect(findReusableGameBlueprint(makeRequest(), "learner-cache-hit")?.id).toBe(blueprint.id);
   });
 
@@ -357,6 +571,40 @@ describe("Content Engine V1", () => {
       skillId: "read-k1-alphabet-letters",
       outcome: "correct",
     });
+  });
+
+  it("passes response-derived scaffold signals through validation without storing learner context in shared content", async () => {
+    const learnerId = `adaptive-content-context-${learnerCounter++}`;
+    setActiveLearnerId(`content-reset-${learnerCounter}`);
+    setActiveLearnerId(learnerId);
+    const blueprint = await generateFixture("speed-math");
+
+    // For 2 × 3 = 6, choosing 5 deterministically signals both an additive
+    // operation confusion and an off-by-one calculation slip.
+    recordSpeedMathBlueprintResponse(blueprint, 0, 5, learnerId);
+    const model = getLearnerModel(learnerId);
+    const skillId = "math-23-multiplication";
+    const state = deriveLearnerSkillState(model, skillId);
+    expect(state.recentAccuracy).toBe(0);
+    expect(state.misconceptionSignals.map((signal) => signal.tag)).toEqual(expect.arrayContaining([
+      "multiplication-operation-confusion",
+      "off-by-one-calculation",
+    ]));
+
+    const request = buildContentGenerationRequest(model, "speed-math", skillId, "space", 3);
+    expect(request.learnerContext).toMatchObject({
+      recentAccuracy: 0,
+      scaffoldLevel: 1,
+      misconceptionTags: expect.arrayContaining(["off-by-one-calculation"]),
+    });
+    const validatedRequest = validateContentGenerationRequest(request);
+    expect(validatedRequest.valid).toBe(true);
+    if (!validatedRequest.valid) throw new Error("The response-derived generation context should pass deterministic validation.");
+    const prompt = buildContentGenerationPrompt(validatedRequest.request);
+    expect(prompt).toContain("Scaffold level 1/2");
+    expect(prompt).toContain("encourage a quick count or arithmetic check");
+    expect(prompt).not.toContain(learnerId);
+    expect(request.learnerContext).not.toHaveProperty("learnerId");
   });
 
   it("rejects extra unknown fields at every blueprint level (exact-schema contract)", async () => {
@@ -449,7 +697,8 @@ describe("Content Engine V1", () => {
       sleep: async () => {},
     });
     expect(outcome.valid).toBe(false);
-    expect(outcome.attempts).toBe(2);
+    expect(outcome.attempts).toBe(1);
+    expect(provider.generateStructuredContent).toHaveBeenCalledTimes(1);
     expect(outcome.errors[0].code).toBe("PROVIDER_ERROR");
     expect(outcome.errors[0].message).toMatch(/timed out/i);
   });

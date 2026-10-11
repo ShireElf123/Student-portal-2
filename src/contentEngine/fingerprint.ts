@@ -43,6 +43,17 @@ export function fingerprintGameBlueprint(blueprint: GameBlueprint): string {
         return `${normalizeContentText(round.targetLetter)}|${pairs.join("|")}`;
       });
       break;
+    case "storybook-comprehension":
+      normalizedRounds = blueprint.content.rounds.map((round) => JSON.stringify({
+        title: normalizeContentText(round.title),
+        text: normalizeContentText(round.text),
+        questionType: round.questionType,
+        prompt: normalizeContentText(round.prompt),
+        options: round.options.map(normalizeContentText),
+        correctOptionIndex: round.correctOptionIndex,
+        evidenceText: normalizeContentText(round.evidenceText),
+      }));
+      break;
   }
 
   const semanticContent = JSON.stringify({
@@ -50,7 +61,11 @@ export function fingerprintGameBlueprint(blueprint: GameBlueprint): string {
     skillId: blueprint.skillId,
     gradeBand: blueprint.gradeBand,
     difficulty: blueprint.difficulty,
-    rounds: normalizedRounds.sort(),
+    ...(blueprint.gameType === "storybook-comprehension" ? {
+      storyTitle: normalizeContentText(blueprint.content.storyTitle),
+      storySummary: normalizeContentText(blueprint.content.storySummary),
+    } : {}),
+    rounds: blueprint.gameType === "storybook-comprehension" ? normalizedRounds : normalizedRounds.sort(),
   });
   return stableHash(semanticContent);
 }
@@ -59,7 +74,17 @@ export function gameBlueprintId(fingerprint: string): string {
   return `game-blueprint-${fingerprint.replace(/^fnv1a64-/, "")}`;
 }
 
-export function buildContentCacheKey(request: ContentGenerationRequest): string {
+export type ContentPoolCompatibility = Pick<
+  ContentGenerationRequest,
+  "gameType" | "skillId" | "gradeBand" | "difficulty" | "theme" | "roundCount"
+>;
+
+/**
+ * Shared pool key deliberately excludes learnerContext. That context may scaffold a
+ * generation request, but it is not a learner record and must not fragment otherwise
+ * compatible validated content into identity-specific caches.
+ */
+export function buildContentPoolKey(request: ContentPoolCompatibility): string {
   const normalizedRequest = {
     gameType: request.gameType,
     skillId: request.skillId,
@@ -67,13 +92,55 @@ export function buildContentCacheKey(request: ContentGenerationRequest): string 
     difficulty: request.difficulty,
     theme: request.theme,
     roundCount: request.roundCount,
+  };
+  return `content-pool-v1:${stableHash(JSON.stringify(normalizedRequest))}`;
+}
+
+export function buildBlueprintContentPoolKey(blueprint: GameBlueprint): string {
+  return buildContentPoolKey({
+    gameType: blueprint.gameType,
+    skillId: blueprint.skillId,
+    gradeBand: blueprint.gradeBand,
+    difficulty: blueprint.difficulty,
+    theme: blueprint.theme,
+    roundCount: blueprint.content.rounds.length,
+  });
+}
+
+/**
+ * Stable key for a persisted blueprint. It intentionally contains only public content
+ * compatibility fields; learner-specific scaffolding signals must never enter shared
+ * Firestore documents, even as a reversible low-entropy hash.
+ */
+function buildContentCompatibilityIdentity(request: ContentGenerationRequest) {
+  return {
+    gameType: request.gameType,
+    skillId: request.skillId,
+    gradeBand: request.gradeBand,
+    difficulty: request.difficulty,
+    theme: request.theme,
+    roundCount: request.roundCount,
+  };
+}
+
+export function buildBlueprintCacheKey(request: ContentGenerationRequest): string {
+  return `content-cache-v1:${stableHash(JSON.stringify(buildContentCompatibilityIdentity(request)))}`;
+}
+
+/** Runtime-only identity for coalescing identical personalized provider requests. Never persist this key. */
+export function buildContentGenerationFlightKey(request: ContentGenerationRequest): string {
+  const normalizedRequest = {
+    ...buildContentCompatibilityIdentity(request),
     learnerContext: {
       gradeBand: request.learnerContext.gradeBand,
       masteryBand: request.learnerContext.masteryBand,
       currentDifficultyLevel: request.learnerContext.currentDifficultyLevel,
       recentIncorrectCount: request.learnerContext.recentIncorrectCount,
       weakSkillIds: [...request.learnerContext.weakSkillIds].sort(),
+      recentAccuracy: request.learnerContext.recentAccuracy ?? null,
+      scaffoldLevel: request.learnerContext.scaffoldLevel ?? 0,
+      misconceptionTags: [...(request.learnerContext.misconceptionTags ?? [])].sort(),
     },
   };
-  return `content-cache-v1:${stableHash(JSON.stringify(normalizedRequest))}`;
+  return `content-flight-v1:${stableHash(JSON.stringify(normalizedRequest))}`;
 }

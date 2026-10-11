@@ -38,6 +38,8 @@ interface ToddlerQuizzesAndGamesProps {
   onAddStar: (amount?: number) => void;
   onBackToBooks?: () => void;
   targetActivity?: string;
+  initialBlueprint?: BubblePopBlueprint;
+  initialBlueprintLearnerId?: string;
 }
 
 type ToddlerActivity =
@@ -447,6 +449,8 @@ export function ToddlerQuizzesAndGames({
   starsCount,
   onAddStar,
   targetActivity,
+  initialBlueprint,
+  initialBlueprintLearnerId,
 }: ToddlerQuizzesAndGamesProps) {
   const [currentActivity, setCurrentActivity] = useState<ToddlerActivity>(() => {
     const validActivities: ToddlerActivity[] = [
@@ -459,8 +463,8 @@ export function ToddlerQuizzesAndGames({
     }
     return "animal-quiz";
   });
-  const [generatedBubbleBlueprint, setGeneratedBubbleBlueprint] = useState<BubblePopBlueprint | null>(null);
-  const [generatedBubbleLearnerId, setGeneratedBubbleLearnerId] = useState<string | null>(null);
+  const [generatedBubbleBlueprint, setGeneratedBubbleBlueprint] = useState<BubblePopBlueprint | null>(() => initialBlueprint ?? null);
+  const [generatedBubbleLearnerId, setGeneratedBubbleLearnerId] = useState<string | null>(() => initialBlueprintLearnerId ?? null);
   const [isGeneratedBubblePlaying, setIsGeneratedBubblePlaying] = useState(false);
 
   useEffect(() => {
@@ -470,6 +474,13 @@ export function ToddlerQuizzesAndGames({
       setIsGeneratedBubblePlaying(false);
     }
   }, [currentActivity]);
+
+  useEffect(() => {
+    if (initialBlueprint && initialBlueprintLearnerId) {
+      setGeneratedBubbleBlueprint(initialBlueprint);
+      setGeneratedBubbleLearnerId(initialBlueprintLearnerId);
+    }
+  }, [initialBlueprint?.id, initialBlueprintLearnerId]);
 
   useEffect(() => {
     const clearContentOnLearnerSwitch = (event: Event) => {

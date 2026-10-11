@@ -15,7 +15,8 @@ import {
   Printer,
 } from "lucide-react";
 import { NavigationTab, Notebook, PracticeQuestion, PracticeSession } from "../types";
-import { canConsumeAI, recordAIConsumption } from "../services/aiUsageService";
+import { canConsumeAI, recordAIConsumption, syncAIQuotaFromResponseHeaders } from "../services/aiUsageService";
+import { getAiAuthorizationHeader } from "../services/aiAuth";
 import {
   recordMistake,
   getDueMistakesCount,
@@ -137,9 +138,10 @@ export function PracticeView({
     questionStartedAt.current = Date.now();
 
     try {
+      const authorization = await getAiAuthorizationHeader();
       const response = await fetch("/api/practice/generate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: authorization },
         body: JSON.stringify({
           subject: subject.trim(),
           topic: topic.trim(),
@@ -147,6 +149,7 @@ export function PracticeView({
           count,
         }),
       });
+      syncAIQuotaFromResponseHeaders(response.headers);
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
@@ -160,8 +163,8 @@ export function PracticeView({
 
       recordAIConsumption("practice");
       setQuestions(data.questions);
-    } catch (err: any) {
-      setError(err.message || "An error occurred generating questions.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An error occurred generating questions.");
     } finally {
       setLoading(false);
     }

@@ -333,6 +333,26 @@ service cloud.firestore {
     }
 
     // ==========================================
+    // GENERATED CONTENT POOL ACCESS CONTROL
+    // Shared documents are written only by the authenticated server after deterministic validation.
+    // They contain reusable curricula only; learner evidence and private context stay owner-scoped.
+    // ==========================================
+    function isServerValidatedSharedBlueprint(data) {
+      return data.keys().hasAll(['source']) && data.source == 'server-validated-v1';
+    }
+
+    function isValidGeneratedContentState(data) {
+      return data.keys().hasAll(['version', 'playedFingerprints', 'invalidFingerprints', 'reservations', 'refillTimes', 'updatedAt']) &&
+        data.keys().toSet().hasOnly(['version', 'playedFingerprints', 'invalidFingerprints', 'reservations', 'refillTimes', 'updatedAt']) &&
+        data.version == 'content-pool-learner-state-v1' &&
+        data.playedFingerprints is list && data.playedFingerprints.size() <= 200 &&
+        data.invalidFingerprints is list && data.invalidFingerprints.size() <= 100 &&
+        data.reservations is list && data.reservations.size() <= 20 &&
+        data.refillTimes is list && data.refillTimes.size() <= 40 &&
+        data.updatedAt is number;
+    }
+
+    // ==========================================
     // ROOT CATCH-ALL DEFAULT DENY
     // ==========================================
     match /{document=**} {
@@ -353,6 +373,21 @@ service cloud.firestore {
       allow create: if isOwner(userId) && isValidId(userId) && isValidUserProfile(incoming()) && incoming().uid == userId;
       allow update: if isOwner(userId) && isValidId(userId) && isValidUserProfile(incoming()) && incoming().uid == existing().uid && incoming().createdAt == existing().createdAt && incoming().diff(existing()).affectedKeys().hasOnly(['email', 'displayName', 'photoURL', 'role', 'linkedStudentIds', 'subscriptionTier', 'subscriptionStatus', 'trialEndsAt', 'aiUsageToday', 'aiUsageResetDate']);
       allow delete: if false;
+
+      // Organization membership is server-provisioned. Users may inspect only their own
+      // membership metadata; entitlement and usage records are Admin-only and authoritative.
+      match /organizationMemberships/{organizationId} {
+        allow get, list: if isOwner(userId) && isValidId(organizationId);
+        allow create, update, delete: if false;
+      }
+
+      match /aiEntitlements/{entitlementId} {
+        allow read, write: if false;
+      }
+
+      match /aiUsageWindows/{windowId} {
+        allow read, write: if false;
+      }
 
       // Notebooks Subcollection
       match /notebooks/{notebookId} {
@@ -423,6 +458,14 @@ service cloud.firestore {
         allow delete: if isOwner(userId);
       }
 
+      // Generated-content consumption, reservations, and refill limits are private to the account owner.
+      match /generatedContentState/{learnerId} {
+        allow get: if isOwner(userId);
+        allow list: if false;
+        allow create, update: if isOwner(userId) && isValidGeneratedContentState(incoming());
+        allow delete: if false;
+      }
+
       // Verified Parent Link Grants: the ONLY basis for parental read access.
       // A grant can be minted only while presenting a live, unexpired,
       // unconsumed link code issued for this exact student — knowledge of the
@@ -445,6 +488,27 @@ service cloud.firestore {
         // Either the student (revoke access) or the parent (leave the family) can delete.
         allow delete: if isOwner(userId) || (isSignedIn() && request.auth.uid == parentUid);
       }
+    }
+
+    // Organization records and aggregate AI usage are managed only by trusted server-side provisioning.
+    match /organizations/{organizationId} {
+      allow read, write: if false;
+
+      match /aiUsageWindows/{windowId} {
+        allow read, write: if false;
+      }
+    }
+
+    // ==========================================
+    // SHARED, NON-PII GENERATED BLUEPRINT POOL
+    // Only the server can create immutable shared entries after deterministic validation.
+    // Clients must query server-provenance documents and revalidate each result before use.
+    // ==========================================
+    match /generatedGameBlueprints/{fingerprint} {
+      allow get: if isSignedIn() && isServerValidatedSharedBlueprint(resource.data) &&
+        resource.data.fingerprint == fingerprint;
+      allow list: if isSignedIn() && isServerValidatedSharedBlueprint(resource.data);
+      allow create, update, delete: if false;
     }
 
     // ==========================================

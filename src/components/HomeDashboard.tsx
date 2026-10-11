@@ -116,7 +116,7 @@ export function HomeDashboard({ notebooks, studyPlan, practiceSessions, onNaviga
             <div>
               <p className="flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[.18em] text-emerald-200"><CalendarCheck size={14} /> Personalized daily route</p>
               <h2 className="mt-1 text-lg font-extrabold text-white">Three focused steps, saved for today</h2>
-              <p className="mt-1 text-xs text-slate-400">Built from your learning evidence and stored for this learner and date.</p>
+              <p className="mt-1 text-xs text-slate-400">Your steps refresh as you practice and stay saved for today.</p>
             </div>
             <span className="rounded-full border border-emerald-200/15 bg-emerald-200/[.06] px-3 py-1.5 text-xs font-bold text-emerald-100">
               {dailyRoute.items.filter((item) => item.completed).length}/{dailyRoute.items.length} complete
@@ -132,7 +132,11 @@ export function HomeDashboard({ notebooks, studyPlan, practiceSessions, onNaviga
                         {item.completed ? <CheckCircle2 size={17} /> : item.slot}
                       </span>
                       <div className="min-w-0">
-                        <p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-200">{item.reason.replace(/-/g, " ")}</p>
+                        <p className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-200">
+                          {item.phase === "warm-up" ? "Warm-up" : item.phase === "focus" ? "Focus round" : item.phase === "growth" ? "New trail" : item.reason.replace(/-/g, " ")} · {item.delivery?.kind === "generated-content"
+                            ? `generated ${item.delivery.gameType.replace(/-/g, " ")}`
+                            : "registered activity"}
+                        </p>
                         <h3 className="mt-1 line-clamp-2 text-sm font-bold text-white">{item.title}</h3>
                         <p className="mt-1 line-clamp-2 text-xs leading-5 text-slate-400">{item.description}</p>
                       </div>

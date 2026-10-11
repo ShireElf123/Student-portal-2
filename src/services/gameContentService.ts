@@ -1,20 +1,32 @@
-import { auth } from "../firebaseCore";
-import { cacheValidatedGameBlueprint, findReusableGameBlueprint, getKnownBlueprintFingerprints } from "../contentEngine/cache";
+import { getAiAuthorizationHeader } from "./aiAuth";
+import { syncAIQuotaFromResponseHeaders } from "./aiUsageService";
+import { buildContentPoolKey } from "../contentEngine/fingerprint";
+import { markGameBlueprintCompleted as markLocalGameBlueprintCompleted } from "../contentEngine/cache";
+import { getDefaultContentPoolManager } from "../contentEngine/contentPoolManager";
+import type { ContentPoolManager } from "../contentEngine/contentPoolManager";
 import { validateContentGenerationRequest, validateGameBlueprint } from "../contentEngine/validation";
+import { MAX_GENERATION_ATTEMPTS } from "../contentEngine/generation";
 import type {
   BlueprintValidationError,
   ContentGenerationRequest,
   ContentGenerationResult,
+  GameBlueprint,
   GenerateBlueprintCommand,
 } from "../contentEngine/types";
 
-export interface ContentGenerationTransport {
-  generate(command: GenerateBlueprintCommand): Promise<unknown>;
+export interface GenerationRequestHooks {
+  beforeRequest?: () => void | Promise<void>;
+  onGenerationAdmitted?: () => void | Promise<void>;
 }
 
-export interface GetOrGenerateOptions {
+export interface ContentGenerationTransport {
+  generate(command: GenerateBlueprintCommand, hooks?: GenerationRequestHooks): Promise<unknown>;
+}
+
+export interface GetOrGenerateOptions extends GenerationRequestHooks {
   transport?: ContentGenerationTransport;
-  beforeGenerate?: () => void | Promise<void>;
+  poolManager?: ContentPoolManager;
+  now?: () => number;
 }
 
 export class ContentGenerationServiceError extends Error {
@@ -27,29 +39,45 @@ export class ContentGenerationServiceError extends Error {
   }
 }
 
+/** Synchronously protects offline reuse, then best-effort syncs the owner-scoped cloud state. */
+export async function markGameBlueprintCompleted(blueprint: GameBlueprint, learnerId: string): Promise<void> {
+  const validation = validateGameBlueprint(blueprint);
+  if (!validation.valid || !learnerId.trim()) return;
+  markLocalGameBlueprintCompleted(validation.blueprint, learnerId);
+  try {
+    const pool = await getDefaultContentPoolManager();
+    await pool.markPlayed(learnerId, validation.blueprint);
+  } catch (error) {
+    console.warn("Generated-content play state could not be synchronized; local learner state was updated.", error);
+  }
+}
+
 /** Firebase ID token for the signed-in account; the server rejects unauthenticated generation. */
 async function buildAuthorizationHeader(): Promise<Record<string, string>> {
-  const user = auth.currentUser;
-  if (!user) {
-    throw new ContentGenerationServiceError(
-      "Sign in to create new AI practice content. Saved activities remain available without signing in."
-    );
-  }
   try {
-    const token = await user.getIdToken();
-    return { Authorization: `Bearer ${token}` };
-  } catch {
-    throw new ContentGenerationServiceError("Your sign-in could not be verified. Please sign in again to create new content.");
+    return { Authorization: await getAiAuthorizationHeader() };
+  } catch (error) {
+    throw new ContentGenerationServiceError(
+      error instanceof Error ? error.message : "Sign in to create new AI practice content."
+    );
   }
 }
 
 const httpContentTransport: ContentGenerationTransport = {
-  async generate(command) {
+  async generate(command, hooks = {}) {
+    // Authenticate before local metering so a missing/expired session is not counted as an attempt.
+    const authorization = await buildAuthorizationHeader();
+    await hooks.beforeRequest?.();
     const response = await fetch("/api/content/generate", {
       method: "POST",
-      headers: { "Content-Type": "application/json", ...(await buildAuthorizationHeader()) },
+      headers: { "Content-Type": "application/json", ...authorization },
       body: JSON.stringify(command),
     });
+    syncAIQuotaFromResponseHeaders(response.headers);
+    if (response.headers.get("X-Content-Generation-Admitted") === "true") {
+      await hooks.onGenerationAdmitted?.();
+    }
+
     let body: unknown;
     try {
       body = await response.json() as unknown;
@@ -79,7 +107,27 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
 
-/** Uses learner-safe local cache first, and stores only server-validated content. */
+const requestLocks = new Map<string, Promise<void>>();
+
+async function withLearnerRequestLock<T>(key: string, task: () => Promise<T>): Promise<T> {
+  const previous = requestLocks.get(key) ?? Promise.resolve();
+  let release: () => void = () => {};
+  const gate = new Promise<void>((resolve) => { release = resolve; });
+  const queued = previous.then(() => gate);
+  requestLocks.set(key, queued);
+  await previous;
+  try {
+    return await task();
+  } finally {
+    release();
+    if (requestLocks.get(key) === queued) requestLocks.delete(key);
+  }
+}
+
+/**
+ * Reads/reserves reusable validated content first. Refill is bounded by pool policy and
+ * every server response is independently validated before the repository can persist it.
+ */
 export async function getOrGenerateGameBlueprint(
   requestInput: ContentGenerationRequest,
   learnerId: string,
@@ -89,45 +137,68 @@ export async function getOrGenerateGameBlueprint(
   if (!requestResult.valid) {
     throw new ContentGenerationServiceError("The content request is invalid.", requestResult.errors);
   }
+  if (!learnerId.trim()) throw new ContentGenerationServiceError("A learner ID is required to prepare content.");
   const request = requestResult.request;
-  const cachedBlueprint = findReusableGameBlueprint(request, learnerId);
-  if (cachedBlueprint) {
-    return { blueprint: cachedBlueprint, attempts: 0, source: "cache", cached: true };
-  }
+  const lockKey = `${learnerId}:${buildContentPoolKey(request)}`;
 
-  await options.beforeGenerate?.();
-  const transport = options.transport ?? httpContentTransport;
-  const command: GenerateBlueprintCommand = {
-    request,
-    excludedFingerprints: getKnownBlueprintFingerprints(),
-  };
-  const response = await transport.generate(command);
-  if (!isRecord(response)) {
-    throw new ContentGenerationServiceError("The content service response must be a JSON object.");
-  }
-  const attempts = Number.isInteger(response.attempts) && Number(response.attempts) >= 1 && Number(response.attempts) <= 2
-    ? Number(response.attempts)
-    : 1;
-  const validation = validateGameBlueprint(response.blueprint, { expectedRequest: request });
-  if (!validation.valid) {
+  return withLearnerRequestLock(lockKey, async () => {
+    const pool = options.poolManager ?? await getDefaultContentPoolManager();
+    const cachedReservation = await pool.reserveContent(request, learnerId, options.now?.() ?? Date.now());
+    if (cachedReservation) {
+      return {
+        blueprint: cachedReservation.blueprint,
+        attempts: 0,
+        source: "cache",
+        cached: true,
+      };
+    }
+
+    const transport = options.transport ?? httpContentTransport;
+    let providerAttempts = 0;
+    const refill = await pool.replenish(request, learnerId, {
+      now: options.now,
+      generate: async (excludedFingerprints) => {
+        const command: GenerateBlueprintCommand = {
+          request,
+          excludedFingerprints: [...new Set(excludedFingerprints)].slice(0, 30),
+        };
+        const response = await transport.generate(command, {
+          beforeRequest: options.beforeRequest,
+          onGenerationAdmitted: options.onGenerationAdmitted,
+        });
+        if (!isRecord(response)) {
+          throw new ContentGenerationServiceError("The content service response must be a JSON object.");
+        }
+        if (Number.isInteger(response.attempts) && Number(response.attempts) >= 1 &&
+          Number(response.attempts) <= MAX_GENERATION_ATTEMPTS) {
+          providerAttempts += Number(response.attempts);
+        } else {
+          providerAttempts += 1;
+        }
+        const validation = validateGameBlueprint(response.blueprint, { expectedRequest: request });
+        if (!validation.valid) {
+          throw new ContentGenerationServiceError(
+            "Generated content failed client-side validation and was not persisted.",
+            validation.errors
+          );
+        }
+        return validation.blueprint;
+      },
+    });
+
+    const generatedReservation = await pool.reserveContent(request, learnerId, options.now?.() ?? Date.now());
+    if (generatedReservation) {
+      return {
+        blueprint: generatedReservation.blueprint,
+        attempts: providerAttempts,
+        source: refill.generatedCount > 0 ? "generated" : "cache",
+        cached: true,
+      };
+    }
+    if (refill.error instanceof ContentGenerationServiceError) throw refill.error;
+    if (refill.error instanceof Error) throw new ContentGenerationServiceError(refill.error.message);
     throw new ContentGenerationServiceError(
-      "Generated content failed client-side validation and was not cached.",
-      validation.errors
+      "No compatible content could be reserved. Please wait briefly or use the registered curated activity."
     );
-  }
-
-  const cacheResult = cacheValidatedGameBlueprint(validation.blueprint);
-  if (cacheResult.duplicate) {
-    throw new ContentGenerationServiceError("The provider returned content already present in the cache; it was not stored again.", [{
-      code: "DUPLICATE_CONTENT",
-      field: "content",
-      message: "Duplicate normalized content was rejected.",
-    }]);
-  }
-  return {
-    blueprint: validation.blueprint,
-    attempts,
-    source: "generated",
-    cached: cacheResult.stored,
-  };
+  });
 }
