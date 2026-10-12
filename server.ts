@@ -8,12 +8,32 @@ import { validatePracticeRequest, validatePracticeQuestions } from "./server/pra
 import { validateContentGenerationRequest, validateExcludedFingerprints } from "./src/contentEngine/validation";
 import { ContentGenerationRateLimiter } from "./server/contentRateLimit";
 import { generateGameBlueprintWithProvider } from "./server/contentGeneration";
-import { createContentAuthMiddleware, createFirebaseContentAuthVerifier, getContentIdentity } from "./server/contentAuth";
+import {
+  createContentAuthMiddleware,
+  createFirebaseContentAuthVerifier,
+  createOptionalIdentityMiddleware,
+  getContentIdentity,
+} from "./server/contentAuth";
+import { createTieredRateLimitMiddleware, TieredRateLimiter } from "./server/tieredRateLimit";
 
 dotenv.config();
 
 const contentGenerationLimiter = new ContentGenerationRateLimiter(3, 12);
 const requireContentAuth = createContentAuthMiddleware(createFirebaseContentAuthVerifier());
+
+// The product intentionally supports signed-out learners (local learning works
+// before sign-in), so the interactive AI routes use *optional* identity: a
+// verified Firebase ID token upgrades the caller to a per-account budget,
+// while anonymous traffic is bounded per network address. Keys are derived
+// server-side only — client-supplied user IDs are never trusted.
+const attachOptionalIdentity = createOptionalIdentityMiddleware(createFirebaseContentAuthVerifier());
+
+/** Default per-route abuse budgets (signed-in learner / anonymous visitor). */
+export const DEFAULT_RATE_BUDGETS = {
+  chat: { authenticated: { maxPerMinute: 8, maxPerDay: 120 }, anonymous: { maxPerMinute: 3, maxPerDay: 15 } },
+  practice: { authenticated: { maxPerMinute: 3, maxPerDay: 24 }, anonymous: { maxPerMinute: 2, maxPerDay: 6 } },
+  studyPlan: { authenticated: { maxPerMinute: 3, maxPerDay: 20 }, anonymous: { maxPerMinute: 2, maxPerDay: 5 } },
+} as const;
 
 /**
  * Model credentials are server-side secrets only. The Firebase *web* API key shipped in
@@ -28,14 +48,52 @@ function getApiKey(): string {
   );
 }
 
-async function startServer() {
+export interface ApiAppOptions {
+  /**
+   * Mount the Vite dev middleware (SPA serving). Defaults to "on outside
+   * production"; pass `false` in tests so no dev server is spawned.
+   */
+  withVite?: boolean;
+  /** Test hook: substitute rate limiters (e.g. generous budgets or fake clocks). */
+  limiters?: {
+    chat?: TieredRateLimiter;
+    practice?: TieredRateLimiter;
+    studyPlan?: TieredRateLimiter;
+  };
+}
+
+/**
+ * Build the fully configured Express app. Kept separate from listen() so the
+ * API contract (routes, limits, auth tiers, body budgets) can be exercised by
+ * integration tests without binding a port or starting Vite.
+ */
+export async function createApiApp(options: ApiAppOptions = {}): Promise<express.Express> {
   const app = express();
-  const PORT = 3000;
+
+  const chatLimiter =
+    options.limiters?.chat ??
+    new TieredRateLimiter(DEFAULT_RATE_BUDGETS.chat.authenticated, DEFAULT_RATE_BUDGETS.chat.anonymous);
+  const practiceLimiter =
+    options.limiters?.practice ??
+    new TieredRateLimiter(DEFAULT_RATE_BUDGETS.practice.authenticated, DEFAULT_RATE_BUDGETS.practice.anonymous);
+  const studyPlanLimiter =
+    options.limiters?.studyPlan ??
+    new TieredRateLimiter(DEFAULT_RATE_BUDGETS.studyPlan.authenticated, DEFAULT_RATE_BUDGETS.studyPlan.anonymous);
+  const requireChatRateLimit = createTieredRateLimitMiddleware(chatLimiter);
+  const requirePracticeRateLimit = createTieredRateLimitMiddleware(practiceLimiter);
+  const requireStudyPlanRateLimit = createTieredRateLimitMiddleware(studyPlanLimiter);
 
   // Only trust forwarded headers when explicitly configured, so req.ip cannot be spoofed by default.
   app.set("trust proxy", process.env.TRUST_PROXY === "1" || process.env.TRUST_PROXY === "true");
 
-  app.use(express.json());
+  // Body budgets: the chat routes carry base64 homework photos, which the
+  // browser downscales/compresses before upload (src/utils/imageAttachment.ts
+  // keeps prepared payloads under ~1.5 MB of base64) — 2 MB covers that with
+  // headroom. Every other JSON payload in this app is a few KB, so those
+  // routes get a strict 100 KB budget. The chat routes declare their own
+  // parser; the standard parser below skips bodies that are already parsed.
+  const chatJsonParser = express.json({ limit: "2mb" });
+  const standardJsonParser = express.json({ limit: "100kb" });
 
   // Health check
   app.get("/api/health", (req, res) => {
@@ -51,7 +109,7 @@ async function startServer() {
   });
 
   // Standard non-streaming chat endpoint
-  app.post("/api/chat", async (req, res) => {
+  app.post("/api/chat", chatJsonParser, attachOptionalIdentity, requireChatRateLimit, async (req, res) => {
     try {
       const { message, previousInteractionId, mode = "general", attachment } = req.body;
 
@@ -85,7 +143,7 @@ async function startServer() {
   });
 
   // Streaming chat endpoint using Server-Sent Events (SSE)
-  app.post("/api/chat/stream", async (req, res) => {
+  app.post("/api/chat/stream", chatJsonParser, attachOptionalIdentity, requireChatRateLimit, async (req, res) => {
     try {
       const { message, previousInteractionId, mode = "general", attachment } = req.body;
 
@@ -129,8 +187,11 @@ async function startServer() {
     }
   });
 
+  // All remaining JSON routes accept only small payloads.
+  app.use(standardJsonParser);
+
   // Practice generation endpoint with strict server-side validation
-  app.post("/api/practice/generate", async (req, res) => {
+  app.post("/api/practice/generate", attachOptionalIdentity, requirePracticeRateLimit, async (req, res) => {
     try {
       if (!getApiKey()) {
         return res.status(500).json({ error: "Academic intelligence core offline: GEMINI_API_KEY is missing." });
@@ -265,7 +326,7 @@ Return a valid JSON array of question objects adhering strictly to this schema:
   });
 
   // Study plan generation endpoint
-  app.post("/api/study-plan/generate", async (req, res) => {
+  app.post("/api/study-plan/generate", attachOptionalIdentity, requireStudyPlanRateLimit, async (req, res) => {
     try {
       if (!getApiKey()) {
         return res.status(500).json({ error: "Academic intelligence core offline: GEMINI_API_KEY is missing." });
@@ -306,8 +367,29 @@ Where priority is one of: "high", "medium", "low". Duration is typically between
     }
   });
 
+  // Body-parser failures (e.g. an oversized homework photo that slipped past the
+  // client-side compressor) become clean JSON errors the UI can surface, instead
+  // of Express's default HTML error page.
+  app.use(
+    (
+      err: { status?: number; type?: string },
+      _req: express.Request,
+      res: express.Response,
+      next: express.NextFunction
+    ) => {
+      if (err && err.status === 413) {
+        res
+          .status(413)
+          .json({ error: "That request is too large. If you attached a photo, please pick a smaller image and try again." });
+        return;
+      }
+      next(err);
+    }
+  );
+
   // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
+  const useVite = options.withVite ?? process.env.NODE_ENV !== "production";
+  if (useVite) {
     const vite = await createViteServer({
       server: { middlewareMode: true, allowedHosts: [".e2b.app", ".run.app"] },
       appType: "spa",
@@ -321,9 +403,19 @@ Where priority is one of: "high", "medium", "low". Duration is typically between
     });
   }
 
+  return app;
+}
+
+async function startServer() {
+  const PORT = 3000;
+  const app = await createApiApp();
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }
 
-startServer();
+// Importing this module for createApiApp() (integration tests) must not bind
+// a port; the server boots only when actually run (tsx server.ts / node dist).
+if (process.env.NODE_ENV !== "test") {
+  startServer();
+}

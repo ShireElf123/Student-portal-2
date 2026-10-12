@@ -1,0 +1,60 @@
+# BuildAI Reviews — robots.txt
+# Policy: allow conventional search crawlers and known search/retrieval crawlers.
+# Robots.txt is a crawl preference, not access control or a guarantee of citation.
+# Review each provider's current crawler documentation before changing this policy.
+
+# --- Classic search engines ---
+User-agent: Googlebot
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+# --- AI search / retrieval bots (allow crawl for discovery) ---
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+# ClaudeBot is distinct from Claude-SearchBot; this policy blocks training crawls.
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+# --- Crawlers restricted by current site policy ---
+User-agent: GPTBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+# --- Cloaked affiliate redirects + utility pages: never crawled ---
+User-agent: *
+Disallow: /go/
+Disallow: /thanks.html
+
+Sitemap: https://classy-pie-a922b2.netlify.app/sitemap.xml

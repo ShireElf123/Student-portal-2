@@ -1,0 +1,27 @@
+# BuildAI Reviews
+
+> AI website builder comparisons published by The Tech GUY. First-hand experience and research-based assessments are labelled separately; current plan details should be confirmed with providers.
+
+## Rankings & Reviews
+- [Best AI Website Builders in 2026 — Reviews & Comparisons](https://classy-pie-a922b2.netlify.app/): A comparison of five AI builders, with evidence limitations and use-case trade-offs explained.
+- [Durable AI Review (9.1/10)](https://classy-pie-a922b2.netlify.app/reviews/durable/): First-hand client-project experience: Durable handled much of the initial build and the client was happy. Observed traffic is not attributed to Durable without analytics evidence.
+- [Dorik AI Review (8.6/10)](https://classy-pie-a922b2.netlify.app/reviews/dorik/): Research-based assessment: check current design controls, agency features, language support and plan restrictions with Dorik.
+- [Framer Review (8.3/10)](https://classy-pie-a922b2.netlify.app/reviews/framer/): Research-based assessment: compare Framer’s design workflow, interactions, publishing and current free/paid plan limits.
+- [Wix AI Review (7.8/10)](https://classy-pie-a922b2.netlify.app/reviews/wix/): Research-based assessment: verify Wix feature availability, apps, commerce, bookings and SEO controls on current plans.
+- [10Web Review (7.4/10)](https://classy-pie-a922b2.netlify.app/reviews/10web/): Research-based assessment: verify WordPress creation, hosting, performance tools and maintenance responsibilities.
+
+## Comparisons
+- [Durable vs Dorik vs Framer](https://classy-pie-a922b2.netlify.app/compare/durable-vs-dorik-vs-framer/): A comparison of Durable, Dorik and Framer with feature and use-case trade-offs.
+- [Durable vs Dorik](https://classy-pie-a922b2.netlify.app/compare/durable-vs-dorik/): Speed vs design control.
+- [Durable vs Framer](https://classy-pie-a922b2.netlify.app/compare/durable-vs-framer/): Done-for-you speed vs total creative control.
+- [Dorik vs Framer](https://classy-pie-a922b2.netlify.app/compare/dorik-vs-framer/): AI-assisted design vs pixel-perfect power.
+
+## Editorial Policies
+- [How We Test (Methodology)](https://classy-pie-a922b2.netlify.app/methodology/): Evaluation categories, evidence labels, scoring limitations and pricing verification principles.
+- [About Us](https://classy-pie-a922b2.netlify.app/about/): Who we are and how we stay independent.
+- [Affiliate Disclosure](https://classy-pie-a922b2.netlify.app/affiliate-disclosure/): How commissions work and why they never influence scores.
+
+## Contact
+- Corrections and questions: https://github.com/ShireElf123/Student-portal-2/issues
+
+_Last updated: 2026-10-09_
