@@ -57,4 +57,4 @@ User-agent: *
 Disallow: /go/
 Disallow: /thanks.html
 
-Sitemap: https://lively-platypus-41e843.netlify.app/sitemap.xml
+Sitemap: https://classy-pie-a922b2.netlify.app/sitemap.xml

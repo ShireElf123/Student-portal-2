@@ -2,7 +2,7 @@
 
 Static website-builder review and comparison site published from the `buildai/` directory. Public canonical URLs currently use:
 
-`https://lively-platypus-41e843.netlify.app/`
+`https://classy-pie-a922b2.netlify.app/`
 
 ## Editorial standards
 
