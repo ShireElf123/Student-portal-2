@@ -64,7 +64,41 @@ tap the duck/lion → spoken confirmation → **automatic** next question (repea
 * No real browser/audio device is available in this environment, so the audible quality of the voice and the OS-level speech engine were simulated with a Chrome-semantics fake (including late cancel events and stalled utterances). The component/game logic, state transitions and timers were exercised for real.
 * The live dev server is running for a manual click-through: Games → 🌿 Safari → tap the mystery animal; it now confirms and moves on by itself. Telling the difference between "auto-advance" and the old "dead screen" only needs one tap.
 
-## 5. Suggested follow-up (not changed on purpose)
+## 5. Follow-up audit (same failure class, after the fix shipped)
+
+The Safari flow was confirmed working by the user. Sweeping every other place that
+gates progress on speech (`onEnd` call sites) found one more hidden freeze:
+
+| Site | Status |
+|------|--------|
+| Safari detective | fixed (auto-advance + timer release) |
+| Animal World clue activity + story steps | fixed (`speakThenRun`) |
+| Animal Quiz + Shapes quiz | safe — already had their own 7–7.5 s fallback timers |
+| Phonics tiles | safe — `onEnd` is an empty callback |
+| Sorting / Color Lab reveals | safe — timer/callback driven, not speech-gated |
+| **Counting activity ("Count the Yellow Chicks" etc.)** | **was still freeze-prone** — the number buttons lock with `disabled={countingAnswered}` and the celebration was revealed only from `onEnd` |
+
+`src/components/ToddlerWorldsNavigator.tsx` now routes the counting victory
+through `speakThenRun` as well, with two regression tests (the second fails on
+the pre-fix code with the activity stuck on screen).
+
+### Deleted test coverage
+
+Commit `da574a3` deleted `src/data/__tests__/toddlerDailyAdventure.test.ts`
+(246 lines) and `curriculumProfiles.test.ts` (94 lines), leaving the daily
+counter/set/mission engine — the rules every toddler game pays through — with no
+coverage. The recovered files were checked against today's code and are stale
+(they assert a removed API: `__resetAccountScopeForTests`, `startDailyMission`,
+`getMissionById`, `{ isNew, size }`, mission rewards paid up-front). Rather than
+assert obsolete behaviour, `src/data/toddler/toddlerDailyAdventure.test.ts` was
+rewritten for the current contract: per-learner per-day counters, one reward per
+distinct member, completion exactly once per matching tab/subactivity, the
+all-three boundary, and stale-day resets (10 tests).
+
+Still uncovered: curriculum-profile memoisation (its old test also used the
+removed API) — worth a small rewrite when someone touches that module.
+
+## 6. Suggested follow-up (not changed on purpose)
 
 * The Safari's first question is always the lion (`useState(() => SAFARI_ANIMALS[0])`); randomising it is a product decision, so it was left as-is.
 * Other `onEnd`-gated calls that already carry their own fallback (the Animal Quiz) were left untouched.

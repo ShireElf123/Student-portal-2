@@ -528,15 +528,10 @@ export function ToddlerWorldsNavigator({
       }
 
       const victoryFeedback = `Hooray! That's right, ${chosenNumber} ${dynamicCounting.itemName}! ${dynamicCounting.soundEffect}`;
-      speakText(victoryFeedback, {
-        pitch: 1.2,
-        onEnd: () => {
-          setTimeout(() => {
-            setShowCelebration(true);
-            soundEffects.playFanfare();
-            triggerCelebrationConfetti();
-          }, 600);
-        },
+      speakThenRun(victoryFeedback, 600, () => {
+        setShowCelebration(true);
+        soundEffects.playFanfare();
+        triggerCelebrationConfetti();
       });
     } else {
       soundEffects.playGentleBoing();

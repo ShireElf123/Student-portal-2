@@ -124,3 +124,59 @@ describe("Animal World detective activity", () => {
     expect(optionButton(container, "Spotted Cow").disabled).toBe(false);
   });
 });
+
+/** Farm Valley → "Count the Yellow Chicks" (counting, answer paid on success). */
+const FARM_COUNT_ROUTE = "world:animal-world:farm-valley:act-farm-count-chicks";
+
+describe("Animal World counting activity", () => {
+  /** Number answer buttons are labelled like "3🦆 Rubber". */
+  const numberButtons = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll("button")).filter((button) =>
+      /^\d/.test(button.textContent?.trim() ?? "")
+    );
+
+  /** Taps the number buttons (re-querying each time) until one is accepted. */
+  const answerCorrectly = async (container: HTMLElement) => {
+    // Wrong taps are non-punitive and simply reset, so trying each number in
+    // turn is safe and removes any dependency on the randomised scenario.
+    for (let attempt = 0; attempt < 4; attempt++) {
+      const buttons = numberButtons(container);
+      if (buttons.length === 0) break;
+      fireEvent.click(buttons[attempt % buttons.length]);
+      await flush(50);
+      if (speech.spoken.some((line) => line.startsWith("Hooray! That's right"))) return;
+      await flush(1500);
+    }
+    throw new Error("no counting answer was accepted");
+  };
+
+  it("reveals the celebration when the engine reports the end", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator onAddStar={() => {}} starsCount={0} initialWorldId={FARM_COUNT_ROUTE} />
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Counting Quest");
+
+    await answerCorrectly(container);
+    await flush(2000);
+
+    expect(container.textContent).toContain("Discovery Mastered!");
+  });
+
+  it("still reveals the celebration when the engine never reports the end", async () => {
+    // The freeze class fixed in Animal Safari: the answer is accepted, the
+    // number buttons lock, and nothing else happens until the child leaves.
+    speech.reportEnd.value = false;
+    const { container } = render(
+      <ToddlerWorldsNavigator onAddStar={() => {}} starsCount={0} initialWorldId={FARM_COUNT_ROUTE} />
+    );
+    await flush(500);
+
+    await answerCorrectly(container);
+    await flush(200);
+    expect(container.textContent).not.toContain("Discovery Mastered!");
+
+    await flush(20000);
+    expect(container.textContent).toContain("Discovery Mastered!");
+  });
+});
