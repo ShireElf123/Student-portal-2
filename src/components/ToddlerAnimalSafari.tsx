@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Volume2, Sparkles, Star, RotateCcw, Award, CheckCircle2 } from "lucide-react";
 import { soundEffects } from "../utils/soundEffects";
@@ -89,12 +89,34 @@ interface ToddlerAnimalSafariProps {
   onAddStar?: (amount?: number) => void;
 }
 
+/**
+ * How long the solved mystery stays on screen (with its confetti and the
+ * highlighted animal) after the praise has been spoken, before the next
+ * mystery animal appears on its own.
+ */
+const CELEBRATION_PAUSE_MS = 900;
+
 export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
   const [activeMode, setActiveMode] = useState<"explore" | "detective">("detective");
   const [targetAnimal, setTargetAnimal] = useState<Animal>(() => SAFARI_ANIMALS[0]);
   const [selectedAnimal, setSelectedAnimal] = useState<Animal | null>(null);
   const [score, setScore] = useState(0);
   const [showCelebration, setShowCelebration] = useState(false);
+
+  // A solved mystery moves on by itself: praise is spoken, the child gets a
+  // moment with the celebration, then the next mystery animal appears without
+  // needing another tap. Timers live in a ref (not state) so every transition
+  // stays cancellable — pressing "Next", switching mode or leaving the screen
+  // must never leave a stray timer behind.
+  const celebrationTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const advancePendingRef = useRef(false);
+  const activeModeRef = useRef(activeMode);
+  activeModeRef.current = activeMode;
+
+  const clearCelebrationTimers = () => {
+    celebrationTimersRef.current.forEach((timer) => clearTimeout(timer));
+    celebrationTimersRef.current = [];
+  };
 
   // Automatically speak instructions on initial load and mode switch
   useEffect(() => {
@@ -115,7 +137,12 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
     return () => clearTimeout(timer);
   }, [activeMode]);
 
+  // Never leave a scheduled round running after the game is closed.
+  useEffect(() => clearCelebrationTimers, []);
+
   const startNewDetectiveRound = () => {
+    advancePendingRef.current = false;
+    clearCelebrationTimers();
     const choices = SAFARI_ANIMALS.filter((animal) => animal.id !== targetAnimal.id);
     const nextTarget = choices[Math.floor(Math.random() * choices.length)] ?? SAFARI_ANIMALS[0];
     setTargetAnimal(nextTarget);
@@ -126,6 +153,45 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
       rate: 0.9,
     });
   };
+
+  /**
+   * Praise the correct animal, then advance to the next mystery on our own.
+   *
+   * The speech engine is treated as best-effort: the round is released on a
+   * timer as well, because a muted voice or a stalled utterance never reports
+   * an end — the child must never be left on a screen that no longer responds.
+   */
+  const celebrateAndAdvance = (animal: Animal) => {
+    const praise = `Yes! Correct! It's the ${animal.name}! ${animal.call}`;
+    advancePendingRef.current = true;
+    clearCelebrationTimers();
+
+    const scheduleAdvance = (delayMs: number) => {
+      celebrationTimersRef.current.push(
+        setTimeout(() => {
+          if (!advancePendingRef.current) return;
+          advancePendingRef.current = false;
+          clearCelebrationTimers();
+          // The child may have switched to free play while the praise played.
+          if (activeModeRef.current !== "detective") return;
+          startNewDetectiveRound();
+        }, delayMs)
+      );
+    };
+
+    speakText(praise, {
+      pitch: 1.25,
+      rate: 0.9,
+      onEnd: () => {
+        if (!advancePendingRef.current) return;
+        clearCelebrationTimers();
+        scheduleAdvance(CELEBRATION_PAUSE_MS);
+      },
+    });
+
+    scheduleAdvance(Math.max(CELEBRATION_PAUSE_MS + 1500, Math.ceil(praise.length / 10) * 1000 + 2500));
+  };
+
 
   const handleAnimalClick = (animal: Animal) => {
     soundEffects.playPop();
@@ -143,7 +209,8 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
       return;
     }
 
-    // Detective quiz mode: each mystery pays once — solve it, then press Next.
+    // Detective quiz mode: each mystery pays once — solve it, then the next
+    // mystery is scheduled automatically (the "Next" button skips the wait).
     if (showCelebration) return;
     if (animal.id === targetAnimal.id) {
       setSelectedAnimal(animal);
@@ -189,10 +256,7 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
         console.error("Failed to record safari response:", error);
       }
 
-      speakText(`Yes! Correct! It's the ${animal.name}! ${animal.call}`, {
-        pitch: 1.25,
-        rate: 0.9,
-      });
+      celebrateAndAdvance(animal);
     } else {
       soundEffects.playGentleBoing();
       try {
@@ -266,6 +330,9 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
             onClick={() => {
               setActiveMode("explore");
               soundEffects.playPop();
+              // Free play takes over: stop any scheduled mystery round.
+              advancePendingRef.current = false;
+              clearCelebrationTimers();
             }}
             className={`px-4 py-2 rounded-2xl font-black text-xs transition-all cursor-pointer ${
               activeMode === "explore"

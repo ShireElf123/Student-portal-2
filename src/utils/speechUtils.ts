@@ -140,7 +140,14 @@ export function scoreVoiceForNaturalSpeech(voice: SpeechSynthesisVoice): number 
 class SpeechCoordinator {
   private activeToken: number = 0;
   private isCurrentlySpeaking: boolean = false;
-  private safetyTimer: NodeJS.Timeout | null = null;
+  /**
+   * Watchdog that releases the *current* utterance if the browser never fires
+   * its end event. It is stored with the token it belongs to: browsers deliver
+   * the cancellation error of a superseded utterance asynchronously, and that
+   * late event used to clear whichever watchdog existed at the time — leaving
+   * the live utterance with no safety net and its caller waiting forever.
+   */
+  private activeWatchdog: { token: number; timer: NodeJS.Timeout } | null = null;
   private activeUtterance: SpeechSynthesisUtterance | null = null;
   private listeners: Set<SpeechListener> = new Set();
   private voiceChangeListeners: Set<() => void> = new Set();
@@ -344,12 +351,22 @@ class SpeechCoordinator {
     });
   }
 
+  /**
+   * Disarms the watchdog that belongs to `token` — or the active one when the
+   * coordinator itself is cancelling speech. Events from an older utterance
+   * must never disarm the watchdog of the utterance that is currently playing.
+   */
+  private clearActiveWatchdog(token?: number): void {
+    const watchdog = this.activeWatchdog;
+    if (!watchdog) return;
+    if (token !== undefined && watchdog.token !== token) return;
+    clearTimeout(watchdog.timer);
+    this.activeWatchdog = null;
+  }
+
   public stop(): void {
     this.activeToken++;
-    if (this.safetyTimer) {
-      clearTimeout(this.safetyTimer);
-      this.safetyTimer = null;
-    }
+    this.clearActiveWatchdog();
 
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       try {
@@ -400,6 +417,10 @@ class SpeechCoordinator {
     // Generous spacing (100ms) before triggering speech prevents WebKit / Chromium audio collisions
     setTimeout(() => {
       if (token !== this.activeToken) {
+        // This line was superseded (another speak or stop arrived first), so
+        // nothing is spoken and no callback is fired. Callers that gate
+        // progression on onEnd must keep their own timeout — see
+        // ToddlerWorldsNavigator / ToddlerAnimalSafari watchdogs.
         return;
       }
 
@@ -444,10 +465,8 @@ class SpeechCoordinator {
           if (hasFinished) return;
           hasFinished = true;
 
-          if (this.safetyTimer) {
-            clearTimeout(this.safetyTimer);
-            this.safetyTimer = null;
-          }
+          // Only this utterance's own watchdog may be disarmed here.
+          this.clearActiveWatchdog(token);
 
           if (token === this.activeToken) {
             this.activeUtterance = null;
@@ -484,10 +503,7 @@ class SpeechCoordinator {
             !options?.isRetry
           ) {
             hasFinished = true;
-            if (this.safetyTimer) {
-              clearTimeout(this.safetyTimer);
-              this.safetyTimer = null;
-            }
+            this.clearActiveWatchdog(token);
             setTimeout(() => {
               if (token === this.activeToken) {
                 this.speak(cleanText, { ...options, isRetry: true });
@@ -506,15 +522,21 @@ class SpeechCoordinator {
           handleFinish();
         };
 
-        // Safety fallback timer: calculate based on text length (avg 12 chars per second at rate 0.94)
+        // Safety fallback timer: calculate based on text length (avg 12 chars per second at rate 0.94).
+        // It is owned by this utterance's token so a late cancel event from a
+        // superseded utterance cannot disarm it.
         const calculatedMs = Math.max(2500, Math.ceil((cleanText.length / 10) * 1000) + 1400);
         const timeoutDuration = options?.timeoutFallbackMs ?? calculatedMs;
 
-        this.safetyTimer = setTimeout(() => {
-          if (token === this.activeToken && !hasFinished) {
-            handleFinish();
-          }
-        }, timeoutDuration);
+        this.clearActiveWatchdog();
+        this.activeWatchdog = {
+          token,
+          timer: setTimeout(() => {
+            if (token === this.activeToken && !hasFinished) {
+              handleFinish();
+            }
+          }, timeoutDuration),
+        };
 
         // Keep a reference on window to prevent Chrome garbage-collecting active utterance prematurely
         (window as unknown as { __activeSpeechUtterance?: SpeechSynthesisUtterance }).__activeSpeechUtterance = utterance;

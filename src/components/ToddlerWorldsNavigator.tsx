@@ -133,6 +133,47 @@ export function ToddlerWorldsNavigator({
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
   const [unlockedNotice, setUnlockedNotice] = useState<string[]>([]);
 
+  // A correct answer (and a story choice) reveals its celebration once the
+  // spoken feedback ends. Speech is best-effort: a muted voice, a stalled
+  // utterance or a superseded line never reports an end, so each reveal is
+  // also armed on a timer. Without this the activity stayed on screen with its
+  // answer cards disabled — the child had to leave and re-enter the activity.
+  const advanceTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const advancePendingRef = useRef(false);
+
+  const clearAdvanceTimers = () => {
+    advanceTimersRef.current.forEach((timer) => clearTimeout(timer));
+    advanceTimersRef.current = [];
+  };
+
+  /** Speaks `feedback`, then runs `onSpokenEnd` — always exactly once. */
+  const speakThenRun = (feedback: string, pauseMs: number, onSpokenEnd: () => void) => {
+    advancePendingRef.current = true;
+    clearAdvanceTimers();
+
+    const run = () => {
+      if (!advancePendingRef.current) return;
+      advancePendingRef.current = false;
+      clearAdvanceTimers();
+      onSpokenEnd();
+    };
+
+    speakText(feedback, {
+      pitch: 1.2,
+      onEnd: () => {
+        if (!advancePendingRef.current) return;
+        clearAdvanceTimers();
+        advanceTimersRef.current.push(setTimeout(run, pauseMs));
+      },
+    });
+
+    advanceTimersRef.current.push(
+      setTimeout(run, Math.max(7000, Math.ceil(feedback.length / 10) * 1000 + 2500))
+    );
+  };
+
+  useEffect(() => clearAdvanceTimers, []);
+
   // Integrated Engine states: Story
   const [activeStory, setActiveStory] = useState<StoryAdventure | null>(null);
   const [storyStepIndex, setStoryStepIndex] = useState<number>(0);
@@ -311,6 +352,9 @@ export function ToddlerWorldsNavigator({
   const handleBackToAreaHub = () => {
     soundEffects.playPop();
     stopSpeaking();
+    // Leaving the activity cancels any pending celebration reveal.
+    advancePendingRef.current = false;
+    clearAdvanceTimers();
     setActiveActivity(null);
     setActiveStory(null);
     setDynamicCounting(null);
@@ -327,6 +371,8 @@ export function ToddlerWorldsNavigator({
   const handleStartActivity = (activity: ToddlerActivity) => {
     soundEffects.playStarSparkle();
     stopSpeaking();
+    advancePendingRef.current = false;
+    clearAdvanceTimers();
     setSelectedOptionId(null);
     setIsAnswered(false);
     setShowCelebration(false);
@@ -413,15 +459,10 @@ export function ToddlerWorldsNavigator({
       }
 
       const victoryFeedback = `Hooray! ${chosen.label}! ${chosen.feedback}`;
-      speakText(victoryFeedback, {
-        pitch: 1.2,
-        onEnd: () => {
-          setTimeout(() => {
-            setShowCelebration(true);
-            soundEffects.playFanfare();
-            triggerCelebrationConfetti();
-          }, 600);
-        },
+      speakThenRun(victoryFeedback, 600, () => {
+        setShowCelebration(true);
+        soundEffects.playFanfare();
+        triggerCelebrationConfetti();
       });
     } else {
       soundEffects.playGentleBoing();
@@ -615,32 +656,27 @@ export function ToddlerWorldsNavigator({
     soundEffects.playStarSparkle();
     onAddStar(1);
 
-    speakText(option.feedback, {
-      pitch: 1.2,
-      onEnd: () => {
-        setTimeout(() => {
-          if (storyStepIndex < activeStory.steps.length - 1) {
-            const nextIdx = storyStepIndex + 1;
-            setStoryStepIndex(nextIdx);
-            setStorySelectedOption(null);
-            speakText(activeStory.steps[nextIdx].spokenNarration, { pitch: 1.15 });
-          } else {
-            setStoryCompleted(true);
-            soundEffects.playFanfare();
-            triggerCelebrationConfetti();
-            onAddStar(3);
-            awardXP(50, "Completed story tale");
+    speakThenRun(option.feedback, 800, () => {
+      if (storyStepIndex < activeStory.steps.length - 1) {
+        const nextIdx = storyStepIndex + 1;
+        setStoryStepIndex(nextIdx);
+        setStorySelectedOption(null);
+        speakText(activeStory.steps[nextIdx].spokenNarration, { pitch: 1.15 });
+      } else {
+        setStoryCompleted(true);
+        soundEffects.playFanfare();
+        triggerCelebrationConfetti();
+        onAddStar(3);
+        awardXP(50, "Completed story tale");
 
-            if (activeActivity) {
-              recordActivityCompletion(activeActivity.worldId, activeActivity.areaId, activeActivity.id, 3);
-            }
+        if (activeActivity) {
+          recordActivityCompletion(activeActivity.worldId, activeActivity.areaId, activeActivity.id, 3);
+        }
 
-            speakText("Hooray! You finished the entire story adventure! You are a brilliant story champion!", {
-              pitch: 1.2,
-            });
-          }
-        }, 800);
-      },
+        speakText("Hooray! You finished the entire story adventure! You are a brilliant story champion!", {
+          pitch: 1.2,
+        });
+      }
     });
   };
 
