@@ -199,6 +199,18 @@ describe("Animal Safari detective loop", () => {
     expect(mystery(container)).toBe("PAWOOO!");
   });
 
+  it("opens on a random mystery instead of always the same animal", async () => {
+    vi.spyOn(Math, "random").mockReturnValue(0.99); // last animal in the list
+    const { container } = render(<ToddlerAnimalSafari onAddStar={() => {}} />);
+    await settle(300);
+
+    // Not the lion (which the game used to show every single time)…
+    expect(mystery(container)).toBe("MOOO MOOO!");
+    // …and the welcome announcement matches what is on screen.
+    expect(speech.spoken[0]).toContain("MOOO MOOO!");
+    expect(solved(container)).toBe(0);
+  });
+
   it("coaches a wrong tap without advancing or paying", async () => {
     const stars: number[] = [];
     const { container } = render(<ToddlerAnimalSafari onAddStar={(amount) => stars.push(amount ?? 1)} />);

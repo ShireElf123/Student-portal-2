@@ -98,7 +98,11 @@ const CELEBRATION_PAUSE_MS = 900;
 
 export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
   const [activeMode, setActiveMode] = useState<"explore" | "detective">("detective");
-  const [targetAnimal, setTargetAnimal] = useState<Animal>(() => SAFARI_ANIMALS[0]);
+  // Opening mystery is drawn at random so the game does not always start on
+  // the same animal (it used to be the lion every single time).
+  const [targetAnimal, setTargetAnimal] = useState<Animal>(
+    () => SAFARI_ANIMALS[Math.floor(Math.random() * SAFARI_ANIMALS.length)] ?? SAFARI_ANIMALS[0]
+  );
   const [selectedAnimal, setSelectedAnimal] = useState<Animal | null>(null);
   const [score, setScore] = useState(0);
   const [showCelebration, setShowCelebration] = useState(false);

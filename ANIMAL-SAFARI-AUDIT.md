@@ -95,10 +95,34 @@ rewritten for the current contract: per-learner per-day counters, one reward per
 distinct member, completion exactly once per matching tab/subactivity, the
 all-three boundary, and stale-day resets (10 tests).
 
-Still uncovered: curriculum-profile memoisation (its old test also used the
-removed API) — worth a small rewrite when someone touches that module.
+`curriculumProfiles.test.ts` was rewritten the same way (11 tests): the four
+frameworks, the `us-ccss` default, remembering a choice in localStorage,
+listener/event fan-out, ignoring an unknown or retired profile id, and the rule
+that an unverified framework never shows a standard code while still showing the
+learning goal.
+
+### Play-through coverage for the remaining toddler games
+
+`src/components/toddlerGamesPlaythrough.test.tsx` (7 tests) drives every other
+toddler game to a finish and starts it again, with speech mocked as a **muted
+engine that never reports the end of an utterance** — the harshest condition for
+this failure class:
+
+| Game | Property pinned |
+|------|-----------------|
+| Memory Card Match | a child can turn cards over after every wrong pair and still reach "Super Memory Champion!" (4 pairs + 3 win stars), then replay |
+| Rhyme Time | all 16 questions answerable from taps alone, completion screen, replay |
+| Balloon Sky Carnival | spawns, pops the target, refills the sky, keeps a daily target counter |
+| Feed Benny Bunny | five carrots then celebration, and no extra stars for over-feeding |
+| Color Magic Mixing Lab | two drops always resolve to a mixed colour on a timer, then "Mix Another Color" |
+| Rainbow Piano | a guided song is played to "Completed!" from the highlighted keys alone |
+| Bubble Pop Phonics | a child who pops the whole wave is auto-refilled and can keep playing |
+
+jsdom has no animation engine, so the suite renders `motion/react` elements as
+plain DOM (one component type per tag) and stubs `ResizeObserver` + canvas
+`getContext`; everything else — state, timers, speech gating — is the real code.
 
 ## 6. Suggested follow-up (not changed on purpose)
 
-* The Safari's first question is always the lion (`useState(() => SAFARI_ANIMALS[0])`); randomising it is a product decision, so it was left as-is.
+* ~~The Safari's first question is always the lion~~ — done: the opening mystery is now drawn at random from the six animals (`ToddlerAnimalSafari.tsx`), with a test that fails on the old `SAFARI_ANIMALS[0]` behaviour.
 * Other `onEnd`-gated calls that already carry their own fallback (the Animal Quiz) were left untouched.
