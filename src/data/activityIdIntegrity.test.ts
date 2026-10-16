@@ -285,17 +285,17 @@ describe("activity-ID integrity", () => {
 
     const expectedDynamic = [
       "src/components/ToddlerWorldsNavigator.tsx:472 (activeActivity.id)",
-      "src/contentEngine/gameAdapters.ts:51 (engine.activityId)",
-      "src/contentEngine/gameAdapters.ts:89 (engine.activityId)",
-      "src/contentEngine/gameAdapters.ts:127 (engine.activityId)",
-      "src/contentEngine/gameAdapters.ts:160 (engine.activityId)",
+      "src/contentEngine/gameAdapters.ts:78 (engine.activityId)",
+      "src/contentEngine/gameAdapters.ts:120 (engine.activityId)",
+      "src/contentEngine/gameAdapters.ts:162 (engine.activityId)",
+      "src/contentEngine/gameAdapters.ts:212 (engine.activityId)",
+      "src/contentEngine/gameAdapters.ts:251 (engine.activityId)",
       "src/data/toddler/toddlerProgressManager.ts:196 (activityId)",
     ];
     expect(dynamicSites.sort()).toEqual(expectedDynamic.sort());
     // Literal activity IDs that can still throw into the UI if the registry moves.
-    // Together with the 6 dynamic sites above, these are the 18 unguarded
-    // evidence call sites (wrap them only after PR #5 lands — outside its conflict zone).
+    // Pin the count so wrapping (or new call sites) is a deliberate test change.
     expect(unguardedLiteralSites).toHaveLength(12);
-    expect(dynamicSites.length + unguardedLiteralSites.length).toBe(18);
+    expect(dynamicSites.length + unguardedLiteralSites.length).toBe(19);
   });
 });

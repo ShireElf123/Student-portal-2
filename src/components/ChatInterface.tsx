@@ -24,7 +24,7 @@ import { Message, Notebook, AcademicMode, Attachment, FriendlyTutorMode } from "
 import { INITIAL_NOTEBOOKS, ACADEMIC_MODES } from "../data/defaultNotebooks";
 import { Sidebar } from "./Sidebar";
 import { MessageItem } from "./MessageItem";
-import { canConsumeAI, recordAIConsumption } from "../services/aiUsageService";
+import { canConsumeAI, recordAIConsumption, syncAIQuotaFromResponseHeaders } from "../services/aiUsageService";
 import { prepareImageAttachment } from "../utils/imageAttachment";
 import { auth } from "../firebaseCore";
 // Notebook persistence is owned by App (account-scoped v3 partition). This
@@ -324,6 +324,7 @@ export function ChatInterface({
             : undefined,
         }),
       });
+      syncAIQuotaFromResponseHeaders(response.headers);
 
       if (!response.ok) {
         const fallbackRes = await fetch("/api/chat", {
@@ -342,6 +343,8 @@ export function ChatInterface({
               : undefined,
           }),
         });
+
+        syncAIQuotaFromResponseHeaders(fallbackRes.headers);
 
         if (!fallbackRes.ok) {
           const errData = await fallbackRes.json().catch(() => ({}));

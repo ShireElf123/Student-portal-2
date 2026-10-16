@@ -5,8 +5,8 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
 import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
-import { markGameBlueprintCompleted } from "../contentEngine/cache";
-import { recordBlueprintSessionCompletion, recordBubblePopBlueprintResponse } from "../contentEngine/gameAdapters";
+import { markGameBlueprintCompleted } from "../services/gameContentService";
+import { createGameResponseSessionId, recordBlueprintSessionCompletion, recordBubblePopBlueprintResponse } from "../contentEngine/gameAdapters";
 import type { BubblePopBlueprint } from "../contentEngine/types";
 
 interface Bubble {
@@ -64,9 +64,11 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
   const [responseFeedback, setResponseFeedback] = useState<string | null>(null);
   const bubbleIdCounter = useRef(0);
   const blueprintRoundIndex = useRef(0);
+  const responseSessionId = useRef("");
 
   // Spawn the first authored or generated round without changing the game engine.
   useEffect(() => {
+    responseSessionId.current = createGameResponseSessionId();
     blueprintRoundIndex.current = 0;
     setPoppedCount(0);
     setIsWon(false);
@@ -80,7 +82,7 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
   const finishGeneratedSession = () => {
     if (!blueprint) return;
     const learnerId = blueprintLearnerId ?? getActiveLearnerId();
-    recordBlueprintSessionCompletion(blueprint, learnerId);
+    recordBlueprintSessionCompletion(blueprint, learnerId, responseSessionId.current || undefined);
     markGameBlueprintCompleted(blueprint, learnerId);
     onPlayingChange?.(false);
   };
@@ -141,6 +143,7 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
 
   const handleRefreshBubbles = () => {
     if (blueprint && isWon) {
+      responseSessionId.current = createGameResponseSessionId();
       blueprintRoundIndex.current = 0;
       setPoppedCount(0);
       setIsWon(false);
@@ -186,7 +189,13 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
         const round = blueprint.content.rounds[blueprintRoundIndex.current];
         const bubbleIndex = round?.bubbles.findIndex((item) => item.id === bubble.id) ?? -1;
         if (bubbleIndex >= 0) {
-          recordBubblePopBlueprintResponse(blueprint, blueprintRoundIndex.current, bubbleIndex, learnerId);
+          recordBubblePopBlueprintResponse(
+            blueprint,
+            blueprintRoundIndex.current,
+            bubbleIndex,
+            learnerId,
+            `${responseSessionId.current}:round-${blueprintRoundIndex.current}:${bubble.id}`
+          );
         }
       } else {
         recordLearningEvent({

@@ -304,6 +304,10 @@ export interface BookLearningInteraction {
   options: string[];
   correctOptionIndex: number;
   skillId: string;
+  /** Present only for generated, validated story questions; static book interactions remain unchanged. */
+  questionType?: "key-detail" | "event-order";
+  hint?: string;
+  explanation?: string;
 }
 
 export interface PictureBookPage {

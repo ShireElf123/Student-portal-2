@@ -29,7 +29,11 @@ vi.mock("../providers/gemini", () => {
       return { interactionId: "int-stream-1" };
     }
     async generateJSON<T>(): Promise<T> {
-      return [] as unknown as T;
+      return [
+        { title: "Review key ideas", subject: "Mathematics", durationMinutes: 25, priority: "high", reason: "A short review strengthens recall." },
+        { title: "Practise worked examples", subject: "Science", durationMinutes: 30, priority: "medium", reason: "Examples build confidence with the method." },
+        { title: "Summarise the lesson", subject: "Humanities", durationMinutes: 20, priority: "low", reason: "A concise summary helps connect the main ideas." },
+      ] as unknown as T;
     }
   }
   return {
@@ -154,8 +158,8 @@ describe("text chat against the real registered routes", () => {
       body: JSON.stringify({ message: "hello" }),
     });
     process.env.GEMINI_API_KEY = "test-key-not-real";
-    expect(res.status).toBe(500);
-    expect((await res.json()).error).toMatch(/GEMINI_API_KEY/);
+    expect(res.status).toBe(503);
+    expect((await res.json()).error).toMatch(/unavailable|GEMINI_API_KEY/i);
   });
 });
 

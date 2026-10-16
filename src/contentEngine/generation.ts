@@ -1,6 +1,7 @@
 import { CURRICULUM_SKILL_NODES } from "../data/curriculumUniverse";
-import { buildContentCacheKey, fingerprintGameBlueprint, gameBlueprintId } from "./fingerprint";
+import { buildBlueprintCacheKey, fingerprintGameBlueprint, gameBlueprintId } from "./fingerprint";
 import { getSupportedGameEngine, isSupportedGameType } from "./registry";
+import { getStorybookIllustration } from "./storybookAssets";
 import { validateContentGenerationRequest, validateExcludedFingerprints, validateGameBlueprint } from "./validation";
 import {
   BlueprintValidationError,
@@ -14,6 +15,8 @@ import {
   GAME_CONTENT_VERSION,
   GeneratedGamePayload,
   SpeedMathBlueprint,
+  StorybookComprehensionBlueprint,
+  StorybookComprehensionPayload,
   SpeedMathPayload,
   TimesMatrixBlueprint,
   TimesMatrixPayload,
@@ -32,7 +35,7 @@ export interface BlueprintGenerationOptions {
   now?: () => number;
   excludedFingerprints?: string[];
   maxAttempts?: number;
-  /** Hard timeout for a single provider call; timed-out calls are retried within the attempt budget. */
+  /** Caller timeout for a provider call; a timeout is not retried because upstream work may still be billable. */
   providerTimeoutMs?: number;
   /** Injectable delay between provider-failure retries (tests pass a no-op). */
   sleep?: (milliseconds: number) => Promise<void>;
@@ -139,7 +142,9 @@ function validatePayloadShape(value: unknown, expectedGameType: ContentGeneratio
   if (!isSupportedGameType(value.gameType) || value.gameType !== expectedGameType) {
     errors.push({ code: "UNSUPPORTED_GAME_TYPE", field: "gameType", message: "Provider must return the requested registered game type." });
   }
-  const topKeys = ["gameType", "objective", "instructions", "feedback", "hints", "voice", "rounds"];
+  const topKeys = value.gameType === "storybook-comprehension"
+    ? ["gameType", "objective", "instructions", "feedback", "hints", "voice", "storyTitle", "storySummary", "rounds"]
+    : ["gameType", "objective", "instructions", "feedback", "hints", "voice", "rounds"];
   if (!exactKeys(value, topKeys)) {
     errors.push({ code: "INVALID_CONTENT", field: "providerOutput", message: "Provider payload has missing or unsupported top-level fields." });
   }
@@ -161,7 +166,9 @@ function validatePayloadShape(value: unknown, expectedGameType: ContentGeneratio
       ? ["leftOperand", "rightOperand", "answer", "choices", "explanation", "hint"]
       : value.gameType === "times-matrix"
         ? ["leftFactor", "rightFactor", "answer", "choices", "explanation", "hint"]
-        : ["targetLetter", "bubbles"];
+        : value.gameType === "bubble-pop-phonics"
+          ? ["targetLetter", "bubbles"]
+          : ["title", "text", "prompt", "questionType", "options", "correctOptionIndex", "evidenceText", "explanation", "hint"];
     value.rounds.forEach((round, index) => {
       if (!isRecord(round) || !exactKeys(round, expectedRoundKeys)) {
         errors.push({ code: "INVALID_CONTENT", field: `rounds[${index}]`, message: "Provider round has missing or unsupported fields." });
@@ -177,6 +184,10 @@ function validatePayloadShape(value: unknown, expectedGameType: ContentGeneratio
             errors.push({ code: "INVALID_CONTENT", field: `rounds[${index}].bubbles[${bubbleIndex}]`, message: "Provider bubble has missing or unsupported fields." });
           }
         });
+      } else if (value.gameType === "storybook-comprehension") {
+        if (!Array.isArray(round.options)) {
+          errors.push({ code: "INVALID_CONTENT", field: `rounds[${index}].options`, message: "Story questions must have an options array." });
+        }
       } else if (!Array.isArray(round.choices)) {
         errors.push({ code: "INVALID_CONTENT", field: `rounds[${index}].choices`, message: "Math answer choices must be an array." });
       }
@@ -197,6 +208,8 @@ function getAvoidContentSummary(blueprint: GameBlueprint): string[] {
       return blueprint.content.rounds.map((round) =>
         `${round.targetLetter}: ${round.bubbles.map((bubble) => `${bubble.letter}-${bubble.word}`).join(", ")}`
       );
+    case "storybook-comprehension":
+      return blueprint.content.rounds.map((round) => `${round.title}: ${round.text} Question: ${round.prompt}`);
   }
 }
 
@@ -208,6 +221,21 @@ export function buildContentGenerationPrompt(
   if (!skill) throw new Error(`Cannot build content prompt for unknown skill ${request.skillId}`);
   const engine = getSupportedGameEngine(request.gameType);
   const context = request.learnerContext;
+  const scaffoldInstructions = [
+    "Keep the standard prompt clear, direct, and encouraging.",
+    "Add one visual or step cue without reducing the target skill.",
+    "Use a smaller worked step and a supportive hint; never reveal the answer before the learner responds.",
+  ];
+  const misconceptionLabels: Record<string, string> = {
+    "multiplication-operation-confusion": "distinguish multiplication from addition using equal groups",
+    "factor-as-product": "show how both factors combine to make the product",
+    "off-by-one-calculation": "encourage a quick count or arithmetic check before choosing",
+    "multiplication-fact-recall": "support recall with a small grouping or repeated-addition cue",
+    "letter-identification-confusion": "make the target letter visually clear and contrast it gently with distractors",
+    "story-detail-recall": "keep the key story detail concrete and easy to find in the page text",
+    "event-order-confusion": "make the order of story events clear and provide a gentle first-next-last hint",
+  };
+  const signalGuidance = (context.misconceptionTags ?? []).map((tag) => misconceptionLabels[tag]).filter(Boolean);
   const avoidSection = avoidContent.length
     ? `\nDo not repeat these recently rejected or already-used question patterns:\n${avoidContent.slice(0, 20).map((item) => `- ${item}`).join("\n")}`
     : "";
@@ -217,8 +245,10 @@ export function buildContentGenerationPrompt(
     `Curriculum objective: ${skill.title}. ${skill.description}\n` +
     `Standard: ${skill.standardCode}; grade band: ${skill.gradeBand}; age band: ${engine.ageBandBySkill[skill.id]}.\n` +
     `Difficulty: ${request.difficulty}. Theme: ${THEME_LABELS[request.theme]}.\n` +
-    `Learner context (anonymous learning signals only): mastery ${context.masteryBand}; adaptive difficulty ${context.currentDifficultyLevel}/5; recent incorrect responses on target skill ${context.recentIncorrectCount}; weak skill IDs ${JSON.stringify(context.weakSkillIds)}.\n` +
-    "Use this context only to scaffold or extend the requested skill. Do not include learner names, IDs, personal data, or mastery judgments.\n";
+    `Learner context (anonymous learning signals only): mastery band ${context.masteryBand}; adaptive difficulty ${context.currentDifficultyLevel}/5; recent accuracy ${context.recentAccuracy === null || context.recentAccuracy === undefined ? "not available" : `${context.recentAccuracy}%`}; recent incorrect responses on target skill ${context.recentIncorrectCount}; weak skill IDs ${JSON.stringify(context.weakSkillIds)}.\n` +
+    `Scaffold level ${context.scaffoldLevel ?? 0}/2: ${scaffoldInstructions[context.scaffoldLevel ?? 0]}\n` +
+    `${signalGuidance.length ? `Support these response patterns gently: ${signalGuidance.join("; ")}.\n` : ""}` +
+    "Use these signals only to scaffold the requested skill. Do not label or diagnose the learner, reveal answers in advance, or include names, IDs, personal data, or mastery judgments.\n";
 
   if (request.gameType === "speed-math") {
     return `${common}${avoidSection}\nReturn exactly this JSON shape, with no extra keys:\n${JSON.stringify({
@@ -242,6 +272,30 @@ export function buildContentGenerationPrompt(
       voice: { introduction: "A short spoken introduction." },
       rounds: [{ leftFactor: 4, rightFactor: 6, answer: 24, choices: [24, 20, 28, 18], explanation: "Four groups of six make twenty-four.", hint: "Count six four times." }],
     }, null, 2)}\nAll rounds must be multiplication facts for the supplied skill. Factors must be 2-${request.difficulty === "easy" ? 5 : request.difficulty === "medium" ? 9 : 12}; compute every answer exactly; provide four unique non-negative integer choices containing the answer once. Do not repeat a fact (order of factors does not create a new fact).`;
+  }
+
+  if (request.gameType === "storybook-comprehension") {
+    return `${common}${avoidSection}\nCreate one short, coherent read-aloud story for children aged five to seven. Make each page a separate, sequential part of the same story. Difficulty controls sentence length and vocabulary: easy uses very short familiar sentences, medium adds a little descriptive detail, and hard uses richer but still concrete language.\nReturn exactly this JSON shape, with no extra keys:\n${JSON.stringify({
+      gameType: "storybook-comprehension",
+      objective: "A short listening-comprehension objective.",
+      instructions: "Listen to each story page, then choose the answer supported by the story.",
+      feedback: { correct: "You remembered an important story detail!", incorrect: "Good try. Let's look back at the story together.", completion: "You finished the story detective adventure!" },
+      hints: ["Listen for the details that help answer the question."],
+      voice: { introduction: "Let's listen to a story and remember its important details." },
+      storyTitle: "A friendly story title.",
+      storySummary: "One short, child-friendly sentence about the story.",
+      rounds: [{
+        title: "A short page heading",
+        text: "Mila the squirrel finds a golden acorn beside the old oak tree.",
+        prompt: "What does Mila find beside the oak tree?",
+        questionType: "key-detail",
+        options: ["A golden acorn", "A blue shell", "A red scarf"],
+        correctOptionIndex: 0,
+        evidenceText: "a golden acorn",
+        explanation: "The story says Mila finds a golden acorn beside the tree.",
+        hint: "Listen for the small treasure Mila found.",
+      }],
+    }, null, 2)}\nCreate exactly ${request.roundCount} pages. Use only questionType key-detail or event-order. Ask direct questions that are answerable from the story; do not require outside knowledge. Each page must contain one question and exactly three distinct, short answer choices with one correct option. correctOptionIndex must identify that answer. evidenceText must be an exact phrase from the same page text that supports the correct answer and contains the correct choice word-for-word. For event-order questions, keep the event order explicit in the connected story and use a clue about first, next, or last. Keep every page text, question, choice, hint, explanation, title, and summary child-safe and concise. Do not output illustrations, images, URLs, names, IDs, or extra fields; the app adds safe visuals and canonical skill IDs.`;
   }
 
   return `${common}${avoidSection}\nReturn exactly this JSON shape, with no extra keys:\n${JSON.stringify({
@@ -294,7 +348,7 @@ function createBlueprintFromPayload(
         prompt: `${round.leftFactor} × ${round.rightFactor} = ?`,
       })),
     };
-  } else {
+  } else if (payload.gameType === "bubble-pop-phonics") {
     content = {
       rounds: payload.rounds.map((round, index) => ({
         id: `round-${index + 1}`,
@@ -306,6 +360,19 @@ function createBlueprintFromPayload(
         })),
       })),
     };
+  } else {
+    const storyPayload = payload as StorybookComprehensionPayload;
+    const storyRequest = request;
+    content = {
+      storyTitle: storyPayload.storyTitle,
+      storySummary: storyPayload.storySummary,
+      rounds: storyPayload.rounds.map((round, index) => ({
+        id: `page-${index + 1}`,
+        ...round,
+        narration: round.text,
+        illustration: getStorybookIllustration(storyRequest.theme, index),
+      })),
+    } as StorybookComprehensionBlueprint["content"];
   }
 
   const provisional = {
@@ -320,7 +387,7 @@ function createBlueprintFromPayload(
       contentVersion: GAME_CONTENT_VERSION,
       validationStatus: "valid" as const,
       fingerprint: "pending",
-      cacheKey: buildContentCacheKey(request),
+      cacheKey: buildBlueprintCacheKey(request),
     },
   } as unknown as GameBlueprint;
   const fingerprint = fingerprintGameBlueprint(provisional);
@@ -380,7 +447,7 @@ export async function generateValidatedGameBlueprint(
           ? "The content provider timed out before returning a structured response."
           : "The content provider could not complete the structured generation request.",
       }];
-      if (attempt === maxAttempts) return { valid: false, attempts: attempt, errors: attemptErrors };
+      if (timedOut || attempt === maxAttempts) return { valid: false, attempts: attempt, errors: attemptErrors };
       await sleep(PROVIDER_FAILURE_BACKOFF_MS[Math.min(attempt, PROVIDER_FAILURE_BACKOFF_MS.length - 1)]);
       continue;
     }
@@ -439,4 +506,11 @@ export async function generateValidatedGameBlueprint(
   };
 }
 
-export type { ContentGenerationRequest, GeneratedGamePayload, SpeedMathPayload, TimesMatrixPayload, BubblePopPayload };
+export type {
+  ContentGenerationRequest,
+  GeneratedGamePayload,
+  SpeedMathPayload,
+  TimesMatrixPayload,
+  BubblePopPayload,
+  StorybookComprehensionPayload,
+};

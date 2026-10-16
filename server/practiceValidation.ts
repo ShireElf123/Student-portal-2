@@ -23,7 +23,9 @@ export const PRACTICE_MAX_COUNT = 10;
  * cleaned values may be used in the AI prompt — never the raw body.
  */
 export function validatePracticeRequest(body: unknown): PracticeRequestValidation {
-  const payload = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
+  const payload = body && typeof body === "object" && !Array.isArray(body)
+    ? body as Record<string, unknown>
+    : {};
   const subject = typeof payload.subject === "string" ? payload.subject.trim() : "";
   const topic = typeof payload.topic === "string" ? payload.topic.trim() : "";
 
@@ -32,6 +34,9 @@ export function validatePracticeRequest(body: unknown): PracticeRequestValidatio
   }
   if (!topic) {
     return { ok: false, error: "Topic is required and cannot be empty." };
+  }
+  if (subject.length > 100 || topic.length > 200) {
+    return { ok: false, error: "Subject must be at most 100 characters and topic at most 200 characters." };
   }
 
   const rawDifficulty =
