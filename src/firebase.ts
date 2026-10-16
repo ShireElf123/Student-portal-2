@@ -17,6 +17,7 @@ import {
 } from "firebase/firestore";
 import firebaseConfig from "../firebase-applet-config.json";
 import { app, handleFirestoreError, notifySyncStatus, OperationType } from "./firebaseCore";
+import { sanitizeFirestoreValue } from "./utils/firestoreSanitize";
 export { auth, googleProvider, handleFirestoreError, notifySyncStatus, OperationType, subscribeToSyncStatus } from "./firebaseCore";
 import {
   Notebook,
@@ -824,10 +825,10 @@ export async function saveLearnerModelToCloud(userId: string, model: any): Promi
   if (!userId) return;
   const path = `users/${userId}/learnerModel/profile`;
   try {
-    await setDoc(doc(db, "users", userId, "learnerModel", "profile"), {
+    await setDoc(doc(db, "users", userId, "learnerModel", "profile"), sanitizeFirestoreValue({
       ...model,
       updatedAt: Date.now(),
-    });
+    }));
   } catch (error) {
     handleFirestoreError(error, OperationType.UPDATE, path);
   }
@@ -858,7 +859,7 @@ export async function recordCloudLearningEvent(userId: string, event: any): Prom
   if (!userId || !event?.id) return;
   const path = `users/${userId}/learningEvents/${event.id}`;
   try {
-    await setDoc(doc(db, "users", userId, "learningEvents", event.id), event);
+    await setDoc(doc(db, "users", userId, "learningEvents", event.id), sanitizeFirestoreValue(event));
   } catch (error) {
     handleFirestoreError(error, OperationType.CREATE, path);
   }
@@ -916,10 +917,10 @@ export async function publishStudentMasteryToClass(
   if (!classId || !studentId || !model) return;
   const path = `classes/${classId}/studentMastery/${studentId}`;
   try {
-    await setDoc(doc(db, "classes", classId, "studentMastery", studentId), {
+    await setDoc(doc(db, "classes", classId, "studentMastery", studentId), sanitizeFirestoreValue({
       ...model,
       updatedAt: Date.now(),
-    });
+    }));
   } catch (error) {
     handleFirestoreError(error, OperationType.UPDATE, path);
   }
