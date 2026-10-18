@@ -74,12 +74,18 @@ describe("learning infrastructure integrity", () => {
       (activity) => activity.experienceType === "toddler-world" || activity.launch.targetId.startsWith("world:")
     );
 
-    expect(worldActivities).toHaveLength(37);
-    expect(registeredWorldActivities).toHaveLength(37);
-    expect(new Set(registeredWorldActivities.map((activity) => activity.id)).size).toBe(37);
+    expect(worldActivities.length).toBeGreaterThanOrEqual(160);
+    expect(registeredWorldActivities).toHaveLength(worldActivities.length);
+    expect(new Set(registeredWorldActivities.map((activity) => activity.id)).size).toBe(worldActivities.length);
     const engagementOnlyIds = new Set([
       "act-color-mix-orange", "act-color-mix-green", "act-music-high-low", "act-sticker-crown-pick",
       "act-feelings-happy-smile", "act-habits-toothbrush", "act-habits-listening-ears", "act-family-sweet-baby",
+      "act-color-mix-purple", "act-color-mix-green-leaf", "act-color-shadow",
+      "act-music-loud-soft", "act-music-high-bird", "act-music-frog-drum",
+      "act-feel-sad-hug", "act-feel-mad-breath", "act-feel-scared-light", "act-feel-proud",
+      "act-feel-share", "act-feel-listen", "act-feel-name-happy",
+      "act-habits-soap", "act-habits-sleep", "act-habits-water", "act-habits-nose",
+      "act-family-kind",
     ]);
     const actualEngagementOnlyIds = new Set<string>();
 

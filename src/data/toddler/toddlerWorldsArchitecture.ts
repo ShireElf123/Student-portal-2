@@ -1,4 +1,5 @@
 import { StoryAdventure, STORY_ADVENTURES } from "./toddlerWorldsData";
+import { attachWorldLevelPacks } from "./toddlerWorldLevelPacks";
 
 export type ToddlerActivityType =
   | "clue-detective"    // Listen/look at environmental clues and identify without answer spoiler
@@ -1615,4 +1616,4 @@ export const ALL_TODDLER_WORLDS: ToddlerWorld[] = [
   STORY_WORLD,
   LEARNING_WORLD,
   MY_WORLD,
-];
+].map(attachWorldLevelPacks);

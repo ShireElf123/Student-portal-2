@@ -180,3 +180,25 @@ describe("Animal World counting activity", () => {
     expect(container.textContent).toContain("Discovery Mastered!");
   });
 });
+
+/** Packed extra on the Farm Valley trail — not one of the original four demo cards. */
+const FARM_DAWN_ROUTE = "world:animal-world:farm-valley:act-farm-rooster-dawn";
+
+describe("world level trail stations", () => {
+  it("plays a packed farm station on the same detective contract", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator onAddStar={() => {}} starsCount={0} initialWorldId={FARM_DAWN_ROUTE} />
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Dawn Rooster");
+
+    fireEvent.click(optionButton(container, "Rooster"));
+    await flush(2000);
+    expect(container.textContent).toContain("Discovery Mastered!");
+
+    fireEvent.click(optionButton(container, "Continue Journey"));
+    await flush(200);
+    expect(container.textContent).toContain("Level trail");
+    expect(container.textContent).toMatch(/Level \d+ of \d+/);
+  });
+});

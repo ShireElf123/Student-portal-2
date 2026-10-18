@@ -1346,14 +1346,15 @@ export function ToddlerWorldsNavigator({
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
-              <span>🧭</span> Activities & Discoveries ({selectedArea.activities.length})
+              <span>🧭</span> Level trail · {selectedArea.activities.length} stations
             </h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {selectedArea.activities.map((activity) => {
+            {selectedArea.activities.map((activity, levelIndex) => {
               const record = progress.completedActivities[activity.id];
               const isDone = !!record;
+              const levelNumber = levelIndex + 1;
 
               return (
                 <motion.div
@@ -1386,6 +1387,9 @@ export function ToddlerWorldsNavigator({
                     </div>
 
                     <div>
+                      <p className="text-[10px] font-black uppercase tracking-wider text-amber-200/80">
+                        Level {levelNumber} of {selectedArea.activities.length}
+                      </p>
                       <h4 className="text-base font-black group-hover:text-amber-300 transition-colors">
                         {activity.title}
                       </h4>
