@@ -459,23 +459,27 @@ function SpeedMathBlitzGame({ blueprint, onPlayingChange, blueprintLearnerId }: 
           if (blueprint) {
             completeGeneratedSession();
           } else {
-            recordLearningEvent({
-              learnerId: getActiveLearnerId(),
-              activityId: "speed-math-blitz-sprint",
-              experienceId: "speed-math-blitz-sprint",
-              contentId: `sprint-${Date.now()}`,
-              eventType: "activity_completed",
-              activityType: "math-blitz",
-              activityTitle: "Speed Math Blitz Sprint Completed",
-              domain: "general",
-              gradeBand: "2-3",
-              result: "explored",
-              score: Math.min(100, Math.round((finalScore / 120) * 100)),
-              difficulty: "medium",
-              attempts: 1,
-              hintsUsed: 0,
-              metadata: { points: finalScore },
-            });
+            try {
+              recordLearningEvent({
+                learnerId: getActiveLearnerId(),
+                activityId: "speed-math-blitz-sprint",
+                experienceId: "speed-math-blitz-sprint",
+                contentId: `sprint-${Date.now()}`,
+                eventType: "activity_completed",
+                activityType: "math-blitz",
+                activityTitle: "Speed Math Blitz Sprint Completed",
+                domain: "general",
+                gradeBand: "2-3",
+                result: "explored",
+                score: Math.min(100, Math.round((finalScore / 120) * 100)),
+                difficulty: "medium",
+                attempts: 1,
+                hintsUsed: 0,
+                metadata: { points: finalScore },
+              });
+            } catch (error) {
+              console.error("Failed to record Speed Math session evidence:", error);
+            }
           }
           return 0;
         }
@@ -495,24 +499,28 @@ function SpeedMathBlitzGame({ blueprint, onPlayingChange, blueprintLearnerId }: 
       recordSpeedMathBlueprintResponse(blueprint, questionCounter.current - 1, val, learnerId, isHintVisible ? 1 : 0, responseId);
     } else {
       const skillId = problem.text.includes("×") ? "math-23-multiplication" : "math-k1-addition-subtraction";
-      recordLearningEvent({
-        learnerId,
-        activityId: "speed-math-blitz-sprint",
-        experienceId: "speed-math-blitz-sprint",
-        contentId: `${problem.id}:choice-${val}`,
-        eventType: "question_answered",
-        activityType: "math-blitz",
-        activityTitle: `Speed Math: ${problem.text}`,
-        skillId,
-        domain: "math",
-        gradeBand: "2-3",
-        result: isCorrect ? "success" : "struggle",
-        score: isCorrect ? 100 : 0,
-        difficulty: "medium",
-        attempts: 1,
-        hintsUsed: 0,
-        metadata: { expression: problem.text, selectedAnswer: val, correctAnswer: problem.answer },
-      });
+      try {
+        recordLearningEvent({
+          learnerId,
+          activityId: "speed-math-blitz-sprint",
+          experienceId: "speed-math-blitz-sprint",
+          contentId: `${problem.id}:choice-${val}`,
+          eventType: "question_answered",
+          activityType: "math-blitz",
+          activityTitle: `Speed Math: ${problem.text}`,
+          skillId,
+          domain: "math",
+          gradeBand: "2-3",
+          result: isCorrect ? "success" : "struggle",
+          score: isCorrect ? 100 : 0,
+          difficulty: "medium",
+          attempts: 1,
+          hintsUsed: 0,
+          metadata: { expression: problem.text, selectedAnswer: val, correctAnswer: problem.answer },
+        });
+      } catch (error) {
+        console.error("Failed to record Speed Math response evidence:", error);
+      }
     }
     if (isCorrect) {
       answeredThisProblem.current = true;
@@ -708,23 +716,27 @@ function TactileFractionLab() {
       awardXP(35);
       awardStars(1);
       speakText(`Hooray! You built ${currentChallenge.label}! Excellent fraction mastery!`, { pitch: 1.1 });
-      recordLearningEvent({
-        learnerId: getActiveLearnerId(),
-        activityId: "primary-lab-fraction-slices",
-        experienceId: "fraction-lab",
-        contentId: `${currentChallenge.targetNum}/${currentChallenge.targetDen}`,
-        eventType: "question_answered",
-        activityType: "fraction-lab",
-        activityTitle: `Fraction Match: ${currentChallenge.label}`,
-        skillId: "math-23-fractions",
-        domain: "math",
-        gradeBand: "2-3",
-        result: "success",
-        score: 100,
-        difficulty: "medium",
-        attempts: 1,
-        hintsUsed: 0,
-      });
+      try {
+        recordLearningEvent({
+          learnerId: getActiveLearnerId(),
+          activityId: "primary-lab-fraction-slices",
+          experienceId: "fraction-lab",
+          contentId: `${currentChallenge.targetNum}/${currentChallenge.targetDen}`,
+          eventType: "question_answered",
+          activityType: "fraction-lab",
+          activityTitle: `Fraction Match: ${currentChallenge.label}`,
+          skillId: "math-23-fractions",
+          domain: "math",
+          gradeBand: "2-3",
+          result: "success",
+          score: 100,
+          difficulty: "medium",
+          attempts: 1,
+          hintsUsed: 0,
+        });
+      } catch (error) {
+        console.error("Failed to record fraction-lab evidence:", error);
+      }
     }
   }, [isTargetMatched, hasCelebrated, currentChallenge]);
 
@@ -958,43 +970,51 @@ function WordForgeGame() {
         awardXP(40);
         awardGems(5);
         speakText(`Correct! ${current.word}!`, { pitch: 1.1 });
-        recordLearningEvent({
-          learnerId: getActiveLearnerId(),
-          activityId: "primary-lab-word-forge",
-          experienceId: "word-forge",
-          contentId: current.word.toLowerCase(),
-          eventType: "question_answered",
-          activityType: "word-forge",
-          activityTitle: `Word Forge: ${current.word}`,
-          skillId: "read-23-sight-words",
-          domain: "reading",
-          gradeBand: "2-3",
-          result: "success",
-          score: 100,
-          difficulty: "medium",
-          attempts: 1,
-          hintsUsed: 0,
-        });
+        try {
+          recordLearningEvent({
+            learnerId: getActiveLearnerId(),
+            activityId: "primary-lab-word-forge",
+            experienceId: "word-forge",
+            contentId: current.word.toLowerCase(),
+            eventType: "question_answered",
+            activityType: "word-forge",
+            activityTitle: `Word Forge: ${current.word}`,
+            skillId: "read-23-sight-words",
+            domain: "reading",
+            gradeBand: "2-3",
+            result: "success",
+            score: 100,
+            difficulty: "medium",
+            attempts: 1,
+            hintsUsed: 0,
+          });
+        } catch (error) {
+          console.error("Failed to record Word Forge success evidence:", error);
+        }
       } else {
         soundEffects.playGentleBoing();
-        recordLearningEvent({
-          learnerId: getActiveLearnerId(),
-          activityId: "primary-lab-word-forge",
-          experienceId: "word-forge",
-          contentId: `${current.word.toLowerCase()}:${newPlaced.join("").toLowerCase()}`,
-          eventType: "question_answered",
-          activityType: "word-forge",
-          activityTitle: `Word Forge: Incorrect attempt for ${current.word}`,
-          skillId: "read-23-sight-words",
-          domain: "reading",
-          gradeBand: "2-3",
-          result: "struggle",
-          score: 0,
-          difficulty: "medium",
-          attempts: 1,
-          hintsUsed: 0,
-          metadata: { answer: newPlaced.join("") },
-        });
+        try {
+          recordLearningEvent({
+            learnerId: getActiveLearnerId(),
+            activityId: "primary-lab-word-forge",
+            experienceId: "word-forge",
+            contentId: `${current.word.toLowerCase()}:${newPlaced.join("").toLowerCase()}`,
+            eventType: "question_answered",
+            activityType: "word-forge",
+            activityTitle: `Word Forge: Incorrect attempt for ${current.word}`,
+            skillId: "read-23-sight-words",
+            domain: "reading",
+            gradeBand: "2-3",
+            result: "struggle",
+            score: 0,
+            difficulty: "medium",
+            attempts: 1,
+            hintsUsed: 0,
+            metadata: { answer: newPlaced.join("") },
+          });
+        } catch (error) {
+          console.error("Failed to record Word Forge struggle evidence:", error);
+        }
         speakText("Not quite! Let's reset the letters and try again!", { pitch: 1.1 });
         setTimeout(() => {
           setScrambled(shuffle(current.word.split("")));
@@ -1130,23 +1150,27 @@ function PhysicsBalanceScaleGame() {
       awardStars(1);
       setScore((s) => s + 1);
       speakText(`Balanced! Target ${targetWeight} kilograms achieved! Great algebraic logic!`, { pitch: 1.1 });
-      recordLearningEvent({
-        learnerId: getActiveLearnerId(),
-        activityId: "primary-lab-balance-scale",
-        experienceId: "balance-scale",
-        contentId: `level-${level}-target-${targetWeight}`,
-        eventType: "question_answered",
-        activityType: "balance-scale",
-        activityTitle: `Balance Scale: ${targetWeight} KG Algebraic Balance`,
-        skillId: "math-45-equations",
-        domain: "math",
-        gradeBand: "4-5",
-        result: "success",
-        score: 100,
-        difficulty: level >= 3 ? "hard" : "medium",
-        attempts: 1,
-        hintsUsed: 0,
-      });
+      try {
+        recordLearningEvent({
+          learnerId: getActiveLearnerId(),
+          activityId: "primary-lab-balance-scale",
+          experienceId: "balance-scale",
+          contentId: `level-${level}-target-${targetWeight}`,
+          eventType: "question_answered",
+          activityType: "balance-scale",
+          activityTitle: `Balance Scale: ${targetWeight} KG Algebraic Balance`,
+          skillId: "math-45-equations",
+          domain: "math",
+          gradeBand: "4-5",
+          result: "success",
+          score: 100,
+          difficulty: level >= 3 ? "hard" : "medium",
+          attempts: 1,
+          hintsUsed: 0,
+        });
+      } catch (error) {
+        console.error("Failed to record balance-scale evidence:", error);
+      }
     }
   }, [isBalanced, hasCelebrated, targetWeight]);
 
@@ -1364,23 +1388,27 @@ function GeometryTangramArchitectGame() {
       awardGems(5);
       speakText(`Magnificent architecture! You assembled the ${currentBlueprint.title}!`, { pitch: 1.15 });
 
-      recordLearningEvent({
-        learnerId: getActiveLearnerId(),
-        activityId: "primary-lab-tangram-geometry",
-        experienceId: "tangram-geometry",
-        contentId: currentBlueprint.id,
-        eventType: "activity_completed",
-        activityType: "geometry-tangram",
-        activityTitle: `Tangram Geometry: ${currentBlueprint.title}`,
-        skillId: "math-k1-shapes",
-        domain: "math",
-        gradeBand: "K-1",
-        result: "success",
-        score: 100,
-        difficulty: "medium",
-        attempts: 1,
-        hintsUsed: 0,
-      });
+      try {
+        recordLearningEvent({
+          learnerId: getActiveLearnerId(),
+          activityId: "primary-lab-tangram-geometry",
+          experienceId: "tangram-geometry",
+          contentId: currentBlueprint.id,
+          eventType: "activity_completed",
+          activityType: "geometry-tangram",
+          activityTitle: `Tangram Geometry: ${currentBlueprint.title}`,
+          skillId: "math-k1-shapes",
+          domain: "math",
+          gradeBand: "K-1",
+          result: "success",
+          score: 100,
+          difficulty: "medium",
+          attempts: 1,
+          hintsUsed: 0,
+        });
+      } catch (error) {
+        console.error("Failed to record tangram evidence:", error);
+      }
     }
   };
 
@@ -1563,23 +1591,27 @@ function CyberRoverCodeRunnerGame() {
   };
 
   const recordRoverOutcome = (contentId: string, result: "success" | "struggle", title: string) => {
-    recordLearningEvent({
-      learnerId: getActiveLearnerId(),
-      activityId: "code-rover-martian-maze",
-      experienceId: "cyber-rover-code-runner",
-      contentId,
-      eventType: "activity_completed",
-      activityType: "code-runner",
-      activityTitle: title,
-      skillId: "logic-23-algorithms",
-      domain: "logic",
-      gradeBand: "2-3",
-      result,
-      score: result === "success" ? 100 : 0,
-      difficulty: "medium",
-      attempts: 1,
-      hintsUsed: 0,
-    });
+    try {
+      recordLearningEvent({
+        learnerId: getActiveLearnerId(),
+        activityId: "code-rover-martian-maze",
+        experienceId: "cyber-rover-code-runner",
+        contentId,
+        eventType: "activity_completed",
+        activityType: "code-runner",
+        activityTitle: title,
+        skillId: "logic-23-algorithms",
+        domain: "logic",
+        gradeBand: "2-3",
+        result,
+        score: result === "success" ? 100 : 0,
+        difficulty: "medium",
+        attempts: 1,
+        hintsUsed: 0,
+      });
+    } catch (error) {
+      console.error("Failed to record code-rover evidence:", error);
+    }
   };
 
   const handleRunProgram = async () => {
@@ -1927,23 +1959,27 @@ function MultiplicationMatrixGame({ blueprint, onPlayingChange, blueprintLearner
           if (blueprint) {
             completeGeneratedSession();
           } else {
-            recordLearningEvent({
-              learnerId: getActiveLearnerId(),
-              activityId: "times-table-matrix-battle",
-              experienceId: "times-matrix",
-              contentId: `sprint-${Date.now()}`,
-              eventType: "activity_completed",
-              activityType: "times-matrix",
-              activityTitle: "Multiplication Matrix Sprint Completed",
-              domain: "general",
-              gradeBand: "2-3",
-              result: "explored",
-              score: Math.min(100, finalScore),
-              difficulty: "medium",
-              attempts: 1,
-              hintsUsed: 0,
-              metadata: { points: finalScore },
-            });
+            try {
+              recordLearningEvent({
+                learnerId: getActiveLearnerId(),
+                activityId: "times-table-matrix-battle",
+                experienceId: "times-matrix",
+                contentId: `sprint-${Date.now()}`,
+                eventType: "activity_completed",
+                activityType: "times-matrix",
+                activityTitle: "Multiplication Matrix Sprint Completed",
+                domain: "general",
+                gradeBand: "2-3",
+                result: "explored",
+                score: Math.min(100, finalScore),
+                difficulty: "medium",
+                attempts: 1,
+                hintsUsed: 0,
+                metadata: { points: finalScore },
+              });
+            } catch (error) {
+              console.error("Failed to record Times Matrix session evidence:", error);
+            }
           }
           return 0;
         }
@@ -1962,24 +1998,28 @@ function MultiplicationMatrixGame({ blueprint, onPlayingChange, blueprintLearner
       const responseId = `${responseSessionId.current}:response-${responseSequence.current++}`;
       recordTimesMatrixBlueprintResponse(blueprint, questionCounter.current - 1, val, learnerId, isHintVisible ? 1 : 0, responseId);
     } else {
-      recordLearningEvent({
-        learnerId,
-        activityId: "times-table-matrix-battle",
-        experienceId: "times-matrix",
-        contentId: `${problem.id}:choice-${val}`,
-        eventType: "question_answered",
-        activityType: "times-matrix",
-        activityTitle: `Multiplication Matrix: ${problem.a} times ${problem.b}`,
-        skillId: "math-23-multiplication",
-        domain: "math",
-        gradeBand: "2-3",
-        result: isCorrect ? "success" : "struggle",
-        score: isCorrect ? 100 : 0,
-        difficulty: "medium",
-        attempts: 1,
-        hintsUsed: 0,
-        metadata: { factorA: problem.a, factorB: problem.b, selectedAnswer: val, correctAnswer: problem.answer },
-      });
+      try {
+        recordLearningEvent({
+          learnerId,
+          activityId: "times-table-matrix-battle",
+          experienceId: "times-matrix",
+          contentId: `${problem.id}:choice-${val}`,
+          eventType: "question_answered",
+          activityType: "times-matrix",
+          activityTitle: `Multiplication Matrix: ${problem.a} times ${problem.b}`,
+          skillId: "math-23-multiplication",
+          domain: "math",
+          gradeBand: "2-3",
+          result: isCorrect ? "success" : "struggle",
+          score: isCorrect ? 100 : 0,
+          difficulty: "medium",
+          attempts: 1,
+          hintsUsed: 0,
+          metadata: { factorA: problem.a, factorB: problem.b, selectedAnswer: val, correctAnswer: problem.answer },
+        });
+      } catch (error) {
+        console.error("Failed to record Times Matrix response evidence:", error);
+      }
     }
     if (isCorrect) {
       answeredRef.current = true;

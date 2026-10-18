@@ -75,33 +75,38 @@ export function recordSpeedMathBlueprintResponse(
   const engine = getSupportedGameEngine("speed-math");
   const eventId = responseEventId(blueprint, round.id, responseId);
   const correct = selectedAnswer === round.answer;
-  return recordLearningEvent({
-    ...(eventId ? { id: eventId } : {}),
-    learnerId,
-    activityId: engine.activityId,
-    experienceId: engine.experienceId,
-    contentId: `${blueprint.id}:${round.id}`,
-    eventType: "question_answered",
-    activityType: "math-blitz",
-    activityTitle: `Generated Speed Math: ${round.prompt}`,
-    skillId: blueprint.skillId,
-    domain: "math",
-    gradeBand: blueprint.gradeBand,
-    result: correct ? "success" : "struggle",
-    score: correct ? 100 : 0,
-    difficulty: blueprint.difficulty,
-    attempts: 1,
-    hintsUsed,
-    ...(!correct ? { misconceptionTags: inferMultiplicationMisconceptionTags(round.leftOperand, round.rightOperand, selectedAnswer, round.answer) } : {}),
-    metadata: {
-      blueprintId: blueprint.id,
-      roundId: round.id,
-      leftOperand: round.leftOperand,
-      rightOperand: round.rightOperand,
-      selectedAnswer,
-      correctAnswer: round.answer,
-    },
-  });
+  try {
+    return recordLearningEvent({
+      ...(eventId ? { id: eventId } : {}),
+      learnerId,
+      activityId: engine.activityId,
+      experienceId: engine.experienceId,
+      contentId: `${blueprint.id}:${round.id}`,
+      eventType: "question_answered",
+      activityType: "math-blitz",
+      activityTitle: `Generated Speed Math: ${round.prompt}`,
+      skillId: blueprint.skillId,
+      domain: "math",
+      gradeBand: blueprint.gradeBand,
+      result: correct ? "success" : "struggle",
+      score: correct ? 100 : 0,
+      difficulty: blueprint.difficulty,
+      attempts: 1,
+      hintsUsed,
+      ...(!correct ? { misconceptionTags: inferMultiplicationMisconceptionTags(round.leftOperand, round.rightOperand, selectedAnswer, round.answer) } : {}),
+      metadata: {
+        blueprintId: blueprint.id,
+        roundId: round.id,
+        leftOperand: round.leftOperand,
+        rightOperand: round.rightOperand,
+        selectedAnswer,
+        correctAnswer: round.answer,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to record generated Speed Math evidence:", error);
+    return undefined;
+  }
 }
 
 export function recordTimesMatrixBlueprintResponse(
@@ -117,33 +122,38 @@ export function recordTimesMatrixBlueprintResponse(
   const engine = getSupportedGameEngine("times-matrix");
   const eventId = responseEventId(blueprint, round.id, responseId);
   const correct = selectedAnswer === round.answer;
-  return recordLearningEvent({
-    ...(eventId ? { id: eventId } : {}),
-    learnerId,
-    activityId: engine.activityId,
-    experienceId: engine.experienceId,
-    contentId: `${blueprint.id}:${round.id}`,
-    eventType: "question_answered",
-    activityType: "times-matrix",
-    activityTitle: `Generated Times Matrix: ${round.prompt}`,
-    skillId: blueprint.skillId,
-    domain: "math",
-    gradeBand: blueprint.gradeBand,
-    result: correct ? "success" : "struggle",
-    score: correct ? 100 : 0,
-    difficulty: blueprint.difficulty,
-    attempts: 1,
-    hintsUsed,
-    ...(!correct ? { misconceptionTags: inferMultiplicationMisconceptionTags(round.leftFactor, round.rightFactor, selectedAnswer, round.answer) } : {}),
-    metadata: {
-      blueprintId: blueprint.id,
-      roundId: round.id,
-      leftFactor: round.leftFactor,
-      rightFactor: round.rightFactor,
-      selectedAnswer,
-      correctAnswer: round.answer,
-    },
-  });
+  try {
+    return recordLearningEvent({
+      ...(eventId ? { id: eventId } : {}),
+      learnerId,
+      activityId: engine.activityId,
+      experienceId: engine.experienceId,
+      contentId: `${blueprint.id}:${round.id}`,
+      eventType: "question_answered",
+      activityType: "times-matrix",
+      activityTitle: `Generated Times Matrix: ${round.prompt}`,
+      skillId: blueprint.skillId,
+      domain: "math",
+      gradeBand: blueprint.gradeBand,
+      result: correct ? "success" : "struggle",
+      score: correct ? 100 : 0,
+      difficulty: blueprint.difficulty,
+      attempts: 1,
+      hintsUsed,
+      ...(!correct ? { misconceptionTags: inferMultiplicationMisconceptionTags(round.leftFactor, round.rightFactor, selectedAnswer, round.answer) } : {}),
+      metadata: {
+        blueprintId: blueprint.id,
+        roundId: round.id,
+        leftFactor: round.leftFactor,
+        rightFactor: round.rightFactor,
+        selectedAnswer,
+        correctAnswer: round.answer,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to record generated Times Matrix evidence:", error);
+    return undefined;
+  }
 }
 
 export function recordBubblePopBlueprintResponse(
@@ -159,32 +169,37 @@ export function recordBubblePopBlueprintResponse(
   const engine = getSupportedGameEngine("bubble-pop-phonics");
   const eventId = responseEventId(blueprint, round.id, responseId);
   const correct = bubble.letter === round.targetLetter;
-  return recordLearningEvent({
-    ...(eventId ? { id: eventId } : {}),
-    learnerId,
-    activityId: engine.activityId,
-    experienceId: engine.experienceId,
-    contentId: `${blueprint.id}:${round.id}:${bubble.id}`,
-    eventType: "question_answered",
-    activityType: "phonics-pop",
-    activityTitle: `Generated Phonics Pop: ${round.prompt}`,
-    skillId: blueprint.skillId,
-    domain: "reading",
-    gradeBand: "toddler",
-    result: correct ? "success" : "struggle",
-    score: correct ? 100 : 0,
-    difficulty: blueprint.difficulty,
-    attempts: 1,
-    hintsUsed: 0,
-    ...(!correct ? { misconceptionTags: inferLetterIdentificationMisconceptionTags(bubble.letter, round.targetLetter) } : {}),
-    metadata: {
-      blueprintId: blueprint.id,
-      roundId: round.id,
-      selectedLetter: bubble.letter,
-      targetLetter: round.targetLetter,
-      targetWord: round.bubbles.find((candidate) => candidate.letter === round.targetLetter)?.word,
-    },
-  });
+  try {
+    return recordLearningEvent({
+      ...(eventId ? { id: eventId } : {}),
+      learnerId,
+      activityId: engine.activityId,
+      experienceId: engine.experienceId,
+      contentId: `${blueprint.id}:${round.id}:${bubble.id}`,
+      eventType: "question_answered",
+      activityType: "phonics-pop",
+      activityTitle: `Generated Phonics Pop: ${round.prompt}`,
+      skillId: blueprint.skillId,
+      domain: "reading",
+      gradeBand: "toddler",
+      result: correct ? "success" : "struggle",
+      score: correct ? 100 : 0,
+      difficulty: blueprint.difficulty,
+      attempts: 1,
+      hintsUsed: 0,
+      ...(!correct ? { misconceptionTags: inferLetterIdentificationMisconceptionTags(bubble.letter, round.targetLetter) } : {}),
+      metadata: {
+        blueprintId: blueprint.id,
+        roundId: round.id,
+        selectedLetter: bubble.letter,
+        targetLetter: round.targetLetter,
+        targetWord: round.bubbles.find((candidate) => candidate.letter === round.targetLetter)?.word,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to record generated Bubble Pop evidence:", error);
+    return undefined;
+  }
 }
 
 const STORYBOOK_MISCONCEPTION_TAGS: Readonly<Record<StorybookQuestionType, "story-detail-recall" | "event-order-confusion">> = {
@@ -209,33 +224,38 @@ export function recordStorybookComprehensionResponse(
   const engine = getSupportedGameEngine("storybook-comprehension");
   const eventId = responseEventId(blueprint, round.id, responseId);
   const correct = selectedOptionIndex === round.correctOptionIndex;
-  return recordLearningEvent({
-    ...(eventId ? { id: eventId } : {}),
-    learnerId,
-    activityId: engine.activityId,
-    experienceId: engine.experienceId,
-    contentId: `${blueprint.id}:${round.id}:option-${selectedOptionIndex}`,
-    eventType: "question_answered",
-    activityType: "storybook-interaction",
-    activityTitle: `${blueprint.content.storyTitle}: ${round.prompt}`,
-    skillId: blueprint.skillId,
-    domain: "reading",
-    gradeBand: blueprint.gradeBand,
-    result: correct ? "success" : "struggle",
-    score: correct ? 100 : 0,
-    difficulty: blueprint.difficulty,
-    attempts: 1,
-    hintsUsed,
-    ...(!correct ? { misconceptionTags: [STORYBOOK_MISCONCEPTION_TAGS[round.questionType]] } : {}),
-    metadata: {
-      blueprintId: blueprint.id,
-      roundId: round.id,
-      questionType: round.questionType,
-      selectedAnswer: round.options[selectedOptionIndex],
-      correctAnswer: round.options[round.correctOptionIndex],
-      evidenceText: round.evidenceText,
-    },
-  });
+  try {
+    return recordLearningEvent({
+      ...(eventId ? { id: eventId } : {}),
+      learnerId,
+      activityId: engine.activityId,
+      experienceId: engine.experienceId,
+      contentId: `${blueprint.id}:${round.id}:option-${selectedOptionIndex}`,
+      eventType: "question_answered",
+      activityType: "storybook-interaction",
+      activityTitle: `${blueprint.content.storyTitle}: ${round.prompt}`,
+      skillId: blueprint.skillId,
+      domain: "reading",
+      gradeBand: blueprint.gradeBand,
+      result: correct ? "success" : "struggle",
+      score: correct ? 100 : 0,
+      difficulty: blueprint.difficulty,
+      attempts: 1,
+      hintsUsed,
+      ...(!correct ? { misconceptionTags: [STORYBOOK_MISCONCEPTION_TAGS[round.questionType]] } : {}),
+      metadata: {
+        blueprintId: blueprint.id,
+        roundId: round.id,
+        questionType: round.questionType,
+        selectedAnswer: round.options[selectedOptionIndex],
+        correctAnswer: round.options[round.correctOptionIndex],
+        evidenceText: round.evidenceText,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to record generated storybook evidence:", error);
+    return undefined;
+  }
 }
 
 export function recordBlueprintSessionCompletion(blueprint: GameBlueprint, learnerId: string, sessionId?: string): void {
@@ -248,21 +268,25 @@ export function recordBlueprintSessionCompletion(blueprint: GameBlueprint, learn
         ? "phonics-pop"
         : "storybook-interaction";
   const eventId = responseEventId(blueprint, "session-completed", sessionId);
-  recordLearningEvent({
-    ...(eventId ? { id: eventId } : {}),
-    learnerId,
-    activityId: engine.activityId,
-    experienceId: engine.experienceId,
-    contentId: `${blueprint.id}:completed`,
-    eventType: "activity_completed",
-    activityType,
-    activityTitle: `Completed: ${blueprint.objective}`,
-    domain: "general",
-    gradeBand: blueprint.gameType === "bubble-pop-phonics" ? "toddler" : blueprint.gradeBand,
-    result: "explored",
-    difficulty: blueprint.difficulty,
-    attempts: 1,
-    hintsUsed: 0,
-    metadata: { blueprintId: blueprint.id, generatedContent: true },
-  });
+  try {
+    recordLearningEvent({
+      ...(eventId ? { id: eventId } : {}),
+      learnerId,
+      activityId: engine.activityId,
+      experienceId: engine.experienceId,
+      contentId: `${blueprint.id}:completed`,
+      eventType: "activity_completed",
+      activityType,
+      activityTitle: `Completed: ${blueprint.objective}`,
+      domain: "general",
+      gradeBand: blueprint.gameType === "bubble-pop-phonics" ? "toddler" : blueprint.gradeBand,
+      result: "explored",
+      difficulty: blueprint.difficulty,
+      attempts: 1,
+      hintsUsed: 0,
+      metadata: { blueprintId: blueprint.id, generatedContent: true },
+    });
+  } catch (error) {
+    console.error("Failed to record generated-session evidence:", error);
+  }
 }

@@ -204,7 +204,9 @@ describe("authenticated generated-content learning integration", () => {
       const responseId = "integration-session-1:round-0:attempt-1";
       const responseEvent = recordSpeedMathBlueprintResponse(result.blueprint, 0, incorrectAnswer, learnerId, 0, responseId);
       const replayedResponse = recordSpeedMathBlueprintResponse(result.blueprint, 0, incorrectAnswer, learnerId, 0, responseId);
-      expect(replayedResponse.id).toBe(responseEvent.id);
+      expect(responseEvent).toBeDefined();
+      expect(replayedResponse).toBeDefined();
+      expect(replayedResponse!.id).toBe(responseEvent!.id);
       recordBlueprintSessionCompletion(result.blueprint, learnerId, "integration-session-1");
       recordBlueprintSessionCompletion(result.blueprint, learnerId, "integration-session-1");
 

@@ -248,6 +248,7 @@ describe("activity-ID integrity", () => {
     const root = resolve(process.cwd(), "src");
     const dynamicSites: string[] = [];
     const unguardedLiteralSites: string[] = [];
+    const unguardedDynamicSites: string[] = [];
 
     for (const filePath of sourceFiles(root)) {
       const text = readFileSync(filePath, "utf8");
@@ -270,10 +271,10 @@ describe("activity-ID integrity", () => {
           const activityExpr = properties.activityId;
           const line = source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1;
           const loc = `${relative(process.cwd(), filePath)}:${line}`;
-          if (!activityExpr) {
-            dynamicSites.push(loc);
-          } else if (!ts.isStringLiteralLike(activityExpr)) {
-            dynamicSites.push(`${loc} (${activityExpr.getText(source)})`);
+          if (!activityExpr || !ts.isStringLiteralLike(activityExpr)) {
+            const label = activityExpr ? `${loc} (${activityExpr.getText(source)})` : loc;
+            dynamicSites.push(label);
+            if (!isInsideTry(node)) unguardedDynamicSites.push(label);
           } else if (!isInsideTry(node)) {
             unguardedLiteralSites.push(`${loc} (${activityExpr.text})`);
           }
@@ -285,17 +286,17 @@ describe("activity-ID integrity", () => {
 
     const expectedDynamic = [
       "src/components/ToddlerWorldsNavigator.tsx:472 (activeActivity.id)",
-      "src/contentEngine/gameAdapters.ts:78 (engine.activityId)",
-      "src/contentEngine/gameAdapters.ts:120 (engine.activityId)",
-      "src/contentEngine/gameAdapters.ts:162 (engine.activityId)",
-      "src/contentEngine/gameAdapters.ts:212 (engine.activityId)",
-      "src/contentEngine/gameAdapters.ts:251 (engine.activityId)",
-      "src/data/toddler/toddlerProgressManager.ts:196 (activityId)",
+      "src/contentEngine/gameAdapters.ts:79 (engine.activityId)",
+      "src/contentEngine/gameAdapters.ts:126 (engine.activityId)",
+      "src/contentEngine/gameAdapters.ts:173 (engine.activityId)",
+      "src/contentEngine/gameAdapters.ts:228 (engine.activityId)",
+      "src/contentEngine/gameAdapters.ts:272 (engine.activityId)",
+      "src/data/toddler/toddlerProgressManager.ts:197 (activityId)",
     ];
     expect(dynamicSites.sort()).toEqual(expectedDynamic.sort());
-    // Literal activity IDs that can still throw into the UI if the registry moves.
-    // Pin the count so wrapping (or new call sites) is a deliberate test change.
-    expect(unguardedLiteralSites).toHaveLength(12);
-    expect(dynamicSites.length + unguardedLiteralSites.length).toBe(19);
+    // Every production recordLearningEvent call — literal or dynamic — must be
+    // inside try/catch so a registry miss cannot freeze a game.
+    expect(unguardedLiteralSites).toEqual([]);
+    expect(unguardedDynamicSites).toEqual([]);
   });
 });

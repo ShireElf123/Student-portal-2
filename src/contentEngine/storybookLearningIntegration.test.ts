@@ -245,7 +245,9 @@ describe("storybook comprehension vertical learning slice", () => {
       const firstResponseId = "storybook-session-a:page-1:first";
       const wrongResponse = recordStorybookComprehensionResponse(generated.blueprint, 0, 1, learnerId, 1, firstResponseId);
       const duplicateResponse = recordStorybookComprehensionResponse(generated.blueprint, 0, 1, learnerId, 1, firstResponseId);
-      expect(duplicateResponse.id).toBe(wrongResponse.id);
+      expect(wrongResponse).toBeDefined();
+      expect(duplicateResponse).toBeDefined();
+      expect(duplicateResponse!.id).toBe(wrongResponse!.id);
       recordStorybookComprehensionResponse(generated.blueprint, 1, 1, learnerId, 0, "storybook-session-a:page-2:first");
       recordBlueprintSessionCompletion(generated.blueprint, learnerId, "storybook-session-a");
       recordBlueprintSessionCompletion(generated.blueprint, learnerId, "storybook-session-a");
@@ -254,7 +256,7 @@ describe("storybook comprehension vertical learning slice", () => {
       expect(learnerAfterResponses.skillMastery[skillId].totalAttempts).toBe(3);
       expect(learnerAfterResponses.recentEvents.filter((event) => event.eventType === "question_answered")).toHaveLength(3);
       expect(learnerAfterResponses.recentEvents.filter((event) => event.eventType === "activity_completed")).toHaveLength(1);
-      expect(learnerAfterResponses.recentEvents.find((event) => event.id === wrongResponse.id)).toMatchObject({
+      expect(learnerAfterResponses.recentEvents.find((event) => event.id === wrongResponse!.id)).toMatchObject({
         learnerId,
         activityId: "picture-book-interaction",
         experienceId: "picture-book-reader",

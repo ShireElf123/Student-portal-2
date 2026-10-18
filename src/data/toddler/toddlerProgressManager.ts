@@ -193,23 +193,27 @@ export function recordActivityCompletion(
   // Completion earns the existing world rewards, but without a scored response it
   // remains engagement-only for mastery, even when the activity has a skill mapping.
   const resolved = resolveSkillForActivity(activityId);
-  recordLearningEvent({
-    learnerId: getActiveLearnerId(),
-    activityId,
-    experienceId: "toddler-worlds-navigator",
-    contentId: activityId,
-    eventType: resolved.skillId ? "activity_completed" : "creative_interaction",
-    activityType: resolved.skillId ? "world-activity" : "engagement",
-    activityTitle: `Toddler Adventure: ${activityId.replace(/-/g, " ")}`,
-    skillId: resolved.skillId,
-    domain: resolved.domain,
-    gradeBand: resolved.gradeBand,
-    result: "explored",
-    difficulty: "easy",
-    attempts: 1,
-    hintsUsed: 0,
-    metadata: { worldId, areaId, firstCompletion: isFirstCompletion },
-  });
+  try {
+    recordLearningEvent({
+      learnerId: getActiveLearnerId(),
+      activityId,
+      experienceId: "toddler-worlds-navigator",
+      contentId: activityId,
+      eventType: resolved.skillId ? "activity_completed" : "creative_interaction",
+      activityType: resolved.skillId ? "world-activity" : "engagement",
+      activityTitle: `Toddler Adventure: ${activityId.replace(/-/g, " ")}`,
+      skillId: resolved.skillId,
+      domain: resolved.domain,
+      gradeBand: resolved.gradeBand,
+      result: "explored",
+      difficulty: "easy",
+      attempts: 1,
+      hintsUsed: 0,
+      metadata: { worldId, areaId, firstCompletion: isFirstCompletion },
+    });
+  } catch (error) {
+    console.error("Failed to record toddler-world completion evidence:", error);
+  }
 
   return {
     isFirstCompletion,
@@ -264,22 +268,26 @@ export function recordMissionCompletion(
 
   saveToddlerProgress(nextState);
 
-  recordLearningEvent({
-    learnerId: getActiveLearnerId(),
-    activityId: "toddler-world-mission-completion",
-    experienceId: "toddler-worlds-navigator",
-    contentId: missionId,
-    eventType: "mission_completed",
-    activityType: "world-mission",
-    activityTitle: `World Mission: ${badgeTitle}`,
-    domain: "general",
-    gradeBand: "toddler",
-    result: "explored",
-    difficulty: "medium",
-    attempts: 1,
-    hintsUsed: 0,
-    metadata: { worldId, areaId, missionId, badgeEmoji, firstCompletion: isFirstCompletion },
-  });
+  try {
+    recordLearningEvent({
+      learnerId: getActiveLearnerId(),
+      activityId: "toddler-world-mission-completion",
+      experienceId: "toddler-worlds-navigator",
+      contentId: missionId,
+      eventType: "mission_completed",
+      activityType: "world-mission",
+      activityTitle: `World Mission: ${badgeTitle}`,
+      domain: "general",
+      gradeBand: "toddler",
+      result: "explored",
+      difficulty: "medium",
+      attempts: 1,
+      hintsUsed: 0,
+      metadata: { worldId, areaId, missionId, badgeEmoji, firstCompletion: isFirstCompletion },
+    });
+  } catch (error) {
+    console.error("Failed to record toddler-world mission evidence:", error);
+  }
 
   return {
     isFirstCompletion,

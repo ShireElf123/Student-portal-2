@@ -34,31 +34,35 @@ export function recordAssessmentResultEvidence(
   learnerId: string
 ): void {
   for (const entry of buildAssessmentEvidenceEntries(assessment, result)) {
-    recordLearningEvent({
-      id: `${result.id}:${entry.itemId}`,
-      learnerId,
-      activityId: "guided-assessment",
-      experienceId: "guided-assessment-bridge",
-      contentId: `${assessment.id}:${entry.itemId}`,
-      eventType: "assessment_response",
-      activityType: "guided-assessment",
-      activityTitle: `${assessment.title}: ${entry.itemId}`,
-      skillId: entry.skillId,
-      domain: "general",
-      gradeBand: assessment.targetStage === "toddler" ? "toddler" : "2-3",
-      result: entry.result,
-      score: entry.numericScore,
-      difficulty: "easy",
-      attempts: 1,
-      hintsUsed: entry.score === "developing" ? 1 : 0,
-      timestamp: result.timestamp,
-      metadata: {
-        assessmentId: assessment.id,
-        assessmentResultId: result.id,
-        itemId: entry.itemId,
-        observedScore: entry.score,
-        responseOutcome: entry.result,
-      },
-    });
+    try {
+      recordLearningEvent({
+        id: `${result.id}:${entry.itemId}`,
+        learnerId,
+        activityId: "guided-assessment",
+        experienceId: "guided-assessment-bridge",
+        contentId: `${assessment.id}:${entry.itemId}`,
+        eventType: "assessment_response",
+        activityType: "guided-assessment",
+        activityTitle: `${assessment.title}: ${entry.itemId}`,
+        skillId: entry.skillId,
+        domain: "general",
+        gradeBand: assessment.targetStage === "toddler" ? "toddler" : "2-3",
+        result: entry.result,
+        score: entry.numericScore,
+        difficulty: "easy",
+        attempts: 1,
+        hintsUsed: entry.score === "developing" ? 1 : 0,
+        timestamp: result.timestamp,
+        metadata: {
+          assessmentId: assessment.id,
+          assessmentResultId: result.id,
+          itemId: entry.itemId,
+          observedScore: entry.score,
+          responseOutcome: entry.result,
+        },
+      });
+    } catch (error) {
+      console.error("Failed to record guided-assessment evidence:", error);
+    }
   }
 }
