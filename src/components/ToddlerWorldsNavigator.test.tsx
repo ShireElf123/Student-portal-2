@@ -191,6 +191,9 @@ describe("wonderland atlas", () => {
     );
     await flush(200);
     expect(container.textContent).toContain("Wonderland Atlas");
+    expect(container.textContent).toContain("The Wilds");
+    expect(container.textContent).toContain("Busy Town");
+    expect(container.textContent).toContain("Walk the continent road");
     expect(container.textContent).toContain("Busy Roads");
     expect(container.textContent).toContain("Bug Garden");
     expect(container.textContent).toContain("Market Kitchen");
@@ -215,8 +218,7 @@ describe("world level trail stations", () => {
 
     fireEvent.click(optionButton(container, "Continue Journey"));
     await flush(200);
-    expect(container.textContent).toContain("Level trail");
-    expect(container.textContent).toMatch(/Level \d+ of \d+/);
+    expect(container.textContent).toContain("Walk the road");
   });
 
   it("plays a game on a new atlas land", async () => {

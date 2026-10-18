@@ -1,6 +1,7 @@
 import { StoryAdventure, STORY_ADVENTURES } from "./toddlerWorldsData";
 import { attachWorldLevelPacks } from "./toddlerWorldLevelPacks";
 import { ATLAS_LANDS } from "./toddlerWorldAtlasLands";
+import { attachWorldToyStations } from "./toddlerWorldToyStations";
 
 export type ToddlerActivityType =
   | "clue-detective"    // Listen/look at environmental clues and identify without answer spoiler
@@ -12,7 +13,13 @@ export type ToddlerActivityType =
   | "color-lab"         // Interactive color mixing
   | "piano-melody"      // Musical play
   | "pattern-match"     // Find what comes next in sequence
-  | "feed-friend";      // Counting & feeding interaction
+  | "feed-friend"       // Counting & feeding interaction
+  | "memory-match"      // Proven Games-tab memory toy, planted on a world road
+  | "balloon-sky"       // Sky letter/number pop
+  | "animal-safari"     // Sound safari
+  | "rhyme-garden"      // Rhyme matching
+  | "bubble-pop"        // Phonics bubbles
+  | "k1-studio";        // Curated skill studio scene
 
 export interface ToddlerActivityOption {
   id: string;
@@ -41,6 +48,8 @@ export interface ToddlerActivity {
   rewardXP: number;
   replayable: boolean;
   storyAdventureId?: string;   // For story-adventure activities
+  /** When type is k1-studio, which curated scene to mount. */
+  studioGameId?: string;
 }
 
 export interface ToddlerMissionStep {
@@ -1617,4 +1626,4 @@ export const ALL_TODDLER_WORLDS: ToddlerWorld[] = [
   STORY_WORLD,
   LEARNING_WORLD,
   MY_WORLD,
-].map(attachWorldLevelPacks).concat(ATLAS_LANDS);
+].map(attachWorldLevelPacks).concat(ATLAS_LANDS).map(attachWorldToyStations);

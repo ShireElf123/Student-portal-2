@@ -54,6 +54,15 @@ import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { resolveSkillForActivity } from "../data/activitySkillRegistry";
 import { ToddlerColorLab } from "./ToddlerColorLab";
 import { ToddlerMusicPiano } from "./ToddlerMusicPiano";
+import { ToddlerMemoryGame } from "./ToddlerMemoryGame";
+import { ToddlerBalloonSky } from "./ToddlerBalloonSky";
+import { ToddlerAnimalSafari } from "./ToddlerAnimalSafari";
+import { ToddlerRhymeGame } from "./ToddlerRhymeGame";
+import { ToddlerBubblePopGame } from "./ToddlerBubblePopGame";
+import { ToddlerK1Studio } from "./ToddlerK1Studio";
+import type { K1StudioGameId } from "../data/toddler/k1StudioGames";
+import { ToddlerWorldTrail } from "./ToddlerWorldTrail";
+import { ATLAS_CONTINENTS, TOY_ACTIVITY_TYPES } from "../data/toddler/toddlerWorldAtlasLayout";
 
 interface ToddlerWorldsNavigatorProps {
   onAddStar: (count: number) => void;
@@ -107,20 +116,12 @@ const SECRET_ZONES: SecretZoneDef[] = [
   },
 ];
 
-/** Percent positions on the atlas canvas so twelve lands read as a map, not a six-card grid. */
-const ATLAS_LAYOUT: Record<string, { x: number; y: number }> = {
-  "animal-world": { x: 14, y: 34 },
-  "adventure-world": { x: 36, y: 16 },
-  "creative-world": { x: 58, y: 26 },
-  "story-world": { x: 80, y: 14 },
-  "learning-world": { x: 88, y: 40 },
-  "my-world": { x: 24, y: 58 },
-  "vehicle-world": { x: 48, y: 52 },
-  "bug-world": { x: 70, y: 56 },
-  "kitchen-world": { x: 90, y: 68 },
-  "city-world": { x: 12, y: 78 },
-  "arctic-world": { x: 38, y: 82 },
-  "night-world": { x: 64, y: 80 },
+const completeWorldToy = (
+  activity: ToddlerActivity,
+  onAddStar: (count: number) => void
+) => {
+  recordActivityCompletion(activity.worldId, activity.areaId, activity.id, activity.rewardStars);
+  onAddStar(activity.rewardStars);
 };
 
 export function ToddlerWorldsNavigator({
@@ -752,9 +753,42 @@ export function ToddlerWorldsNavigator({
             </div>
             <ToddlerMusicPiano
               onAddStar={() => {
-                recordActivityCompletion(activeActivity.worldId, activeActivity.areaId, activeActivity.id, activeActivity.rewardStars);
-                onAddStar(activeActivity.rewardStars);
+                completeWorldToy(activeActivity, onAddStar);
               }}
+            />
+          </div>
+        )}
+
+        {activeActivity.type === "memory-match" && (
+          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-emerald-400/30 shadow-2xl">
+            <ToddlerMemoryGame onAddStar={() => completeWorldToy(activeActivity, onAddStar)} />
+          </div>
+        )}
+        {activeActivity.type === "balloon-sky" && (
+          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-sky-400/30 shadow-2xl">
+            <ToddlerBalloonSky onAddStar={() => completeWorldToy(activeActivity, onAddStar)} />
+          </div>
+        )}
+        {activeActivity.type === "animal-safari" && (
+          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-lime-400/30 shadow-2xl">
+            <ToddlerAnimalSafari onAddStar={() => completeWorldToy(activeActivity, onAddStar)} />
+          </div>
+        )}
+        {activeActivity.type === "rhyme-garden" && (
+          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-fuchsia-400/30 shadow-2xl">
+            <ToddlerRhymeGame onAddStar={() => completeWorldToy(activeActivity, onAddStar)} />
+          </div>
+        )}
+        {activeActivity.type === "bubble-pop" && (
+          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-cyan-400/30 shadow-2xl">
+            <ToddlerBubblePopGame onAddStar={() => completeWorldToy(activeActivity, onAddStar)} />
+          </div>
+        )}
+        {activeActivity.type === "k1-studio" && activeActivity.studioGameId && (
+          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-amber-400/30 shadow-2xl">
+            <ToddlerK1Studio
+              gameId={activeActivity.studioGameId as K1StudioGameId}
+              onAddStar={() => completeWorldToy(activeActivity, onAddStar)}
             />
           </div>
         )}
@@ -1358,73 +1392,32 @@ export function ToddlerWorldsNavigator({
           </div>
         )}
 
-        {/* ACTIVITIES GRID */}
+        {/* STATION ROAD */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
-              <span>🧭</span> Level trail · {selectedArea.activities.length} stations
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {selectedArea.activities.map((activity, levelIndex) => {
-              const record = progress.completedActivities[activity.id];
-              const isDone = !!record;
-              const levelNumber = levelIndex + 1;
-
-              return (
-                <motion.div
-                  key={activity.id}
-                  whileHover={{ y: -3, scale: 1.01 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleStartActivity(activity)}
-                  className={`p-5 rounded-3xl border-2 transition-all cursor-pointer flex flex-col justify-between group shadow-lg ${
-                    isDone
-                      ? "bg-white/[0.07] border-emerald-400/40 hover:border-emerald-400/70 text-white"
-                      : "bg-white/[0.04] border-white/15 hover:border-amber-400/50 text-white"
-                  }`}
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-3xl p-2.5 rounded-2xl bg-white/10 border border-white/10 group-hover:scale-110 transition-transform">
-                        {activity.clueIcon}
-                      </span>
-                      <div className="flex items-center gap-1.5">
-                        {isDone ? (
-                          <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-black flex items-center gap-1">
-                            <CheckCircle2 size={12} /> Mastered
-                          </span>
-                        ) : (
-                          <span className="px-2.5 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 text-[10px] font-black flex items-center gap-1">
-                            <Star size={10} fill="currentColor" /> New
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-wider text-amber-200/80">
-                        Level {levelNumber} of {selectedArea.activities.length}
-                      </p>
-                      <h4 className="text-base font-black group-hover:text-amber-300 transition-colors">
-                        {activity.title}
-                      </h4>
-                      <p className="text-xs text-white/60 line-clamp-2 mt-1">
-                        {activity.learningObjective}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold text-amber-300">
-                    <span>+{activity.rewardStars} Stars</span>
-                    <span className="flex items-center gap-1 text-white/80 group-hover:text-amber-300">
-                      {isDone ? "Play Again" : "Explore"} <ArrowRight size={14} />
-                    </span>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+          {(() => {
+            const firstOpen = selectedArea.activities.find((activity) => !progress.completedActivities[activity.id]);
+            const currentId = firstOpen?.id ?? selectedArea.activities.at(-1)?.id;
+            return (
+              <ToddlerWorldTrail
+                label={`Walk the road · ${selectedArea.activities.length} stations`}
+                buddyEmoji="🧒"
+                sceneryEmojis={selectedArea.environment.sceneryEmojis}
+                onSelect={(id) => {
+                  const activity = selectedArea.activities.find((item) => item.id === id);
+                  if (activity) handleStartActivity(activity);
+                }}
+                nodes={selectedArea.activities.map((activity) => ({
+                  id: activity.id,
+                  emoji: activity.clueIcon,
+                  title: activity.title,
+                  done: !!progress.completedActivities[activity.id],
+                  locked: false,
+                  current: activity.id === currentId,
+                  toy: TOY_ACTIVITY_TYPES.has(activity.type),
+                }))}
+              />
+            );
+          })()}
         </div>
       </div>
     );
@@ -1505,78 +1498,37 @@ export function ToddlerWorldsNavigator({
               {selectedWorld.areas.reduce((sum, area) => sum + area.activities.length, 0)} stations
             </h3>
             <p className="text-xs text-white/60">
-              Follow the path through this world. Every land is a trail of original games — not a four-card demo.
+              Walk the road through this land. Pip stands on the next stop.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {selectedWorld.areas.map((area, areaIndex) => {
+          <ToddlerWorldTrail
+            label={`Walk the road · ${selectedWorld.areas.length} areas`}
+            buddyEmoji={selectedWorld.emoji}
+            sceneryEmojis={selectedWorld.areas[0]?.environment.sceneryEmojis}
+            onSelect={(id) => {
+              const area = selectedWorld.areas.find((item) => item.id === id);
+              if (area) handleSelectArea(area);
+            }}
+            nodes={selectedWorld.areas.map((area) => {
               const unlocked = isAreaUnlocked(area, progress);
               const stats = getAreaProgressStats(area, progress);
-
-              return (
-                <motion.div
-                  key={area.id}
-                  whileHover={unlocked ? { y: -4, scale: 1.01 } : {}}
-                  whileTap={unlocked ? { scale: 0.98 } : {}}
-                  onClick={() => handleSelectArea(area)}
-                  className={`p-6 rounded-[2rem] border-2 transition-all cursor-pointer flex flex-col justify-between shadow-xl ${
-                    unlocked
-                      ? "bg-[#14152a] border-white/20 hover:border-amber-400/50 text-white"
-                      : "bg-white/[0.02] border-white/10 opacity-70 text-white/50 cursor-not-allowed"
-                  }`}
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <span className="text-3xl p-2 rounded-2xl bg-white/10 border border-white/10">
-                          {area.emoji}
-                        </span>
-                        <div>
-                          <h4 className="text-lg font-black text-white">{area.title}</h4>
-                          <div className="text-xs text-amber-300 font-bold">
-                            Stop {areaIndex + 1} of {selectedWorld.areas.length} · {area.tagline}
-                          </div>
-                        </div>
-                      </div>
-
-                      {unlocked ? (
-                        <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-black flex items-center gap-1">
-                          <Unlock size={12} /> Open
-                        </span>
-                      ) : (
-                        <span className="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-400/30 text-[10px] font-black flex items-center gap-1">
-                          <Lock size={12} /> Locked
-                        </span>
-                      )}
-                    </div>
-
-                    <p className="text-xs text-white/60 line-clamp-2">
-                      {area.environment.ambientDescription}
-                    </p>
-                  </div>
-
-                  {/* Footer status / Unlock requirement */}
-                  <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-bold">
-                    {unlocked ? (
-                      <>
-                        <span className="text-white/60">
-                          {stats.completedCount} / {stats.totalCount} stations
-                        </span>
-                        <span className="text-amber-300 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                          Enter Area <ArrowRight size={14} />
-                        </span>
-                      </>
-                    ) : (
-                      <span className="text-rose-300/80 text-[11px] flex items-center gap-1">
-                        <Lock size={12} /> {area.unlockRequirementText || "Earn more stars to unlock"}
-                      </span>
-                    )}
-                  </div>
-                </motion.div>
-              );
+              const currentId =
+                progress.lastVisitedAreaId && selectedWorld.areas.some((item) => item.id === progress.lastVisitedAreaId)
+                  ? progress.lastVisitedAreaId
+                  : selectedWorld.areas.find((item) => isAreaUnlocked(item, progress) && getAreaProgressStats(item, progress).completedCount < getAreaProgressStats(item, progress).totalCount)?.id
+                    ?? selectedWorld.areas[0]?.id;
+              return {
+                id: area.id,
+                emoji: area.emoji,
+                title: area.title,
+                subtitle: area.tagline,
+                done: stats.completedCount >= stats.totalCount && stats.totalCount > 0,
+                locked: !unlocked,
+                current: area.id === currentId,
+              };
             })}
-          </div>
+          />
         </div>
       </div>
     );
@@ -1602,7 +1554,7 @@ export function ToddlerWorldsNavigator({
               (sum, world) => sum + world.areas.reduce((areaSum, area) => areaSum + area.activities.length, 0),
               0
             )}{" "}
-            stations of original games across the map — tap an island, not a six-card demo.
+            stations on four continent roads. Walk the path. Pip waits on the next land.
           </p>
         </div>
 
@@ -1700,85 +1652,50 @@ export function ToddlerWorldsNavigator({
         </div>
       </div>
 
-      {/* Vast atlas — islands with area pins, not a six-card grid */}
-      <div className="overflow-x-auto rounded-[2.5rem] border-2 border-cyan-300/40 shadow-2xl">
-        <div className="relative min-h-[640px] min-w-[980px] bg-gradient-to-b from-sky-300 via-emerald-300 to-teal-500">
-          <div className="absolute top-5 right-12 text-6xl drop-shadow">☀️</div>
-          <div className="absolute top-8 left-10 text-4xl opacity-80">☁️</div>
-          <div className="absolute top-16 left-[38%] text-3xl opacity-70">☁️</div>
-          <div className="absolute bottom-4 left-8 text-5xl">🌊</div>
-          <div className="absolute bottom-6 right-16 text-4xl">🌊</div>
-          <svg className="absolute inset-0 h-full w-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
-            <path
-              d="M14 34 C 24 20, 30 16, 36 16 S 50 24, 58 26 S 74 14, 80 14 S 86 32, 88 40"
-              fill="none"
-              stroke="white"
-              strokeWidth="0.45"
-              strokeDasharray="1.4 1.1"
-              opacity="0.55"
-            />
-            <path
-              d="M14 34 C 18 48, 22 56, 24 58 S 40 50, 48 52 S 62 54, 70 56 S 84 64, 90 68"
-              fill="none"
-              stroke="white"
-              strokeWidth="0.45"
-              strokeDasharray="1.4 1.1"
-              opacity="0.45"
-            />
-            <path
-              d="M12 78 C 24 80, 32 82, 38 82 S 54 80, 64 80 S 80 72, 90 68"
-              fill="none"
-              stroke="white"
-              strokeWidth="0.45"
-              strokeDasharray="1.4 1.1"
-              opacity="0.4"
-            />
-          </svg>
-
-          {ALL_TODDLER_WORLDS.map((world, worldIndex) => {
-            const stats = getWorldProgressStats(world, progress);
-            const pos = ATLAS_LAYOUT[world.id] ?? {
-              x: 12 + (worldIndex % 4) * 24,
-              y: 18 + Math.floor(worldIndex / 4) * 28,
-            };
-            const stationCount = world.areas.reduce((sum, area) => sum + area.activities.length, 0);
-
-            return (
-              <motion.button
-                key={world.id}
-                type="button"
-                whileHover={{ y: -6, scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => handleSelectWorld(world)}
-                style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
-                className="absolute -translate-x-1/2 -translate-y-1/2 w-44 p-3 rounded-[1.6rem] bg-white/90 border-2 border-white shadow-xl text-left cursor-pointer"
-              >
-                <div className="flex items-center gap-2">
-                  <span className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${world.gradient} flex items-center justify-center text-2xl shadow`}>
-                    {world.emoji}
-                  </span>
-                  <div className="min-w-0">
-                    <h3 className="text-sm font-black text-slate-900 truncate">{world.title}</h3>
-                    <p className="text-[10px] font-bold text-amber-700 truncate">{world.tagline}</p>
-                  </div>
-                </div>
-                <div className="mt-2 flex flex-wrap gap-1">
-                  {world.areas.map((area) => (
-                    <span key={area.id} title={area.title} className="text-sm leading-none">
-                      {area.emoji}
-                    </span>
-                  ))}
-                </div>
-                <div className="mt-2 flex items-center justify-between text-[10px] font-black text-slate-600">
-                  <span>{world.areas.length} areas · {stationCount} games</span>
-                  <span className="text-amber-600 flex items-center gap-0.5">
-                    {stats.starsEarned} <Star size={10} fill="currentColor" />
-                  </span>
-                </div>
-              </motion.button>
-            );
-          })}
-        </div>
+      {/* Continent roads — Khan/ABCMouse path, our scenery */}
+      <div className="space-y-4">
+        {ATLAS_CONTINENTS.map((continent) => {
+          const lands = continent.worldIds
+            .map((id) => ALL_TODDLER_WORLDS.find((world) => world.id === id))
+            .filter((world): world is ToddlerWorld => Boolean(world));
+          const currentId =
+            progress.lastVisitedWorldId && lands.some((world) => world.id === progress.lastVisitedWorldId)
+              ? progress.lastVisitedWorldId
+              : lands[0]?.id;
+          return (
+            <div
+              key={continent.id}
+              className={`p-4 sm:p-5 rounded-[2rem] bg-gradient-to-r ${continent.band} border-2 border-white/15 space-y-2`}
+            >
+              <div className="flex items-baseline justify-between gap-2 px-1">
+                <h3 className="text-lg font-black text-white">
+                  {continent.emoji} {continent.title}
+                </h3>
+                <p className="text-xs font-bold text-white/70">{continent.blurb}</p>
+              </div>
+              <ToddlerWorldTrail
+                label="Walk the continent road"
+                buddyEmoji="🧒"
+                onSelect={(id) => {
+                  const world = lands.find((item) => item.id === id);
+                  if (world) handleSelectWorld(world);
+                }}
+                nodes={lands.map((world) => {
+                  const stats = getWorldProgressStats(world, progress);
+                  return {
+                    id: world.id,
+                    emoji: world.emoji,
+                    title: world.title,
+                    done: stats.percentage >= 100,
+                    locked: false,
+                    current: world.id === currentId,
+                    toy: false,
+                  };
+                })}
+              />
+            </div>
+          );
+        })}
       </div>
 
       {/* Secret Zone Discovery Modal */}
