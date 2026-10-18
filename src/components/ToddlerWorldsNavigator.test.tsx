@@ -184,6 +184,23 @@ describe("Animal World counting activity", () => {
 /** Packed extra on the Farm Valley trail — not one of the original four demo cards. */
 const FARM_DAWN_ROUTE = "world:animal-world:farm-valley:act-farm-rooster-dawn";
 
+describe("wonderland atlas", () => {
+  it("opens as a map of many lands, not six demo cards", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator onAddStar={() => {}} starsCount={0} />
+    );
+    await flush(200);
+    expect(container.textContent).toContain("Wonderland Atlas");
+    expect(container.textContent).toContain("Busy Roads");
+    expect(container.textContent).toContain("Bug Garden");
+    expect(container.textContent).toContain("Market Kitchen");
+    expect(container.textContent).toContain("Town Square");
+    expect(container.textContent).toContain("Ice Neighbours");
+    expect(container.textContent).toContain("Night Neighbourhood");
+    expect(container.textContent).toContain("Animal World");
+  });
+});
+
 describe("world level trail stations", () => {
   it("plays a packed farm station on the same detective contract", async () => {
     const { container } = render(
@@ -200,5 +217,20 @@ describe("world level trail stations", () => {
     await flush(200);
     expect(container.textContent).toContain("Level trail");
     expect(container.textContent).toMatch(/Level \d+ of \d+/);
+  });
+
+  it("plays a game on a new atlas land", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator
+        onAddStar={() => {}}
+        starsCount={0}
+        initialWorldId="world:vehicle-world:garage-bay:act-garage-who-bus"
+      />
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Who Needs Wheels");
+    fireEvent.click(optionButton(container, "The school bus"));
+    await flush(2000);
+    expect(container.textContent).toContain("Discovery Mastered!");
   });
 });

@@ -1,5 +1,6 @@
 import { StoryAdventure, STORY_ADVENTURES } from "./toddlerWorldsData";
 import { attachWorldLevelPacks } from "./toddlerWorldLevelPacks";
+import { ATLAS_LANDS } from "./toddlerWorldAtlasLands";
 
 export type ToddlerActivityType =
   | "clue-detective"    // Listen/look at environmental clues and identify without answer spoiler
@@ -1608,7 +1609,7 @@ export const MY_WORLD: ToddlerWorld = {
   ],
 };
 
-// Array of all 6 Master Learning Worlds
+// Original six plus atlas lands — a map of many places, not a six-card demo.
 export const ALL_TODDLER_WORLDS: ToddlerWorld[] = [
   ANIMAL_WORLD,
   ADVENTURE_WORLD,
@@ -1616,4 +1617,4 @@ export const ALL_TODDLER_WORLDS: ToddlerWorld[] = [
   STORY_WORLD,
   LEARNING_WORLD,
   MY_WORLD,
-].map(attachWorldLevelPacks);
+].map(attachWorldLevelPacks).concat(ATLAS_LANDS);

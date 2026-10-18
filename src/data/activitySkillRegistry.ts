@@ -1,5 +1,6 @@
 import { ALL_TODDLER_WORLDS } from "./toddler/toddlerWorldsArchitecture";
 import { WORLD_LEVEL_PACK_SKILLS } from "./toddler/toddlerWorldLevelPacks";
+import { ATLAS_WORLD_SKILLS } from "./toddler/toddlerWorldAtlasLands";
 import { CURRICULUM_SKILL_NODES, CurriculumDomain, GradeLevelBand } from "./curriculumUniverse";
 import { NavigationTab } from "../types";
 
@@ -120,6 +121,7 @@ const TODDLER_WORLD_ACTIVITY_SKILLS: Record<string, string | undefined> = {
   "act-habits-listening-ears": undefined,
   "act-family-sweet-baby": undefined,
   ...WORLD_LEVEL_PACK_SKILLS,
+  ...ATLAS_WORLD_SKILLS,
 };
 
 const toddlerWorldDefinitions: LearningActivityDefinition[] = ALL_TODDLER_WORLDS.flatMap((world) =>

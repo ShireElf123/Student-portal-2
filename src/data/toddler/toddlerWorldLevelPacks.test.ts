@@ -15,7 +15,8 @@ describe("toddler world level trails", () => {
       (sum, world) => sum + world.areas.reduce((areaSum, area) => areaSum + area.activities.length, 0),
       0
     );
-    expect(total).toBeGreaterThanOrEqual(160);
+    expect(ALL_TODDLER_WORLDS.length).toBeGreaterThanOrEqual(12);
+    expect(total).toBeGreaterThanOrEqual(300);
   });
 
   it("keeps every packed level id unique and skill-mapped or honestly unmapped", () => {

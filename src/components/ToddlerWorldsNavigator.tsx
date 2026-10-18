@@ -107,6 +107,22 @@ const SECRET_ZONES: SecretZoneDef[] = [
   },
 ];
 
+/** Percent positions on the atlas canvas so twelve lands read as a map, not a six-card grid. */
+const ATLAS_LAYOUT: Record<string, { x: number; y: number }> = {
+  "animal-world": { x: 14, y: 34 },
+  "adventure-world": { x: 36, y: 16 },
+  "creative-world": { x: 58, y: 26 },
+  "story-world": { x: 80, y: 14 },
+  "learning-world": { x: 88, y: 40 },
+  "my-world": { x: 24, y: 58 },
+  "vehicle-world": { x: 48, y: 52 },
+  "bug-world": { x: 70, y: 56 },
+  "kitchen-world": { x: 90, y: 68 },
+  "city-world": { x: 12, y: 78 },
+  "arctic-world": { x: 38, y: 82 },
+  "night-world": { x: 64, y: 80 },
+};
+
 export function ToddlerWorldsNavigator({
   onAddStar,
   starsCount,
@@ -1485,15 +1501,16 @@ export function ToddlerWorldsNavigator({
         <div className="space-y-4">
           <div>
             <h3 className="text-lg font-black text-white flex items-center gap-2">
-              <span>🗺️</span> Areas to Explore ({selectedWorld.areas.length})
+              <span>🗺️</span> Area trail · {selectedWorld.areas.length} lands ·{" "}
+              {selectedWorld.areas.reduce((sum, area) => sum + area.activities.length, 0)} stations
             </h3>
             <p className="text-xs text-white/60">
-              Each area contains unique learning activities, missions, and rewards. Progress through areas to unlock new territory!
+              Follow the path through this world. Every land is a trail of original games — not a four-card demo.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {selectedWorld.areas.map((area) => {
+            {selectedWorld.areas.map((area, areaIndex) => {
               const unlocked = isAreaUnlocked(area, progress);
               const stats = getAreaProgressStats(area, progress);
 
@@ -1517,7 +1534,9 @@ export function ToddlerWorldsNavigator({
                         </span>
                         <div>
                           <h4 className="text-lg font-black text-white">{area.title}</h4>
-                          <div className="text-xs text-amber-300 font-bold">{area.tagline}</div>
+                          <div className="text-xs text-amber-300 font-bold">
+                            Stop {areaIndex + 1} of {selectedWorld.areas.length} · {area.tagline}
+                          </div>
                         </div>
                       </div>
 
@@ -1542,7 +1561,7 @@ export function ToddlerWorldsNavigator({
                     {unlocked ? (
                       <>
                         <span className="text-white/60">
-                          {stats.completedCount} / {stats.totalCount} Discoveries
+                          {stats.completedCount} / {stats.totalCount} stations
                         </span>
                         <span className="text-amber-300 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
                           Enter Area <ArrowRight size={14} />
@@ -1572,13 +1591,18 @@ export function ToddlerWorldsNavigator({
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-[2.5rem] bg-gradient-to-r from-indigo-900/60 via-purple-900/50 to-indigo-900/60 border-2 border-indigo-400/30 backdrop-blur-md shadow-xl">
         <div className="space-y-1">
           <span className="px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 text-xs font-black uppercase tracking-wider inline-flex items-center gap-1">
-            <span>🗺️</span> Toddler Wonderland Worlds
+            <span>🗺️</span> Wonderland Atlas
           </span>
           <h2 className="text-2xl sm:text-3xl font-black text-white">
-            Choose Your Learning World!
+            Wander {ALL_TODDLER_WORLDS.length} lands
           </h2>
           <p className="text-xs sm:text-sm text-white/70 max-w-xl">
-            Each world is an explorable environment containing multiple areas, missions, and rewards that remember your progress!
+            {ALL_TODDLER_WORLDS.reduce((sum, world) => sum + world.areas.length, 0)} areas ·{" "}
+            {ALL_TODDLER_WORLDS.reduce(
+              (sum, world) => sum + world.areas.reduce((areaSum, area) => areaSum + area.activities.length, 0),
+              0
+            )}{" "}
+            stations of original games across the map — tap an island, not a six-card demo.
           </p>
         </div>
 
@@ -1676,65 +1700,85 @@ export function ToddlerWorldsNavigator({
         </div>
       </div>
 
-      {/* 6 WORLDS MAP GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {ALL_TODDLER_WORLDS.map((world) => {
-          const stats = getWorldProgressStats(world, progress);
+      {/* Vast atlas — islands with area pins, not a six-card grid */}
+      <div className="overflow-x-auto rounded-[2.5rem] border-2 border-cyan-300/40 shadow-2xl">
+        <div className="relative min-h-[640px] min-w-[980px] bg-gradient-to-b from-sky-300 via-emerald-300 to-teal-500">
+          <div className="absolute top-5 right-12 text-6xl drop-shadow">☀️</div>
+          <div className="absolute top-8 left-10 text-4xl opacity-80">☁️</div>
+          <div className="absolute top-16 left-[38%] text-3xl opacity-70">☁️</div>
+          <div className="absolute bottom-4 left-8 text-5xl">🌊</div>
+          <div className="absolute bottom-6 right-16 text-4xl">🌊</div>
+          <svg className="absolute inset-0 h-full w-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+            <path
+              d="M14 34 C 24 20, 30 16, 36 16 S 50 24, 58 26 S 74 14, 80 14 S 86 32, 88 40"
+              fill="none"
+              stroke="white"
+              strokeWidth="0.45"
+              strokeDasharray="1.4 1.1"
+              opacity="0.55"
+            />
+            <path
+              d="M14 34 C 18 48, 22 56, 24 58 S 40 50, 48 52 S 62 54, 70 56 S 84 64, 90 68"
+              fill="none"
+              stroke="white"
+              strokeWidth="0.45"
+              strokeDasharray="1.4 1.1"
+              opacity="0.45"
+            />
+            <path
+              d="M12 78 C 24 80, 32 82, 38 82 S 54 80, 64 80 S 80 72, 90 68"
+              fill="none"
+              stroke="white"
+              strokeWidth="0.45"
+              strokeDasharray="1.4 1.1"
+              opacity="0.4"
+            />
+          </svg>
 
-          return (
-            <motion.div
-              key={world.id}
-              whileHover={{ y: -5, scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => handleSelectWorld(world)}
-              className="p-6 rounded-[2.25rem] bg-[#14152a] border-2 border-white/15 hover:border-amber-400/50 transition-all cursor-pointer flex flex-col justify-between group shadow-xl"
-            >
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div
-                    className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${world.gradient} flex items-center justify-center text-3xl shadow-lg group-hover:scale-110 transition-transform`}
-                  >
+          {ALL_TODDLER_WORLDS.map((world, worldIndex) => {
+            const stats = getWorldProgressStats(world, progress);
+            const pos = ATLAS_LAYOUT[world.id] ?? {
+              x: 12 + (worldIndex % 4) * 24,
+              y: 18 + Math.floor(worldIndex / 4) * 28,
+            };
+            const stationCount = world.areas.reduce((sum, area) => sum + area.activities.length, 0);
+
+            return (
+              <motion.button
+                key={world.id}
+                type="button"
+                whileHover={{ y: -6, scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => handleSelectWorld(world)}
+                style={{ left: `${pos.x}%`, top: `${pos.y}%` }}
+                className="absolute -translate-x-1/2 -translate-y-1/2 w-44 p-3 rounded-[1.6rem] bg-white/90 border-2 border-white shadow-xl text-left cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <span className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${world.gradient} flex items-center justify-center text-2xl shadow`}>
                     {world.emoji}
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-black text-slate-900 truncate">{world.title}</h3>
+                    <p className="text-[10px] font-bold text-amber-700 truncate">{world.tagline}</p>
                   </div>
-                  <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-white/10 text-amber-300 font-bold text-xs border border-white/10">
-                    <Star size={12} fill="currentColor" /> {stats.starsEarned} Stars
-                  </div>
                 </div>
-
-                <div>
-                  <h3 className="text-xl font-black text-white group-hover:text-amber-300 transition-colors">
-                    {world.title}
-                  </h3>
-                  <div className="text-xs text-amber-300 font-bold mt-0.5">{world.tagline}</div>
-                  <p className="text-xs text-white/60 mt-2 line-clamp-2 leading-relaxed">
-                    {world.description}
-                  </p>
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {world.areas.map((area) => (
+                    <span key={area.id} title={area.title} className="text-sm leading-none">
+                      {area.emoji}
+                    </span>
+                  ))}
                 </div>
-              </div>
-
-              {/* Progress & Explore CTA */}
-              <div className="mt-5 pt-3 border-t border-white/10 space-y-2">
-                <div className="flex items-center justify-between text-[11px] font-bold text-white/60">
-                  <span>{stats.unlockedAreasCount} / {stats.totalAreasCount} Areas Unlocked</span>
-                  <span className="text-amber-300">{stats.percentage}%</span>
-                </div>
-                <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full transition-all duration-500"
-                    style={{ width: `${stats.percentage}%` }}
-                  />
-                </div>
-
-                <div className="pt-2 flex items-center justify-between text-xs font-black text-amber-300 group-hover:text-amber-200">
-                  <span>{world.areas.length} Distinct Areas</span>
-                  <span className="flex items-center gap-1">
-                    Enter World <ArrowRight size={14} />
+                <div className="mt-2 flex items-center justify-between text-[10px] font-black text-slate-600">
+                  <span>{world.areas.length} areas · {stationCount} games</span>
+                  <span className="text-amber-600 flex items-center gap-0.5">
+                    {stats.starsEarned} <Star size={10} fill="currentColor" />
                   </span>
                 </div>
-              </div>
-            </motion.div>
-          );
-        })}
+              </motion.button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Secret Zone Discovery Modal */}
