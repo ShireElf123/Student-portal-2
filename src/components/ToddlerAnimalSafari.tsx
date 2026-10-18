@@ -10,83 +10,14 @@ import {
   recordDailyCount,
   recordDailySetMember,
 } from "../data/toddler/toddlerDailyAdventure";
+import { DEFAULT_SAFARI_FRIENDS, type SafariFriend } from "../data/toddler/toddlerWorldPlayThemes";
 
-interface Animal {
-  id: string;
-  name: string;
-  emoji: string;
-  soundText: string;
-  call: string;
-  funFact: string;
-  habitat: string;
-  bgGradient: string;
-}
-
-const SAFARI_ANIMALS: Animal[] = [
-  {
-    id: "lion",
-    name: "Brave Lion",
-    emoji: "🦁",
-    soundText: "ROAAAR!",
-    call: "Rrrroaaar! Roar! I am the brave golden Lion with a fuzzy mane!",
-    funFact: "Lions live in families called prides and love resting under big acacia trees!",
-    habitat: "Sunny Savanna",
-    bgGradient: "from-amber-400 to-orange-500",
-  },
-  {
-    id: "elephant",
-    name: "Gentle Elephant",
-    emoji: "🐘",
-    soundText: "PAWOOO!",
-    call: "Pawoooo! I am the big gentle Elephant! I spray water with my long trunk!",
-    funFact: "Elephants have gigantic floppy ears that help keep them cool in the sunshine!",
-    habitat: "Waterhole",
-    bgGradient: "from-slate-400 to-sky-500",
-  },
-  {
-    id: "monkey",
-    name: "Cheeky Monkey",
-    emoji: "🐵",
-    soundText: "OOH-OOH AAH-AAH!",
-    call: "Ooh ooh aah aah! I am a playful Monkey swinging through the green jungle vines!",
-    funFact: "Monkeys have long tails that act like an extra hand to hold onto tree branches!",
-    habitat: "Tall Treetops",
-    bgGradient: "from-emerald-400 to-teal-500",
-  },
-  {
-    id: "duck",
-    name: "Happy Duck",
-    emoji: "🦆",
-    soundText: "QUACK QUACK!",
-    call: "Quack quack! Splish splash! I am a cheerful Duck swimming in the blue pond!",
-    funFact: "Duck feathers are waterproof, keeping them warm and dry while swimming!",
-    habitat: "Lily Pad Pond",
-    bgGradient: "from-sky-400 to-cyan-500",
-  },
-  {
-    id: "frog",
-    name: "Bouncy Frog",
-    emoji: "🐸",
-    soundText: "RIBBIT RIBBIT!",
-    call: "Ribbit ribbit! Hop hop! I am a green tree frog catching bugs with my long tongue!",
-    funFact: "Frogs can breathe through their skin and take giant leaping jumps!",
-    habitat: "River Stream",
-    bgGradient: "from-lime-400 to-emerald-600",
-  },
-  {
-    id: "cow",
-    name: "Friendly Cow",
-    emoji: "🐄",
-    soundText: "MOOO MOOO!",
-    call: "Moooo moooo! I am the spotted dairy Cow munching on delicious green clover!",
-    funFact: "Cows have excellent senses of smell and enjoy making friends in grassy pastures!",
-    habitat: "Green Meadow",
-    bgGradient: "from-rose-400 to-pink-500",
-  },
-];
+type Animal = SafariFriend;
 
 interface ToddlerAnimalSafariProps {
   onAddStar?: (amount?: number) => void;
+  animals?: SafariFriend[];
+  sceneTitle?: string;
 }
 
 /**
@@ -96,12 +27,17 @@ interface ToddlerAnimalSafariProps {
  */
 const CELEBRATION_PAUSE_MS = 900;
 
-export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
+export function ToddlerAnimalSafari({
+  onAddStar,
+  animals,
+  sceneTitle = "Savanna Animal Detective",
+}: ToddlerAnimalSafariProps) {
+  const roster = animals && animals.length >= 3 ? animals : DEFAULT_SAFARI_FRIENDS;
   const [activeMode, setActiveMode] = useState<"explore" | "detective">("detective");
   // Opening mystery is drawn at random so the game does not always start on
   // the same animal (it used to be the lion every single time).
   const [targetAnimal, setTargetAnimal] = useState<Animal>(
-    () => SAFARI_ANIMALS[Math.floor(Math.random() * SAFARI_ANIMALS.length)] ?? SAFARI_ANIMALS[0]
+    () => roster[Math.floor(Math.random() * roster.length)] ?? roster[0]
   );
   const [selectedAnimal, setSelectedAnimal] = useState<Animal | null>(null);
   const [score, setScore] = useState(0);
@@ -126,12 +62,12 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (activeMode === "detective") {
-        speakText(`Welcome to Animal Safari! Who makes this sound? ${targetAnimal.soundText}! Tap the right animal!`, {
+        speakText(`Welcome to ${sceneTitle}! Who makes this sound? ${targetAnimal.soundText}! Tap the right animal!`, {
           pitch: 1.25,
           rate: 0.9,
         });
       } else {
-        speakText("Welcome to Animal Safari! Tap any animal friend to hear their call and fun secrets!", {
+        speakText(`Welcome to ${sceneTitle}! Tap any animal friend to hear their call and fun secrets!`, {
           pitch: 1.2,
           rate: 0.9,
         });
@@ -147,8 +83,8 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
   const startNewDetectiveRound = () => {
     advancePendingRef.current = false;
     clearCelebrationTimers();
-    const choices = SAFARI_ANIMALS.filter((animal) => animal.id !== targetAnimal.id);
-    const nextTarget = choices[Math.floor(Math.random() * choices.length)] ?? SAFARI_ANIMALS[0];
+    const choices = roster.filter((animal) => animal.id !== targetAnimal.id);
+    const nextTarget = choices[Math.floor(Math.random() * choices.length)] ?? roster[0];
     setTargetAnimal(nextTarget);
     setSelectedAnimal(null);
     setShowCelebration(false);
@@ -304,10 +240,10 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
       {/* Top Banner Card */}
       <div className="p-6 rounded-3xl bg-gradient-to-r from-amber-500/20 via-emerald-500/20 to-sky-500/20 border-2 border-emerald-400/30 text-center space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-400/20 text-emerald-300 text-xs font-black uppercase tracking-wider">
-          <span>🌿</span> Animal Safari &amp; Wildlife Sounds
+          <span>🌿</span> {sceneTitle}
         </div>
         <h2 className="text-2xl sm:text-3xl font-black text-white">
-          Savanna Animal Detective
+          {sceneTitle}
         </h2>
         <p className="text-white/70 text-xs sm:text-sm max-w-lg mx-auto">
           Hear friendly animal voices, meet cute creatures, and solve safari mystery sounds!
@@ -387,7 +323,7 @@ export function ToddlerAnimalSafari({ onAddStar }: ToddlerAnimalSafariProps) {
 
       {/* Animal Cards Grid (Chunky 3D Buttons) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        {SAFARI_ANIMALS.map((animal) => {
+        {roster.map((animal) => {
           const isCorrectTarget = activeMode === "detective" && showCelebration && animal.id === targetAnimal.id;
           return (
             <motion.button

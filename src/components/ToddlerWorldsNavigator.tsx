@@ -63,6 +63,7 @@ import { ToddlerK1Studio } from "./ToddlerK1Studio";
 import type { K1StudioGameId } from "../data/toddler/k1StudioGames";
 import { ToddlerWorldTrail } from "./ToddlerWorldTrail";
 import { ATLAS_CONTINENTS, TOY_ACTIVITY_TYPES } from "../data/toddler/toddlerWorldAtlasLayout";
+import { getWorldPlayTheme } from "../data/toddler/toddlerWorldPlayThemes";
 
 interface ToddlerWorldsNavigatorProps {
   onAddStar: (count: number) => void;
@@ -713,6 +714,7 @@ export function ToddlerWorldsNavigator({
   // VIEW LEVEL 4: ACTIVITY RUNNER / GAMEPLAY
   // ==========================================================================
   if (activeActivity) {
+    const playTheme = getWorldPlayTheme(activeActivity.worldId, activeActivity.areaId);
     return (
       <div className="max-w-3xl mx-auto space-y-4">
         {/* Navigation Bar */}
@@ -778,19 +780,23 @@ export function ToddlerWorldsNavigator({
         {activeActivity.type === "memory-match" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-emerald-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerMemoryGame onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerMemoryGame pairs={playTheme.memory} onAddStar={() => completeWorldToy(activeActivity)} />
           </div>
         )}
         {activeActivity.type === "balloon-sky" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-sky-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerBalloonSky onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerBalloonSky letters={playTheme.balloonLetters} onAddStar={() => completeWorldToy(activeActivity)} />
           </div>
         )}
         {activeActivity.type === "animal-safari" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-lime-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerAnimalSafari onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerAnimalSafari
+              animals={playTheme.safari}
+              sceneTitle={playTheme.safariTitle}
+              onAddStar={() => completeWorldToy(activeActivity)}
+            />
           </div>
         )}
         {activeActivity.type === "rhyme-garden" && (

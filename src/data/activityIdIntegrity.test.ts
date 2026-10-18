@@ -286,7 +286,7 @@ describe("activity-ID integrity", () => {
 
     const expectedDynamic = [
       "src/components/ToddlerK1Studio.tsx:51 (game.activityId)",
-      "src/components/ToddlerWorldsNavigator.tsx:502 (activeActivity.id)",
+      "src/components/ToddlerWorldsNavigator.tsx:503 (activeActivity.id)",
       "src/contentEngine/gameAdapters.ts:79 (engine.activityId)",
       "src/contentEngine/gameAdapters.ts:126 (engine.activityId)",
       "src/contentEngine/gameAdapters.ts:173 (engine.activityId)",

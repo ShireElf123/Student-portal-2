@@ -244,6 +244,8 @@ describe("world level trail stations", () => {
     );
     await flush(500);
     expect(container.textContent).toContain("Floe Safari");
+    expect(container.textContent).toContain("🐧");
+    expect(container.textContent).not.toContain("🦁");
     expect(container.textContent).not.toContain("Let's play");
     expect(container.textContent).not.toContain("Observe the clues");
   });
