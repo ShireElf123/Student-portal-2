@@ -1289,6 +1289,7 @@ export default function App() {
               }
               setActiveTab("assessment");
             }}
+            onLaunchLearning={handleLearningLaunch}
           />
         )}
 

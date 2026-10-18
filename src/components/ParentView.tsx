@@ -5,12 +5,8 @@ import {
   Target,
   CheckCircle2,
   CalendarCheck,
-  AlertCircle,
   Link as LinkIcon,
   ChevronDown,
-  ChevronRight,
-  TrendingUp,
-  Brain,
   Award,
   Plus,
   X,
@@ -40,14 +36,13 @@ import { VoiceSettingsModal } from "./VoiceSettingsModal";
 import { PrintableWorksheetGenerator } from "./PrintableWorksheetGenerator";
 import { DiagnosticPlacementModal } from "./DiagnosticPlacementModal";
 import { MistakeReviewVaultModal } from "./MistakeReviewVaultModal";
-import { CURRICULUM_SKILL_NODES, CURRICULUM_DOMAINS } from "../data/curriculumUniverse";
+import { ParentEvidenceBoard } from "./ParentEvidenceBoard";
+import type { EvidenceLaunch } from "../utils/parentEvidenceBoard";
 import {
   getDueMistakesCount,
   getLearnerModel,
   getInitialLearnerModel,
   subscribeLearnerModel,
-  computeDomainMastery,
-  getLearnerSummary,
   getSavedDiagnosticResult,
   DiagnosticResult,
   LearnerModel,
@@ -73,6 +68,7 @@ interface ParentViewProps {
   onApplyDiagnosticRecommendation?: (nodeId: string) => void;
   assessmentResults?: AssessmentResult[];
   onStartAssessment?: (stage?: "toddler" | "primary") => void;
+  onLaunchLearning?: (launch: EvidenceLaunch) => void;
   currentUserId?: string | null;
 }
 
@@ -98,6 +94,7 @@ export function ParentView({
   onApplyDiagnosticRecommendation,
   assessmentResults = [],
   onStartAssessment,
+  onLaunchLearning,
   currentUserId = null,
 }: ParentViewProps) {
   // Real linked learners resolve from the cloud family graph. Placeholder/demo
@@ -260,6 +257,14 @@ export function ParentView({
       stopSpeaking();
     } else {
       testVoice("Hello! I am your AI learning coach. Ready for today's learning quest?");
+    }
+  };
+
+  const handleEvidenceLaunch = (launch: EvidenceLaunch) => {
+    try {
+      onLaunchLearning?.(launch);
+    } catch {
+      // Registry mismatch is a programming error; keep the parent screen usable.
     }
   };
 
@@ -454,7 +459,7 @@ export function ParentView({
             Your learner’s progress
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1 font-medium">
-            A clear view of recent learning, progress, and what to try next.
+            Skill, last evidence, and the next activity — not XP or a mastery average.
           </p>
         </div>
 
@@ -547,6 +552,12 @@ export function ParentView({
         </div>
       </div>
 
+      <ParentEvidenceBoard
+        model={displayModel}
+        learnerName={activeChild?.name || "your learner"}
+        onLaunch={onLaunchLearning ? handleEvidenceLaunch : undefined}
+      />
+
       {/* AI Conversation Starters for Parents */}
       <div className="bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 shadow-xl space-y-5">
         <div className="flex items-center justify-between flex-wrap gap-3">
@@ -589,26 +600,6 @@ export function ParentView({
           ))}
         </div>
       </div>
-
-      {/* Evidence-based next action */}
-      {displayModel.recommendedNext[0] && (() => {
-        const nextAction = displayModel.recommendedNext[0];
-        return (
-          <div className="flex flex-col justify-between gap-5 rounded-3xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/70 via-teal-950/50 to-slate-900 p-6 shadow-xl sm:p-7 md:flex-row md:items-center">
-            <div className="flex items-center gap-4">
-              <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-emerald-400/30 bg-emerald-400/10 text-3xl">🌱</div>
-              <div>
-                <p className="text-xs font-black uppercase tracking-wider text-emerald-300">Suggested next step · {nextAction.badge}</p>
-                <h3 className="mt-1 text-base font-black text-white sm:text-lg">{nextAction.title}</h3>
-                <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-300">{nextAction.reason}</p>
-              </div>
-            </div>
-            <button onClick={() => nextAction.nodeId && onApplyDiagnosticRecommendation ? onApplyDiagnosticRecommendation(nextAction.nodeId) : onNavigate(nextAction.targetTab)} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border-b-2 border-emerald-700 bg-emerald-500 px-5 py-3 text-xs font-black text-slate-950 shadow-lg transition hover:bg-emerald-400">
-              Open suggested step <ChevronRight size={16}/>
-            </button>
-          </div>
-        );
-      })()}
 
       {/* Family settings: only expose controls that work in this build. */}
       <section className="rounded-3xl border border-slate-700/80 bg-slate-900/90 p-5 shadow-xl sm:p-6">
@@ -787,141 +778,30 @@ export function ParentView({
         </div>
       </div>
 
-      {/* Pro Competency Gap Radar & Diagnostic Intelligence */}
-      <div className="bg-slate-900/90 border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
-              <Compass className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-base sm:text-lg font-black text-white">
-                Curriculum Competency Radar & Diagnostic Insights
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-medium">
-                Standard-aligned mastery across Mathematics, Phonics, STEM, and Computational Thinking.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setIsWorksheetModalOpen(true)}
-              className="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
-            >
-              <Printer size={15} />
-              <span>Print Offline Worksheet</span>
-            </button>
-            <button
-              onClick={() => setIsDiagnosticModalOpen(true)}
-              className="px-3.5 py-2 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
-            >
-              <Compass size={15} />
-              <span>Run Diagnostic Check</span>
-            </button>
-          </div>
+      {/* Offline worksheet and optional diagnostic — secondary to scored evidence. */}
+      <div className="bg-slate-900/90 border border-slate-700/80 rounded-3xl p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 className="text-sm font-black text-white">Print a worksheet or run a short snapshot</h3>
+          <p className="text-xs text-slate-400 mt-1 font-medium">
+            These are optional. They do not fill the evidence board until the learner answers.
+          </p>
         </div>
-
-        {/* Domain Progress Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {CURRICULUM_DOMAINS.map((domain) => {
-            const domainNodes = CURRICULUM_SKILL_NODES.filter((n) => n.domain === domain.id);
-            // Real computed mastery from the displayed model (linked cloud or this browser)
-            const pct = isViewingLinked
-              ? (() => {
-                  if (domainNodes.length === 0) return 0;
-                  let totalEvidence = 0;
-                  domainNodes.forEach((node) => {
-                    const record = displayModel.skillMastery[node.id];
-                    if (record) totalEvidence += record.tier === "master" ? 100 : record.evidenceScore;
-                  });
-                  return Math.min(100, Math.round(totalEvidence / domainNodes.length));
-                })()
-              : computeDomainMastery(domain.id);
-            return (
-              <div
-                key={domain.id}
-                className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 space-y-3"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-xl">{domain.emoji}</span>
-                  <span className="text-xs font-black text-emerald-400">{pct}% Mastered</span>
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-white truncate">{domain.label}</h4>
-                  <p className="text-[11px] text-slate-400 mt-0.5">{domainNodes.length} Standards Nodes</p>
-                </div>
-                <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-emerald-500 rounded-full transition-all duration-500"
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
-              </div>
-            );
-          })}
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => setIsWorksheetModalOpen(true)}
+            className="px-3.5 py-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+          >
+            <Printer size={15} />
+            <span>Print worksheet</span>
+          </button>
+          <button
+            onClick={() => setIsDiagnosticModalOpen(true)}
+            className="px-3.5 py-2 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+          >
+            <Compass size={15} />
+            <span>Short snapshot</span>
+          </button>
         </div>
-
-        {/* Identified Gap / Recommended Next Step Banner */}
-        {displayModel.recommendedNext.length > 0 && (
-          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs sm:text-sm">
-            <div className="flex items-center gap-2.5 text-amber-200">
-              <AlertCircle size={18} className="text-amber-400 shrink-0" />
-              <span>
-                <strong>Smart Recommendation ({displayModel.recommendedNext[0].badge}):</strong>{" "}
-                {displayModel.recommendedNext[0].title} — {displayModel.recommendedNext[0].reason}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => onNavigate(displayModel.recommendedNext[0].targetTab)}
-                className="px-3.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-bold text-xs transition-colors cursor-pointer"
-              >
-                Start Recommended Task
-              </button>
-              <button
-                onClick={() => setIsWorksheetModalOpen(true)}
-                className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-colors cursor-pointer"
-              >
-                Worksheet
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Unified Learning Journey Event Stream */}
-        {displayModel.recentEvents.length > 0 && (
-          <div className="pt-2 border-t border-slate-800/80 space-y-2.5">
-            <div className="flex items-center justify-between text-xs text-slate-400 font-bold">
-              <span>Recent Learning Milestones ({displayModel.recentEvents.length} Recorded)</span>
-              <span className="text-emerald-400">{displayModel.strongSkills.length} Strong Skills</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-48 overflow-y-auto pr-1">
-              {displayModel.recentEvents.slice(0, 6).map((evt) => (
-                <div
-                  key={evt.id}
-                  className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-xs flex items-center justify-between gap-2 shadow-sm"
-                >
-                  <div className="min-w-0">
-                    <p className="font-bold text-white truncate">{evt.activityTitle}</p>
-                    <p className="text-[10px] text-slate-400 mt-0.5">
-                      {new Date(evt.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} • {evt.domain}
-                    </p>
-                  </div>
-                  <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md shrink-0 ${
-                    evt.result === "mastered"
-                      ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
-                      : evt.result === "success"
-                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
-                      : "bg-blue-500/20 text-blue-300 border border-blue-500/30"
-                  }`}>
-                    {evt.result}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Guided Milestone Assessments for Early & Primary Learners */}
@@ -933,10 +813,10 @@ export function ParentView({
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-black text-white">
-                Guided Milestone Assessments ({activeChild?.name})
+                Optional skill snapshot ({activeChild?.name})
               </h3>
               <p className="text-xs sm:text-sm text-slate-400 mt-0.5 font-medium">
-                Short interactive learning snapshots for early literacy, math and reasoning. Use these as a guide—not a formal or standardized assessment.
+                A short guided check, not a grade and not mastery. Scored answers still belong on the evidence board above.
               </p>
             </div>
           </div>
@@ -983,8 +863,8 @@ export function ParentView({
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs sm:text-sm font-bold text-white">{res.assessmentTitle}</span>
-                  <span className="px-2 py-0.5 rounded text-xs font-black bg-amber-500/10 text-amber-300 border border-amber-500/30">
-                    ⭐ {res.starsAwarded} Stars
+                  <span className="px-2 py-0.5 rounded text-xs font-black bg-slate-800 text-slate-300 border border-slate-700">
+                    {res.date}
                   </span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-slate-400">

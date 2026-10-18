@@ -604,7 +604,7 @@ export function subscribeLearnerModel(callback: (model: LearnerModel) => void): 
 }
 
 /** Returns a real, launchable learning activity linked to the requested skill. */
-function selectActivityForSkill(skillId: string, gradeBand: LearnerModel["gradeBand"], preferredActivityId?: string) {
+export function selectActivityForSkill(skillId: string, gradeBand: LearnerModel["gradeBand"], preferredActivityId?: string) {
   const candidates = getActivitiesForSkill(skillId).filter((activity) =>
     activity.skillIds.includes(skillId) &&
     !["engagement", "assessment", "homework"].includes(activity.experienceType) &&
