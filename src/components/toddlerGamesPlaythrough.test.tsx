@@ -77,6 +77,7 @@ import { ToddlerQuizzesAndGames } from "./ToddlerQuizzesAndGames";
 import { ToddlerColorLab } from "./ToddlerColorLab";
 import { ToddlerMusicPiano } from "./ToddlerMusicPiano";
 import { ToddlerBubblePopGame } from "./ToddlerBubblePopGame";
+import { ToddlerK1Studio } from "./ToddlerK1Studio";
 
 const flush = async (ms = 0) => {
   await act(async () => {
@@ -357,4 +358,40 @@ describe("Open-ended toddler games", () => {
     fireEvent.click(poppable(container)[0]);
     await flush(50);
     expect(popped(container)).toBe(7);
-  });});
+  });
+});
+
+describe("K–1 skill studio (curated, AI off)", () => {
+  it("Picnic Plus scores five put-together/take-away rounds and can replay", async () => {
+    const { container, getByText } = render(<ToddlerK1Studio gameId="picnic-plus" />);
+    await flush(250);
+
+    expect(container.textContent).toContain("Picnic Plus");
+
+    const playCorrect = async (label: string) => {
+      fireEvent.click(getByText(label));
+      await flush(800);
+    };
+
+    await playCorrect("5 berries");
+    await playCorrect("8 pretzels");
+    await playCorrect("4 grapes");
+    await playCorrect("0 cookies");
+    await playCorrect("7 sandwiches");
+
+    expect(container.textContent).toContain("Studio round complete");
+    fireEvent.click(getByText("Play Picnic Plus again"));
+    await flush(250);
+    expect(container.textContent).toContain("3 berries");
+  });
+
+  it("Bead Train asks for the next bead, not a random quiz", async () => {
+    const { container, getByText } = render(<ToddlerK1Studio gameId="bead-train" />);
+    await flush(250);
+    expect(container.textContent).toContain("Bead Train");
+    expect(container.textContent).toContain("🔴 🔵 🔴 🔵 🔴");
+    fireEvent.click(getByText("Blue bead"));
+    await flush(800);
+    expect(container.textContent).toContain("☀️ ☀️ 🌙");
+  });
+});

@@ -30,6 +30,8 @@ import { ToddlerColorLab } from "./ToddlerColorLab";
 import { ToddlerMusicPiano } from "./ToddlerMusicPiano";
 import { ToddlerAnimalSafari } from "./ToddlerAnimalSafari";
 import { ToddlerBalloonSky } from "./ToddlerBalloonSky";
+import { ToddlerK1Studio } from "./ToddlerK1Studio";
+import { K1_STUDIO_GAMES, K1_STUDIO_GAME_IDS, type K1StudioGameId } from "../data/toddler/k1StudioGames";
 import { GeneratedContentPanel } from "./GeneratedContentPanel";
 import type { GameBlueprint, BubblePopBlueprint } from "../contentEngine/types";
 
@@ -53,7 +55,15 @@ type ToddlerActivity =
   | "color-magic"
   | "bubble-pop"
   | "bubble-pop-phonics"
-  | "feed-animal";
+  | "feed-animal"
+  | K1StudioGameId;
+
+const TODDLER_ACTIVITY_IDS: ToddlerActivity[] = [
+  "rainbow-piano", "animal-safari", "balloon-sky", "animal-quiz",
+  "shape-match", "memory-match", "rhyme-time", "color-magic",
+  "bubble-pop", "bubble-pop-phonics", "feed-animal",
+  ...K1_STUDIO_GAME_IDS,
+];
 
 interface QuizQuestion {
   id: string;
@@ -453,12 +463,7 @@ export function ToddlerQuizzesAndGames({
   initialBlueprintLearnerId,
 }: ToddlerQuizzesAndGamesProps) {
   const [currentActivity, setCurrentActivity] = useState<ToddlerActivity>(() => {
-    const validActivities: ToddlerActivity[] = [
-      "rainbow-piano", "animal-safari", "balloon-sky", "animal-quiz",
-      "shape-match", "memory-match", "rhyme-time", "color-magic",
-      "bubble-pop", "bubble-pop-phonics", "feed-animal"
-    ];
-    if (targetActivity && validActivities.includes(targetActivity as ToddlerActivity)) {
+    if (targetActivity && TODDLER_ACTIVITY_IDS.includes(targetActivity as ToddlerActivity)) {
       return targetActivity as ToddlerActivity;
     }
     return "animal-quiz";
@@ -496,12 +501,7 @@ export function ToddlerQuizzesAndGames({
   }, [generatedBubbleLearnerId]);
 
   useEffect(() => {
-    const validActivities: ToddlerActivity[] = [
-      "rainbow-piano", "animal-safari", "balloon-sky", "animal-quiz",
-      "shape-match", "memory-match", "rhyme-time", "color-magic",
-      "bubble-pop", "bubble-pop-phonics", "feed-animal"
-    ];
-    if (targetActivity && validActivities.includes(targetActivity as ToddlerActivity)) {
+    if (targetActivity && TODDLER_ACTIVITY_IDS.includes(targetActivity as ToddlerActivity)) {
       setCurrentActivity(targetActivity as ToddlerActivity);
     }
   }, [targetActivity]);
@@ -1187,6 +1187,32 @@ export function ToddlerQuizzesAndGames({
         </button>
       </div>
 
+      <div className="mb-4">
+        <p className="mb-2 px-1 text-[10px] font-black uppercase tracking-wider text-white/50">
+          K–1 skill studio · works with AI off
+        </p>
+        <div className="grid grid-cols-3 sm:grid-cols-7 gap-1.5">
+          {K1_STUDIO_GAMES.map((studioGame) => (
+            <button
+              key={studioGame.id}
+              type="button"
+              onClick={() => {
+                setCurrentActivity(studioGame.id);
+                soundEffects.playPop();
+              }}
+              className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[10px] sm:text-[11px] transition-all cursor-pointer border-b-4 ${
+                currentActivity === studioGame.id
+                  ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md ring-2 ring-emerald-300/40"
+                  : "bg-white/5 border-white/10 text-white/70 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              <span className="text-base sm:text-lg">{studioGame.emoji}</span>
+              <span className="truncate max-w-full">{studioGame.title.split(" ")[0]}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* ACTIVITY 0: RAINBOW XYLOPHONE */}
       {currentActivity === "rainbow-piano" && (
         <ToddlerMusicPiano onAddStar={onAddStar} />
@@ -1683,6 +1709,10 @@ export function ToddlerQuizzesAndGames({
       {/* ACTIVITY 7: COLOR MAGIC LAB */}
       {currentActivity === "color-magic" && (
         <ToddlerColorLab onAddStar={onAddStar} />
+      )}
+
+      {K1_STUDIO_GAME_IDS.includes(currentActivity as K1StudioGameId) && (
+        <ToddlerK1Studio gameId={currentActivity as K1StudioGameId} onAddStar={onAddStar} />
       )}
     </div>
   );

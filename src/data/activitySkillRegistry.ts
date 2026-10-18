@@ -59,6 +59,13 @@ const CORE_ACTIVITY_DEFINITIONS: LearningActivityDefinition[] = [
   { id: "toddler-bubble-pop", title: "Rainbow Bubble Popper", skillIds: [], gradeBand: "toddler", experienceId: "bubble-pop", experienceType: "engagement", launch: { route: "toddler", targetId: "game:bubble-pop" } },
   { id: "toddler-mission-animals", title: "Animal World Safari Mission", skillIds: ["sci-k1-habitats"], gradeBand: "toddler", experienceId: "animal-safari", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:animal-safari" } },
   { id: "toddler-mission-counting", title: "Counting Grove Mission", skillIds: ["math-k1-counting"], gradeBand: "toddler", experienceId: "feed-animal", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:feed-animal" } },
+  { id: "toddler-ten-frame-taxi", title: "Ten-Frame Taxi", skillIds: ["math-k1-place-value"], gradeBand: "toddler", experienceId: "ten-frame-taxi", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:ten-frame-taxi" } },
+  { id: "toddler-blend-kitchen", title: "Blend Kitchen", skillIds: ["read-k1-consonant-blends"], gradeBand: "toddler", experienceId: "blend-kitchen", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:blend-kitchen" } },
+  { id: "toddler-bead-train", title: "Bead Train", skillIds: ["logic-k1-patterns"], gradeBand: "toddler", experienceId: "bead-train", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:bead-train" } },
+  { id: "toddler-picnic-plus", title: "Picnic Plus", skillIds: ["math-k1-addition-subtraction"], gradeBand: "toddler", experienceId: "picnic-plus", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:picnic-plus" } },
+  { id: "toddler-weather-porch", title: "Weather Porch", skillIds: ["sci-k1-weather-seasons"], gradeBand: "toddler", experienceId: "weather-porch", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:weather-porch" } },
+  { id: "toddler-laundry-sort", title: "Laundry Sort", skillIds: ["logic-k1-sorting"], gradeBand: "toddler", experienceId: "laundry-sort", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:laundry-sort" } },
+  { id: "toddler-story-porch", title: "Story Porch", skillIds: ["read-k1-listening-comprehension"], gradeBand: "toddler", experienceId: "story-porch", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:story-porch" } },
 
   // Generic activities are valid for the linked skill, but recommendations prefer a dedicated lesson/game.
   { id: "curriculum-skill-practice", title: "Curriculum Skill Quest", skillIds: allSkillIds, gradeBand: "2-3", experienceId: "curriculum-skill-tree", experienceType: "curriculum-quest", launch: { route: "odyssey", targetId: "curriculum-quest" } },
@@ -310,6 +317,7 @@ export function validateLearningActivityRegistry(): string[] {
   const toddlerGameTargets = new Set([
     "bubble-pop-phonics", "animal-safari", "feed-animal", "color-magic",
     "rhyme-time", "rainbow-piano", "balloon-sky", "memory-match", "shape-match", "animal-quiz", "bubble-pop",
+    "ten-frame-taxi", "blend-kitchen", "bead-train", "picnic-plus", "weather-porch", "laundry-sort", "story-porch",
   ]);
 
   for (const activity of LEARNING_ACTIVITY_DEFINITIONS) {
