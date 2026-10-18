@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { motion } from "motion/react";
-import { Lock, Star } from "lucide-react";
+import { Lock } from "lucide-react";
 
 export interface WorldTrailNode {
   id: string;
@@ -36,68 +36,61 @@ export function ToddlerWorldTrail({
   }, [nodes]);
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between gap-2 px-1">
-        <p className="text-[11px] font-black uppercase tracking-wider text-amber-200/90">{label}</p>
-        {sceneryEmojis.length > 0 && (
-          <div className="flex gap-1 text-lg" aria-hidden>
-            {sceneryEmojis.slice(0, 5).map((emoji, index) => (
+    <section className="space-y-2">
+      <p className="px-1 text-sm font-black text-white/80">{label}</p>
+      <div
+        ref={scrollerRef}
+        className="overflow-x-auto rounded-[2rem] border border-white/20 shadow-xl"
+      >
+        <div className="relative min-h-[220px] min-w-max bg-gradient-to-b from-sky-300 via-sky-200 to-emerald-300">
+          <div className="pointer-events-none absolute inset-x-0 top-3 flex justify-between px-10 text-3xl opacity-70" aria-hidden>
+            <span>☁️</span>
+            <span>☀️</span>
+            <span>☁️</span>
+            {sceneryEmojis.slice(0, 2).map((emoji, index) => (
               <span key={`${emoji}-${index}`}>{emoji}</span>
             ))}
           </div>
-        )}
-      </div>
-      <div
-        ref={scrollerRef}
-        className="overflow-x-auto pb-2 rounded-[1.8rem] bg-gradient-to-b from-sky-300/20 via-emerald-400/10 to-amber-700/20 border border-white/10"
-      >
-        <div className="relative flex items-end min-w-max px-8 pt-10 pb-6 gap-1">
-          <div className="absolute left-8 right-8 bottom-9 h-3 rounded-full bg-amber-800/90 shadow-inner" />
-          <div className="absolute left-8 right-8 bottom-[2.35rem] h-0.5 rounded-full bg-amber-200/40 border-t border-dashed border-white/50" />
-          {nodes.map((node, index) => (
-            <div key={node.id} className="relative z-10 flex w-[7.2rem] shrink-0 flex-col items-center">
-              {node.current && (
-                <motion.span
-                  initial={{ y: -6 }}
-                  animate={{ y: [-4, 2, -4] }}
-                  transition={{ repeat: Infinity, duration: 1.4 }}
-                  className="text-3xl drop-shadow mb-1"
-                  aria-hidden
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-lime-600/80 to-transparent" />
+          <div className="relative flex items-end gap-10 px-12 pb-8 pt-16">
+            <div className="absolute left-16 right-16 bottom-[4.35rem] h-2 rounded-full bg-amber-700/70" />
+            {nodes.map((node) => (
+              <div key={node.id} className="relative z-10 flex w-28 shrink-0 flex-col items-center">
+                {node.current && (
+                  <motion.span
+                    animate={{ y: [0, -6, 0] }}
+                    transition={{ repeat: Infinity, duration: 1.6 }}
+                    className="absolute -top-11 text-4xl drop-shadow"
+                    aria-hidden
+                  >
+                    {buddyEmoji}
+                  </motion.span>
+                )}
+                <motion.button
+                  type="button"
+                  data-trail-current={node.current ? "true" : "false"}
+                  whileTap={node.locked ? undefined : { scale: 0.95 }}
+                  onClick={() => onSelect(node.id)}
+                  className={`flex h-[88px] w-[88px] items-center justify-center rounded-full border-[6px] text-4xl shadow-lg cursor-pointer ${
+                    node.locked
+                      ? "border-white/40 bg-slate-400"
+                      : node.current
+                        ? "border-amber-300 bg-white ring-4 ring-amber-300/70"
+                        : node.done
+                          ? "border-emerald-400 bg-white"
+                          : "border-white bg-white"
+                  }`}
                 >
-                  {buddyEmoji}
-                </motion.span>
-              )}
-              {!node.current && <span className="h-8" />}
-              <motion.button
-                type="button"
-                data-trail-current={node.current ? "true" : "false"}
-                whileTap={node.locked ? undefined : { scale: 0.94 }}
-                onClick={() => onSelect(node.id)}
-                className={`w-[4.4rem] h-[4.4rem] rounded-full border-4 flex items-center justify-center text-3xl shadow-lg cursor-pointer ${
-                  node.locked
-                    ? "bg-slate-700/80 border-white/10 opacity-60 cursor-not-allowed"
-                    : node.done
-                      ? "bg-emerald-400 border-white"
-                      : node.toy
-                        ? "bg-gradient-to-br from-fuchsia-400 to-amber-300 border-white"
-                        : "bg-gradient-to-br from-sky-300 to-amber-200 border-white"
-                }`}
-              >
-                {node.locked ? <Lock size={22} className="text-white/80" /> : node.emoji}
-              </motion.button>
-              <p className="mt-2 text-[10px] font-black uppercase tracking-wide text-amber-100">
-                {node.toy ? "Toy" : "Stop"} {index + 1}
-              </p>
-              <p className="px-1 text-center text-xs font-black text-white leading-tight line-clamp-2">{node.title}</p>
-              {node.done && (
-                <span className="mt-1 text-[9px] font-black text-emerald-300 flex items-center gap-0.5">
-                  <Star size={9} fill="currentColor" /> Done
-                </span>
-              )}
-            </div>
-          ))}
+                  {node.locked ? <Lock size={28} className="text-white" /> : node.emoji}
+                </motion.button>
+                <p className="mt-2 max-w-[7.5rem] text-center text-sm font-black leading-tight text-slate-900">
+                  {node.title}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

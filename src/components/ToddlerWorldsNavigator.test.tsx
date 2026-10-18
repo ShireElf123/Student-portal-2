@@ -193,7 +193,6 @@ describe("wonderland atlas", () => {
     expect(container.textContent).toContain("Wonderland Atlas");
     expect(container.textContent).toContain("The Wilds");
     expect(container.textContent).toContain("Busy Town");
-    expect(container.textContent).toContain("Walk the continent road");
     expect(container.textContent).toContain("Busy Roads");
     expect(container.textContent).toContain("Bug Garden");
     expect(container.textContent).toContain("Market Kitchen");

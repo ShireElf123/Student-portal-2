@@ -5,7 +5,7 @@ export const ATLAS_CONTINENTS = [
     title: "The Wilds",
     blurb: "Beasts, bugs and ice",
     emoji: "🌿",
-    band: "from-emerald-400/40 via-lime-300/30 to-cyan-400/30",
+    band: "from-sky-300 via-emerald-200 to-lime-300",
     worldIds: ["animal-world", "bug-world", "arctic-world"],
   },
   {
@@ -13,7 +13,7 @@ export const ATLAS_CONTINENTS = [
     title: "Busy Town",
     blurb: "Roads, square and market",
     emoji: "🏘️",
-    band: "from-amber-400/40 via-orange-300/30 to-rose-400/30",
+    band: "from-amber-200 via-orange-100 to-rose-200",
     worldIds: ["vehicle-world", "city-world", "kitchen-world"],
   },
   {
@@ -21,7 +21,7 @@ export const ATLAS_CONTINENTS = [
     title: "Make & Tell",
     blurb: "Paint, stories and letters",
     emoji: "🎨",
-    band: "from-pink-400/40 via-violet-300/30 to-indigo-400/30",
+    band: "from-pink-200 via-violet-100 to-indigo-200",
     worldIds: ["creative-world", "story-world", "learning-world"],
   },
   {
@@ -29,7 +29,7 @@ export const ATLAS_CONTINENTS = [
     title: "Sky & Home",
     blurb: "Forest, feelings and night",
     emoji: "🌙",
-    band: "from-sky-400/40 via-indigo-400/30 to-slate-500/30",
+    band: "from-indigo-200 via-sky-100 to-slate-200",
     worldIds: ["adventure-world", "my-world", "night-world"],
   },
 ] as const;

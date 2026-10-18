@@ -1539,161 +1539,104 @@ export function ToddlerWorldsNavigator({
   // ==========================================================================
   return (
     <div className="space-y-6">
-      {/* Worlds Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 sm:p-8 rounded-[2.5rem] bg-gradient-to-r from-indigo-900/60 via-purple-900/50 to-indigo-900/60 border-2 border-indigo-400/30 backdrop-blur-md shadow-xl">
-        <div className="space-y-1">
-          <span className="px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 text-xs font-black uppercase tracking-wider inline-flex items-center gap-1">
-            <span>🗺️</span> Wonderland Atlas
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-white">
-            Wander {ALL_TODDLER_WORLDS.length} lands
-          </h2>
-          <p className="text-xs sm:text-sm text-white/70 max-w-xl">
-            {ALL_TODDLER_WORLDS.reduce((sum, world) => sum + world.areas.length, 0)} areas ·{" "}
-            {ALL_TODDLER_WORLDS.reduce(
-              (sum, world) => sum + world.areas.reduce((areaSum, area) => areaSum + area.activities.length, 0),
-              0
-            )}{" "}
-            stations on four continent roads. Walk the path. Pip waits on the next land.
-          </p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-amber-300">Wonderland Atlas</p>
+          <h2 className="text-3xl font-black text-white">Pick a land</h2>
         </div>
-
-        {/* Free Play Reminder */}
         {onOpenGames && (
           <button
             onClick={onOpenGames}
-            className="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs cursor-pointer border border-white/10 transition-all flex items-center gap-2 shrink-0"
+            className="px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs cursor-pointer border border-white/10"
           >
-            <span>🎮</span> Want quick games? Go to Free Play
+            Free Play
           </button>
         )}
       </div>
 
-      {/* SECRET MILESTONE ZONES (Dino Excavation, Starlight Observatory, Coral Cavern) */}
-      <div className="p-6 rounded-[2.25rem] bg-gradient-to-r from-amber-950/40 via-purple-950/40 to-indigo-950/40 border-2 border-amber-400/40 space-y-4 shadow-xl">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <span className="text-2xl p-2 rounded-xl bg-amber-500/20 text-amber-300">✨</span>
-            <div>
-              <h3 className="text-lg font-black text-white flex items-center gap-2">
-                <span>Secret Explorer Milestone Zones</span>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30">
-                  {starsCount} ⭐ Collected
-                </span>
-              </h3>
-              <p className="text-xs text-white/70">
-                Collect Golden Stars across the worlds to unlock these hidden expedition sanctuaries!
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {SECRET_ZONES.map((zone) => {
-            const isUnlocked = starsCount >= zone.starsRequired;
-            return (
-              <motion.div
-                key={zone.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => {
-                  if (!isUnlocked) {
-                    soundEffects.playGentleBoing();
-                    speakText(
-                      `The ${zone.title} is locked! You need ${zone.starsRequired} stars. Keep exploring to earn ${zone.starsRequired - starsCount} more stars!`,
-                      { pitch: 1.15 }
-                    );
-                  } else {
-                    setActiveSecretZone(zone);
-                    soundEffects.playFanfare();
-                    triggerCelebrationConfetti();
-                    awardXP(zone.rewardXP);
-                    speakText(`Welcome to ${zone.title}! ${zone.discoveryDescription}`, {
-                      pitch: 1.2,
-                    });
-                  }
-                }}
-                className={`p-4 rounded-2xl border-2 transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between ${
-                  isUnlocked
-                    ? `bg-gradient-to-br ${zone.bgGradient} border-white/40 text-white shadow-lg`
-                    : "bg-white/[0.04] border-white/10 text-white/50"
-                }`}
-              >
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-3xl p-2 rounded-xl bg-white/20 backdrop-blur-sm">
-                      {zone.emoji}
-                    </span>
-                    {isUnlocked ? (
-                      <span className="px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-black flex items-center gap-1">
-                        <Unlock size={11} /> Unlocked
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded-full bg-black/40 text-white/70 text-[10px] font-bold flex items-center gap-1">
-                        <Lock size={11} /> {zone.starsRequired} ⭐
-                      </span>
-                    )}
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-black text-white">{zone.title}</h4>
-                    <p className="text-[11px] opacity-80 mt-0.5 line-clamp-2">
-                      {zone.subtitle}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-3 pt-2 border-t border-white/20 text-[11px] font-bold flex items-center justify-between">
-                  <span>+{zone.rewardXP} XP Discovery</span>
-                  <span>{isUnlocked ? "Enter Room ➡️" : `${Math.max(0, zone.starsRequired - starsCount)} ⭐ left`}</span>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Continent roads — Khan/ABCMouse path, our scenery */}
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {ATLAS_CONTINENTS.map((continent) => {
           const lands = continent.worldIds
             .map((id) => ALL_TODDLER_WORLDS.find((world) => world.id === id))
             .filter((world): world is ToddlerWorld => Boolean(world));
-          const currentId =
-            progress.lastVisitedWorldId && lands.some((world) => world.id === progress.lastVisitedWorldId)
-              ? progress.lastVisitedWorldId
-              : lands[0]?.id;
           return (
-            <div
+            <section
               key={continent.id}
-              className={`p-4 sm:p-5 rounded-[2rem] bg-gradient-to-r ${continent.band} border-2 border-white/15 space-y-2`}
+              className={`rounded-[2rem] bg-gradient-to-br ${continent.band} p-5 shadow-xl border border-white/40`}
             >
-              <div className="flex items-baseline justify-between gap-2 px-1">
-                <h3 className="text-lg font-black text-white">
+              <div className="mb-4 flex items-baseline justify-between gap-2">
+                <h3 className="text-xl font-black text-slate-900">
                   {continent.emoji} {continent.title}
                 </h3>
-                <p className="text-xs font-bold text-white/70">{continent.blurb}</p>
+                <p className="text-xs font-bold text-slate-700">{continent.blurb}</p>
               </div>
-              <ToddlerWorldTrail
-                label="Walk the continent road"
-                buddyEmoji="🧒"
-                onSelect={(id) => {
-                  const world = lands.find((item) => item.id === id);
-                  if (world) handleSelectWorld(world);
-                }}
-                nodes={lands.map((world) => {
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {lands.map((world) => {
                   const stats = getWorldProgressStats(world, progress);
-                  return {
-                    id: world.id,
-                    emoji: world.emoji,
-                    title: world.title,
-                    done: stats.percentage >= 100,
-                    locked: false,
-                    current: world.id === currentId,
-                    toy: false,
-                  };
+                  const stations = world.areas.reduce((sum, area) => sum + area.activities.length, 0);
+                  const here = progress.lastVisitedWorldId === world.id;
+                  return (
+                    <motion.button
+                      key={world.id}
+                      type="button"
+                      whileHover={{ y: -4 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => handleSelectWorld(world)}
+                      className={`rounded-3xl bg-white p-4 text-left shadow-md cursor-pointer border-4 ${
+                        here ? "border-amber-400" : "border-white"
+                      }`}
+                    >
+                      <span className={`mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${world.gradient} text-3xl shadow`}>
+                        {world.emoji}
+                      </span>
+                      <h4 className="text-base font-black text-slate-900 leading-tight">{world.title}</h4>
+                      <p className="mt-1 text-[11px] font-bold text-slate-500">
+                        {world.areas.length} areas · {stations} games
+                      </p>
+                      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100">
+                        <div
+                          className="h-full rounded-full bg-amber-400"
+                          style={{ width: `${stats.percentage}%` }}
+                        />
+                      </div>
+                    </motion.button>
+                  );
                 })}
-              />
-            </div>
+              </div>
+            </section>
+          );
+        })}
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {SECRET_ZONES.map((zone) => {
+          const isUnlocked = starsCount >= zone.starsRequired;
+          return (
+            <button
+              key={zone.id}
+              type="button"
+              onClick={() => {
+                if (!isUnlocked) {
+                  soundEffects.playGentleBoing();
+                  speakText(
+                    `The ${zone.title} is locked! You need ${zone.starsRequired} stars.`,
+                    { pitch: 1.15 }
+                  );
+                  return;
+                }
+                setActiveSecretZone(zone);
+                soundEffects.playFanfare();
+                speakText(`Welcome to ${zone.title}! ${zone.discoveryDescription}`, { pitch: 1.2 });
+              }}
+              className={`flex items-center gap-2 rounded-full px-3 py-2 text-xs font-black cursor-pointer border ${
+                isUnlocked
+                  ? "bg-amber-400/20 border-amber-300 text-amber-100"
+                  : "bg-white/5 border-white/10 text-white/50"
+              }`}
+            >
+              <span>{zone.emoji}</span>
+              {zone.title}
+            </button>
           );
         })}
       </div>
