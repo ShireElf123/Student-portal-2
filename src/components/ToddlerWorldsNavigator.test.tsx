@@ -234,6 +234,20 @@ describe("world level trail stations", () => {
     expect(container.textContent).not.toContain("Observe the clues");
   });
 
+  it("plays a planted toy on an atlas ice land", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator
+        onAddStar={() => {}}
+        starsCount={0}
+        initialWorldId="world:arctic-world:ice-floe:act-floe-ice-safari"
+      />
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Floe Safari");
+    expect(container.textContent).not.toContain("Let's play");
+    expect(container.textContent).not.toContain("Observe the clues");
+  });
+
   it("plays a game on a new atlas land", async () => {
     const { container } = render(
       <ToddlerWorldsNavigator
