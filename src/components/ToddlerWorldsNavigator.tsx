@@ -116,13 +116,14 @@ const SECRET_ZONES: SecretZoneDef[] = [
   },
 ];
 
-const completeWorldToy = (
-  activity: ToddlerActivity,
-  onAddStar: (count: number) => void
-) => {
-  recordActivityCompletion(activity.worldId, activity.areaId, activity.id, activity.rewardStars);
-  onAddStar(activity.rewardStars);
-};
+function worldRouteParts(route?: string | null) {
+  if (!route) return { worldId: null as string | null, areaId: null as string | null };
+  if (route.startsWith("world:")) {
+    const [, worldId, areaId] = route.split(":");
+    return { worldId: worldId || null, areaId: areaId || null };
+  }
+  return { worldId: route, areaId: null };
+}
 
 export function ToddlerWorldsNavigator({
   onAddStar,
@@ -131,9 +132,10 @@ export function ToddlerWorldsNavigator({
   onOpenPictureBooks,
   onOpenGames,
 }: ToddlerWorldsNavigatorProps) {
+  const openingRoute = worldRouteParts(initialWorldId);
   // Navigation hierarchy state
-  const [selectedWorldId, setSelectedWorldId] = useState<string | null>(initialWorldId || null);
-  const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
+  const [selectedWorldId, setSelectedWorldId] = useState<string | null>(openingRoute.worldId);
+  const [selectedAreaId, setSelectedAreaId] = useState<string | null>(openingRoute.areaId);
   const [activeActivity, setActiveActivity] = useState<ToddlerActivity | null>(null);
   const [activeMission, setActiveMission] = useState<ToddlerMission | null>(null);
   const [missionStepIdx, setMissionStepIdx] = useState<number>(0);
@@ -143,6 +145,14 @@ export function ToddlerWorldsNavigator({
   const [progress, setProgress] = useState<ToddlerWorldProgressState>(() => getToddlerProgress());
   const progressRef = useRef(progress);
   progressRef.current = progress;
+  const toyCreditedRef = useRef<string | null>(null);
+
+  const completeWorldToy = (activity: ToddlerActivity) => {
+    if (toyCreditedRef.current === activity.id) return;
+    toyCreditedRef.current = activity.id;
+    recordActivityCompletion(activity.worldId, activity.areaId, activity.id, activity.rewardStars);
+    onAddStar(activity.rewardStars);
+  };
 
   // Activity execution states
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
@@ -388,6 +398,7 @@ export function ToddlerWorldsNavigator({
   const handleStartActivity = (activity: ToddlerActivity) => {
     soundEffects.playStarSparkle();
     stopSpeaking();
+    toyCreditedRef.current = null;
     advancePendingRef.current = false;
     clearAdvanceTimers();
     setSelectedOptionId(null);
@@ -437,7 +448,9 @@ export function ToddlerWorldsNavigator({
     setMissionStepIdx(0);
 
     const firstStep = mission.steps[0];
-    const targetActivity = selectedArea?.activities.find((a) => a.id === firstStep.activityId);
+    const targetActivity =
+      selectedArea?.activities.find((a) => a.id === firstStep.activityId) ||
+      selectedWorld?.areas.flatMap((area) => area.activities).find((a) => a.id === firstStep.activityId);
 
     if (targetActivity) {
       handleStartActivity(targetActivity);
@@ -627,7 +640,9 @@ export function ToddlerWorldsNavigator({
       const nextStepIdx = missionStepIdx + 1;
       setMissionStepIdx(nextStepIdx);
       const nextStep = activeMission.steps[nextStepIdx];
-      const nextAct = selectedArea?.activities.find((a) => a.id === nextStep.activityId);
+      const nextAct =
+        selectedArea?.activities.find((a) => a.id === nextStep.activityId) ||
+        selectedWorld?.areas.flatMap((area) => area.activities).find((a) => a.id === nextStep.activityId);
 
       if (nextAct) {
         handleStartActivity(nextAct);
@@ -636,7 +651,7 @@ export function ToddlerWorldsNavigator({
       }
     } else if (activeMission && missionStepIdx === activeMission.steps.length - 1) {
       // Completed full mission!
-      recordMissionCompletion(
+      const { isFirstCompletion } = recordMissionCompletion(
         activeMission.worldId,
         activeMission.areaId,
         activeMission.id,
@@ -644,8 +659,10 @@ export function ToddlerWorldsNavigator({
         activeMission.badgeTitle,
         activeMission.rewardStars
       );
-      onAddStar(activeMission.rewardStars);
-      awardXP(activeMission.rewardXP, `Completed Mission ${activeMission.title}`);
+      if (isFirstCompletion) {
+        onAddStar(activeMission.rewardStars);
+        awardXP(activeMission.rewardXP, `Completed Mission ${activeMission.title}`);
+      }
       soundEffects.playFanfare();
       triggerCelebrationConfetti();
       speakText(`Congratulations! You completed the entire mission: ${activeMission.title}! You earned the ${activeMission.badgeTitle} badge!`, { pitch: 1.2 });
@@ -731,8 +748,7 @@ export function ToddlerWorldsNavigator({
             </div>
             <ToddlerColorLab
               onAddStar={() => {
-                recordActivityCompletion(activeActivity.worldId, activeActivity.areaId, activeActivity.id, activeActivity.rewardStars);
-                onAddStar(activeActivity.rewardStars);
+                completeWorldToy(activeActivity);
                 soundEffects.playFanfare();
                 triggerCelebrationConfetti();
                 setShowCelebration(true);
@@ -753,42 +769,48 @@ export function ToddlerWorldsNavigator({
             </div>
             <ToddlerMusicPiano
               onAddStar={() => {
-                completeWorldToy(activeActivity, onAddStar);
+                completeWorldToy(activeActivity);
               }}
             />
           </div>
         )}
 
         {activeActivity.type === "memory-match" && (
-          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-emerald-400/30 shadow-2xl">
-            <ToddlerMemoryGame onAddStar={() => completeWorldToy(activeActivity, onAddStar)} />
+          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-emerald-400/30 shadow-2xl space-y-3">
+            <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
+            <ToddlerMemoryGame onAddStar={() => completeWorldToy(activeActivity)} />
           </div>
         )}
         {activeActivity.type === "balloon-sky" && (
-          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-sky-400/30 shadow-2xl">
-            <ToddlerBalloonSky onAddStar={() => completeWorldToy(activeActivity, onAddStar)} />
+          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-sky-400/30 shadow-2xl space-y-3">
+            <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
+            <ToddlerBalloonSky onAddStar={() => completeWorldToy(activeActivity)} />
           </div>
         )}
         {activeActivity.type === "animal-safari" && (
-          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-lime-400/30 shadow-2xl">
-            <ToddlerAnimalSafari onAddStar={() => completeWorldToy(activeActivity, onAddStar)} />
+          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-lime-400/30 shadow-2xl space-y-3">
+            <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
+            <ToddlerAnimalSafari onAddStar={() => completeWorldToy(activeActivity)} />
           </div>
         )}
         {activeActivity.type === "rhyme-garden" && (
-          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-fuchsia-400/30 shadow-2xl">
-            <ToddlerRhymeGame onAddStar={() => completeWorldToy(activeActivity, onAddStar)} />
+          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-fuchsia-400/30 shadow-2xl space-y-3">
+            <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
+            <ToddlerRhymeGame onAddStar={() => completeWorldToy(activeActivity)} />
           </div>
         )}
         {activeActivity.type === "bubble-pop" && (
-          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-cyan-400/30 shadow-2xl">
-            <ToddlerBubblePopGame onAddStar={() => completeWorldToy(activeActivity, onAddStar)} />
+          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-cyan-400/30 shadow-2xl space-y-3">
+            <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
+            <ToddlerBubblePopGame onAddStar={() => completeWorldToy(activeActivity)} />
           </div>
         )}
         {activeActivity.type === "k1-studio" && activeActivity.studioGameId && (
-          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-amber-400/30 shadow-2xl">
+          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-amber-400/30 shadow-2xl space-y-3">
+            <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerK1Studio
               gameId={activeActivity.studioGameId as K1StudioGameId}
-              onAddStar={() => completeWorldToy(activeActivity, onAddStar)}
+              onAddStar={() => completeWorldToy(activeActivity)}
             />
           </div>
         )}
@@ -1147,7 +1169,10 @@ export function ToddlerWorldsNavigator({
         )}
 
         {/* 6. DEFAULT CLUE-DETECTIVE / SOUND-DETECTIVE ACTIVITY (NO ANSWER SPOILERS!) */}
-        {!dynamicCounting && !dynamicSorting && activeActivity.type !== "color-lab" && activeActivity.type !== "piano-melody" && !activeStory && (
+        {!dynamicCounting &&
+          !dynamicSorting &&
+          !activeStory &&
+          !TOY_ACTIVITY_TYPES.has(activeActivity.type) && (
           <div className="p-6 sm:p-8 rounded-3xl bg-[#121327] border-2 border-white/20 shadow-2xl text-center space-y-6">
             {/* Header / Learning Goal */}
             <div className="flex items-center justify-between text-xs text-white/60 font-bold border-b border-white/10 pb-3">
@@ -1336,70 +1361,14 @@ export function ToddlerWorldsNavigator({
           </div>
         </div>
 
-        {/* MULTI-STEP MISSION SECTION (IF PRESENT) */}
-        {selectedArea.missions.length > 0 && (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
-                <span>🎯</span> Area Expeditions & Missions
-              </h3>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4">
-              {selectedArea.missions.map((mission) => {
-                const isCompleted = progress.completedMissions[mission.id];
-                return (
-                  <div
-                    key={mission.id}
-                    className="p-5 sm:p-6 rounded-3xl bg-gradient-to-r from-amber-500/15 via-[#1a1b35] to-[#1a1b35] border-2 border-amber-400/40 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-3xl shadow-lg shrink-0">
-                        {mission.badgeEmoji}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="text-lg font-black text-white">{mission.title}</h4>
-                          {isCompleted && (
-                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-[10px] font-black">
-                              ✓ Completed
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-amber-200/80 mt-0.5">{mission.description}</p>
-                        <div className="text-[11px] text-white/60 font-bold mt-2 flex items-center gap-2">
-                          <span>{mission.steps.length} Steps</span>
-                          <span>•</span>
-                          <span className="text-amber-300">Reward: {mission.badgeTitle} Badge + {mission.rewardStars} Stars ⭐</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => handleStartMission(mission)}
-                      className={`px-5 py-3 rounded-2xl font-black text-xs cursor-pointer shadow-md transition-all shrink-0 ${
-                        isCompleted
-                          ? "bg-white/10 hover:bg-white/20 text-white"
-                          : "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 text-white"
-                      }`}
-                    >
-                      {isCompleted ? "Replay Mission 🔄" : "Start Mission 🚀"}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* STATION ROAD */}
+        {/* STATION ROAD first — kids maps put the path in the scene, extras below */}
         <div className="space-y-3">
           {(() => {
             const firstOpen = selectedArea.activities.find((activity) => !progress.completedActivities[activity.id]);
             const currentId = firstOpen?.id ?? selectedArea.activities.at(-1)?.id;
             return (
               <ToddlerWorldTrail
-                label={`Walk the road · ${selectedArea.activities.length} stations`}
+                label={`${selectedArea.title} · ${selectedArea.activities.length} stations`}
                 buddyEmoji="🧒"
                 sceneryEmojis={selectedArea.environment.sceneryEmojis}
                 onSelect={(id) => {
@@ -1419,6 +1388,29 @@ export function ToddlerWorldsNavigator({
             );
           })()}
         </div>
+
+        {selectedArea.missions.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {selectedArea.missions.map((mission) => {
+              const isCompleted = progress.completedMissions[mission.id];
+              return (
+                <button
+                  key={mission.id}
+                  type="button"
+                  onClick={() => handleStartMission(mission)}
+                  className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-black cursor-pointer border ${
+                    isCompleted
+                      ? "bg-white/10 border-white/15 text-white"
+                      : "bg-amber-400/20 border-amber-300 text-amber-100"
+                  }`}
+                >
+                  <span>{mission.badgeEmoji}</span>
+                  {isCompleted ? `Replay ${mission.title}` : mission.title}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
     );
   }
@@ -1476,59 +1468,44 @@ export function ToddlerWorldsNavigator({
           <p className="text-xs sm:text-sm font-medium opacity-90 max-w-2xl leading-relaxed">
             {selectedWorld.description}
           </p>
-
-          {/* Learning Goals Chips */}
-          <div className="flex flex-wrap gap-2 pt-1">
-            {selectedWorld.learningGoals.map((goal, idx) => (
-              <span
-                key={idx}
-                className="px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-sm text-[11px] font-bold text-white flex items-center gap-1 border border-white/20"
-              >
-                <span>✓</span> {goal}
-              </span>
-            ))}
-          </div>
         </div>
 
         {/* AREAS IN THIS WORLD */}
         <div className="space-y-4">
-          <div>
-            <h3 className="text-lg font-black text-white flex items-center gap-2">
-              <span>🗺️</span> Area trail · {selectedWorld.areas.length} lands ·{" "}
-              {selectedWorld.areas.reduce((sum, area) => sum + area.activities.length, 0)} stations
-            </h3>
-            <p className="text-xs text-white/60">
-              Walk the road through this land. Pip stands on the next stop.
-            </p>
-          </div>
-
-          <ToddlerWorldTrail
-            label={`Walk the road · ${selectedWorld.areas.length} areas`}
-            buddyEmoji={selectedWorld.emoji}
-            sceneryEmojis={selectedWorld.areas[0]?.environment.sceneryEmojis}
-            onSelect={(id) => {
-              const area = selectedWorld.areas.find((item) => item.id === id);
-              if (area) handleSelectArea(area);
-            }}
-            nodes={selectedWorld.areas.map((area) => {
-              const unlocked = isAreaUnlocked(area, progress);
-              const stats = getAreaProgressStats(area, progress);
-              const currentId =
-                progress.lastVisitedAreaId && selectedWorld.areas.some((item) => item.id === progress.lastVisitedAreaId)
-                  ? progress.lastVisitedAreaId
-                  : selectedWorld.areas.find((item) => isAreaUnlocked(item, progress) && getAreaProgressStats(item, progress).completedCount < getAreaProgressStats(item, progress).totalCount)?.id
-                    ?? selectedWorld.areas[0]?.id;
-              return {
-                id: area.id,
-                emoji: area.emoji,
-                title: area.title,
-                subtitle: area.tagline,
-                done: stats.completedCount >= stats.totalCount && stats.totalCount > 0,
-                locked: !unlocked,
-                current: area.id === currentId,
-              };
-            })}
-          />
+          {(() => {
+            const currentId =
+              progress.lastVisitedAreaId && selectedWorld.areas.some((item) => item.id === progress.lastVisitedAreaId)
+                ? progress.lastVisitedAreaId
+                : selectedWorld.areas.find((item) => {
+                    if (!isAreaUnlocked(item, progress)) return false;
+                    const stats = getAreaProgressStats(item, progress);
+                    return stats.completedCount < stats.totalCount;
+                  })?.id ?? selectedWorld.areas[0]?.id;
+            return (
+              <ToddlerWorldTrail
+                label={`${selectedWorld.title} · ${selectedWorld.areas.length} areas`}
+                buddyEmoji={selectedWorld.emoji}
+                sceneryEmojis={selectedWorld.areas[0]?.environment.sceneryEmojis}
+                onSelect={(id) => {
+                  const area = selectedWorld.areas.find((item) => item.id === id);
+                  if (area) handleSelectArea(area);
+                }}
+                nodes={selectedWorld.areas.map((area) => {
+                  const unlocked = isAreaUnlocked(area, progress);
+                  const stats = getAreaProgressStats(area, progress);
+                  return {
+                    id: area.id,
+                    emoji: area.emoji,
+                    title: area.title,
+                    subtitle: area.tagline,
+                    done: stats.completedCount >= stats.totalCount && stats.totalCount > 0,
+                    locked: !unlocked,
+                    current: area.id === currentId,
+                  };
+                })}
+              />
+            );
+          })()}
         </div>
       </div>
     );

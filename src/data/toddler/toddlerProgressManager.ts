@@ -244,7 +244,7 @@ export function recordMissionCompletion(
 
   const nextWorldStars = {
     ...current.worldStars,
-    [worldId]: (current.worldStars[worldId] || 0) + bonusStars,
+    [worldId]: (current.worldStars[worldId] || 0) + (isFirstCompletion ? bonusStars : 0),
   };
 
   const targetWorld = ALL_TODDLER_WORLDS.find((w) => w.id === worldId);

@@ -217,7 +217,21 @@ describe("world level trail stations", () => {
 
     fireEvent.click(optionButton(container, "Continue Journey"));
     await flush(200);
-    expect(container.textContent).toContain("Walk the road");
+    expect(container.textContent).toContain("Farm Valley");
+  });
+
+  it("plays a planted toy without the quiz overlay", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator
+        onAddStar={() => {}}
+        starsCount={0}
+        initialWorldId="world:animal-world:farm-valley:act-farm-safari-walk"
+      />
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Pasture Safari");
+    expect(container.textContent).not.toContain("Let's play");
+    expect(container.textContent).not.toContain("Observe the clues");
   });
 
   it("plays a game on a new atlas land", async () => {

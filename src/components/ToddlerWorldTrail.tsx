@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { Lock } from "lucide-react";
 
 export interface WorldTrailNode {
@@ -29,11 +29,13 @@ export function ToddlerWorldTrail({
   sceneryEmojis = [],
 }: ToddlerWorldTrailProps) {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
+  const currentId = nodes.find((node) => node.current)?.id;
 
   useEffect(() => {
     const current = scrollerRef.current?.querySelector<HTMLElement>("[data-trail-current='true']");
-    current?.scrollIntoView?.({ inline: "center", block: "nearest", behavior: "smooth" });
-  }, [nodes]);
+    current?.scrollIntoView?.({ inline: "center", block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+  }, [currentId, reduceMotion]);
 
   return (
     <section className="space-y-2">
@@ -58,7 +60,7 @@ export function ToddlerWorldTrail({
               <div key={node.id} className="relative z-10 flex w-28 shrink-0 flex-col items-center">
                 {node.current && (
                   <motion.span
-                    animate={{ y: [0, -6, 0] }}
+                    animate={reduceMotion ? undefined : { y: [0, -6, 0] }}
                     transition={{ repeat: Infinity, duration: 1.6 }}
                     className="absolute -top-11 text-4xl drop-shadow"
                     aria-hidden
@@ -69,16 +71,21 @@ export function ToddlerWorldTrail({
                 <motion.button
                   type="button"
                   data-trail-current={node.current ? "true" : "false"}
+                  aria-disabled={node.locked}
                   whileTap={node.locked ? undefined : { scale: 0.95 }}
-                  onClick={() => onSelect(node.id)}
-                  className={`flex h-[88px] w-[88px] items-center justify-center rounded-full border-[6px] text-4xl shadow-lg cursor-pointer ${
+                  onClick={() => {
+                    if (!node.locked) onSelect(node.id);
+                  }}
+                  className={`flex h-[88px] w-[88px] items-center justify-center rounded-full border-[6px] text-4xl shadow-lg ${
                     node.locked
-                      ? "border-white/40 bg-slate-400"
+                      ? "border-white/40 bg-slate-400 cursor-not-allowed"
                       : node.current
-                        ? "border-amber-300 bg-white ring-4 ring-amber-300/70"
-                        : node.done
-                          ? "border-emerald-400 bg-white"
-                          : "border-white bg-white"
+                        ? "border-amber-300 bg-white ring-4 ring-amber-300/70 cursor-pointer"
+                        : node.toy
+                          ? "border-sky-400 bg-white cursor-pointer"
+                          : node.done
+                            ? "border-emerald-400 bg-white cursor-pointer"
+                            : "border-white bg-white cursor-pointer"
                   }`}
                 >
                   {node.locked ? <Lock size={28} className="text-white" /> : node.emoji}
