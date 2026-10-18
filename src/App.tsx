@@ -1096,10 +1096,11 @@ export default function App() {
               )}
             </div>
 
-            {/* Agency Gamification HUD: XP, Streak, Stars, Odyssey Map Button, AI Voice */}
+            {/* Evidence HUD: practiced K–1 skills and the next registered activity. */}
             <GamificationHeader
               onOpenOdyssey={() => setActiveTab("odyssey")}
               onOpenVoiceSettings={() => setIsVoiceModalOpen(true)}
+              onLaunchNext={handleLearningLaunch}
               activeTab={activeTab}
               isLight={learningStage === "primary"}
             />
@@ -1382,6 +1383,7 @@ export default function App() {
               setActiveTab("tutor");
             }}
             onStartPractice={handleStartPracticeForNotebook}
+            onLaunchLearning={handleLearningLaunch}
           />
         )}
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BarChart3,
   Target,
@@ -13,6 +13,9 @@ import {
 import { NavigationTab, Notebook, PracticeSession, StudyPlanItem } from "../types";
 import { getNotebookTopicStatus, getTopicStatusBadge } from "../utils/topicStatus";
 import { todayISO } from "../utils/dateUtils";
+import { getLearnerModel, subscribeLearnerModel, type LearnerModel } from "../utils/learnerBrain";
+import { ParentEvidenceBoard } from "./ParentEvidenceBoard";
+import type { EvidenceLaunch } from "../utils/parentEvidenceBoard";
 
 interface ProgressViewProps {
   notebooks: Notebook[];
@@ -21,6 +24,7 @@ interface ProgressViewProps {
   onNavigate: (tab: NavigationTab) => void;
   onSelectNotebook: (id: string) => void;
   onStartPractice: (subject: string, topic: string) => void;
+  onLaunchLearning?: (launch: EvidenceLaunch) => void;
 }
 
 export function ProgressView({
@@ -30,7 +34,22 @@ export function ProgressView({
   onNavigate,
   onSelectNotebook,
   onStartPractice,
+  onLaunchLearning,
 }: ProgressViewProps) {
+  const [learnerModel, setLearnerModel] = useState<LearnerModel>(() => getLearnerModel());
+  useEffect(() => {
+    setLearnerModel(getLearnerModel());
+    return subscribeLearnerModel(setLearnerModel);
+  }, []);
+
+  const handleEvidenceLaunch = (launch: EvidenceLaunch) => {
+    try {
+      onLaunchLearning?.(launch);
+    } catch {
+      // Keep progress usable if a registry row is stale.
+    }
+  };
+
   const todayStr = todayISO();
   const todayTasks = studyPlan.filter((t) => t.date === todayStr);
   const completedToday = todayTasks.filter((t) => t.completed).length;
@@ -60,14 +79,20 @@ export function ProgressView({
       <div className="pb-3 border-b border-slate-800">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight flex items-center gap-3">
           <BarChart3 className="text-indigo-400" size={32} />
-          Academic Progress & Mastery
+          What you’ve actually practiced
         </h1>
         <p className="text-xs sm:text-sm text-slate-400 mt-1 font-medium">
-          Objective evaluation computed purely from your active notes, study tasks, and practice quizzes
+          K–1 skills with a scored response — the same evidence a parent sees. Unplayed skills stay off this list.
         </p>
       </div>
 
-      {/* Summary KPI Cards */}
+      <ParentEvidenceBoard
+        model={learnerModel}
+        learnerName="you"
+        onLaunch={onLaunchLearning ? handleEvidenceLaunch : undefined}
+      />
+
+      {/* Notebook / homework KPIs stay secondary to scored curriculum evidence. */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         <div className="p-5 sm:p-6 rounded-3xl bg-slate-900/90 border border-slate-700/80 space-y-1.5 shadow-md">
           <div className="flex items-center justify-between text-slate-400">
