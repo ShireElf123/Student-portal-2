@@ -90,7 +90,12 @@ export function ToddlerWorldTrail({
                 >
                   {node.locked ? <Lock size={28} className="text-white" /> : node.emoji}
                 </motion.button>
-                <p className="mt-2 max-w-[7.5rem] text-center text-sm font-black leading-tight text-slate-900">
+                {node.toy && (
+                  <p className="mt-1 rounded-full bg-sky-500 px-2 text-[10px] font-black uppercase tracking-wide text-white">
+                    Play
+                  </p>
+                )}
+                <p className="mt-1 max-w-[7.5rem] text-center text-sm font-black leading-tight text-slate-900">
                   {node.title}
                 </p>
               </div>

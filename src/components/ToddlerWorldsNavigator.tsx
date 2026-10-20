@@ -61,10 +61,13 @@ import { ToddlerRhymeGame } from "./ToddlerRhymeGame";
 import { ToddlerBubblePopGame } from "./ToddlerBubblePopGame";
 import { ToddlerK1Studio } from "./ToddlerK1Studio";
 import { ToddlerLetterTrace } from "./ToddlerLetterTrace";
+import { ToddlerLetterLane } from "./ToddlerLetterLane";
+import { ToddlerOpenPlay } from "./ToddlerOpenPlay";
 import type { K1StudioGameId } from "../data/toddler/k1StudioGames";
 import { ToddlerWorldTrail } from "./ToddlerWorldTrail";
 import { ATLAS_CONTINENTS, TOY_ACTIVITY_TYPES } from "../data/toddler/toddlerWorldAtlasLayout";
 import { getWorldPlayTheme } from "../data/toddler/toddlerWorldPlayThemes";
+import { WORLD_COVER } from "../data/toddler/toddlerWorldArt";
 
 interface ToddlerWorldsNavigatorProps {
   onAddStar: (count: number) => void;
@@ -149,6 +152,7 @@ export function ToddlerWorldsNavigator({
   progressRef.current = progress;
   const toyCreditedRef = useRef<string | null>(null);
   const [tapsMuted, setTapsMuted] = useState(() => soundEffects.isMuted());
+  const [letterLaneOpen, setLetterLaneOpen] = useState(false);
   const toggleTapSounds = () => {
     const next = !soundEffects.isMuted();
     soundEffects.setMuted(next);
@@ -845,6 +849,14 @@ export function ToddlerWorldsNavigator({
             />
           </div>
         )}
+        {activeActivity.type === "open-play" && activeActivity.openPlayId && (
+          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-orange-400/30 shadow-2xl space-y-3">
+            <ToddlerOpenPlay
+              playId={activeActivity.openPlayId}
+              onAddStar={() => completeWorldToy(activeActivity)}
+            />
+          </div>
+        )}
         {activeActivity.type === "k1-studio" && activeActivity.studioGameId && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-amber-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
@@ -1487,7 +1499,16 @@ export function ToddlerWorldsNavigator({
         </div>
 
         {/* World Header Banner */}
-        <div className={`p-6 sm:p-8 rounded-[2.5rem] bg-gradient-to-r ${selectedWorld.gradient} text-white shadow-xl space-y-4 border-2 border-white/30`}>
+        <div className={`relative overflow-hidden p-6 sm:p-8 rounded-[2.5rem] bg-gradient-to-r ${selectedWorld.gradient} text-white shadow-xl space-y-4 border-2 border-white/30`}>
+          {WORLD_COVER[selectedWorld.id] && (
+            <img
+              src={WORLD_COVER[selectedWorld.id]}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          )}
+          <div className="absolute inset-0 bg-slate-950/45" />
+          <div className="relative z-10 space-y-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <span className="text-4xl p-3 rounded-2xl bg-white/20 backdrop-blur-sm shadow-md">
@@ -1508,6 +1529,7 @@ export function ToddlerWorldsNavigator({
           <p className="text-xs sm:text-sm font-medium opacity-90 max-w-2xl leading-relaxed">
             {selectedWorld.description}
           </p>
+          </div>
         </div>
 
         {/* AREAS IN THIS WORLD */}
@@ -1554,6 +1576,23 @@ export function ToddlerWorldsNavigator({
   // ==========================================================================
   // VIEW LEVEL 1: WORLDS OVERVIEW MAP
   // ==========================================================================
+  if (letterLaneOpen) {
+    return (
+      <div className="max-w-3xl mx-auto space-y-4">
+        <button
+          type="button"
+          onClick={() => setLetterLaneOpen(false)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs cursor-pointer border border-white/10"
+        >
+          <ChevronLeft size={16} /> Back to atlas
+        </button>
+        <div className="p-4 rounded-3xl bg-[#131427] border-2 border-amber-400/30 shadow-2xl">
+          <ToddlerLetterLane onDone={() => onAddStar(1)} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
@@ -1570,6 +1609,16 @@ export function ToddlerWorldsNavigator({
           >
             {tapsMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
             {tapsMuted ? "Taps off" : "Taps on"}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setLetterLaneOpen(true);
+              speakText("Letter Lane. Three letters. About five minutes. No streak.", { pitch: 1.15 });
+            }}
+            className="px-4 py-2 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs cursor-pointer"
+          >
+            Letter Lane
           </button>
           {onOpenGames && (
             <button
@@ -1610,13 +1659,23 @@ export function ToddlerWorldsNavigator({
                       whileHover={{ y: -4 }}
                       whileTap={{ scale: 0.97 }}
                       onClick={() => handleSelectWorld(world)}
-                      className={`rounded-3xl bg-white p-4 text-left shadow-md cursor-pointer border-4 ${
+                      className={`overflow-hidden rounded-3xl bg-white text-left shadow-md cursor-pointer border-4 ${
                         here ? "border-amber-400" : "border-white"
                       }`}
                     >
-                      <span className={`mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${world.gradient} text-3xl shadow`}>
-                        {world.emoji}
+                      <span className="relative mb-0 block h-28 w-full overflow-hidden">
+                        {WORLD_COVER[world.id] ? (
+                          <img src={WORLD_COVER[world.id]} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          <span className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${world.gradient} text-5xl`}>
+                            {world.emoji}
+                          </span>
+                        )}
+                        <span className="absolute left-2 top-2 flex h-10 w-10 items-center justify-center rounded-2xl bg-white/90 text-2xl shadow">
+                          {world.emoji}
+                        </span>
                       </span>
+                      <span className="block p-4">
                       <h4 className="text-base font-black text-slate-900 leading-tight">{world.title}</h4>
                       <p className="mt-1 text-[11px] font-bold text-slate-500">
                         {world.areas.length} areas · {stations} games
@@ -1627,6 +1686,7 @@ export function ToddlerWorldsNavigator({
                           style={{ width: `${stats.percentage}%` }}
                         />
                       </div>
+                      </span>
                     </motion.button>
                   );
                 })}

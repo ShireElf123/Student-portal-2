@@ -619,21 +619,160 @@ for (const stations of Object.values(TOYS)) {
   }
 }
 
+const EXTRA_TOYS: Record<string, ToyStation[]> = {
+  "animal-world/farm-valley": [
+    toy({
+      id: "act-farm-letter-trace",
+      title: "Farm Letter Trace",
+      type: "letter-trace",
+      learningObjective: "Finger-trace farm letters",
+      clueIcon: "✍️",
+      cluePrompt: "Trace C for Cow in the pasture.",
+      spokenPrompt: "Trace the farm letter with your finger!",
+      skillId: "read-k1-alphabet-letters",
+    }),
+  ],
+  "bug-world/flower-bed": [
+    toy({
+      id: "act-bed-letter-trace",
+      title: "Garden Letter Trace",
+      type: "letter-trace",
+      learningObjective: "Finger-trace garden letters",
+      clueIcon: "✍️",
+      cluePrompt: "Trace B for Bee in the flower bed.",
+      spokenPrompt: "Trace the garden letter with your finger!",
+      skillId: "read-k1-alphabet-letters",
+    }),
+  ],
+  "city-world/park-green": [
+    toy({
+      id: "act-park-letter-trace",
+      title: "Park Letter Trace",
+      type: "letter-trace",
+      learningObjective: "Finger-trace park letters",
+      clueIcon: "✍️",
+      cluePrompt: "Trace P for Park on the green.",
+      spokenPrompt: "Trace the park letter with your finger!",
+      skillId: "read-k1-alphabet-letters",
+    }),
+  ],
+  "creative-world/color-studio": [
+    toy({
+      id: "act-studio-letter-trace",
+      title: "Studio Letter Trace",
+      type: "letter-trace",
+      learningObjective: "Finger-trace paint letters",
+      clueIcon: "✍️",
+      cluePrompt: "Trace A for Art in the studio.",
+      spokenPrompt: "Trace the studio letter with your finger!",
+      skillId: "read-k1-alphabet-letters",
+    }),
+  ],
+  "story-world/barnyard-tales": [
+    toy({
+      id: "act-barn-letter-trace",
+      title: "Tale Letter Trace",
+      type: "letter-trace",
+      learningObjective: "Finger-trace story letters",
+      clueIcon: "✍️",
+      cluePrompt: "Trace H for Hen in the tale barn.",
+      spokenPrompt: "Trace the story letter with your finger!",
+      skillId: "read-k1-alphabet-letters",
+    }),
+  ],
+  "my-world/family-home": [
+    toy({
+      id: "act-home-letter-trace",
+      title: "Home Letter Trace",
+      type: "letter-trace",
+      learningObjective: "Finger-trace home letters",
+      clueIcon: "✍️",
+      cluePrompt: "Trace H for Home at the family table.",
+      spokenPrompt: "Trace the home letter with your finger!",
+      skillId: "read-k1-alphabet-letters",
+    }),
+    toy({
+      id: "act-home-pour",
+      title: "Pour a Cup",
+      type: "open-play",
+      openPlayId: "pour",
+      learningObjective: "Pour without a wrong answer",
+      clueIcon: "🥛",
+      cluePrompt: "Hold to pour. Stop when the cup is happy.",
+      spokenPrompt: "Pour a cup. There is no wrong way!",
+    }),
+  ],
+  "adventure-world/forest-trail": [
+    toy({
+      id: "act-forest-letter-trace",
+      title: "Forest Letter Trace",
+      type: "letter-trace",
+      learningObjective: "Finger-trace forest letters",
+      clueIcon: "✍️",
+      cluePrompt: "Trace T for Tree on the trail.",
+      spokenPrompt: "Trace the forest letter with your finger!",
+      skillId: "read-k1-alphabet-letters",
+    }),
+  ],
+  "night-world/owl-wood": [
+    toy({
+      id: "act-owl-letter-trace",
+      title: "Night Letter Trace",
+      type: "letter-trace",
+      learningObjective: "Finger-trace night letters",
+      clueIcon: "✍️",
+      cluePrompt: "Trace O for Owl in the dark wood.",
+      spokenPrompt: "Trace the night letter with your finger!",
+      skillId: "read-k1-alphabet-letters",
+    }),
+  ],
+  "kitchen-world/soup-pot": [
+    toy({
+      id: "act-soup-stir",
+      title: "Stir the Pot",
+      type: "open-play",
+      openPlayId: "stir",
+      learningObjective: "Stir soup with no wrong answer",
+      clueIcon: "🍲",
+      cluePrompt: "Drag round and round. There is no wrong way.",
+      spokenPrompt: "Stir Nana's soup. Round and round!",
+    }),
+  ],
+  "vehicle-world/town-road": [
+    toy({
+      id: "act-street-drive",
+      title: "Drive the Bus",
+      type: "open-play",
+      openPlayId: "drive",
+      learningObjective: "Drive with no wrong answer",
+      clueIcon: "🚌",
+      cluePrompt: "Slide the bus. Beep when you like.",
+      spokenPrompt: "Drive the bus down the high street!",
+    }),
+  ],
+};
+
+for (const stations of Object.values(EXTRA_TOYS)) {
+  for (const station of stations) {
+    WORLD_TOY_STATION_SKILLS[station.id] = station.skillId;
+  }
+}
+
 export function attachWorldToyStations(world: ToddlerWorld): ToddlerWorld {
   return {
     ...world,
     areas: world.areas.map((area) => {
-      const extra = TOYS[`${world.id}/${area.id}`] ?? [];
+      const extra = [...(TOYS[`${world.id}/${area.id}`] ?? []), ...(EXTRA_TOYS[`${world.id}/${area.id}`] ?? [])];
       if (!extra.length) return area;
       return {
         ...area,
         activities: [
-          ...area.activities,
           ...extra.map((packed) => {
             const { skillId, ...activity } = packed;
             void skillId;
             return { ...activity, worldId: world.id, areaId: area.id };
           }),
+          ...area.activities,
         ],
       };
     }),

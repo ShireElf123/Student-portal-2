@@ -93,6 +93,7 @@ describe("learning infrastructure integrity", () => {
       "act-dino-memory-bones", "act-feelings-face-memory", "act-habits-brush-piano",
       "act-heap-bug-memory", "act-lamp-star-memory", "act-market-color-lab",
       "act-soup-color-lab", "act-stall-color-lab", "act-workshop-memory-beads",
+      "act-soup-stir", "act-street-drive", "act-home-pour",
     ]);
     const actualEngagementOnlyIds = new Set<string>();
 

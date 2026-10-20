@@ -44,6 +44,7 @@ export const TOY_ACTIVITY_TYPES = new Set([
   "bubble-pop",
   "k1-studio",
   "letter-trace",
+  "open-play",
   "counting",
   "sorting",
 ]);

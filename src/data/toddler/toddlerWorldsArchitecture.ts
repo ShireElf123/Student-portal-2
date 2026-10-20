@@ -20,7 +20,8 @@ export type ToddlerActivityType =
   | "rhyme-garden"      // Rhyme matching
   | "bubble-pop"        // Phonics bubbles
   | "k1-studio"         // Curated skill studio scene
-  | "letter-trace";     // Finger-trace a land letter
+  | "letter-trace"      // Finger-trace a land letter
+  | "open-play";        // No-fail stir / drive / pour
 
 export interface ToddlerActivityOption {
   id: string;
@@ -51,6 +52,8 @@ export interface ToddlerActivity {
   storyAdventureId?: string;   // For story-adventure activities
   /** When type is k1-studio, which curated scene to mount. */
   studioGameId?: string;
+  /** When type is open-play, which no-fail toy to mount. */
+  openPlayId?: "stir" | "drive" | "pour";
 }
 
 export interface ToddlerMissionStep {
