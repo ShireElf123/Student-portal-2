@@ -69,7 +69,7 @@ import type { K1StudioGameId } from "../data/toddler/k1StudioGames";
 import { ToddlerWorldTrail } from "./ToddlerWorldTrail";
 import { ATLAS_CONTINENTS, TOY_ACTIVITY_TYPES } from "../data/toddler/toddlerWorldAtlasLayout";
 import { getWorldPlayTheme } from "../data/toddler/toddlerWorldPlayThemes";
-import { WORLD_COVER } from "../data/toddler/toddlerWorldArt";
+import { SECRET_COVER, WORLD_COVER } from "../data/toddler/toddlerWorldArt";
 
 interface ToddlerWorldsNavigatorProps {
   onAddStar: (count: number) => void;
@@ -1542,7 +1542,7 @@ export function ToddlerWorldsNavigator({
   // ==========================================================================
   if (activeSecretZone) {
     return (
-      <div className="max-w-5xl mx-auto space-y-4">
+      <div className="max-w-6xl mx-auto space-y-4">
         <button
           type="button"
           onClick={() => setActiveSecretZone(null)}
@@ -1679,16 +1679,21 @@ export function ToddlerWorldsNavigator({
         })}
       </div>
 
-      <div className="space-y-2">
-        <p className="text-xs font-black uppercase tracking-widest text-white/50">Secret rooms · open them, then play</p>
-        <div className="flex flex-wrap gap-2">
+      <section className="rounded-[2rem] bg-gradient-to-br from-indigo-300 via-violet-200 to-amber-200 p-5 shadow-xl border border-white/40">
+        <div className="mb-4 flex items-baseline justify-between gap-2">
+          <h3 className="text-xl font-black text-slate-900">Hidden doors</h3>
+          <p className="text-xs font-bold text-slate-700">Secret rooms · earn stars, then step in</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {SECRET_ZONES.map((zone) => {
             const isUnlocked = starsCount >= zone.starsRequired;
             const found = secretZoneIsFound(zone.id);
             return (
-              <button
+              <motion.button
                 key={zone.id}
                 type="button"
+                whileHover={{ y: isUnlocked ? -4 : 0 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => {
                   if (!isUnlocked) {
                     soundEffects.playGentleBoing();
@@ -1702,20 +1707,42 @@ export function ToddlerWorldsNavigator({
                   soundEffects.playPop();
                   speakText(`Welcome to ${zone.title}. ${zone.subtitle}`, { pitch: 1.18 });
                 }}
-                className={`flex items-center gap-2 rounded-full px-3 py-2 text-xs font-black cursor-pointer border ${
-                  isUnlocked
-                    ? "bg-amber-400/20 border-amber-300 text-amber-100"
-                    : "bg-white/5 border-white/10 text-white/50"
+                className={`overflow-hidden rounded-3xl bg-white text-left shadow-md cursor-pointer border-4 ${
+                  found ? "border-amber-400" : "border-white"
                 }`}
               >
-                <span>{found ? "✅" : zone.emoji}</span>
-                {zone.title}
-                {!isUnlocked && <span className="opacity-70">· {zone.starsRequired}★</span>}
-              </button>
+                <span className="relative mb-0 block h-40 w-full overflow-hidden">
+                  {SECRET_COVER[zone.id] ? (
+                    <img
+                      src={SECRET_COVER[zone.id]}
+                      alt=""
+                      className={`h-full w-full object-cover ${isUnlocked ? "" : "grayscale"}`}
+                    />
+                  ) : (
+                    <span className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${zone.bgGradient} text-5xl`}>
+                      {zone.emoji}
+                    </span>
+                  )}
+                  <span className="absolute left-2 top-2 flex h-10 w-10 items-center justify-center rounded-2xl bg-white/90 text-2xl shadow">
+                    {found ? "✅" : zone.emoji}
+                  </span>
+                  {!isUnlocked && (
+                    <span className="absolute inset-0 flex items-end justify-center bg-slate-950/35 p-3">
+                      <span className="rounded-full bg-white/95 px-3 py-1 text-xs font-black text-slate-800">
+                        Need {zone.starsRequired}★
+                      </span>
+                    </span>
+                  )}
+                </span>
+                <span className="block p-4">
+                  <h4 className="text-base font-black text-slate-900 leading-tight">{zone.title}</h4>
+                  <p className="mt-1 text-[11px] font-bold text-slate-500">{zone.subtitle}</p>
+                </span>
+              </motion.button>
             );
           })}
         </div>
-      </div>
+      </section>
     </div>
   );
 }

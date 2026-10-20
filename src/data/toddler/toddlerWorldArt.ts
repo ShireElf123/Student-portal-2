@@ -14,6 +14,12 @@ export const WORLD_COVER: Record<string, string> = {
   "night-world": "/worlds/night-world.jpg",
 };
 
+export const SECRET_COVER: Record<string, string> = {
+  "zone-dino-cave": "/worlds/secret-dino-cave.jpg",
+  "zone-starlight-observatory": "/worlds/secret-starlight.jpg",
+  "zone-coral-cavern": "/worlds/secret-coral.jpg",
+};
+
 export const TOY_STILL: Record<string, string> = {
   stir: "/toys/stir.jpg",
   drive: "/toys/drive.jpg",

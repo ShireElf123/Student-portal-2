@@ -3,6 +3,7 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import { SECRET_COVER } from "../data/toddler/toddlerWorldArt";
 
 export interface SecretZoneDef {
   id: "zone-dino-cave" | "zone-starlight-observatory" | "zone-coral-cavern";
@@ -595,7 +596,11 @@ export function ToddlerSecretZonePlay({
   };
 
   return (
-    <div className={`rounded-[2rem] border-2 border-white/20 bg-gradient-to-br ${zone.bgGradient} p-4 sm:p-6 space-y-4 shadow-2xl`}>
+    <div className={`overflow-hidden rounded-[2rem] border-2 border-white/20 bg-gradient-to-br ${zone.bgGradient} shadow-2xl`}>
+      {SECRET_COVER[zone.id] && (
+        <img src={SECRET_COVER[zone.id]} alt="" className="h-36 sm:h-48 w-full object-cover" />
+      )}
+      <div className="p-4 sm:p-6 space-y-4">
       <div className="text-center space-y-1">
         <p className="text-xs font-black uppercase tracking-[0.2em] text-white/80">Secret room</p>
         <h3 className="text-2xl sm:text-3xl font-black text-white">
@@ -617,6 +622,7 @@ export function ToddlerSecretZonePlay({
       >
         {done ? "Back to the atlas" : "Leave for now"}
       </button>
+      </div>
     </div>
   );
 }

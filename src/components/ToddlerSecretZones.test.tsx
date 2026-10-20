@@ -89,6 +89,7 @@ describe("secret rooms", () => {
   it("opens Dino Excavation Cave as a dig floor, not a speech-only card", async () => {
     const { container } = render(<ToddlerWorldsNavigator onAddStar={() => {}} starsCount={40} />);
     await flush();
+    expect(container.textContent).toContain("Hidden doors");
     const chip = Array.from(container.querySelectorAll("button")).find((button) =>
       button.textContent?.includes("Dino Excavation Cave")
     );
