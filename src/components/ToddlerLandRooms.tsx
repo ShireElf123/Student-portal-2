@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { triggerCelebrationConfetti } from "../utils/gamification";
-import { CAST } from "../data/toddler/toddlerWorldArt";
 
 export type LandPlayId =
   | "milk-cow"
@@ -192,11 +191,6 @@ function Stage({
         ))}
         <div className="absolute inset-x-0 bottom-0 h-16 bg-black/10" />
       </div>
-      <img
-        src={CAST.pip}
-        alt=""
-        className="pointer-events-none absolute bottom-3 right-3 z-[5] h-16 w-16 rounded-full object-cover object-top ring-2 ring-white/95 shadow-lg"
-      />
       <div className="relative z-10">
         <div className="text-center mb-3">
           <p className="text-[11px] font-black uppercase tracking-[0.22em] text-white/70">This land’s room</p>

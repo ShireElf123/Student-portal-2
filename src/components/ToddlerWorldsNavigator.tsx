@@ -68,8 +68,7 @@ import type { K1StudioGameId } from "../data/toddler/k1StudioGames";
 import { ToddlerWorldTrail } from "./ToddlerWorldTrail";
 import { ATLAS_CONTINENTS, TOY_ACTIVITY_TYPES } from "../data/toddler/toddlerWorldAtlasLayout";
 import { getWorldPlayTheme } from "../data/toddler/toddlerWorldPlayThemes";
-import { CAST, SECRET_COVER, WORLD_COVER } from "../data/toddler/toddlerWorldArt";
-import { CastPortrait } from "./CastPortrait";
+import { SECRET_COVER, WORLD_COVER } from "../data/toddler/toddlerWorldArt";
 
 interface ToddlerWorldsNavigatorProps {
   onAddStar: (count: number) => void;
@@ -1448,7 +1447,6 @@ export function ToddlerWorldsNavigator({
               <ToddlerWorldTrail
                 label={`${selectedArea.title} · ${selectedArea.activities.length} stations`}
                 buddyEmoji="🧒"
-                buddySrc={CAST.pip}
                 coverSrc={WORLD_COVER[selectedWorld.id]}
                 sceneryEmojis={selectedArea.environment.sceneryEmojis}
                 onSelect={(id) => {
@@ -1542,7 +1540,6 @@ export function ToddlerWorldsNavigator({
               <span className="text-4xl p-3 rounded-2xl bg-white/20 backdrop-blur-sm shadow-md">
                 {selectedWorld.emoji}
               </span>
-              <CastPortrait who="pip" size={56} className="hidden sm:block" />
               <div>
                 <h2 className="text-2xl sm:text-3xl font-black">{selectedWorld.title}</h2>
                 <div className="text-xs sm:text-sm font-bold opacity-90">{selectedWorld.tagline}</div>
@@ -1576,7 +1573,6 @@ export function ToddlerWorldsNavigator({
               <ToddlerWorldTrail
                 label={`${selectedWorld.title} · ${selectedWorld.areas.length} areas`}
                 buddyEmoji={selectedWorld.emoji}
-                buddySrc={CAST.pip}
                 coverSrc={WORLD_COVER[selectedWorld.id]}
                 sceneryEmojis={selectedWorld.areas[0]?.environment.sceneryEmojis}
                 onSelect={(id) => {
@@ -1647,16 +1643,8 @@ export function ToddlerWorldsNavigator({
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-end">
-              <CastPortrait who="pip" size={64} />
-              <CastPortrait who="nana" size={48} className="-ml-3 mb-0.5 ring-amber-100" />
-            </div>
-            <div>
           <p className="text-xs font-black uppercase tracking-[0.22em] text-amber-600">Wonderland Atlas</p>
           <h2 className="text-4xl sm:text-5xl font-black tracking-tight">Pick a land</h2>
-            </div>
-          </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button
@@ -1732,11 +1720,6 @@ export function ToddlerWorldsNavigator({
                         <span className="absolute left-2 top-2 flex h-10 w-10 items-center justify-center rounded-2xl bg-white/90 text-2xl shadow">
                           {world.emoji}
                         </span>
-                        <img
-                          src={world.id === "kitchen-world" || world.id === "story-world" ? CAST.nana : CAST.pip}
-                          alt=""
-                          className="absolute bottom-2 right-2 h-12 w-12 rounded-full object-cover object-top ring-2 ring-white shadow-md"
-                        />
                       </span>
                       <span className="block p-4 sm:p-5">
                       <h4 className="text-xl font-black text-slate-900 leading-tight">{world.title}</h4>

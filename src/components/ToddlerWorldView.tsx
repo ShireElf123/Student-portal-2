@@ -67,7 +67,6 @@ import {
   CharacterAnchor,
   TactileAgencyButton,
 } from "./landscape/LandscapeDecorations";
-import { CastPortrait } from "./CastPortrait";
 
 interface ToddlerWorldViewProps {
   initialActivityId?: string;
@@ -671,8 +670,8 @@ export function ToddlerWorldView({
 
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
           <div className="flex items-center gap-3.5 text-center md:text-left">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 overflow-hidden rounded-3xl shadow-2xl shadow-orange-500/40 ring-4 ring-white border-2 border-amber-300 animate-bounce flex-shrink-0">
-              <CastPortrait who="pip" size={80} className="h-full w-full rounded-none ring-0 shadow-none" />
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-400 to-pink-500 flex items-center justify-center text-3xl sm:text-4xl shadow-2xl shadow-orange-500/40 ring-4 ring-white border-2 border-amber-300 animate-bounce flex-shrink-0">
+              🧸
             </div>
             <div>
               <div className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-1 shadow-md ${
