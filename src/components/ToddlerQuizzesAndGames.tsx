@@ -31,7 +31,7 @@ import { ToddlerMusicPiano } from "./ToddlerMusicPiano";
 import { ToddlerAnimalSafari } from "./ToddlerAnimalSafari";
 import { ToddlerBalloonSky } from "./ToddlerBalloonSky";
 import { ToddlerK1Studio } from "./ToddlerK1Studio";
-import { K1_STUDIO_GAME_IDS, type K1StudioGameId } from "../data/toddler/k1StudioGames";
+import { K1_STUDIO_GAMES, K1_STUDIO_GAME_IDS, type K1StudioGameId } from "../data/toddler/k1StudioGames";
 import type { BubblePopBlueprint } from "../contentEngine/types";
 
 interface ToddlerQuizzesAndGamesProps {
@@ -1232,6 +1232,32 @@ export function ToddlerQuizzesAndGames({
           <span className="text-base sm:text-lg">🐰</span>
           <span className="truncate">Feed Bunny</span>
         </button>
+      </div>
+
+      <div className="mb-4">
+        <p className="mb-2 px-1 text-[10px] font-black uppercase tracking-wider text-white/50">
+          Skill studio
+        </p>
+        <div className="grid grid-cols-3 sm:grid-cols-7 gap-1.5">
+          {K1_STUDIO_GAMES.map((studioGame) => (
+            <button
+              key={studioGame.id}
+              type="button"
+              onClick={() => {
+                setCurrentActivity(studioGame.id);
+                soundEffects.playPop();
+              }}
+              className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[10px] sm:text-[11px] transition-all cursor-pointer border-b-4 ${
+                currentActivity === studioGame.id
+                  ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md ring-2 ring-emerald-300/40"
+                  : "bg-white/5 border-white/10 text-white/70 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              <span className="text-base sm:text-lg">{studioGame.emoji}</span>
+              <span className="truncate max-w-full">{studioGame.title.split(" ")[0]}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* ACTIVITY 0: RAINBOW XYLOPHONE */}

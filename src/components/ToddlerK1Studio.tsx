@@ -109,7 +109,8 @@ export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
     <section className="rounded-[2rem] border-4 border-white/15 bg-slate-950/70 p-5 sm:p-7 shadow-2xl">
       <header className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h3 className="text-xl font-black text-white sm:text-2xl">
+          <p className="text-[11px] font-black uppercase tracking-wider text-white/50">Skill studio</p>
+          <h3 className="mt-1 text-xl font-black text-white sm:text-2xl">
             <span className="mr-2">{game.emoji}</span>
             {game.title}
           </h3>
