@@ -288,7 +288,7 @@ const SAFARI_BY_WORLD: Record<string, { title: string; safari: SafariFriend[] }>
 };
 
 const LETTERS_BY_WORLD: Record<string, string[]> = {
-  "learning-world": ["A", "B", "C", "D", "S", "T", "M", "P"],
+  "learning-world": ["A", "B", "C", "D", "S", "T", "M", "P", "6", "8", "10"],
   "arctic-world": ["I", "C", "E", "S", "N", "O", "W", "P"],
   "night-world": ["N", "O", "M", "S", "L", "B", "W", "T"],
   "vehicle-world": ["B", "C", "P", "T", "R", "A", "V", "S"],
@@ -620,6 +620,26 @@ const COUNTING_BY_WORLD: Record<string, ThemedCountItem[]> = {
     { name: "Letter Cards", emoji: "🅰️", sound: "A says /æ/!", bg: "from-rose-900 to-red-950", text: "text-rose-200" },
     { name: "Counting Dots", emoji: "🔵", sound: "Tap tap!", bg: "from-sky-900 to-blue-950", text: "text-sky-200" },
     { name: "Little Books", emoji: "📘", sound: "Flip!", bg: "from-indigo-900 to-blue-950", text: "text-indigo-200" },
+  ],
+  "creative-world": [
+    { name: "Paint Drops", emoji: "🎨", sound: "Splash colour!", bg: "from-pink-900 to-violet-950", text: "text-pink-200" },
+    { name: "Stickers", emoji: "🌟", sound: "Stick!", bg: "from-amber-900 to-yellow-950", text: "text-amber-200" },
+    { name: "Crayons", emoji: "🖍️", sound: "Scribble!", bg: "from-sky-900 to-indigo-950", text: "text-sky-200" },
+  ],
+  "story-world": [
+    { name: "Story Books", emoji: "📖", sound: "Once upon!", bg: "from-amber-900 to-orange-950", text: "text-amber-200" },
+    { name: "Tale Stars", emoji: "✨", sound: "Sparkle!", bg: "from-violet-900 to-indigo-950", text: "text-violet-200" },
+    { name: "Barn Eggs", emoji: "🥚", sound: "Crack!", bg: "from-yellow-900 to-lime-950", text: "text-yellow-200" },
+  ],
+  "my-world": [
+    { name: "Family Cups", emoji: "🥛", sound: "Sip sip!", bg: "from-rose-900 to-amber-950", text: "text-rose-200" },
+    { name: "Home Hearts", emoji: "❤️", sound: "Love you!", bg: "from-pink-900 to-red-950", text: "text-pink-200" },
+    { name: "Toothbrushes", emoji: "🪥", sound: "Brush brush!", bg: "from-cyan-900 to-sky-950", text: "text-cyan-200" },
+  ],
+  "adventure-world": [
+    { name: "Trail Stones", emoji: "🪨", sound: "Clack!", bg: "from-stone-900 to-emerald-950", text: "text-stone-200" },
+    { name: "Forest Leaves", emoji: "🍃", sound: "Rustle!", bg: "from-lime-900 to-green-950", text: "text-lime-200" },
+    { name: "Treasure Coins", emoji: "🪙", sound: "Clink!", bg: "from-amber-900 to-yellow-950", text: "text-amber-200" },
   ],
 };
 

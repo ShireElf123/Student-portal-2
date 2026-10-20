@@ -263,7 +263,7 @@ describe("Feed Benny Bunny", () => {
 
     fireEvent.click(buttonsWith(container, "Feed Bunny Again")[0]);
     await flush(300);
-    expect(container.textContent).toContain("0 of 5 Carrots");
+    expect(container.textContent).toContain("0 of 8 Carrots");
     expect(carrotButton()).toBeTruthy();
   });
 });

@@ -115,6 +115,11 @@ const COUNTING_CARDS = [
   { num: 3, word: "Three", emojis: "🍓 🍓 🍓", item: "Strawberries", color: "from-rose-400 to-pink-300" },
   { num: 4, word: "Four", emojis: "🚗 🚗 🚗 🚗", item: "Toy Cars", color: "from-emerald-400 to-teal-300" },
   { num: 5, word: "Five", emojis: "⭐ ⭐ ⭐ ⭐ ⭐", item: "Shiny Stars", color: "from-purple-400 to-indigo-300" },
+  { num: 6, word: "Six", emojis: "🐝 🐝 🐝 🐝 🐝 🐝", item: "Busy Bees", color: "from-yellow-400 to-amber-300" },
+  { num: 7, word: "Seven", emojis: "🐞 🐞 🐞 🐞 🐞 🐞 🐞", item: "Ladybugs", color: "from-red-400 to-rose-300" },
+  { num: 8, word: "Eight", emojis: "🍎 🍎 🍎 🍎 🍎 🍎 🍎 🍎", item: "Apples", color: "from-orange-400 to-red-300" },
+  { num: 9, word: "Nine", emojis: "🦋 🦋 🦋 🦋 🦋 🦋 🦋 🦋 🦋", item: "Butterflies", color: "from-fuchsia-400 to-violet-300" },
+  { num: 10, word: "Ten", emojis: "⭐⭐⭐⭐⭐ ⭐⭐⭐⭐⭐", item: "Ten Stars", color: "from-indigo-400 to-blue-300" },
 ];
 
 export function ToddlerWorldView({
@@ -1259,12 +1264,12 @@ export function ToddlerWorldView({
                 <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${
                   isMeadow ? "text-slate-900" : "text-white"
                 }`}>
-                  <span>🔢</span> 1-2-3 Counting Safari
+                  <span>🔢</span> Count to Ten
                 </h2>
                 <p className={`text-xs sm:text-sm font-semibold ${
                   isMeadow ? "text-slate-700" : "text-white/60"
                 }`}>
-                  Count the fun objects with your finger! Tap any card to hear numbers spoken aloud!
+                  Count from 1 to 10. Tap a card to hear the number. Later lands count past ten.
                 </p>
               </div>
             </div>

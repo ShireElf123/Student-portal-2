@@ -96,6 +96,9 @@ const BONUS_EXPLORER_QUESTIONS: QuizQuestion[] = [
   { id: "q24", prompt: "Which weather means we might need an umbrella?", spokenPrompt: "Drip drop! What falls from clouds and makes puddles?", correctId: "rain", soundCue: "Drip drop!", options: [{ id: "rain", label: "Rain", emoji: "🌧️", soundText: "Take an umbrella in the rain!" }, { id: "sun", label: "Sunshine", emoji: "☀️", soundText: "Bright sunny day!" }, { id: "wind", label: "Wind", emoji: "💨", soundText: "Whoosh goes the wind!" }, { id: "rainbow", label: "Rainbow", emoji: "🌈", soundText: "A rainbow can appear after rain!" }] },
   { id: "q25", prompt: "Which one belongs in the ocean?", spokenPrompt: "Splash into the blue ocean. Which friendly creature swims in the sea?", correctId: "dolphin", soundCue: "Splash!", options: [{ id: "dolphin", label: "Dolphin", emoji: "🐬", soundText: "I swim and leap in the ocean!" }, { id: "chicken", label: "Chicken", emoji: "🐔", soundText: "Cluck cluck on the farm!" }, { id: "camel", label: "Camel", emoji: "🐫", soundText: "I walk in the desert!" }, { id: "sheep", label: "Sheep", emoji: "🐑", soundText: "Baa baa in the meadow!" }] },
   { id: "q26", prompt: "What comes next: red, blue, red, blue...?", spokenPrompt: "Let's spot the repeating colors. Red, blue, red, blue. What comes next?", correctId: "red", soundCue: "Red, blue, red, blue!", options: [{ id: "red", label: "Red", emoji: "🔴", soundText: "The pattern starts again with red!" }, { id: "blue", label: "Blue", emoji: "🔵", soundText: "Blue was just before. What starts again?" }, { id: "green", label: "Green", emoji: "🟢", soundText: "Green is a lovely color, but not in this pattern!" }, { id: "yellow", label: "Yellow", emoji: "🟡", soundText: "Look at the repeating colors again!" }] },
+  { id: "q27", prompt: "Which one is the number six?", spokenPrompt: "After five comes six. Which number is six?", correctId: "six", soundCue: "Six!", options: [{ id: "four", label: "Four", emoji: "4️⃣", soundText: "Four!" }, { id: "six", label: "Six", emoji: "6️⃣", soundText: "Six little bees!" }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "Two!" }, { id: "nine", label: "Nine", emoji: "9️⃣", soundText: "Nine!" }] },
+  { id: "q28", prompt: "Which one is the number eight?", spokenPrompt: "Count up: six, seven, eight. Which number is eight?", correctId: "eight", soundCue: "Eight!", options: [{ id: "three", label: "Three", emoji: "3️⃣", soundText: "Three!" }, { id: "five", label: "Five", emoji: "5️⃣", soundText: "Five!" }, { id: "eight", label: "Eight", emoji: "8️⃣", soundText: "Eight apples!" }, { id: "one", label: "One", emoji: "1️⃣", soundText: "One!" }] },
+  { id: "q29", prompt: "Which one is the number ten?", spokenPrompt: "A full ten-frame. Which number is ten?", correctId: "ten", soundCue: "Ten!", options: [{ id: "seven", label: "Seven", emoji: "7️⃣", soundText: "Seven!" }, { id: "ten", label: "Ten", emoji: "🔟", soundText: "Ten stars!" }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "Two!" }, { id: "four", label: "Four", emoji: "4️⃣", soundText: "Four!" }] },
 ];
 
 const ANIMAL_QUIZ_QUESTIONS: QuizQuestion[] = [
@@ -534,7 +537,9 @@ export function ToddlerQuizzesAndGames({
 
   // Feed the Animal State
   const [carrotsFed, setCarrotsFed] = useState<number>(0);
-  const targetCarrots = 5;
+  const [bunnyGoalIndex, setBunnyGoalIndex] = useState(0);
+  const BUNNY_GOALS = [5, 8, 10] as const;
+  const targetCarrots = BUNNY_GOALS[bunnyGoalIndex];
 
   // Timers refs to ensure seamless synchronization and eliminate any overlap
   const advanceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -977,8 +982,15 @@ export function ToddlerQuizzesAndGames({
   };
 
   const handleResetBunny = () => {
+    const nextGoal = Math.min(bunnyGoalIndex + 1, BUNNY_GOALS.length - 1);
+    setBunnyGoalIndex(nextGoal);
     setCarrotsFed(0);
-    speakText("Bunny is ready to eat again! Tap the crunchy carrots to feed bunny!", { pitch: 1.2 });
+    speakText(
+      nextGoal === 0
+        ? "Bunny is ready to eat again! Tap the crunchy carrots!"
+        : `Bunny is hungrier! This time count to ${BUNNY_GOALS[nextGoal]}!`,
+      { pitch: 1.2 }
+    );
   };
 
   return (
@@ -1632,7 +1644,7 @@ export function ToddlerQuizzesAndGames({
                 Feed Hungry Benny Bunny!
               </h3>
               <p className="text-white/60 text-xs sm:text-sm mt-1">
-                Tap the crunchy orange carrots below to feed Benny 5 delicious snacks!
+                Tap carrots to count. First tummy is 5, then 8, then 10.
               </p>
             </div>
 
@@ -1682,7 +1694,7 @@ export function ToddlerQuizzesAndGames({
             ) : (
               <div className="space-y-4">
                 <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 font-bold text-sm">
-                  🎉 Benny Bunny is so full and happy! You finished counting to 5!
+                  🎉 Benny Bunny is so full! You counted to {targetCarrots}! Next time the tummy holds more.
                 </div>
                 <button
                   onClick={handleResetBunny}

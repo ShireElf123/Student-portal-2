@@ -49,5 +49,7 @@ describe("world play themes", () => {
     const vehicles = getWorldPlayTheme("vehicle-world", "high-street");
     expect(vehicles.songIds).toContain("wheels");
     expect(vehicles.songIds).not.toContain("old-mac");
+    const home = getWorldPlayTheme("my-world", "family-home");
+    expect(home.counting.map((item) => item.emoji)).toEqual(expect.arrayContaining(["🥛", "❤️"]));
   });
 });

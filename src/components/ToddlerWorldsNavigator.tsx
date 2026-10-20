@@ -42,6 +42,7 @@ import {
   ToddlerWorldProgressState,
 } from "../data/toddler/toddlerProgressManager";
 import {
+  countingLevelForPlace,
   generateCountingScenario,
   generateSortingChallenge,
   DynamicCountingScenario,
@@ -120,6 +121,12 @@ const SECRET_ZONES: SecretZoneDef[] = [
     discoveryDescription: "Deep among bioluminescent sea anemones, you opened a giant rainbow clam and discovered the Royal Pearl!",
   },
 ];
+
+function countingLevelForActivity(activity: ToddlerActivity) {
+  const world = ALL_TODDLER_WORLDS.find((item) => item.id === activity.worldId);
+  const areaIndex = world?.areas.findIndex((area) => area.id === activity.areaId) ?? 0;
+  return countingLevelForPlace(areaIndex, activity.difficulty);
+}
 
 function worldRouteParts(route?: string | null) {
   if (!route) return { worldId: null as string | null, areaId: null as string | null };
@@ -437,7 +444,7 @@ export function ToddlerWorldsNavigator({
     const playTheme = getWorldPlayTheme(activity.worldId, activity.areaId);
 
     if (activity.type === "counting") {
-      const countScenario = generateCountingScenario(activity.difficulty, playTheme.counting);
+      const countScenario = generateCountingScenario(countingLevelForActivity(activity), playTheme.counting);
       setDynamicCounting(countScenario);
     } else {
       setDynamicCounting(null);
@@ -587,7 +594,7 @@ export function ToddlerWorldsNavigator({
   const handleRegenerateCounting = () => {
     if (!activeActivity) return;
     const countScenario = generateCountingScenario(
-      activeActivity.difficulty,
+      countingLevelForActivity(activeActivity),
       getWorldPlayTheme(activeActivity.worldId, activeActivity.areaId).counting,
     );
     setDynamicCounting(countScenario);
@@ -960,7 +967,7 @@ export function ToddlerWorldsNavigator({
             {/* Prompt Box */}
             <div className="space-y-2">
               <span className="px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-black uppercase tracking-wider inline-block border border-amber-400/30">
-                🔢 Counting Quest
+                🔢 Count {dynamicCounting.targetCount > 10 ? "11 to 20" : dynamicCounting.targetCount > 5 ? "6 to 10" : "1 to 5"}
               </span>
               <h3 className="text-2xl sm:text-3xl font-black text-white">
                 {dynamicCounting.question}
@@ -983,10 +990,11 @@ export function ToddlerWorldsNavigator({
 
             {/* Tap-to-Count Visual Item Arena */}
             <div className="p-6 rounded-3xl bg-black/20 backdrop-blur-sm border border-white/20 max-w-xl mx-auto">
-              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 min-h-[120px]">
+              <div className={`flex flex-wrap items-center justify-center min-h-[120px] ${dynamicCounting.targetCount > 10 ? "gap-2" : "gap-4 sm:gap-6"}`}>
                 {Array.from({ length: dynamicCounting.targetCount }, (_, idx) => {
                   const isTapped = tappedCountIndices.includes(idx);
                   const tappedOrder = tappedCountIndices.indexOf(idx) + 1;
+                  const compact = dynamicCounting.targetCount > 10;
 
                   return (
                     <motion.button
@@ -994,7 +1002,11 @@ export function ToddlerWorldsNavigator({
                       whileHover={{ scale: 1.12 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={() => handleTapCountObject(idx)}
-                      className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl flex items-center justify-center text-4xl sm:text-5xl cursor-pointer transition-all border-2 select-none shadow-md ${
+                      className={`relative flex items-center justify-center cursor-pointer transition-all border-2 select-none shadow-md ${
+                        compact
+                          ? "w-11 h-11 rounded-xl text-2xl"
+                          : "w-16 h-16 sm:w-20 sm:h-20 rounded-2xl sm:rounded-3xl text-4xl sm:text-5xl"
+                      } ${
                         isTapped
                           ? "bg-amber-400/30 border-amber-300 ring-4 ring-amber-400/50 scale-105"
                           : "bg-white/10 hover:bg-white/20 border-white/20"

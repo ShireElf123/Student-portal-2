@@ -53,19 +53,30 @@ const COUNTING_OBJECT_TEMPLATES = [
   { name: "Spotted Ladybugs", emoji: "🐞", sound: "Crawl on leaf!", bg: "from-red-900 to-slate-950", text: "text-red-300" },
 ];
 
+export function countingBand(level: number): { min: number; max: number; label: string } {
+  if (level <= 1) return { min: 1, max: 5, label: "1 to 5" };
+  if (level === 2) return { min: 6, max: 10, label: "6 to 10" };
+  return { min: 11, max: 20, label: "11 to 20" };
+}
+
+/** First area stays 1–5. Next road 6–10. Deeper land 11–20. Never weaker than authored difficulty. */
+export function countingLevelForPlace(areaIndex: number, authoredDifficulty: number = 1): number {
+  const fromRoad = areaIndex <= 0 ? 1 : areaIndex === 1 ? 2 : 3;
+  return Math.max(authoredDifficulty || 1, fromRoad);
+}
+
 export function generateCountingScenario(
   level: number = 1,
   pool: { name: string; emoji: string; sound: string; bg: string; text: string }[] = COUNTING_OBJECT_TEMPLATES,
 ): DynamicCountingScenario {
-  const maxNumber = level <= 1 ? 5 : level === 2 ? 8 : 10;
-  const count = Math.floor(Math.random() * maxNumber) + 1;
+  const { min, max, label } = countingBand(level);
+  const count = min + Math.floor(Math.random() * (max - min + 1));
   const source = pool.length > 0 ? pool : COUNTING_OBJECT_TEMPLATES;
   const template = source[Math.floor(Math.random() * source.length)];
 
-  // Create 2 distractors
   const distractors: number[] = [];
   while (distractors.length < 2) {
-    const candidate = Math.floor(Math.random() * maxNumber) + 1;
+    const candidate = min + Math.floor(Math.random() * (max - min + 1));
     if (candidate !== count && !distractors.includes(candidate)) {
       distractors.push(candidate);
     }
@@ -82,7 +93,10 @@ export function generateCountingScenario(
     bgGradient: template.bg,
     textColor: template.text,
     question: `How many ${template.name} can you count?`,
-    spokenPrompt: `Look at the screen! Can you count the ${template.name}? How many do you see?`,
+    spokenPrompt:
+      level <= 1
+        ? `Look! Count the ${template.name}. How many do you see?`
+        : `This group is bigger. Count the ${template.name} from ${label}. How many do you see?`,
     distractorCounts: options,
   };
 }

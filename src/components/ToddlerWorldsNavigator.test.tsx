@@ -155,7 +155,7 @@ describe("Animal World counting activity", () => {
       <ToddlerWorldsNavigator onAddStar={() => {}} starsCount={0} initialWorldId={FARM_COUNT_ROUTE} />
     );
     await flush(500);
-    expect(container.textContent).toContain("Counting Quest");
+    expect(container.textContent).toContain("Count 1 to 5");
 
     await answerCorrectly(container);
     await flush(2000);

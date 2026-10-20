@@ -127,7 +127,7 @@ const WEEKLY_SCHEDULES: Record<number, DailySchedule> = {
     themeTitle: "Farm & Food Sorting",
     themeBannerEmoji: "🥕",
     missions: [
-      { id: "fri-1", title: "Feed Benny Bunny", tagline: "Tap 5 crunchy orange carrots", emoji: "🐰", targetTab: "games", targetSubactivity: "feed-animal", starsReward: 2, xpReward: 30 },
+      { id: "fri-1", title: "Feed Benny Bunny", tagline: "Count carrots — 5, then 8, then 10", emoji: "🐰", targetTab: "games", targetSubactivity: "feed-animal", starsReward: 2, xpReward: 30 },
       { id: "fri-2", title: "My World: Feelings & Family", tagline: "Who has a big happy smile?", emoji: "😊", targetTab: "worlds", targetSubactivity: "my-world", starsReward: 2, xpReward: 30 },
       { id: "fri-3", title: "Counting Sunshine Garden", tagline: "Count bees and butterflies!", emoji: "🌻", targetTab: "books", starsReward: 3, xpReward: 50 },
     ],
