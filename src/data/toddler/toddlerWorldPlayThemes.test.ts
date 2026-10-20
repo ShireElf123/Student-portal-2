@@ -68,11 +68,26 @@ describe("world play themes", () => {
     ];
     for (const worldId of worlds) {
       const theme = getWorldPlayTheme(worldId);
-      expect(theme.sorting.items.length, worldId).toBeGreaterThanOrEqual(8);
+      expect(theme.sorting.items.length, worldId).toBeGreaterThanOrEqual(12);
       expect(theme.memory.length, worldId).toBeGreaterThanOrEqual(8);
       expect(theme.balloonLetters.length, worldId).toBeGreaterThanOrEqual(12);
-      expect(theme.bubbles.length, worldId).toBeGreaterThanOrEqual(8);
-      expect(theme.rhymes.length, worldId).toBeGreaterThanOrEqual(4);
+      expect(theme.bubbles.length, worldId).toBeGreaterThanOrEqual(12);
+      expect(theme.rhymes.length, worldId).toBeGreaterThanOrEqual(8);
+      expect(theme.counting.length, worldId).toBeGreaterThanOrEqual(5);
+      expect(theme.safari.length, worldId).toBeGreaterThanOrEqual(8);
     }
+  });
+
+  it("does not clone farm animals onto the tale land or jungle onto the trail", () => {
+    const tale = getWorldPlayTheme("story-world", "barnyard-tales");
+    expect(tale.safari.map((friend) => friend.emoji)).toEqual(expect.arrayContaining(["📖", "👑", "🐉"]));
+    const trail = getWorldPlayTheme("adventure-world");
+    expect(trail.safari.map((friend) => friend.emoji)).toEqual(expect.arrayContaining(["🥾", "💎", "🌲"]));
+    expect(trail.safari.map((friend) => friend.emoji)).not.toContain("🐵");
+    const heap = getWorldPlayTheme("bug-world", "compost-heap");
+    expect(heap.safariTitle).toBe("Compost Safari");
+    expect(heap.safari.map((friend) => friend.emoji)).toContain("🪱");
+    const bed = getWorldPlayTheme("night-world", "bedroom-lamp");
+    expect(bed.safari.map((friend) => friend.emoji)).toEqual(expect.arrayContaining(["🛏️", "🧸"]));
   });
 });

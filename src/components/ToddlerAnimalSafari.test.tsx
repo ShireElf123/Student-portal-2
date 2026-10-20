@@ -205,9 +205,9 @@ describe("Animal Safari detective loop", () => {
     await settle(300);
 
     // Not the lion (which the game used to show every single time)…
-    expect(mystery(container)).toBe("MOOO MOOO!");
+    expect(mystery(container)).toBe("WHINNY!");
     // …and the welcome announcement matches what is on screen.
-    expect(speech.spoken[0]).toContain("MOOO MOOO!");
+    expect(speech.spoken[0]).toContain("WHINNY!");
     expect(solved(container)).toBe(0);
   });
 
