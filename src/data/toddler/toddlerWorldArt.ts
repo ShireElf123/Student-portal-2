@@ -31,14 +31,7 @@ export const TOY_STILL: Record<string, string> = {
   comb: "/toys/comb.jpg",
 };
 
-/** Cartoon Pip for bouncing chrome. Painted portraits stay unused in play UI. */
 export const CAST = {
   pip: "/cast/pip.jpg",
   nana: "/cast/nana.jpg",
-  pipCartoon: "/cast/pip-cartoon.jpg",
-} as const;
-
-export const UI_CHROME = {
-  cloud: "/ui/cloud.jpg",
-  sun: "/ui/sun.jpg",
 } as const;

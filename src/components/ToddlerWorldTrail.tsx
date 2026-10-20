@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { Lock } from "lucide-react";
-import { CAST, UI_CHROME } from "../data/toddler/toddlerWorldArt";
 
 export interface WorldTrailNode {
   id: string;
@@ -29,7 +28,7 @@ export function ToddlerWorldTrail({
   nodes,
   onSelect,
   buddyEmoji = "🧒",
-  buddySrc = CAST.pipCartoon,
+  buddySrc,
   coverSrc,
   sceneryEmojis = [],
 }: ToddlerWorldTrailProps) {
@@ -47,45 +46,42 @@ export function ToddlerWorldTrail({
       <p className="px-1 text-sm font-black text-white/80">{label}</p>
       <div
         ref={scrollerRef}
-        className="overflow-x-auto rounded-[2rem] border-[6px] border-amber-100 shadow-[0_16px_32px_rgba(40,20,0,0.22)]"
+        className="overflow-x-auto rounded-[2rem] border border-white/20 shadow-xl"
       >
-        <div className="relative min-h-[236px] min-w-max overflow-hidden bg-gradient-to-b from-sky-300 via-sky-200 to-emerald-300">
+        <div className="relative min-h-[220px] min-w-max overflow-hidden bg-gradient-to-b from-sky-300 via-sky-200 to-emerald-300">
           {coverSrc && (
             <img
               src={coverSrc}
               alt=""
-              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-50"
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-55"
             />
           )}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-sky-200/35 via-transparent to-emerald-900/30" />
-          <div className="pointer-events-none absolute inset-x-0 top-2 flex items-start justify-between px-8" aria-hidden>
-            <img src={UI_CHROME.cloud} alt="" className="h-12 w-16 object-contain drop-shadow sm:h-14 sm:w-20" />
-            <img src={UI_CHROME.sun} alt="" className="h-14 w-14 object-contain drop-shadow sm:h-16 sm:w-16" />
-            <img src={UI_CHROME.cloud} alt="" className="h-10 w-14 object-contain opacity-90 drop-shadow" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-sky-200/40 via-transparent to-emerald-900/25" />
+          <div className="pointer-events-none absolute inset-x-0 top-3 flex justify-between px-10 text-3xl opacity-70" aria-hidden>
+            <span>☁️</span>
+            <span>☀️</span>
+            <span>☁️</span>
             {sceneryEmojis.slice(0, 2).map((emoji, index) => (
-              <span key={`${emoji}-${index}`} className="pt-2 text-2xl opacity-80">
-                {emoji}
-              </span>
+              <span key={`${emoji}-${index}`}>{emoji}</span>
             ))}
           </div>
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-lime-700/85 via-lime-600/40 to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-lime-600/80 to-transparent" />
           <div className="relative flex items-end gap-10 px-12 pb-8 pt-16">
-            <div className="absolute left-16 right-16 bottom-[4.5rem] h-3 rounded-full bg-amber-800/80 shadow-inner" />
-            <div className="absolute left-16 right-16 bottom-[4.65rem] h-1.5 rounded-full bg-amber-400/70" />
+            <div className="absolute left-16 right-16 bottom-[4.35rem] h-2 rounded-full bg-amber-700/70" />
             {nodes.map((node) => (
               <div key={node.id} className="relative z-10 flex w-28 shrink-0 flex-col items-center">
                 {node.current && (
                   <motion.span
                     animate={reduceMotion ? undefined : { y: [0, -6, 0] }}
                     transition={{ repeat: Infinity, duration: 1.6 }}
-                    className="absolute -top-14 drop-shadow"
+                    className="absolute -top-12 drop-shadow"
                     aria-hidden
                   >
                     {buddySrc ? (
                       <img
                         src={buddySrc}
                         alt=""
-                        className="h-14 w-14 rounded-full bg-[#f6e7c1] object-contain ring-[3px] ring-white shadow-md"
+                        className="h-12 w-12 rounded-full object-cover object-top ring-2 ring-white shadow-md"
                       />
                     ) : (
                       <span className="text-4xl">{buddyEmoji}</span>
@@ -100,16 +96,16 @@ export function ToddlerWorldTrail({
                   onClick={() => {
                     if (!node.locked) onSelect(node.id);
                   }}
-                  className={`flex h-[92px] w-[92px] items-center justify-center rounded-full border-[8px] text-4xl shadow-lg ${
+                  className={`flex h-[88px] w-[88px] items-center justify-center rounded-full border-[6px] text-4xl shadow-lg ${
                     node.locked
-                      ? "border-stone-400 bg-slate-400 cursor-not-allowed"
+                      ? "border-white/40 bg-slate-400 cursor-not-allowed"
                       : node.current
-                        ? "border-amber-700 bg-[#fff6e4] ring-4 ring-amber-300/80 cursor-pointer"
+                        ? "border-amber-300 bg-white ring-4 ring-amber-300/70 cursor-pointer"
                         : node.toy
-                          ? "border-sky-600 bg-[#fff6e4] cursor-pointer"
+                          ? "border-sky-400 bg-white cursor-pointer"
                           : node.done
-                            ? "border-emerald-700 bg-[#fff6e4] cursor-pointer"
-                            : "border-amber-800 bg-[#fff6e4] cursor-pointer"
+                            ? "border-emerald-400 bg-white cursor-pointer"
+                            : "border-white bg-white cursor-pointer"
                   }`}
                 >
                   {node.locked ? <Lock size={28} className="text-white" /> : node.emoji}
