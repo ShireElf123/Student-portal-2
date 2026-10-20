@@ -64,6 +64,7 @@ describe("land rooms", () => {
     for (const worldId of ["story-world", "learning-world", "my-world"]) {
       const world = ALL_TODDLER_WORLDS.find((item) => item.id === worldId);
       expect(world?.areas.length).toBeGreaterThanOrEqual(4);
+      expect(world?.areas.every((area) => area.activities.length >= 8)).toBe(true);
     }
   });
 

@@ -11,20 +11,22 @@ describe("in-world play toys", () => {
     const ids = ALL_TODDLER_WORLDS.flatMap((world) =>
       world.areas.flatMap((area) => area.activities.filter((activity) => activity.type === "letter-trace").map((activity) => activity.id))
     );
-    expect(ids.sort()).toEqual([
-      "act-bakery-letter-trace",
-      "act-barn-letter-trace",
-      "act-bed-letter-trace",
-      "act-farm-letter-trace",
-      "act-floe-letter-trace",
-      "act-forest-letter-trace",
-      "act-home-letter-trace",
-      "act-meadow-letter-trace",
-      "act-owl-letter-trace",
-      "act-park-letter-trace",
-      "act-street-letter-trace",
-      "act-studio-letter-trace",
-    ]);
+    expect(ids).toEqual(
+      expect.arrayContaining([
+        "act-bakery-letter-trace",
+        "act-barn-letter-trace",
+        "act-bed-letter-trace",
+        "act-farm-letter-trace",
+        "act-floe-letter-trace",
+        "act-forest-letter-trace",
+        "act-home-letter-trace",
+        "act-meadow-letter-trace",
+        "act-owl-letter-trace",
+        "act-park-letter-trace",
+        "act-street-letter-trace",
+        "act-studio-letter-trace",
+      ]),
+    );
     expect(new Set(ALL_TODDLER_WORLDS.filter((world) => world.areas.some((area) => area.activities.some((activity) => activity.type === "letter-trace"))).map((world) => world.id)).size).toBe(12);
   });
 

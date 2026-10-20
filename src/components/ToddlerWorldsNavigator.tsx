@@ -140,8 +140,6 @@ export function ToddlerWorldsNavigator({
     "rhyme-garden",
     "bubble-pop",
     "k1-studio",
-    "letter-trace",
-    "color-lab",
     "piano-melody",
   ]);
 
@@ -855,6 +853,7 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl sm:text-2xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerLetterTrace
               catalog={playTheme.bubbles}
+              prompt={`${activeActivity.title}. ${activeActivity.cluePrompt}`}
               onAddStar={() => completeWorldToy(activeActivity)}
             />
           </div>
