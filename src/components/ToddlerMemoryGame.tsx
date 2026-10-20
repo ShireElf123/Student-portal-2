@@ -54,8 +54,8 @@ export function ToddlerMemoryGame({
   pairs?: MemoryPair[];
 }) {
   const deckPairs = pairs && pairs.length >= 4 ? pairs : MEMORY_PAIRS;
-  const [pairCount, setPairCount] = useState(4);
-  const [cards, setCards] = useState<CardItem[]>(() => generateCards(4, deckPairs));
+  const [pairCount, setPairCount] = useState(6);
+  const [cards, setCards] = useState<CardItem[]>(() => generateCards(6, deckPairs));
   const [flippedIds, setFlippedIds] = useState<number[]>([]);
   const [matchesCount, setMatchesCount] = useState<number>(0);
   const [isWon, setIsWon] = useState<boolean>(false);

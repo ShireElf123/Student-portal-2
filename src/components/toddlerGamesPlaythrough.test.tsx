@@ -129,13 +129,13 @@ describe("Memory Match", () => {
     const { container } = render(<ToddlerMemoryGame onAddStar={(amount) => stars.push(amount ?? 1)} />);
     await flush(400);
 
-    const counter = () => Number(container.textContent?.match(/(\d+)\/4 Pairs/)?.[1] ?? -1);
+    const counter = () => Number(container.textContent?.match(/(\d+)\/6 Pairs/)?.[1] ?? -1);
     const faceUp = (card: HTMLButtonElement) => !card.textContent?.includes("Tap");
 
     // Turn cards over the way a child does: hold one card up, then try partners
     // one at a time. Every card must be clickable again after a wrong turn, so a
     // child cannot get stuck — that is the property under test.
-    for (let pair = 0; pair < 4; pair++) {
+    for (let pair = 0; pair < 6; pair++) {
       const open = () => cards(container).filter((card) => !card.disabled);
       const before = counter();
       const first = open()[0];
@@ -159,12 +159,12 @@ describe("Memory Match", () => {
 
     expect(container.textContent).toContain("Super Memory Champion");
     // 1 star per pair + 3 for the win.
-    expect(stars.reduce((total, value) => total + value, 0)).toBe(4 + 3);
+    expect(stars.reduce((total, value) => total + value, 0)).toBe(6 + 3);
 
     const playAgain = buttonsWith(container, "Play Again")[0];
     fireEvent.click(playAgain);
     await flush(600);
-    expect(container.textContent).toContain("0/4 Pairs");
+    expect(container.textContent).toContain("0/6 Pairs");
   });
 });
 

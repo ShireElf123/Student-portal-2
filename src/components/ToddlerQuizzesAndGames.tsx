@@ -445,6 +445,42 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
       { id: "square", label: "Green Square", emoji: "🟩", color: "from-emerald-500 to-teal-400" },
     ],
   },
+  {
+    id: "s13",
+    prompt: "Nana cut pizza. Which slice has three corners?",
+    spokenPrompt: "Look at Nana's pizza. Which slice is a triangle with three corners?",
+    correctId: "pizza",
+    options: [
+      { id: "pizza", label: "Pizza slice", emoji: "🍕", color: "from-orange-500 to-red-400" },
+      { id: "plate", label: "Round plate", emoji: "🍽️", color: "from-slate-200 to-stone-400" },
+      { id: "window", label: "Window", emoji: "🪟", color: "from-sky-400 to-cyan-400" },
+      { id: "clock", label: "Clock", emoji: "🕐", color: "from-amber-400 to-yellow-300" },
+    ],
+  },
+  {
+    id: "s14",
+    prompt: "The classroom window has four equal sides. Tap it.",
+    spokenPrompt: "Which shape is the square window with four equal sides?",
+    correctId: "window",
+    options: [
+      { id: "ball", label: "Ball", emoji: "⚽", color: "from-slate-600 to-emerald-500" },
+      { id: "window", label: "Square window", emoji: "🪟", color: "from-sky-400 to-cyan-500" },
+      { id: "slice", label: "Pizza", emoji: "🍕", color: "from-orange-500 to-red-400" },
+      { id: "moon", label: "Moon", emoji: "🌙", color: "from-indigo-400 to-blue-300" },
+    ],
+  },
+  {
+    id: "s15",
+    prompt: "The town clock is a circle. Tap the round clock.",
+    spokenPrompt: "Find the round town clock. A circle has no corners!",
+    correctId: "clock",
+    options: [
+      { id: "door", label: "Door", emoji: "🚪", color: "from-amber-700 to-stone-600" },
+      { id: "slice", label: "Pizza", emoji: "🍕", color: "from-orange-500 to-red-400" },
+      { id: "clock", label: "Town clock", emoji: "🕐", color: "from-amber-400 to-yellow-300" },
+      { id: "book", label: "Book", emoji: "📘", color: "from-indigo-400 to-blue-600" },
+    ],
+  },
 ];
 
 interface BubbleItem {

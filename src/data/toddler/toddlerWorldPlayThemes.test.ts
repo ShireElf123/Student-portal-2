@@ -52,4 +52,27 @@ describe("world play themes", () => {
     const home = getWorldPlayTheme("my-world", "family-home");
     expect(home.counting.map((item) => item.emoji)).toEqual(expect.arrayContaining(["🥛", "❤️"]));
   });
+
+  it("does not drop kitchen or home onto savanna lions", () => {
+    const kitchen = getWorldPlayTheme("kitchen-world", "soup-pot");
+    expect(kitchen.safari.map((friend) => friend.emoji)).toEqual(expect.arrayContaining(["🍲", "🍞"]));
+    expect(kitchen.safari.map((friend) => friend.emoji)).not.toContain("🦁");
+    const street = getWorldPlayTheme("vehicle-world", "town-road");
+    expect(street.safari.map((friend) => friend.emoji)).toContain("🚌");
+  });
+
+  it("gives every land a full sort, memory, and letter set — not four demo cards", () => {
+    const worlds = [
+      "animal-world", "bug-world", "arctic-world", "vehicle-world", "city-world", "kitchen-world",
+      "creative-world", "story-world", "learning-world", "adventure-world", "my-world", "night-world",
+    ];
+    for (const worldId of worlds) {
+      const theme = getWorldPlayTheme(worldId);
+      expect(theme.sorting.items.length, worldId).toBeGreaterThanOrEqual(8);
+      expect(theme.memory.length, worldId).toBeGreaterThanOrEqual(8);
+      expect(theme.balloonLetters.length, worldId).toBeGreaterThanOrEqual(12);
+      expect(theme.bubbles.length, worldId).toBeGreaterThanOrEqual(8);
+      expect(theme.rhymes.length, worldId).toBeGreaterThanOrEqual(4);
+    }
+  });
 });
