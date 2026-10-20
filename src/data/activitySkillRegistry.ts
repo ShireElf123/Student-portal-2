@@ -51,6 +51,7 @@ const CORE_ACTIVITY_DEFINITIONS: LearningActivityDefinition[] = [
   { id: "toddler-ocean-counting", title: "Ocean Coral Counting", skillIds: ["math-k1-counting"], gradeBand: "toddler", experienceId: "feed-animal", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:feed-animal" } },
   { id: "toddler-color-magic", title: "Color Mixing Cauldron", skillIds: [], gradeBand: "toddler", experienceId: "color-magic", experienceType: "engagement", launch: { route: "toddler", targetId: "game:color-magic" } },
   { id: "toddler-rhyme-match", title: "Rhyme Time Garden", skillIds: ["read-k1-phonemic-awareness"], gradeBand: "toddler", experienceId: "rhyme-time", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:rhyme-time" } },
+  { id: "toddler-letter-trace", title: "Finger Letter Trace", skillIds: ["read-k1-alphabet-letters"], gradeBand: "toddler", experienceId: "letter-trace", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:letter-trace" } },
   { id: "toddler-piano-music", title: "Rainbow Xylophone Music Studio", skillIds: [], gradeBand: "toddler", experienceId: "rainbow-piano", experienceType: "engagement", launch: { route: "toddler", targetId: "game:rainbow-piano" } },
   { id: "toddler-balloon-sky", title: "Sky Balloon Alphabet & Numbers", skillIds: ["math-k1-counting", "read-k1-alphabet-letters"], gradeBand: "toddler", experienceId: "balloon-sky", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:balloon-sky" } },
   { id: "toddler-memory-match", title: "Memory Forest Match", skillIds: [], gradeBand: "toddler", experienceId: "memory-match", experienceType: "engagement", launch: { route: "toddler", targetId: "game:memory-match" } },
@@ -324,6 +325,7 @@ export function validateLearningActivityRegistry(): string[] {
     "bubble-pop-phonics", "animal-safari", "feed-animal", "color-magic",
     "rhyme-time", "rainbow-piano", "balloon-sky", "memory-match", "shape-match", "animal-quiz", "bubble-pop",
     "ten-frame-taxi", "blend-kitchen", "bead-train", "picnic-plus", "weather-porch", "laundry-sort", "story-porch",
+    "letter-trace",
   ]);
 
   for (const activity of LEARNING_ACTIVITY_DEFINITIONS) {

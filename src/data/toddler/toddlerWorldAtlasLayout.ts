@@ -43,6 +43,7 @@ export const TOY_ACTIVITY_TYPES = new Set([
   "rhyme-garden",
   "bubble-pop",
   "k1-studio",
+  "letter-trace",
   "counting",
   "sorting",
 ]);

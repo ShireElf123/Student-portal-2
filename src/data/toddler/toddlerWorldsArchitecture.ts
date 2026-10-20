@@ -19,7 +19,8 @@ export type ToddlerActivityType =
   | "animal-safari"     // Sound safari
   | "rhyme-garden"      // Rhyme matching
   | "bubble-pop"        // Phonics bubbles
-  | "k1-studio";        // Curated skill studio scene
+  | "k1-studio"         // Curated skill studio scene
+  | "letter-trace";     // Finger-trace a land letter
 
 export interface ToddlerActivityOption {
   id: string;

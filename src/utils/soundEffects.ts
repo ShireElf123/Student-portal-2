@@ -5,6 +5,29 @@
 
 class SoundEffectManager {
   private ctx: AudioContext | null = null;
+  private muted = false;
+
+  constructor() {
+    if (typeof window === "undefined") return;
+    try {
+      this.muted = window.localStorage.getItem("app_sfx_muted") === "true";
+    } catch {
+      this.muted = false;
+    }
+  }
+
+  isMuted() {
+    return this.muted;
+  }
+
+  setMuted(muted: boolean) {
+    this.muted = muted;
+    try {
+      window.localStorage.setItem("app_sfx_muted", String(muted));
+    } catch {
+      // ignore quota / private mode
+    }
+  }
 
   private getContext(): AudioContext | null {
     if (typeof window === "undefined") return null;
@@ -24,6 +47,7 @@ class SoundEffectManager {
    * Pleasant bubble pop sound for tapping items or bursting bubbles
    */
   playPop() {
+    if (this.muted) return;
     try {
       const ctx = this.getContext();
       if (!ctx) return;
@@ -54,6 +78,7 @@ class SoundEffectManager {
    * Cheerful 3-tone chime for correct quiz answers or star earned
    */
   playSuccessChime() {
+    if (this.muted) return;
     try {
       const ctx = this.getContext();
       if (!ctx) return;
@@ -87,6 +112,7 @@ class SoundEffectManager {
    * Playful twinkle for collecting stars
    */
   playStarSparkle() {
+    if (this.muted) return;
     try {
       const ctx = this.getContext();
       if (!ctx) return;
@@ -119,6 +145,7 @@ class SoundEffectManager {
    * Soft, gentle wobble for retry (non-punitive, warm)
    */
   playGentleBoing() {
+    if (this.muted) return;
     try {
       const ctx = this.getContext();
       if (!ctx) return;
@@ -148,6 +175,7 @@ class SoundEffectManager {
    * Fanfare celebration sound for finishing a game or quiz
    */
   playFanfare() {
+    if (this.muted) return;
     try {
       const ctx = this.getContext();
       if (!ctx) return;
@@ -185,6 +213,7 @@ class SoundEffectManager {
 
   /** Soft, mallet-like tone with a short attack and inharmonic xylophone overtones. */
   playXylophoneKey(freq: number) {
+    if (this.muted) return;
     try {
       const ctx = this.getContext();
       if (!ctx) return;
@@ -230,6 +259,7 @@ class SoundEffectManager {
    * Cheerful balloon popping sound
    */
   playBalloonPop() {
+    if (this.muted) return;
     try {
       const ctx = this.getContext();
       if (!ctx) return;
@@ -258,6 +288,7 @@ class SoundEffectManager {
    * Shimmering cosmic chime for planetary discovery
    */
   playCosmicChime() {
+    if (this.muted) return;
     try {
       const ctx = this.getContext();
       if (!ctx) return;

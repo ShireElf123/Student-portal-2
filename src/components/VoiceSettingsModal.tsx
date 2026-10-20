@@ -26,6 +26,7 @@ import {
   setActivePersona,
   VoicePersona,
 } from "../utils/speechUtils";
+import { soundEffects } from "../utils/soundEffects";
 
 interface VoiceSettingsModalProps {
   isOpen: boolean;
@@ -39,6 +40,7 @@ export function VoiceSettingsModal({ isOpen, onClose }: VoiceSettingsModalProps)
   const [selectedPersona, setSelectedPersona] = useState<VoicePersona>(() => getActivePersona());
   const [speaking, setSpeaking] = useState<boolean>(isSpeaking());
   const [muted, setMuted] = useState<boolean>(isVoiceMuted());
+  const [tapsMuted, setTapsMuted] = useState<boolean>(() => soundEffects.isMuted());
   const [testPhrase, setTestPhrase] = useState<string>(
     "Hello there! I'm your learning companion. Let's explore wonder, stories, and science together!"
   );
@@ -178,6 +180,22 @@ export function VoiceSettingsModal({ isOpen, onClose }: VoiceSettingsModalProps)
                 title={muted ? "Voice is Muted" : "Voice is Active"}
               >
                 {muted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const next = !soundEffects.isMuted();
+                  soundEffects.setMuted(next);
+                  setTapsMuted(next);
+                }}
+                className={`px-2.5 py-2 rounded-xl border text-[10px] font-black uppercase tracking-wide transition-all cursor-pointer ${
+                  tapsMuted
+                    ? "bg-red-500/20 border-red-500/40 text-red-300 hover:bg-red-500/30"
+                    : "bg-slate-800 border-slate-700 text-slate-300 hover:text-white"
+                }`}
+                title={tapsMuted ? "Tap sounds are off" : "Quiet tap pops"}
+              >
+                {tapsMuted ? "Taps off" : "Taps on"}
               </button>
             </div>
           </div>

@@ -60,6 +60,7 @@ import { ToddlerAnimalSafari } from "./ToddlerAnimalSafari";
 import { ToddlerRhymeGame } from "./ToddlerRhymeGame";
 import { ToddlerBubblePopGame } from "./ToddlerBubblePopGame";
 import { ToddlerK1Studio } from "./ToddlerK1Studio";
+import { ToddlerLetterTrace } from "./ToddlerLetterTrace";
 import type { K1StudioGameId } from "../data/toddler/k1StudioGames";
 import { ToddlerWorldTrail } from "./ToddlerWorldTrail";
 import { ATLAS_CONTINENTS, TOY_ACTIVITY_TYPES } from "../data/toddler/toddlerWorldAtlasLayout";
@@ -147,6 +148,12 @@ export function ToddlerWorldsNavigator({
   const progressRef = useRef(progress);
   progressRef.current = progress;
   const toyCreditedRef = useRef<string | null>(null);
+  const [tapsMuted, setTapsMuted] = useState(() => soundEffects.isMuted());
+  const toggleTapSounds = () => {
+    const next = !soundEffects.isMuted();
+    soundEffects.setMuted(next);
+    setTapsMuted(next);
+  };
 
   const completeWorldToy = (activity: ToddlerActivity) => {
     if (toyCreditedRef.current === activity.id) return;
@@ -743,6 +750,14 @@ export function ToddlerWorldsNavigator({
             <span className="px-3 py-1 rounded-full bg-white/10 text-white text-xs font-bold flex items-center gap-1">
               <Star size={12} className="text-amber-400 fill-amber-400" /> +{activeActivity.rewardStars} Stars
             </span>
+            <button
+              type="button"
+              onClick={toggleTapSounds}
+              className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/10"
+              title={tapsMuted ? "Tap sounds are off" : "Quiet tap sounds"}
+            >
+              {tapsMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+            </button>
           </div>
         </div>
 
@@ -819,6 +834,15 @@ export function ToddlerWorldsNavigator({
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-cyan-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerBubblePopGame catalog={playTheme.bubbles} onAddStar={() => completeWorldToy(activeActivity)} />
+          </div>
+        )}
+        {activeActivity.type === "letter-trace" && (
+          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-amber-400/30 shadow-2xl space-y-3">
+            <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
+            <ToddlerLetterTrace
+              catalog={playTheme.bubbles}
+              onAddStar={() => completeWorldToy(activeActivity)}
+            />
           </div>
         )}
         {activeActivity.type === "k1-studio" && activeActivity.studioGameId && (
@@ -1537,14 +1561,25 @@ export function ToddlerWorldsNavigator({
           <p className="text-xs font-black uppercase tracking-[0.2em] text-amber-300">Wonderland Atlas</p>
           <h2 className="text-3xl font-black text-white">Pick a land</h2>
         </div>
-        {onOpenGames && (
+        <div className="flex items-center gap-2">
           <button
-            onClick={onOpenGames}
-            className="px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs cursor-pointer border border-white/10"
+            type="button"
+            onClick={toggleTapSounds}
+            className="px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs cursor-pointer border border-white/10 inline-flex items-center gap-1.5"
+            title={tapsMuted ? "Tap sounds are off" : "Quiet tap sounds"}
           >
-            Free Play
+            {tapsMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+            {tapsMuted ? "Taps off" : "Taps on"}
           </button>
-        )}
+          {onOpenGames && (
+            <button
+              onClick={onOpenGames}
+              className="px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs cursor-pointer border border-white/10"
+            >
+              Free Play
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">

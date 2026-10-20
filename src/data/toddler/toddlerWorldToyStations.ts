@@ -96,6 +96,16 @@ const TOYS: Record<string, ToyStation[]> = {
       spokenPrompt: "Let's cook blends in the meadow kitchen!",
       skillId: "read-k1-consonant-blends",
     }),
+    toy({
+      id: "act-meadow-letter-trace",
+      title: "Meadow Letter Trace",
+      type: "letter-trace",
+      learningObjective: "Finger-trace meadow letters",
+      clueIcon: "✍️",
+      cluePrompt: "Trace the big letter with your finger.",
+      spokenPrompt: "Trace the meadow letter with your finger!",
+      skillId: "read-k1-alphabet-letters",
+    }),
   ],
   "learning-world/counting-grove": [
     toy({
@@ -360,6 +370,16 @@ const TOYS: Record<string, ToyStation[]> = {
       spokenPrompt: "Tap the high street balloons!",
       skillId: "read-k1-alphabet-letters",
     }),
+    toy({
+      id: "act-street-letter-trace",
+      title: "Street Letter Trace",
+      type: "letter-trace",
+      learningObjective: "Finger-trace bus and car letters",
+      clueIcon: "✍️",
+      cluePrompt: "Trace B for Bus on the high street.",
+      spokenPrompt: "Trace the high street letter with your finger!",
+      skillId: "read-k1-alphabet-letters",
+    }),
   ],
   "vehicle-world/airport-runway": [
     toy({
@@ -441,6 +461,16 @@ const TOYS: Record<string, ToyStation[]> = {
       cluePrompt: "Flip two buns. Find the matching treats.",
       spokenPrompt: "Flip the bakery buns and find the match!",
     }),
+    toy({
+      id: "act-bakery-letter-trace",
+      title: "Flour Letter Trace",
+      type: "letter-trace",
+      learningObjective: "Finger-trace bakery letters in flour",
+      clueIcon: "✍️",
+      cluePrompt: "Trace A for Apple in the flour.",
+      spokenPrompt: "Trace the bakery letter in the flour!",
+      skillId: "read-k1-alphabet-letters",
+    }),
   ],
   "kitchen-world/soup-pot": [
     toy({
@@ -498,6 +528,16 @@ const TOYS: Record<string, ToyStation[]> = {
       cluePrompt: "Who is calling on the penguin floe?",
       spokenPrompt: "Listen for who is calling on the ice floe!",
       skillId: "sci-k1-habitats",
+    }),
+    toy({
+      id: "act-floe-letter-trace",
+      title: "Ice Letter Trace",
+      type: "letter-trace",
+      learningObjective: "Finger-trace ice letters",
+      clueIcon: "✍️",
+      cluePrompt: "Trace P for Penguin in the snow.",
+      spokenPrompt: "Trace the ice letter in the snow!",
+      skillId: "read-k1-alphabet-letters",
     }),
   ],
   "arctic-world/polar-den": [
