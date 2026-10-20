@@ -15,7 +15,22 @@ export type LandPlayId =
   | "number-pebbles"
   | "campfire"
   | "feeling-face"
-  | "night-tuck";
+  | "night-tuck"
+  | "vine-swing"
+  | "dew-web"
+  | "seal-clap"
+  | "wash-bus"
+  | "pigeon-feed"
+  | "knead-dough"
+  | "drum-boom"
+  | "rocket-stars"
+  | "ten-dots"
+  | "puddle-jump"
+  | "brush-teeth"
+  | "owl-hoot"
+  | "puppet-bow"
+  | "syllable-clap"
+  | "rain-boots";
 
 const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = {
   "milk-cow": { title: "Milk the cow", line: "Hold the pail. Fill it to the top.", done: "Warm milk for the barn!" },
@@ -30,6 +45,21 @@ const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = 
   campfire: { title: "Build a campfire", line: "Lay four logs, then strike a spark.", done: "Warm light on the trail." },
   "feeling-face": { title: "Make a feeling", line: "Pick eyes, then a mouth.", done: "That face has a feeling!" },
   "night-tuck": { title: "Tuck in for night", line: "Close three shutters, then hug teddy.", done: "Quiet house. Sweet sleep." },
+  "vine-swing": { title: "Swing the vine", line: "Tap the vine. Swing five times.", done: "Wheee across the canopy!" },
+  "dew-web": { title: "Dew on the web", line: "Tap six shiny drops.", done: "The web sparkles." },
+  "seal-clap": { title: "Seal clap", line: "Tap the seal five times.", done: "Clap clap clap!" },
+  "wash-bus": { title: "Wash the bus", line: "Tap the dirt spots off.", done: "Shiny bus. Beep beep!" },
+  "pigeon-feed": { title: "Feed the pigeons", line: "Tap four crumbs to the birds.", done: "Coo! Full tummies." },
+  "knead-dough": { title: "Knead the dough", line: "Press the dough eight times.", done: "Soft bread ready." },
+  "drum-boom": { title: "Boom the drums", line: "Tap the drums 1, then 2, then 3.", done: "A parade beat!" },
+  "rocket-stars": { title: "Star the rocket", line: "Tap five stars, then launch.", done: "Whoosh to the moon!" },
+  "ten-dots": { title: "Fill the ten-frame", line: "Tap ten dots. Fill every box.", done: "Ten. A full frame!" },
+  "puddle-jump": { title: "Puddle jump", line: "Tap four puddles. Splash!", done: "Wet boots. Big grin." },
+  "brush-teeth": { title: "Brush, brush", line: "Brush eight strokes.", done: "Clean shiny teeth." },
+  "owl-hoot": { title: "Owl hoot", line: "Tap the owl three times.", done: "Hoo hoo hoo." },
+  "puppet-bow": { title: "Puppet bow", line: "Tap each puppet to take a bow.", done: "The nook claps!" },
+  "syllable-clap": { title: "Clap ba-na-na", line: "Clap three beats.", done: "Ba. Na. Na!" },
+  "rain-boots": { title: "Rain boots", line: "Stamp four puddles.", done: "Splash all the way home." },
 };
 
 function useCredit(onAddStar?: () => void) {
@@ -61,6 +91,21 @@ const SCENERY: Record<LandPlayId, string[]> = {
   campfire: ["🌲", "🦉", "🌙", "⭐", "🏕️"],
   "feeling-face": ["💗", "🌼", "🌈", "🧸", "☀️"],
   "night-tuck": ["🌙", "⭐", "🦉", "🛏️", "🕯️"],
+  "vine-swing": ["🌴", "🦜", "🍃", "🍌", "☀️"],
+  "dew-web": ["🕸️", "💧", "🌿", "🪲", "🌸"],
+  "seal-clap": ["🦭", "❄️", "🧊", "🌊", "🐟"],
+  "wash-bus": ["🚌", "🧽", "💧", "☀️", "🛞"],
+  "pigeon-feed": ["🕊️", "🍞", "🌳", "🪑", "🌤️"],
+  "knead-dough": ["🍞", "🌾", "🥣", "🔥", "🧈"],
+  "drum-boom": ["🥁", "🎵", "🌈", "🎺", "⭐"],
+  "rocket-stars": ["🚀", "🌙", "⭐", "🪐", "✨"],
+  "ten-dots": ["🔟", "🌼", "📗", "⭐", "🔷"],
+  "puddle-jump": ["🌧️", "🌈", "🌲", "💧", "☔"],
+  "brush-teeth": ["🪥", "😁", "💧", "🌙", "⭐"],
+  "owl-hoot": ["🦉", "🌙", "🌲", "⭐", "🪵"],
+  "puppet-bow": ["🎭", "🎪", "🌟", "🧵", "👏"],
+  "syllable-clap": ["👏", "🐟", "🔤", "💧", "🌙"],
+  "rain-boots": ["👢", "🌧️", "🪟", "☕", "☂️"],
 };
 
 function Stage({
@@ -643,6 +688,219 @@ function NightTuck({ onAddStar }: { onAddStar?: () => void }) {
   );
 }
 
+function TapCount({
+  playId,
+  className,
+  need,
+  emoji,
+  testId,
+  onAddStar,
+}: {
+  playId: LandPlayId;
+  className: string;
+  need: number;
+  emoji: string;
+  testId: string;
+  onAddStar?: () => void;
+}) {
+  const { done, finish } = useCredit(onAddStar);
+  const [n, setN] = useState(0);
+  return (
+    <Stage playId={playId} done={done} className={className}>
+      <button
+        type="button"
+        data-testid={testId}
+        className="mx-auto block min-h-24 min-w-24 text-7xl"
+        onClick={() => {
+          setN((value) => {
+            const next = Math.min(need, value + 1);
+            soundEffects.playPop();
+            if (next >= need) finish();
+            return next;
+          });
+        }}
+      >
+        {emoji}
+      </button>
+      <p className="text-center text-white font-black mt-4" data-testid={`${testId}-count`}>
+        {n} of {need}
+      </p>
+    </Stage>
+  );
+}
+
+function SpotTap({
+  playId,
+  className,
+  spots,
+  onAddStar,
+}: {
+  playId: LandPlayId;
+  className: string;
+  spots: { id: string; emoji: string; top: string; left: string }[];
+  onAddStar?: () => void;
+}) {
+  const { done, finish } = useCredit(onAddStar);
+  const [got, setGot] = useState<string[]>([]);
+  return (
+    <Stage playId={playId} done={done} className={className}>
+      <div className="relative h-72 sm:h-80">
+        {spots.map((spot) =>
+          got.includes(spot.id) ? null : (
+            <button
+              key={spot.id}
+              type="button"
+              data-testid={`spot-${spot.id}`}
+              className="absolute min-h-16 min-w-16 text-4xl"
+              style={{ top: spot.top, left: spot.left }}
+              onClick={() => {
+                setGot((prev) => {
+                  if (prev.includes(spot.id)) return prev;
+                  const next = [...prev, spot.id];
+                  soundEffects.playPop();
+                  if (next.length >= spots.length) finish();
+                  return next;
+                });
+              }}
+            >
+              {spot.emoji}
+            </button>
+          )
+        )}
+      </div>
+      <p className="text-center text-white font-black">{got.length} of {spots.length}</p>
+    </Stage>
+  );
+}
+
+function DrumBoom({ onAddStar }: { onAddStar?: () => void }) {
+  const { done, finish } = useCredit(onAddStar);
+  const [step, setStep] = useState(1);
+  return (
+    <Stage playId="drum-boom" done={done} className="bg-gradient-to-b from-fuchsia-300 via-orange-400 to-rose-800">
+      <div className="flex justify-center gap-4 mt-8">
+        {[1, 2, 3].map((n) => (
+          <button
+            key={n}
+            type="button"
+            data-testid={`drum-${n}`}
+            className={`min-h-24 min-w-24 rounded-full text-5xl font-black ${n < step ? "bg-white" : "bg-white/20"}`}
+            onClick={() => {
+              if (n !== step) {
+                soundEffects.playGentleBoing();
+                return;
+              }
+              soundEffects.playPop();
+              const next = step + 1;
+              setStep(next);
+              if (next > 3) finish();
+            }}
+          >
+            🥁{n}
+          </button>
+        ))}
+      </div>
+    </Stage>
+  );
+}
+
+function RocketStars({ onAddStar }: { onAddStar?: () => void }) {
+  const { done, finish } = useCredit(onAddStar);
+  const [stars, setStars] = useState(0);
+  return (
+    <Stage playId="rocket-stars" done={done} className="bg-gradient-to-b from-indigo-900 via-violet-800 to-black">
+      <div className="flex flex-col items-center gap-5 mt-6">
+        <div className="text-7xl">{stars >= 5 ? "🚀" : "🛰️"}</div>
+        <button
+          type="button"
+          data-testid="star-tap"
+          className="min-h-16 rounded-full bg-amber-200 px-8 py-4 text-xl font-black text-amber-950"
+          onClick={() => {
+            setStars((n) => Math.min(5, n + 1));
+            soundEffects.playPop();
+          }}
+        >
+          Tap a star
+        </button>
+        <p className="text-white font-black">{stars} of 5</p>
+        <button
+          type="button"
+          data-testid="launch"
+          className="min-h-16 rounded-full bg-orange-500 px-8 py-4 text-xl font-black text-white"
+          onClick={() => {
+            if (stars < 5) {
+              soundEffects.playGentleBoing();
+              speakText("Need five stars first!", { pitch: 1.2 });
+              return;
+            }
+            finish();
+          }}
+        >
+          Launch
+        </button>
+      </div>
+    </Stage>
+  );
+}
+
+function TenDots({ onAddStar }: { onAddStar?: () => void }) {
+  const { done, finish } = useCredit(onAddStar);
+  const [on, setOn] = useState<number[]>([]);
+  return (
+    <Stage playId="ten-dots" done={done} className="bg-gradient-to-b from-lime-200 via-emerald-400 to-teal-800">
+      <div className="grid grid-cols-5 gap-3 max-w-sm mx-auto mt-6">
+        {Array.from({ length: 10 }, (_, i) => (
+          <button
+            key={i}
+            type="button"
+            data-testid={`dot-${i}`}
+            className={`h-14 w-14 rounded-xl border-4 ${on.includes(i) ? "bg-amber-300 border-white" : "bg-white/20 border-white/50"}`}
+            onClick={() => {
+              setOn((prev) => {
+                if (prev.includes(i)) return prev;
+                const next = [...prev, i];
+                soundEffects.playPop();
+                if (next.length >= 10) finish();
+                return next;
+              });
+            }}
+          />
+        ))}
+      </div>
+    </Stage>
+  );
+}
+
+function PuppetBow({ onAddStar }: { onAddStar?: () => void }) {
+  const { done, finish } = useCredit(onAddStar);
+  const [bow, setBow] = useState<number[]>([]);
+  return (
+    <Stage playId="puppet-bow" done={done} className="bg-gradient-to-b from-rose-200 via-violet-400 to-purple-900">
+      <div className="flex justify-center gap-4 mt-10">
+        {["🦊", "🐰", "🐻"].map((face, i) => (
+          <button
+            key={face}
+            type="button"
+            data-testid={`puppet-${i}`}
+            className={`min-h-24 min-w-20 text-6xl rounded-3xl ${bow.includes(i) ? "bg-white" : "bg-white/20"}`}
+            onClick={() => {
+              setBow((prev) => {
+                if (prev.includes(i)) return prev;
+                const next = [...prev, i];
+                soundEffects.playPop();
+                if (next.length >= 3) finish();
+                return next;
+              });
+            }}
+          >
+            {bow.includes(i) ? "🙇" : face}
+          </button>
+        ))}
+      </div>
+    </Stage>
+  );
+}
+
 const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX.Element> = {
   "milk-cow": MilkCow,
   "firefly-jar": FireflyJar,
@@ -656,6 +914,96 @@ const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX
   campfire: Campfire,
   "feeling-face": FeelingFace,
   "night-tuck": NightTuck,
+  "vine-swing": (props) => (
+    <TapCount playId="vine-swing" className="bg-gradient-to-b from-lime-300 via-emerald-600 to-green-950" need={5} emoji="🐒" testId="vine" {...props} />
+  ),
+  "dew-web": (props) => (
+    <SpotTap
+      playId="dew-web"
+      className="bg-gradient-to-b from-emerald-200 via-teal-600 to-slate-900"
+      spots={[
+        { id: "a", emoji: "💧", top: "12%", left: "18%" },
+        { id: "b", emoji: "💧", top: "20%", left: "62%" },
+        { id: "c", emoji: "💧", top: "38%", left: "40%" },
+        { id: "d", emoji: "💧", top: "52%", left: "22%" },
+        { id: "e", emoji: "💧", top: "58%", left: "70%" },
+        { id: "f", emoji: "💧", top: "72%", left: "48%" },
+      ]}
+      {...props}
+    />
+  ),
+  "seal-clap": (props) => (
+    <TapCount playId="seal-clap" className="bg-gradient-to-b from-sky-200 via-cyan-500 to-blue-900" need={5} emoji="🦭" testId="seal" {...props} />
+  ),
+  "wash-bus": (props) => (
+    <SpotTap
+      playId="wash-bus"
+      className="bg-gradient-to-b from-yellow-200 via-orange-400 to-slate-700"
+      spots={[
+        { id: "a", emoji: "🟫", top: "20%", left: "18%" },
+        { id: "b", emoji: "🟫", top: "28%", left: "55%" },
+        { id: "c", emoji: "🟫", top: "48%", left: "32%" },
+        { id: "d", emoji: "🟫", top: "58%", left: "68%" },
+        { id: "e", emoji: "🟫", top: "70%", left: "44%" },
+      ]}
+      {...props}
+    />
+  ),
+  "pigeon-feed": (props) => (
+    <SpotTap
+      playId="pigeon-feed"
+      className="bg-gradient-to-b from-sky-200 via-lime-300 to-stone-600"
+      spots={[
+        { id: "a", emoji: "🍞", top: "30%", left: "20%" },
+        { id: "b", emoji: "🍞", top: "40%", left: "60%" },
+        { id: "c", emoji: "🍞", top: "58%", left: "34%" },
+        { id: "d", emoji: "🍞", top: "68%", left: "72%" },
+      ]}
+      {...props}
+    />
+  ),
+  "knead-dough": (props) => (
+    <TapCount playId="knead-dough" className="bg-gradient-to-b from-amber-200 via-orange-400 to-rose-900" need={8} emoji="🍞" testId="dough" {...props} />
+  ),
+  "drum-boom": DrumBoom,
+  "rocket-stars": RocketStars,
+  "ten-dots": TenDots,
+  "puddle-jump": (props) => (
+    <SpotTap
+      playId="puddle-jump"
+      className="bg-gradient-to-b from-sky-300 via-blue-500 to-emerald-800"
+      spots={[
+        { id: "a", emoji: "💦", top: "28%", left: "16%" },
+        { id: "b", emoji: "💦", top: "36%", left: "58%" },
+        { id: "c", emoji: "💦", top: "58%", left: "30%" },
+        { id: "d", emoji: "💦", top: "70%", left: "66%" },
+      ]}
+      {...props}
+    />
+  ),
+  "brush-teeth": (props) => (
+    <TapCount playId="brush-teeth" className="bg-gradient-to-b from-sky-200 via-cyan-400 to-indigo-800" need={8} emoji="😁" testId="brush" {...props} />
+  ),
+  "owl-hoot": (props) => (
+    <TapCount playId="owl-hoot" className="bg-gradient-to-b from-indigo-800 via-slate-900 to-black" need={3} emoji="🦉" testId="owl" {...props} />
+  ),
+  "puppet-bow": PuppetBow,
+  "syllable-clap": (props) => (
+    <TapCount playId="syllable-clap" className="bg-gradient-to-b from-yellow-200 via-orange-400 to-rose-800" need={3} emoji="👏" testId="clap" {...props} />
+  ),
+  "rain-boots": (props) => (
+    <SpotTap
+      playId="rain-boots"
+      className="bg-gradient-to-b from-slate-300 via-sky-500 to-indigo-900"
+      spots={[
+        { id: "a", emoji: "👢", top: "24%", left: "18%" },
+        { id: "b", emoji: "👢", top: "34%", left: "62%" },
+        { id: "c", emoji: "👢", top: "56%", left: "28%" },
+        { id: "d", emoji: "👢", top: "68%", left: "70%" },
+      ]}
+      {...props}
+    />
+  ),
 };
 
 export function ToddlerLandRooms({

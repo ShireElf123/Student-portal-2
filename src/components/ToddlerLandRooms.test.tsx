@@ -48,7 +48,7 @@ afterEach(() => {
 });
 
 describe("land rooms", () => {
-  it("plants one unique land-play room on every world", () => {
+  it("plants unique land-play rooms on every world, and extra districts on thin lands", () => {
     const rooms = ALL_TODDLER_WORLDS.flatMap((world) =>
       world.areas.flatMap((area) =>
         area.activities
@@ -56,11 +56,15 @@ describe("land rooms", () => {
           .map((activity) => ({ worldId: world.id, playId: activity.landPlayId, id: activity.id }))
       )
     );
-    expect(rooms).toHaveLength(12);
+    expect(rooms.length).toBeGreaterThanOrEqual(24);
     expect(new Set(rooms.map((room) => room.worldId)).size).toBe(12);
-    expect(new Set(rooms.map((room) => room.playId)).size).toBe(12);
-    expect(new Set(rooms.map((room) => room.id)).size).toBe(12);
+    expect(new Set(rooms.map((room) => room.playId)).size).toBe(rooms.length);
+    expect(new Set(rooms.map((room) => room.id)).size).toBe(rooms.length);
     expect(rooms.every((room) => room.playId)).toBe(true);
+    for (const worldId of ["story-world", "learning-world", "my-world"]) {
+      const world = ALL_TODDLER_WORLDS.find((item) => item.id === worldId);
+      expect(world?.areas.length).toBeGreaterThanOrEqual(4);
+    }
   });
 
   it("fills the farm pail when the child holds to milk", async () => {
@@ -176,6 +180,27 @@ describe("land rooms", () => {
     fireEvent.click(night.getByTestId("shutter-1"));
     fireEvent.click(night.getByTestId("shutter-2"));
     fireEvent.click(night.getByTestId("teddy"));
+    await flush();
+    expect(stars).toEqual([1, 1, 1]);
+  });
+
+  it("swings the vine, fills ten dots, and bows three puppets", async () => {
+    const stars: number[] = [];
+    const vine = render(<ToddlerLandRooms playId="vine-swing" onAddStar={() => stars.push(1)} />);
+    const vineBtn = vine.getByTestId("vine");
+    for (let i = 0; i < 5; i += 1) fireEvent.click(vineBtn);
+    await flush();
+    vine.unmount();
+
+    const dots = render(<ToddlerLandRooms playId="ten-dots" onAddStar={() => stars.push(1)} />);
+    for (let i = 0; i < 10; i += 1) fireEvent.click(dots.getByTestId(`dot-${i}`));
+    await flush();
+    dots.unmount();
+
+    const puppets = render(<ToddlerLandRooms playId="puppet-bow" onAddStar={() => stars.push(1)} />);
+    fireEvent.click(puppets.getByTestId("puppet-0"));
+    fireEvent.click(puppets.getByTestId("puppet-1"));
+    fireEvent.click(puppets.getByTestId("puppet-2"));
     await flush();
     expect(stars).toEqual([1, 1, 1]);
   });

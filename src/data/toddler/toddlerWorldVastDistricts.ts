@@ -1,0 +1,263 @@
+/** Extra districts so the thin original lands are not three-stop demos. */
+import type { ToddlerActivity, ToddlerArea, ToddlerWorld } from "./toddlerWorldsArchitecture";
+
+const PLAY: ToddlerActivity["options"] = [
+  { id: "play", label: "Let's play", emoji: "🎮", feedback: "Time to play!", isCorrect: true },
+];
+
+function act(
+  partial: Omit<ToddlerActivity, "rewardStars" | "rewardXP" | "replayable" | "difficulty" | "clueType" | "options"> & {
+    type: ToddlerActivity["type"];
+    options?: ToddlerActivity["options"];
+    difficulty?: 1 | 2 | 3;
+    clueType?: ToddlerActivity["clueType"];
+  },
+): ToddlerActivity {
+  return {
+    difficulty: 1,
+    clueType: "creative",
+    options: PLAY,
+    rewardStars: 1,
+    rewardXP: 0,
+    replayable: true,
+    ...partial,
+  };
+}
+
+const DISTRICTS: Record<string, ToddlerArea[]> = {
+  "story-world": [
+    {
+      id: "puppet-nook",
+      worldId: "story-world",
+      title: "Puppet Nook",
+      emoji: "🎭",
+      tagline: "Tiny stage, big voices",
+      environment: {
+        bgGradient: "from-rose-200 via-violet-100 to-amber-200 text-violet-950",
+        cardBg: "bg-violet-50/90 border-violet-300",
+        accentColor: "violet",
+        sceneryEmojis: ["🎭", "🎪", "🧵", "🌟", "🪑"],
+        ambientDescription: "A velvet curtain, a wooden stage, and puppets waiting for a story.",
+      },
+      requiredStarsToUnlock: 2,
+      unlockRequirementText: "Earn 2 stars to open the puppet nook.",
+      activities: [
+        act({
+          id: "act-puppet-who-talks",
+          worldId: "story-world",
+          areaId: "puppet-nook",
+          title: "Who talks with hands?",
+          type: "clue-detective",
+          learningObjective: "Spot a puppet as a story helper",
+          clueIcon: "🎭",
+          cluePrompt: "Who tells a tale with a sock and a smile?",
+          spokenPrompt: "Who talks with hands on the tiny stage?",
+          options: [
+            { id: "puppet", label: "Hand puppet", emoji: "🧦", feedback: "The puppet talks when a hand is inside!", isCorrect: true },
+            { id: "rock", label: "Quiet rock", emoji: "🪨", feedback: "Rocks do not tell tales.", isCorrect: false },
+            { id: "spoon", label: "Soup spoon", emoji: "🥄", feedback: "Spoons belong in the kitchen.", isCorrect: false },
+          ],
+        }),
+        act({
+          id: "act-puppet-count-crowd",
+          worldId: "story-world",
+          areaId: "puppet-nook",
+          title: "Count the seats",
+          type: "counting",
+          learningObjective: "Count seats in the nook",
+          clueType: "counting",
+          clueIcon: "🪑",
+          cluePrompt: "Tap each little seat.",
+          spokenPrompt: "How many seats for the show?",
+        }),
+        act({
+          id: "act-puppet-sort-stage",
+          worldId: "story-world",
+          areaId: "puppet-nook",
+          title: "Stage or seats",
+          type: "sorting",
+          learningObjective: "Sort stage things from audience things",
+          clueIcon: "🎪",
+          cluePrompt: "Stage things here. Seat things there.",
+          spokenPrompt: "Is it for the stage, or for the seats?",
+        }),
+        act({
+          id: "act-puppet-letter-p",
+          worldId: "story-world",
+          areaId: "puppet-nook",
+          title: "Trace P for Puppet",
+          type: "letter-trace",
+          learningObjective: "Finger-trace P",
+          clueIcon: "✍️",
+          cluePrompt: "Trace P for Puppet.",
+          spokenPrompt: "Trace the letter P with your finger!",
+        }),
+      ],
+      missions: [],
+    },
+  ],
+  "learning-world": [
+    {
+      id: "word-stream",
+      worldId: "learning-world",
+      title: "Word Stream",
+      emoji: "🐟",
+      tagline: "Sounds that swim",
+      environment: {
+        bgGradient: "from-sky-200 via-cyan-100 to-emerald-200 text-sky-950",
+        cardBg: "bg-sky-50/90 border-sky-300",
+        accentColor: "sky",
+        sceneryEmojis: ["🐟", "💧", "🌿", "🔤", "🪨"],
+        ambientDescription: "A shallow stream where letter-fish flash their first sounds.",
+      },
+      requiredStarsToUnlock: 2,
+      unlockRequirementText: "Earn 2 stars to follow the word stream.",
+      activities: [
+        act({
+          id: "act-stream-who-mmm",
+          worldId: "learning-world",
+          areaId: "word-stream",
+          title: "Who says mmm?",
+          type: "sound-detective",
+          learningObjective: "Hear /m/ at the start",
+          clueType: "sound",
+          clueIcon: "👂",
+          cluePrompt: "Mmm. Who starts with that hum?",
+          spokenPrompt: "Mmm. Who starts with mmm?",
+          options: [
+            { id: "moon", label: "Moon", emoji: "🌙", feedback: "Moon starts with mmm!", isCorrect: true, soundCue: "Mmm!" },
+            { id: "sun", label: "Sun", emoji: "☀️", feedback: "Sun starts with sss.", isCorrect: false },
+            { id: "fish", label: "Fish", emoji: "🐟", feedback: "Fish starts with fff.", isCorrect: false },
+          ],
+        }),
+        act({
+          id: "act-stream-count-fish",
+          worldId: "learning-world",
+          areaId: "word-stream",
+          title: "Count the letter-fish",
+          type: "counting",
+          learningObjective: "Count fish in the stream",
+          clueType: "counting",
+          clueIcon: "🐟",
+          cluePrompt: "Tap each letter-fish.",
+          spokenPrompt: "How many fish in the stream?",
+        }),
+        act({
+          id: "act-stream-sort-sound",
+          worldId: "learning-world",
+          areaId: "word-stream",
+          title: "Hum or splash",
+          type: "sorting",
+          learningObjective: "Sort mouth sounds from water sounds",
+          clueIcon: "💧",
+          cluePrompt: "Letter sounds here. Water sounds there.",
+          spokenPrompt: "Is it a letter sound, or a water sound?",
+        }),
+        act({
+          id: "act-stream-letter-m",
+          worldId: "learning-world",
+          areaId: "word-stream",
+          title: "Trace M for Moon",
+          type: "letter-trace",
+          learningObjective: "Finger-trace M",
+          clueIcon: "✍️",
+          cluePrompt: "Trace M for Moon.",
+          spokenPrompt: "Trace the letter M with your finger!",
+        }),
+      ],
+      missions: [],
+    },
+  ],
+  "my-world": [
+    {
+      id: "rainy-window",
+      worldId: "my-world",
+      title: "Rainy Window",
+      emoji: "🌧️",
+      tagline: "Boots, drops and cocoa",
+      environment: {
+        bgGradient: "from-slate-300 via-sky-200 to-indigo-300 text-slate-950",
+        cardBg: "bg-slate-50/90 border-slate-300",
+        accentColor: "sky",
+        sceneryEmojis: ["🌧️", "👢", "🪟", "☕", "☂️"],
+        ambientDescription: "Rain on the glass, warm socks, and puddles by the step.",
+      },
+      requiredStarsToUnlock: 2,
+      unlockRequirementText: "Earn 2 stars to sit by the rainy window.",
+      activities: [
+        act({
+          id: "act-rain-who-boots",
+          worldId: "my-world",
+          areaId: "rainy-window",
+          title: "Who keeps toes dry?",
+          type: "clue-detective",
+          learningObjective: "Choose rain boots for wet weather",
+          clueIcon: "🌧️",
+          cluePrompt: "The path is wet. What keeps toes dry?",
+          spokenPrompt: "What keeps toes dry in the rain?",
+          options: [
+            { id: "boots", label: "Rain boots", emoji: "👢", feedback: "Boots splash and stay dry inside!", isCorrect: true },
+            { id: "socks", label: "Soft socks", emoji: "🧦", feedback: "Socks get soggy in puddles.", isCorrect: false },
+            { id: "hat", label: "Sun hat", emoji: "👒", feedback: "A sun hat is for bright days.", isCorrect: false },
+          ],
+        }),
+        act({
+          id: "act-rain-count-drops",
+          worldId: "my-world",
+          areaId: "rainy-window",
+          title: "Count the drops",
+          type: "counting",
+          learningObjective: "Count raindrops on the glass",
+          clueType: "counting",
+          clueIcon: "💧",
+          cluePrompt: "Tap each drop on the window.",
+          spokenPrompt: "How many drops on the glass?",
+        }),
+        act({
+          id: "act-rain-sort-wet",
+          worldId: "my-world",
+          areaId: "rainy-window",
+          title: "Wet or dry",
+          type: "sorting",
+          learningObjective: "Sort wet-day things from dry-day things",
+          clueIcon: "☂️",
+          cluePrompt: "Rain things here. Sunny things there.",
+          spokenPrompt: "Is it for rain, or for sun?",
+        }),
+        act({
+          id: "act-rain-letter-r",
+          worldId: "my-world",
+          areaId: "rainy-window",
+          title: "Trace R for Rain",
+          type: "letter-trace",
+          learningObjective: "Finger-trace R",
+          clueIcon: "✍️",
+          cluePrompt: "Trace R for Rain.",
+          spokenPrompt: "Trace the letter R with your finger!",
+        }),
+      ],
+      missions: [],
+    },
+  ],
+};
+
+export const VAST_DISTRICT_SKILLS: Record<string, string | undefined> = {
+  "act-puppet-who-talks": "read-k1-listening-comprehension",
+  "act-puppet-count-crowd": "math-k1-counting",
+  "act-puppet-sort-stage": "logic-k1-sorting",
+  "act-puppet-letter-p": "read-k1-alphabet-letters",
+  "act-stream-who-mmm": "read-k1-phonemic-awareness",
+  "act-stream-count-fish": "math-k1-counting",
+  "act-stream-sort-sound": "logic-k1-sorting",
+  "act-stream-letter-m": "read-k1-alphabet-letters",
+  "act-rain-who-boots": "sci-k1-weather-seasons",
+  "act-rain-count-drops": "math-k1-counting",
+  "act-rain-sort-wet": "logic-k1-sorting",
+  "act-rain-letter-r": "read-k1-alphabet-letters",
+};
+
+export function attachVastDistricts(world: ToddlerWorld): ToddlerWorld {
+  const extra = DISTRICTS[world.id];
+  if (!extra?.length) return world;
+  return { ...world, areas: [...world.areas, ...extra] };
+}

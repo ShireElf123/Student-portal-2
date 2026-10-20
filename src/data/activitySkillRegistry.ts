@@ -2,6 +2,7 @@ import { ALL_TODDLER_WORLDS } from "./toddler/toddlerWorldsArchitecture";
 import { WORLD_LEVEL_PACK_SKILLS } from "./toddler/toddlerWorldLevelPacks";
 import { ATLAS_WORLD_SKILLS } from "./toddler/toddlerWorldAtlasLands";
 import { WORLD_TOY_STATION_SKILLS } from "./toddler/toddlerWorldToyStations";
+import { VAST_DISTRICT_SKILLS } from "./toddler/toddlerWorldVastDistricts";
 import { CURRICULUM_SKILL_NODES, CurriculumDomain, GradeLevelBand } from "./curriculumUniverse";
 import { NavigationTab } from "../types";
 
@@ -128,6 +129,7 @@ const TODDLER_WORLD_ACTIVITY_SKILLS: Record<string, string | undefined> = {
   ...WORLD_LEVEL_PACK_SKILLS,
   ...ATLAS_WORLD_SKILLS,
   ...WORLD_TOY_STATION_SKILLS,
+  ...VAST_DISTRICT_SKILLS,
 };
 
 const toddlerWorldDefinitions: LearningActivityDefinition[] = ALL_TODDLER_WORLDS.flatMap((world) =>

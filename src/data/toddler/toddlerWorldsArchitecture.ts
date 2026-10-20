@@ -1,5 +1,6 @@
 import { StoryAdventure, STORY_ADVENTURES } from "./toddlerWorldsData";
 import { attachWorldLevelPacks } from "./toddlerWorldLevelPacks";
+import { attachVastDistricts } from "./toddlerWorldVastDistricts";
 import { ATLAS_LANDS } from "./toddlerWorldAtlasLands";
 import { attachWorldToyStations } from "./toddlerWorldToyStations";
 
@@ -68,7 +69,22 @@ export interface ToddlerActivity {
     | "number-pebbles"
     | "campfire"
     | "feeling-face"
-    | "night-tuck";
+    | "night-tuck"
+    | "vine-swing"
+    | "dew-web"
+    | "seal-clap"
+    | "wash-bus"
+    | "pigeon-feed"
+    | "knead-dough"
+    | "drum-boom"
+    | "rocket-stars"
+    | "ten-dots"
+    | "puddle-jump"
+    | "brush-teeth"
+    | "owl-hoot"
+    | "puppet-bow"
+    | "syllable-clap"
+    | "rain-boots";
 }
 
 export interface ToddlerMissionStep {
@@ -1645,4 +1661,4 @@ export const ALL_TODDLER_WORLDS: ToddlerWorld[] = [
   STORY_WORLD,
   LEARNING_WORLD,
   MY_WORLD,
-].map(attachWorldLevelPacks).concat(ATLAS_LANDS).map(attachWorldToyStations);
+].map(attachWorldLevelPacks).map(attachVastDistricts).concat(ATLAS_LANDS).map(attachWorldToyStations);
