@@ -612,8 +612,166 @@ const TOYS: Record<string, ToyStation[]> = {
   ],
 };
 
+
+const LAND_TOYS: Record<string, ToyStation[]> = {
+  "animal-world/farm-valley": [
+    toy({
+      id: "act-land-milk-cow",
+      title: "Milk the Cow",
+      type: "land-play",
+      landPlayId: "milk-cow",
+      learningObjective: "Hold to fill a pail — farm work, not a quiz",
+      clueIcon: "🐄",
+      cluePrompt: "Hold the pail. Fill it to the top.",
+      spokenPrompt: "Hold to milk the cow. Fill the pail!",
+      skillId: "sci-k1-habitats",
+    }),
+  ],
+  "bug-world/flower-bed": [
+    toy({
+      id: "act-land-firefly-jar",
+      title: "Catch Fireflies",
+      type: "land-play",
+      landPlayId: "firefly-jar",
+      learningObjective: "Catch glow-bugs into a jar",
+      clueIcon: "✨",
+      cluePrompt: "Tap six glow-bugs into the jar.",
+      spokenPrompt: "Catch the fireflies in the flower bed!",
+      skillId: "sci-k1-habitats",
+    }),
+  ],
+  "arctic-world/ice-floe": [
+    toy({
+      id: "act-land-penguin-slide",
+      title: "Penguin Slide",
+      type: "land-play",
+      landPlayId: "penguin-slide",
+      learningObjective: "Slide a penguin to the fishing hole",
+      clueIcon: "🐧",
+      cluePrompt: "Slide the penguin down to the fish hole.",
+      spokenPrompt: "Slide the penguin down the ice!",
+      skillId: "sci-k1-habitats",
+    }),
+  ],
+  "vehicle-world/garage-bay": [
+    toy({
+      id: "act-land-load-truck",
+      title: "Load the Truck",
+      type: "land-play",
+      landPlayId: "load-truck",
+      learningObjective: "Load four crates onto a truck",
+      clueIcon: "🚚",
+      cluePrompt: "Tap four crates onto the truck.",
+      spokenPrompt: "Load the truck in the garage!",
+      skillId: "math-k1-shapes",
+    }),
+  ],
+  "city-world/fire-house": [
+    toy({
+      id: "act-land-fire-hose",
+      title: "Hang the Hoses",
+      type: "land-play",
+      landPlayId: "fire-hose",
+      learningObjective: "Put water on each flame at the fire house",
+      clueIcon: "🚒",
+      cluePrompt: "Tap each flame to put the water on it.",
+      spokenPrompt: "Help the fire house put the water on!",
+      skillId: "sci-k1-habitats",
+    }),
+  ],
+  "kitchen-world/fruit-stall": [
+    toy({
+      id: "act-land-fruit-stack",
+      title: "Stack the Stall",
+      type: "land-play",
+      landPlayId: "fruit-stack",
+      learningObjective: "Stack five fruits on a market plate",
+      clueIcon: "🍎",
+      cluePrompt: "Tap fruit onto the plate. Fill five.",
+      spokenPrompt: "Stack fruit at the stall!",
+      skillId: "math-k1-counting",
+    }),
+  ],
+  "creative-world/color-studio": [
+    toy({
+      id: "act-land-stamp-mural",
+      title: "Stamp a Mural",
+      type: "land-play",
+      landPlayId: "stamp-mural",
+      learningObjective: "Stamp a wall six times with chosen marks",
+      clueIcon: "🎨",
+      cluePrompt: "Pick a stamp. Press the wall six times.",
+      spokenPrompt: "Stamp a mural on the studio wall!",
+      skillId: "logic-k1-patterns",
+    }),
+  ],
+  "story-world/barnyard-tales": [
+    toy({
+      id: "act-land-story-stones",
+      title: "Story Stones",
+      type: "land-play",
+      landPlayId: "story-stones",
+      learningObjective: "Tell a three-stone story in order",
+      clueIcon: "🪨",
+      cluePrompt: "Tap the stones in story order.",
+      spokenPrompt: "Tell the story with the stones!",
+      skillId: "read-k1-listening-comprehension",
+    }),
+  ],
+  "learning-world/phonics-meadow": [
+    toy({
+      id: "act-land-number-pebbles",
+      title: "Number Pebbles",
+      type: "land-play",
+      landPlayId: "number-pebbles",
+      learningObjective: "Tap pebbles in count order 1 to 5",
+      clueIcon: "🔢",
+      cluePrompt: "Tap the pebbles from 1 to 5.",
+      spokenPrompt: "Count the meadow pebbles in order!",
+      skillId: "math-k1-counting",
+    }),
+  ],
+  "adventure-world/forest-trail": [
+    toy({
+      id: "act-land-campfire",
+      title: "Build a Campfire",
+      type: "land-play",
+      landPlayId: "campfire",
+      learningObjective: "Lay logs then strike a spark",
+      clueIcon: "🔥",
+      cluePrompt: "Lay four logs, then strike a spark.",
+      spokenPrompt: "Build a campfire on the forest trail!",
+      skillId: "sci-k1-habitats",
+    }),
+  ],
+  "my-world/feelings-emotions": [
+    toy({
+      id: "act-land-feeling-face",
+      title: "Make a Feeling",
+      type: "land-play",
+      landPlayId: "feeling-face",
+      learningObjective: "Build a face from eyes and a mouth",
+      clueIcon: "😊",
+      cluePrompt: "Pick eyes, then a mouth.",
+      spokenPrompt: "Make a feeling face!",
+    }),
+  ],
+  "night-world/bedroom-lamp": [
+    toy({
+      id: "act-land-night-tuck",
+      title: "Tuck in for Night",
+      type: "land-play",
+      landPlayId: "night-tuck",
+      learningObjective: "Close shutters then tuck teddy",
+      clueIcon: "🧸",
+      cluePrompt: "Close three shutters, then hug teddy.",
+      spokenPrompt: "Close the shutters and tuck teddy in!",
+    }),
+  ],
+};
+
 export const WORLD_TOY_STATION_SKILLS: Record<string, string | undefined> = {};
-for (const stations of Object.values(TOYS)) {
+for (const stations of [...Object.values(TOYS), ...Object.values(LAND_TOYS)]) {
   for (const station of stations) {
     WORLD_TOY_STATION_SKILLS[station.id] = station.skillId;
   }
@@ -762,7 +920,11 @@ export function attachWorldToyStations(world: ToddlerWorld): ToddlerWorld {
   return {
     ...world,
     areas: world.areas.map((area) => {
-      const extra = [...(TOYS[`${world.id}/${area.id}`] ?? []), ...(EXTRA_TOYS[`${world.id}/${area.id}`] ?? [])];
+      const extra = [
+        ...(LAND_TOYS[`${world.id}/${area.id}`] ?? []),
+        ...(TOYS[`${world.id}/${area.id}`] ?? []),
+        ...(EXTRA_TOYS[`${world.id}/${area.id}`] ?? []),
+      ];
       if (!extra.length) return area;
       return {
         ...area,

@@ -21,7 +21,8 @@ export type ToddlerActivityType =
   | "bubble-pop"        // Phonics bubbles
   | "k1-studio"         // Curated skill studio scene
   | "letter-trace"      // Finger-trace a land letter
-  | "open-play";        // No-fail stir / drive / pour
+  | "open-play"         // No-fail stir / drive / pour
+  | "land-play";        // Land-unique room (not a quiz skin)
 
 export interface ToddlerActivityOption {
   id: string;
@@ -54,6 +55,20 @@ export interface ToddlerActivity {
   studioGameId?: string;
   /** When type is open-play, which no-fail toy to mount. */
   openPlayId?: "stir" | "drive" | "pour";
+  /** When type is land-play, which unique land room to mount. */
+  landPlayId?:
+    | "milk-cow"
+    | "firefly-jar"
+    | "penguin-slide"
+    | "load-truck"
+    | "fire-hose"
+    | "fruit-stack"
+    | "stamp-mural"
+    | "story-stones"
+    | "number-pebbles"
+    | "campfire"
+    | "feeling-face"
+    | "night-tuck";
 }
 
 export interface ToddlerMissionStep {

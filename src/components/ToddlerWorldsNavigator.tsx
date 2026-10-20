@@ -64,6 +64,7 @@ import { ToddlerK1Studio } from "./ToddlerK1Studio";
 import { ToddlerLetterTrace } from "./ToddlerLetterTrace";
 import { ToddlerLetterLane } from "./ToddlerLetterLane";
 import { ToddlerOpenPlay } from "./ToddlerOpenPlay";
+import { ToddlerLandRooms } from "./ToddlerLandRooms";
 import { SECRET_ZONES, ToddlerSecretZonePlay, secretZoneIsFound } from "./ToddlerSecretZones";
 import type { K1StudioGameId } from "../data/toddler/k1StudioGames";
 import { ToddlerWorldTrail } from "./ToddlerWorldTrail";
@@ -812,6 +813,14 @@ export function ToddlerWorldsNavigator({
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-orange-400/30 shadow-2xl space-y-3">
             <ToddlerOpenPlay
               playId={activeActivity.openPlayId}
+              onAddStar={() => completeWorldToy(activeActivity)}
+            />
+          </div>
+        )}
+        {activeActivity.type === "land-play" && activeActivity.landPlayId && (
+          <div className="p-2 sm:p-3 rounded-3xl bg-[#131427] border-2 border-lime-400/30 shadow-2xl">
+            <ToddlerLandRooms
+              playId={activeActivity.landPlayId}
               onAddStar={() => completeWorldToy(activeActivity)}
             />
           </div>
