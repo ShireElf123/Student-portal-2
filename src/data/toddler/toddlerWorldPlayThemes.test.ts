@@ -31,4 +31,23 @@ describe("world play themes", () => {
     const ice = getWorldPlayTheme("arctic-world", "seal-shore");
     expect(ice.bubbles.some((item) => item.emoji === "🐧")).toBe(true);
   });
+
+  it("does not fall back to cat/hat on bug or farm lands", () => {
+    const bugs = getWorldPlayTheme("bug-world", "pond-edge");
+    expect(bugs.rhymes.some((item) => item.targetWord === "Snail")).toBe(true);
+    expect(bugs.bubbles.some((item) => item.word === "Bee")).toBe(true);
+    const farm = getWorldPlayTheme("animal-world", "farm-valley");
+    expect(farm.rhymes.some((item) => item.targetWord === "Pig")).toBe(true);
+    expect(farm.bubbles.some((item) => item.word === "Cow")).toBe(true);
+  });
+
+  it("gives kitchen count, mix, songs, and sorting their own deck", () => {
+    const kitchen = getWorldPlayTheme("kitchen-world", "bakery-shelf");
+    expect(kitchen.counting.map((item) => item.emoji)).toEqual(expect.arrayContaining(["🍎", "🍞"]));
+    expect(kitchen.mix.orange.emoji).toBe("🥕");
+    expect(kitchen.sorting.title).toMatch(/Fruit/);
+    const vehicles = getWorldPlayTheme("vehicle-world", "high-street");
+    expect(vehicles.songIds).toContain("wheels");
+    expect(vehicles.songIds).not.toContain("old-mac");
+  });
 });

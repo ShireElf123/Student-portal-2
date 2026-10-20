@@ -423,15 +423,17 @@ export function ToddlerWorldsNavigator({
       setActiveStory(null);
     }
 
+    const playTheme = getWorldPlayTheme(activity.worldId, activity.areaId);
+
     if (activity.type === "counting") {
-      const countScenario = generateCountingScenario(activity.difficulty);
+      const countScenario = generateCountingScenario(activity.difficulty, playTheme.counting);
       setDynamicCounting(countScenario);
     } else {
       setDynamicCounting(null);
     }
 
     if (activity.type === "sorting") {
-      const sortScenario = generateSortingChallenge();
+      const sortScenario = generateSortingChallenge(playTheme.sorting);
       setDynamicSorting(sortScenario);
     } else {
       setDynamicSorting(null);
@@ -573,7 +575,10 @@ export function ToddlerWorldsNavigator({
 
   const handleRegenerateCounting = () => {
     if (!activeActivity) return;
-    const countScenario = generateCountingScenario(activeActivity.difficulty);
+    const countScenario = generateCountingScenario(
+      activeActivity.difficulty,
+      getWorldPlayTheme(activeActivity.worldId, activeActivity.areaId).counting,
+    );
     setDynamicCounting(countScenario);
     setCountingAnswered(false);
     setTappedCountIndices([]);
@@ -622,7 +627,10 @@ export function ToddlerWorldsNavigator({
   };
 
   const handleRegenerateSorting = () => {
-    const sortScenario = generateSortingChallenge();
+    if (!activeActivity) return;
+    const sortScenario = generateSortingChallenge(
+      getWorldPlayTheme(activeActivity.worldId, activeActivity.areaId).sorting,
+    );
     setDynamicSorting(sortScenario);
     setSortedItems({});
     setCountingAnswered(false);
@@ -749,6 +757,7 @@ export function ToddlerWorldsNavigator({
               <p className="text-white/70 text-xs sm:text-sm">{activeActivity.cluePrompt}</p>
             </div>
             <ToddlerColorLab
+              mixFlavor={playTheme.mix}
               onAddStar={() => {
                 completeWorldToy(activeActivity);
                 soundEffects.playFanfare();
@@ -770,6 +779,7 @@ export function ToddlerWorldsNavigator({
               <p className="text-white/70 text-xs sm:text-sm">{activeActivity.cluePrompt}</p>
             </div>
             <ToddlerMusicPiano
+              songIds={playTheme.songIds}
               onAddStar={() => {
                 completeWorldToy(activeActivity);
               }}

@@ -85,9 +85,13 @@ const SONGS: Song[] = [
 
 interface ToddlerMusicPianoProps {
   onAddStar?: (amount?: number) => void;
+  songIds?: string[];
 }
 
-export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
+export function ToddlerMusicPiano({ onAddStar, songIds }: ToddlerMusicPianoProps) {
+  const songCatalog = songIds && songIds.length > 0
+    ? SONGS.filter((song) => songIds.includes(song.id))
+    : SONGS;
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [currentNoteIdx, setCurrentNoteIdx] = useState<number>(0);
   const [activeKey, setActiveKey] = useState<string | null>(null);
@@ -219,7 +223,7 @@ export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
             🎨 Free Play Meadow
           </button>
 
-          {SONGS.map((song) => {
+          {songCatalog.map((song) => {
             const isSelected = selectedSong?.id === song.id;
             return (
               <button

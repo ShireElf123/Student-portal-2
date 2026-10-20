@@ -35,6 +35,35 @@ export interface BubbleWord {
   sound: string;
 }
 
+export interface ThemedCountItem {
+  name: string;
+  emoji: string;
+  sound: string;
+  bg: string;
+  text: string;
+}
+
+export interface ThemedSort {
+  title: string;
+  instruction: string;
+  spokenPrompt: string;
+  categoryA: { id: string; label: string; emoji: string; dropZoneColor: string };
+  categoryB: { id: string; label: string; emoji: string; dropZoneColor: string };
+  items: {
+    id: string;
+    label: string;
+    emoji: string;
+    correctCategory: "A" | "B";
+    soundFeedback: string;
+  }[];
+}
+
+export interface MixFlavor {
+  orange: { title: string; emoji: string; phrase: string };
+  green: { title: string; emoji: string; phrase: string };
+  purple: { title: string; emoji: string; phrase: string };
+}
+
 export interface WorldPlayTheme {
   safariTitle: string;
   safari: SafariFriend[];
@@ -43,6 +72,10 @@ export interface WorldPlayTheme {
   balloonLetters: string[];
   rhymes: ThemedRhyme[];
   bubbles: BubbleWord[];
+  songIds: string[];
+  mix: MixFlavor;
+  counting: ThemedCountItem[];
+  sorting: ThemedSort;
 }
 
 const savanna: SafariFriend[] = [
@@ -260,6 +293,13 @@ const LETTERS_BY_WORLD: Record<string, string[]> = {
   "night-world": ["N", "O", "M", "S", "L", "B", "W", "T"],
   "vehicle-world": ["B", "C", "P", "T", "R", "A", "V", "S"],
   "kitchen-world": ["A", "B", "S", "P", "M", "C", "T", "O"],
+  "animal-world": ["C", "P", "H", "D", "L", "M", "F", "S"],
+  "bug-world": ["B", "A", "L", "W", "S", "C", "F", "M"],
+  "city-world": ["P", "B", "T", "L", "M", "S", "F", "C"],
+  "creative-world": ["P", "B", "S", "C", "H", "D", "N", "A"],
+  "story-world": ["B", "T", "S", "H", "C", "K", "P", "R"],
+  "my-world": ["H", "B", "S", "M", "T", "F", "C", "L"],
+  "adventure-world": ["M", "T", "R", "P", "G", "C", "S", "F"],
 };
 
 const defaultRhymes: ThemedRhyme[] = [
@@ -293,6 +333,54 @@ const RHYMES_BY_WORLD: Record<string, ThemedRhyme[]> = {
     { id: "l-ten", targetWord: "Ten", targetEmoji: "🔟", spokenPrompt: "What rhymes with Ten?", correctWord: "Pen", options: [{ word: "Pen", emoji: "✏️", isCorrect: true }, { word: "Six", emoji: "6️⃣", isCorrect: false }, { word: "Book", emoji: "📘", isCorrect: false }] },
     { id: "l-bee", targetWord: "Bee", targetEmoji: "🐝", spokenPrompt: "What rhymes with Bee?", correctWord: "Tree", options: [{ word: "Tree", emoji: "🌳", isCorrect: true }, { word: "Map", emoji: "🗺️", isCorrect: false }, { word: "Cup", emoji: "☕", isCorrect: false }] },
     { id: "l-fox", targetWord: "Fox", targetEmoji: "🦊", spokenPrompt: "What rhymes with Fox?", correctWord: "Box", options: [{ word: "Box", emoji: "📦", isCorrect: true }, { word: "Hat", emoji: "🎩", isCorrect: false }, { word: "Sun", emoji: "☀️", isCorrect: false }] },
+  ],
+  "animal-world": [
+    { id: "a-pig", targetWord: "Pig", targetEmoji: "🐷", spokenPrompt: "What rhymes with Pig in the muddy pen?", correctWord: "Dig", options: [{ word: "Dig", emoji: "🕳️", isCorrect: true }, { word: "Cow", emoji: "🐄", isCorrect: false }, { word: "Hen", emoji: "🐔", isCorrect: false }] },
+    { id: "a-hen", targetWord: "Hen", targetEmoji: "🐔", spokenPrompt: "What rhymes with Hen?", correctWord: "Pen", options: [{ word: "Pen", emoji: "✏️", isCorrect: true }, { word: "Egg", emoji: "🥚", isCorrect: false }, { word: "Hay", emoji: "🌾", isCorrect: false }] },
+    { id: "a-sheep", targetWord: "Sheep", targetEmoji: "🐑", spokenPrompt: "What rhymes with Sheep?", correctWord: "Sleep", options: [{ word: "Sleep", emoji: "😴", isCorrect: true }, { word: "Wool", emoji: "🧶", isCorrect: false }, { word: "Barn", emoji: "🏚️", isCorrect: false }] },
+    { id: "a-cat", targetWord: "Cat", targetEmoji: "🐱", spokenPrompt: "What rhymes with Cat in the barn?", correctWord: "Hat", options: [{ word: "Hat", emoji: "🎩", isCorrect: true }, { word: "Milk", emoji: "🥛", isCorrect: false }, { word: "Hay", emoji: "🌾", isCorrect: false }] },
+  ],
+  "bug-world": [
+    { id: "b-bee", targetWord: "Bee", targetEmoji: "🐝", spokenPrompt: "What rhymes with Bee on the flower?", correctWord: "Tree", options: [{ word: "Tree", emoji: "🌳", isCorrect: true }, { word: "Ant", emoji: "🐜", isCorrect: false }, { word: "Mud", emoji: "🟤", isCorrect: false }] },
+    { id: "b-bug", targetWord: "Bug", targetEmoji: "🐞", spokenPrompt: "What rhymes with Bug?", correctWord: "Hug", options: [{ word: "Hug", emoji: "🤗", isCorrect: true }, { word: "Leaf", emoji: "🍃", isCorrect: false }, { word: "Web", emoji: "🕸️", isCorrect: false }] },
+    { id: "b-ant", targetWord: "Ant", targetEmoji: "🐜", spokenPrompt: "What rhymes with Ant?", correctWord: "Plant", options: [{ word: "Plant", emoji: "🌱", isCorrect: true }, { word: "Bee", emoji: "🐝", isCorrect: false }, { word: "Rock", emoji: "🪨", isCorrect: false }] },
+    { id: "b-snail", targetWord: "Snail", targetEmoji: "🐌", spokenPrompt: "What rhymes with Snail?", correctWord: "Trail", options: [{ word: "Trail", emoji: "🛤️", isCorrect: true }, { word: "Shell", emoji: "🐚", isCorrect: false }, { word: "Dew", emoji: "💧", isCorrect: false }] },
+  ],
+  "arctic-world": [
+    { id: "i-ice", targetWord: "Ice", targetEmoji: "🧊", spokenPrompt: "What rhymes with Ice on the floe?", correctWord: "Nice", options: [{ word: "Nice", emoji: "😊", isCorrect: true }, { word: "Seal", emoji: "🦭", isCorrect: false }, { word: "Snow", emoji: "❄️", isCorrect: false }] },
+    { id: "i-seal", targetWord: "Seal", targetEmoji: "🦭", spokenPrompt: "What rhymes with Seal?", correctWord: "Wheel", options: [{ word: "Wheel", emoji: "🛞", isCorrect: true }, { word: "Ice", emoji: "🧊", isCorrect: false }, { word: "Bear", emoji: "🐻‍❄️", isCorrect: false }] },
+    { id: "i-snow", targetWord: "Snow", targetEmoji: "❄️", spokenPrompt: "What rhymes with Snow?", correctWord: "Go", options: [{ word: "Go", emoji: "🚶", isCorrect: true }, { word: "Floe", emoji: "🧊", isCorrect: false }, { word: "Fur", emoji: "🧸", isCorrect: false }] },
+    { id: "i-whale", targetWord: "Whale", targetEmoji: "🐋", spokenPrompt: "What rhymes with Whale?", correctWord: "Sail", options: [{ word: "Sail", emoji: "⛵", isCorrect: true }, { word: "Ice", emoji: "🧊", isCorrect: false }, { word: "Fish", emoji: "🐟", isCorrect: false }] },
+  ],
+  "city-world": [
+    { id: "c-park", targetWord: "Park", targetEmoji: "🌳", spokenPrompt: "What rhymes with Park in town?", correctWord: "Dark", options: [{ word: "Dark", emoji: "🌑", isCorrect: true }, { word: "Bus", emoji: "🚌", isCorrect: false }, { word: "Shop", emoji: "🛍️", isCorrect: false }] },
+    { id: "c-bell", targetWord: "Bell", targetEmoji: "🔔", spokenPrompt: "What rhymes with Bell?", correctWord: "Shell", options: [{ word: "Shell", emoji: "🐚", isCorrect: true }, { word: "Lamp", emoji: "🏮", isCorrect: false }, { word: "Road", emoji: "🛣️", isCorrect: false }] },
+    { id: "c-tree", targetWord: "Tree", targetEmoji: "🌳", spokenPrompt: "What rhymes with Tree in the park?", correctWord: "Bee", options: [{ word: "Bee", emoji: "🐝", isCorrect: true }, { word: "Bench", emoji: "🪵", isCorrect: false }, { word: "Bag", emoji: "🛍️", isCorrect: false }] },
+    { id: "c-shop", targetWord: "Shop", targetEmoji: "🏪", spokenPrompt: "What rhymes with Shop?", correctWord: "Stop", options: [{ word: "Stop", emoji: "🛑", isCorrect: true }, { word: "Park", emoji: "🌳", isCorrect: false }, { word: "Book", emoji: "📖", isCorrect: false }] },
+  ],
+  "creative-world": [
+    { id: "cr-paint", targetWord: "Paint", targetEmoji: "🎨", spokenPrompt: "What rhymes with Paint at the atelier?", correctWord: "Wait", options: [{ word: "Wait", emoji: "⏳", isCorrect: true }, { word: "Brush", emoji: "🖌️", isCorrect: false }, { word: "Bead", emoji: "🟣", isCorrect: false }] },
+    { id: "cr-bead", targetWord: "Bead", targetEmoji: "🟣", spokenPrompt: "What rhymes with Bead?", correctWord: "Read", options: [{ word: "Read", emoji: "📖", isCorrect: true }, { word: "Glue", emoji: "🧴", isCorrect: false }, { word: "Song", emoji: "🎵", isCorrect: false }] },
+    { id: "cr-song", targetWord: "Song", targetEmoji: "🎵", spokenPrompt: "What rhymes with Song?", correctWord: "Long", options: [{ word: "Long", emoji: "📏", isCorrect: true }, { word: "Drum", emoji: "🥁", isCorrect: false }, { word: "Star", emoji: "🌟", isCorrect: false }] },
+    { id: "cr-glue", targetWord: "Glue", targetEmoji: "🧴", spokenPrompt: "What rhymes with Glue?", correctWord: "Blue", options: [{ word: "Blue", emoji: "🔵", isCorrect: true }, { word: "Paint", emoji: "🎨", isCorrect: false }, { word: "Cut", emoji: "✂️", isCorrect: false }] },
+  ],
+  "story-world": [
+    { id: "s-book", targetWord: "Book", targetEmoji: "📖", spokenPrompt: "What rhymes with Book in the tale?", correctWord: "Look", options: [{ word: "Look", emoji: "👀", isCorrect: true }, { word: "Hen", emoji: "🐔", isCorrect: false }, { word: "Crown", emoji: "👑", isCorrect: false }] },
+    { id: "s-tale", targetWord: "Tale", targetEmoji: "📜", spokenPrompt: "What rhymes with Tale?", correctWord: "Sail", options: [{ word: "Sail", emoji: "⛵", isCorrect: true }, { word: "King", emoji: "👑", isCorrect: false }, { word: "Page", emoji: "📄", isCorrect: false }] },
+    { id: "s-king", targetWord: "King", targetEmoji: "👑", spokenPrompt: "What rhymes with King?", correctWord: "Ring", options: [{ word: "Ring", emoji: "💍", isCorrect: true }, { word: "Book", emoji: "📘", isCorrect: false }, { word: "Boat", emoji: "⛵", isCorrect: false }] },
+    { id: "s-hen", targetWord: "Hen", targetEmoji: "🐔", spokenPrompt: "What rhymes with Hen in the barnyard tale?", correctWord: "Pen", options: [{ word: "Pen", emoji: "✏️", isCorrect: true }, { word: "Egg", emoji: "🥚", isCorrect: false }, { word: "Crown", emoji: "👑", isCorrect: false }] },
+  ],
+  "my-world": [
+    { id: "m-hug", targetWord: "Hug", targetEmoji: "🤗", spokenPrompt: "What rhymes with Hug at home?", correctWord: "Bug", options: [{ word: "Bug", emoji: "🐞", isCorrect: true }, { word: "Home", emoji: "🏠", isCorrect: false }, { word: "Soap", emoji: "🧼", isCorrect: false }] },
+    { id: "m-bed", targetWord: "Bed", targetEmoji: "🛏️", spokenPrompt: "What rhymes with Bed?", correctWord: "Red", options: [{ word: "Red", emoji: "🔴", isCorrect: true }, { word: "Brush", emoji: "🪥", isCorrect: false }, { word: "Hug", emoji: "🤗", isCorrect: false }] },
+    { id: "m-home", targetWord: "Home", targetEmoji: "🏠", spokenPrompt: "What rhymes with Home?", correctWord: "Comb", options: [{ word: "Comb", emoji: "🪮", isCorrect: true }, { word: "Door", emoji: "🚪", isCorrect: false }, { word: "Smile", emoji: "😊", isCorrect: false }] },
+    { id: "m-heart", targetWord: "Heart", targetEmoji: "❤️", spokenPrompt: "What rhymes with Heart?", correctWord: "Start", options: [{ word: "Start", emoji: "🚦", isCorrect: true }, { word: "Hug", emoji: "🤗", isCorrect: false }, { word: "Cup", emoji: "🥤", isCorrect: false }] },
+  ],
+  "adventure-world": [
+    { id: "ad-map", targetWord: "Map", targetEmoji: "🗺️", spokenPrompt: "What rhymes with Map on the trail?", correctWord: "Tap", options: [{ word: "Tap", emoji: "👆", isCorrect: true }, { word: "Pine", emoji: "🌲", isCorrect: false }, { word: "Gem", emoji: "💎", isCorrect: false }] },
+    { id: "ad-rain", targetWord: "Rain", targetEmoji: "☔", spokenPrompt: "What rhymes with Rain?", correctWord: "Train", options: [{ word: "Train", emoji: "🚂", isCorrect: true }, { word: "Tree", emoji: "🌲", isCorrect: false }, { word: "Mud", emoji: "🟤", isCorrect: false }] },
+    { id: "ad-tree", targetWord: "Tree", targetEmoji: "🌲", spokenPrompt: "What rhymes with Tree in the forest?", correctWord: "Bee", options: [{ word: "Bee", emoji: "🐝", isCorrect: true }, { word: "Map", emoji: "🗺️", isCorrect: false }, { word: "Rock", emoji: "🪨", isCorrect: false }] },
+    { id: "ad-cave", targetWord: "Cave", targetEmoji: "🕳️", spokenPrompt: "What rhymes with Cave?", correctWord: "Wave", options: [{ word: "Wave", emoji: "🌊", isCorrect: true }, { word: "Gem", emoji: "💎", isCorrect: false }, { word: "Path", emoji: "🛤️", isCorrect: false }] },
   ],
 };
 
@@ -348,6 +436,286 @@ const BUBBLES_BY_WORLD: Record<string, BubbleWord[]> = {
     { letter: "W", word: "Wood", emoji: "🌲", sound: "W says /w/! Wood!" },
     { letter: "T", word: "Quiet", emoji: "🤫", sound: "Tiptoe time!" },
   ],
+  "animal-world": [
+    { letter: "C", word: "Cow", emoji: "🐄", sound: "C says /k/! Cow!" },
+    { letter: "P", word: "Pig", emoji: "🐷", sound: "P says /p/! Pig!" },
+    { letter: "H", word: "Horse", emoji: "🐴", sound: "H says /h/! Horse!" },
+    { letter: "D", word: "Duck", emoji: "🦆", sound: "D says /d/! Duck!" },
+    { letter: "L", word: "Lion", emoji: "🦁", sound: "L says /l/! Lion!" },
+    { letter: "M", word: "Monkey", emoji: "🐵", sound: "M says /m/! Monkey!" },
+    { letter: "S", word: "Sheep", emoji: "🐑", sound: "S says /s/! Sheep!" },
+    { letter: "F", word: "Frog", emoji: "🐸", sound: "F says /f/! Frog!" },
+  ],
+  "bug-world": [
+    { letter: "B", word: "Bee", emoji: "🐝", sound: "B says /b/! Bee!" },
+    { letter: "A", word: "Ant", emoji: "🐜", sound: "A says /æ/! Ant!" },
+    { letter: "L", word: "Ladybug", emoji: "🐞", sound: "L says /l/! Ladybug!" },
+    { letter: "W", word: "Worm", emoji: "🪱", sound: "W says /w/! Worm!" },
+    { letter: "S", word: "Snail", emoji: "🐌", sound: "S says /s/! Snail!" },
+    { letter: "C", word: "Caterpillar", emoji: "🐛", sound: "C says /k/! Caterpillar!" },
+    { letter: "F", word: "Fly", emoji: "🪰", sound: "F says /f/! Fly!" },
+    { letter: "M", word: "Moth", emoji: "🦋", sound: "M says /m/! Moth!" },
+  ],
+  "city-world": [
+    { letter: "P", word: "Park", emoji: "🌳", sound: "P says /p/! Park!" },
+    { letter: "B", word: "Bus", emoji: "🚌", sound: "B says /b/! Bus!" },
+    { letter: "T", word: "Town", emoji: "🏘️", sound: "T says /t/! Town!" },
+    { letter: "L", word: "Lamp", emoji: "🏮", sound: "L says /l/! Lamp!" },
+    { letter: "M", word: "Market", emoji: "🛍️", sound: "M says /m/! Market!" },
+    { letter: "S", word: "Shop", emoji: "🏪", sound: "S says /s/! Shop!" },
+    { letter: "F", word: "Fire", emoji: "🚒", sound: "F says /f/! Fire engine!" },
+    { letter: "C", word: "Clock", emoji: "🕰️", sound: "C says /k/! Clock!" },
+  ],
+  "creative-world": [
+    { letter: "P", word: "Paint", emoji: "🎨", sound: "P says /p/! Paint!" },
+    { letter: "B", word: "Bead", emoji: "🟣", sound: "B says /b/! Bead!" },
+    { letter: "S", word: "Song", emoji: "🎵", sound: "S says /s/! Song!" },
+    { letter: "C", word: "Color", emoji: "🌈", sound: "C says /k/! Color!" },
+    { letter: "H", word: "Heart", emoji: "💖", sound: "H says /h/! Heart!" },
+    { letter: "D", word: "Drum", emoji: "🥁", sound: "D says /d/! Drum!" },
+    { letter: "N", word: "Note", emoji: "🎶", sound: "N says /n/! Note!" },
+    { letter: "A", word: "Art", emoji: "🖼️", sound: "A says /ɑ/! Art!" },
+  ],
+  "story-world": [
+    { letter: "B", word: "Book", emoji: "📖", sound: "B says /b/! Book!" },
+    { letter: "T", word: "Tale", emoji: "📜", sound: "T says /t/! Tale!" },
+    { letter: "S", word: "Story", emoji: "📚", sound: "S says /s/! Story!" },
+    { letter: "H", word: "Hen", emoji: "🐔", sound: "H says /h/! Hen!" },
+    { letter: "C", word: "Crown", emoji: "👑", sound: "C says /k/! Crown!" },
+    { letter: "K", word: "King", emoji: "🤴", sound: "K says /k/! King!" },
+    { letter: "P", word: "Page", emoji: "📄", sound: "P says /p/! Page!" },
+    { letter: "R", word: "Read", emoji: "👀", sound: "R says /r/! Read!" },
+  ],
+  "my-world": [
+    { letter: "H", word: "Home", emoji: "🏠", sound: "H says /h/! Home!" },
+    { letter: "B", word: "Brush", emoji: "🪥", sound: "B says /b/! Brush!" },
+    { letter: "S", word: "Smile", emoji: "😊", sound: "S says /s/! Smile!" },
+    { letter: "M", word: "Mum", emoji: "👩", sound: "M says /m/! Mum!" },
+    { letter: "T", word: "Teeth", emoji: "🦷", sound: "T says /t/! Teeth!" },
+    { letter: "F", word: "Family", emoji: "👨‍👩‍👧", sound: "F says /f/! Family!" },
+    { letter: "C", word: "Cup", emoji: "🥤", sound: "C says /k/! Cup!" },
+    { letter: "L", word: "Love", emoji: "❤️", sound: "L says /l/! Love!" },
+  ],
+  "adventure-world": [
+    { letter: "M", word: "Map", emoji: "🗺️", sound: "M says /m/! Map!" },
+    { letter: "T", word: "Trail", emoji: "🥾", sound: "T says /t/! Trail!" },
+    { letter: "R", word: "Rocket", emoji: "🚀", sound: "R says /r/! Rocket!" },
+    { letter: "P", word: "Pine", emoji: "🌲", sound: "P says /p/! Pine!" },
+    { letter: "G", word: "Gem", emoji: "💎", sound: "G says /g/! Gem!" },
+    { letter: "C", word: "Cave", emoji: "🕳️", sound: "C says /k/! Cave!" },
+    { letter: "S", word: "Star", emoji: "⭐", sound: "S says /s/! Star!" },
+    { letter: "F", word: "Forest", emoji: "🌳", sound: "F says /f/! Forest!" },
+  ],
+  "learning-world": [
+    { letter: "A", word: "A", emoji: "🅰️", sound: "A says /æ/! Letter A!" },
+    { letter: "B", word: "Book", emoji: "📘", sound: "B says /b/! Book!" },
+    { letter: "C", word: "Count", emoji: "🔢", sound: "C says /k/! Count!" },
+    { letter: "D", word: "Dot", emoji: "🔵", sound: "D says /d/! Dot!" },
+    { letter: "S", word: "Shape", emoji: "🔷", sound: "S says /s/! Shape!" },
+    { letter: "T", word: "Ten", emoji: "🔟", sound: "T says /t/! Ten!" },
+    { letter: "M", word: "Map", emoji: "🗺️", sound: "M says /m/! Map!" },
+    { letter: "P", word: "Pen", emoji: "✏️", sound: "P says /p/! Pen!" },
+  ],
+};
+
+const defaultSongs = ["twinkle", "mary", "row"];
+
+const SONGS_BY_WORLD: Record<string, string[]> = {
+  "night-world": ["twinkle", "jingle"],
+  "vehicle-world": ["wheels", "london", "row"],
+  "animal-world": ["old-mac", "baa", "mary"],
+  "kitchen-world": ["baa", "mary"],
+  "arctic-world": ["jingle", "twinkle"],
+  "city-world": ["london", "wheels"],
+  "bug-world": ["twinkle", "mary"],
+  "creative-world": ["twinkle", "row"],
+  "story-world": ["baa", "mary"],
+  "my-world": ["twinkle", "baa"],
+  "adventure-world": ["row", "london"],
+  "learning-world": ["twinkle", "mary", "baa"],
+};
+
+const defaultMix: MixFlavor = {
+  orange: { title: "Magical Orange!", emoji: "🍊", phrase: "Red plus Yellow creates sparkling sweet Orange!" },
+  green: { title: "Emerald Green!", emoji: "🌱", phrase: "Blue plus Yellow magically mixes into fresh Green!" },
+  purple: { title: "Royal Purple!", emoji: "🍇", phrase: "Red plus Blue creates deep royal Purple!" },
+};
+
+const MIX_BY_WORLD: Record<string, MixFlavor> = {
+  "kitchen-world": {
+    orange: { title: "Soup Orange!", emoji: "🥕", phrase: "Red plus Yellow makes carrot soup Orange!" },
+    green: { title: "Pea Green!", emoji: "🫛", phrase: "Blue plus Yellow makes garden pea Green!" },
+    purple: { title: "Berry Purple!", emoji: "🍇", phrase: "Red plus Blue makes jam-jar Purple!" },
+  },
+  "night-world": {
+    orange: { title: "Lamp Orange!", emoji: "🏮", phrase: "Red plus Yellow makes a warm night lamp!" },
+    green: { title: "Firefly Green!", emoji: "✨", phrase: "Blue plus Yellow makes a firefly glow!" },
+    purple: { title: "Dusk Purple!", emoji: "🌌", phrase: "Red plus Blue makes the sleepy dusk sky!" },
+  },
+  "arctic-world": {
+    orange: { title: "Sunset Orange!", emoji: "🌅", phrase: "Red plus Yellow paints the ice sunset!" },
+    green: { title: "Light Green!", emoji: "🌌", phrase: "Blue plus Yellow makes the northern lights!" },
+    purple: { title: "Twilight Purple!", emoji: "💜", phrase: "Red plus Blue paints the polar dusk!" },
+  },
+  "vehicle-world": {
+    orange: { title: "Cone Orange!", emoji: "🚧", phrase: "Red plus Yellow makes a road cone!" },
+    green: { title: "Go Green!", emoji: "🟢", phrase: "Blue plus Yellow means go at the lights!" },
+    purple: { title: "Night Bus Purple!", emoji: "🚌", phrase: "Red plus Blue paints the evening bus!" },
+  },
+  "bug-world": {
+    orange: { title: "Ladybug Orange!", emoji: "🐞", phrase: "Red plus Yellow paints a sunny wing!" },
+    green: { title: "Leaf Green!", emoji: "🍃", phrase: "Blue plus Yellow makes a juicy leaf!" },
+    purple: { title: "Flower Purple!", emoji: "💜", phrase: "Red plus Blue makes a clover bloom!" },
+  },
+  "creative-world": {
+    orange: { title: "Paint Orange!", emoji: "🎨", phrase: "Red plus Yellow on the atelier paper!" },
+    green: { title: "Bead Green!", emoji: "🟢", phrase: "Blue plus Yellow strings a green bead!" },
+    purple: { title: "Ink Purple!", emoji: "🟣", phrase: "Red plus Blue makes royal studio ink!" },
+  },
+};
+
+const defaultCounting: ThemedCountItem[] = [
+  { name: "Shiny Stars", emoji: "⭐", sound: "Twinkle twinkle!", bg: "from-purple-900 to-indigo-900", text: "text-amber-300" },
+  { name: "Sweet Apples", emoji: "🍎", sound: "Crisp and juicy!", bg: "from-amber-900 to-red-900", text: "text-red-300" },
+  { name: "Rainbow Balloons", emoji: "🎈", sound: "Pop float up!", bg: "from-violet-900 to-purple-950", text: "text-purple-200" },
+];
+
+const COUNTING_BY_WORLD: Record<string, ThemedCountItem[]> = {
+  "kitchen-world": [
+    { name: "Red Apples", emoji: "🍎", sound: "Crunch!", bg: "from-rose-900 to-orange-900", text: "text-rose-200" },
+    { name: "Warm Buns", emoji: "🍞", sound: "Mmm bread!", bg: "from-amber-900 to-yellow-900", text: "text-amber-200" },
+    { name: "Soup Spoons", emoji: "🥄", sound: "Stir stir!", bg: "from-orange-900 to-rose-900", text: "text-orange-200" },
+  ],
+  "arctic-world": [
+    { name: "Snowflakes", emoji: "❄️", sound: "Soft snow!", bg: "from-sky-900 to-indigo-950", text: "text-cyan-200" },
+    { name: "Penguins", emoji: "🐧", sound: "Honk honk!", bg: "from-slate-900 to-sky-950", text: "text-sky-200" },
+    { name: "Ice Cubes", emoji: "🧊", sound: "Clink!", bg: "from-cyan-900 to-blue-950", text: "text-cyan-100" },
+  ],
+  "vehicle-world": [
+    { name: "Yellow Buses", emoji: "🚌", sound: "Beep beep!", bg: "from-amber-900 to-yellow-900", text: "text-yellow-200" },
+    { name: "Little Cars", emoji: "🚗", sound: "Vroom!", bg: "from-sky-900 to-blue-950", text: "text-sky-200" },
+    { name: "Toy Planes", emoji: "✈️", sound: "Whoosh!", bg: "from-cyan-900 to-indigo-950", text: "text-cyan-200" },
+  ],
+  "night-world": [
+    { name: "Twinkle Stars", emoji: "⭐", sound: "Twinkle!", bg: "from-indigo-950 to-slate-950", text: "text-amber-200" },
+    { name: "Sleepy Owls", emoji: "🦉", sound: "Hoot!", bg: "from-violet-950 to-indigo-950", text: "text-violet-200" },
+    { name: "Night Lamps", emoji: "💡", sound: "Click!", bg: "from-amber-950 to-indigo-950", text: "text-yellow-200" },
+  ],
+  "bug-world": [
+    { name: "Busy Bees", emoji: "🐝", sound: "Buzz!", bg: "from-yellow-900 to-lime-950", text: "text-yellow-200" },
+    { name: "Ladybugs", emoji: "🐞", sound: "Crawl!", bg: "from-rose-900 to-red-950", text: "text-rose-200" },
+    { name: "Garden Ants", emoji: "🐜", sound: "Tiny steps!", bg: "from-stone-900 to-lime-950", text: "text-lime-200" },
+  ],
+  "animal-world": [
+    { name: "Farm Chicks", emoji: "🐤", sound: "Cheep!", bg: "from-yellow-900 to-amber-950", text: "text-yellow-200" },
+    { name: "Pond Ducks", emoji: "🦆", sound: "Quack!", bg: "from-sky-900 to-cyan-950", text: "text-yellow-200" },
+    { name: "Woolly Sheep", emoji: "🐑", sound: "Baaa!", bg: "from-slate-800 to-emerald-950", text: "text-slate-100" },
+  ],
+  "city-world": [
+    { name: "Park Trees", emoji: "🌳", sound: "Rustle!", bg: "from-emerald-900 to-green-950", text: "text-lime-200" },
+    { name: "Market Bags", emoji: "🛍️", sound: "Rustle rustle!", bg: "from-pink-900 to-fuchsia-950", text: "text-pink-200" },
+    { name: "Town Bells", emoji: "🔔", sound: "Ding!", bg: "from-amber-900 to-yellow-950", text: "text-amber-200" },
+  ],
+  "learning-world": [
+    { name: "Letter Cards", emoji: "🅰️", sound: "A says /æ/!", bg: "from-rose-900 to-red-950", text: "text-rose-200" },
+    { name: "Counting Dots", emoji: "🔵", sound: "Tap tap!", bg: "from-sky-900 to-blue-950", text: "text-sky-200" },
+    { name: "Little Books", emoji: "📘", sound: "Flip!", bg: "from-indigo-900 to-blue-950", text: "text-indigo-200" },
+  ],
+};
+
+const defaultSorting: ThemedSort = {
+  title: "Land Animals vs. Ocean Swimmers",
+  instruction: "Sort the animals: Who walks on land, and who swims in the water?",
+  spokenPrompt: "Let's sort our animal friends! Who lives on grassy land, and who swims in the sea?",
+  categoryA: { id: "land", label: "Land Animals", emoji: "🌳", dropZoneColor: "border-emerald-400 bg-emerald-950/40 text-emerald-300" },
+  categoryB: { id: "ocean", label: "Ocean Swimmers", emoji: "🌊", dropZoneColor: "border-cyan-400 bg-cyan-950/40 text-cyan-300" },
+  items: [
+    { id: "lion", label: "Lion", emoji: "🦁", correctCategory: "A", soundFeedback: "Lions roar on the sunny savanna!" },
+    { id: "whale", label: "Whale", emoji: "🐳", correctCategory: "B", soundFeedback: "Whales swim deep in the blue ocean!" },
+    { id: "monkey", label: "Monkey", emoji: "🐵", correctCategory: "A", soundFeedback: "Monkeys climb tall jungle trees!" },
+    { id: "dolphin", label: "Dolphin", emoji: "🐬", correctCategory: "B", soundFeedback: "Dolphins leap through ocean waves!" },
+  ],
+};
+
+const SORTING_BY_WORLD: Record<string, ThemedSort> = {
+  "kitchen-world": {
+    title: "Fruit vs Kitchen Tools",
+    instruction: "Put fruit in the basket. Put tools by the stove.",
+    spokenPrompt: "Is it a fruit for eating, or a tool for cooking?",
+    categoryA: { id: "fruit", label: "Fruit Basket", emoji: "🧺", dropZoneColor: "border-rose-400 bg-rose-950/40 text-rose-300" },
+    categoryB: { id: "tool", label: "Kitchen Tools", emoji: "🥄", dropZoneColor: "border-amber-400 bg-amber-950/40 text-amber-300" },
+    items: [
+      { id: "apple", label: "Apple", emoji: "🍎", correctCategory: "A", soundFeedback: "Apple goes in the fruit basket!" },
+      { id: "spoon", label: "Spoon", emoji: "🥄", correctCategory: "B", soundFeedback: "Spoon stirs the soup!" },
+      { id: "pear", label: "Pear", emoji: "🍐", correctCategory: "A", soundFeedback: "Pear is a fruit!" },
+      { id: "pot", label: "Pot", emoji: "🥘", correctCategory: "B", soundFeedback: "Pot sits on the stove!" },
+    ],
+  },
+  "vehicle-world": {
+    title: "Sky vs Street",
+    instruction: "Who flies, and who rolls on the road?",
+    spokenPrompt: "Does it fly in the sky, or roll on the street?",
+    categoryA: { id: "sky", label: "Sky", emoji: "✈️", dropZoneColor: "border-sky-400 bg-sky-950/40 text-sky-300" },
+    categoryB: { id: "street", label: "Street", emoji: "🛣️", dropZoneColor: "border-amber-400 bg-amber-950/40 text-amber-300" },
+    items: [
+      { id: "plane", label: "Plane", emoji: "✈️", correctCategory: "A", soundFeedback: "The plane lifts over the town!" },
+      { id: "bus", label: "Bus", emoji: "🚌", correctCategory: "B", soundFeedback: "The bus beeps on the high street!" },
+      { id: "heli", label: "Helicopter", emoji: "🚁", correctCategory: "A", soundFeedback: "Chop chop in the clouds!" },
+      { id: "car", label: "Car", emoji: "🚗", correctCategory: "B", soundFeedback: "The car rolls on wheels!" },
+    ],
+  },
+  "arctic-world": {
+    title: "Ice Neighbours vs Warm Friends",
+    instruction: "Who lives on the ice, and who likes the warm grass?",
+    spokenPrompt: "Ice neighbour, or warm-grass friend?",
+    categoryA: { id: "ice", label: "On the Ice", emoji: "🧊", dropZoneColor: "border-cyan-400 bg-cyan-950/40 text-cyan-300" },
+    categoryB: { id: "warm", label: "Warm Grass", emoji: "🌳", dropZoneColor: "border-emerald-400 bg-emerald-950/40 text-emerald-300" },
+    items: [
+      { id: "penguin", label: "Penguin", emoji: "🐧", correctCategory: "A", soundFeedback: "Penguins huddle on the floe!" },
+      { id: "lion", label: "Lion", emoji: "🦁", correctCategory: "B", soundFeedback: "Lions nap on warm grass!" },
+      { id: "seal", label: "Seal", emoji: "🦭", correctCategory: "A", soundFeedback: "Seals clap on the cold shore!" },
+      { id: "cow", label: "Cow", emoji: "🐄", correctCategory: "B", soundFeedback: "Cows munch clover in the meadow!" },
+    ],
+  },
+  "night-world": {
+    title: "Day Sky vs Night Sky",
+    instruction: "What belongs to daytime, and what belongs to night?",
+    spokenPrompt: "Daytime friend, or night-time friend?",
+    categoryA: { id: "day", label: "Daytime", emoji: "☀️", dropZoneColor: "border-amber-400 bg-amber-950/40 text-amber-300" },
+    categoryB: { id: "night", label: "Night", emoji: "🌙", dropZoneColor: "border-indigo-400 bg-indigo-950/40 text-indigo-300" },
+    items: [
+      { id: "sun", label: "Sun", emoji: "☀️", correctCategory: "A", soundFeedback: "The sun warms the morning!" },
+      { id: "moon", label: "Moon", emoji: "🌙", correctCategory: "B", soundFeedback: "The moon watches bedtime!" },
+      { id: "kite", label: "Kite", emoji: "🪁", correctCategory: "A", soundFeedback: "Kites fly in the day breeze!" },
+      { id: "owl", label: "Owl", emoji: "🦉", correctCategory: "B", soundFeedback: "Owls hoot after dark!" },
+    ],
+  },
+  "bug-world": {
+    title: "Bugs vs Flowers",
+    instruction: "Put crawly bugs with bugs. Put blooms with flowers.",
+    spokenPrompt: "Is it a bug, or a flower?",
+    categoryA: { id: "bug", label: "Bugs", emoji: "🐞", dropZoneColor: "border-lime-400 bg-lime-950/40 text-lime-300" },
+    categoryB: { id: "flower", label: "Flowers", emoji: "🌸", dropZoneColor: "border-pink-400 bg-pink-950/40 text-pink-300" },
+    items: [
+      { id: "bee", label: "Bee", emoji: "🐝", correctCategory: "A", soundFeedback: "Bee is a busy bug!" },
+      { id: "bloom", label: "Bloom", emoji: "🌸", correctCategory: "B", soundFeedback: "The bloom stays in the flower bed!" },
+      { id: "ant", label: "Ant", emoji: "🐜", correctCategory: "A", soundFeedback: "Ant marches with the bugs!" },
+      { id: "tulip", label: "Tulip", emoji: "🌷", correctCategory: "B", soundFeedback: "Tulip is a garden flower!" },
+    ],
+  },
+  "animal-world": {
+    title: "Farm vs Jungle",
+    instruction: "Barn friends here. Jungle friends there.",
+    spokenPrompt: "Does this friend live on the farm, or in the jungle?",
+    categoryA: { id: "farm", label: "Farm", emoji: "🐄", dropZoneColor: "border-lime-400 bg-lime-950/40 text-lime-300" },
+    categoryB: { id: "jungle", label: "Jungle", emoji: "🌴", dropZoneColor: "border-emerald-400 bg-emerald-950/40 text-emerald-300" },
+    items: [
+      { id: "cow", label: "Cow", emoji: "🐄", correctCategory: "A", soundFeedback: "Cow lives in the pasture!" },
+      { id: "monkey", label: "Monkey", emoji: "🐵", correctCategory: "B", soundFeedback: "Monkey swings in the canopy!" },
+      { id: "hen", label: "Hen", emoji: "🐔", correctCategory: "A", soundFeedback: "Hen nests in the barn!" },
+      { id: "tiger", label: "Tiger", emoji: "🐯", correctCategory: "B", soundFeedback: "Tiger pads the jungle path!" },
+    ],
+  },
 };
 
 export const DEFAULT_SAFARI_FRIENDS = savanna;
@@ -366,5 +734,9 @@ export function getWorldPlayTheme(worldId: string, areaId?: string | null): Worl
     balloonLetters: LETTERS_BY_WORLD[worldId] ?? ["A", "B", "C", "D", "E", "S", "T", "M"],
     rhymes: RHYMES_BY_WORLD[worldId] ?? defaultRhymes,
     bubbles: BUBBLES_BY_WORLD[worldId] ?? defaultBubbles,
+    songIds: SONGS_BY_WORLD[worldId] ?? defaultSongs,
+    mix: MIX_BY_WORLD[worldId] ?? defaultMix,
+    counting: COUNTING_BY_WORLD[worldId] ?? defaultCounting,
+    sorting: SORTING_BY_WORLD[worldId] ?? defaultSorting,
   };
 }

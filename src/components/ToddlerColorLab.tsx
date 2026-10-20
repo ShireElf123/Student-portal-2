@@ -5,6 +5,7 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
 import { triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import type { MixFlavor } from "../data/toddler/toddlerWorldPlayThemes";
 
 interface ColorDrop {
   id: "red" | "yellow" | "blue";
@@ -130,7 +131,15 @@ function PaintCanvas() {
   );
 }
 
-export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => void }) {
+export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: number) => void; mixFlavor?: MixFlavor }) {
+  const recipes: Record<string, MixResult> = {
+    "red+yellow": { ...RECIPES["red+yellow"], ...(mixFlavor?.orange ?? {}) },
+    "yellow+red": { ...RECIPES["yellow+red"], ...(mixFlavor?.orange ?? {}) },
+    "blue+yellow": { ...RECIPES["blue+yellow"], ...(mixFlavor?.green ?? {}) },
+    "yellow+blue": { ...RECIPES["yellow+blue"], ...(mixFlavor?.green ?? {}) },
+    "red+blue": { ...RECIPES["red+blue"], ...(mixFlavor?.purple ?? {}) },
+    "blue+red": { ...RECIPES["blue+red"], ...(mixFlavor?.purple ?? {}) },
+  };
   const [selectedDrops, setSelectedDrops] = useState<ColorDrop[]>([]);
   const [currentResult, setCurrentResult] = useState<MixResult | null>(null);
   const rewardPaid = useRef(false);
@@ -160,7 +169,7 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
 
     if (next.length === 2) {
       const key = `${next[0].id}+${next[1].id}`;
-      const result = RECIPES[key];
+      const result = recipes[key];
 
       if (result) {
         resolutionTimer.current = setTimeout(() => {

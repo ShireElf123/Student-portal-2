@@ -53,10 +53,14 @@ const COUNTING_OBJECT_TEMPLATES = [
   { name: "Spotted Ladybugs", emoji: "🐞", sound: "Crawl on leaf!", bg: "from-red-900 to-slate-950", text: "text-red-300" },
 ];
 
-export function generateCountingScenario(level: number = 1): DynamicCountingScenario {
+export function generateCountingScenario(
+  level: number = 1,
+  pool: { name: string; emoji: string; sound: string; bg: string; text: string }[] = COUNTING_OBJECT_TEMPLATES,
+): DynamicCountingScenario {
   const maxNumber = level <= 1 ? 5 : level === 2 ? 8 : 10;
   const count = Math.floor(Math.random() * maxNumber) + 1;
-  const template = COUNTING_OBJECT_TEMPLATES[Math.floor(Math.random() * COUNTING_OBJECT_TEMPLATES.length)];
+  const source = pool.length > 0 ? pool : COUNTING_OBJECT_TEMPLATES;
+  const template = source[Math.floor(Math.random() * source.length)];
 
   // Create 2 distractors
   const distractors: number[] = [];
@@ -83,7 +87,25 @@ export function generateCountingScenario(level: number = 1): DynamicCountingScen
   };
 }
 
-export function generateSortingChallenge(): DynamicSortingChallenge {
+export function generateSortingChallenge(pack?: {
+  title: string;
+  instruction: string;
+  spokenPrompt: string;
+  categoryA: DynamicSortingChallenge["categoryA"];
+  categoryB: DynamicSortingChallenge["categoryB"];
+  items: DynamicSortingChallenge["items"];
+}): DynamicSortingChallenge {
+  if (pack) {
+    return {
+      id: `sort-${Date.now()}`,
+      title: pack.title,
+      instruction: pack.instruction,
+      spokenPrompt: pack.spokenPrompt,
+      categoryA: pack.categoryA,
+      categoryB: pack.categoryB,
+      items: [...pack.items].sort(() => Math.random() - 0.5),
+    };
+  }
   const themes = [
     {
       title: "Land Animals vs. Ocean Swimmers",
