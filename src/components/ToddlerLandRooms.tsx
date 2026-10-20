@@ -51,7 +51,7 @@ const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = 
   "wash-bus": { title: "Wash the bus", line: "Drag the sponge over the dirt.", done: "Shiny bus. Beep beep!" },
   "pigeon-feed": { title: "Feed the pigeons", line: "Drag crumbs to the birds.", done: "Coo! Full tummies." },
   "knead-dough": { title: "Knead the dough", line: "Hold to press the dough.", done: "Soft bread ready." },
-  "drum-boom": { title: "Boom the drums", line: "Tap the drums 1, then 2, then 3.", done: "A parade beat!" },
+  "drum-boom": { title: "Boom the drums", line: "Tap the drums from 1 to 8.", done: "A parade beat!" },
   "rocket-stars": { title: "Star the rocket", line: "Drag five stars onto the rocket, then hold to launch.", done: "Whoosh to the moon!" },
   "ten-dots": { title: "Fill the ten-frame", line: "Drag ten counters onto the frame.", done: "Ten. A full frame!" },
   "puddle-jump": { title: "Puddle jump", line: "Drag the boot through the puddles.", done: "Wet boots. Big grin." },
@@ -1000,13 +1000,13 @@ function DrumBoom({ onAddStar }: { onAddStar?: () => void }) {
   const [step, setStep] = useState(1);
   return (
     <Stage playId="drum-boom" done={done} className="bg-gradient-to-b from-fuchsia-300 via-orange-400 to-rose-800">
-      <div className="flex justify-center gap-4 mt-8">
-        {[1, 2, 3].map((n) => (
+      <div className="flex flex-wrap justify-center gap-3 mt-6 max-w-md mx-auto">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
           <button
             key={n}
             type="button"
             data-testid={`drum-${n}`}
-            className={`min-h-24 min-w-24 rounded-full text-5xl font-black ${n < step ? "bg-white" : "bg-white/20"}`}
+            className={`h-16 w-16 rounded-full text-2xl font-black ${n < step ? "bg-white" : "bg-white/20"}`}
             onClick={() => {
               if (n !== step) {
                 soundEffects.playGentleBoing();
@@ -1015,7 +1015,7 @@ function DrumBoom({ onAddStar }: { onAddStar?: () => void }) {
               soundEffects.playPop();
               const next = step + 1;
               setStep(next);
-              if (next > 3) finish();
+              if (next > 8) finish();
             }}
           >
             🥁{n}

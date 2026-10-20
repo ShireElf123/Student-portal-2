@@ -73,6 +73,13 @@ const CORE_ACTIVITY_DEFINITIONS: LearningActivityDefinition[] = [
   { id: "toddler-story-porch", title: "Story Porch", skillIds: ["read-k1-listening-comprehension"], gradeBand: "toddler", experienceId: "story-porch", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:story-porch" } },
   { id: "toddler-sock-drawer", title: "Sock Drawer", skillIds: ["logic-k1-sorting"], gradeBand: "toddler", experienceId: "sock-drawer", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:sock-drawer" } },
   { id: "toddler-farm-count", title: "Farm Count", skillIds: ["math-k1-counting"], gradeBand: "toddler", experienceId: "farm-count", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:farm-count" } },
+  { id: "toddler-reef-sort", title: "Reef Sort", skillIds: ["sci-k1-habitats"], gradeBand: "toddler", experienceId: "reef-sort", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:reef-sort" } },
+  { id: "toddler-shape-bakery", title: "Shape Bakery", skillIds: ["math-k1-shapes"], gradeBand: "toddler", experienceId: "shape-bakery", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:shape-bakery" } },
+  { id: "toddler-bus-stop", title: "Bus Stop", skillIds: ["math-k1-counting"], gradeBand: "toddler", experienceId: "bus-stop", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:bus-stop" } },
+  { id: "toddler-shadow-lantern", title: "Shadow Lantern", skillIds: ["logic-k1-sorting"], gradeBand: "toddler", experienceId: "shadow-lantern", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:shadow-lantern" } },
+  { id: "toddler-dino-tracks", title: "Dino Tracks", skillIds: ["sci-k1-habitats"], gradeBand: "toddler", experienceId: "dino-tracks", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:dino-tracks" } },
+  { id: "toddler-ice-pack", title: "Ice Pack", skillIds: ["sci-k1-weather-seasons"], gradeBand: "toddler", experienceId: "ice-pack", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:ice-pack" } },
+  { id: "toddler-bug-sort", title: "Bug Sort", skillIds: ["logic-k1-sorting"], gradeBand: "toddler", experienceId: "bug-sort", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:bug-sort" } },
   { id: "act-secret-dino-cave", title: "Dino Excavation Cave", skillIds: [], gradeBand: "toddler", experienceId: "act-secret-dino-cave", experienceType: "engagement", launch: { route: "toddler", targetId: "worlds" } },
   { id: "act-secret-starlight", title: "Starlight Sky Observatory", skillIds: [], gradeBand: "toddler", experienceId: "act-secret-starlight", experienceType: "engagement", launch: { route: "toddler", targetId: "worlds" } },
   { id: "act-secret-coral", title: "Coral Reef Secret Cavern", skillIds: [], gradeBand: "toddler", experienceId: "act-secret-coral", experienceType: "engagement", launch: { route: "toddler", targetId: "worlds" } },
@@ -332,7 +339,7 @@ export function validateLearningActivityRegistry(): string[] {
     "bubble-pop-phonics", "animal-safari", "feed-animal", "color-magic",
     "rhyme-time", "rainbow-piano", "balloon-sky", "memory-match", "shape-match", "animal-quiz", "bubble-pop",
     "ten-frame-taxi", "blend-kitchen", "bead-train", "picnic-plus", "weather-porch", "laundry-sort", "story-porch",
-    "sock-drawer", "farm-count",
+    "sock-drawer", "farm-count", "reef-sort", "shape-bakery", "bus-stop", "shadow-lantern", "dino-tracks", "ice-pack", "bug-sort",
     "letter-trace",
   ]);
 

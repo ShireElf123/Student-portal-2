@@ -1238,7 +1238,7 @@ export function ToddlerQuizzesAndGames({
         <p className="mb-2 px-1 text-[10px] font-black uppercase tracking-wider text-white/50">
           Skill studio
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
           {K1_STUDIO_GAMES.map((studioGame) => (
             <button
               key={studioGame.id}

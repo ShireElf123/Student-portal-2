@@ -383,11 +383,27 @@ describe("K–1 skill studio (curated, AI off)", () => {
     await playCorrect("6 cups");
     await playCorrect("5 plums");
     await playCorrect("10 crackers");
+    await playCorrect("6 oranges");
+    await playCorrect("5 pears");
+    await playCorrect("9 peaches");
+    await playCorrect("8 rolls");
+    await playCorrect("10 olives");
+    await playCorrect("7 carrots");
 
     expect(container.textContent).toContain("You did it!");
     fireEvent.click(getByText("Play Picnic Plus again"));
     await flush(250);
     expect(container.textContent).toContain("3 berries");
+  });
+
+  it("Bus Stop counts riders past five, not a tiny 1-2-3", async () => {
+    const { container, getByText } = render(<ToddlerK1Studio gameId="bus-stop" />);
+    await flush(250);
+    expect(container.textContent).toContain("Bus Stop");
+    expect(container.textContent).toContain("How many riders?");
+    fireEvent.click(getByText("6 riders"));
+    await flush(800);
+    expect(container.textContent).toContain("8 long");
   });
 
   it("Bead Train asks for the next bead, not a random quiz", async () => {
