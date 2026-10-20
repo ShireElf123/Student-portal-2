@@ -23,4 +23,12 @@ describe("world play themes", () => {
       expect.arrayContaining(["🍞", "🍎"])
     );
   });
+
+  it("rhymes and bubbles follow the land", () => {
+    const kitchen = getWorldPlayTheme("kitchen-world", "soup-pot");
+    expect(kitchen.rhymes.some((item) => item.targetWord === "Pot")).toBe(true);
+    expect(kitchen.bubbles.some((item) => item.word === "Soup")).toBe(true);
+    const ice = getWorldPlayTheme("arctic-world", "seal-shore");
+    expect(ice.bubbles.some((item) => item.emoji === "🐧")).toBe(true);
+  });
 });

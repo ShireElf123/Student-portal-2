@@ -79,7 +79,7 @@ const CORE_ACTIVITY_DEFINITIONS: LearningActivityDefinition[] = [
   { id: "guided-assessment", title: "Guided Assessment", skillIds: allSkillIds, gradeBand: "2-3", experienceId: "guided-assessment-bridge", experienceType: "assessment", launch: { route: "assessment", targetId: "guided-assessment" } },
   { id: "diagnostic-assessment-summary", title: "Diagnostic Assessment Summary", skillIds: [], gradeBand: "2-3", experienceId: "diagnostic-placement", experienceType: "assessment", launch: { route: "assessment", targetId: "guided-assessment" } },
   { id: "diagnostic-question", title: "Diagnostic Question Response", skillIds: allSkillIds, gradeBand: "2-3", experienceId: "diagnostic-placement", experienceType: "assessment", launch: { route: "assessment", targetId: "guided-assessment" } },
-  { id: "picture-book-interaction", title: "Picture Book Question", skillIds: ["read-k1-alphabet-letters", "math-k1-counting", "math-k1-shapes", "read-k1-listening-comprehension"], gradeBand: "toddler", experienceId: "picture-book-reader", experienceType: "picture-book", launch: { route: "toddler", targetId: "books" } },
+  { id: "picture-book-interaction", title: "Picture Book Question", skillIds: ["read-k1-alphabet-letters", "math-k1-counting", "math-k1-shapes", "read-k1-listening-comprehension", "sci-k1-habitats"], gradeBand: "toddler", experienceId: "picture-book-reader", experienceType: "picture-book", launch: { route: "toddler", targetId: "books" } },
   { id: "toddler-world-mission-completion", title: "Toddler World Mission Completion", skillIds: [], gradeBand: "toddler", experienceId: "toddler-worlds-navigator", experienceType: "engagement", launch: { route: "toddler", targetId: "worlds" } },
 ];
 

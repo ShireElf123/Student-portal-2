@@ -8,6 +8,7 @@ import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { markGameBlueprintCompleted } from "../services/gameContentService";
 import { createGameResponseSessionId, recordBlueprintSessionCompletion, recordBubblePopBlueprintResponse } from "../contentEngine/gameAdapters";
 import type { BubblePopBlueprint } from "../contentEngine/types";
+import type { BubbleWord } from "../data/toddler/toddlerWorldPlayThemes";
 
 interface Bubble {
   id: string;
@@ -53,9 +54,11 @@ export interface ToddlerBubblePopGameProps {
   blueprint?: BubblePopBlueprint;
   blueprintLearnerId?: string;
   onPlayingChange?: (isPlaying: boolean) => void;
+  catalog?: BubbleWord[];
 }
 
-export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLearnerId, onPlayingChange }: ToddlerBubblePopGameProps) {
+export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLearnerId, onPlayingChange, catalog }: ToddlerBubblePopGameProps) {
+  const words = catalog && catalog.length >= 4 ? catalog : BUBBLE_CATALOG;
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [poppedCount, setPoppedCount] = useState(0);
   const [targetLetter, setTargetLetter] = useState("A");
@@ -94,7 +97,7 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
       if (!round) return;
       const generatedBubbles = round.bubbles.map((item, index): Bubble => {
         const style = GRADIENTS[index % GRADIENTS.length];
-        const curated = BUBBLE_CATALOG.find((entry) => entry.letter === item.letter);
+        const curated = words.find((entry) => entry.letter === item.letter) ?? BUBBLE_CATALOG.find((entry) => entry.letter === item.letter);
         return {
           id: item.id,
           letter: item.letter,
@@ -118,7 +121,7 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
     const usedLetters: string[] = [];
 
     for (let i = 0; i < 6; i++) {
-      const item = BUBBLE_CATALOG[Math.floor(Math.random() * BUBBLE_CATALOG.length)];
+      const item = words[Math.floor(Math.random() * words.length)];
       usedLetters.push(item.letter);
       const style = GRADIENTS[Math.floor(Math.random() * GRADIENTS.length)];
 
@@ -154,7 +157,7 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
 
   const handlePop = (bubble: Bubble) => {
     soundEffects.playPop();
-    const item = BUBBLE_CATALOG.find((b) => b.letter === bubble.letter);
+    const item = words.find((b) => b.letter === bubble.letter) ?? BUBBLE_CATALOG.find((b) => b.letter === bubble.letter);
     if (blueprint) {
       speakText(`${bubble.letter} begins ${bubble.word}.`, { pitch: 1.25, rate: 0.92 });
     } else if (item) {

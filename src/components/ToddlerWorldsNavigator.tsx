@@ -802,13 +802,13 @@ export function ToddlerWorldsNavigator({
         {activeActivity.type === "rhyme-garden" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-fuchsia-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerRhymeGame onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerRhymeGame questions={playTheme.rhymes} onAddStar={() => completeWorldToy(activeActivity)} />
           </div>
         )}
         {activeActivity.type === "bubble-pop" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-cyan-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerBubblePopGame onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerBubblePopGame catalog={playTheme.bubbles} onAddStar={() => completeWorldToy(activeActivity)} />
           </div>
         )}
         {activeActivity.type === "k1-studio" && activeActivity.studioGameId && (

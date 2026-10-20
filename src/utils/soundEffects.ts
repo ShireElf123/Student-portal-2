@@ -175,14 +175,34 @@ class SoundEffectManager {
     }
   }
 
+  /** Call from a tap so the first xylophone note is not waiting on autoplay unlock. */
+  unlock() {
+    const ctx = this.getContext();
+    if (ctx && ctx.state === "suspended") {
+      void ctx.resume().catch(() => {});
+    }
+  }
+
   /** Soft, mallet-like tone with a short attack and inharmonic xylophone overtones. */
   playXylophoneKey(freq: number) {
     try {
       const ctx = this.getContext();
       if (!ctx) return;
-      // Leave a small scheduling margin so the first note still sounds when a
-      // mobile browser has just resumed its suspended AudioContext.
-      const now = ctx.currentTime + 0.02;
+      if (ctx.state === "suspended") {
+        void ctx.resume().then(() => this.strikeXylophone(freq)).catch(() => {});
+        return;
+      }
+      this.strikeXylophone(freq);
+    } catch {
+      // AudioContext unavailable or blocked by browser policy.
+    }
+  }
+
+  private strikeXylophone(freq: number) {
+    const ctx = this.ctx;
+    if (!ctx) return;
+    try {
+      const now = ctx.state === "running" ? ctx.currentTime : ctx.currentTime + 0.02;
       const partials = [
         { ratio: 1, level: 0.22, decay: 0.62 },
         { ratio: 2.76, level: 0.075, decay: 0.19 },

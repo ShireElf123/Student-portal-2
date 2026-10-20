@@ -143,6 +143,7 @@ export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
   }, []);
 
   const handleKeyPress = (k: KeyConfig) => {
+    soundEffects.unlock();
     if (isPlayingDemo) stopDemo();
     setActiveKey(k.note);
     soundEffects.playXylophoneKey(k.freq);
@@ -187,7 +188,7 @@ export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
   const expectedKey = selectedSong && !songCompleted ? selectedSong.notes[currentNoteIdx] : null;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6" onPointerDownCapture={() => soundEffects.unlock()}>
       {/* Top Header Card */}
       <div className="p-6 rounded-3xl bg-gradient-to-r from-pink-500/15 via-purple-500/15 to-indigo-500/15 border-2 border-pink-400/30 text-center space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-400/20 text-pink-300 text-xs font-black uppercase tracking-wider">
