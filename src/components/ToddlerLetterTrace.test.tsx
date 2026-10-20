@@ -1,11 +1,15 @@
 import { describe, expect, it } from "vitest";
+import { strokesForLetter } from "../data/toddler/toddlerLetterStrokes";
 import {
-  isTraceStrokeComplete,
+  isStrokePathComplete,
   letterFromPrompt,
+  markStrokeHits,
+  pathLength,
   pickTraceDeck,
-  sampleLetterCoverage,
-  TRACE_MIN_COVERAGE,
-  TRACE_MIN_INK,
+  resampleStroke,
+  STROKE_COMPLETE,
+  STROKE_HIT_RADIUS,
+  strokeCoverage,
 } from "./ToddlerLetterTrace";
 
 describe("letter trace deck", () => {
@@ -33,50 +37,60 @@ describe("letter trace deck", () => {
   });
 });
 
+describe("letter strokes", () => {
+  it("gives A three writing lines and S one", () => {
+    expect(strokesForLetter("A")).toHaveLength(3);
+    expect(strokesForLetter("S")).toHaveLength(1);
+    expect(strokesForLetter("T")).toHaveLength(2);
+  });
+});
+
 describe("letter trace completion", () => {
-  it("does not finish a short scribble or a top-only stroke", () => {
+  it("finishes after one pass along the line", () => {
+    const stroke = strokesForLetter("A")[0];
+    const samples = resampleStroke(stroke);
+    const hits = samples.map(() => false);
+    for (const point of samples) markStrokeHits(samples, hits, point, STROKE_HIT_RADIUS);
+    const coverage = strokeCoverage(hits);
+    expect(coverage).toBeGreaterThanOrEqual(STROKE_COMPLETE);
     expect(
-      isTraceStrokeComplete({
-        coverage: 0.32,
-        topCoverage: 0.9,
-        bottomCoverage: 0.9,
-        inkDistance: 90,
-      }),
-    ).toBe(false);
-    expect(
-      isTraceStrokeComplete({
-        coverage: 0.8,
-        topCoverage: 0.9,
-        bottomCoverage: 0.05,
-        inkDistance: 400,
-      }),
-    ).toBe(false);
-    expect(
-      isTraceStrokeComplete({
-        coverage: TRACE_MIN_COVERAGE,
-        topCoverage: 0.4,
-        bottomCoverage: 0.4,
-        inkDistance: TRACE_MIN_INK,
+      isStrokePathComplete({
+        coverage,
+        travel: pathLength(samples),
+        pathLength: pathLength(samples),
+        startedAtStart: true,
       }),
     ).toBe(true);
   });
 
-  it("scores ink against the letter mask, not empty paper", () => {
-    const width = 8;
-    const height = 8;
-    const mask = new Uint8ClampedArray(width * height * 4);
-    const ink = new Uint8ClampedArray(width * height * 4);
-    for (let y = 1; y <= 6; y += 1) {
-      const i = (y * width + 3) * 4 + 3;
-      mask[i] = 255;
-      if (y <= 2) ink[i] = 255;
-    }
-    const sample = sampleLetterCoverage(mask, ink, width, height);
-    expect(sample.coverage).toBeLessThan(0.5);
-    expect(sample.topCoverage).toBeGreaterThan(0.5);
-    expect(sample.bottomCoverage).toBeLessThan(0.3);
+  it("does not finish a scribble off the line or a tap with no travel", () => {
+    const stroke = strokesForLetter("A")[0];
+    const samples = resampleStroke(stroke);
+    const hits = samples.map(() => false);
+    markStrokeHits(samples, hits, { x: 90, y: 20 }, STROKE_HIT_RADIUS);
     expect(
-      isTraceStrokeComplete({ ...sample, inkDistance: 400 }),
+      isStrokePathComplete({
+        coverage: strokeCoverage(hits),
+        travel: 4,
+        pathLength: pathLength(samples),
+        startedAtStart: true,
+      }),
+    ).toBe(false);
+    expect(
+      isStrokePathComplete({
+        coverage: 0.95,
+        travel: 4,
+        pathLength: 80,
+        startedAtStart: true,
+      }),
+    ).toBe(false);
+    expect(
+      isStrokePathComplete({
+        coverage: 0.95,
+        travel: 50,
+        pathLength: 80,
+        startedAtStart: false,
+      }),
     ).toBe(false);
   });
 });

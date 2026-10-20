@@ -5,6 +5,7 @@ import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import type { BubbleWord } from "../data/toddler/toddlerWorldPlayThemes";
+import { strokesForLetter, type TracePoint } from "../data/toddler/toddlerLetterStrokes";
 
 const FALLBACK: BubbleWord[] = [
   { letter: "A", word: "Apple", emoji: "🍎", sound: "A says /æ/! Apple!" },
@@ -13,11 +14,13 @@ const FALLBACK: BubbleWord[] = [
   { letter: "M", word: "Moon", emoji: "🌙", sound: "M says /m/! Moon!" },
 ];
 
-/** A first stroke must not count as a finished letter. */
-export const TRACE_MIN_COVERAGE = 0.62;
-export const TRACE_MIN_BAND = 0.3;
-export const TRACE_SETTLE_MS = 850;
-export const TRACE_MIN_INK = 220;
+/** One pass on the road is enough. Do not colour the letter in. */
+export const STROKE_HIT_RADIUS = 13;
+export const STROKE_START_RADIUS = 18;
+export const STROKE_INK_RADIUS = 18;
+export const STROKE_COMPLETE = 0.7;
+export const STROKE_TRAVEL = 0.36;
+export const STROKE_SAMPLE = 2.4;
 
 export function letterFromPrompt(prompt: string | undefined): string | null {
   if (!prompt) return null;
@@ -57,65 +60,87 @@ export function pickTraceDeck(
   return uniqueLetters(pool, options?.maxLetters ?? 3);
 }
 
-export function sampleLetterCoverage(
-  mask: Uint8ClampedArray,
-  ink: Uint8ClampedArray,
-  width: number,
-  height: number,
-): { coverage: number; topCoverage: number; bottomCoverage: number } {
-  let minY = height;
-  let maxY = 0;
-  const letter: number[] = [];
-  for (let y = 0; y < height; y += 1) {
-    for (let x = 0; x < width; x += 1) {
-      const alphaIndex = (y * width + x) * 4 + 3;
-      if ((mask[alphaIndex] ?? 0) < 80) continue;
-      letter.push(alphaIndex, y);
-      if (y < minY) minY = y;
-      if (y > maxY) maxY = y;
-    }
+export function pathLength(points: TracePoint[]): number {
+  let total = 0;
+  for (let i = 1; i < points.length; i += 1) {
+    total += Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y);
   }
-  if (!letter.length) return { coverage: 0, topCoverage: 0, bottomCoverage: 0 };
-  const split = minY + (maxY - minY) * 0.33;
-  const splitBottom = minY + (maxY - minY) * 0.67;
-  let hit = 0;
-  let top = 0;
-  let topHit = 0;
-  let bottom = 0;
-  let bottomHit = 0;
-  for (let i = 0; i < letter.length; i += 2) {
-    const alphaIndex = letter[i];
-    const y = letter[i + 1];
-    const painted = (ink[alphaIndex] ?? 0) > 40;
-    hit += painted ? 1 : 0;
-    if (y <= split) {
-      top += 1;
-      topHit += painted ? 1 : 0;
-    } else if (y >= splitBottom) {
-      bottom += 1;
-      bottomHit += painted ? 1 : 0;
-    }
-  }
-  return {
-    coverage: hit / (letter.length / 2),
-    topCoverage: top === 0 ? 1 : topHit / top,
-    bottomCoverage: bottom === 0 ? 1 : bottomHit / bottom,
-  };
+  return total;
 }
 
-export function isTraceStrokeComplete(sample: {
+export function resampleStroke(points: TracePoint[], spacing = STROKE_SAMPLE): TracePoint[] {
+  if (points.length === 0) return [];
+  if (points.length === 1) return [points[0]];
+  const out: TracePoint[] = [{ ...points[0] }];
+  let carry = 0;
+  for (let i = 1; i < points.length; i += 1) {
+    let x0 = points[i - 1].x;
+    let y0 = points[i - 1].y;
+    const x1 = points[i].x;
+    const y1 = points[i].y;
+    let remaining = Math.hypot(x1 - x0, y1 - y0);
+    if (remaining === 0) continue;
+    while (carry + remaining >= spacing) {
+      const t = (spacing - carry) / remaining;
+      x0 += (x1 - x0) * t;
+      y0 += (y1 - y0) * t;
+      out.push({ x: x0, y: y0 });
+      remaining = Math.hypot(x1 - x0, y1 - y0);
+      carry = 0;
+    }
+    carry += remaining;
+  }
+  const last = points[points.length - 1];
+  const tail = out[out.length - 1];
+  if (!tail || Math.hypot(tail.x - last.x, tail.y - last.y) > 0.4) out.push({ ...last });
+  return out;
+}
+
+export function distanceToStroke(point: TracePoint, samples: TracePoint[]): number {
+  let best = Number.POSITIVE_INFINITY;
+  for (const sample of samples) {
+    const next = Math.hypot(sample.x - point.x, sample.y - point.y);
+    if (next < best) best = next;
+  }
+  return best;
+}
+
+export function markStrokeHits(
+  samples: TracePoint[],
+  hits: boolean[],
+  finger: TracePoint,
+  radius = STROKE_HIT_RADIUS,
+): void {
+  for (let i = 0; i < samples.length; i += 1) {
+    if (hits[i]) continue;
+    if (Math.hypot(samples[i].x - finger.x, samples[i].y - finger.y) <= radius) {
+      hits[i] = true;
+    }
+  }
+}
+
+export function strokeCoverage(hits: boolean[]): number {
+  if (!hits.length) return 0;
+  let hit = 0;
+  for (const on of hits) if (on) hit += 1;
+  return hit / hits.length;
+}
+
+export function isStrokePathComplete(sample: {
   coverage: number;
-  topCoverage: number;
-  bottomCoverage: number;
-  inkDistance: number;
-  minInk?: number;
+  travel: number;
+  pathLength: number;
+  startedAtStart: boolean;
 }): boolean {
   return (
-    sample.coverage >= TRACE_MIN_COVERAGE &&
-    sample.topCoverage >= TRACE_MIN_BAND &&
-    sample.bottomCoverage >= TRACE_MIN_BAND &&
-    sample.inkDistance >= (sample.minInk ?? TRACE_MIN_INK)
+    sample.startedAtStart &&
+    sample.coverage >= STROKE_COMPLETE &&
+    sample.travel >= sample.pathLength * STROKE_TRAVEL
   );
+}
+
+function polyline(points: TracePoint[]): string {
+  return points.map((point) => `${point.x},${point.y}`).join(" ");
 }
 
 export function ToddlerLetterTrace({
@@ -129,26 +154,35 @@ export function ToddlerLetterTrace({
 }) {
   const deck = pickTraceDeck(catalog, { prompt });
   const [index, setIndex] = useState(0);
+  const [strokeIndex, setStrokeIndex] = useState(0);
   const [done, setDone] = useState(false);
   const [stars, setStars] = useState(0);
   const [fill, setFill] = useState(0);
-  const [guidePx, setGuidePx] = useState(120);
+  const [missStart, setMissStart] = useState(false);
   const inkRef = useRef<HTMLCanvasElement>(null);
-  const maskRef = useRef<Uint8ClampedArray | null>(null);
   const drawing = useRef(false);
-  const last = useRef<{ x: number; y: number } | null>(null);
-  const inked = useRef(0);
+  const last = useRef<TracePoint | null>(null);
+  const lastCanvas = useRef<{ x: number; y: number } | null>(null);
+  const hits = useRef<boolean[]>([]);
+  const samples = useRef<TracePoint[]>([]);
+  const startedAtStart = useRef(false);
+  const travel = useRef(0);
   const finishedRound = useRef(false);
-  const settleTimer = useRef<number | null>(null);
-  const minInk = useRef(TRACE_MIN_INK);
-  const fontPx = useRef(120);
   const current = deck[index] ?? deck[0];
+  const strokes = strokesForLetter(current.letter);
+  const activeStroke = strokes[Math.min(strokeIndex, strokes.length - 1)] ?? strokes[0];
 
-  const clearSettle = () => {
-    if (settleTimer.current != null) {
-      window.clearTimeout(settleTimer.current);
-      settleTimer.current = null;
-    }
+  const toCanvas = (point: TracePoint, rect: DOMRect) => ({
+    x: (point.x / 100) * rect.width,
+    y: (point.y / 100) * rect.height,
+  });
+
+  const toNorm = (event: React.PointerEvent<HTMLCanvasElement>): TracePoint => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    return {
+      x: ((event.clientX - rect.left) / rect.width) * 100,
+      y: ((event.clientY - rect.top) / rect.height) * 100,
+    };
   };
 
   const sizeCanvas = () => {
@@ -163,83 +197,85 @@ export function ToddlerLetterTrace({
     if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, rect.width, rect.height);
-    fontPx.current = Math.floor(rect.height * 0.72);
-    setGuidePx(fontPx.current);
-    const mask = document.createElement("canvas");
-    mask.width = canvas.width;
-    mask.height = canvas.height;
-    const mctx = mask.getContext("2d");
-    if (!mctx) return;
-    mctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    mctx.fillStyle = "#000";
-    mctx.font = `700 ${fontPx.current}px system-ui, ui-rounded, Arial`;
-    mctx.textAlign = "center";
-    mctx.textBaseline = "middle";
-    mctx.fillText(current.letter, rect.width / 2, rect.height / 2 + 6);
-    const maskData = mctx.getImageData(0, 0, mask.width, mask.height);
-    maskRef.current = maskData.data;
-    let letterPixels = 0;
-    for (let i = 3; i < maskData.data.length; i += 16) {
-      if (maskData.data[i] >= 80) letterPixels += 1;
-    }
-    minInk.current = Math.max(TRACE_MIN_INK, Math.sqrt(Math.max(letterPixels, 1)) * 3.2);
-    inked.current = 0;
-    finishedRound.current = false;
-    setFill(0);
-    clearSettle();
+  };
+
+  const resetStroke = (nextIndex = strokeIndex) => {
+    const stroke = strokes[nextIndex] ?? strokes[0];
+    samples.current = resampleStroke(stroke);
+    hits.current = samples.current.map(() => false);
+    startedAtStart.current = false;
+    travel.current = 0;
+    drawing.current = false;
+    last.current = null;
+    lastCanvas.current = null;
+    const doneStrokes = nextIndex;
+    setFill(strokes.length ? doneStrokes / strokes.length : 0);
+  };
+
+  const clearInk = () => {
+    const canvas = inkRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
+    const rect = canvas.getBoundingClientRect();
+    ctx.clearRect(0, 0, rect.width, rect.height);
   };
 
   useEffect(() => {
     sizeCanvas();
+    setStrokeIndex(0);
+    finishedRound.current = false;
+    setMissStart(false);
+    samples.current = resampleStroke(strokes[0] ?? []);
+    hits.current = samples.current.map(() => false);
+    startedAtStart.current = false;
+    travel.current = 0;
+    setFill(0);
     const onResize = () => sizeCanvas();
     window.addEventListener("resize", onResize);
-    return () => {
-      window.removeEventListener("resize", onResize);
-      clearSettle();
-    };
+    return () => window.removeEventListener("resize", onResize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current.letter]);
 
   useEffect(() => {
+    const line = strokeIndex + 1;
+    const total = strokes.length;
     const timer = setTimeout(() => {
-      speakText(`Trace the letter ${current.letter}. ${current.sound}`, { pitch: 1.2, rate: 0.92 });
-    }, 200);
+      if (strokeIndex === 0) {
+        speakText(`Trace the letter ${current.letter}. Start on the blue dot. One line. ${current.sound}`, {
+          pitch: 1.2,
+          rate: 0.92,
+        });
+      } else {
+        speakText(`Line ${line} of ${total}. Start on the blue dot.`, { pitch: 1.2, rate: 0.95 });
+      }
+    }, 180);
     return () => {
       clearTimeout(timer);
       stopSpeaking();
     };
-  }, [current.letter, current.sound]);
+  }, [current.letter, current.sound, strokeIndex, strokes.length]);
 
-  const point = (event: React.PointerEvent<HTMLCanvasElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
-  };
-
-  const paint = (from: { x: number; y: number }, to: { x: number; y: number }) => {
+  const paint = (from: { x: number; y: number }, to: { x: number; y: number }, rect: DOMRect) => {
     const canvas = inkRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
+    const width = Math.max(14, Math.min(rect.width, rect.height) * 0.07);
     ctx.strokeStyle = "#f59e0b";
-    ctx.lineWidth = 20;
+    ctx.lineWidth = width;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.beginPath();
     ctx.moveTo(from.x, from.y);
     ctx.lineTo(to.x, to.y);
     ctx.stroke();
-    inked.current += Math.hypot(to.x - from.x, to.y - from.y);
   };
 
-  const readCoverage = () => {
-    const canvas = inkRef.current;
-    const mask = maskRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (!canvas || !mask || !ctx) return { coverage: 0, topCoverage: 0, bottomCoverage: 0 };
-    const ink = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-    return sampleLetterCoverage(mask, ink, canvas.width, canvas.height);
+  const reportFill = () => {
+    const coverage = strokeCoverage(hits.current);
+    setFill((strokeIndex + coverage) / Math.max(strokes.length, 1));
   };
 
-  const commitRound = () => {
+  const commitLetter = () => {
     if (finishedRound.current || done) return;
     finishedRound.current = true;
     soundEffects.playSuccessChime();
@@ -278,47 +314,93 @@ export function ToddlerLetterTrace({
     }
   };
 
-  const maybeFinish = () => {
-    if (finishedRound.current || done) return;
-    const sample = readCoverage();
-    setFill(Math.min(1, sample.coverage / TRACE_MIN_COVERAGE));
-    if (
-      !isTraceStrokeComplete({
-        ...sample,
-        inkDistance: inked.current,
-        minInk: minInk.current,
-      })
-    ) {
-      clearSettle();
+  const completeStroke = () => {
+    drawing.current = false;
+    last.current = null;
+    lastCanvas.current = null;
+    soundEffects.playPop();
+    if (strokeIndex >= strokes.length - 1) {
+      setFill(1);
+      commitLetter();
       return;
     }
-    if (settleTimer.current != null) return;
-    settleTimer.current = window.setTimeout(() => {
-      settleTimer.current = null;
-      commitRound();
-    }, TRACE_SETTLE_MS);
+    const next = strokeIndex + 1;
+    setStrokeIndex(next);
+    resetStroke(next);
+  };
+
+  const maybeFinishStroke = () => {
+    if (finishedRound.current || done) return;
+    if (
+      isStrokePathComplete({
+        coverage: strokeCoverage(hits.current),
+        travel: travel.current,
+        pathLength: pathLength(samples.current),
+        startedAtStart: startedAtStart.current,
+      })
+    ) {
+      completeStroke();
+    }
   };
 
   const start = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    if (finishedRound.current || done) return;
+    const finger = toNorm(event);
+    const startPoint = samples.current[0];
+    if (!startPoint) return;
+    const nearStart = Math.hypot(finger.x - startPoint.x, finger.y - startPoint.y) <= STROKE_START_RADIUS;
+    if (!nearStart) {
+      setMissStart(true);
+      soundEffects.unlock();
+      return;
+    }
     event.currentTarget.setPointerCapture(event.pointerId);
     drawing.current = true;
-    last.current = point(event);
+    startedAtStart.current = true;
+    setMissStart(false);
+    last.current = finger;
+    const rect = event.currentTarget.getBoundingClientRect();
+    lastCanvas.current = toCanvas(finger, rect);
+    markStrokeHits(samples.current, hits.current, finger);
     soundEffects.unlock();
-    clearSettle();
+    reportFill();
   };
 
   const move = (event: React.PointerEvent<HTMLCanvasElement>) => {
     if (!drawing.current || !last.current) return;
-    const next = point(event);
-    paint(last.current, next);
-    last.current = next;
+    const finger = toNorm(event);
+    const prev = last.current;
+    const step = Math.hypot(finger.x - prev.x, finger.y - prev.y);
+    const slices = Math.max(1, Math.ceil(step / 2));
+    const rect = event.currentTarget.getBoundingClientRect();
+    let painted = lastCanvas.current;
+    for (let i = 1; i <= slices; i += 1) {
+      const t = i / slices;
+      const along = { x: prev.x + (finger.x - prev.x) * t, y: prev.y + (finger.y - prev.y) * t };
+      if (distanceToStroke(along, samples.current) > STROKE_INK_RADIUS) {
+        painted = null;
+        continue;
+      }
+      travel.current += step / slices;
+      markStrokeHits(samples.current, hits.current, along);
+      const canvasPoint = toCanvas(along, rect);
+      if (painted) paint(painted, canvasPoint, rect);
+      painted = canvasPoint;
+    }
+    last.current = finger;
+    lastCanvas.current = painted;
+    reportFill();
+    maybeFinishStroke();
   };
 
-  const endStroke = (shouldScore: boolean) => {
+  const endStroke = () => {
     drawing.current = false;
     last.current = null;
-    if (shouldScore) maybeFinish();
+    lastCanvas.current = null;
+    maybeFinishStroke();
   };
+
+  const startDot = activeStroke[0];
 
   return (
     <div className="space-y-4">
@@ -327,25 +409,48 @@ export function ToddlerLetterTrace({
         <h3 className="text-2xl font-black text-white">
           {current.emoji} {current.letter} is for {current.word}
         </h3>
-        <p className="text-white/75 text-base">Trace the whole letter. Lift and keep going if you need another stroke.</p>
+        <p className="text-white/75 text-base">
+          Line {Math.min(strokeIndex + 1, strokes.length)} of {strokes.length}. Start on the blue dot. Draw one
+          line.
+        </p>
       </div>
 
       <div className="relative min-h-[20rem] h-[min(62vh,34rem)] rounded-[2rem] bg-white overflow-hidden border-[6px] border-amber-300 shadow-inner">
-        <div
-          aria-hidden
-          className="absolute inset-0 flex items-center justify-center text-amber-200/80 font-black select-none"
-          style={{ fontSize: guidePx, lineHeight: 1 }}
-        >
-          {current.letter}
-        </div>
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden>
+          {strokes.map((stroke, i) => (
+            <polyline
+              key={`${current.letter}-ghost-${i}`}
+              points={polyline(stroke)}
+              fill="none"
+              stroke={i < strokeIndex ? "#f59e0b" : "#fde68a"}
+              strokeWidth={i < strokeIndex ? 4.2 : 3.4}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity={i < strokeIndex ? 0.95 : 0.55}
+            />
+          ))}
+          <polyline
+            points={polyline(activeStroke)}
+            fill="none"
+            stroke="#f59e0b"
+            strokeWidth={4.6}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeDasharray="3.2 3.6"
+            opacity={0.95}
+          />
+          {startDot && (
+            <circle cx={startDot.x} cy={startDot.y} r="5.4" fill="#2563eb" stroke="#fff" strokeWidth="1.4" />
+          )}
+        </svg>
         <canvas
           ref={inkRef}
           className="absolute inset-0 h-full w-full touch-none"
           onPointerDown={start}
           onPointerMove={move}
-          onPointerUp={() => endStroke(true)}
-          onPointerCancel={() => endStroke(false)}
-          aria-label={`Trace the letter ${current.letter}`}
+          onPointerUp={endStroke}
+          onPointerCancel={endStroke}
+          aria-label={`Trace the letter ${current.letter}, line ${strokeIndex + 1} of ${strokes.length}`}
         />
       </div>
 
@@ -356,7 +461,11 @@ export function ToddlerLetterTrace({
         />
       </div>
       <p className="text-center text-white/60 text-sm font-bold">
-        {fill < 1 ? "Keep tracing the letter." : "Almost… finish the last bits."}
+        {missStart
+          ? "Start on the blue dot, then slide one line."
+          : fill < 1
+            ? "Follow the dotted line. One line at a time."
+            : "Letter done!"}
       </p>
 
       <div className="flex items-center justify-between">
@@ -375,7 +484,12 @@ export function ToddlerLetterTrace({
           <button
             type="button"
             onClick={() => {
+              clearInk();
               sizeCanvas();
+              setStrokeIndex(0);
+              resetStroke(0);
+              finishedRound.current = false;
+              setMissStart(false);
               soundEffects.playPop();
             }}
             className="inline-flex items-center gap-1 rounded-xl bg-white/10 px-3 py-2 text-xs font-bold text-white hover:bg-white/20"
@@ -385,9 +499,7 @@ export function ToddlerLetterTrace({
         </div>
       </div>
 
-      {done && (
-        <p className="text-center text-emerald-300 font-black">All letters traced. You did it!</p>
-      )}
+      {done && <p className="text-center text-emerald-300 font-black">All letters traced. You did it!</p>}
     </div>
   );
 }
