@@ -31,9 +31,8 @@ import { ToddlerMusicPiano } from "./ToddlerMusicPiano";
 import { ToddlerAnimalSafari } from "./ToddlerAnimalSafari";
 import { ToddlerBalloonSky } from "./ToddlerBalloonSky";
 import { ToddlerK1Studio } from "./ToddlerK1Studio";
-import { K1_STUDIO_GAMES, K1_STUDIO_GAME_IDS, type K1StudioGameId } from "../data/toddler/k1StudioGames";
-import { GeneratedContentPanel } from "./GeneratedContentPanel";
-import type { GameBlueprint, BubblePopBlueprint } from "../contentEngine/types";
+import { K1_STUDIO_GAME_IDS, type K1StudioGameId } from "../data/toddler/k1StudioGames";
+import type { BubblePopBlueprint } from "../contentEngine/types";
 
 interface ToddlerQuizzesAndGamesProps {
   starsCount: number;
@@ -1047,7 +1046,7 @@ export function ToddlerQuizzesAndGames({
               className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              <span>AI Voice Speaking...</span>
+              <span>Speaking…</span>
             </motion.div>
           )}
         </div>
@@ -1235,32 +1234,6 @@ export function ToddlerQuizzesAndGames({
         </button>
       </div>
 
-      <div className="mb-4">
-        <p className="mb-2 px-1 text-[10px] font-black uppercase tracking-wider text-white/50">
-          K–1 skill studio · works with AI off
-        </p>
-        <div className="grid grid-cols-3 sm:grid-cols-7 gap-1.5">
-          {K1_STUDIO_GAMES.map((studioGame) => (
-            <button
-              key={studioGame.id}
-              type="button"
-              onClick={() => {
-                setCurrentActivity(studioGame.id);
-                soundEffects.playPop();
-              }}
-              className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[10px] sm:text-[11px] transition-all cursor-pointer border-b-4 ${
-                currentActivity === studioGame.id
-                  ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md ring-2 ring-emerald-300/40"
-                  : "bg-white/5 border-white/10 text-white/70 hover:text-white hover:bg-white/10"
-              }`}
-            >
-              <span className="text-base sm:text-lg">{studioGame.emoji}</span>
-              <span className="truncate max-w-full">{studioGame.title.split(" ")[0]}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* ACTIVITY 0: RAINBOW XYLOPHONE */}
       {currentActivity === "rainbow-piano" && (
         <ToddlerMusicPiano onAddStar={onAddStar} />
@@ -1268,18 +1241,6 @@ export function ToddlerQuizzesAndGames({
 
       {currentActivity === "bubble-pop-phonics" && (
         <>
-          <GeneratedContentPanel
-            gameType="bubble-pop-phonics"
-            skillId="read-k1-alphabet-letters"
-            onBlueprint={(blueprint: GameBlueprint, learnerId: string) => {
-              if (blueprint.gameType === "bubble-pop-phonics") {
-                setGeneratedBubbleBlueprint(blueprint);
-                setGeneratedBubbleLearnerId(learnerId);
-                setIsGeneratedBubblePlaying(true);
-              }
-            }}
-            disabled={isGeneratedBubblePlaying}
-          />
           <ToddlerBubblePopGame
             key={`${getActiveLearnerId()}:${generatedBubbleLearnerId ?? "curated"}`}
             onAddStar={onAddStar}

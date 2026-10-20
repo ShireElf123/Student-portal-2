@@ -109,8 +109,7 @@ export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
     <section className="rounded-[2rem] border-4 border-white/15 bg-slate-950/70 p-5 sm:p-7 shadow-2xl">
       <header className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[11px] font-black uppercase tracking-wider text-white/50">K–1 skill studio · no AI needed</p>
-          <h3 className="mt-1 text-xl font-black text-white sm:text-2xl">
+          <h3 className="text-xl font-black text-white sm:text-2xl">
             <span className="mr-2">{game.emoji}</span>
             {game.title}
           </h3>
@@ -123,9 +122,9 @@ export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
 
       {done ? (
         <div className="rounded-3xl bg-emerald-500/15 border border-emerald-400/30 p-8 text-center">
-          <p className="text-2xl font-black text-white">Studio round complete</p>
+          <p className="text-2xl font-black text-white">You did it!</p>
           <p className="mt-2 text-sm text-emerald-100">
-            {correctCount} scored {game.title.toLowerCase()} responses. Same evidence a parent sees.
+            {correctCount} of {game.rounds.length} in {game.title}.
           </p>
           <button
             type="button"

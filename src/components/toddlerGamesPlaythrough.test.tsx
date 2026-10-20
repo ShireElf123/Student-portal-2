@@ -379,7 +379,7 @@ describe("K–1 skill studio (curated, AI off)", () => {
     await playCorrect("0 cookies");
     await playCorrect("7 sandwiches");
 
-    expect(container.textContent).toContain("Studio round complete");
+    expect(container.textContent).toContain("You did it!");
     fireEvent.click(getByText("Play Picnic Plus again"));
     await flush(250);
     expect(container.textContent).toContain("3 berries");
