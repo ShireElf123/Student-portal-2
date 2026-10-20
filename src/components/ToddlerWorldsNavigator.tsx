@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import {
-  Sparkles,
   Star,
   ChevronLeft,
   Volume2,
@@ -9,7 +8,6 @@ import {
   RotateCcw,
   CheckCircle2,
   ArrowRight,
-  Compass,
   Trophy,
   Heart,
   Lock,
@@ -630,10 +628,18 @@ export function ToddlerWorldsNavigator({
   };
 
   const nextTrailActivity = (): ToddlerActivity | null => {
-    if (!selectedArea || !activeActivity) return null;
+    if (!selectedWorld || !selectedArea || !activeActivity) return null;
     const index = selectedArea.activities.findIndex((item) => item.id === activeActivity.id);
-    if (index < 0) return null;
-    return selectedArea.activities[index + 1] ?? null;
+    if (index >= 0 && index < selectedArea.activities.length - 1) {
+      return selectedArea.activities[index + 1];
+    }
+    const areaIndex = selectedWorld.areas.findIndex((area) => area.id === selectedArea.id);
+    for (let i = areaIndex + 1; i < selectedWorld.areas.length; i += 1) {
+      const area = selectedWorld.areas[i];
+      if (!isAreaUnlocked(area, progress)) continue;
+      if (area.activities[0]) return area.activities[0];
+    }
+    return null;
   };
 
   const continueAfterRef = useRef<() => void>(() => {});
@@ -683,6 +689,7 @@ export function ToddlerWorldsNavigator({
 
     const next = nextTrailActivity();
     if (next) {
+      if (next.areaId !== selectedAreaId) setSelectedAreaId(next.areaId);
       handleStartActivity(next);
       return;
     }
@@ -695,12 +702,10 @@ export function ToddlerWorldsNavigator({
     if (!showCelebration || !activeActivity) return;
     if (activeMission) return;
     if (!AUTO_TRAIL_TYPES.has(activeActivity.type)) return;
-    if (!selectedArea) return;
-    const index = selectedArea.activities.findIndex((item) => item.id === activeActivity.id);
-    if (index < 0 || index >= selectedArea.activities.length - 1) return;
+    if (!nextTrailActivity()) return;
     const timer = window.setTimeout(() => continueAfterRef.current(), 3800);
     return () => window.clearTimeout(timer);
-  }, [showCelebration, activeActivity?.id, activeMission, selectedArea]);
+  }, [showCelebration, activeActivity?.id, activeMission, selectedArea, selectedWorld, progress]);
 
 
   // ------------------ STORY ADVENTURE HANDLERS ------------------
@@ -944,10 +949,11 @@ export function ToddlerWorldsNavigator({
                   You helped the characters through every scene, solved the challenges, and earned 3 Golden Stars!
                 </p>
                 <button
-                  onClick={handleBackToAreaHub}
-                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-xs cursor-pointer shadow-lg hover:from-amber-400"
+                  type="button"
+                  onClick={handleContinueAfterCelebration}
+                  className="min-h-16 px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-lg cursor-pointer shadow-lg hover:from-amber-400"
                 >
-                  Return to {selectedArea?.title} 🗺️
+                  {trailNext ? `Next: ${trailNext.clueIcon} ${trailNext.title}` : "Back to the trail"}
                 </button>
               </div>
             )}
@@ -957,20 +963,16 @@ export function ToddlerWorldsNavigator({
         {/* 4. DYNAMIC COUNTING REPLAY ENGINE */}
         {dynamicCounting && (
           <div className={`p-6 sm:p-8 rounded-3xl bg-gradient-to-b ${dynamicCounting.bgGradient} border-2 border-white/20 shadow-2xl text-center space-y-6`}>
-            {/* Header & Learning Objective */}
-            <div className="flex items-center justify-between text-xs text-white/70 font-bold border-b border-white/10 pb-3">
-              <span className="flex items-center gap-1.5">
-                <Compass size={14} className="text-amber-300" /> {activeActivity.learningObjective}
-              </span>
+            <div className="flex items-center justify-end">
               <button
+                type="button"
                 onClick={handleRegenerateCounting}
-                className="px-2.5 py-1 rounded-xl bg-white/15 hover:bg-white/25 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-all active:scale-95"
+                className="min-h-12 px-4 rounded-full bg-white/20 hover:bg-white/30 text-white text-sm font-black flex items-center gap-1 cursor-pointer"
               >
-                <RotateCcw size={12} /> New Group 🎲
+                <RotateCcw size={16} /> New friends
               </button>
             </div>
 
-            {/* Prompt Box */}
             <div className="space-y-2">
               <span className="px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-black uppercase tracking-wider inline-block border border-amber-400/30">
                 🔢 Count {dynamicCounting.targetCount > 10 ? "11 to 20" : dynamicCounting.targetCount > 5 ? "6 to 10" : "1 to 5"}
@@ -978,18 +980,19 @@ export function ToddlerWorldsNavigator({
               <h3 className="text-2xl sm:text-3xl font-black text-white">
                 {dynamicCounting.question}
               </h3>
-              <p className="text-white/80 text-xs sm:text-sm font-medium">
-                Tap each item with your finger to count out loud!
+              <p className="text-white text-base font-bold">
+                Tap each one
               </p>
               <div>
                 <button
+                  type="button"
                   onClick={() => {
                     soundEffects.playPop();
                     speakText(dynamicCounting.spokenPrompt, { pitch: 1.15 });
                   }}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-white border border-white/20 font-bold text-xs cursor-pointer transition-all active:scale-95"
+                  className="inline-flex min-h-14 items-center gap-2 px-6 py-3 rounded-full bg-white text-slate-900 font-black text-base cursor-pointer active:scale-95"
                 >
-                  <Volume2 size={14} /> Listen to Question Again 🔊
+                  <Volume2 size={18} /> Hear it again
                 </button>
               </div>
             </div>
@@ -1077,35 +1080,29 @@ export function ToddlerWorldsNavigator({
         {/* 5. DYNAMIC SORTING REPLAY ENGINE */}
         {dynamicSorting && (
           <div className="p-6 sm:p-8 rounded-3xl bg-[#121327] border-2 border-white/20 shadow-2xl text-center space-y-6">
-            {/* Header & Objective */}
-            <div className="flex items-center justify-between text-xs text-white/70 font-bold border-b border-white/10 pb-3">
-              <span className="flex items-center gap-1.5">
-                <Compass size={14} className="text-cyan-400" /> {activeActivity.learningObjective}
-              </span>
+            <div className="flex items-center justify-end">
               <button
+                type="button"
                 onClick={handleRegenerateSorting}
-                className="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-all active:scale-95"
+                className="min-h-12 px-4 rounded-full bg-white/15 hover:bg-white/25 text-white text-sm font-black flex items-center gap-1 cursor-pointer"
               >
-                <RotateCcw size={12} /> New Challenge 🎲
+                <RotateCcw size={16} /> New friends
               </button>
             </div>
 
-            {/* Instruction Banner */}
             <div className="space-y-1.5">
-              <span className="px-3 py-1 rounded-full bg-cyan-400/20 text-cyan-300 text-xs font-black uppercase tracking-wider inline-block border border-cyan-400/30">
-                🧩 Smart Sorting Challenge
-              </span>
-              <h3 className="text-2xl font-black text-white">{dynamicSorting.title}</h3>
-              <p className="text-white/80 text-xs sm:text-sm font-medium">{dynamicSorting.instruction}</p>
+              <h3 className="text-2xl sm:text-3xl font-black text-white">{dynamicSorting.title}</h3>
+              <p className="text-white text-base font-bold">{dynamicSorting.instruction}</p>
               <div>
                 <button
+                  type="button"
                   onClick={() => {
                     soundEffects.playPop();
                     speakText(dynamicSorting.spokenPrompt, { pitch: 1.15 });
                   }}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/30 font-bold text-xs cursor-pointer transition-all active:scale-95"
+                  className="inline-flex min-h-14 items-center gap-2 px-6 py-3 rounded-full bg-white text-slate-900 font-black text-base cursor-pointer active:scale-95"
                 >
-                  <Volume2 size={14} /> Listen to Instructions Again 🔊
+                  <Volume2 size={18} /> Hear it again
                 </button>
               </div>
             </div>
@@ -1213,15 +1210,17 @@ export function ToddlerWorldsNavigator({
                   {/* Two Action Buttons to Assign Target */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                     <button
+                      type="button"
                       onClick={() => handleSortItem(currentItem, "A")}
-                      className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs cursor-pointer shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 border border-emerald-400/40"
+                      className="min-h-16 p-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-base cursor-pointer shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 border border-emerald-400/40"
                     >
                       <span>{dynamicSorting.categoryA.emoji}</span>
                       <span>Put in {dynamicSorting.categoryA.label}</span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleSortItem(currentItem, "B")}
-                      className="p-3.5 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-black text-xs cursor-pointer shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 border border-cyan-400/40"
+                      className="min-h-16 p-4 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-black text-base cursor-pointer shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 border border-cyan-400/40"
                     >
                       <span>{dynamicSorting.categoryB.emoji}</span>
                       <span>Put in {dynamicSorting.categoryB.label}</span>
@@ -1243,69 +1242,58 @@ export function ToddlerWorldsNavigator({
           !dynamicSorting &&
           !activeStory &&
           !TOY_ACTIVITY_TYPES.has(activeActivity.type) && (
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#121327] border-2 border-white/20 shadow-2xl text-center space-y-6">
-            {/* Header / Learning Goal */}
-            <div className="flex items-center justify-between text-xs text-white/60 font-bold border-b border-white/10 pb-3">
-              <span className="flex items-center gap-1.5">
-                <Compass size={14} className="text-sky-400" /> {activeActivity.learningObjective}
-              </span>
-              <span className="text-amber-300 flex items-center gap-1">
-                <Star size={12} fill="currentColor" /> {activeActivity.difficulty === 1 ? "Beginner" : activeActivity.difficulty === 2 ? "Intermediate" : "Advanced"}
-              </span>
+          <div className={`relative overflow-hidden p-5 sm:p-8 rounded-[2rem] bg-gradient-to-b ${selectedArea?.environment.bgGradient ?? "from-sky-300 to-emerald-400"} border-4 border-white/40 shadow-2xl text-center space-y-5 min-h-[28rem]`}>
+            <div className="pointer-events-none absolute inset-x-0 top-3 flex justify-between px-6 text-3xl opacity-70" aria-hidden>
+              {(selectedArea?.environment.sceneryEmojis ?? ["☁️", "☀️"]).slice(0, 4).map((emoji, index) => (
+                <span key={`${emoji}-${index}`}>{emoji}</span>
+              ))}
             </div>
-
-            {/* Environmental Clue Box - Crucially: NON-REVEALING ICON */}
-            <div className="p-5 rounded-2xl bg-gradient-to-b from-white/[0.08] to-white/[0.03] border border-white/15 space-y-3">
-              <div className="w-16 h-16 mx-auto rounded-2xl bg-white/10 flex items-center justify-center text-4xl shadow-inner animate-pulse">
+            <div className="relative z-10 space-y-4">
+              <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-[1.6rem] bg-white/80 text-5xl shadow-inner">
                 {activeActivity.clueIcon}
               </div>
-              <h3 className="text-xl sm:text-2xl font-black text-white">
+              <h3 className="text-2xl sm:text-3xl font-black text-slate-900 drop-shadow-sm">
                 {activeActivity.title}
               </h3>
-              <p className="text-white/80 text-sm sm:text-base max-w-lg mx-auto font-medium">
+              <p className="text-slate-800 text-base sm:text-lg max-w-lg mx-auto font-bold">
                 {activeActivity.cluePrompt}
               </p>
-
-              {/* Re-listen Prompt Audio Button */}
               <button
+                type="button"
                 onClick={() => {
                   soundEffects.playPop();
                   speakText(activeActivity.spokenPrompt, { pitch: 1.15 });
                 }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/30 font-bold text-xs cursor-pointer transition-all active:scale-95"
+                className="inline-flex min-h-14 items-center gap-2 px-6 py-3 rounded-full bg-white text-slate-900 font-black text-base shadow-lg cursor-pointer transition-all active:scale-95"
               >
-                <Volume2 size={14} /> Listen to Clue Again 🔊
+                <Volume2 size={18} /> Hear it again
               </button>
-            </div>
-
-            {/* Answer Cards Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-lg mx-auto">
-              {activeActivity.options.map((opt) => {
-                const isSelected = selectedOptionId === opt.id;
-                return (
-                  <button
-                    key={opt.id}
-                    disabled={isAnswered}
-                    onClick={() => handleSelectOption(opt.id)}
-                    className={`p-4 rounded-2xl border-2 flex flex-col items-center justify-center gap-2.5 transition-all cursor-pointer shadow-md active:scale-95 ${
-                      isSelected && opt.isCorrect
-                        ? "bg-emerald-500 border-emerald-300 text-white scale-105 shadow-emerald-500/40"
-                        : isSelected && !opt.isCorrect
-                        ? "bg-rose-500 border-rose-300 text-white animate-shake"
-                        : "bg-white/10 border-white/15 hover:bg-white/20 text-white hover:border-white/30"
-                    }`}
-                  >
-                    <span className="text-4xl filter drop-shadow">{opt.emoji}</span>
-                    <span className="font-black text-xs text-center leading-tight">
-                      {opt.label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="text-xs text-white/40">
-              💡 Observe the clues and tap your answer to earn stars!
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-xl mx-auto">
+                {activeActivity.options.map((opt) => {
+                  const isSelected = selectedOptionId === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      disabled={isAnswered}
+                      onClick={() => handleSelectOption(opt.id)}
+                      className={`min-h-[7rem] p-4 rounded-[1.6rem] border-4 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer shadow-lg active:scale-95 ${
+                        isSelected && opt.isCorrect
+                          ? "bg-emerald-400 border-emerald-200 text-white scale-105"
+                          : isSelected && !opt.isCorrect
+                          ? "bg-rose-400 border-rose-200 text-white animate-shake"
+                          : "bg-white/90 border-white text-slate-900 hover:bg-white"
+                      }`}
+                    >
+                      <span className="text-5xl filter drop-shadow">{opt.emoji}</span>
+                      <span className="font-black text-sm text-center leading-tight">
+                        {opt.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-slate-800/80 text-sm font-black">Tap who it is</p>
             </div>
           </div>
         )}
@@ -1326,9 +1314,9 @@ export function ToddlerWorldsNavigator({
                   <div className="px-4 py-2 rounded-2xl bg-amber-400/20 border border-amber-400/40 text-amber-300 font-black text-sm flex items-center gap-1.5">
                     <Star size={16} fill="currentColor" /> +{activeActivity.rewardStars} Stars
                   </div>
-                  <div className="px-4 py-2 rounded-2xl bg-purple-400/20 border border-purple-400/40 text-purple-300 font-black text-sm flex items-center gap-1.5">
-                    <Sparkles size={16} /> +{activeActivity.rewardXP} XP
-                  </div>
+                  {activeActivity.rewardXP > 0 && (
+                    <div className="sr-only">+{activeActivity.rewardXP} XP</div>
+                  )}
                 </div>
 
                 {/* Newly Unlocked Area Alert */}
@@ -1501,12 +1489,12 @@ export function ToddlerWorldsNavigator({
             onClick={handleBackToWorldsMap}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-xs cursor-pointer transition-all border border-white/10"
           >
-            <ChevronLeft size={16} /> World Map
+            <ChevronLeft size={16} /> All lands
           </button>
 
           <div className="flex items-center gap-3">
             <div className="text-xs text-white/60 font-bold hidden sm:block">
-              {worldStats.completedActivities} of {worldStats.totalActivities} Discoveries
+              {worldStats.completedActivities} of {worldStats.totalActivities} stops
             </div>
             <div className="w-32 h-2.5 rounded-full bg-white/10 overflow-hidden">
               <div

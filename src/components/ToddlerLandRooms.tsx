@@ -48,6 +48,21 @@ function useCredit(onAddStar?: () => void) {
   return { done, finish };
 }
 
+const SCENERY: Record<LandPlayId, string[]> = {
+  "milk-cow": ["☁️", "🏡", "🌾", "🌻", "🪵"],
+  "firefly-jar": ["🌙", "🌸", "🌿", "⭐", "🍃"],
+  "penguin-slide": ["❄️", "🧊", "🌨️", "🐟", "🏔️"],
+  "load-truck": ["🛢️", "🧰", "🛞", "🚧", "📦"],
+  "fire-hose": ["🚒", "🔔", "🪜", "💧", "🧯"],
+  "fruit-stack": ["🧺", "🍋", "🍉", "🥕", "🌽"],
+  "stamp-mural": ["🎨", "🖌️", "🌈", "✨", "🖼️"],
+  "story-stones": ["📖", "🌙", "🏡", "⭐", "🌲"],
+  "number-pebbles": ["🌼", "🍃", "🦋", "🪨", "☀️"],
+  campfire: ["🌲", "🦉", "🌙", "⭐", "🏕️"],
+  "feeling-face": ["💗", "🌼", "🌈", "🧸", "☀️"],
+  "night-tuck": ["🌙", "⭐", "🦉", "🛏️", "🕯️"],
+};
+
 function Stage({
   playId,
   className,
@@ -73,12 +88,26 @@ function Stage({
 
   return (
     <div className={`relative overflow-hidden rounded-[2rem] border-4 border-white/25 min-h-[28rem] sm:min-h-[32rem] p-4 sm:p-6 ${className}`}>
-      <div className="text-center mb-3">
-        <p className="text-[11px] font-black uppercase tracking-[0.22em] text-white/55">This land’s room</p>
-        <h3 className="text-2xl sm:text-3xl font-black text-white drop-shadow">{copy.title}</h3>
-        <p className="text-white/80 text-sm sm:text-base">{done ? copy.done : copy.line}</p>
+      <div className="pointer-events-none absolute inset-0" aria-hidden>
+        {SCENERY[playId].map((bit, index) => (
+          <span
+            key={`${bit}-${index}`}
+            className="absolute text-3xl sm:text-4xl opacity-80"
+            style={{ top: `${10 + (index * 16) % 62}%`, left: `${8 + (index * 18) % 78}%` }}
+          >
+            {bit}
+          </span>
+        ))}
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-black/10" />
       </div>
-      {children}
+      <div className="relative z-10">
+        <div className="text-center mb-3">
+          <p className="text-[11px] font-black uppercase tracking-[0.22em] text-white/70">This land’s room</p>
+          <h3 className="text-2xl sm:text-3xl font-black text-white drop-shadow">{copy.title}</h3>
+          <p className="text-white/90 text-sm sm:text-base font-bold">{done ? copy.done : copy.line}</p>
+        </div>
+        {children}
+      </div>
     </div>
   );
 }
@@ -106,7 +135,7 @@ function MilkCow({ onAddStar }: { onAddStar?: () => void }) {
   return (
     <Stage playId="milk-cow" done={done} className="bg-gradient-to-b from-lime-300 via-emerald-600 to-amber-900">
       <div className="flex flex-col items-center gap-4">
-        <div className="text-7xl sm:text-8xl" aria-hidden>
+        <div className="text-7xl sm:text-8xl animate-bounce" aria-hidden>
           🐄
         </div>
         <div

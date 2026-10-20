@@ -64,6 +64,8 @@ const startActivity = async () => {
   );
   await flush(500);
   expect(utils.container.textContent).toContain("The Grassy Pasture Sound");
+  expect(utils.container.textContent).toContain("Tap who it is");
+  expect(utils.container.textContent).not.toContain("Beginner");
   return utils;
 };
 
@@ -89,6 +91,8 @@ describe("Animal World detective activity", () => {
 
     expect(speech.spoken.some((line) => line.includes("friendly dairy cow"))).toBe(true);
     expect(container.textContent).toContain("You did it!");
+    expect(container.textContent).not.toContain("Beginner");
+    expect(container.textContent).not.toContain("Observe the clues");
   });
 
   it("still celebrates a correct answer when the engine never reports the end", async () => {

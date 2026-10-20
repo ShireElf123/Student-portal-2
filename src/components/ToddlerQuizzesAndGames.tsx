@@ -1067,13 +1067,13 @@ export function ToddlerQuizzesAndGames({
       </div>
 
       {/* Game Selector Bar (Big, Touchable, Colorful - 11 Interactive Wonderland Games) */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-11 gap-1.5 p-1.5 rounded-3xl bg-white/[0.04] border border-white/10 max-w-6xl mx-auto">
+      <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 p-2 rounded-3xl bg-white/[0.04] border border-white/10 max-w-6xl mx-auto">
         <button
           onClick={() => {
             setCurrentActivity("rainbow-piano");
             soundEffects.playPop();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
             currentActivity === "rainbow-piano"
               ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white border-rose-700 shadow-md scale-102 ring-2 ring-pink-300/40"
               : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
@@ -1088,7 +1088,7 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("animal-safari");
             soundEffects.playPop();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
             currentActivity === "animal-safari"
               ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md scale-102 ring-2 ring-emerald-300/40"
               : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
@@ -1103,7 +1103,7 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("balloon-sky");
             soundEffects.playPop();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
             currentActivity === "balloon-sky"
               ? "bg-gradient-to-r from-sky-400 to-blue-500 text-white border-blue-700 shadow-md scale-102 ring-2 ring-sky-300/40"
               : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
@@ -1118,7 +1118,7 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("animal-quiz");
             handleRestartQuiz();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
             currentActivity === "animal-quiz"
               ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-orange-700 shadow-md scale-102 ring-2 ring-amber-300/40"
               : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
@@ -1133,7 +1133,7 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("shape-match");
             handleRestartShapes();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
             currentActivity === "shape-match"
               ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-indigo-700 shadow-md scale-102 ring-2 ring-purple-300/40"
               : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
@@ -1148,7 +1148,7 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("memory-match");
             soundEffects.playPop();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
             currentActivity === "memory-match"
               ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-cyan-700 shadow-md scale-102 ring-2 ring-cyan-300/40"
               : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
@@ -1163,7 +1163,7 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("rhyme-time");
             soundEffects.playPop();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
             currentActivity === "rhyme-time"
               ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white border-rose-700 shadow-md scale-102 ring-2 ring-pink-300/40"
               : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
@@ -1178,7 +1178,7 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("color-magic");
             soundEffects.playPop();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
             currentActivity === "color-magic"
               ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md scale-102 ring-2 ring-emerald-300/40"
               : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
@@ -1193,7 +1193,7 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("bubble-pop");
             spawnBubbles();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
             currentActivity === "bubble-pop"
               ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white border-fuchsia-700 shadow-md scale-102 ring-2 ring-fuchsia-300/40"
               : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
@@ -1208,7 +1208,7 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("bubble-pop-phonics");
             soundEffects.playPop();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
             currentActivity === "bubble-pop-phonics"
               ? "bg-gradient-to-r from-sky-500 to-indigo-500 text-white border-indigo-700 shadow-md scale-102 ring-2 ring-sky-300/40"
               : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
@@ -1223,7 +1223,7 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("feed-animal");
             handleResetBunny();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
             currentActivity === "feed-animal"
               ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white border-amber-700 shadow-md scale-102 ring-2 ring-amber-300/40"
               : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
@@ -1238,7 +1238,7 @@ export function ToddlerQuizzesAndGames({
         <p className="mb-2 px-1 text-[10px] font-black uppercase tracking-wider text-white/50">
           Skill studio
         </p>
-        <div className="grid grid-cols-3 sm:grid-cols-7 gap-1.5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
           {K1_STUDIO_GAMES.map((studioGame) => (
             <button
               key={studioGame.id}
@@ -1247,14 +1247,14 @@ export function ToddlerQuizzesAndGames({
                 setCurrentActivity(studioGame.id);
                 soundEffects.playPop();
               }}
-              className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[10px] sm:text-[11px] transition-all cursor-pointer border-b-4 ${
+              className={`flex min-h-20 flex-col items-center justify-center gap-1 px-2 py-3 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer border-b-4 ${
                 currentActivity === studioGame.id
                   ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md ring-2 ring-emerald-300/40"
                   : "bg-white/5 border-white/10 text-white/70 hover:text-white hover:bg-white/10"
               }`}
             >
-              <span className="text-base sm:text-lg">{studioGame.emoji}</span>
-              <span className="truncate max-w-full">{studioGame.title.split(" ")[0]}</span>
+              <span className="text-2xl">{studioGame.emoji}</span>
+              <span className="text-center leading-tight">{studioGame.title}</span>
             </button>
           ))}
         </div>
