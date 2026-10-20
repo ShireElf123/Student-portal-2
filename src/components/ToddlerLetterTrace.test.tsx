@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { LETTER_STROKE_COUNTS, strokesForLetter } from "../data/toddler/toddlerLetterStrokes";
 import {
   advanceAlongStroke,
+  isClosedStroke,
   isStrokePathComplete,
   letterFromPrompt,
   pathLength,
@@ -147,6 +148,40 @@ describe("letter trace completion", () => {
         pathLength: 80,
         startedAtStart: false,
         endDistance: 0,
+      }),
+    ).toBe(false);
+  });
+
+  it("does not finish O just by sitting on the start, which is also the end", () => {
+    const stroke = strokesForLetter("O")[0];
+    expect(isClosedStroke(stroke)).toBe(true);
+    const samples = resampleStroke(stroke);
+    expect(
+      isStrokePathComplete({
+        along: 0,
+        total: samples.length,
+        travel: 0,
+        pathLength: pathLength(samples),
+        startedAtStart: true,
+        endDistance: 0,
+      }),
+    ).toBe(false);
+  });
+
+  it("does not finish a line drawn the wrong way from the start", () => {
+    const samples = resampleStroke(strokesForLetter("A")[0]);
+    let along = 0;
+    for (let i = 0; i < 8; i += 1) along = advanceAlongStroke(samples, along, samples[0], STROKE_HIT_RADIUS);
+    expect(strokeProgress(along, samples.length)).toBeLessThan(0.2);
+    const end = samples[samples.length - 1];
+    expect(
+      isStrokePathComplete({
+        along,
+        total: samples.length,
+        travel: 20,
+        pathLength: pathLength(samples),
+        startedAtStart: true,
+        endDistance: Math.hypot(samples[0].x - end.x, samples[0].y - end.y),
       }),
     ).toBe(false);
   });

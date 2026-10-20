@@ -149,6 +149,13 @@ export function isStrokePathComplete(sample: {
   );
 }
 
+export function isClosedStroke(stroke: TracePoint[]): boolean {
+  if (stroke.length < 2) return false;
+  const start = stroke[0];
+  const end = stroke[stroke.length - 1];
+  return Math.hypot(start.x - end.x, start.y - end.y) < 12;
+}
+
 function polyline(points: TracePoint[]): string {
   return points.map((point) => `${point.x},${point.y}`).join(" ");
 }
@@ -310,6 +317,16 @@ export function ToddlerLetterTrace({
     ctx.stroke();
   };
 
+  const paintAlongPath = (fromIndex: number, toIndex: number, rect: DOMRect) => {
+    if (toIndex <= fromIndex) return;
+    for (let i = fromIndex; i < toIndex; i += 1) {
+      const a = samples.current[i];
+      const b = samples.current[i + 1];
+      if (!a || !b) continue;
+      paint(toCanvas(a, rect), toCanvas(b, rect), rect);
+    }
+  };
+
   const reportFill = () => {
     const progress = strokeProgress(along.current, samples.current.length);
     setFill((strokeIndex + progress) / Math.max(strokes.length, 1));
@@ -354,13 +371,15 @@ export function ToddlerLetterTrace({
     }
   };
 
-  const beginStrokeAt = (finger: TracePoint, canvasPoint: { x: number; y: number }) => {
+  const beginStrokeAt = (finger: TracePoint, canvasPoint: { x: number; y: number }, rect?: DOMRect) => {
     drawing.current = true;
     startedAtStart.current = true;
     setMissStart(false);
     last.current = finger;
     lastCanvas.current = canvasPoint;
+    const before = along.current;
     along.current = advanceAlongStroke(samples.current, along.current, finger);
+    if (rect) paintAlongPath(before, along.current, rect);
     reportFill();
   };
 
@@ -423,7 +442,7 @@ export function ToddlerLetterTrace({
     }
     event.currentTarget.setPointerCapture(event.pointerId);
     const rect = event.currentTarget.getBoundingClientRect();
-    beginStrokeAt(finger, toCanvas(finger, rect));
+    beginStrokeAt(finger, toCanvas(finger, rect), rect);
     soundEffects.unlock();
   };
 
@@ -434,24 +453,20 @@ export function ToddlerLetterTrace({
     const step = Math.hypot(finger.x - prev.x, finger.y - prev.y);
     const slices = Math.max(1, Math.ceil(step / 2));
     const rect = event.currentTarget.getBoundingClientRect();
-    let painted = lastCanvas.current;
     for (let i = 1; i <= slices; i += 1) {
       const t = i / slices;
       const point = { x: prev.x + (finger.x - prev.x) * t, y: prev.y + (finger.y - prev.y) * t };
-      if (distanceToStroke(point, samples.current) > STROKE_INK_RADIUS) {
-        painted = null;
-        continue;
-      }
+      if (distanceToStroke(point, samples.current) > STROKE_INK_RADIUS) continue;
       travel.current += step / slices;
+      const before = along.current;
       along.current = advanceAlongStroke(samples.current, along.current, point);
-      const canvasPoint = toCanvas(point, rect);
-      if (painted) paint(painted, canvasPoint, rect);
-      painted = canvasPoint;
+      paintAlongPath(before, along.current, rect);
     }
     last.current = finger;
-    lastCanvas.current = painted;
+    const head = samples.current[along.current];
+    lastCanvas.current = head ? toCanvas(head, rect) : toCanvas(finger, rect);
     reportFill();
-    maybeFinishStroke({ finger, canvas: painted ?? toCanvas(finger, rect) });
+    maybeFinishStroke({ finger, canvas: lastCanvas.current });
   };
 
   const endStroke = () => {
@@ -466,6 +481,8 @@ export function ToddlerLetterTrace({
 
   const startDot = activeStroke[0];
   const endDot = activeStroke[activeStroke.length - 1];
+  const lineProgress = fill * Math.max(strokes.length, 1) - strokeIndex;
+  const showEndDot = Boolean(endDot) && !(isClosedStroke(activeStroke) && lineProgress < 0.2);
 
   return (
     <div className="space-y-4">
@@ -511,7 +528,7 @@ export function ToddlerLetterTrace({
               strokeDasharray="3.4 3.8"
               opacity={0.95}
             />
-            {endDot && (
+            {showEndDot && endDot && (
               <circle cx={endDot.x} cy={endDot.y} r="5.4" fill="#fff" stroke="#16a34a" strokeWidth="1.8" />
             )}
             {startDot && (
@@ -525,6 +542,7 @@ export function ToddlerLetterTrace({
             onPointerMove={move}
             onPointerUp={endStroke}
             onPointerCancel={endStroke}
+            onLostPointerCapture={endStroke}
             aria-label={`Trace the letter ${current.letter}, line ${strokeIndex + 1} of ${strokes.length}`}
           />
         </div>
@@ -562,6 +580,9 @@ export function ToddlerLetterTrace({
             onClick={() => {
               clearInk();
               sizeCanvas();
+              setDone(false);
+              setIndex(0);
+              setStars(0);
               setStrokeIndex(0);
               resetStroke(0);
               finishedRound.current = false;

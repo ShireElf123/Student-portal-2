@@ -855,6 +855,7 @@ export function ToddlerWorldsNavigator({
           <div className="p-3 sm:p-4 rounded-3xl bg-[#131427] border-2 border-amber-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl sm:text-2xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerLetterTrace
+              key={activeActivity.id}
               catalog={playTheme.bubbles}
               prompt={`${activeActivity.title}. ${activeActivity.cluePrompt}`}
               onAddStar={() => completeWorldToy(activeActivity)}
