@@ -32,6 +32,7 @@ import { ToddlerAnimalSafari } from "./ToddlerAnimalSafari";
 import { ToddlerBalloonSky } from "./ToddlerBalloonSky";
 import { ToddlerK1Studio } from "./ToddlerK1Studio";
 import { K1_STUDIO_GAMES, K1_STUDIO_GAME_IDS, type K1StudioGameId } from "../data/toddler/k1StudioGames";
+import { CastPortrait } from "./CastPortrait";
 import type { BubblePopBlueprint } from "../contentEngine/types";
 
 interface ToddlerQuizzesAndGamesProps {
@@ -1235,7 +1236,8 @@ export function ToddlerQuizzesAndGames({
       </div>
 
       <div className="mb-4">
-        <p className="mb-2 px-1 text-[10px] font-black uppercase tracking-wider text-white/50">
+        <p className="mb-2 px-1 flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-white/50">
+          <CastPortrait who="pip" size={28} className="ring-1" />
           Skill studio
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">

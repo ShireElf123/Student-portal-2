@@ -25,4 +25,14 @@ export const TOY_STILL: Record<string, string> = {
   drive: "/toys/drive.jpg",
   pour: "/toys/pour.jpg",
   trace: "/toys/trace.jpg",
+  scoop: "/toys/scoop.jpg",
+  pet: "/toys/pet.jpg",
+  plant: "/toys/plant.jpg",
+  comb: "/toys/comb.jpg",
 };
+
+/** Painted faces for Pip and Nana — same storybook style as the island covers. */
+export const CAST = {
+  pip: "/cast/pip.jpg",
+  nana: "/cast/nana.jpg",
+} as const;

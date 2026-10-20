@@ -4,6 +4,7 @@ import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { soundEffects } from "../utils/soundEffects";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { getK1StudioGame, type K1StudioGameId, type K1StudioChoice } from "../data/toddler/k1StudioGames";
+import { CastPortrait } from "./CastPortrait";
 
 interface ToddlerK1StudioProps {
   gameId: K1StudioGameId;
@@ -108,13 +109,16 @@ export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
   return (
     <section className="rounded-[2rem] border-4 border-white/15 bg-slate-950/70 p-5 sm:p-7 shadow-2xl">
       <header className="mb-5 flex flex-wrap items-end justify-between gap-3">
-        <div>
+        <div className="flex items-start gap-3">
+          <CastPortrait who="pip" size={48} className="mt-0.5" />
+          <div>
           <p className="text-[11px] font-black uppercase tracking-wider text-white/50">Skill studio</p>
           <h3 className="mt-1 text-xl font-black text-white sm:text-2xl">
             <span className="mr-2">{game.emoji}</span>
             {game.title}
           </h3>
           <p className="mt-1 max-w-xl text-xs font-semibold text-white/70">{game.tagline}</p>
+          </div>
         </div>
         <p className="rounded-2xl bg-white/10 px-3 py-1.5 text-xs font-black text-white">
           {done ? `${correctCount}/${game.rounds.length}` : `${roundIndex + 1}/${game.rounds.length}`}

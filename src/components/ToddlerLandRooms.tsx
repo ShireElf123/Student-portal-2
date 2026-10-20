@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { triggerCelebrationConfetti } from "../utils/gamification";
+import { CAST } from "../data/toddler/toddlerWorldArt";
 
 export type LandPlayId =
   | "milk-cow"
@@ -170,12 +171,20 @@ function Stage({
   }, [done, copy.done]);
 
   return (
-    <div className={`relative overflow-hidden rounded-[2rem] border-4 border-white/25 min-h-[28rem] sm:min-h-[32rem] p-4 sm:p-6 ${className}`}>
+    <div className={`relative overflow-hidden rounded-[2rem] border-4 border-amber-100/90 min-h-[28rem] sm:min-h-[32rem] p-4 sm:p-6 shadow-[0_18px_40px_rgba(40,20,0,0.22)] ${className}`}>
+      <div
+        className="pointer-events-none absolute inset-0 mix-blend-soft-light opacity-70"
+        aria-hidden
+        style={{
+          background:
+            "radial-gradient(ellipse at 18% 0%, rgba(255,255,255,0.55), transparent 46%), radial-gradient(ellipse at 90% 100%, rgba(120,70,20,0.18), transparent 40%)",
+        }}
+      />
       <div className="pointer-events-none absolute inset-0" aria-hidden>
         {SCENERY[playId].map((bit, index) => (
           <span
             key={`${bit}-${index}`}
-            className="absolute text-3xl sm:text-4xl opacity-80"
+            className="absolute text-3xl sm:text-4xl opacity-40"
             style={{ top: `${10 + (index * 16) % 62}%`, left: `${8 + (index * 18) % 78}%` }}
           >
             {bit}
@@ -183,6 +192,11 @@ function Stage({
         ))}
         <div className="absolute inset-x-0 bottom-0 h-16 bg-black/10" />
       </div>
+      <img
+        src={CAST.pip}
+        alt=""
+        className="pointer-events-none absolute bottom-3 right-3 z-[5] h-16 w-16 rounded-full object-cover object-top ring-2 ring-white/95 shadow-lg"
+      />
       <div className="relative z-10">
         <div className="text-center mb-3">
           <p className="text-[11px] font-black uppercase tracking-[0.22em] text-white/70">This land’s room</p>

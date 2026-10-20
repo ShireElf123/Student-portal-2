@@ -18,6 +18,8 @@ interface ToddlerWorldTrailProps {
   nodes: WorldTrailNode[];
   onSelect: (id: string) => void;
   buddyEmoji?: string;
+  buddySrc?: string;
+  coverSrc?: string;
   sceneryEmojis?: string[];
 }
 
@@ -26,6 +28,8 @@ export function ToddlerWorldTrail({
   nodes,
   onSelect,
   buddyEmoji = "🧒",
+  buddySrc,
+  coverSrc,
   sceneryEmojis = [],
 }: ToddlerWorldTrailProps) {
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -44,7 +48,15 @@ export function ToddlerWorldTrail({
         ref={scrollerRef}
         className="overflow-x-auto rounded-[2rem] border border-white/20 shadow-xl"
       >
-        <div className="relative min-h-[220px] min-w-max bg-gradient-to-b from-sky-300 via-sky-200 to-emerald-300">
+        <div className="relative min-h-[220px] min-w-max overflow-hidden bg-gradient-to-b from-sky-300 via-sky-200 to-emerald-300">
+          {coverSrc && (
+            <img
+              src={coverSrc}
+              alt=""
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-55"
+            />
+          )}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-sky-200/40 via-transparent to-emerald-900/25" />
           <div className="pointer-events-none absolute inset-x-0 top-3 flex justify-between px-10 text-3xl opacity-70" aria-hidden>
             <span>☁️</span>
             <span>☀️</span>
@@ -62,10 +74,18 @@ export function ToddlerWorldTrail({
                   <motion.span
                     animate={reduceMotion ? undefined : { y: [0, -6, 0] }}
                     transition={{ repeat: Infinity, duration: 1.6 }}
-                    className="absolute -top-11 text-4xl drop-shadow"
+                    className="absolute -top-12 drop-shadow"
                     aria-hidden
                   >
-                    {buddyEmoji}
+                    {buddySrc ? (
+                      <img
+                        src={buddySrc}
+                        alt=""
+                        className="h-12 w-12 rounded-full object-cover object-top ring-2 ring-white shadow-md"
+                      />
+                    ) : (
+                      <span className="text-4xl">{buddyEmoji}</span>
+                    )}
                   </motion.span>
                 )}
                 <motion.button
