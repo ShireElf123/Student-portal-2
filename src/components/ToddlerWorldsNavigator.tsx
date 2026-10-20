@@ -64,6 +64,7 @@ import { ToddlerK1Studio } from "./ToddlerK1Studio";
 import { ToddlerLetterTrace } from "./ToddlerLetterTrace";
 import { ToddlerLetterLane } from "./ToddlerLetterLane";
 import { ToddlerOpenPlay } from "./ToddlerOpenPlay";
+import { SECRET_ZONES, ToddlerSecretZonePlay, secretZoneIsFound } from "./ToddlerSecretZones";
 import type { K1StudioGameId } from "../data/toddler/k1StudioGames";
 import { ToddlerWorldTrail } from "./ToddlerWorldTrail";
 import { ATLAS_CONTINENTS, TOY_ACTIVITY_TYPES } from "../data/toddler/toddlerWorldAtlasLayout";
@@ -77,50 +78,6 @@ interface ToddlerWorldsNavigatorProps {
   onOpenPictureBooks?: () => void;
   onOpenGames?: () => void;
 }
-
-interface SecretZoneDef {
-  id: string;
-  title: string;
-  subtitle: string;
-  emoji: string;
-  starsRequired: number;
-  bgGradient: string;
-  rewardXP: number;
-  discoveryDescription: string;
-}
-
-const SECRET_ZONES: SecretZoneDef[] = [
-  {
-    id: "zone-dino-cave",
-    title: "Dino Excavation Cave",
-    subtitle: "Uncover glowing fossils and ancient golden dino eggs",
-    emoji: "🦕",
-    starsRequired: 10,
-    bgGradient: "from-amber-600 via-orange-600 to-yellow-600",
-    rewardXP: 60,
-    discoveryDescription: "You stepped into the torch-lit cavern and brushed away sand to find a Golden Triceratops Horn!",
-  },
-  {
-    id: "zone-starlight-observatory",
-    title: "Starlight Sky Observatory",
-    subtitle: "Map cosmic constellations with the giant brass telescope",
-    emoji: "🔭",
-    starsRequired: 20,
-    bgGradient: "from-indigo-700 via-purple-700 to-pink-700",
-    rewardXP: 80,
-    discoveryDescription: "You aligned the telescope mirrors and discovered the smiling Little Bear constellation shining brightly!",
-  },
-  {
-    id: "zone-coral-cavern",
-    title: "Coral Reef Secret Cavern",
-    subtitle: "Dive beneath the waves to find glowing pearls",
-    emoji: "🪸",
-    starsRequired: 30,
-    bgGradient: "from-teal-600 via-emerald-600 to-cyan-600",
-    rewardXP: 100,
-    discoveryDescription: "Deep among bioluminescent sea anemones, you opened a giant rainbow clam and discovered the Royal Pearl!",
-  },
-];
 
 function countingLevelForActivity(activity: ToddlerActivity) {
   const world = ALL_TODDLER_WORLDS.find((item) => item.id === activity.worldId);
@@ -151,7 +108,7 @@ export function ToddlerWorldsNavigator({
   const [activeActivity, setActiveActivity] = useState<ToddlerActivity | null>(null);
   const [activeMission, setActiveMission] = useState<ToddlerMission | null>(null);
   const [missionStepIdx, setMissionStepIdx] = useState<number>(0);
-  const [activeSecretZone, setActiveSecretZone] = useState<SecretZoneDef | null>(null);
+  const [activeSecretZone, setActiveSecretZone] = useState<(typeof SECRET_ZONES)[number] | null>(null);
 
   // Persistent world progression state
   const [progress, setProgress] = useState<ToddlerWorldProgressState>(() => getToddlerProgress());
@@ -1583,6 +1540,25 @@ export function ToddlerWorldsNavigator({
   // ==========================================================================
   // VIEW LEVEL 1: WORLDS OVERVIEW MAP
   // ==========================================================================
+  if (activeSecretZone) {
+    return (
+      <div className="max-w-5xl mx-auto space-y-4">
+        <button
+          type="button"
+          onClick={() => setActiveSecretZone(null)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs cursor-pointer border border-white/10"
+        >
+          <ChevronLeft size={16} /> Back to atlas
+        </button>
+        <ToddlerSecretZonePlay
+          zone={activeSecretZone}
+          onAddStar={onAddStar}
+          onLeave={() => setActiveSecretZone(null)}
+        />
+      </div>
+    );
+  }
+
   if (letterLaneOpen) {
     return (
       <div className="max-w-5xl mx-auto space-y-4">
@@ -1703,74 +1679,43 @@ export function ToddlerWorldsNavigator({
         })}
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {SECRET_ZONES.map((zone) => {
-          const isUnlocked = starsCount >= zone.starsRequired;
-          return (
-            <button
-              key={zone.id}
-              type="button"
-              onClick={() => {
-                if (!isUnlocked) {
-                  soundEffects.playGentleBoing();
-                  speakText(
-                    `The ${zone.title} is locked! You need ${zone.starsRequired} stars.`,
-                    { pitch: 1.15 }
-                  );
-                  return;
-                }
-                setActiveSecretZone(zone);
-                soundEffects.playFanfare();
-                speakText(`Welcome to ${zone.title}! ${zone.discoveryDescription}`, { pitch: 1.2 });
-              }}
-              className={`flex items-center gap-2 rounded-full px-3 py-2 text-xs font-black cursor-pointer border ${
-                isUnlocked
-                  ? "bg-amber-400/20 border-amber-300 text-amber-100"
-                  : "bg-white/5 border-white/10 text-white/50"
-              }`}
-            >
-              <span>{zone.emoji}</span>
-              {zone.title}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Secret Zone Discovery Modal */}
-      {activeSecretZone && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-          <div className="w-full max-w-md bg-[#131427] border-2 border-amber-400/60 rounded-[2.5rem] p-6 sm:p-8 shadow-2xl text-center space-y-5 animate-in zoom-in-95">
-            <div
-              className={`w-24 h-24 rounded-3xl bg-gradient-to-br ${activeSecretZone.bgGradient} flex items-center justify-center text-5xl mx-auto shadow-2xl border-2 border-white/40`}
-            >
-              {activeSecretZone.emoji}
-            </div>
-
-            <div className="space-y-1">
-              <span className="px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 text-xs font-black uppercase">
-                ⭐ Milestone Secret Zone!
-              </span>
-              <h3 className="text-2xl font-black text-white">{activeSecretZone.title}</h3>
-              <p className="text-xs text-amber-200/90 font-semibold">{activeSecretZone.subtitle}</p>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs sm:text-sm text-white/90 leading-relaxed font-medium">
-              "{activeSecretZone.discoveryDescription}"
-            </div>
-
-            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs font-black text-amber-300">
-              +{activeSecretZone.rewardXP} Explorer XP Awarded! 🏆
-            </div>
-
-            <button
-              onClick={() => setActiveSecretZone(null)}
-              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black text-sm shadow-xl transition-all cursor-pointer"
-            >
-              Continue Exploring Worlds 🗺️
-            </button>
-          </div>
+      <div className="space-y-2">
+        <p className="text-xs font-black uppercase tracking-widest text-white/50">Secret rooms · open them, then play</p>
+        <div className="flex flex-wrap gap-2">
+          {SECRET_ZONES.map((zone) => {
+            const isUnlocked = starsCount >= zone.starsRequired;
+            const found = secretZoneIsFound(zone.id);
+            return (
+              <button
+                key={zone.id}
+                type="button"
+                onClick={() => {
+                  if (!isUnlocked) {
+                    soundEffects.playGentleBoing();
+                    speakText(
+                      `The ${zone.title} is locked! You need ${zone.starsRequired} stars.`,
+                      { pitch: 1.15 }
+                    );
+                    return;
+                  }
+                  setActiveSecretZone(zone);
+                  soundEffects.playPop();
+                  speakText(`Welcome to ${zone.title}. ${zone.subtitle}`, { pitch: 1.18 });
+                }}
+                className={`flex items-center gap-2 rounded-full px-3 py-2 text-xs font-black cursor-pointer border ${
+                  isUnlocked
+                    ? "bg-amber-400/20 border-amber-300 text-amber-100"
+                    : "bg-white/5 border-white/10 text-white/50"
+                }`}
+              >
+                <span>{found ? "✅" : zone.emoji}</span>
+                {zone.title}
+                {!isUnlocked && <span className="opacity-70">· {zone.starsRequired}★</span>}
+              </button>
+            );
+          })}
         </div>
-      )}
+      </div>
     </div>
   );
 }
