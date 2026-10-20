@@ -36,9 +36,9 @@ const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = 
   "milk-cow": { title: "Milk the cow", line: "Hold the pail. Fill it to the top.", done: "Warm milk for the barn!" },
   "firefly-jar": { title: "Catch fireflies", line: "Tap six glow-bugs into the jar.", done: "A lantern of tiny stars!" },
   "penguin-slide": { title: "Penguin slide", line: "Slide the penguin down to the fish hole.", done: "Splash! A fish for lunch!" },
-  "load-truck": { title: "Load the truck", line: "Tap four crates onto the truck.", done: "All loaded. Ready to roll!" },
-  "fire-hose": { title: "Hang the hoses", line: "Tap each flame to put the water on it.", done: "The fire house is calm." },
-  "fruit-stack": { title: "Stack the stall", line: "Tap fruit onto the plate. Fill five.", done: "A market tower!" },
+  "load-truck": { title: "Load the truck", line: "Drag four crates onto the truck.", done: "All loaded. Ready to roll!" },
+  "fire-hose": { title: "Hang the hoses", line: "Hold the hose. Drag water onto each flame.", done: "The fire house is calm." },
+  "fruit-stack": { title: "Stack the stall", line: "Drag fruit onto the plate. Fill five.", done: "A market tower!" },
   "stamp-mural": { title: "Stamp a mural", line: "Pick a stamp. Press the wall six times.", done: "A wall full of colour!" },
   "story-stones": { title: "Story stones", line: "Tap the stones in story order.", done: "Once upon a time… you told it!" },
   "number-pebbles": { title: "Number pebbles", line: "Tap the pebbles from 1 to 5.", done: "The meadow counted with you!" },
@@ -52,12 +52,12 @@ const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = 
   "pigeon-feed": { title: "Feed the pigeons", line: "Drag crumbs to the birds.", done: "Coo! Full tummies." },
   "knead-dough": { title: "Knead the dough", line: "Hold to press the dough.", done: "Soft bread ready." },
   "drum-boom": { title: "Boom the drums", line: "Tap the drums 1, then 2, then 3.", done: "A parade beat!" },
-  "rocket-stars": { title: "Star the rocket", line: "Tap five stars, then launch.", done: "Whoosh to the moon!" },
+  "rocket-stars": { title: "Star the rocket", line: "Drag five stars onto the rocket, then hold to launch.", done: "Whoosh to the moon!" },
   "ten-dots": { title: "Fill the ten-frame", line: "Tap ten dots. Fill every box.", done: "Ten. A full frame!" },
   "puddle-jump": { title: "Puddle jump", line: "Drag the boot through the puddles.", done: "Wet boots. Big grin." },
   "brush-teeth": { title: "Brush, brush", line: "Drag the brush across the teeth.", done: "Clean shiny teeth." },
   "owl-hoot": { title: "Owl hoot", line: "Hold to hoot. Three long hoots.", done: "Hoo hoo hoo." },
-  "puppet-bow": { title: "Puppet bow", line: "Tap each puppet to take a bow.", done: "The nook claps!" },
+  "puppet-bow": { title: "Puppet bow", line: "Pull each puppet down for a bow.", done: "The nook claps!" },
   "syllable-clap": { title: "Clap ba-na-na", line: "Hold three beats. Ba. Na. Na.", done: "Ba. Na. Na!" },
   "rain-boots": { title: "Rain boots", line: "Drag the boot through the puddles.", done: "Splash all the way home." },
 };
@@ -315,38 +315,65 @@ function PenguinSlide({ onAddStar }: { onAddStar?: () => void }) {
   );
 }
 
+function pointerHits(el: HTMLElement | null, clientX: number, clientY: number, pad = 36) {
+  if (!el) return false;
+  const rect = el.getBoundingClientRect();
+  return clientX >= rect.left - pad && clientX <= rect.right + pad && clientY >= rect.top - pad && clientY <= rect.bottom + pad;
+}
+
 function LoadTruck({ onAddStar }: { onAddStar?: () => void }) {
   const { done, finish } = useCredit(onAddStar);
   const [loaded, setLoaded] = useState<number[]>([]);
+  const loadedRef = useRef<number[]>([]);
+  const bedRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef<number | null>(null);
   const crates = [0, 1, 2, 3];
+
+  const drop = (crate: number, clientX: number, clientY: number) => {
+    if (loadedRef.current.includes(crate)) return;
+    if (!pointerHits(bedRef.current, clientX, clientY)) return;
+    loadedRef.current = [...loadedRef.current, crate];
+    setLoaded(loadedRef.current);
+    soundEffects.playPop();
+    if (loadedRef.current.length >= 4) finish();
+  };
+
   return (
     <Stage playId="load-truck" done={done} className="bg-gradient-to-b from-amber-200 via-orange-400 to-stone-800">
       <div className="flex flex-col items-center gap-6">
-        <div className="text-7xl" data-testid="truck-bed">
+        <div ref={bedRef} className="text-7xl min-h-24 min-w-40 text-center" data-testid="truck-bed">
           🚚
           <span className="text-2xl align-top">{loaded.map(() => "📦").join("")}</span>
         </div>
         <div className="flex gap-3">
-          {crates.map((crate) => (
-            <button
-              key={crate}
-              type="button"
-              data-testid={`crate-${crate}`}
-              disabled={loaded.includes(crate)}
-              className="min-h-16 min-w-16 text-5xl disabled:opacity-20"
-              onClick={() => {
-                setLoaded((prev) => {
-                  if (prev.includes(crate)) return prev;
-                  const next = [...prev, crate];
-                  soundEffects.playPop();
-                  if (next.length >= 4) finish();
-                  return next;
-                });
-              }}
-            >
-              📦
-            </button>
-          ))}
+          {crates.map((crate) =>
+            loaded.includes(crate) ? (
+              <span key={crate} className="min-h-16 min-w-16 opacity-20 text-5xl">
+                📦
+              </span>
+            ) : (
+              <button
+                key={crate}
+                type="button"
+                data-testid={`crate-${crate}`}
+                className="min-h-16 min-w-16 text-5xl touch-none"
+                onPointerDown={(event) => {
+                  dragging.current = crate;
+                  event.currentTarget.setPointerCapture?.(event.pointerId);
+                }}
+                onPointerMove={(event) => {
+                  if (dragging.current !== crate) return;
+                  drop(crate, event.clientX, event.clientY);
+                }}
+                onPointerUp={(event) => {
+                  if (dragging.current === crate) drop(crate, event.clientX, event.clientY);
+                  dragging.current = null;
+                }}
+              >
+                📦
+              </button>
+            )
+          )}
         </div>
       </div>
     </Stage>
@@ -355,48 +382,53 @@ function LoadTruck({ onAddStar }: { onAddStar?: () => void }) {
 
 function FireHose({ onAddStar }: { onAddStar?: () => void }) {
   const { done, finish } = useCredit(onAddStar);
-  const [hose, setHose] = useState(false);
   const [out, setOut] = useState<number[]>([]);
+  const outRef = useRef<number[]>([]);
+  const spraying = useRef(false);
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  const spray = (clientX: number, clientY: number) => {
+    if (!spraying.current || !stageRef.current) return;
+    for (const flame of [0, 1, 2]) {
+      if (outRef.current.includes(flame)) continue;
+      const el = stageRef.current.querySelector<HTMLElement>(`[data-testid="flame-${flame}"]`);
+      if (!pointerHits(el, clientX, clientY, 44)) continue;
+      outRef.current = [...outRef.current, flame];
+      setOut(outRef.current);
+      soundEffects.playPop();
+      if (outRef.current.length >= 3) finish();
+    }
+  };
+
   return (
     <Stage playId="fire-hose" done={done} className="bg-gradient-to-b from-rose-400 via-red-700 to-slate-900">
-      <button
-        type="button"
-        data-testid="hose"
-        className={`mx-auto mb-4 block min-h-16 rounded-full px-8 py-4 text-xl font-black ${hose ? "bg-sky-200 text-sky-950" : "bg-white text-rose-900"}`}
-        onClick={() => {
-          setHose(true);
-          soundEffects.playPop();
-        }}
-      >
-        {hose ? "Hose ready" : "Grab the hose"}
-      </button>
-      <div className="flex justify-around items-end h-56">
-        {[0, 1, 2].map((flame) => (
-          <button
-            key={flame}
-            type="button"
-            data-testid={`flame-${flame}`}
-            className="min-h-20 min-w-20 text-6xl"
-            onClick={() => {
-              if (!hose) {
-                soundEffects.playGentleBoing();
-                speakText("Grab the hose first!", { pitch: 1.2 });
-                return;
-              }
-              setOut((prev) => {
-                if (prev.includes(flame)) return prev;
-                const next = [...prev, flame];
-                soundEffects.playPop();
-                if (next.length >= 3) finish();
-                return next;
-              });
-            }}
-          >
-            {out.includes(flame) ? "💧" : "🔥"}
-          </button>
-        ))}
+      <div ref={stageRef} className="space-y-4">
+        <button
+          type="button"
+          data-testid="hose"
+          className="mx-auto mb-4 block min-h-16 rounded-full px-8 py-4 text-xl font-black bg-sky-200 text-sky-950 touch-none"
+          onPointerDown={(event) => {
+            spraying.current = true;
+            event.currentTarget.setPointerCapture?.(event.pointerId);
+            soundEffects.playPop();
+            spray(event.clientX, event.clientY);
+          }}
+          onPointerMove={(event) => spray(event.clientX, event.clientY)}
+          onPointerUp={() => {
+            spraying.current = false;
+          }}
+        >
+          Hold the hose
+        </button>
+        <div className="flex justify-around items-end h-56">
+          {[0, 1, 2].map((flame) => (
+            <div key={flame} data-testid={`flame-${flame}`} className="min-h-20 min-w-20 text-6xl text-center">
+              {out.includes(flame) ? "💧" : "🔥"}
+            </div>
+          ))}
+        </div>
+        <p className="text-center text-white/80 font-black">Drag water onto every flame</p>
       </div>
-      <p className="text-center text-white/80 font-black mt-4">{hose ? "Tap the flames" : "Grab the hose, then tap the flames"}</p>
     </Stage>
   );
 }
@@ -406,10 +438,23 @@ const FRUIT = ["🍎", "🍊", "🍌", "🍇", "🍐"];
 function FruitStack({ onAddStar }: { onAddStar?: () => void }) {
   const { done, finish } = useCredit(onAddStar);
   const [stack, setStack] = useState<string[]>([]);
+  const stackRef = useRef<string[]>([]);
+  const plateRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef<string | null>(null);
+
+  const drop = (fruit: string, clientX: number, clientY: number) => {
+    if (stackRef.current.includes(fruit) || stackRef.current.length >= 5) return;
+    if (!pointerHits(plateRef.current, clientX, clientY)) return;
+    stackRef.current = [...stackRef.current, fruit];
+    setStack(stackRef.current);
+    soundEffects.playPop();
+    if (stackRef.current.length >= 5) finish();
+  };
+
   return (
     <Stage playId="fruit-stack" done={done} className="bg-gradient-to-b from-yellow-200 via-lime-400 to-green-800">
       <div className="flex flex-col items-center gap-5">
-        <div className="min-h-[7rem] flex flex-col-reverse items-center" data-testid="fruit-plate">
+        <div ref={plateRef} className="min-h-[7rem] min-w-[10rem] flex flex-col-reverse items-center" data-testid="fruit-plate">
           <div className="text-4xl">🍽️</div>
           {stack.map((fruit, i) => (
             <div key={`${fruit}-${i}`} className="text-4xl -mb-2">
@@ -418,25 +463,34 @@ function FruitStack({ onAddStar }: { onAddStar?: () => void }) {
           ))}
         </div>
         <div className="flex gap-3 flex-wrap justify-center">
-          {FRUIT.map((fruit) => (
-            <button
-              key={fruit}
-              type="button"
-              data-testid={`fruit-${fruit}`}
-              className="min-h-16 min-w-16 text-5xl"
-              onClick={() => {
-                setStack((prev) => {
-                  if (prev.length >= 5) return prev;
-                  const next = [...prev, fruit];
-                  soundEffects.playPop();
-                  if (next.length >= 5) finish();
-                  return next;
-                });
-              }}
-            >
-              {fruit}
-            </button>
-          ))}
+          {FRUIT.map((fruit) =>
+            stack.includes(fruit) ? (
+              <span key={fruit} className="min-h-16 min-w-16 text-5xl opacity-20">
+                {fruit}
+              </span>
+            ) : (
+              <button
+                key={fruit}
+                type="button"
+                data-testid={`fruit-${fruit}`}
+                className="min-h-16 min-w-16 text-5xl touch-none"
+                onPointerDown={(event) => {
+                  dragging.current = fruit;
+                  event.currentTarget.setPointerCapture?.(event.pointerId);
+                }}
+                onPointerMove={(event) => {
+                  if (dragging.current !== fruit) return;
+                  drop(fruit, event.clientX, event.clientY);
+                }}
+                onPointerUp={(event) => {
+                  if (dragging.current === fruit) drop(fruit, event.clientX, event.clientY);
+                  dragging.current = null;
+                }}
+              >
+                {fruit}
+              </button>
+            )
+          )}
         </div>
       </div>
     </Stage>
@@ -928,43 +982,96 @@ function DrumBoom({ onAddStar }: { onAddStar?: () => void }) {
 
 function RocketStars({ onAddStar }: { onAddStar?: () => void }) {
   const { done, finish } = useCredit(onAddStar);
-  const [stars, setStars] = useState(0);
+  const [stars, setStars] = useState<number[]>([]);
+  const starsRef = useRef<number[]>([]);
+  const rocketRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef<number | null>(null);
+  const holding = useRef(false);
+  const fillRef = useRef(6);
+  const [fill, setFill] = useState(6);
+
+  const drop = (id: number, clientX: number, clientY: number) => {
+    if (starsRef.current.includes(id)) return;
+    if (!pointerHits(rocketRef.current, clientX, clientY, 48)) return;
+    starsRef.current = [...starsRef.current, id];
+    setStars(starsRef.current);
+    soundEffects.playPop();
+  };
+
+  useEffect(() => {
+    const tick = window.setInterval(() => {
+      if (!holding.current || done) return;
+      if (starsRef.current.length < 5) return;
+      fillRef.current = Math.min(100, fillRef.current + 6);
+      setFill(fillRef.current);
+      if (fillRef.current >= 100) {
+        holding.current = false;
+        finish();
+      }
+    }, 70);
+    return () => window.clearInterval(tick);
+  }, [done, finish]);
+
   return (
     <Stage playId="rocket-stars" done={done} className="bg-gradient-to-b from-indigo-900 via-violet-800 to-black">
-      <div className="flex flex-col items-center gap-5 mt-6">
-        <div className="text-7xl">{stars >= 5 ? "🚀" : "🛰️"}</div>
-        <button
-          type="button"
-          data-testid="star-tap"
-          className="min-h-16 rounded-full bg-amber-200 px-8 py-4 text-xl font-black text-amber-950"
-          onClick={() => {
-            setStars((n) => Math.min(5, n + 1));
-            soundEffects.playPop();
-          }}
-        >
-          Tap a star
-        </button>
-        <p className="text-white font-black">{stars} of 5</p>
+      <div className="flex flex-col items-center gap-5 mt-4">
+        <div ref={rocketRef} className="text-7xl min-h-24 min-w-24 text-center" data-testid="rocket">
+          {stars.length >= 5 ? "🚀" : "🛰️"}
+        </div>
+        <p className="text-white font-black">{stars.length} of 5 stars</p>
+        <div className="flex gap-3">
+          {[0, 1, 2, 3, 4].map((id) =>
+            stars.includes(id) ? (
+              <span key={id} className="text-4xl opacity-20">⭐</span>
+            ) : (
+              <button
+                key={id}
+                type="button"
+                data-testid={`star-${id}`}
+                className="min-h-14 min-w-14 text-4xl touch-none"
+                onPointerDown={(event) => {
+                  dragging.current = id;
+                  event.currentTarget.setPointerCapture?.(event.pointerId);
+                }}
+                onPointerMove={(event) => {
+                  if (dragging.current !== id) return;
+                  drop(id, event.clientX, event.clientY);
+                }}
+                onPointerUp={(event) => {
+                  if (dragging.current === id) drop(id, event.clientX, event.clientY);
+                  dragging.current = null;
+                }}
+              >
+                ⭐
+              </button>
+            )
+          )}
+        </div>
         <button
           type="button"
           data-testid="launch"
           className="min-h-16 rounded-full bg-orange-500 px-8 py-4 text-xl font-black text-white"
-          onClick={() => {
-            if (stars < 5) {
+          onPointerDown={() => {
+            if (starsRef.current.length < 5) {
               soundEffects.playGentleBoing();
               speakText("Need five stars first!", { pitch: 1.2 });
               return;
             }
-            finish();
+            holding.current = true;
+          }}
+          onPointerUp={() => {
+            holding.current = false;
+          }}
+          onPointerLeave={() => {
+            holding.current = false;
           }}
         >
-          Launch
+          {done ? "Whoosh!" : fill > 6 ? "Hold to launch" : "Launch"}
         </button>
       </div>
     </Stage>
   );
 }
-
 function TenDots({ onAddStar }: { onAddStar?: () => void }) {
   const { done, finish } = useCredit(onAddStar);
   const [on, setOn] = useState<number[]>([]);
@@ -996,6 +1103,19 @@ function TenDots({ onAddStar }: { onAddStar?: () => void }) {
 function PuppetBow({ onAddStar }: { onAddStar?: () => void }) {
   const { done, finish } = useCredit(onAddStar);
   const [bow, setBow] = useState<number[]>([]);
+  const bowRef = useRef<number[]>([]);
+  const startY = useRef<number | null>(null);
+
+  const pull = (i: number, clientY: number) => {
+    if (bowRef.current.includes(i) || startY.current == null) return;
+    if (clientY - startY.current < 36) return;
+    bowRef.current = [...bowRef.current, i];
+    setBow(bowRef.current);
+    soundEffects.playPop();
+    startY.current = null;
+    if (bowRef.current.length >= 3) finish();
+  };
+
   return (
     <Stage playId="puppet-bow" done={done} className="bg-gradient-to-b from-rose-200 via-violet-400 to-purple-900">
       <div className="flex justify-center gap-4 mt-10">
@@ -1004,16 +1124,13 @@ function PuppetBow({ onAddStar }: { onAddStar?: () => void }) {
             key={face}
             type="button"
             data-testid={`puppet-${i}`}
-            className={`min-h-24 min-w-20 text-6xl rounded-3xl ${bow.includes(i) ? "bg-white" : "bg-white/20"}`}
-            onClick={() => {
-              setBow((prev) => {
-                if (prev.includes(i)) return prev;
-                const next = [...prev, i];
-                soundEffects.playPop();
-                if (next.length >= 3) finish();
-                return next;
-              });
+            className={`min-h-24 min-w-20 text-6xl rounded-3xl touch-none ${bow.includes(i) ? "bg-white" : "bg-white/20"}`}
+            onPointerDown={(event) => {
+              startY.current = event.clientY;
+              event.currentTarget.setPointerCapture?.(event.pointerId);
             }}
+            onPointerMove={(event) => pull(i, event.clientY)}
+            onPointerUp={(event) => pull(i, event.clientY)}
           >
             {bow.includes(i) ? "🙇" : face}
           </button>
@@ -1022,7 +1139,6 @@ function PuppetBow({ onAddStar }: { onAddStar?: () => void }) {
     </Stage>
   );
 }
-
 const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX.Element> = {
   "milk-cow": MilkCow,
   "firefly-jar": FireflyJar,

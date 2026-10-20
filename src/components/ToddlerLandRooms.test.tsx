@@ -37,6 +37,16 @@ const flush = async () => {
   });
 };
 
+const box = () =>
+  ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100, x: 0, y: 0, toJSON: () => {} }) as DOMRect;
+
+const dragOnto = (from: HTMLElement, target: HTMLElement) => {
+  target.getBoundingClientRect = box;
+  fireEvent.pointerDown(from, { clientX: 10, clientY: 10, pointerId: 1 });
+  fireEvent.pointerMove(from, { clientX: 50, clientY: 50, pointerId: 1, buttons: 1 });
+  fireEvent.pointerUp(from, { clientX: 50, clientY: 50, pointerId: 1 });
+};
+
 beforeEach(() => {
   cleanup();
   vi.useRealTimers();
@@ -117,18 +127,23 @@ describe("land rooms", () => {
   it("loads four crates, puts out three flames, and stacks five fruits", async () => {
     const stars: number[] = [];
     const truck = render(<ToddlerLandRooms playId="load-truck" onAddStar={() => stars.push(1)} />);
-    for (const n of [0, 1, 2, 3]) fireEvent.click(truck.getByTestId(`crate-${n}`));
+    const bed = truck.getByTestId("truck-bed");
+    for (const n of [0, 1, 2, 3]) dragOnto(truck.getByTestId(`crate-${n}`), bed);
     await flush();
     truck.unmount();
 
     const hose = render(<ToddlerLandRooms playId="fire-hose" onAddStar={() => stars.push(1)} />);
-    fireEvent.click(hose.getByTestId("hose"));
-    for (const n of [0, 1, 2]) fireEvent.click(hose.getByTestId(`flame-${n}`));
+    for (const n of [0, 1, 2]) hose.getByTestId(`flame-${n}`).getBoundingClientRect = box;
+    const nozzle = hose.getByTestId("hose");
+    fireEvent.pointerDown(nozzle, { clientX: 50, clientY: 50, pointerId: 1 });
+    fireEvent.pointerMove(nozzle, { clientX: 50, clientY: 50, pointerId: 1, buttons: 1 });
+    fireEvent.pointerUp(nozzle, { clientX: 50, clientY: 50, pointerId: 1 });
     await flush();
     hose.unmount();
 
     const stall = render(<ToddlerLandRooms playId="fruit-stack" onAddStar={() => stars.push(1)} />);
-    for (const fruit of ["🍎", "🍊", "🍌", "🍇", "🍐"]) fireEvent.click(stall.getByTestId(`fruit-${fruit}`));
+    const plate = stall.getByTestId("fruit-plate");
+    for (const fruit of ["🍎", "🍊", "🍌", "🍇", "🍐"]) dragOnto(stall.getByTestId(`fruit-${fruit}`), plate);
     await flush();
     expect(stars).toEqual([1, 1, 1]);
   });
@@ -202,11 +217,27 @@ describe("land rooms", () => {
     dots.unmount();
 
     const puppets = render(<ToddlerLandRooms playId="puppet-bow" onAddStar={() => stars.push(1)} />);
-    fireEvent.click(puppets.getByTestId("puppet-0"));
-    fireEvent.click(puppets.getByTestId("puppet-1"));
-    fireEvent.click(puppets.getByTestId("puppet-2"));
+    for (const n of [0, 1, 2]) {
+      const puppet = puppets.getByTestId(`puppet-${n}`);
+      fireEvent.pointerDown(puppet, { clientY: 10, pointerId: 1 });
+      fireEvent.pointerMove(puppet, { clientY: 80, pointerId: 1, buttons: 1 });
+    }
     await flush();
     expect(stars).toEqual([1, 1, 1]);
+  });
+
+  it("stars the rocket by dragging, then holds to launch", async () => {
+    vi.useFakeTimers();
+    const stars: number[] = [];
+    const { getByTestId } = render(<ToddlerLandRooms playId="rocket-stars" onAddStar={() => stars.push(1)} />);
+    const rocket = getByTestId("rocket");
+    for (const n of [0, 1, 2, 3, 4]) dragOnto(getByTestId(`star-${n}`), rocket);
+    fireEvent.pointerDown(getByTestId("launch"));
+    await act(async () => {
+      vi.advanceTimersByTime(2500);
+    });
+    expect(stars).toEqual([1]);
+    vi.useRealTimers();
   });
 
   it("scrubs dirt off the bus by dragging, not tapping", async () => {
