@@ -668,7 +668,7 @@ export function ToddlerWorldView({
           </>
         )}
 
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
           <div className="flex items-center gap-3.5 text-center md:text-left">
             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-400 to-pink-500 flex items-center justify-center text-3xl sm:text-4xl shadow-2xl shadow-orange-500/40 ring-4 ring-white border-2 border-amber-300 animate-bounce flex-shrink-0">
               🧸
@@ -679,17 +679,17 @@ export function ToddlerWorldView({
                   ? "bg-white text-amber-900 border-2 border-amber-300"
                   : "bg-amber-400/20 text-amber-300 border border-amber-400/30"
               }`}>
-                <Sparkles size={13} className="text-amber-500" /> Toddlers &amp; Little Explorers (Ages 2–5)
+                <Sparkles size={13} className="text-amber-500" /> Ages 2–5
               </div>
-              <h1 className={`text-2xl sm:text-4xl font-black tracking-tight ${
+              <h1 className={`text-3xl sm:text-5xl font-black tracking-tight ${
                 isMeadow ? "text-slate-900 drop-shadow-sm font-display" : "text-white"
               }`}>
-                Picture Book &amp; Phonics Wonderland
+                Toddler Wonderland
               </h1>
-              <p className={`text-xs sm:text-sm font-bold ${
+              <p className={`text-sm sm:text-base font-bold ${
                 isMeadow ? "text-slate-700 max-w-xl" : "text-white/70 max-w-xl"
               }`}>
-                Interactive read-aloud picture books, spoken phonics sounds, animal safari detective, and counting games!
+                Pick a land. Play inside.
               </p>
             </div>
           </div>
@@ -828,7 +828,7 @@ export function ToddlerWorldView({
       />
 
       {/* Main Mode Navigation Tabs (Chunky, Tactile 3D Buttons - 6 Agency Tabs) */}
-      <div className="max-w-6xl mx-auto px-4 pt-2 pb-2">
+      <div className="max-w-7xl mx-auto px-4 pt-2 pb-2">
         <div className={`grid grid-cols-2 sm:grid-cols-6 gap-2 p-2 rounded-3xl max-w-4xl mx-auto mb-8 shadow-xl ${
           isMeadow
             ? "bg-white/95 backdrop-blur-md border-4 border-emerald-300 ring-4 ring-emerald-500/20"
@@ -919,10 +919,10 @@ export function ToddlerWorldView({
           </button>
         </div>
 
-        {/* Responsive Layout: Sidebar on Desktop (lg:col-span-3), Main Content (lg:col-span-9) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Worlds is the front page: full width like the phone. Other tabs keep the desktop sidebar. */}
+        <div className={`grid grid-cols-1 gap-6 items-start ${activeTab === "worlds" ? "" : "lg:grid-cols-12"}`}>
           {/* Desktop Left Sidebar: Buddy Mascot, Explorer Rank, Today's Quests */}
-          <div className="hidden lg:flex flex-col gap-4 lg:col-span-3">
+          <div className={`hidden flex-col gap-4 lg:col-span-3 ${activeTab === "worlds" ? "" : "lg:flex"}`}>
             {/* Buddy Companion Mascot Card */}
             <div className={`p-5 rounded-3xl border shadow-lg ${
               isMeadow
@@ -1046,7 +1046,7 @@ export function ToddlerWorldView({
           </div>
 
           {/* Main Content Area */}
-          <div className="lg:col-span-9 space-y-6">
+          <div className={`${activeTab === "worlds" ? "" : "lg:col-span-9"} space-y-6`}>
             {/* SECTION 0: 6 WORLDS GATEWAYS NAVIGATOR */}
             {activeTab === "worlds" && (
               <ToddlerWorldsNavigator

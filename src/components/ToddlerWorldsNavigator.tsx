@@ -1577,20 +1577,20 @@ export function ToddlerWorldsNavigator({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <div className="space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-amber-300">Wonderland Atlas</p>
-          <h2 className="text-3xl font-black text-white">Pick a land</h2>
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-amber-600">Wonderland Atlas</p>
+          <h2 className="text-4xl sm:text-5xl font-black tracking-tight">Pick a land</h2>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={toggleTapSounds}
-            className="px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs cursor-pointer border border-white/10 inline-flex items-center gap-1.5"
+            className="px-4 py-2.5 rounded-2xl bg-white text-slate-900 font-bold text-sm cursor-pointer border border-white/60 shadow-sm inline-flex items-center gap-1.5"
             title={tapsMuted ? "Tap sounds are off" : "Quiet tap sounds"}
           >
-            {tapsMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+            {tapsMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
             {tapsMuted ? "Taps off" : "Taps on"}
           </button>
           <button
@@ -1599,14 +1599,14 @@ export function ToddlerWorldsNavigator({
               setLetterLaneOpen(true);
               speakText("Letter Lane. Three letters. About five minutes. No streak.", { pitch: 1.15 });
             }}
-            className="px-4 py-2 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs cursor-pointer"
+            className="px-4 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm cursor-pointer shadow-sm"
           >
             Letter Lane
           </button>
           {onOpenGames && (
             <button
               onClick={onOpenGames}
-              className="px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs cursor-pointer border border-white/10"
+              className="px-4 py-2.5 rounded-2xl bg-white text-slate-900 font-bold text-sm cursor-pointer border border-white/60 shadow-sm"
             >
               Free Play
             </button>
@@ -1614,7 +1614,7 @@ export function ToddlerWorldsNavigator({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 gap-6">
         {ATLAS_CONTINENTS.map((continent) => {
           const lands = continent.worldIds
             .map((id) => ALL_TODDLER_WORLDS.find((world) => world.id === id))
@@ -1622,15 +1622,15 @@ export function ToddlerWorldsNavigator({
           return (
             <section
               key={continent.id}
-              className={`rounded-[2rem] bg-gradient-to-br ${continent.band} p-5 shadow-xl border border-white/40`}
+              className={`rounded-[2rem] bg-gradient-to-br ${continent.band} p-4 sm:p-6 shadow-xl border border-white/40`}
             >
-              <div className="mb-4 flex items-baseline justify-between gap-2">
-                <h3 className="text-xl font-black text-slate-900">
+              <div className="mb-5 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
+                <h3 className="text-2xl sm:text-3xl font-black text-slate-900">
                   {continent.emoji} {continent.title}
                 </h3>
-                <p className="text-xs font-bold text-slate-700">{continent.blurb}</p>
+                <p className="text-sm font-bold text-slate-700">{continent.blurb}</p>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {lands.map((world) => {
                   const stats = getWorldProgressStats(world, progress);
                   const stations = world.areas.reduce((sum, area) => sum + area.activities.length, 0);
@@ -1646,7 +1646,7 @@ export function ToddlerWorldsNavigator({
                         here ? "border-amber-400" : "border-white"
                       }`}
                     >
-                      <span className="relative mb-0 block h-28 w-full overflow-hidden">
+                      <span className="relative mb-0 block h-44 sm:h-48 md:h-56 w-full overflow-hidden">
                         {WORLD_COVER[world.id] ? (
                           <img src={WORLD_COVER[world.id]} alt="" className="h-full w-full object-cover" />
                         ) : (
@@ -1658,9 +1658,9 @@ export function ToddlerWorldsNavigator({
                           {world.emoji}
                         </span>
                       </span>
-                      <span className="block p-4">
-                      <h4 className="text-base font-black text-slate-900 leading-tight">{world.title}</h4>
-                      <p className="mt-1 text-[11px] font-bold text-slate-500">
+                      <span className="block p-4 sm:p-5">
+                      <h4 className="text-xl font-black text-slate-900 leading-tight">{world.title}</h4>
+                      <p className="mt-1 text-sm font-bold text-slate-500">
                         {world.areas.length} areas · {stations} games
                       </p>
                       <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100">
@@ -1679,12 +1679,12 @@ export function ToddlerWorldsNavigator({
         })}
       </div>
 
-      <section className="rounded-[2rem] bg-gradient-to-br from-indigo-300 via-violet-200 to-amber-200 p-5 shadow-xl border border-white/40">
-        <div className="mb-4 flex items-baseline justify-between gap-2">
-          <h3 className="text-xl font-black text-slate-900">Hidden doors</h3>
-          <p className="text-xs font-bold text-slate-700">Secret rooms · earn stars, then step in</p>
+      <section className="rounded-[2rem] bg-gradient-to-br from-indigo-300 via-violet-200 to-amber-200 p-4 sm:p-6 shadow-xl border border-white/40">
+        <div className="mb-5 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
+          <h3 className="text-2xl sm:text-3xl font-black text-slate-900">Hidden doors</h3>
+          <p className="text-sm font-bold text-slate-700">Secret rooms · earn stars, then step in</p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {SECRET_ZONES.map((zone) => {
             const isUnlocked = starsCount >= zone.starsRequired;
             const found = secretZoneIsFound(zone.id);
@@ -1711,7 +1711,7 @@ export function ToddlerWorldsNavigator({
                   found ? "border-amber-400" : "border-white"
                 }`}
               >
-                <span className="relative mb-0 block h-40 w-full overflow-hidden">
+                <span className="relative mb-0 block h-44 sm:h-48 md:h-56 w-full overflow-hidden">
                   {SECRET_COVER[zone.id] ? (
                     <img
                       src={SECRET_COVER[zone.id]}
@@ -1734,9 +1734,9 @@ export function ToddlerWorldsNavigator({
                     </span>
                   )}
                 </span>
-                <span className="block p-4">
-                  <h4 className="text-base font-black text-slate-900 leading-tight">{zone.title}</h4>
-                  <p className="mt-1 text-[11px] font-bold text-slate-500">{zone.subtitle}</p>
+                <span className="block p-4 sm:p-5">
+                  <h4 className="text-xl font-black text-slate-900 leading-tight">{zone.title}</h4>
+                  <p className="mt-1 text-sm font-bold text-slate-500">{zone.subtitle}</p>
                 </span>
               </motion.button>
             );
