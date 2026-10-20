@@ -10,13 +10,13 @@ export const WORLD_COVER: Record<string, string> = {
   "story-world": "/worlds/story-world.jpg",
   "learning-world": "/worlds/learning-world.jpg",
   "adventure-world": "/worlds/adventure-world.jpg",
-  "my-world": "/worlds/kitchen-world.jpg",
-  "night-world": "/worlds/adventure-world.jpg",
+  "my-world": "/worlds/my-world.jpg",
+  "night-world": "/worlds/night-world.jpg",
 };
 
 export const TOY_STILL: Record<string, string> = {
-  stir: "/worlds/kitchen-world.jpg",
-  drive: "/worlds/vehicle-world.jpg",
-  pour: "/worlds/kitchen-world.jpg",
-  trace: "/worlds/learning-world.jpg",
+  stir: "/toys/stir.jpg",
+  drive: "/toys/drive.jpg",
+  pour: "/toys/pour.jpg",
+  trace: "/toys/trace.jpg",
 };
