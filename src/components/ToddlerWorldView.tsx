@@ -67,6 +67,8 @@ import {
   CharacterAnchor,
   TactileAgencyButton,
 } from "./landscape/LandscapeDecorations";
+import { CastPortrait } from "./CastPortrait";
+import { UI_CHROME } from "../data/toddler/toddlerWorldArt";
 
 interface ToddlerWorldViewProps {
   initialActivityId?: string;
@@ -655,9 +657,11 @@ export function ToddlerWorldView({
             <FloatingCloudDecoration className="absolute top-4 right-52 hidden lg:block" size="sm" />
             <FloatingCloudDecoration className="absolute -top-3 right-10 hidden sm:block" size="sm" />
             {/* Friendly Sun Badge */}
-            <div className="absolute top-2 right-4 text-4xl sm:text-5xl animate-spin-slow pointer-events-none select-none opacity-90 hidden sm:block" style={{ animationDuration: "25s" }}>
-              ☀️
-            </div>
+            <img
+              src={UI_CHROME.sun}
+              alt=""
+              className="absolute top-2 right-4 h-12 w-12 sm:h-16 sm:w-16 object-contain pointer-events-none select-none hidden sm:block"
+            />
             {/* Playful Flying Butterflies */}
             <div className="absolute bottom-2 left-1/4 text-xl animate-bounce pointer-events-none select-none hidden md:block">
               🦋
@@ -670,8 +674,8 @@ export function ToddlerWorldView({
 
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
           <div className="flex items-center gap-3.5 text-center md:text-left">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-400 to-pink-500 flex items-center justify-center text-3xl sm:text-4xl shadow-2xl shadow-orange-500/40 ring-4 ring-white border-2 border-amber-300 animate-bounce flex-shrink-0">
-              🧸
+            <div className="w-16 h-16 sm:w-20 sm:h-20 overflow-hidden rounded-3xl bg-[#f6e7c1] shadow-2xl shadow-orange-500/40 ring-4 ring-white border-2 border-amber-300 animate-bounce flex-shrink-0">
+              <CastPortrait who="pipCartoon" size={80} className="h-full w-full rounded-none ring-0 shadow-none" />
             </div>
             <div>
               <div className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-1 shadow-md ${

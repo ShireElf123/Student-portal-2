@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { CAST, TOY_STILL, WORLD_COVER } from "./toddlerWorldArt";
 
 describe("toddler world art", () => {
-  it("paints Pip and Nana as storybook portraits", () => {
+  it("keeps bouncing Pip as a flat cartoon, not a photo", () => {
+    expect(CAST.pipCartoon).toBe("/cast/pip-cartoon.jpg");
     expect(CAST.pip).toBe("/cast/pip.jpg");
     expect(CAST.nana).toBe("/cast/nana.jpg");
   });
