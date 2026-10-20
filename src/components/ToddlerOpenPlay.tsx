@@ -49,7 +49,7 @@ export function ToddlerOpenPlay({
 
   return (
     <div className="space-y-4">
-      <div className="overflow-hidden rounded-[2rem] border-4 border-white/20 h-36">
+      <div className="overflow-hidden rounded-[2rem] border-4 border-white/20 h-44 sm:h-52">
         <img src={copy.still} alt="" className="h-full w-full object-cover" />
       </div>
       <div className="text-center">
@@ -59,7 +59,7 @@ export function ToddlerOpenPlay({
 
       {playId === "stir" && (
         <div
-          className="relative mx-auto h-64 w-64 cursor-pointer select-none touch-none"
+          className="relative mx-auto h-72 w-72 sm:h-80 sm:w-80 cursor-pointer select-none touch-none"
           onPointerDown={(event) => event.currentTarget.setPointerCapture(event.pointerId)}
           onPointerMove={(event) => {
             if (event.buttons === 0) return;
@@ -73,7 +73,7 @@ export function ToddlerOpenPlay({
         >
           <div className="absolute inset-6 rounded-full bg-gradient-to-br from-orange-500 to-amber-700 shadow-inner border-8 border-amber-900" />
           <div
-            className="absolute left-1/2 top-8 h-40 w-3 origin-bottom rounded-full bg-amber-200"
+            className="absolute left-1/2 top-10 h-48 sm:h-56 w-3 origin-bottom rounded-full bg-amber-200"
             style={{ transform: `translateX(-50%) rotate(${stir}deg)` }}
           />
         </div>
@@ -81,7 +81,7 @@ export function ToddlerOpenPlay({
 
       {playId === "drive" && (
         <div
-          className="relative h-48 overflow-hidden rounded-[2rem] bg-gradient-to-b from-sky-300 to-amber-200 touch-none"
+          className="relative h-64 sm:h-72 overflow-hidden rounded-[2rem] bg-gradient-to-b from-sky-300 to-amber-200 touch-none"
           onPointerDown={(event) => {
             event.currentTarget.setPointerCapture(event.pointerId);
             soundEffects.playPop();
@@ -106,7 +106,7 @@ export function ToddlerOpenPlay({
 
       {playId === "pour" && (
         <div
-          className="flex h-56 items-end justify-center gap-10 touch-none select-none"
+          className="flex h-64 sm:h-72 items-end justify-center gap-10 touch-none select-none"
           onPointerDown={(event) => {
             pouring.current = true;
             event.currentTarget.setPointerCapture(event.pointerId);

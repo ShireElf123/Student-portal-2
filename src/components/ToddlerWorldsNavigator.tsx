@@ -741,8 +741,9 @@ export function ToddlerWorldsNavigator({
   // ==========================================================================
   if (activeActivity) {
     const playTheme = getWorldPlayTheme(activeActivity.worldId, activeActivity.areaId);
+    const drawingPlay = activeActivity.type === "color-lab" || activeActivity.type === "letter-trace";
     return (
-      <div className="max-w-3xl mx-auto space-y-4">
+      <div className={`${drawingPlay ? "max-w-5xl" : "max-w-3xl"} mx-auto space-y-4`}>
         {/* Navigation Bar */}
         <div className="flex items-center justify-between">
           <button
@@ -774,14 +775,8 @@ export function ToddlerWorldsNavigator({
 
         {/* 1. COLOR LAB ENGINE INTEGRATION */}
         {activeActivity.type === "color-lab" && (
-          <div className="p-6 rounded-3xl bg-[#131427] border-2 border-pink-400/30 shadow-2xl text-center space-y-4">
-            <div className="space-y-1">
-              <span className="px-3 py-1 rounded-full bg-pink-400/20 text-pink-300 text-xs font-bold border border-pink-400/30">
-                🎨 Creative Color Magic
-              </span>
-              <h3 className="text-2xl font-black text-white">{activeActivity.title}</h3>
-              <p className="text-white/70 text-xs sm:text-sm">{activeActivity.cluePrompt}</p>
-            </div>
+          <div className="p-3 sm:p-4 rounded-3xl bg-[#131427] border-2 border-pink-400/30 shadow-2xl space-y-3">
+            <h3 className="text-xl sm:text-2xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerColorLab
               mixFlavor={playTheme.mix}
               onAddStar={() => {
@@ -848,8 +843,8 @@ export function ToddlerWorldsNavigator({
           </div>
         )}
         {activeActivity.type === "letter-trace" && (
-          <div className="p-4 rounded-3xl bg-[#131427] border-2 border-amber-400/30 shadow-2xl space-y-3">
-            <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
+          <div className="p-3 sm:p-4 rounded-3xl bg-[#131427] border-2 border-amber-400/30 shadow-2xl space-y-3">
+            <h3 className="text-xl sm:text-2xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerLetterTrace
               catalog={playTheme.bubbles}
               onAddStar={() => completeWorldToy(activeActivity)}
@@ -1590,7 +1585,7 @@ export function ToddlerWorldsNavigator({
   // ==========================================================================
   if (letterLaneOpen) {
     return (
-      <div className="max-w-3xl mx-auto space-y-4">
+      <div className="max-w-5xl mx-auto space-y-4">
         <button
           type="button"
           onClick={() => setLetterLaneOpen(false)}

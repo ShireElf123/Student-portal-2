@@ -288,10 +288,10 @@ describe("Open-ended toddler games", () => {
     const { container } = render(<ToddlerColorLab onAddStar={(amount) => stars.push(amount ?? 1)} />);
     await flush(200);
 
-    expect(container.textContent).toContain("Step 1: Tap your first color drop below");
+    expect(container.textContent).toContain("Tap your first colour below");
     fireEvent.click(buttonsWith(container, "Ruby Red")[0]);
     await flush(50);
-    expect(container.textContent).toContain("Step 2: Now tap a second color to mix!");
+    expect(container.textContent).toContain("Now tap a second colour to mix!");
 
     fireEvent.click(buttonsWith(container, "Sunny Yellow")[0]);
     // The mix resolves on a timer, not on a speech callback.
@@ -301,7 +301,7 @@ describe("Open-ended toddler games", () => {
 
     fireEvent.click(buttonsWith(container, "Mix Another Color")[0]);
     await flush(200);
-    expect(container.textContent).toContain("Step 1: Tap your first color drop below");
+    expect(container.textContent).toContain("Tap your first colour below");
   });
 
   it("Music Piano plays a whole guided song from the glowing keys", async () => {

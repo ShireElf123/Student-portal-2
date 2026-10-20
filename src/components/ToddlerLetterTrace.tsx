@@ -100,7 +100,7 @@ export function ToddlerLetterTrace({
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
     ctx.strokeStyle = "#f59e0b";
-    ctx.lineWidth = 22;
+    ctx.lineWidth = 28;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.beginPath();
@@ -194,14 +194,14 @@ export function ToddlerLetterTrace({
         <h3 className="text-2xl font-black text-white">
           {current.emoji} {current.letter} is for {current.word}
         </h3>
-        <p className="text-white/70 text-sm">Draw on the big letter with your finger.</p>
+        <p className="text-white/75 text-base">Trace the big letter with your finger.</p>
       </div>
 
-      <div className="relative h-72 sm:h-80 rounded-[2rem] bg-white overflow-hidden border-4 border-amber-300 shadow-inner">
+      <div className="relative min-h-[20rem] h-[min(62vh,34rem)] rounded-[2rem] bg-white overflow-hidden border-[6px] border-amber-300 shadow-inner">
         <div
           aria-hidden
           className="absolute inset-0 flex items-center justify-center text-amber-200/80 font-black select-none"
-          style={{ fontSize: "14rem", lineHeight: 1 }}
+          style={{ fontSize: "clamp(8rem, 42vh, 18rem)", lineHeight: 1 }}
         >
           {current.letter}
         </div>
