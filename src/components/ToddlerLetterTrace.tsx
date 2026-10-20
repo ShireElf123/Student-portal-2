@@ -14,13 +14,14 @@ const FALLBACK: BubbleWord[] = [
   { letter: "M", word: "Moon", emoji: "🌙", sound: "M says /m/! Moon!" },
 ];
 
-/** One pass on the road is enough. Do not colour the letter in. */
-export const STROKE_HIT_RADIUS = 13;
-export const STROKE_START_RADIUS = 18;
-export const STROKE_INK_RADIUS = 18;
-export const STROKE_COMPLETE = 0.7;
-export const STROKE_TRAVEL = 0.36;
+/** Reach the end of this writing line. Do not colour the letter in. */
+export const STROKE_HIT_RADIUS = 16;
+export const STROKE_START_RADIUS = 22;
+export const STROKE_INK_RADIUS = 20;
+export const STROKE_END = 0.8;
+export const STROKE_TRAVEL = 0.3;
 export const STROKE_SAMPLE = 2.4;
+export const STROKE_LOOKAHEAD = 14;
 
 export function letterFromPrompt(prompt: string | undefined): string | null {
   if (!prompt) return null;
@@ -105,36 +106,39 @@ export function distanceToStroke(point: TracePoint, samples: TracePoint[]): numb
   return best;
 }
 
-export function markStrokeHits(
+export function advanceAlongStroke(
   samples: TracePoint[],
-  hits: boolean[],
+  along: number,
   finger: TracePoint,
   radius = STROKE_HIT_RADIUS,
-): void {
-  for (let i = 0; i < samples.length; i += 1) {
-    if (hits[i]) continue;
+  lookahead = STROKE_LOOKAHEAD,
+): number {
+  let next = along;
+  const from = Math.max(0, along - 2);
+  const to = Math.min(samples.length - 1, along + lookahead);
+  for (let i = from; i <= to; i += 1) {
     if (Math.hypot(samples[i].x - finger.x, samples[i].y - finger.y) <= radius) {
-      hits[i] = true;
+      next = Math.max(next, i);
     }
   }
+  return next;
 }
 
-export function strokeCoverage(hits: boolean[]): number {
-  if (!hits.length) return 0;
-  let hit = 0;
-  for (const on of hits) if (on) hit += 1;
-  return hit / hits.length;
+export function strokeProgress(along: number, total: number): number {
+  if (total <= 1) return along > 0 ? 1 : 0;
+  return Math.min(1, along / (total - 1));
 }
 
 export function isStrokePathComplete(sample: {
-  coverage: number;
+  along: number;
+  total: number;
   travel: number;
   pathLength: number;
   startedAtStart: boolean;
 }): boolean {
   return (
     sample.startedAtStart &&
-    sample.coverage >= STROKE_COMPLETE &&
+    strokeProgress(sample.along, sample.total) >= STROKE_END &&
     sample.travel >= sample.pathLength * STROKE_TRAVEL
   );
 }
@@ -159,12 +163,14 @@ export function ToddlerLetterTrace({
   const [stars, setStars] = useState(0);
   const [fill, setFill] = useState(0);
   const [missStart, setMissStart] = useState(false);
+  const [box, setBox] = useState({ size: 0, left: 0, top: 0 });
+  const padRef = useRef<HTMLDivElement>(null);
   const inkRef = useRef<HTMLCanvasElement>(null);
   const drawing = useRef(false);
   const last = useRef<TracePoint | null>(null);
   const lastCanvas = useRef<{ x: number; y: number } | null>(null);
-  const hits = useRef<boolean[]>([]);
   const samples = useRef<TracePoint[]>([]);
+  const along = useRef(0);
   const startedAtStart = useRef(false);
   const travel = useRef(0);
   const finishedRound = useRef(false);
@@ -185,31 +191,45 @@ export function ToddlerLetterTrace({
     };
   };
 
+  const measurePad = () => {
+    const pad = padRef.current;
+    if (!pad) return;
+    const rect = pad.getBoundingClientRect();
+    const inset = 16;
+    const size = Math.max(96, Math.min(rect.width, rect.height) - inset * 2);
+    const left = (rect.width - size) / 2;
+    const top = (rect.height - size) / 2;
+    setBox((prev) =>
+      prev.size === size && prev.left === left && prev.top === top ? prev : { size, left, top },
+    );
+  };
+
   const sizeCanvas = () => {
     const canvas = inkRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(rect.width * dpr);
-    canvas.height = Math.round(rect.height * dpr);
+    const nextWidth = Math.round(rect.width * dpr);
+    const nextHeight = Math.round(rect.height * dpr);
+    if (canvas.width === nextWidth && canvas.height === nextHeight) return;
+    canvas.width = nextWidth;
+    canvas.height = nextHeight;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, rect.width, rect.height);
   };
 
   const resetStroke = (nextIndex = strokeIndex) => {
     const stroke = strokes[nextIndex] ?? strokes[0];
     samples.current = resampleStroke(stroke);
-    hits.current = samples.current.map(() => false);
+    along.current = 0;
     startedAtStart.current = false;
     travel.current = 0;
     drawing.current = false;
     last.current = null;
     lastCanvas.current = null;
-    const doneStrokes = nextIndex;
-    setFill(strokes.length ? doneStrokes / strokes.length : 0);
+    setFill(strokes.length ? nextIndex / strokes.length : 0);
   };
 
   const clearInk = () => {
@@ -221,18 +241,32 @@ export function ToddlerLetterTrace({
   };
 
   useEffect(() => {
+    measurePad();
+    const pad = padRef.current;
+    const observer = pad ? new ResizeObserver(() => measurePad()) : null;
+    if (pad) observer?.observe(pad);
+    window.addEventListener("resize", measurePad);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener("resize", measurePad);
+    };
+  }, []);
+
+  useEffect(() => {
     sizeCanvas();
+  }, [box.size]);
+
+  useEffect(() => {
+    sizeCanvas();
+    clearInk();
     setStrokeIndex(0);
     finishedRound.current = false;
     setMissStart(false);
     samples.current = resampleStroke(strokes[0] ?? []);
-    hits.current = samples.current.map(() => false);
+    along.current = 0;
     startedAtStart.current = false;
     travel.current = 0;
     setFill(0);
-    const onResize = () => sizeCanvas();
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current.letter]);
 
@@ -259,7 +293,7 @@ export function ToddlerLetterTrace({
     const canvas = inkRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
-    const width = Math.max(14, Math.min(rect.width, rect.height) * 0.07);
+    const width = Math.max(16, Math.min(rect.width, rect.height) * 0.08);
     ctx.strokeStyle = "#f59e0b";
     ctx.lineWidth = width;
     ctx.lineCap = "round";
@@ -271,8 +305,8 @@ export function ToddlerLetterTrace({
   };
 
   const reportFill = () => {
-    const coverage = strokeCoverage(hits.current);
-    setFill((strokeIndex + coverage) / Math.max(strokes.length, 1));
+    const progress = strokeProgress(along.current, samples.current.length);
+    setFill((strokeIndex + progress) / Math.max(strokes.length, 1));
   };
 
   const commitLetter = () => {
@@ -314,7 +348,17 @@ export function ToddlerLetterTrace({
     }
   };
 
-  const completeStroke = () => {
+  const beginStrokeAt = (finger: TracePoint, canvasPoint: { x: number; y: number }) => {
+    drawing.current = true;
+    startedAtStart.current = true;
+    setMissStart(false);
+    last.current = finger;
+    lastCanvas.current = canvasPoint;
+    along.current = advanceAlongStroke(samples.current, along.current, finger);
+    reportFill();
+  };
+
+  const completeStroke = (hold?: { finger: TracePoint; canvas: { x: number; y: number } }) => {
     drawing.current = false;
     last.current = null;
     lastCanvas.current = null;
@@ -327,19 +371,29 @@ export function ToddlerLetterTrace({
     const next = strokeIndex + 1;
     setStrokeIndex(next);
     resetStroke(next);
+    if (hold) {
+      const startPoint = samples.current[0];
+      if (
+        startPoint &&
+        Math.hypot(hold.finger.x - startPoint.x, hold.finger.y - startPoint.y) <= STROKE_START_RADIUS
+      ) {
+        beginStrokeAt(hold.finger, hold.canvas);
+      }
+    }
   };
 
-  const maybeFinishStroke = () => {
+  const maybeFinishStroke = (hold?: { finger: TracePoint; canvas: { x: number; y: number } }) => {
     if (finishedRound.current || done) return;
     if (
       isStrokePathComplete({
-        coverage: strokeCoverage(hits.current),
+        along: along.current,
+        total: samples.current.length,
         travel: travel.current,
         pathLength: pathLength(samples.current),
         startedAtStart: startedAtStart.current,
       })
     ) {
-      completeStroke();
+      completeStroke(hold);
     }
   };
 
@@ -355,15 +409,9 @@ export function ToddlerLetterTrace({
       return;
     }
     event.currentTarget.setPointerCapture(event.pointerId);
-    drawing.current = true;
-    startedAtStart.current = true;
-    setMissStart(false);
-    last.current = finger;
     const rect = event.currentTarget.getBoundingClientRect();
-    lastCanvas.current = toCanvas(finger, rect);
-    markStrokeHits(samples.current, hits.current, finger);
+    beginStrokeAt(finger, toCanvas(finger, rect));
     soundEffects.unlock();
-    reportFill();
   };
 
   const move = (event: React.PointerEvent<HTMLCanvasElement>) => {
@@ -376,28 +424,29 @@ export function ToddlerLetterTrace({
     let painted = lastCanvas.current;
     for (let i = 1; i <= slices; i += 1) {
       const t = i / slices;
-      const along = { x: prev.x + (finger.x - prev.x) * t, y: prev.y + (finger.y - prev.y) * t };
-      if (distanceToStroke(along, samples.current) > STROKE_INK_RADIUS) {
+      const point = { x: prev.x + (finger.x - prev.x) * t, y: prev.y + (finger.y - prev.y) * t };
+      if (distanceToStroke(point, samples.current) > STROKE_INK_RADIUS) {
         painted = null;
         continue;
       }
       travel.current += step / slices;
-      markStrokeHits(samples.current, hits.current, along);
-      const canvasPoint = toCanvas(along, rect);
+      along.current = advanceAlongStroke(samples.current, along.current, point);
+      const canvasPoint = toCanvas(point, rect);
       if (painted) paint(painted, canvasPoint, rect);
       painted = canvasPoint;
     }
     last.current = finger;
     lastCanvas.current = painted;
     reportFill();
-    maybeFinishStroke();
+    maybeFinishStroke(painted ? { finger, canvas: painted } : undefined);
   };
 
   const endStroke = () => {
+    const hold = last.current && lastCanvas.current ? { finger: last.current, canvas: lastCanvas.current } : undefined;
     drawing.current = false;
     last.current = null;
     lastCanvas.current = null;
-    maybeFinishStroke();
+    maybeFinishStroke(hold);
   };
 
   const startDot = activeStroke[0];
@@ -415,43 +464,51 @@ export function ToddlerLetterTrace({
         </p>
       </div>
 
-      <div className="relative min-h-[20rem] h-[min(62vh,34rem)] rounded-[2rem] bg-white overflow-hidden border-[6px] border-amber-300 shadow-inner">
-        <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden>
-          {strokes.map((stroke, i) => (
+      <div
+        ref={padRef}
+        className="relative min-h-[20rem] h-[min(62vh,34rem)] rounded-[2rem] bg-white overflow-hidden border-[6px] border-amber-300 shadow-inner"
+      >
+        <div
+          className="absolute"
+          style={{ left: box.left, top: box.top, width: box.size, height: box.size }}
+        >
+          <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" aria-hidden>
+            {strokes.map((stroke, i) => (
+              <polyline
+                key={`${current.letter}-ghost-${i}`}
+                points={polyline(stroke)}
+                fill="none"
+                stroke={i < strokeIndex ? "#f59e0b" : "#fde68a"}
+                strokeWidth={i < strokeIndex ? 5.2 : 4.4}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity={i < strokeIndex ? 0.95 : 0.5}
+              />
+            ))}
             <polyline
-              key={`${current.letter}-ghost-${i}`}
-              points={polyline(stroke)}
+              points={polyline(activeStroke)}
               fill="none"
-              stroke={i < strokeIndex ? "#f59e0b" : "#fde68a"}
-              strokeWidth={i < strokeIndex ? 4.2 : 3.4}
+              stroke="#f59e0b"
+              strokeWidth={5.6}
               strokeLinecap="round"
               strokeLinejoin="round"
-              opacity={i < strokeIndex ? 0.95 : 0.55}
+              strokeDasharray="3.4 3.8"
+              opacity={0.95}
             />
-          ))}
-          <polyline
-            points={polyline(activeStroke)}
-            fill="none"
-            stroke="#f59e0b"
-            strokeWidth={4.6}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeDasharray="3.2 3.6"
-            opacity={0.95}
+            {startDot && (
+              <circle cx={startDot.x} cy={startDot.y} r="6.2" fill="#2563eb" stroke="#fff" strokeWidth="1.6" />
+            )}
+          </svg>
+          <canvas
+            ref={inkRef}
+            className="absolute inset-0 h-full w-full touch-none"
+            onPointerDown={start}
+            onPointerMove={move}
+            onPointerUp={endStroke}
+            onPointerCancel={endStroke}
+            aria-label={`Trace the letter ${current.letter}, line ${strokeIndex + 1} of ${strokes.length}`}
           />
-          {startDot && (
-            <circle cx={startDot.x} cy={startDot.y} r="5.4" fill="#2563eb" stroke="#fff" strokeWidth="1.4" />
-          )}
-        </svg>
-        <canvas
-          ref={inkRef}
-          className="absolute inset-0 h-full w-full touch-none"
-          onPointerDown={start}
-          onPointerMove={move}
-          onPointerUp={endStroke}
-          onPointerCancel={endStroke}
-          aria-label={`Trace the letter ${current.letter}, line ${strokeIndex + 1} of ${strokes.length}`}
-        />
+        </div>
       </div>
 
       <div className="h-2 rounded-full bg-white/15 overflow-hidden">
@@ -464,7 +521,7 @@ export function ToddlerLetterTrace({
         {missStart
           ? "Start on the blue dot, then slide one line."
           : fill < 1
-            ? "Follow the dotted line. One line at a time."
+            ? "Follow this dotted line to the end."
             : "Letter done!"}
       </p>
 
