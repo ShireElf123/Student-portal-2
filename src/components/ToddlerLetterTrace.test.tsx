@@ -78,29 +78,38 @@ describe("letter trace completion", () => {
     }
   });
 
-  it("still finishes B when the finger is a little beside the line", () => {
-    const sample = walkStroke("B", 1, 8);
-    expect(isStrokePathComplete(sample)).toBe(true);
+  it("still finishes B when the finger is a little beside the end", () => {
+    const sample = walkStroke("B", 1, 0);
+    expect(isStrokePathComplete({ ...sample, endDistance: 5 })).toBe(true);
+  });
+
+  it("keeps progress on the pointer instead of jumping to the tip", () => {
+    const samples = resampleStroke(strokesForLetter("B")[0]);
+    const midIndex = Math.floor((samples.length - 1) * 0.5);
+    const along = advanceAlongStroke(samples, midIndex, samples[midIndex], STROKE_HIT_RADIUS);
+    expect(along).toBeLessThan(samples.length - 4);
+    expect(strokeProgress(along, samples.length)).toBeLessThan(0.7);
   });
 
   it("does not finish until the finger is at the end of the line", () => {
     const stroke = strokesForLetter("B")[0];
     const samples = resampleStroke(stroke);
-    const cutoff = Math.floor(samples.length * 0.7);
+    const cutoff = Math.floor((samples.length - 1) * 0.85);
     let along = 0;
     for (const point of samples.slice(0, cutoff + 1)) {
       along = advanceAlongStroke(samples, along, point, STROKE_HIT_RADIUS);
     }
-    const mid = samples[along] ?? samples[cutoff];
+    const finger = samples[along] ?? samples[cutoff];
     const end = samples[samples.length - 1];
+    expect(strokeProgress(along, samples.length)).toBeLessThan(STROKE_END);
     expect(
       isStrokePathComplete({
         along,
         total: samples.length,
-        travel: pathLength(samples) * 0.7,
+        travel: pathLength(samples) * 0.85,
         pathLength: pathLength(samples),
         startedAtStart: true,
-        endDistance: Math.hypot(mid.x - end.x, mid.y - end.y),
+        endDistance: Math.hypot(finger.x - end.x, finger.y - end.y),
       }),
     ).toBe(false);
   });

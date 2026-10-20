@@ -14,15 +14,15 @@ const FALLBACK: BubbleWord[] = [
   { letter: "M", word: "Moon", emoji: "🌙", sound: "M says /m/! Moon!" },
 ];
 
-/** Finish only when the finger is at the end of this writing line. */
+/** Finish only when the finger is on the end dot — never ahead of the pointer. */
 export const STROKE_HIT_RADIUS = 16;
 export const STROKE_START_RADIUS = 22;
 export const STROKE_INK_RADIUS = 20;
-export const STROKE_END = 0.93;
-export const STROKE_END_RADIUS = 14;
-export const STROKE_TRAVEL = 0.4;
+export const STROKE_END = 0.97;
+export const STROKE_END_RADIUS = 8;
+export const STROKE_TRAVEL = 0.45;
 export const STROKE_SAMPLE = 2.4;
-export const STROKE_LOOKAHEAD = 5;
+export const STROKE_LOOKAHEAD = 4;
 
 export function letterFromPrompt(prompt: string | undefined): string | null {
   if (!prompt) return null;
@@ -114,15 +114,18 @@ export function advanceAlongStroke(
   radius = STROKE_HIT_RADIUS,
   lookahead = STROKE_LOOKAHEAD,
 ): number {
-  let next = along;
-  const from = Math.max(0, along - 2);
+  let nearest = along;
+  let nearestD = radius;
+  const from = Math.max(0, along - 1);
   const to = Math.min(samples.length - 1, along + lookahead);
   for (let i = from; i <= to; i += 1) {
-    if (Math.hypot(samples[i].x - finger.x, samples[i].y - finger.y) <= radius) {
-      next = Math.max(next, i);
+    const distance = Math.hypot(samples[i].x - finger.x, samples[i].y - finger.y);
+    if (distance <= nearestD) {
+      nearestD = distance;
+      nearest = i;
     }
   }
-  return next;
+  return nearest < along ? along : nearest;
 }
 
 export function strokeProgress(along: number, total: number): number {
