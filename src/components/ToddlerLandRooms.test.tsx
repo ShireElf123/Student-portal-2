@@ -117,6 +117,7 @@ describe("land rooms", () => {
     truck.unmount();
 
     const hose = render(<ToddlerLandRooms playId="fire-hose" onAddStar={() => stars.push(1)} />);
+    fireEvent.click(hose.getByTestId("hose"));
     for (const n of [0, 1, 2]) fireEvent.click(hose.getByTestId(`flame-${n}`));
     await flush();
     hose.unmount();

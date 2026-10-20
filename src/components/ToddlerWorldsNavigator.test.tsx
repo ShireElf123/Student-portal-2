@@ -88,7 +88,7 @@ describe("Animal World detective activity", () => {
     await flush(2000);
 
     expect(speech.spoken.some((line) => line.includes("friendly dairy cow"))).toBe(true);
-    expect(container.textContent).toContain("Discovery Mastered!");
+    expect(container.textContent).toContain("You did it!");
   });
 
   it("still celebrates a correct answer when the engine never reports the end", async () => {
@@ -100,17 +100,17 @@ describe("Animal World detective activity", () => {
 
     // The freeze: answer accepted, cards locked, no way forward yet.
     expect(optionButton(container, "Spotted Cow").disabled).toBe(true);
-    expect(container.textContent).not.toContain("Discovery Mastered!");
+    expect(container.textContent).not.toContain("You did it!");
 
     // The watchdog releases the reveal without any further tap.
     await flush(20000);
-    expect(container.textContent).toContain("Discovery Mastered!");
+    expect(container.textContent).toContain("You did it!");
 
     // And the child can carry on playing.
-    fireEvent.click(optionButton(container, "Continue Journey"));
+    fireEvent.click(container.querySelector("[data-testid=trail-next]") as HTMLButtonElement);
     await flush(200);
     expect(container.textContent).toContain("Farm Valley");
-    expect(container.textContent).not.toContain("Discovery Mastered!");
+    expect(container.textContent).not.toContain("You did it!");
   });
 
   it("coaches a wrong answer without locking the activity", async () => {
@@ -120,7 +120,7 @@ describe("Animal World detective activity", () => {
     await flush(2000);
 
     expect(speech.spoken.at(-1)).toContain("That is Pink Piggy!");
-    expect(container.textContent).not.toContain("Discovery Mastered!");
+    expect(container.textContent).not.toContain("You did it!");
     expect(optionButton(container, "Spotted Cow").disabled).toBe(false);
   });
 });
@@ -160,7 +160,7 @@ describe("Animal World counting activity", () => {
     await answerCorrectly(container);
     await flush(2000);
 
-    expect(container.textContent).toContain("Discovery Mastered!");
+    expect(container.textContent).toContain("You did it!");
   });
 
   it("still reveals the celebration when the engine never reports the end", async () => {
@@ -174,10 +174,10 @@ describe("Animal World counting activity", () => {
 
     await answerCorrectly(container);
     await flush(200);
-    expect(container.textContent).not.toContain("Discovery Mastered!");
+    expect(container.textContent).not.toContain("You did it!");
 
     await flush(20000);
-    expect(container.textContent).toContain("Discovery Mastered!");
+    expect(container.textContent).toContain("You did it!");
   });
 });
 
@@ -213,9 +213,9 @@ describe("world level trail stations", () => {
 
     fireEvent.click(optionButton(container, "Rooster"));
     await flush(2000);
-    expect(container.textContent).toContain("Discovery Mastered!");
+    expect(container.textContent).toContain("You did it!");
 
-    fireEvent.click(optionButton(container, "Continue Journey"));
+    fireEvent.click(container.querySelector("[data-testid=trail-next]") as HTMLButtonElement);
     await flush(200);
     expect(container.textContent).toContain("Farm Valley");
   });
@@ -262,6 +262,27 @@ describe("world level trail stations", () => {
     expect(container.textContent).toContain("Who Needs Wheels");
     fireEvent.click(optionButton(container, "The school bus"));
     await flush(2000);
-    expect(container.textContent).toContain("Discovery Mastered!");
+    expect(container.textContent).toContain("You did it!");
+  });
+});
+
+describe("trail ease", () => {
+  it("moves a finished land room onto the next stop after a short beat", async () => {
+    const { container, getByTestId } = render(
+      <ToddlerWorldsNavigator
+        onAddStar={() => {}}
+        starsCount={0}
+        initialWorldId="world:animal-world:farm-valley:act-land-milk-cow"
+      />
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Milk the cow");
+    fireEvent.pointerDown(getByTestId("milk-hold"));
+    await flush(2500);
+    expect(container.textContent).toContain("You did it!");
+    expect(container.textContent).toContain("Next:");
+    await flush(4000);
+    expect(container.textContent).toContain("Pasture Safari");
+    expect(container.textContent).not.toContain("You did it!");
   });
 });

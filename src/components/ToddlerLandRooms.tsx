@@ -120,7 +120,7 @@ function MilkCow({ onAddStar }: { onAddStar?: () => void }) {
         <button
           type="button"
           data-testid="milk-hold"
-          className="rounded-full bg-amber-100 px-8 py-4 text-lg font-black text-amber-950 shadow-lg active:scale-95"
+          className="min-h-16 min-w-[14rem] rounded-full bg-amber-100 px-10 py-5 text-xl font-black text-amber-950 shadow-lg active:scale-95"
           onPointerDown={() => {
             holding.current = true;
           }}
@@ -131,7 +131,7 @@ function MilkCow({ onAddStar }: { onAddStar?: () => void }) {
             holding.current = false;
           }}
         >
-          Hold to milk
+          {done ? "Full!" : "Hold to milk"}
         </button>
       </div>
     </Stage>
@@ -217,9 +217,22 @@ function PenguinSlide({ onAddStar }: { onAddStar?: () => void }) {
         }}
       >
         <div className="absolute left-1/2 top-4 h-[90%] w-16 -translate-x-1/2 rounded-full bg-white/70 rotate-[-8deg]" />
-        <div className="absolute text-5xl" style={{ top: `${y}%`, left: "42%" }} data-testid="penguin">
+        <button
+          type="button"
+          className="absolute text-5xl"
+          style={{ top: `${y}%`, left: "42%" }}
+          data-testid="penguin"
+          onClick={() => {
+            setY((value) => {
+              const next = Math.min(86, value + 22);
+              if (next > 72) finish();
+              return next;
+            });
+            soundEffects.playPop();
+          }}
+        >
           🐧
-        </div>
+        </button>
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-4xl" data-testid="fish-hole">
           🕳️🐟
         </div>
@@ -246,7 +259,7 @@ function LoadTruck({ onAddStar }: { onAddStar?: () => void }) {
               type="button"
               data-testid={`crate-${crate}`}
               disabled={loaded.includes(crate)}
-              className="text-4xl disabled:opacity-20"
+              className="min-h-16 min-w-16 text-5xl disabled:opacity-20"
               onClick={() => {
                 setLoaded((prev) => {
                   if (prev.includes(crate)) return prev;
@@ -268,17 +281,34 @@ function LoadTruck({ onAddStar }: { onAddStar?: () => void }) {
 
 function FireHose({ onAddStar }: { onAddStar?: () => void }) {
   const { done, finish } = useCredit(onAddStar);
+  const [hose, setHose] = useState(false);
   const [out, setOut] = useState<number[]>([]);
   return (
     <Stage playId="fire-hose" done={done} className="bg-gradient-to-b from-rose-400 via-red-700 to-slate-900">
-      <div className="flex justify-around items-end h-64">
+      <button
+        type="button"
+        data-testid="hose"
+        className={`mx-auto mb-4 block min-h-16 rounded-full px-8 py-4 text-xl font-black ${hose ? "bg-sky-200 text-sky-950" : "bg-white text-rose-900"}`}
+        onClick={() => {
+          setHose(true);
+          soundEffects.playPop();
+        }}
+      >
+        {hose ? "Hose ready" : "Grab the hose"}
+      </button>
+      <div className="flex justify-around items-end h-56">
         {[0, 1, 2].map((flame) => (
           <button
             key={flame}
             type="button"
             data-testid={`flame-${flame}`}
-            className="text-6xl"
+            className="min-h-20 min-w-20 text-6xl"
             onClick={() => {
+              if (!hose) {
+                soundEffects.playGentleBoing();
+                speakText("Grab the hose first!", { pitch: 1.2 });
+                return;
+              }
               setOut((prev) => {
                 if (prev.includes(flame)) return prev;
                 const next = [...prev, flame];
@@ -292,7 +322,7 @@ function FireHose({ onAddStar }: { onAddStar?: () => void }) {
           </button>
         ))}
       </div>
-      <p className="text-center text-white/80 font-black mt-4">Tap the flames with the hose</p>
+      <p className="text-center text-white/80 font-black mt-4">{hose ? "Tap the flames" : "Grab the hose, then tap the flames"}</p>
     </Stage>
   );
 }
@@ -319,7 +349,7 @@ function FruitStack({ onAddStar }: { onAddStar?: () => void }) {
               key={fruit}
               type="button"
               data-testid={`fruit-${fruit}`}
-              className="text-4xl"
+              className="min-h-16 min-w-16 text-5xl"
               onClick={() => {
                 setStack((prev) => {
                   if (prev.length >= 5) return prev;
@@ -358,7 +388,7 @@ function StampMural({ onAddStar }: { onAddStar?: () => void }) {
             key={stamp.id}
             type="button"
             data-testid={`stamp-${stamp.id}`}
-            className={`text-3xl rounded-2xl px-3 py-2 ${tool === stamp.mark ? "bg-white" : "bg-white/20"}`}
+            className={`min-h-16 min-w-16 text-4xl rounded-2xl px-4 py-3 ${tool === stamp.mark ? "bg-white" : "bg-white/20"}`}
             onClick={() => setTool(stamp.mark)}
           >
             {stamp.mark}
@@ -437,7 +467,7 @@ function NumberPebbles({ onAddStar }: { onAddStar?: () => void }) {
             type="button"
             data-testid={`pebble-${n}`}
             disabled={n < next}
-            className={`h-16 w-16 rounded-full text-2xl font-black ${n < next ? "bg-white text-emerald-800" : "bg-stone-700 text-white"}`}
+            className={`h-20 w-20 rounded-full text-3xl font-black ${n < next ? "bg-white text-emerald-800" : "bg-stone-700 text-white"}`}
             onClick={() => {
               if (n !== next) {
                 soundEffects.playGentleBoing();
@@ -470,7 +500,7 @@ function Campfire({ onAddStar }: { onAddStar?: () => void }) {
         <button
           type="button"
           data-testid="add-log"
-          className="rounded-full bg-amber-200 px-6 py-3 font-black text-amber-950"
+          className="min-h-14 rounded-full bg-amber-200 px-8 py-4 text-lg font-black text-amber-950"
           onClick={() => {
             setLogs((n) => {
               const next = Math.min(4, n + 1);
@@ -484,9 +514,14 @@ function Campfire({ onAddStar }: { onAddStar?: () => void }) {
         <button
           type="button"
           data-testid="spark"
-          disabled={logs < 4 || lit}
-          className="rounded-full bg-orange-500 px-6 py-3 font-black text-white disabled:opacity-40"
+          className="min-h-14 rounded-full bg-orange-500 px-8 py-4 text-lg font-black text-white"
           onClick={() => {
+            if (logs < 4) {
+              soundEffects.playGentleBoing();
+              speakText("Lay four logs first!", { pitch: 1.2 });
+              return;
+            }
+            if (lit) return;
             setLit(true);
             finish();
           }}
@@ -517,7 +552,7 @@ function FeelingFace({ onAddStar }: { onAddStar?: () => void }) {
         <p className="text-white font-black">Eyes</p>
         <div className="flex gap-3">
           {EYES.map((eye) => (
-            <button key={eye} type="button" data-testid={`eyes-${eye}`} className="text-4xl" onClick={() => setEyes(eye)}>
+            <button key={eye} type="button" data-testid={`eyes-${eye}`} className="min-h-16 min-w-16 text-5xl" onClick={() => setEyes(eye)}>
               {eye}
             </button>
           ))}
@@ -525,7 +560,7 @@ function FeelingFace({ onAddStar }: { onAddStar?: () => void }) {
         <p className="text-white font-black">Mouth</p>
         <div className="flex gap-3">
           {MOUTHS.map((m) => (
-            <button key={m} type="button" data-testid={`mouth-${m}`} className="text-4xl" onClick={() => setMouth(m)}>
+            <button key={m} type="button" data-testid={`mouth-${m}`} className="min-h-16 min-w-16 text-5xl" onClick={() => setMouth(m)}>
               {m}
             </button>
           ))}
@@ -547,7 +582,7 @@ function NightTuck({ onAddStar }: { onAddStar?: () => void }) {
             key={w}
             type="button"
             data-testid={`shutter-${w}`}
-            className="h-28 w-16 rounded-t-2xl border-4 border-amber-200 text-2xl"
+            className="h-32 w-20 rounded-t-2xl border-4 border-amber-200 text-3xl"
             style={{ background: shut.includes(w) ? "#1e1b4b" : "#fde68a" }}
             onClick={() => {
               setShut((prev) => (prev.includes(w) ? prev : [...prev, w]));
@@ -561,9 +596,14 @@ function NightTuck({ onAddStar }: { onAddStar?: () => void }) {
       <button
         type="button"
         data-testid="teddy"
-        disabled={shut.length < 3 || tucked}
-        className="mx-auto block text-6xl disabled:opacity-40"
+        className="mx-auto block min-h-20 min-w-20 text-7xl"
         onClick={() => {
+          if (shut.length < 3) {
+            soundEffects.playGentleBoing();
+            speakText("Close the shutters first!", { pitch: 1.2 });
+            return;
+          }
+          if (tucked) return;
           setTucked(true);
           finish();
         }}

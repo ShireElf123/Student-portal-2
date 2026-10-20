@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import {
   Sparkles,
   Star,
@@ -129,7 +129,23 @@ export function ToddlerWorldsNavigator({
     toyCreditedRef.current = activity.id;
     recordActivityCompletion(activity.worldId, activity.areaId, activity.id, activity.rewardStars);
     onAddStar(activity.rewardStars);
+    setShowCelebration(true);
   };
+
+  /** Toys auto-roll after a beat. Quizzes wait for a tap. Both go to the next stop. */
+  const AUTO_TRAIL_TYPES = new Set([
+    "land-play",
+    "open-play",
+    "memory-match",
+    "balloon-sky",
+    "animal-safari",
+    "rhyme-garden",
+    "bubble-pop",
+    "k1-studio",
+    "letter-trace",
+    "color-lab",
+    "piano-melody",
+  ]);
 
   // Activity execution states
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
@@ -613,7 +629,16 @@ export function ToddlerWorldsNavigator({
     speakText(sortScenario.spokenPrompt, { pitch: 1.15 });
   };
 
-  // Handle continuing to next mission step or returning
+  const nextTrailActivity = (): ToddlerActivity | null => {
+    if (!selectedArea || !activeActivity) return null;
+    const index = selectedArea.activities.findIndex((item) => item.id === activeActivity.id);
+    if (index < 0) return null;
+    return selectedArea.activities[index + 1] ?? null;
+  };
+
+  const continueAfterRef = useRef<() => void>(() => {});
+
+  // Handle continuing to next mission step or the next trail stop
   const handleContinueAfterCelebration = () => {
     setShowCelebration(false);
     setSelectedOptionId(null);
@@ -656,8 +681,27 @@ export function ToddlerWorldsNavigator({
       return;
     }
 
+    const next = nextTrailActivity();
+    if (next) {
+      handleStartActivity(next);
+      return;
+    }
+
     handleBackToAreaHub();
   };
+  continueAfterRef.current = handleContinueAfterCelebration;
+
+  useEffect(() => {
+    if (!showCelebration || !activeActivity) return;
+    if (activeMission) return;
+    if (!AUTO_TRAIL_TYPES.has(activeActivity.type)) return;
+    if (!selectedArea) return;
+    const index = selectedArea.activities.findIndex((item) => item.id === activeActivity.id);
+    if (index < 0 || index >= selectedArea.activities.length - 1) return;
+    const timer = window.setTimeout(() => continueAfterRef.current(), 3800);
+    return () => window.clearTimeout(timer);
+  }, [showCelebration, activeActivity?.id, activeMission, selectedArea]);
+
 
   // ------------------ STORY ADVENTURE HANDLERS ------------------
   const handleSelectStoryOption = (step: StoryAdventureStep, optionId: string) => {
@@ -700,6 +744,7 @@ export function ToddlerWorldsNavigator({
   if (activeActivity) {
     const playTheme = getWorldPlayTheme(activeActivity.worldId, activeActivity.areaId);
     const drawingPlay = activeActivity.type === "color-lab" || activeActivity.type === "letter-trace";
+    const trailNext = nextTrailActivity();
     return (
       <div className={`${drawingPlay ? "max-w-5xl" : "max-w-3xl"} mx-auto space-y-4`}>
         {/* Navigation Bar */}
@@ -1266,19 +1311,13 @@ export function ToddlerWorldsNavigator({
         )}
 
         {/* VICTORY / UNLOCK CELEBRATION MODAL */}
-        <AnimatePresence>
-          {showCelebration && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
-            >
+        {showCelebration && (
+            <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
               <div className="max-w-md w-full p-8 rounded-3xl bg-gradient-to-b from-[#1b1c36] to-[#121327] border-2 border-amber-400/50 shadow-2xl text-center space-y-5">
                 <div className="text-6xl animate-bounce">🌟</div>
                 <div className="space-y-1">
                   <span className="px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 text-xs font-black uppercase tracking-wider">
-                    Discovery Mastered!
+                    You did it!
                   </span>
                   <h3 className="text-2xl font-black text-white">{activeActivity.title}</h3>
                 </div>
@@ -1303,34 +1342,42 @@ export function ToddlerWorldsNavigator({
                 )}
 
                 <div className="pt-2 flex flex-col gap-2">
-                  {(dynamicCounting || dynamicSorting) && (!activeMission || missionStepIdx >= activeMission.steps.length - 1) && (
+                  {(!activeMission || missionStepIdx >= activeMission.steps.length - 1) && (
                     <button
+                      type="button"
                       onClick={() => {
                         setShowCelebration(false);
                         if (dynamicCounting) {
                           handleRegenerateCounting();
-                        } else if (dynamicSorting) {
-                          handleRegenerateSorting();
+                          return;
                         }
+                        if (dynamicSorting) {
+                          handleRegenerateSorting();
+                          return;
+                        }
+                        handleStartActivity(activeActivity);
                       }}
-                      className="w-full py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-white font-bold text-xs cursor-pointer border border-white/20 transition-all flex items-center justify-center gap-1.5"
+                      className="w-full min-h-14 py-3 rounded-2xl bg-white/15 hover:bg-white/25 text-white font-black text-base cursor-pointer border border-white/20 transition-all flex items-center justify-center gap-1.5"
                     >
-                      <RotateCcw size={14} /> Play Again with New Items 🎲
+                      <RotateCcw size={18} /> Play again
                     </button>
                   )}
                   <button
+                    type="button"
+                    data-testid="trail-next"
                     onClick={handleContinueAfterCelebration}
-                    className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black text-sm cursor-pointer shadow-lg transition-all"
+                    className="w-full min-h-16 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black text-lg cursor-pointer shadow-lg transition-all"
                   >
                     {activeMission && missionStepIdx < activeMission.steps.length - 1
                       ? "Next Mission Step ➡️"
-                      : "Continue Journey 🗺️"}
+                      : trailNext
+                        ? `Next: ${trailNext.clueIcon} ${trailNext.title}`
+                        : "Back to the trail"}
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
       </div>
     );
   }
