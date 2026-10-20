@@ -287,13 +287,13 @@ describe("activity-ID integrity", () => {
     const expectedDynamic = [
       "src/components/ToddlerK1Studio.tsx:51 (game.activityId)",
       "src/components/ToddlerSecretZones.tsx:91 (zone.activityId)",
-      "src/components/ToddlerWorldsNavigator.tsx:493 (activeActivity.id)",
+      "src/components/ToddlerWorldsNavigator.tsx:500 (activeActivity.id)",
       "src/contentEngine/gameAdapters.ts:79 (engine.activityId)",
       "src/contentEngine/gameAdapters.ts:126 (engine.activityId)",
       "src/contentEngine/gameAdapters.ts:173 (engine.activityId)",
       "src/contentEngine/gameAdapters.ts:228 (engine.activityId)",
       "src/contentEngine/gameAdapters.ts:272 (engine.activityId)",
-      "src/data/toddler/toddlerProgressManager.ts:197 (activityId)",
+      "src/data/toddler/toddlerProgressManager.ts:203 (activityId)",
     ];
     expect(dynamicSites.sort()).toEqual(expectedDynamic.sort());
     // Every production recordLearningEvent call — literal or dynamic — must be

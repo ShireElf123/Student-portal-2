@@ -45,21 +45,21 @@ const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = 
   campfire: { title: "Build a campfire", line: "Lay four logs, then strike a spark.", done: "Warm light on the trail." },
   "feeling-face": { title: "Make a feeling", line: "Pick eyes, then a mouth.", done: "That face has a feeling!" },
   "night-tuck": { title: "Tuck in for night", line: "Close three shutters, then hug teddy.", done: "Quiet house. Sweet sleep." },
-  "vine-swing": { title: "Swing the vine", line: "Tap the vine. Swing five times.", done: "Wheee across the canopy!" },
-  "dew-web": { title: "Dew on the web", line: "Tap six shiny drops.", done: "The web sparkles." },
-  "seal-clap": { title: "Seal clap", line: "Tap the seal five times.", done: "Clap clap clap!" },
-  "wash-bus": { title: "Wash the bus", line: "Tap the dirt spots off.", done: "Shiny bus. Beep beep!" },
-  "pigeon-feed": { title: "Feed the pigeons", line: "Tap four crumbs to the birds.", done: "Coo! Full tummies." },
-  "knead-dough": { title: "Knead the dough", line: "Press the dough eight times.", done: "Soft bread ready." },
+  "vine-swing": { title: "Swing the vine", line: "Hold the vine. Swing across.", done: "Wheee across the canopy!" },
+  "dew-web": { title: "Dew on the web", line: "Drag the drops along the web.", done: "The web sparkles." },
+  "seal-clap": { title: "Seal clap", line: "Hold. Clap with the seal.", done: "Clap clap clap!" },
+  "wash-bus": { title: "Wash the bus", line: "Drag the sponge over the dirt.", done: "Shiny bus. Beep beep!" },
+  "pigeon-feed": { title: "Feed the pigeons", line: "Drag crumbs to the birds.", done: "Coo! Full tummies." },
+  "knead-dough": { title: "Knead the dough", line: "Hold to press the dough.", done: "Soft bread ready." },
   "drum-boom": { title: "Boom the drums", line: "Tap the drums 1, then 2, then 3.", done: "A parade beat!" },
   "rocket-stars": { title: "Star the rocket", line: "Tap five stars, then launch.", done: "Whoosh to the moon!" },
   "ten-dots": { title: "Fill the ten-frame", line: "Tap ten dots. Fill every box.", done: "Ten. A full frame!" },
-  "puddle-jump": { title: "Puddle jump", line: "Tap four puddles. Splash!", done: "Wet boots. Big grin." },
-  "brush-teeth": { title: "Brush, brush", line: "Brush eight strokes.", done: "Clean shiny teeth." },
-  "owl-hoot": { title: "Owl hoot", line: "Tap the owl three times.", done: "Hoo hoo hoo." },
+  "puddle-jump": { title: "Puddle jump", line: "Drag the boot through the puddles.", done: "Wet boots. Big grin." },
+  "brush-teeth": { title: "Brush, brush", line: "Drag the brush across the teeth.", done: "Clean shiny teeth." },
+  "owl-hoot": { title: "Owl hoot", line: "Hold to hoot. Three long hoots.", done: "Hoo hoo hoo." },
   "puppet-bow": { title: "Puppet bow", line: "Tap each puppet to take a bow.", done: "The nook claps!" },
-  "syllable-clap": { title: "Clap ba-na-na", line: "Clap three beats.", done: "Ba. Na. Na!" },
-  "rain-boots": { title: "Rain boots", line: "Stamp four puddles.", done: "Splash all the way home." },
+  "syllable-clap": { title: "Clap ba-na-na", line: "Hold three beats. Ba. Na. Na.", done: "Ba. Na. Na!" },
+  "rain-boots": { title: "Rain boots", line: "Drag the boot through the puddles.", done: "Splash all the way home." },
 };
 
 function useCredit(onAddStar?: () => void) {
@@ -688,87 +688,209 @@ function NightTuck({ onAddStar }: { onAddStar?: () => void }) {
   );
 }
 
-function TapCount({
+function HoldPlay({
   playId,
   className,
-  need,
-  emoji,
   testId,
+  emoji,
+  holds = 1,
   onAddStar,
 }: {
   playId: LandPlayId;
   className: string;
-  need: number;
-  emoji: string;
   testId: string;
+  emoji: string;
+  holds?: number;
   onAddStar?: () => void;
 }) {
   const { done, finish } = useCredit(onAddStar);
-  const [n, setN] = useState(0);
+  const [fill, setFill] = useState(6);
+  const [rounds, setRounds] = useState(0);
+  const holding = useRef(false);
+  const fillRef = useRef(6);
+  const roundsRef = useRef(0);
+
+  useEffect(() => {
+    const tick = window.setInterval(() => {
+      if (!holding.current || done) return;
+      fillRef.current = Math.min(100, fillRef.current + 5);
+      setFill(fillRef.current);
+      if (fillRef.current % 20 < 5) soundEffects.playPop();
+      if (fillRef.current >= 100) {
+        holding.current = false;
+        fillRef.current = 6;
+        setFill(6);
+        roundsRef.current += 1;
+        setRounds(roundsRef.current);
+        if (roundsRef.current >= holds) finish();
+      }
+    }, 70);
+    return () => window.clearInterval(tick);
+  }, [done, finish, holds]);
+
   return (
     <Stage playId={playId} done={done} className={className}>
-      <button
-        type="button"
-        data-testid={testId}
-        className="mx-auto block min-h-24 min-w-24 text-7xl"
-        onClick={() => {
-          setN((value) => {
-            const next = Math.min(need, value + 1);
-            soundEffects.playPop();
-            if (next >= need) finish();
-            return next;
-          });
-        }}
-      >
-        {emoji}
-      </button>
-      <p className="text-center text-white font-black mt-4" data-testid={`${testId}-count`}>
-        {n} of {need}
-      </p>
+      <div className="flex flex-col items-center gap-4">
+        <div
+          className="text-7xl sm:text-8xl"
+          style={{ transform: playId === "vine-swing" ? `rotate(${fill * 0.7 - 24}deg)` : undefined }}
+        >
+          {emoji}
+        </div>
+        <div className="relative h-5 w-56 overflow-hidden rounded-full bg-white/25" role="progressbar" aria-valuenow={fill}>
+          <div className="absolute inset-y-0 left-0 bg-amber-200" style={{ width: `${fill}%` }} />
+        </div>
+        <button
+          type="button"
+          data-testid={testId}
+          className="min-h-16 min-w-[14rem] rounded-full bg-amber-100 px-10 py-5 text-xl font-black text-amber-950 shadow-lg active:scale-95"
+          onPointerDown={() => {
+            holding.current = true;
+          }}
+          onPointerUp={() => {
+            holding.current = false;
+          }}
+          onPointerLeave={() => {
+            holding.current = false;
+          }}
+        >
+          {done ? "Done!" : holds > 1 ? `Hold ${Math.min(holds, rounds + 1)} of ${holds}` : "Hold"}
+        </button>
+      </div>
     </Stage>
   );
 }
 
-function SpotTap({
+function ScrubPlay({
   playId,
   className,
   spots,
+  tool,
   onAddStar,
 }: {
   playId: LandPlayId;
   className: string;
   spots: { id: string; emoji: string; top: string; left: string }[];
+  tool: string;
   onAddStar?: () => void;
 }) {
   const { done, finish } = useCredit(onAddStar);
   const [got, setGot] = useState<string[]>([]);
+  const [toolPos, setToolPos] = useState<{ x: number; y: number } | null>(null);
+  const dragging = useRef(false);
+  const origin = useRef<{ x: number; y: number } | null>(null);
+  const gotRef = useRef<string[]>([]);
+
+  const collectNear = (clientX: number, clientY: number, stage: HTMLElement) => {
+    const box = stage.getBoundingClientRect();
+    setToolPos({ x: clientX - box.left, y: clientY - box.top });
+    const travelled = origin.current
+      ? Math.hypot(clientX - origin.current.x, clientY - origin.current.y)
+      : 0;
+    if (travelled < 18) return;
+    for (const spot of spots) {
+      if (gotRef.current.includes(spot.id)) continue;
+      const el = stage.querySelector(`[data-testid="spot-${spot.id}"]`);
+      if (!el) continue;
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      if (Math.hypot(clientX - cx, clientY - cy) > 52) continue;
+      gotRef.current = [...gotRef.current, spot.id];
+      setGot(gotRef.current);
+      soundEffects.playPop();
+      if (gotRef.current.length >= spots.length) finish();
+    }
+  };
+
   return (
     <Stage playId={playId} done={done} className={className}>
-      <div className="relative h-72 sm:h-80">
+      <div
+        className="relative h-72 sm:h-80 touch-none"
+        data-testid={`${playId}-scrub`}
+        onPointerDown={(event) => {
+          dragging.current = true;
+          origin.current = { x: event.clientX, y: event.clientY };
+          event.currentTarget.setPointerCapture?.(event.pointerId);
+          collectNear(event.clientX, event.clientY, event.currentTarget);
+        }}
+        onPointerMove={(event) => {
+          if (!dragging.current) return;
+          collectNear(event.clientX, event.clientY, event.currentTarget);
+        }}
+        onPointerUp={() => {
+          dragging.current = false;
+          origin.current = null;
+        }}
+      >
         {spots.map((spot) =>
           got.includes(spot.id) ? null : (
-            <button
+            <div
               key={spot.id}
-              type="button"
               data-testid={`spot-${spot.id}`}
               className="absolute min-h-16 min-w-16 text-4xl"
               style={{ top: spot.top, left: spot.left }}
-              onClick={() => {
-                setGot((prev) => {
-                  if (prev.includes(spot.id)) return prev;
-                  const next = [...prev, spot.id];
-                  soundEffects.playPop();
-                  if (next.length >= spots.length) finish();
-                  return next;
-                });
-              }}
             >
               {spot.emoji}
-            </button>
+            </div>
           )
         )}
+        {toolPos && (
+          <div
+            className="pointer-events-none absolute text-5xl"
+            style={{ left: toolPos.x, top: toolPos.y, transform: "translate(-50%, -50%)" }}
+          >
+            {tool}
+          </div>
+        )}
       </div>
-      <p className="text-center text-white font-black">{got.length} of {spots.length}</p>
+      <p className="text-center text-white font-black">
+        {got.length} of {spots.length}
+      </p>
+    </Stage>
+  );
+}
+
+function BrushTeeth({ onAddStar }: { onAddStar?: () => void }) {
+  const { done, finish } = useCredit(onAddStar);
+  const [strokes, setStrokes] = useState(0);
+  const dragging = useRef(false);
+  const lastX = useRef<number | null>(null);
+  const travel = useRef(0);
+  const strokesRef = useRef(0);
+
+  return (
+    <Stage playId="brush-teeth" done={done} className="bg-gradient-to-b from-sky-200 via-cyan-400 to-indigo-800">
+      <div
+        className="relative mx-auto h-56 w-full max-w-md touch-none rounded-[2rem] bg-rose-100"
+        data-testid="brush"
+        onPointerDown={(event) => {
+          dragging.current = true;
+          lastX.current = event.clientX;
+          event.currentTarget.setPointerCapture?.(event.pointerId);
+        }}
+        onPointerMove={(event) => {
+          if (!dragging.current || lastX.current == null) return;
+          travel.current += Math.abs(event.clientX - lastX.current);
+          lastX.current = event.clientX;
+          if (travel.current >= 48 && strokesRef.current < 8) {
+            travel.current = 0;
+            strokesRef.current += 1;
+            setStrokes(strokesRef.current);
+            soundEffects.playPop();
+            if (strokesRef.current >= 8) finish();
+          }
+        }}
+        onPointerUp={() => {
+          dragging.current = false;
+          lastX.current = null;
+        }}
+      >
+        <div className="absolute inset-x-8 top-1/2 h-16 -translate-y-1/2 rounded-full bg-white text-center text-5xl leading-[4rem]">
+          😁
+        </div>
+      </div>
+      <p className="text-center text-white font-black mt-4">{strokes} of 8 strokes</p>
     </Stage>
   );
 }
@@ -915,12 +1037,13 @@ const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX
   "feeling-face": FeelingFace,
   "night-tuck": NightTuck,
   "vine-swing": (props) => (
-    <TapCount playId="vine-swing" className="bg-gradient-to-b from-lime-300 via-emerald-600 to-green-950" need={5} emoji="🐒" testId="vine" {...props} />
+    <HoldPlay playId="vine-swing" className="bg-gradient-to-b from-lime-300 via-emerald-600 to-green-950" emoji="🐒" testId="vine" {...props} />
   ),
   "dew-web": (props) => (
-    <SpotTap
+    <ScrubPlay
       playId="dew-web"
       className="bg-gradient-to-b from-emerald-200 via-teal-600 to-slate-900"
+      tool="🕸️"
       spots={[
         { id: "a", emoji: "💧", top: "12%", left: "18%" },
         { id: "b", emoji: "💧", top: "20%", left: "62%" },
@@ -933,12 +1056,13 @@ const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX
     />
   ),
   "seal-clap": (props) => (
-    <TapCount playId="seal-clap" className="bg-gradient-to-b from-sky-200 via-cyan-500 to-blue-900" need={5} emoji="🦭" testId="seal" {...props} />
+    <HoldPlay playId="seal-clap" className="bg-gradient-to-b from-sky-200 via-cyan-500 to-blue-900" emoji="🦭" testId="seal" holds={5} {...props} />
   ),
   "wash-bus": (props) => (
-    <SpotTap
+    <ScrubPlay
       playId="wash-bus"
       className="bg-gradient-to-b from-yellow-200 via-orange-400 to-slate-700"
+      tool="🧽"
       spots={[
         { id: "a", emoji: "🟫", top: "20%", left: "18%" },
         { id: "b", emoji: "🟫", top: "28%", left: "55%" },
@@ -950,28 +1074,30 @@ const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX
     />
   ),
   "pigeon-feed": (props) => (
-    <SpotTap
+    <ScrubPlay
       playId="pigeon-feed"
       className="bg-gradient-to-b from-sky-200 via-lime-300 to-stone-600"
+      tool="🍞"
       spots={[
-        { id: "a", emoji: "🍞", top: "30%", left: "20%" },
-        { id: "b", emoji: "🍞", top: "40%", left: "60%" },
-        { id: "c", emoji: "🍞", top: "58%", left: "34%" },
-        { id: "d", emoji: "🍞", top: "68%", left: "72%" },
+        { id: "a", emoji: "🐦", top: "30%", left: "20%" },
+        { id: "b", emoji: "🐦", top: "40%", left: "60%" },
+        { id: "c", emoji: "🐦", top: "58%", left: "34%" },
+        { id: "d", emoji: "🐦", top: "68%", left: "72%" },
       ]}
       {...props}
     />
   ),
   "knead-dough": (props) => (
-    <TapCount playId="knead-dough" className="bg-gradient-to-b from-amber-200 via-orange-400 to-rose-900" need={8} emoji="🍞" testId="dough" {...props} />
+    <HoldPlay playId="knead-dough" className="bg-gradient-to-b from-amber-200 via-orange-400 to-rose-900" emoji="🍞" testId="dough" {...props} />
   ),
   "drum-boom": DrumBoom,
   "rocket-stars": RocketStars,
   "ten-dots": TenDots,
   "puddle-jump": (props) => (
-    <SpotTap
+    <ScrubPlay
       playId="puddle-jump"
       className="bg-gradient-to-b from-sky-300 via-blue-500 to-emerald-800"
+      tool="👢"
       spots={[
         { id: "a", emoji: "💦", top: "28%", left: "16%" },
         { id: "b", emoji: "💦", top: "36%", left: "58%" },
@@ -981,25 +1107,24 @@ const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX
       {...props}
     />
   ),
-  "brush-teeth": (props) => (
-    <TapCount playId="brush-teeth" className="bg-gradient-to-b from-sky-200 via-cyan-400 to-indigo-800" need={8} emoji="😁" testId="brush" {...props} />
-  ),
+  "brush-teeth": BrushTeeth,
   "owl-hoot": (props) => (
-    <TapCount playId="owl-hoot" className="bg-gradient-to-b from-indigo-800 via-slate-900 to-black" need={3} emoji="🦉" testId="owl" {...props} />
+    <HoldPlay playId="owl-hoot" className="bg-gradient-to-b from-indigo-800 via-slate-900 to-black" emoji="🦉" testId="owl" holds={3} {...props} />
   ),
   "puppet-bow": PuppetBow,
   "syllable-clap": (props) => (
-    <TapCount playId="syllable-clap" className="bg-gradient-to-b from-yellow-200 via-orange-400 to-rose-800" need={3} emoji="👏" testId="clap" {...props} />
+    <HoldPlay playId="syllable-clap" className="bg-gradient-to-b from-yellow-200 via-orange-400 to-rose-800" emoji="👏" testId="clap" holds={3} {...props} />
   ),
   "rain-boots": (props) => (
-    <SpotTap
+    <ScrubPlay
       playId="rain-boots"
       className="bg-gradient-to-b from-slate-300 via-sky-500 to-indigo-900"
+      tool="👢"
       spots={[
-        { id: "a", emoji: "👢", top: "24%", left: "18%" },
-        { id: "b", emoji: "👢", top: "34%", left: "62%" },
-        { id: "c", emoji: "👢", top: "56%", left: "28%" },
-        { id: "d", emoji: "👢", top: "68%", left: "70%" },
+        { id: "a", emoji: "💦", top: "24%", left: "18%" },
+        { id: "b", emoji: "💦", top: "34%", left: "62%" },
+        { id: "c", emoji: "💦", top: "56%", left: "28%" },
+        { id: "d", emoji: "💦", top: "68%", left: "70%" },
       ]}
       {...props}
     />

@@ -127,13 +127,19 @@ export function subscribeToddlerProgress(callback: (state: ToddlerWorldProgressS
  */
 export function checkAreaUnlocks(
   world: ToddlerWorld,
-  currentWorldStars: number,
+  completedActivities: Record<string, CompletedActivityRecord>,
   unlockedAreasMap: Record<string, boolean>
 ): string[] {
   const newlyUnlocked: string[] = [];
 
-  world.areas.forEach((area) => {
-    if (!unlockedAreasMap[area.id] && currentWorldStars >= area.requiredStarsToUnlock) {
+  world.areas.forEach((area, index) => {
+    if (unlockedAreasMap[area.id]) return;
+    if (index === 0) {
+      newlyUnlocked.push(area.id);
+      return;
+    }
+    const previous = world.areas[index - 1];
+    if (previous.activities.some((activity) => completedActivities[activity.id])) {
       newlyUnlocked.push(area.id);
     }
   });
@@ -171,7 +177,7 @@ export function recordActivityCompletion(
   // Find target world to calculate area unlocks
   const targetWorld = ALL_TODDLER_WORLDS.find((w) => w.id === worldId);
   const newlyUnlocked = targetWorld
-    ? checkAreaUnlocks(targetWorld, nextWorldStars[worldId], current.unlockedAreas)
+    ? checkAreaUnlocks(targetWorld, nextCompletedActivities, current.unlockedAreas)
     : [];
 
   const nextUnlockedAreas = { ...current.unlockedAreas };
@@ -249,7 +255,7 @@ export function recordMissionCompletion(
 
   const targetWorld = ALL_TODDLER_WORLDS.find((w) => w.id === worldId);
   const newlyUnlocked = targetWorld
-    ? checkAreaUnlocks(targetWorld, nextWorldStars[worldId], current.unlockedAreas)
+    ? checkAreaUnlocks(targetWorld, current.completedActivities, current.unlockedAreas)
     : [];
 
   const nextUnlockedAreas = { ...current.unlockedAreas };
@@ -298,11 +304,13 @@ export function recordMissionCompletion(
 
 export function isAreaUnlocked(area: ToddlerArea, state?: ToddlerWorldProgressState): boolean {
   const progress = state || getToddlerProgress();
-  if (area.requiredStarsToUnlock === 0) return true;
   if (progress.unlockedAreas[area.id]) return true;
-
-  const currentWorldStars = progress.worldStars[area.worldId] || 0;
-  return currentWorldStars >= area.requiredStarsToUnlock;
+  const world = ALL_TODDLER_WORLDS.find((item) => item.id === area.worldId);
+  if (!world) return area.requiredStarsToUnlock === 0;
+  const index = world.areas.findIndex((item) => item.id === area.id);
+  if (index <= 0) return true;
+  const previous = world.areas[index - 1];
+  return previous.activities.some((activity) => progress.completedActivities[activity.id]);
 }
 
 export function getWorldProgressStats(

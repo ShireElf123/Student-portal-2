@@ -127,6 +127,10 @@ export function ToddlerWorldsNavigator({
     toyCreditedRef.current = activity.id;
     recordActivityCompletion(activity.worldId, activity.areaId, activity.id, activity.rewardStars);
     onAddStar(activity.rewardStars);
+    if (activity.type === "color-lab" || activity.type === "letter-trace") {
+      setStayPlayDone(true);
+      return;
+    }
     setShowCelebration(true);
   };
 
@@ -147,6 +151,7 @@ export function ToddlerWorldsNavigator({
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState<boolean>(false);
   const [showCelebration, setShowCelebration] = useState<boolean>(false);
+  const [stayPlayDone, setStayPlayDone] = useState(false);
   const [unlockedNotice, setUnlockedNotice] = useState<string[]>([]);
 
   // A correct answer (and a story choice) reveals its celebration once the
@@ -228,7 +233,7 @@ export function ToddlerWorldsNavigator({
       if (!isAreaUnlocked(targetArea, progressRef.current)) {
         setSelectedAreaId(null);
         setActiveActivity(null);
-        speakText(`This area is locked! ${targetArea.unlockRequirementText || "Earn more stars to unlock it!"}`, { pitch: 1.15 });
+        speakText("Play one game in the last place first, then this door opens!", { pitch: 1.15 });
         return;
       }
       setSelectedAreaId(areaId);
@@ -317,7 +322,7 @@ export function ToddlerWorldsNavigator({
   const handleSelectArea = (area: ToddlerArea) => {
     if (!isAreaUnlocked(area, progress)) {
       soundEffects.playGentleBoing();
-      speakText(`This area is locked! ${area.unlockRequirementText || "Earn more stars to unlock it!"}`, { pitch: 1.15 });
+      speakText("Play one game in the last place first, then this door opens!", { pitch: 1.15 });
       return;
     }
 
@@ -379,6 +384,7 @@ export function ToddlerWorldsNavigator({
     setSortedItems({});
     setCountingAnswered(false);
     setShowCelebration(false);
+    setStayPlayDone(false);
     setSelectedOptionId(null);
     setIsAnswered(false);
   };
@@ -393,6 +399,7 @@ export function ToddlerWorldsNavigator({
     setSelectedOptionId(null);
     setIsAnswered(false);
     setShowCelebration(false);
+    setStayPlayDone(false);
     setUnlockedNotice([]);
     setTappedCountIndices([]);
     setCountingAnswered(false);
@@ -645,6 +652,7 @@ export function ToddlerWorldsNavigator({
   // Handle continuing to next mission step or the next trail stop
   const handleContinueAfterCelebration = () => {
     setShowCelebration(false);
+    setStayPlayDone(false);
     setSelectedOptionId(null);
     setIsAnswered(false);
     setCountingAnswered(false);
@@ -785,12 +793,7 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl sm:text-2xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerColorLab
               mixFlavor={playTheme.mix}
-              onAddStar={() => {
-                completeWorldToy(activeActivity);
-                soundEffects.playFanfare();
-                triggerCelebrationConfetti();
-                setShowCelebration(true);
-              }}
+              onAddStar={() => completeWorldToy(activeActivity)}
             />
           </div>
         )}
@@ -881,6 +884,20 @@ export function ToddlerWorldsNavigator({
               gameId={activeActivity.studioGameId as K1StudioGameId}
               onAddStar={() => completeWorldToy(activeActivity)}
             />
+          </div>
+        )}
+
+        {stayPlayDone && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 rounded-2xl bg-amber-400/15 border border-amber-300/40 px-4 py-3">
+            <p className="text-amber-200 font-black text-sm">Star! Keep drawing, or go on.</p>
+            <button
+              type="button"
+              data-testid="trail-next"
+              onClick={handleContinueAfterCelebration}
+              className="min-h-12 rounded-xl bg-amber-400 px-5 py-2 text-sm font-black text-amber-950"
+            >
+              {trailNext ? `Next: ${trailNext.title}` : "Back to the trail"}
+            </button>
           </div>
         )}
 

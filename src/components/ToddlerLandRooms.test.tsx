@@ -187,11 +187,14 @@ describe("land rooms", () => {
 
   it("swings the vine, fills ten dots, and bows three puppets", async () => {
     const stars: number[] = [];
+    vi.useFakeTimers();
     const vine = render(<ToddlerLandRooms playId="vine-swing" onAddStar={() => stars.push(1)} />);
-    const vineBtn = vine.getByTestId("vine");
-    for (let i = 0; i < 5; i += 1) fireEvent.click(vineBtn);
-    await flush();
+    fireEvent.pointerDown(vine.getByTestId("vine"));
+    await act(async () => {
+      vi.advanceTimersByTime(2500);
+    });
     vine.unmount();
+    vi.useRealTimers();
 
     const dots = render(<ToddlerLandRooms playId="ten-dots" onAddStar={() => stars.push(1)} />);
     for (let i = 0; i < 10; i += 1) fireEvent.click(dots.getByTestId(`dot-${i}`));
@@ -204,5 +207,21 @@ describe("land rooms", () => {
     fireEvent.click(puppets.getByTestId("puppet-2"));
     await flush();
     expect(stars).toEqual([1, 1, 1]);
+  });
+
+  it("scrubs dirt off the bus by dragging, not tapping", async () => {
+    const stars: number[] = [];
+    const { getByTestId } = render(<ToddlerLandRooms playId="wash-bus" onAddStar={() => stars.push(1)} />);
+    const stage = getByTestId("wash-bus-scrub");
+    const dragOver = (id: string) => {
+      const spot = getByTestId(`spot-${id}`);
+      spot.getBoundingClientRect = () =>
+        ({ top: 40, left: 40, bottom: 80, right: 80, width: 40, height: 40, x: 40, y: 40, toJSON: () => {} }) as DOMRect;
+      fireEvent.pointerDown(stage, { clientX: 10, clientY: 10, pointerId: 1 });
+      fireEvent.pointerMove(stage, { clientX: 60, clientY: 60, pointerId: 1, buttons: 1 });
+    };
+    for (const id of ["a", "b", "c", "d", "e"]) dragOver(id);
+    await flush();
+    expect(stars).toEqual([1]);
   });
 });
