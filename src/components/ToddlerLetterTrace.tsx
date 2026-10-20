@@ -14,14 +14,15 @@ const FALLBACK: BubbleWord[] = [
   { letter: "M", word: "Moon", emoji: "🌙", sound: "M says /m/! Moon!" },
 ];
 
-/** Reach the end of this writing line. Do not colour the letter in. */
+/** Finish only when the finger is at the end of this writing line. */
 export const STROKE_HIT_RADIUS = 16;
 export const STROKE_START_RADIUS = 22;
 export const STROKE_INK_RADIUS = 20;
-export const STROKE_END = 0.8;
-export const STROKE_TRAVEL = 0.3;
+export const STROKE_END = 0.93;
+export const STROKE_END_RADIUS = 14;
+export const STROKE_TRAVEL = 0.4;
 export const STROKE_SAMPLE = 2.4;
-export const STROKE_LOOKAHEAD = 14;
+export const STROKE_LOOKAHEAD = 5;
 
 export function letterFromPrompt(prompt: string | undefined): string | null {
   if (!prompt) return null;
@@ -135,11 +136,13 @@ export function isStrokePathComplete(sample: {
   travel: number;
   pathLength: number;
   startedAtStart: boolean;
+  endDistance: number;
 }): boolean {
   return (
     sample.startedAtStart &&
     strokeProgress(sample.along, sample.total) >= STROKE_END &&
-    sample.travel >= sample.pathLength * STROKE_TRAVEL
+    sample.travel >= sample.pathLength * STROKE_TRAVEL &&
+    sample.endDistance <= STROKE_END_RADIUS
   );
 }
 
@@ -384,6 +387,10 @@ export function ToddlerLetterTrace({
 
   const maybeFinishStroke = (hold?: { finger: TracePoint; canvas: { x: number; y: number } }) => {
     if (finishedRound.current || done) return;
+    const end = samples.current[samples.current.length - 1];
+    const finger = hold?.finger;
+    const endDistance =
+      finger && end ? Math.hypot(finger.x - end.x, finger.y - end.y) : Number.POSITIVE_INFINITY;
     if (
       isStrokePathComplete({
         along: along.current,
@@ -391,6 +398,7 @@ export function ToddlerLetterTrace({
         travel: travel.current,
         pathLength: pathLength(samples.current),
         startedAtStart: startedAtStart.current,
+        endDistance,
       })
     ) {
       completeStroke(hold);
@@ -402,8 +410,10 @@ export function ToddlerLetterTrace({
     const finger = toNorm(event);
     const startPoint = samples.current[0];
     if (!startPoint) return;
+    const head = samples.current[along.current] ?? startPoint;
     const nearStart = Math.hypot(finger.x - startPoint.x, finger.y - startPoint.y) <= STROKE_START_RADIUS;
-    if (!nearStart) {
+    const nearHead = Math.hypot(finger.x - head.x, finger.y - head.y) <= STROKE_START_RADIUS;
+    if (!nearStart && !(startedAtStart.current && nearHead)) {
       setMissStart(true);
       soundEffects.unlock();
       return;
@@ -438,11 +448,13 @@ export function ToddlerLetterTrace({
     last.current = finger;
     lastCanvas.current = painted;
     reportFill();
-    maybeFinishStroke(painted ? { finger, canvas: painted } : undefined);
+    maybeFinishStroke({ finger, canvas: painted ?? toCanvas(finger, rect) });
   };
 
   const endStroke = () => {
-    const hold = last.current && lastCanvas.current ? { finger: last.current, canvas: lastCanvas.current } : undefined;
+    const hold = last.current
+      ? { finger: last.current, canvas: lastCanvas.current ?? { x: 0, y: 0 } }
+      : undefined;
     drawing.current = false;
     last.current = null;
     lastCanvas.current = null;
@@ -450,6 +462,7 @@ export function ToddlerLetterTrace({
   };
 
   const startDot = activeStroke[0];
+  const endDot = activeStroke[activeStroke.length - 1];
 
   return (
     <div className="space-y-4">
@@ -459,8 +472,8 @@ export function ToddlerLetterTrace({
           {current.emoji} {current.letter} is for {current.word}
         </h3>
         <p className="text-white/75 text-base">
-          Line {Math.min(strokeIndex + 1, strokes.length)} of {strokes.length}. Start on the blue dot. Draw one
-          line.
+          Line {Math.min(strokeIndex + 1, strokes.length)} of {strokes.length}. Start on the blue dot. Go all
+          the way to the end.
         </p>
       </div>
 
@@ -495,6 +508,9 @@ export function ToddlerLetterTrace({
               strokeDasharray="3.4 3.8"
               opacity={0.95}
             />
+            {endDot && (
+              <circle cx={endDot.x} cy={endDot.y} r="5.4" fill="#fff" stroke="#16a34a" strokeWidth="1.8" />
+            )}
             {startDot && (
               <circle cx={startDot.x} cy={startDot.y} r="6.2" fill="#2563eb" stroke="#fff" strokeWidth="1.6" />
             )}
@@ -521,7 +537,7 @@ export function ToddlerLetterTrace({
         {missStart
           ? "Start on the blue dot, then slide one line."
           : fill < 1
-            ? "Follow this dotted line to the end."
+            ? "Keep going until you touch the green end."
             : "Letter done!"}
       </p>
 

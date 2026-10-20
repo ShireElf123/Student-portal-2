@@ -44,12 +44,14 @@ function walkStroke(letter: string, strokeIndex: number, wobble = 0) {
   for (const point of samples) {
     along = advanceAlongStroke(samples, along, { x: point.x + wobble, y: point.y + wobble }, STROKE_HIT_RADIUS);
   }
+  const end = samples[samples.length - 1];
   return {
     along,
     total: samples.length,
     travel: pathLength(samples),
     pathLength: pathLength(samples),
     startedAtStart: true,
+    endDistance: end ? Math.hypot(wobble, wobble) : Number.POSITIVE_INFINITY,
     progress: strokeProgress(along, samples.length),
   };
 }
@@ -81,6 +83,28 @@ describe("letter trace completion", () => {
     expect(isStrokePathComplete(sample)).toBe(true);
   });
 
+  it("does not finish until the finger is at the end of the line", () => {
+    const stroke = strokesForLetter("B")[0];
+    const samples = resampleStroke(stroke);
+    const cutoff = Math.floor(samples.length * 0.7);
+    let along = 0;
+    for (const point of samples.slice(0, cutoff + 1)) {
+      along = advanceAlongStroke(samples, along, point, STROKE_HIT_RADIUS);
+    }
+    const mid = samples[along] ?? samples[cutoff];
+    const end = samples[samples.length - 1];
+    expect(
+      isStrokePathComplete({
+        along,
+        total: samples.length,
+        travel: pathLength(samples) * 0.7,
+        pathLength: pathLength(samples),
+        startedAtStart: true,
+        endDistance: Math.hypot(mid.x - end.x, mid.y - end.y),
+      }),
+    ).toBe(false);
+  });
+
   it("does not finish a scribble off the line or a tap with no travel", () => {
     const stroke = strokesForLetter("B")[1];
     const samples = resampleStroke(stroke);
@@ -93,6 +117,7 @@ describe("letter trace completion", () => {
         travel: 4,
         pathLength: pathLength(samples),
         startedAtStart: true,
+        endDistance: 40,
       }),
     ).toBe(false);
     expect(
@@ -102,6 +127,7 @@ describe("letter trace completion", () => {
         travel: 4,
         pathLength: 80,
         startedAtStart: true,
+        endDistance: 0,
       }),
     ).toBe(false);
     expect(
@@ -111,6 +137,7 @@ describe("letter trace completion", () => {
         travel: 50,
         pathLength: 80,
         startedAtStart: false,
+        endDistance: 0,
       }),
     ).toBe(false);
   });
