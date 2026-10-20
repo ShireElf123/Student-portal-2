@@ -8,7 +8,7 @@ import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import type { MixFlavor } from "../data/toddler/toddlerWorldPlayThemes";
 
 interface ColorDrop {
-  id: "red" | "yellow" | "blue";
+  id: "red" | "yellow" | "blue" | "white";
   name: string;
   emoji: string;
   colorClass: string;
@@ -19,6 +19,7 @@ const PRIMARY_COLORS: ColorDrop[] = [
   { id: "red", name: "Ruby Red", emoji: "🔴", colorClass: "from-red-500 to-rose-600", glowColor: "shadow-red-500/50" },
   { id: "yellow", name: "Sunny Yellow", emoji: "🟡", colorClass: "from-yellow-400 to-amber-400", glowColor: "shadow-yellow-500/50" },
   { id: "blue", name: "Ocean Blue", emoji: "🔵", colorClass: "from-blue-500 to-indigo-600", glowColor: "shadow-blue-500/50" },
+  { id: "white", name: "Cloud White", emoji: "⚪", colorClass: "from-white to-slate-200", glowColor: "shadow-white/50" },
 ];
 
 interface MixResult {
@@ -36,6 +37,12 @@ const RECIPES: Record<string, MixResult> = {
   "yellow+blue": { title: "Emerald Green!", colorName: "Green", bgGradient: "from-emerald-400 to-teal-500", emoji: "🌱", phrase: "Yellow plus Blue magically mixes into fresh Green!" },
   "red+blue": { title: "Royal Purple!", colorName: "Purple", bgGradient: "from-purple-500 to-indigo-600", emoji: "🍇", phrase: "Red plus Blue creates deep royal Purple!" },
   "blue+red": { title: "Royal Purple!", colorName: "Purple", bgGradient: "from-purple-500 to-indigo-600", emoji: "🍇", phrase: "Blue plus Red creates deep royal Purple!" },
+  "red+white": { title: "Soft Pink!", colorName: "Pink", bgGradient: "from-pink-300 to-rose-400", emoji: "🌸", phrase: "Red plus White makes a soft morning Pink!" },
+  "white+red": { title: "Soft Pink!", colorName: "Pink", bgGradient: "from-pink-300 to-rose-400", emoji: "🌸", phrase: "White plus Red makes a soft morning Pink!" },
+  "yellow+white": { title: "Warm Cream!", colorName: "Cream", bgGradient: "from-amber-100 to-yellow-200", emoji: "🍦", phrase: "Yellow plus White stirs into Warm Cream!" },
+  "white+yellow": { title: "Warm Cream!", colorName: "Cream", bgGradient: "from-amber-100 to-yellow-200", emoji: "🍦", phrase: "White plus Yellow stirs into Warm Cream!" },
+  "blue+white": { title: "Sky Blue!", colorName: "Sky", bgGradient: "from-sky-200 to-blue-400", emoji: "🌤️", phrase: "Blue plus White opens into Sky Blue!" },
+  "white+blue": { title: "Sky Blue!", colorName: "Sky", bgGradient: "from-sky-200 to-blue-400", emoji: "🌤️", phrase: "White plus Blue opens into Sky Blue!" },
 };
 
 const PAINT_COLORS = ["#ef4444", "#f59e0b", "#facc15", "#22c55e", "#06b6d4", "#3b82f6", "#8b5cf6", "#ec4899", "#78350f", "#111827"];
@@ -184,6 +191,12 @@ export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: n
     "yellow+blue": { ...RECIPES["yellow+blue"], ...(mixFlavor?.green ?? {}) },
     "red+blue": { ...RECIPES["red+blue"], ...(mixFlavor?.purple ?? {}) },
     "blue+red": { ...RECIPES["blue+red"], ...(mixFlavor?.purple ?? {}) },
+    "red+white": RECIPES["red+white"],
+    "white+red": RECIPES["white+red"],
+    "yellow+white": RECIPES["yellow+white"],
+    "white+yellow": RECIPES["white+yellow"],
+    "blue+white": RECIPES["blue+white"],
+    "white+blue": RECIPES["white+blue"],
   };
   const [selectedDrops, setSelectedDrops] = useState<ColorDrop[]>([]);
   const [currentResult, setCurrentResult] = useState<MixResult | null>(null);

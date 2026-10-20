@@ -30,7 +30,19 @@ export type LandPlayId =
   | "owl-hoot"
   | "puppet-bow"
   | "syllable-clap"
-  | "rain-boots";
+  | "rain-boots"
+  | "water-can"
+  | "set-table"
+  | "pack-bag"
+  | "nest-eggs"
+  | "stack-cups"
+  | "shelf-books"
+  | "feed-fish"
+  | "hang-stars"
+  | "fish-toss"
+  | "coil-rope"
+  | "bag-market"
+  | "scoop-moon";
 
 const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = {
   "milk-cow": { title: "Milk the cow", line: "Hold the pail. Fill it to the top.", done: "Warm milk for the barn!" },
@@ -60,7 +72,20 @@ const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = 
   "puppet-bow": { title: "Puppet bow", line: "Pull each puppet down for a bow.", done: "The nook claps!" },
   "syllable-clap": { title: "Clap ba-na-na", line: "Hold three beats. Ba. Na. Na.", done: "Ba. Na. Na!" },
   "rain-boots": { title: "Rain boots", line: "Drag the boot through the puddles.", done: "Splash all the way home." },
+  "water-can": { title: "Water the bed", line: "Drag the can onto every thirsty plant.", done: "The garden drinks!" },
+  "set-table": { title: "Set the table", line: "Drag plate, cup, spoon, and napkin onto the cloth.", done: "Supper is ready." },
+  "pack-bag": { title: "Pack the bag", line: "Drag four trip things into the bag.", done: "Packed. Ready to go!" },
+  "nest-eggs": { title: "Warm the nest", line: "Drag four eggs into the nest.", done: "Safe and warm." },
+  "stack-cups": { title: "Stack the cups", line: "Drag five cups onto the tower.", done: "A wobbly tower!" },
+  "shelf-books": { title: "Shelf the books", line: "Drag four books onto the shelf.", done: "The nook is tidy." },
+  "feed-fish": { title: "Feed the reef", line: "Drag flakes onto every fish.", done: "Full tummies in the coral." },
+  "hang-stars": { title: "Hang the stars", line: "Drag five stars onto the night.", done: "The balcony glows." },
+  "fish-toss": { title: "Toss a fish", line: "Drag four fish to the seal.", done: "Catch! The seal is glad." },
+  "coil-rope": { title: "Coil the ropes", line: "Drag four ropes onto the bollard.", done: "The dock is tidy." },
+  "bag-market": { title: "Fill the market bag", line: "Drag four stall things into the bag.", done: "Home with the shopping!" },
+  "scoop-moon": { title: "Scoop moon dust", line: "Drag four scoops into the tin.", done: "Dust for the rocket." },
 };
+
 
 function useCredit(onAddStar?: () => void) {
   const credited = useRef(false);
@@ -106,7 +131,20 @@ const SCENERY: Record<LandPlayId, string[]> = {
   "puppet-bow": ["🎭", "🎪", "🌟", "🧵", "👏"],
   "syllable-clap": ["👏", "🐟", "🔤", "💧", "🌙"],
   "rain-boots": ["👢", "🌧️", "🪟", "☕", "☂️"],
+  "water-can": ["🌱", "💧", "🐞", "🌸", "🌤️"],
+  "set-table": ["🍽️", "🕯️", "🧺", "🍞", "🏡"],
+  "pack-bag": ["🧳", "🎫", "✈️", "🧦", "📘"],
+  "nest-eggs": ["🦕", "🌿", "🥚", "🪨", "☀️"],
+  "stack-cups": ["🔷", "🔶", "⭐", "📗", "🧩"],
+  "shelf-books": ["📚", "🕯️", "🪟", "🪑", "🌙"],
+  "feed-fish": ["🐠", "🪸", "🌊", "🫧", "🐚"],
+  "hang-stars": ["⭐", "🌙", "🌃", "✨", "🦉"],
+  "fish-toss": ["🦭", "🐟", "🧊", "🌊", "❄️"],
+  "coil-rope": ["⚓", "🚢", "🪢", "🌊", "🪵"],
+  "bag-market": ["🛍️", "🥕", "🍞", "🧀", "🌞"],
+  "scoop-moon": ["🚀", "🌕", "✨", "🪐", "🛰️"],
 };
+
 
 function Stage({
   playId,
@@ -309,6 +347,144 @@ function PenguinSlide({ onAddStar }: { onAddStar?: () => void }) {
         </button>
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-4xl" data-testid="fish-hole">
           🕳️🐟
+        </div>
+      </div>
+    </Stage>
+  );
+}
+
+
+function DragBits({
+  playId,
+  className,
+  bits,
+  targetTestId,
+  targetIdle,
+  onAddStar,
+}: {
+  playId: LandPlayId;
+  className: string;
+  bits: { id: string; emoji: string }[];
+  targetTestId: string;
+  targetIdle: string;
+  onAddStar?: () => void;
+}) {
+  const { done, finish } = useCredit(onAddStar);
+  const [held, setHeld] = useState<string[]>([]);
+  const heldRef = useRef<string[]>([]);
+  const targetRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef<string | null>(null);
+
+  const drop = (id: string, clientX: number, clientY: number) => {
+    if (heldRef.current.includes(id)) return;
+    if (!pointerHits(targetRef.current, clientX, clientY, 48)) return;
+    heldRef.current = [...heldRef.current, id];
+    setHeld(heldRef.current);
+    soundEffects.playPop();
+    if (heldRef.current.length >= bits.length) finish();
+  };
+
+  return (
+    <Stage playId={playId} done={done} className={className}>
+      <div className="flex flex-col items-center gap-6">
+        <div ref={targetRef} data-testid={targetTestId} className="min-h-24 min-w-32 text-center text-7xl">
+          {targetIdle}
+          <span className="block text-3xl">{held.map((id) => bits.find((bit) => bit.id === id)?.emoji).join("")}</span>
+        </div>
+        <div className="flex flex-wrap justify-center gap-3">
+          {bits.map((bit) =>
+            held.includes(bit.id) ? (
+              <span key={bit.id} className="min-h-16 min-w-16 text-5xl opacity-20">
+                {bit.emoji}
+              </span>
+            ) : (
+              <button
+                key={bit.id}
+                type="button"
+                data-testid={`bit-${bit.id}`}
+                className="min-h-16 min-w-16 text-5xl touch-none"
+                onPointerDown={(event) => {
+                  dragging.current = bit.id;
+                  event.currentTarget.setPointerCapture?.(event.pointerId);
+                }}
+                onPointerMove={(event) => {
+                  if (dragging.current !== bit.id) return;
+                  drop(bit.id, event.clientX, event.clientY);
+                }}
+                onPointerUp={(event) => {
+                  if (dragging.current === bit.id) drop(bit.id, event.clientX, event.clientY);
+                  dragging.current = null;
+                }}
+              >
+                {bit.emoji}
+              </button>
+            )
+          )}
+        </div>
+      </div>
+    </Stage>
+  );
+}
+
+function DragToolSpots({
+  playId,
+  className,
+  toolTestId,
+  tool,
+  spots,
+  onAddStar,
+}: {
+  playId: LandPlayId;
+  className: string;
+  toolTestId: string;
+  tool: string;
+  spots: { id: string; emoji: string }[];
+  onAddStar?: () => void;
+}) {
+  const { done, finish } = useCredit(onAddStar);
+  const [hit, setHit] = useState<string[]>([]);
+  const hitRef = useRef<string[]>([]);
+  const spraying = useRef(false);
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  const spray = (clientX: number, clientY: number) => {
+    if (!spraying.current || !stageRef.current) return;
+    for (const spot of spots) {
+      if (hitRef.current.includes(spot.id)) continue;
+      const el = stageRef.current.querySelector<HTMLElement>(`[data-testid="spot-${spot.id}"]`);
+      if (!pointerHits(el, clientX, clientY, 44)) continue;
+      hitRef.current = [...hitRef.current, spot.id];
+      setHit(hitRef.current);
+      soundEffects.playPop();
+      if (hitRef.current.length >= spots.length) finish();
+    }
+  };
+
+  return (
+    <Stage playId={playId} done={done} className={className}>
+      <div ref={stageRef} className="space-y-4">
+        <button
+          type="button"
+          data-testid={toolTestId}
+          className="mx-auto mb-4 block min-h-16 rounded-full bg-white/20 px-8 py-4 text-5xl touch-none"
+          onPointerDown={(event) => {
+            spraying.current = true;
+            event.currentTarget.setPointerCapture?.(event.pointerId);
+            spray(event.clientX, event.clientY);
+          }}
+          onPointerMove={(event) => spray(event.clientX, event.clientY)}
+          onPointerUp={() => {
+            spraying.current = false;
+          }}
+        >
+          {tool}
+        </button>
+        <div className="flex justify-around items-end h-40">
+          {spots.map((spot) => (
+            <div key={spot.id} data-testid={`spot-${spot.id}`} className="min-h-20 min-w-20 text-center text-6xl">
+              {hit.includes(spot.id) ? "✨" : spot.emoji}
+            </div>
+          ))}
         </div>
       </div>
     </Stage>
@@ -1321,6 +1497,42 @@ const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX
       ]}
       {...props}
     />
+  ),
+  "water-can": (props) => (
+    <DragToolSpots playId="water-can" className="bg-gradient-to-b from-lime-200 via-emerald-500 to-green-950" toolTestId="water-can" tool="🚿" spots={[{ id: "a", emoji: "🌱" }, { id: "b", emoji: "🌿" }, { id: "c", emoji: "🌸" }, { id: "d", emoji: "🥬" }]} {...props} />
+  ),
+  "set-table": (props) => (
+    <DragBits playId="set-table" className="bg-gradient-to-b from-amber-100 via-orange-300 to-rose-800" bits={[{ id: "plate", emoji: "🍽️" }, { id: "cup", emoji: "🥤" }, { id: "spoon", emoji: "🥄" }, { id: "napkin", emoji: "🧻" }]} targetTestId="table-cloth" targetIdle="🧺" {...props} />
+  ),
+  "pack-bag": (props) => (
+    <DragBits playId="pack-bag" className="bg-gradient-to-b from-sky-200 via-blue-400 to-indigo-900" bits={[{ id: "shirt", emoji: "👕" }, { id: "book", emoji: "📘" }, { id: "apple", emoji: "🍎" }, { id: "sock", emoji: "🧦" }]} targetTestId="trip-bag" targetIdle="🧳" {...props} />
+  ),
+  "nest-eggs": (props) => (
+    <DragBits playId="nest-eggs" className="bg-gradient-to-b from-lime-200 via-stone-400 to-amber-900" bits={[{ id: "a", emoji: "🥚" }, { id: "b", emoji: "🥚" }, { id: "c", emoji: "🥚" }, { id: "d", emoji: "🥚" }]} targetTestId="dino-nest" targetIdle="🪺" {...props} />
+  ),
+  "stack-cups": (props) => (
+    <DragBits playId="stack-cups" className="bg-gradient-to-b from-violet-200 via-fuchsia-400 to-indigo-900" bits={[{ id: "a", emoji: "🥤" }, { id: "b", emoji: "🥤" }, { id: "c", emoji: "🥤" }, { id: "d", emoji: "🥤" }, { id: "e", emoji: "🥤" }]} targetTestId="cup-tower" targetIdle="⬜" {...props} />
+  ),
+  "shelf-books": (props) => (
+    <DragBits playId="shelf-books" className="bg-gradient-to-b from-amber-200 via-orange-400 to-stone-800" bits={[{ id: "a", emoji: "📕" }, { id: "b", emoji: "📗" }, { id: "c", emoji: "📘" }, { id: "d", emoji: "📙" }]} targetTestId="book-shelf" targetIdle="📚" {...props} />
+  ),
+  "feed-fish": (props) => (
+    <DragToolSpots playId="feed-fish" className="bg-gradient-to-b from-cyan-200 via-blue-500 to-indigo-950" toolTestId="fish-flakes" tool="🍘" spots={[{ id: "a", emoji: "🐠" }, { id: "b", emoji: "🐟" }, { id: "c", emoji: "🐡" }]} {...props} />
+  ),
+  "hang-stars": (props) => (
+    <DragBits playId="hang-stars" className="bg-gradient-to-b from-indigo-400 via-violet-700 to-black" bits={[{ id: "a", emoji: "⭐" }, { id: "b", emoji: "⭐" }, { id: "c", emoji: "⭐" }, { id: "d", emoji: "⭐" }, { id: "e", emoji: "⭐" }]} targetTestId="night-sky" targetIdle="🌃" {...props} />
+  ),
+  "fish-toss": (props) => (
+    <DragBits playId="fish-toss" className="bg-gradient-to-b from-sky-200 via-cyan-400 to-blue-900" bits={[{ id: "a", emoji: "🐟" }, { id: "b", emoji: "🐟" }, { id: "c", emoji: "🐟" }, { id: "d", emoji: "🐟" }]} targetTestId="seal-mouth" targetIdle="🦭" {...props} />
+  ),
+  "coil-rope": (props) => (
+    <DragBits playId="coil-rope" className="bg-gradient-to-b from-amber-200 via-sky-400 to-slate-800" bits={[{ id: "a", emoji: "🪢" }, { id: "b", emoji: "🪢" }, { id: "c", emoji: "🪢" }, { id: "d", emoji: "🪢" }]} targetTestId="bollard" targetIdle="⚓" {...props} />
+  ),
+  "bag-market": (props) => (
+    <DragBits playId="bag-market" className="bg-gradient-to-b from-yellow-200 via-orange-400 to-rose-800" bits={[{ id: "carrot", emoji: "🥕" }, { id: "bread", emoji: "🍞" }, { id: "cheese", emoji: "🧀" }, { id: "pear", emoji: "🍐" }]} targetTestId="market-bag" targetIdle="🛍️" {...props} />
+  ),
+  "scoop-moon": (props) => (
+    <DragBits playId="scoop-moon" className="bg-gradient-to-b from-indigo-300 via-slate-700 to-black" bits={[{ id: "a", emoji: "✨" }, { id: "b", emoji: "✨" }, { id: "c", emoji: "✨" }, { id: "d", emoji: "✨" }]} targetTestId="moon-tin" targetIdle="🥫" {...props} />
   ),
 };
 

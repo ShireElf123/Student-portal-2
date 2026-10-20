@@ -30,11 +30,11 @@ describe("in-world play toys", () => {
     expect(new Set(ALL_TODDLER_WORLDS.filter((world) => world.areas.some((area) => area.activities.some((activity) => activity.type === "letter-trace"))).map((world) => world.id)).size).toBe(12);
   });
 
-  it("plants no-fail stir, drive, and pour beside the quizzes", () => {
+  it("plants no-fail stir, drive, pour, and more Toca-style toys beside the quizzes", () => {
     const ids = ALL_TODDLER_WORLDS.flatMap((world) =>
       world.areas.flatMap((area) => area.activities.filter((activity) => activity.type === "open-play").map((activity) => activity.id))
     );
-    expect(ids.sort()).toEqual(["act-home-pour", "act-soup-stir", "act-street-drive"]);
+    expect(ids.sort()).toEqual(["act-den-pet", "act-dock-scoop", "act-home-comb", "act-home-pour", "act-pond-plant", "act-soup-stir", "act-street-drive"]);
   });
 
   it("plants a real play toy on every area road", () => {

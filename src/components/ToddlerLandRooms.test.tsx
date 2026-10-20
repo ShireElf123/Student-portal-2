@@ -254,4 +254,13 @@ describe("land rooms", () => {
     await flush();
     expect(stars).toEqual([1]);
   });
+
+  it("packs a trip bag by dragging, not tapping", async () => {
+    const stars: number[] = [];
+    const { getByTestId } = render(<ToddlerLandRooms playId="pack-bag" onAddStar={() => stars.push(1)} />);
+    const bag = getByTestId("trip-bag");
+    for (const id of ["shirt", "book", "apple", "sock"]) dragOnto(getByTestId(`bit-${id}`), bag);
+    await flush();
+    expect(stars).toEqual([1]);
+  });
 });

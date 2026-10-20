@@ -55,7 +55,7 @@ export interface ToddlerActivity {
   /** When type is k1-studio, which curated scene to mount. */
   studioGameId?: string;
   /** When type is open-play, which no-fail toy to mount. */
-  openPlayId?: "stir" | "drive" | "pour";
+  openPlayId?: "stir" | "drive" | "pour" | "scoop" | "pet" | "plant" | "comb";
   /** When type is land-play, which unique land room to mount. */
   landPlayId?:
     | "milk-cow"
@@ -84,7 +84,19 @@ export interface ToddlerActivity {
     | "owl-hoot"
     | "puppet-bow"
     | "syllable-clap"
-    | "rain-boots";
+    | "rain-boots"
+    | "water-can"
+    | "set-table"
+    | "pack-bag"
+    | "nest-eggs"
+    | "stack-cups"
+    | "shelf-books"
+    | "feed-fish"
+    | "hang-stars"
+    | "fish-toss"
+    | "coil-rope"
+    | "bag-market"
+    | "scoop-moon";
 }
 
 export interface ToddlerMissionStep {

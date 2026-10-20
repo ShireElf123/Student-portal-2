@@ -4,7 +4,17 @@ import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { triggerCelebrationConfetti } from "../utils/gamification";
 import { TOY_STILL } from "../data/toddler/toddlerWorldArt";
 
-export type OpenPlayId = "stir" | "drive" | "pour";
+export type OpenPlayId = "stir" | "drive" | "pour" | "scoop" | "pet" | "plant" | "comb";
+
+const COPY: Record<OpenPlayId, { title: string; line: string; emoji: string }> = {
+  stir: { title: "Stir the pot", line: "Drag round and round. There is no wrong way.", emoji: "🍲" },
+  drive: { title: "Drive the bus", line: "Slide the bus. Beep when you like.", emoji: "🚌" },
+  pour: { title: "Pour a cup", line: "Hold to pour. Stop when the cup is happy.", emoji: "🥛" },
+  scoop: { title: "Scoop the sand", line: "Dip and pour. There is no wrong way.", emoji: "🪣" },
+  pet: { title: "Pet the cub", line: "Stroke slowly. The cub likes kind hands.", emoji: "🐻‍❄️" },
+  plant: { title: "Water the plant", line: "Hold to rain. The leaves drink.", emoji: "🪴" },
+  comb: { title: "Comb the mane", line: "Stroke the comb. There is no wrong way.", emoji: "🐴" },
+};
 
 export function ToddlerOpenPlay({
   playId,
@@ -21,13 +31,16 @@ export function ToddlerOpenPlay({
   const [fill, setFill] = useState(8);
   const fillRef = useRef(8);
   const pouring = useRef(false);
+  const [scoops, setScoops] = useState(0);
+  const [pets, setPets] = useState(0);
+  const [rain, setRain] = useState(8);
+  const rainRef = useRef(8);
+  const raining = useRef(false);
+  const [strokes, setStrokes] = useState(0);
+  const lastX = useRef<number | null>(null);
 
-  const copy =
-    playId === "stir"
-      ? { title: "Stir the pot", line: "Drag round and round. There is no wrong way.", still: TOY_STILL.stir }
-      : playId === "drive"
-        ? { title: "Drive the bus", line: "Slide the bus. Beep when you like.", still: TOY_STILL.drive }
-        : { title: "Pour a cup", line: "Hold to pour. Stop when the cup is happy.", still: TOY_STILL.pour };
+  const copy = COPY[playId];
+  const still = TOY_STILL[playId];
 
   useEffect(() => {
     const t = setTimeout(() => speakText(copy.line, { pitch: 1.2, rate: 0.92 }), 200);
@@ -50,7 +63,13 @@ export function ToddlerOpenPlay({
   return (
     <div className="space-y-4">
       <div className="overflow-hidden rounded-[2rem] border-4 border-white/20 h-44 sm:h-52">
-        <img src={copy.still} alt="" className="h-full w-full object-cover" />
+        {still ? (
+          <img src={still} alt="" className="h-full w-full object-cover" />
+        ) : (
+          <div className="flex h-full items-center justify-center bg-gradient-to-br from-amber-200 via-orange-300 to-stone-800 text-8xl">
+            {copy.emoji}
+          </div>
+        )}
       </div>
       <div className="text-center">
         <h3 className="text-2xl font-black text-white">{copy.title}</h3>
@@ -129,6 +148,97 @@ export function ToddlerOpenPlay({
             <div className="absolute inset-x-0 bottom-0 bg-sky-300/90" style={{ height: `${fill}%` }} />
           </div>
         </div>
+      )}
+
+      {playId === "scoop" && (
+        <button
+          type="button"
+          data-testid="scoop-sand"
+          className="mx-auto flex h-64 w-full max-w-sm touch-none flex-col items-center justify-center rounded-[2rem] bg-gradient-to-b from-sky-200 to-amber-300 text-7xl"
+          onPointerDown={(event) => event.currentTarget.setPointerCapture(event.pointerId)}
+          onPointerMove={(event) => {
+            if (event.buttons === 0) return;
+            setScoops((n) => {
+              const next = n + 1;
+              if (next % 8 === 0) soundEffects.playPop();
+              if (next >= 40) finish();
+              return next;
+            });
+          }}
+        >
+          {done ? "🏰" : scoops > 20 ? "🪣" : "🏖️"}
+        </button>
+      )}
+
+      {playId === "pet" && (
+        <button
+          type="button"
+          data-testid="pet-cub"
+          className="mx-auto flex h-64 w-full max-w-sm touch-none items-center justify-center rounded-[2rem] bg-gradient-to-b from-slate-100 to-sky-400 text-8xl"
+          onPointerDown={(event) => event.currentTarget.setPointerCapture(event.pointerId)}
+          onPointerMove={(event) => {
+            if (event.buttons === 0) return;
+            setPets((n) => {
+              const next = n + 1;
+              if (next % 10 === 0) soundEffects.playPop();
+              if (next >= 50) finish();
+              return next;
+            });
+          }}
+        >
+          {done ? "😴" : "🐻‍❄️"}
+        </button>
+      )}
+
+      {playId === "plant" && (
+        <div
+          className="mx-auto flex h-64 w-full max-w-sm touch-none flex-col items-center justify-end rounded-[2rem] bg-gradient-to-b from-sky-300 to-lime-700 pb-6"
+          onPointerDown={(event) => {
+            raining.current = true;
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }}
+          onPointerUp={() => {
+            raining.current = false;
+            if (rainRef.current >= 50) finish();
+          }}
+          onPointerMove={() => {
+            if (!raining.current) return;
+            const next = Math.min(100, rainRef.current + 3);
+            rainRef.current = next;
+            setRain(next);
+            if (next === 40 || next === 70) soundEffects.playPop();
+            if (next >= 80) finish();
+          }}
+        >
+          <div className={`text-6xl ${raining.current ? "translate-y-2" : ""}`}>🌧️</div>
+          <div className="text-7xl">{rain > 50 ? "🌿" : "🌱"}</div>
+        </div>
+      )}
+
+      {playId === "comb" && (
+        <button
+          type="button"
+          data-testid="comb-mane"
+          className="mx-auto flex h-64 w-full max-w-sm touch-none items-center justify-center rounded-[2rem] bg-gradient-to-b from-amber-100 to-orange-400 text-8xl"
+          onPointerDown={(event) => {
+            lastX.current = event.clientX;
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }}
+          onPointerMove={(event) => {
+            if (event.buttons === 0 || lastX.current == null) return;
+            const delta = Math.abs(event.clientX - lastX.current);
+            lastX.current = event.clientX;
+            if (delta < 4) return;
+            setStrokes((n) => {
+              const next = n + 1;
+              if (next % 6 === 0) soundEffects.playPop();
+              if (next >= 24) finish();
+              return next;
+            });
+          }}
+        >
+          {done ? "✨🐴" : "🐴"}
+        </button>
       )}
 
       {done && <p className="text-center text-emerald-300 font-black">No wrong answers. Just play.</p>}
