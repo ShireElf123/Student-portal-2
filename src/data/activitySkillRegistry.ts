@@ -71,6 +71,8 @@ const CORE_ACTIVITY_DEFINITIONS: LearningActivityDefinition[] = [
   { id: "toddler-weather-porch", title: "Weather Porch", skillIds: ["sci-k1-weather-seasons"], gradeBand: "toddler", experienceId: "weather-porch", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:weather-porch" } },
   { id: "toddler-laundry-sort", title: "Laundry Sort", skillIds: ["logic-k1-sorting"], gradeBand: "toddler", experienceId: "laundry-sort", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:laundry-sort" } },
   { id: "toddler-story-porch", title: "Story Porch", skillIds: ["read-k1-listening-comprehension"], gradeBand: "toddler", experienceId: "story-porch", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:story-porch" } },
+  { id: "toddler-sock-drawer", title: "Sock Drawer", skillIds: ["logic-k1-sorting"], gradeBand: "toddler", experienceId: "sock-drawer", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:sock-drawer" } },
+  { id: "toddler-farm-count", title: "Farm Count", skillIds: ["math-k1-counting"], gradeBand: "toddler", experienceId: "farm-count", experienceType: "toddler-game", launch: { route: "toddler", targetId: "game:farm-count" } },
   { id: "act-secret-dino-cave", title: "Dino Excavation Cave", skillIds: [], gradeBand: "toddler", experienceId: "act-secret-dino-cave", experienceType: "engagement", launch: { route: "toddler", targetId: "worlds" } },
   { id: "act-secret-starlight", title: "Starlight Sky Observatory", skillIds: [], gradeBand: "toddler", experienceId: "act-secret-starlight", experienceType: "engagement", launch: { route: "toddler", targetId: "worlds" } },
   { id: "act-secret-coral", title: "Coral Reef Secret Cavern", skillIds: [], gradeBand: "toddler", experienceId: "act-secret-coral", experienceType: "engagement", launch: { route: "toddler", targetId: "worlds" } },
@@ -330,6 +332,7 @@ export function validateLearningActivityRegistry(): string[] {
     "bubble-pop-phonics", "animal-safari", "feed-animal", "color-magic",
     "rhyme-time", "rainbow-piano", "balloon-sky", "memory-match", "shape-match", "animal-quiz", "bubble-pop",
     "ten-frame-taxi", "blend-kitchen", "bead-train", "picnic-plus", "weather-porch", "laundry-sort", "story-porch",
+    "sock-drawer", "farm-count",
     "letter-trace",
   ]);
 

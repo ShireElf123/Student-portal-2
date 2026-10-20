@@ -983,6 +983,17 @@ const EXTRA_TOYS: Record<string, ToyStation[]> = {
       spokenPrompt: "Trace the farm letter with your finger!",
       skillId: "read-k1-alphabet-letters",
     }),
+    toy({
+      id: "act-farm-pen-count",
+      title: "Pen Farm Count",
+      type: "k1-studio",
+      studioGameId: "farm-count",
+      learningObjective: "Count animals in the stall past five",
+      clueIcon: "🐄",
+      cluePrompt: "Count the animals in the stall.",
+      spokenPrompt: "Count the animals in the farm pen!",
+      skillId: "math-k1-counting",
+    }),
   ],
   "bug-world/flower-bed": [
     toy({
@@ -1052,6 +1063,17 @@ const EXTRA_TOYS: Record<string, ToyStation[]> = {
       clueIcon: "🥛",
       cluePrompt: "Hold to pour. Stop when the cup is happy.",
       spokenPrompt: "Pour a cup. There is no wrong way!",
+    }),
+    toy({
+      id: "act-home-sock-drawer",
+      title: "Home Sock Drawer",
+      type: "k1-studio",
+      studioGameId: "sock-drawer",
+      learningObjective: "Match sock pairs in the family drawer",
+      clueIcon: "🧦",
+      cluePrompt: "Find the matching socks in the drawer.",
+      spokenPrompt: "Find the matching socks in the drawer!",
+      skillId: "logic-k1-sorting",
     }),
   ],
   "adventure-world/forest-trail": [

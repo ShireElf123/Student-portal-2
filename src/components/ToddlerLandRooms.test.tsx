@@ -148,11 +148,12 @@ describe("land rooms", () => {
     expect(stars).toEqual([1, 1, 1]);
   });
 
-  it("stamps a mural, tells stones in order, and counts pebbles 1 to 5", async () => {
+  it("stamps a mural, tells stones in order, and counts pebbles 1 to 10", async () => {
     const stars: number[] = [];
     const mural = render(<ToddlerLandRooms playId="stamp-mural" onAddStar={() => stars.push(1)} />);
     const wall = mural.getByTestId("mural-wall");
-    for (let i = 0; i < 6; i += 1) fireEvent.click(wall);
+    const stamp = mural.getByTestId("stamp-sun");
+    for (let i = 0; i < 6; i += 1) dragOnto(stamp, wall);
     await flush();
     mural.unmount();
 
@@ -164,11 +165,7 @@ describe("land rooms", () => {
     stones.unmount();
 
     const pebbles = render(<ToddlerLandRooms playId="number-pebbles" onAddStar={() => stars.push(1)} />);
-    fireEvent.click(pebbles.getByTestId("pebble-1"));
-    fireEvent.click(pebbles.getByTestId("pebble-2"));
-    fireEvent.click(pebbles.getByTestId("pebble-3"));
-    fireEvent.click(pebbles.getByTestId("pebble-4"));
-    fireEvent.click(pebbles.getByTestId("pebble-5"));
+    for (let n = 1; n <= 10; n += 1) fireEvent.click(pebbles.getByTestId(`pebble-${n}`));
     await flush();
     expect(stars).toEqual([1, 1, 1]);
   });
@@ -178,7 +175,8 @@ describe("land rooms", () => {
     const fire = render(<ToddlerLandRooms playId="campfire" onAddStar={() => stars.push(1)} />);
     fireEvent.click(fire.getByTestId("spark"));
     expect(stars).toEqual([]);
-    for (let i = 0; i < 4; i += 1) fireEvent.click(fire.getByTestId("add-log"));
+    const pit = fire.getByTestId("fire-pit");
+    for (let i = 0; i < 4; i += 1) dragOnto(fire.getByTestId(`log-${i}`), pit);
     fireEvent.click(fire.getByTestId("spark"));
     await flush();
     fire.unmount();
@@ -212,7 +210,8 @@ describe("land rooms", () => {
     vi.useRealTimers();
 
     const dots = render(<ToddlerLandRooms playId="ten-dots" onAddStar={() => stars.push(1)} />);
-    for (let i = 0; i < 10; i += 1) fireEvent.click(dots.getByTestId(`dot-${i}`));
+    const frame = dots.getByTestId("ten-frame");
+    for (let i = 0; i < 10; i += 1) dragOnto(dots.getByTestId(`counter-${i}`), frame);
     await flush();
     dots.unmount();
 

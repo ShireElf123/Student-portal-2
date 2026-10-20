@@ -39,10 +39,10 @@ const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = 
   "load-truck": { title: "Load the truck", line: "Drag four crates onto the truck.", done: "All loaded. Ready to roll!" },
   "fire-hose": { title: "Hang the hoses", line: "Hold the hose. Drag water onto each flame.", done: "The fire house is calm." },
   "fruit-stack": { title: "Stack the stall", line: "Drag fruit onto the plate. Fill five.", done: "A market tower!" },
-  "stamp-mural": { title: "Stamp a mural", line: "Pick a stamp. Press the wall six times.", done: "A wall full of colour!" },
+  "stamp-mural": { title: "Stamp a mural", line: "Drag a stamp onto the wall. Six prints.", done: "A wall full of colour!" },
   "story-stones": { title: "Story stones", line: "Tap the stones in story order.", done: "Once upon a time… you told it!" },
-  "number-pebbles": { title: "Number pebbles", line: "Tap the pebbles from 1 to 5.", done: "The meadow counted with you!" },
-  campfire: { title: "Build a campfire", line: "Lay four logs, then strike a spark.", done: "Warm light on the trail." },
+  "number-pebbles": { title: "Number pebbles", line: "Tap the pebbles from 1 to 10.", done: "The meadow counted with you!" },
+  campfire: { title: "Build a campfire", line: "Drag four logs onto the stones, then strike a spark.", done: "Warm light on the trail." },
   "feeling-face": { title: "Make a feeling", line: "Pick eyes, then a mouth.", done: "That face has a feeling!" },
   "night-tuck": { title: "Tuck in for night", line: "Close three shutters, then hug teddy.", done: "Quiet house. Sweet sleep." },
   "vine-swing": { title: "Swing the vine", line: "Hold the vine. Swing across.", done: "Wheee across the canopy!" },
@@ -53,7 +53,7 @@ const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = 
   "knead-dough": { title: "Knead the dough", line: "Hold to press the dough.", done: "Soft bread ready." },
   "drum-boom": { title: "Boom the drums", line: "Tap the drums 1, then 2, then 3.", done: "A parade beat!" },
   "rocket-stars": { title: "Star the rocket", line: "Drag five stars onto the rocket, then hold to launch.", done: "Whoosh to the moon!" },
-  "ten-dots": { title: "Fill the ten-frame", line: "Tap ten dots. Fill every box.", done: "Ten. A full frame!" },
+  "ten-dots": { title: "Fill the ten-frame", line: "Drag ten counters onto the frame.", done: "Ten. A full frame!" },
   "puddle-jump": { title: "Puddle jump", line: "Drag the boot through the puddles.", done: "Wet boots. Big grin." },
   "brush-teeth": { title: "Brush, brush", line: "Drag the brush across the teeth.", done: "Clean shiny teeth." },
   "owl-hoot": { title: "Owl hoot", line: "Hold to hoot. Three long hoots.", done: "Hoo hoo hoo." },
@@ -506,44 +506,62 @@ const STAMPS = [
 
 function StampMural({ onAddStar }: { onAddStar?: () => void }) {
   const { done, finish } = useCredit(onAddStar);
-  const [tool, setTool] = useState(STAMPS[0].mark);
-  const [marks, setMarks] = useState<string[]>([]);
+  const [marks, setMarks] = useState<{ mark: string; x: number; y: number }[]>([]);
+  const marksRef = useRef<{ mark: string; x: number; y: number }[]>([]);
+  const wallRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef<string | null>(null);
+
+  const drop = (mark: string, clientX: number, clientY: number) => {
+    if (marksRef.current.length >= 6) return;
+    if (!pointerHits(wallRef.current, clientX, clientY, 48)) return;
+    const rect = wallRef.current?.getBoundingClientRect();
+    const x = rect ? ((clientX - rect.left) / Math.max(1, rect.width)) * 100 : 12 + marksRef.current.length * 12;
+    const y = rect ? ((clientY - rect.top) / Math.max(1, rect.height)) * 100 : 20;
+    marksRef.current = [...marksRef.current, { mark, x: Math.min(88, Math.max(6, x)), y: Math.min(78, Math.max(8, y)) }];
+    setMarks(marksRef.current);
+    dragging.current = null;
+    soundEffects.playPop();
+    if (marksRef.current.length >= 6) finish();
+  };
+
   return (
     <Stage playId="stamp-mural" done={done} className="bg-gradient-to-b from-fuchsia-300 via-purple-600 to-indigo-950">
-      <div className="flex gap-2 justify-center mb-3">
+      <div
+        ref={wallRef}
+        data-testid="mural-wall"
+        className="mx-auto mb-4 h-48 w-full max-w-md rounded-3xl bg-amber-50/90 relative overflow-hidden"
+      >
+        <span className="sr-only">Stamp the wall</span>
+        {marks.map((item, i) => (
+          <span key={i} className="absolute text-3xl" style={{ top: `${item.y}%`, left: `${item.x}%` }}>
+            {item.mark}
+          </span>
+        ))}
+      </div>
+      <div className="flex gap-2 justify-center">
         {STAMPS.map((stamp) => (
           <button
             key={stamp.id}
             type="button"
             data-testid={`stamp-${stamp.id}`}
-            className={`min-h-16 min-w-16 text-4xl rounded-2xl px-4 py-3 ${tool === stamp.mark ? "bg-white" : "bg-white/20"}`}
-            onClick={() => setTool(stamp.mark)}
+            className="min-h-16 min-w-16 text-4xl rounded-2xl px-4 py-3 bg-white/20 touch-none"
+            onPointerDown={(event) => {
+              dragging.current = stamp.mark;
+              event.currentTarget.setPointerCapture?.(event.pointerId);
+            }}
+            onPointerMove={(event) => {
+              if (dragging.current !== stamp.mark) return;
+              drop(stamp.mark, event.clientX, event.clientY);
+            }}
+            onPointerUp={(event) => {
+              if (dragging.current === stamp.mark) drop(stamp.mark, event.clientX, event.clientY);
+              dragging.current = null;
+            }}
           >
             {stamp.mark}
           </button>
         ))}
       </div>
-      <button
-        type="button"
-        data-testid="mural-wall"
-        className="mx-auto block h-48 w-full max-w-md rounded-3xl bg-amber-50/90 relative overflow-hidden"
-        onClick={() => {
-          setMarks((prev) => {
-            if (prev.length >= 6) return prev;
-            const next = [...prev, tool];
-            soundEffects.playPop();
-            if (next.length >= 6) finish();
-            return next;
-          });
-        }}
-      >
-        <span className="sr-only">Stamp the wall</span>
-        {marks.map((mark, i) => (
-          <span key={i} className="absolute text-2xl" style={{ top: `${12 + (i % 3) * 28}%`, left: `${10 + i * 12}%` }}>
-            {mark}
-          </span>
-        ))}
-      </button>
     </Stage>
   );
 }
@@ -588,14 +606,14 @@ function NumberPebbles({ onAddStar }: { onAddStar?: () => void }) {
   const [next, setNext] = useState(1);
   return (
     <Stage playId="number-pebbles" done={done} className="bg-gradient-to-b from-teal-200 via-emerald-500 to-lime-900">
-      <div className="flex flex-wrap justify-center gap-4 mt-10">
-        {[3, 1, 5, 2, 4].map((n) => (
+      <div className="flex flex-wrap justify-center gap-3 mt-8 max-w-md mx-auto">
+        {[7, 3, 1, 9, 5, 2, 10, 4, 8, 6].map((n) => (
           <button
             key={n}
             type="button"
             data-testid={`pebble-${n}`}
             disabled={n < next}
-            className={`h-20 w-20 rounded-full text-3xl font-black ${n < next ? "bg-white text-emerald-800" : "bg-stone-700 text-white"}`}
+            className={`h-16 w-16 rounded-full text-2xl font-black ${n < next ? "bg-white text-emerald-800" : "bg-stone-700 text-white"}`}
             onClick={() => {
               if (n !== next) {
                 soundEffects.playGentleBoing();
@@ -604,7 +622,7 @@ function NumberPebbles({ onAddStar }: { onAddStar?: () => void }) {
               soundEffects.playPop();
               const after = next + 1;
               setNext(after);
-              if (after > 5) finish();
+              if (after > 10) finish();
             }}
           >
             {n}
@@ -617,34 +635,62 @@ function NumberPebbles({ onAddStar }: { onAddStar?: () => void }) {
 
 function Campfire({ onAddStar }: { onAddStar?: () => void }) {
   const { done, finish } = useCredit(onAddStar);
-  const [logs, setLogs] = useState(0);
+  const [logs, setLogs] = useState<number[]>([]);
+  const logsRef = useRef<number[]>([]);
+  const pitRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef<number | null>(null);
   const [lit, setLit] = useState(false);
+
+  const drop = (log: number, clientX: number, clientY: number) => {
+    if (logsRef.current.includes(log) || logsRef.current.length >= 4) return;
+    if (!pointerHits(pitRef.current, clientX, clientY, 48)) return;
+    logsRef.current = [...logsRef.current, log];
+    setLogs(logsRef.current);
+    soundEffects.playPop();
+  };
+
   return (
     <Stage playId="campfire" done={done} className="bg-gradient-to-b from-sky-900 via-indigo-950 to-black">
       <div className="flex flex-col items-center gap-5 mt-6">
-        <div className="text-7xl" data-testid="fire-pit">
-          {lit ? "🔥" : logs ? "🪵".repeat(Math.min(logs, 4)) : "🪨"}
+        <div ref={pitRef} className="text-7xl min-h-24 min-w-32 text-center" data-testid="fire-pit">
+          {lit ? "🔥" : logs.length ? "🪵".repeat(logs.length) : "🪨"}
         </div>
-        <button
-          type="button"
-          data-testid="add-log"
-          className="min-h-14 rounded-full bg-amber-200 px-8 py-4 text-lg font-black text-amber-950"
-          onClick={() => {
-            setLogs((n) => {
-              const next = Math.min(4, n + 1);
-              soundEffects.playPop();
-              return next;
-            });
-          }}
-        >
-          Lay a log
-        </button>
+        <div className="flex gap-3">
+          {[0, 1, 2, 3].map((log) =>
+            logs.includes(log) ? (
+              <span key={log} className="min-h-16 min-w-16 text-5xl opacity-20">
+                🪵
+              </span>
+            ) : (
+              <button
+                key={log}
+                type="button"
+                data-testid={`log-${log}`}
+                className="min-h-16 min-w-16 text-5xl touch-none"
+                onPointerDown={(event) => {
+                  dragging.current = log;
+                  event.currentTarget.setPointerCapture?.(event.pointerId);
+                }}
+                onPointerMove={(event) => {
+                  if (dragging.current !== log) return;
+                  drop(log, event.clientX, event.clientY);
+                }}
+                onPointerUp={(event) => {
+                  if (dragging.current === log) drop(log, event.clientX, event.clientY);
+                  dragging.current = null;
+                }}
+              >
+                🪵
+              </button>
+            )
+          )}
+        </div>
         <button
           type="button"
           data-testid="spark"
           className="min-h-14 rounded-full bg-orange-500 px-8 py-4 text-lg font-black text-white"
           onClick={() => {
-            if (logs < 4) {
+            if (logs.length < 4) {
               soundEffects.playGentleBoing();
               speakText("Lay four logs first!", { pitch: 1.2 });
               return;
@@ -1074,27 +1120,58 @@ function RocketStars({ onAddStar }: { onAddStar?: () => void }) {
 }
 function TenDots({ onAddStar }: { onAddStar?: () => void }) {
   const { done, finish } = useCredit(onAddStar);
-  const [on, setOn] = useState<number[]>([]);
+  const [filled, setFilled] = useState<number[]>([]);
+  const filledRef = useRef<number[]>([]);
+  const frameRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef<number | null>(null);
+
+  const drop = (counter: number, clientX: number, clientY: number) => {
+    if (filledRef.current.includes(counter) || filledRef.current.length >= 10) return;
+    if (!pointerHits(frameRef.current, clientX, clientY, 48)) return;
+    filledRef.current = [...filledRef.current, counter];
+    setFilled(filledRef.current);
+    soundEffects.playPop();
+    if (filledRef.current.length >= 10) finish();
+  };
+
   return (
     <Stage playId="ten-dots" done={done} className="bg-gradient-to-b from-lime-200 via-emerald-400 to-teal-800">
-      <div className="grid grid-cols-5 gap-3 max-w-sm mx-auto mt-6">
-        {Array.from({ length: 10 }, (_, i) => (
-          <button
-            key={i}
-            type="button"
-            data-testid={`dot-${i}`}
-            className={`h-14 w-14 rounded-xl border-4 ${on.includes(i) ? "bg-amber-300 border-white" : "bg-white/20 border-white/50"}`}
-            onClick={() => {
-              setOn((prev) => {
-                if (prev.includes(i)) return prev;
-                const next = [...prev, i];
-                soundEffects.playPop();
-                if (next.length >= 10) finish();
-                return next;
-              });
-            }}
-          />
-        ))}
+      <div className="flex flex-col items-center gap-6 mt-4">
+        <div ref={frameRef} data-testid="ten-frame" className="grid grid-cols-5 gap-2 rounded-3xl bg-white/20 p-3">
+          {Array.from({ length: 10 }, (_, i) => (
+            <div
+              key={i}
+              data-testid={`dot-${i}`}
+              className={`h-12 w-12 rounded-xl border-4 ${i < filled.length ? "bg-amber-300 border-white" : "bg-white/10 border-white/50"}`}
+            />
+          ))}
+        </div>
+        <div className="flex flex-wrap justify-center gap-2 max-w-sm">
+          {Array.from({ length: 10 }, (_, i) =>
+            filled.includes(i) ? (
+              <span key={i} className="h-12 w-12 rounded-full bg-amber-200/20 opacity-20" />
+            ) : (
+              <button
+                key={i}
+                type="button"
+                data-testid={`counter-${i}`}
+                className="h-12 w-12 rounded-full bg-amber-300 border-4 border-white touch-none"
+                onPointerDown={(event) => {
+                  dragging.current = i;
+                  event.currentTarget.setPointerCapture?.(event.pointerId);
+                }}
+                onPointerMove={(event) => {
+                  if (dragging.current !== i) return;
+                  drop(i, event.clientX, event.clientY);
+                }}
+                onPointerUp={(event) => {
+                  if (dragging.current === i) drop(i, event.clientX, event.clientY);
+                  dragging.current = null;
+                }}
+              />
+            )
+          )}
+        </div>
       </div>
     </Stage>
   );

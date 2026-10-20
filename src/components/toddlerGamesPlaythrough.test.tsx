@@ -378,6 +378,11 @@ describe("K–1 skill studio (curated, AI off)", () => {
     await playCorrect("4 grapes");
     await playCorrect("0 cookies");
     await playCorrect("7 sandwiches");
+    await playCorrect("5 apples");
+    await playCorrect("8 muffins");
+    await playCorrect("6 cups");
+    await playCorrect("5 plums");
+    await playCorrect("10 crackers");
 
     expect(container.textContent).toContain("You did it!");
     fireEvent.click(getByText("Play Picnic Plus again"));
