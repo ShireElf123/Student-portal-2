@@ -162,9 +162,30 @@ export interface SpeakOptions {
   onStart?: () => void;
   onEnd?: () => void;
   onError?: (err: unknown) => void;
+  /** Word-by-word read-along. charIndex is in the spoken string. */
+  onBoundary?: (info: { charIndex: number; wordIndex: number }) => void;
   timeoutFallbackMs?: number;
   profile?: VoiceProfile;
   isRetry?: boolean;
+}
+
+/** Start indexes of each spoken word, for read-along highlight. */
+export function wordStarts(text: string): number[] {
+  const starts: number[] = [];
+  const re = /\S+/g;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(text))) starts.push(match.index);
+  return starts;
+}
+
+export function wordIndexFromCharIndex(text: string, charIndex: number): number {
+  const starts = wordStarts(text);
+  if (starts.length === 0) return 0;
+  let index = 0;
+  for (let i = 0; i < starts.length; i++) {
+    if (charIndex >= starts[i]) index = i;
+  }
+  return index;
 }
 
 export type SpeechListener = (isSpeaking: boolean) => void;
@@ -519,10 +540,28 @@ class SpeechCoordinator {
         utterance.rate = naturalRate;
 
         let hasFinished = false;
+        let boundaryHeard = false;
+        let fallbackTick: ReturnType<typeof setInterval> | null = null;
+
+        const emitBoundary = (charIndex: number) => {
+          if (token !== this.activeToken || hasFinished) return;
+          try {
+            options?.onBoundary?.({
+              charIndex,
+              wordIndex: wordIndexFromCharIndex(cleanText, charIndex),
+            });
+          } catch {
+            // ignore
+          }
+        };
 
         const handleFinish = () => {
           if (hasFinished) return;
           hasFinished = true;
+          if (fallbackTick) {
+            clearInterval(fallbackTick);
+            fallbackTick = null;
+          }
 
           // Only this utterance's own watchdog may be disarmed here.
           this.clearActiveWatchdog(token);
@@ -546,7 +585,21 @@ class SpeechCoordinator {
             } catch {
               // ignore
             }
+            const starts = wordStarts(cleanText);
+            if (starts.length > 0) emitBoundary(starts[0]);
           }
+        };
+
+        utterance.onboundary = (event: SpeechSynthesisEvent) => {
+          if (token !== this.activeToken || hasFinished) return;
+          const name = (event as SpeechSynthesisEvent & { name?: string }).name;
+          if (name && name !== "word") return;
+          boundaryHeard = true;
+          if (fallbackTick) {
+            clearInterval(fallbackTick);
+            fallbackTick = null;
+          }
+          emitBoundary(typeof event.charIndex === "number" ? event.charIndex : 0);
         };
 
         utterance.onend = () => {
@@ -596,6 +649,27 @@ class SpeechCoordinator {
             }
           }, timeoutDuration),
         };
+
+        // Some mobile browsers never fire word boundaries. Walk the words on a timer until a real boundary arrives.
+        if (options?.onBoundary) {
+          const starts = wordStarts(cleanText);
+          const stepMs = Math.max(280, Math.floor(timeoutDuration / Math.max(2, starts.length + 1)));
+          let walk = 1;
+          fallbackTick = setInterval(() => {
+            if (token !== this.activeToken || hasFinished || boundaryHeard) {
+              if (fallbackTick) clearInterval(fallbackTick);
+              fallbackTick = null;
+              return;
+            }
+            if (walk >= starts.length) {
+              if (fallbackTick) clearInterval(fallbackTick);
+              fallbackTick = null;
+              return;
+            }
+            emitBoundary(starts[walk]);
+            walk += 1;
+          }, stepMs);
+        }
 
         // Keep a reference on window to prevent Chrome garbage-collecting active utterance prematurely
         (window as unknown as { __activeSpeechUtterance?: SpeechSynthesisUtterance }).__activeSpeechUtterance = utterance;

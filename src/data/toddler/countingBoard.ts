@@ -111,6 +111,24 @@ export const PATTERN_ROUNDS: PatternRound[] = [
   { id: "pat-loaf", shown: ["🥣", "🍞", "🥣", "🍞", "?"], options: ["🥣", "🚌"], answer: "🥣", spoken: "Bowl, loaf, bowl, loaf. What comes next?" },
 ];
 
+export interface NextNumberRound {
+  n: number;
+  answer: number;
+  options: [number, number, number];
+  spoken: string;
+}
+
+export const NEXT_NUMBER_ROUNDS: NextNumberRound[] = [
+  { n: 1, answer: 2, options: [2, 5, 9], spoken: "One. What number comes next?" },
+  { n: 3, answer: 4, options: [4, 2, 8], spoken: "Three. What number comes next?" },
+  { n: 4, answer: 5, options: [5, 1, 7], spoken: "Four. What number comes next?" },
+  { n: 6, answer: 7, options: [7, 9, 2], spoken: "Six. What number comes next?" },
+  { n: 9, answer: 10, options: [10, 8, 3], spoken: "Nine. What number comes next?" },
+  { n: 10, answer: 11, options: [11, 20, 8], spoken: "Ten. What number comes next?" },
+  { n: 14, answer: 15, options: [15, 13, 4], spoken: "Fourteen. What number comes next?" },
+  { n: 19, answer: 20, options: [20, 18, 10], spoken: "Nineteen. What number comes next?" },
+];
+
 export const SHAPE_ROUNDS: ShapeRound[] = [
   { id: "sh-sun", name: "Circle", emoji: "☀️", spoken: "The chalk sun. What shape?", options: ["Circle", "Square", "Triangle"] },
   { id: "sh-mat", name: "Square", emoji: "🟫", spoken: "The welcome mat. What shape?", options: ["Square", "Circle", "Triangle"] },

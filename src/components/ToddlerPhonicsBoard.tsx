@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Volume2 } from "lucide-react";
 import {
   BLEND_WORDS,
+  LETTER_NEXT_ROUNDS,
   PHONICS_TILES,
   SIGHT_WORDS,
   SOUND_HUNTS,
@@ -16,7 +17,7 @@ import { recordPhonicsLetterTapped } from "../data/toddler/toddlerDailyAdventure
 import { ToddlerLetterTrace } from "./ToddlerLetterTrace";
 import { CharacterAnchor } from "./landscape/LandscapeDecorations";
 
-type Mode = "letters" | "hunt" | "blend" | "families" | "sight";
+type Mode = "letters" | "hunt" | "blend" | "families" | "sight" | "order";
 
 const MODES: { id: Mode; label: string; emoji: string }[] = [
   { id: "letters", label: "Letters", emoji: "🔤" },
@@ -24,6 +25,7 @@ const MODES: { id: Mode; label: string; emoji: string }[] = [
   { id: "blend", label: "Blend", emoji: "🧩" },
   { id: "families", label: "Families", emoji: "🐱" },
   { id: "sight", label: "Sight words", emoji: "👀" },
+  { id: "order", label: "ABC order", emoji: "➡️" },
 ];
 
 function shuffle<T>(items: T[]): T[] {
@@ -45,9 +47,11 @@ export function ToddlerPhonicsBoard({
   const [blendIndex, setBlendIndex] = useState(0);
   const [blendStep, setBlendStep] = useState(0);
   const [sightIndex, setSightIndex] = useState(0);
+  const [orderIndex, setOrderIndex] = useState(0);
   const hunt = SOUND_HUNTS[huntIndex % SOUND_HUNTS.length];
   const blend: BlendWord = BLEND_WORDS[blendIndex % BLEND_WORDS.length];
   const sight = SIGHT_WORDS[sightIndex % SIGHT_WORDS.length];
+  const order = LETTER_NEXT_ROUNDS[orderIndex % LETTER_NEXT_ROUNDS.length];
   const huntChoices = useMemo(() => shuffle([hunt.letter, ...hunt.decoys]), [hunt]);
 
   const panel = isMeadow ? "bg-white border-pink-300 text-slate-900" : "bg-[#16162a] border-pink-500/40 text-white";
@@ -71,7 +75,7 @@ export function ToddlerPhonicsBoard({
           <span>🔤</span> ABC Phonics
         </h2>
         <p className={`text-sm sm:text-base font-semibold ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
-          Letters, first sounds, blending, families, sight words. Neighborhood words. Trace if you like.
+          Letters, first sounds, blending, families, sight words, and ABC order. Neighborhood words. Trace if you like.
         </p>
       </div>
 
@@ -86,6 +90,7 @@ export function ToddlerPhonicsBoard({
               if (item.id === "hunt") speakText(hunt.spoken, { pitch: 1.16, rate: 0.9 });
               if (item.id === "blend") speakText("Tap the letters in order.", { pitch: 1.16, rate: 0.9 });
               if (item.id === "sight") speakText(sight.spoken, { pitch: 1.16, rate: 0.9 });
+              if (item.id === "order") speakText(order.spoken, { pitch: 1.16, rate: 0.9 });
             }}
             className={`min-h-14 rounded-full px-4 py-2 font-black border-b-4 ${
               mode === item.id ? "bg-pink-400 border-pink-700 text-pink-950" : ghost
@@ -304,6 +309,35 @@ export function ToddlerPhonicsBoard({
             </div>
           )}
         </>
+      )}
+
+      {mode === "order" && (
+        <div className={`rounded-[2rem] border-4 p-5 ${panel}`}>
+          <p className="text-4xl font-black tracking-widest mb-2">{order.shown} ?</p>
+          <p className="text-lg font-black mb-4">{order.spoken}</p>
+          <div className="flex flex-wrap gap-3">
+            {order.options.map((option) => (
+              <button
+                key={option}
+                type="button"
+                className="min-h-16 min-w-16 rounded-full bg-pink-100 px-6 py-3 text-3xl font-black text-pink-950 border-b-4 border-pink-500"
+                onClick={() => {
+                  if (option !== order.answer) {
+                    speakText("Try another letter.", { pitch: 1.1 });
+                    return;
+                  }
+                  onAddStar?.();
+                  soundEffects.playPop();
+                  const next = (orderIndex + 1) % LETTER_NEXT_ROUNDS.length;
+                  setOrderIndex(next);
+                  speakText(`Yes. ${option}. ${LETTER_NEXT_ROUNDS[next].spoken}`, { pitch: 1.16, rate: 0.9 });
+                }}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </div>
       )}
 
       {mode === "sight" && (

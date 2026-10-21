@@ -161,6 +161,9 @@ describe("story library", () => {
     const elevatorButtons = PICTURE_BOOKS.find((book) => book.id === "elevator-buttons");
     expect(elevatorButtons?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const safariAlphabet = PICTURE_BOOKS.find((book) => book.id === "safari-alphabet");
+    expect(safariAlphabet?.pages.length).toBe(15);
+    expect(safariAlphabet?.pages.map((page) => page.title).join(" ")).toMatch(/Fox/);
+    expect(safariAlphabet?.pages.map((page) => page.title).join(" ")).toMatch(/Ostrich/);
     expect(safariAlphabet?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const gardenCounting = PICTURE_BOOKS.find((book) => book.id === "garden-counting");
     expect(gardenCounting?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
@@ -297,7 +300,7 @@ describe("story library", () => {
     expect(home?.pages[1].text.toLowerCase()).toContain("teddy");
     expect(home?.pages[1].text).not.toMatch(/\bMum\b/);
     const safari = PICTURE_BOOKS.find((book) => book.id === "safari-alphabet");
-    expect(safari?.subtitle.toLowerCase()).toContain("a through e");
+    expect(safari?.subtitle.toLowerCase()).toContain("a through o");
   });
 
   it("maps every scored page to a real picture-book skill", () => {

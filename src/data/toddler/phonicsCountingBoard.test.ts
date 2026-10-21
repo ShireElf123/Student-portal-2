@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { COUNTING_CARDS, MAKE_TEN_ROUNDS, MORE_LESS_ROUNDS, PATTERN_ROUNDS, SHAPE_ROUNDS, SUBITIZE_ROUNDS } from "./countingBoard";
-import { BLEND_WORDS, PHONICS_TILES, SIGHT_WORDS, SOUND_HUNTS, WORD_FAMILIES } from "./phonicsBoard";
+import { COUNTING_CARDS, MAKE_TEN_ROUNDS, MORE_LESS_ROUNDS, NEXT_NUMBER_ROUNDS, PATTERN_ROUNDS, SHAPE_ROUNDS, SUBITIZE_ROUNDS } from "./countingBoard";
+import { BLEND_WORDS, LETTER_NEXT_ROUNDS, PHONICS_TILES, SIGHT_WORDS, SOUND_HUNTS, WORD_FAMILIES } from "./phonicsBoard";
 
 describe("phonics and counting boards", () => {
   it("keeps twenty-six unique letters with three neighborhood words each", () => {
@@ -36,5 +36,10 @@ describe("phonics and counting boards", () => {
     expect(SIGHT_WORDS.every((round) => round.sentence.toLowerCase().includes(round.word.toLowerCase()))).toBe(true);
     expect(PATTERN_ROUNDS.length).toBeGreaterThanOrEqual(8);
     expect(PATTERN_ROUNDS.every((round) => round.options.includes(round.answer))).toBe(true);
+    expect(NEXT_NUMBER_ROUNDS.length).toBeGreaterThanOrEqual(8);
+    expect(NEXT_NUMBER_ROUNDS.every((round) => round.options.includes(round.answer))).toBe(true);
+    expect(LETTER_NEXT_ROUNDS.length).toBeGreaterThanOrEqual(8);
+    expect(LETTER_NEXT_ROUNDS.every((round) => round.options.includes(round.answer))).toBe(true);
+    expect(BLEND_WORDS.length).toBeGreaterThanOrEqual(16);
   });
 });

@@ -136,4 +136,26 @@ export const BLEND_WORDS: BlendWord[] = [
   { word: "pig", emoji: "🐷", letters: ["P", "I", "G"], spoken: "P. I. G. Pig." },
   { word: "hop", emoji: "🐰", letters: ["H", "O", "P"], spoken: "H. O. P. Hop." },
   { word: "red", emoji: "🔴", letters: ["R", "E", "D"], spoken: "R. E. D. Red." },
+  { word: "fox", emoji: "🦊", letters: ["F", "O", "X"], spoken: "F. O. X. Fox." },
+  { word: "log", emoji: "🪵", letters: ["L", "O", "G"], spoken: "L. O. G. Log." },
+  { word: "ten", emoji: "🔟", letters: ["T", "E", "N"], spoken: "T. E. N. Ten." },
+  { word: "map", emoji: "🗺️", letters: ["M", "A", "P"], spoken: "M. A. P. Map." },
+];
+
+export interface LetterNextRound {
+  shown: string;
+  answer: string;
+  options: [string, string, string];
+  spoken: string;
+}
+
+export const LETTER_NEXT_ROUNDS: LetterNextRound[] = [
+  { shown: "A B C", answer: "D", options: ["D", "M", "S"], spoken: "A, B, C. What letter comes next?" },
+  { shown: "D E F", answer: "G", options: ["G", "A", "R"], spoken: "D, E, F. What letter comes next?" },
+  { shown: "H I J", answer: "K", options: ["K", "B", "P"], spoken: "H, I, J. What letter comes next?" },
+  { shown: "L M N", answer: "O", options: ["O", "T", "C"], spoken: "L, M, N. What letter comes next?" },
+  { shown: "P Q R", answer: "S", options: ["S", "A", "N"], spoken: "P, Q, R. What letter comes next?" },
+  { shown: "S T U", answer: "V", options: ["V", "B", "M"], spoken: "S, T, U. What letter comes next?" },
+  { shown: "V W X", answer: "Y", options: ["Y", "D", "H"], spoken: "V, W, X. What letter comes next?" },
+  { shown: "W X Y", answer: "Z", options: ["Z", "A", "K"], spoken: "W, X, Y. What letter comes next?" },
 ];

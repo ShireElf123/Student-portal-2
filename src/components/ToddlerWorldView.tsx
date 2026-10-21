@@ -131,26 +131,33 @@ function booksForRow(id: "featured" | "teddy-nana" | "street" | "first-words" | 
 function StoryReadAloudText({
   text,
   highlights,
+  activeWordIndex,
   onSpeakWord,
 }: {
   text: string;
   highlights?: string[];
+  activeWordIndex?: number | null;
   onSpeakWord: (word: string) => void;
 }) {
   const wanted = new Set((highlights ?? []).map((word) => word.toLowerCase()));
   const parts = text.split(/(\s+)/);
+  let wordNumber = -1;
   return (
     <p className="text-lg sm:text-2xl font-black text-slate-800 leading-relaxed">
       {parts.map((part, index) => {
         const clean = part.replace(/[^A-Za-z0-9']/g, "");
         if (!clean) return <span key={`${part}-${index}`}>{part}</span>;
+        wordNumber += 1;
         const gold = wanted.has(clean.toLowerCase());
+        const reading = activeWordIndex === wordNumber;
         return (
           <button
             key={`${clean}-${index}`}
             type="button"
-            className={`inline min-h-12 rounded-md px-1 ${
-              gold
+            className={`inline min-h-12 rounded-md px-1 transition-colors ${
+              reading
+                ? "bg-amber-400 text-amber-950 ring-2 ring-amber-600"
+                : gold
                 ? "bg-amber-200 text-amber-950 underline decoration-amber-500 decoration-2 underline-offset-4"
                 : "hover:bg-amber-100"
             }`}
@@ -239,6 +246,7 @@ export function ToddlerWorldView({
     selectedBook?.id === `generated-${initialBlueprint.id}` ? initialBlueprint : null;
   const [isBookCompleted, setIsBookCompleted] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  const [readAlongWordIndex, setReadAlongWordIndex] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState<boolean>(() => speechCoordinator.isMuted());
   const [starsCount, setStarsCount] = useState<number>(() => {
     return getGamificationState().starsCount;
@@ -439,6 +447,15 @@ export function ToddlerWorldView({
     }
   };
 
+  const speakPrintedPage = (page: PictureBookPage) => {
+    const line = spokenPageText(page);
+    setReadAlongWordIndex(0);
+    speakText(line, {
+      onBoundary: ({ wordIndex }) => setReadAlongWordIndex(wordIndex),
+      onEnd: () => setReadAlongWordIndex(null),
+    });
+  };
+
   const handleOpenBook = (book: PictureBook, pageIndex = 0, learnerId?: string) => {
     const startingPage = book.pages[pageIndex];
     if (!startingPage) return;
@@ -470,10 +487,10 @@ export function ToddlerWorldView({
         };
         aud.play().catch(() => {
           setIsPlayingParentAudio(false);
-          speakText(spokenPageText(startingPage));
+          speakPrintedPage(startingPage);
         });
       } else if (readModeRef.current === "to-me") {
-        speakText(spokenPageText(startingPage));
+        speakPrintedPage(startingPage);
       }
     });
   };
@@ -497,6 +514,7 @@ export function ToddlerWorldView({
 
   const handleCloseBook = () => {
     stopSpeaking();
+    setReadAlongWordIndex(null);
     if (audioPlayerRef.current) {
       audioPlayerRef.current.pause();
       audioPlayerRef.current = null;
@@ -539,10 +557,10 @@ export function ToddlerWorldView({
           };
           aud.play().catch(() => {
             setIsPlayingParentAudio(false);
-            speakText(spokenPageText(selectedBook.pages[nextIdx]));
+            speakPrintedPage(selectedBook.pages[nextIdx]);
           });
         } else if (readModeRef.current === "to-me") {
-          speakText(spokenPageText(selectedBook.pages[nextIdx]));
+          speakPrintedPage(selectedBook.pages[nextIdx]);
         }
       });
       if (!visitedBookPagesRef.current.has(nextIdx)) {
@@ -603,10 +621,10 @@ export function ToddlerWorldView({
         };
         aud.play().catch(() => {
           setIsPlayingParentAudio(false);
-          if (readModeRef.current === "to-me") speakText(spokenPageText(selectedBook.pages[prevIdx]));
+          if (readModeRef.current === "to-me") speakPrintedPage(selectedBook.pages[prevIdx]);
         });
       } else if (readModeRef.current === "to-me") {
-        speakText(spokenPageText(selectedBook.pages[prevIdx]));
+        speakPrintedPage(selectedBook.pages[prevIdx]);
       }
     });
   };
@@ -621,12 +639,14 @@ export function ToddlerWorldView({
 
     if (isSpeaking) {
       stopSpeaking();
+      setReadAlongWordIndex(null);
       return;
     }
 
     // Play parent recording if available
     if (parentAudioRecord?.audioBlob) {
       stopSpeaking();
+      setReadAlongWordIndex(null);
       const url = URL.createObjectURL(parentAudioRecord.audioBlob);
       const aud = new Audio(url);
       audioPlayerRef.current = aud;
@@ -638,16 +658,19 @@ export function ToddlerWorldView({
       aud.onerror = () => {
         setIsPlayingParentAudio(false);
         audioPlayerRef.current = null;
-        speakText(text);
+        if (activePage) speakPrintedPage(activePage);
+        else speakText(text);
       };
       aud.play().catch(() => {
         setIsPlayingParentAudio(false);
-        speakText(text);
+        if (activePage) speakPrintedPage(activePage);
+        else speakText(text);
       });
       return;
     }
 
-    speakText(text);
+    if (activePage) speakPrintedPage(activePage);
+    else speakText(text);
   };
 
   const handleStartParentRecording = async () => {
@@ -1377,6 +1400,7 @@ export function ToddlerWorldView({
                       onClick={() => {
                         setReadMode("myself");
                         stopSpeaking();
+                        setReadAlongWordIndex(null);
                       }}
                       className={`min-h-10 px-3 rounded-xl text-xs font-black ${readMode === "myself" ? "bg-amber-400 text-amber-950" : "text-slate-600"}`}
                     >
@@ -1510,6 +1534,7 @@ export function ToddlerWorldView({
                       <StoryReadAloudText
                         text={activePage.text}
                         highlights={activePage.wordHighlights}
+                        activeWordIndex={readAlongWordIndex}
                         onSpeakWord={(word) => speakText(word, { pitch: 1.18 })}
                       />
 
@@ -1628,7 +1653,7 @@ export function ToddlerWorldView({
                         setCurrentPageIndex(0);
                         setIsBookCompleted(false);
                         if (selectedBook.pages[0]) {
-                          speakText(spokenPageText(selectedBook.pages[0]));
+                          speakPrintedPage(selectedBook.pages[0]);
                         }
                       }}
                       className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-b from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-amber-950 font-black text-sm border-b-4 border-orange-700 shadow-lg transition-all active:translate-y-1 cursor-pointer"

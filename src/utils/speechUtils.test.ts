@@ -197,6 +197,12 @@ describe("prepareSpeechText and spokenPageText", () => {
     ).toBe("Pip unfolds a map. The pine path is this way.");
   });
 
+  it("maps a spoken character to the current word for read-along", async () => {
+    const { wordIndexFromCharIndex } = await loadCoordinator();
+    expect(wordIndexFromCharIndex("A says a. Apple.", 0)).toBe(0);
+    expect(wordIndexFromCharIndex("A says a. Apple.", 7)).toBe(2);
+  });
+
   it("sends the cleaned line to the speech engine", async () => {
     installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
     const { speakText } = await loadCoordinator();
