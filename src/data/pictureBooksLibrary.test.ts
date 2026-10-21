@@ -76,7 +76,9 @@ describe("story library", () => {
     expect(rain?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(ferry?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const pot = PICTURE_BOOKS.find((book) => book.id === "hot-pot-sip");
+    const hug = PICTURE_BOOKS.find((book) => book.id === "big-hug-bed");
     expect(pot?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(hug?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["hot-pot-sip"]).toBe("/covers/hot-pot-sip.jpg");
     expect(PICTURE_BOOK_COVERS["big-hug-bed"]).toBe("/covers/big-hug-bed.jpg");
     expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);

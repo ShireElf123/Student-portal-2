@@ -160,4 +160,12 @@ export const PICTURE_BOOK_SPREADS: Record<string, string> = {
   "hot-pot-sip:6": "/spreads/hot-pot-sip-6.jpg",
   "hot-pot-sip:7": "/spreads/hot-pot-sip-7.jpg",
   "hot-pot-sip:8": "/spreads/hot-pot-sip-8.jpg",
+  "big-hug-bed:1": "/spreads/big-hug-bed-1.jpg",
+  "big-hug-bed:2": "/spreads/big-hug-bed-2.jpg",
+  "big-hug-bed:3": "/spreads/big-hug-bed-3.jpg",
+  "big-hug-bed:4": "/spreads/big-hug-bed-4.jpg",
+  "big-hug-bed:5": "/spreads/big-hug-bed-5.jpg",
+  "big-hug-bed:6": "/spreads/big-hug-bed-6.jpg",
+  "big-hug-bed:7": "/spreads/big-hug-bed-7.jpg",
+  "big-hug-bed:8": "/spreads/big-hug-bed-8.jpg",
 };
