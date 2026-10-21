@@ -144,4 +144,12 @@ export const PICTURE_BOOK_SPREADS: Record<string, string> = {
   "what-rain-does:10": "/spreads/what-rain-does-10.jpg",
   "how-a-ferry-floats:1": "/spreads/how-a-ferry-floats-1.jpg",
   "how-a-ferry-floats:2": "/spreads/how-a-ferry-floats-2.jpg",
+  "how-a-ferry-floats:3": "/spreads/how-a-ferry-floats-3.jpg",
+  "how-a-ferry-floats:4": "/spreads/how-a-ferry-floats-4.jpg",
+  "how-a-ferry-floats:5": "/spreads/how-a-ferry-floats-5.jpg",
+  "how-a-ferry-floats:6": "/spreads/how-a-ferry-floats-6.jpg",
+  "how-a-ferry-floats:7": "/spreads/how-a-ferry-floats-7.jpg",
+  "how-a-ferry-floats:8": "/spreads/how-a-ferry-floats-8.jpg",
+  "how-a-ferry-floats:9": "/spreads/how-a-ferry-floats-9.jpg",
+  "how-a-ferry-floats:10": "/spreads/how-a-ferry-floats-10.jpg",
 };

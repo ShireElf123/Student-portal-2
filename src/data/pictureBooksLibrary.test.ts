@@ -74,7 +74,7 @@ describe("story library", () => {
     expect(mail?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(bread?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(rain?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
-    expect(ferry?.pages.slice(0, 2).every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(ferry?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);
     expect(Object.values(PICTURE_BOOK_SPREADS).every((path) => path.endsWith(".jpg"))).toBe(true);
     expect(Object.keys(PICTURE_BOOK_SPREADS).length).toBeGreaterThanOrEqual(16);
