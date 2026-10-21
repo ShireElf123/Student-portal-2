@@ -156,6 +156,16 @@ describe("story library", () => {
     expect(PICTURE_BOOK_COVERS["nana-soup-pot"]).toBe("/covers/nana-soup-pot.jpg");
     expect(PICTURE_BOOK_COVERS["pond-edge-bugs"]).toBe("/covers/pond-edge-bugs.jpg");
     expect(PICTURE_BOOK_COVERS["park-green-picnic"]).toBe("/covers/park-green-picnic.jpg");
+    expect(PICTURE_BOOK_COVERS["safari-alphabet"]).toBe("/covers/safari-alphabet.jpg");
+    expect(PICTURE_BOOK_COVERS["garden-counting"]).toBe("/covers/garden-counting.jpg");
+    expect(PICTURE_BOOK_COVERS["colors-shapes-circus"]).toBe("/covers/colors-shapes-circus.jpg");
+    expect(PICTURE_BOOK_COVERS["little-bear-bedtime"]).toBe("/covers/little-bear-bedtime.jpg");
+    expect(PICTURE_BOOK_COVERS["buddy-farm-tale"]).toBe("/covers/buddy-farm-tale.jpg");
+    expect(PICTURE_BOOK_COVERS["rocket-space-trip"]).toBe("/covers/rocket-space-trip.jpg");
+    expect(PICTURE_BOOK_COVERS["ocean-friends-dive"]).toBe("/covers/ocean-friends-dive.jpg");
+    expect(PICTURE_BOOK_COVERS["feelings-with-leo"]).toBe("/covers/feelings-with-leo.jpg");
+    expect(PICTURE_BOOK_COVERS["atelier-paint-day"]).toBe("/covers/atelier-paint-day.jpg");
+    expect(PICTURE_BOOK_COVERS["letter-meadow-abc"]).toBe("/covers/letter-meadow-abc.jpg");
     expect(PICTURE_BOOK_COVERS["hot-pot-sip"]).toBe("/covers/hot-pot-sip.jpg");
     expect(PICTURE_BOOK_COVERS["big-hug-bed"]).toBe("/covers/big-hug-bed.jpg");
     expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);
