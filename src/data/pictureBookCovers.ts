@@ -35,6 +35,7 @@ export const PICTURE_BOOK_COVERS: Record<string, string> = {
   "red-bus-run": "/covers/red-bus-run.jpg",
   "pig-in-mud": "/covers/pig-in-mud.jpg",
   "fox-in-box": "/covers/fox-in-box.jpg",
+  "dog-on-log": "/covers/dog-on-log.jpg",
 };
 
 export const PLAYHOUSE_COVERS: Record<string, string> = {

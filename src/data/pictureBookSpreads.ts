@@ -28,4 +28,13 @@ export const PICTURE_BOOK_SPREADS: Record<string, string> = {
   "fox-in-box:2": "/spreads/fox-in-box-2.jpg",
   "fox-in-box:3": "/spreads/fox-in-box-3.jpg",
   "fox-in-box:4": "/spreads/fox-in-box-4.jpg",
+  "fox-in-box:5": "/spreads/fox-in-box-5.jpg",
+  "fox-in-box:6": "/spreads/fox-in-box-6.jpg",
+  "fox-in-box:7": "/spreads/fox-in-box-7.jpg",
+  "fox-in-box:8": "/spreads/fox-in-box-8.jpg",
+  "dog-on-log:1": "/spreads/dog-on-log-1.jpg",
+  "dog-on-log:2": "/spreads/dog-on-log-2.jpg",
+  "dog-on-log:3": "/spreads/dog-on-log-3.jpg",
+  "dog-on-log:4": "/spreads/dog-on-log-4.jpg",
+  "dog-on-log:5": "/spreads/dog-on-log-5.jpg",
 };
