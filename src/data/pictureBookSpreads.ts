@@ -46,4 +46,13 @@ export const PICTURE_BOOK_SPREADS: Record<string, string> = {
   "hen-in-pen:4": "/spreads/hen-in-pen-4.jpg",
   "hen-in-pen:5": "/spreads/hen-in-pen-5.jpg",
   "hen-in-pen:6": "/spreads/hen-in-pen-6.jpg",
+  "hen-in-pen:7": "/spreads/hen-in-pen-7.jpg",
+  "hen-in-pen:8": "/spreads/hen-in-pen-8.jpg",
+  "bug-in-mug:1": "/spreads/bug-in-mug-1.jpg",
+  "bug-in-mug:2": "/spreads/bug-in-mug-2.jpg",
+  "bug-in-mug:3": "/spreads/bug-in-mug-3.jpg",
+  "bug-in-mug:4": "/spreads/bug-in-mug-4.jpg",
+  "bug-in-mug:5": "/spreads/bug-in-mug-5.jpg",
+  "bug-in-mug:6": "/spreads/bug-in-mug-6.jpg",
+  "bug-in-mug:7": "/spreads/bug-in-mug-7.jpg",
 };
