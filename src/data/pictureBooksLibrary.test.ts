@@ -153,7 +153,9 @@ describe("story library", () => {
     const laundryRain = PICTURE_BOOKS.find((book) => book.id === "laundromat-rain");
     expect(laundryRain?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const sprinkler = PICTURE_BOOKS.find((book) => book.id === "backyard-sprinkler");
-    expect(sprinkler?.pages.slice(0, 6).every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(sprinkler?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const redWagon = PICTURE_BOOKS.find((book) => book.id === "red-wagon-hill");
+    expect(redWagon?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["lemonade-stoop"]).toBe("/covers/lemonade-stoop.jpg");
     expect(PICTURE_BOOK_COVERS["lost-red-mitten"]).toBe("/covers/lost-red-mitten.jpg");
     expect(PICTURE_BOOK_COVERS["nana-porch-swing"]).toBe("/covers/nana-porch-swing.jpg");
