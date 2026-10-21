@@ -118,8 +118,10 @@ describe("story library", () => {
     expect(taxi?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const keyMat = PICTURE_BOOKS.find((book) => book.id === "lost-key-mat");
     const quilt = PICTURE_BOOKS.find((book) => book.id === "quilt-square-moon");
+    const plow = PICTURE_BOOKS.find((book) => book.id === "snow-plow-dawn");
     expect(keyMat?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
-    expect(quilt?.pages.slice(0, 6).every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(quilt?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(plow?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["hot-pot-sip"]).toBe("/covers/hot-pot-sip.jpg");
     expect(PICTURE_BOOK_COVERS["big-hug-bed"]).toBe("/covers/big-hug-bed.jpg");
     expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);
