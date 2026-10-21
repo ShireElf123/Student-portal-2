@@ -126,6 +126,16 @@ describe("story library", () => {
     expect(icebox?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["lemonade-stoop"]).toBe("/covers/lemonade-stoop.jpg");
     expect(PICTURE_BOOK_COVERS["lost-red-mitten"]).toBe("/covers/lost-red-mitten.jpg");
+    expect(PICTURE_BOOK_COVERS["nana-porch-swing"]).toBe("/covers/nana-porch-swing.jpg");
+    expect(PICTURE_BOOK_COVERS["kind-mail-truck"]).toBe("/covers/kind-mail-truck.jpg");
+    expect(PICTURE_BOOK_COVERS["gully-harbor-morning"]).toBe("/covers/gully-harbor-morning.jpg");
+    expect(PICTURE_BOOK_COVERS["first-day-yellow-bus"]).toBe("/covers/first-day-yellow-bus.jpg");
+    expect(PICTURE_BOOK_COVERS["laundromat-rain"]).toBe("/covers/laundromat-rain.jpg");
+    expect(PICTURE_BOOK_COVERS["backyard-sprinkler"]).toBe("/covers/backyard-sprinkler.jpg");
+    expect(PICTURE_BOOK_COVERS["red-wagon-hill"]).toBe("/covers/red-wagon-hill.jpg");
+    expect(PICTURE_BOOK_COVERS["market-saturday-berries"]).toBe("/covers/market-saturday-berries.jpg");
+    expect(PICTURE_BOOK_COVERS["elevator-buttons"]).toBe("/covers/elevator-buttons.jpg");
+    expect(PICTURE_BOOK_COVERS["cosmic-rocket-journey"]).toBe("/covers/cosmic-rocket-journey.jpg");
     expect(PICTURE_BOOK_COVERS["hot-pot-sip"]).toBe("/covers/hot-pot-sip.jpg");
     expect(PICTURE_BOOK_COVERS["big-hug-bed"]).toBe("/covers/big-hug-bed.jpg");
     expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);
