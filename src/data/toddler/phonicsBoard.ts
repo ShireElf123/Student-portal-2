@@ -96,6 +96,33 @@ export interface BlendWord {
   spoken: string;
 }
 
+export interface SightWordRound {
+  word: string;
+  sentence: string;
+  emoji: string;
+  spoken: string;
+}
+
+/** High-frequency words in stoop sentences — Duolingo ABC sight-word beat, our street. */
+export const SIGHT_WORDS: SightWordRound[] = [
+  { word: "the", sentence: "The cat sat on the mat.", emoji: "🐱", spoken: "Find the word the." },
+  { word: "a", sentence: "Nana cut a slice.", emoji: "🍉", spoken: "Find the word a." },
+  { word: "I", sentence: "I hop on the bus.", emoji: "🚌", spoken: "Find the word I." },
+  { word: "to", sentence: "We go to the stoop.", emoji: "🏡", spoken: "Find the word to." },
+  { word: "you", sentence: "Nana sees you.", emoji: "🧶", spoken: "Find the word you." },
+  { word: "is", sentence: "The pot is hot.", emoji: "🍲", spoken: "Find the word is." },
+  { word: "it", sentence: "Pat it on the mat.", emoji: "🟫", spoken: "Find the word it." },
+  { word: "we", sentence: "We sip and nap.", emoji: "🥤", spoken: "Find the word we." },
+  { word: "my", sentence: "My hat is on the peg.", emoji: "🎩", spoken: "Find the word my." },
+  { word: "on", sentence: "The cat is on the mat.", emoji: "🐱", spoken: "Find the word on." },
+  { word: "and", sentence: "Nana and Teddy sit.", emoji: "🧸", spoken: "Find the word and." },
+  { word: "look", sentence: "Look at the red bus.", emoji: "🚌", spoken: "Find the word look." },
+  { word: "see", sentence: "I see the ferry.", emoji: "⛴️", spoken: "Find the word see." },
+  { word: "like", sentence: "I like the warm bun.", emoji: "🥯", spoken: "Find the word like." },
+  { word: "here", sentence: "Come here to the stoop.", emoji: "🪜", spoken: "Find the word here." },
+  { word: "come", sentence: "Come to the door.", emoji: "🚪", spoken: "Find the word come." },
+];
+
 export const BLEND_WORDS: BlendWord[] = [
   { word: "cat", emoji: "🐱", letters: ["C", "A", "T"], spoken: "C. A. T. Cat." },
   { word: "hat", emoji: "🎩", letters: ["H", "A", "T"], spoken: "H. A. T. Hat." },

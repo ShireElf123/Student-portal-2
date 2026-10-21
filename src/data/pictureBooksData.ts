@@ -3,6 +3,7 @@ import { PICTURE_BOOK_COVERS } from "./pictureBookCovers";
 import { EPIC_PICTURE_BOOKS } from "./pictureBooksEpics";
 import { NEIGHBORHOOD_PICTURE_BOOKS } from "./pictureBooksNeighborhood";
 import { STOOP_PICTURE_BOOKS } from "./pictureBooksStoop";
+import { STUDIO_PICTURE_BOOKS } from "./pictureBooksStudio";
 
 const CLASSIC_PICTURE_BOOKS: PictureBook[] = [
   {
@@ -2100,12 +2101,43 @@ const CLASSIC_PICTURE_BOOKS: PictureBook[] = [
   },
 ];
 
+const SERIES_BY_ID: Record<string, NonNullable<PictureBook["series"]>> = {
+  "pancake-saturday": "teddy-nana",
+  "diner-booth-two": "teddy-nana",
+  "nana-porch-swing": "teddy-nana",
+  "nana-soup-pot": "teddy-nana",
+  "lost-key-mat": "teddy-nana",
+  "quilt-square-moon": "teddy-nana",
+  "icebox-lemonade": "teddy-nana",
+  "attic-rain-trunk": "teddy-nana",
+  "porch-dusk-jar": "teddy-nana",
+  "home-kind-morning": "teddy-nana",
+  "little-bear-bedtime": "teddy-nana",
+  "night-bus-home": "street",
+  "kind-mail-truck": "street",
+  "gully-harbor-morning": "street",
+  "corner-store-bell": "street",
+  "laundromat-rain": "street",
+  "first-day-yellow-bus": "street",
+  "elevator-buttons": "street",
+  "ferry-horn-morning": "street",
+  "subway-token-mouse": "street",
+  "yellow-taxi-puddle": "street",
+  "corner-shop-ding": "street",
+  "lighthouse-blink": "street",
+  "snow-plow-dawn": "street",
+  "high-street-bus": "street",
+};
+
 export const PICTURE_BOOKS: PictureBook[] = [
+  ...STUDIO_PICTURE_BOOKS,
   ...EPIC_PICTURE_BOOKS,
   ...NEIGHBORHOOD_PICTURE_BOOKS,
   ...STOOP_PICTURE_BOOKS,
   ...CLASSIC_PICTURE_BOOKS,
-].map((book) =>
-  PICTURE_BOOK_COVERS[book.id] ? { ...book, coverImage: PICTURE_BOOK_COVERS[book.id] } : book,
-);
+].map((book) => ({
+  ...book,
+  coverImage: PICTURE_BOOK_COVERS[book.id] ?? book.coverImage,
+  series: book.series ?? SERIES_BY_ID[book.id],
+}));
 

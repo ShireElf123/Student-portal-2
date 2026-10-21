@@ -83,15 +83,25 @@ interface ToddlerWorldViewProps {
   onRequestExit?: () => void;
 }
 
+const FEATURED_BOOK_IDS = [
+  "stoop-watermelon",
+  "pancake-saturday",
+  "how-a-ferry-floats",
+  "cat-on-mat",
+  "paper-gutter-boat",
+  "little-red-fire-truck",
+  "how-mail-travels",
+  "quilt-square-moon",
+] as const;
+
 const BOOK_SHELVES = [
-  { id: "all", label: "All", emoji: "📚" },
-  { id: "long", label: "Long tales", emoji: "✨" },
+  { id: "all", label: "Library", emoji: "📚" },
+  { id: "teddy-nana", label: "Teddy & Nana", emoji: "🧸" },
+  { id: "street", label: "Street", emoji: "🚕" },
+  { id: "first-words", label: "First words", emoji: "🔤" },
+  { id: "look-learn", label: "Look & learn", emoji: "🔍" },
   { id: "bedtime", label: "Bedtime", emoji: "🌙" },
-  { id: "adventure", label: "Adventure", emoji: "🚀" },
-  { id: "letters", label: "Letters", emoji: "🔤" },
-  { id: "numbers", label: "Numbers", emoji: "🔢" },
-  { id: "feelings", label: "Feelings", emoji: "💛" },
-  { id: "animals", label: "Animals", emoji: "🐾" },
+  { id: "long", label: "Long tales", emoji: "✨" },
 ] as const;
 
 type BookShelfId = (typeof BOOK_SHELVES)[number]["id"];
@@ -99,13 +109,21 @@ type BookShelfId = (typeof BOOK_SHELVES)[number]["id"];
 function bookMatchesShelf(book: PictureBook, shelf: BookShelfId): boolean {
   if (shelf === "all") return true;
   if (shelf === "long") return book.pages.length >= 8;
-  if (shelf === "adventure") return book.category === "space" || book.category === "ocean" || book.category === "nature";
-  if (shelf === "letters") return book.category === "phonics";
-  if (shelf === "numbers") return book.category === "numbers";
-  if (shelf === "feelings") return book.category === "feelings" || book.category === "manners";
-  if (shelf === "animals") return book.category === "animals";
-  if (shelf === "bedtime") return book.category === "bedtime";
+  if (shelf === "teddy-nana") return book.series === "teddy-nana";
+  if (shelf === "street") return book.series === "street";
+  if (shelf === "first-words") return book.series === "first-words";
+  if (shelf === "look-learn") return book.series === "look-learn";
+  if (shelf === "bedtime") return book.category === "bedtime" || book.id === "big-hug-bed";
   return true;
+}
+
+function booksForRow(id: "featured" | "teddy-nana" | "street" | "first-words" | "look-learn" | "bedtime"): PictureBook[] {
+  if (id === "featured") {
+    return FEATURED_BOOK_IDS.map((bookId) => PICTURE_BOOKS.find((book) => book.id === bookId)).filter(
+      (book): book is PictureBook => Boolean(book),
+    );
+  }
+  return PICTURE_BOOKS.filter((book) => bookMatchesShelf(book, id));
 }
 
 function StoryReadAloudText({
@@ -120,24 +138,63 @@ function StoryReadAloudText({
   const wanted = new Set((highlights ?? []).map((word) => word.toLowerCase()));
   const parts = text.split(/(\s+)/);
   return (
-    <p className="text-base sm:text-2xl font-black text-slate-800 leading-relaxed">
+    <p className="text-lg sm:text-2xl font-black text-slate-800 leading-relaxed">
       {parts.map((part, index) => {
         const clean = part.replace(/[^A-Za-z0-9']/g, "");
-        if (clean && wanted.has(clean.toLowerCase())) {
-          return (
-            <button
-              key={`${clean}-${index}`}
-              type="button"
-              className="inline min-h-11 rounded-md bg-amber-200 px-1 text-amber-950 underline decoration-amber-500 decoration-2 underline-offset-4"
-              onClick={() => onSpeakWord(clean)}
-            >
-              {part}
-            </button>
-          );
-        }
-        return <span key={`${part}-${index}`}>{part}</span>;
+        if (!clean) return <span key={`${part}-${index}`}>{part}</span>;
+        const gold = wanted.has(clean.toLowerCase());
+        return (
+          <button
+            key={`${clean}-${index}`}
+            type="button"
+            className={`inline min-h-12 rounded-md px-1 ${
+              gold
+                ? "bg-amber-200 text-amber-950 underline decoration-amber-500 decoration-2 underline-offset-4"
+                : "hover:bg-amber-100"
+            }`}
+            onClick={() => onSpeakWord(clean)}
+          >
+            {part}
+          </button>
+        );
       })}
     </p>
+  );
+}
+
+function StoryCoverCard({
+  book,
+  onOpen,
+  large,
+}: {
+  book: PictureBook;
+  onOpen: (book: PictureBook) => void;
+  large?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen(book)}
+      className={`snap-start shrink-0 text-left ${large ? "w-[11.5rem] sm:w-56" : "w-40 sm:w-48"}`}
+    >
+      <div
+        className={`relative overflow-hidden rounded-[1.75rem] border-4 border-white/70 shadow-xl bg-gradient-to-br ${book.coverGradient} ${
+          large ? "aspect-[3/4]" : "aspect-[4/5]"
+        }`}
+      >
+        {book.coverImage ? (
+          <img src={book.coverImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        ) : (
+          <span className="absolute inset-0 flex items-center justify-center text-7xl drop-shadow">{book.coverEmoji}</span>
+        )}
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 pt-10">
+          <p className="text-[11px] font-black uppercase tracking-wide text-white/90">
+            {book.pages.length} pages · {book.readTimeMinutes} min
+          </p>
+          <h3 className="text-base sm:text-lg font-black leading-tight text-white line-clamp-2">{book.title}</h3>
+        </div>
+      </div>
+    </button>
   );
 }
 
@@ -157,6 +214,9 @@ export function ToddlerWorldView({
   const activeBuddy = gameState.buddy ?? DEFAULT_BUDDY;
   const [selectedBook, setSelectedBook] = useState<PictureBook | null>(null);
   const [bookShelf, setBookShelf] = useState<BookShelfId>("all");
+  const [readMode, setReadMode] = useState<"to-me" | "myself">("to-me");
+  const readModeRef = useRef<"to-me" | "myself">("to-me");
+  readModeRef.current = readMode;
   const [currentPageIndex, setCurrentPageIndex] = useState<number>(0);
   const [bookInteractionAnswers, setBookInteractionAnswers] = useState<Record<string, number>>({});
   const [bookInteractionHints, setBookInteractionHints] = useState<Record<string, boolean>>({});
@@ -399,7 +459,7 @@ export function ToddlerWorldView({
           setIsPlayingParentAudio(false);
           speakText(startingPage.narration);
         });
-      } else {
+      } else if (readModeRef.current === "to-me") {
         speakText(startingPage.narration);
       }
     });
@@ -468,7 +528,7 @@ export function ToddlerWorldView({
             setIsPlayingParentAudio(false);
             speakText(selectedBook.pages[nextIdx].narration);
           });
-        } else {
+        } else if (readModeRef.current === "to-me") {
           speakText(selectedBook.pages[nextIdx].narration);
         }
       });
@@ -530,9 +590,9 @@ export function ToddlerWorldView({
         };
         aud.play().catch(() => {
           setIsPlayingParentAudio(false);
-          speakText(selectedBook.pages[prevIdx].narration);
+          if (readModeRef.current === "to-me") speakText(selectedBook.pages[prevIdx].narration);
         });
-      } else {
+      } else if (readModeRef.current === "to-me") {
         speakText(selectedBook.pages[prevIdx].narration);
       }
     });
@@ -1087,7 +1147,7 @@ export function ToddlerWorldView({
                 <p className={`text-sm sm:text-base font-semibold ${
                   isMeadow ? "text-slate-800" : "text-white/85"
                 }`}>
-                  Long picture books with a beginning, middle, and end. Tap a cover. Hear it read. Tap gold words.
+                  A real library: series rows, long tales, first words, look-and-learn. Tap a cover. Tap any word.
                 </p>
               </div>
             </div>
@@ -1114,98 +1174,41 @@ export function ToddlerWorldView({
               })}
             </div>
 
-            {bookShelf === "all" && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                {PICTURE_BOOKS.filter((book) => book.pages.length >= 8).slice(0, 3).map((book) => (
-                  <button
-                    key={`featured-${book.id}`}
-                    type="button"
-                    onClick={() => handleOpenBook(book)}
-                    className={`text-left min-h-40 rounded-[2rem] p-5 border-4 border-white/40 shadow-xl bg-gradient-to-br ${book.coverGradient} text-white`}
-                  >
-                    {book.coverImage ? (
-                      <img src={book.coverImage} alt="" className="h-24 w-24 rounded-2xl object-cover shadow-lg border-2 border-white/50" />
-                    ) : (
-                      <span className="text-6xl drop-shadow">{book.coverEmoji}</span>
-                    )}
-                    <p className="mt-3 text-xs font-black uppercase tracking-wider text-white/90">Long tale · {book.pages.length} pages</p>
-                    <h3 className="text-2xl font-black leading-tight">{book.title}</h3>
-                    <p className="text-sm font-semibold text-white/95 line-clamp-2">{book.subtitle}</p>
-                  </button>
+            {bookShelf === "all" ? (
+              <div className="space-y-8">
+                {(
+                  [
+                    { id: "featured", label: "Open tonight", emoji: "✨" },
+                    { id: "teddy-nana", label: "Teddy & Nana", emoji: "🧸" },
+                    { id: "street", label: "Out on the street", emoji: "🚕" },
+                    { id: "first-words", label: "First words", emoji: "🔤" },
+                    { id: "look-learn", label: "Look & learn", emoji: "🔍" },
+                    { id: "bedtime", label: "Bedtime", emoji: "🌙" },
+                  ] as const
+                ).map((row) => {
+                  const rowBooks = booksForRow(row.id);
+                  if (rowBooks.length === 0) return null;
+                  return (
+                    <section key={row.id}>
+                      <h3 className={`text-lg sm:text-xl font-black mb-3 ${isMeadow ? "text-slate-900" : "text-white"}`}>
+                        {row.emoji} {row.label}
+                      </h3>
+                      <div className="flex gap-4 overflow-x-auto pb-3 snap-x">
+                        {rowBooks.map((book) => (
+                          <StoryCoverCard key={`${row.id}-${book.id}`} book={book} large onOpen={handleOpenBook} />
+                        ))}
+                      </div>
+                    </section>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-4">
+                {PICTURE_BOOKS.filter((book) => bookMatchesShelf(book, bookShelf)).map((book) => (
+                  <StoryCoverCard key={book.id} book={book} large onOpen={handleOpenBook} />
                 ))}
               </div>
             )}
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {PICTURE_BOOKS.filter((book) => bookMatchesShelf(book, bookShelf)).map((book) => (
-                <motion.div
-                  key={book.id}
-                  whileHover={{ y: -6, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleOpenBook(book)}
-                  className={`group relative flex flex-col justify-between p-5 rounded-[2.25rem] transition-all cursor-pointer overflow-hidden ${
-                    isMeadow
-                      ? "bg-white text-slate-800 border-4 border-amber-200 hover:border-amber-400 shadow-[0_14px_30px_-6px_rgba(20,83,45,0.18)] hover:shadow-[0_20px_40px_-6px_rgba(20,83,45,0.25)]"
-                      : "bg-white/[0.03] border-2 border-white/10 hover:border-amber-400/50 hover:bg-white/[0.06] text-white shadow-xl"
-                  }`}
-                >
-                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${book.coverGradient} opacity-20 rounded-full blur-2xl group-hover:opacity-40 transition-opacity`} />
-                  
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      {book.coverImage ? (
-                        <img
-                          src={book.coverImage}
-                          alt=""
-                          className="h-16 w-16 rounded-2xl object-cover shadow-sm border-2 border-amber-200 transition-transform group-hover:scale-110"
-                        />
-                      ) : (
-                      <span className={`text-4xl p-3 rounded-2xl border transition-transform group-hover:scale-110 shadow-sm ${
-                        isMeadow ? "bg-amber-100 border-amber-200" : "bg-white/10 border-white/10"
-                      }`}>
-                        {book.coverEmoji}
-                      </span>
-                      )}
-                      <span className={`px-2.5 py-1 text-xs sm:text-sm font-black uppercase rounded-full ${
-                        isMeadow ? "bg-amber-200 text-amber-950" : "bg-white/10 text-white/80"
-                      }`}>
-                        {book.ageRange}
-                      </span>
-                    </div>
-
-                    <h3 className={`text-lg font-black leading-snug mb-1 transition-colors ${
-                      isMeadow
-                        ? "text-slate-900 group-hover:text-amber-600"
-                        : "text-white group-hover:text-amber-300"
-                    }`}>
-                      {book.title}
-                    </h3>
-                    <p className={`text-sm line-clamp-2 mb-3 ${
-                      isMeadow ? "text-slate-700 font-medium" : "text-white/90"
-                    }`}>
-                      {book.subtitle}
-                    </p>
-                  </div>
-
-                  <div className={`pt-3 border-t flex items-center justify-between text-sm ${
-                    isMeadow ? "border-slate-100" : "border-white/5"
-                  }`}>
-                    <span className={`flex items-center gap-1 font-black ${
-                      isMeadow ? "text-amber-700" : "text-amber-300"
-                    }`}>
-                      <Play size={13} className={isMeadow ? "fill-amber-700" : "fill-amber-300"} /> Read Now ({book.pages.length}p)
-                    </span>
-                    <span className={`text-xs sm:text-sm font-black px-2.5 py-1 rounded-lg border shadow-sm ${
-                      isMeadow
-                        ? "bg-amber-100 border-amber-300 text-amber-900"
-                        : "bg-amber-500/20 border-amber-400/30 text-amber-300"
-                    }`}>
-                      +3 ⭐
-                    </span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
 
             {/* Parent & Tutor Reading Tips Card (Tactile Cloud Card) */}
             <div className={`mt-8 p-5 sm:p-6 rounded-[2.25rem] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl ${
@@ -1339,6 +1342,25 @@ export function ToddlerWorldView({
                 </div>
 
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                  <div className="hidden sm:flex rounded-2xl border-2 border-amber-300 bg-white p-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setReadMode("to-me")}
+                      className={`min-h-10 px-3 rounded-xl text-xs font-black ${readMode === "to-me" ? "bg-amber-400 text-amber-950" : "text-slate-600"}`}
+                    >
+                      Read to me
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setReadMode("myself");
+                        stopSpeaking();
+                      }}
+                      className={`min-h-10 px-3 rounded-xl text-xs font-black ${readMode === "myself" ? "bg-amber-400 text-amber-950" : "text-slate-600"}`}
+                    >
+                      I read
+                    </button>
+                  </div>
                   {/* Read to Me / Parent Voice Button */}
                   <button
                     onClick={() => handleReadAloud(activePage.narration)}
@@ -1417,15 +1439,15 @@ export function ToddlerWorldView({
               {/* Book Canvas / Page Surface */}
               {!isBookCompleted ? (
                 <>
-                  <div className="p-4 sm:p-8 flex-1 overflow-y-auto grid md:grid-cols-2 gap-4 sm:gap-6 items-center">
+                  <div className="p-4 sm:p-8 flex-1 overflow-y-auto grid md:grid-cols-5 gap-4 sm:gap-6 items-center">
                     {/* Visual Scene Box (Pop-up Art Card) */}
                     <motion.div
                       key={`page-illus-${activePage.pageNumber}`}
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      className="w-full min-h-48 py-8 sm:py-14 px-4 sm:px-6 rounded-[2rem] bg-white border-4 border-amber-200 flex flex-col items-center justify-center shadow-lg relative overflow-hidden"
+                      className={`md:col-span-3 w-full min-h-64 sm:min-h-80 py-10 sm:py-16 px-4 sm:px-6 rounded-[2rem] bg-gradient-to-br ${activePage.bgGradient} border-4 border-amber-200 flex flex-col items-center justify-center shadow-lg relative overflow-hidden`}
                     >
-                      <div className="text-7xl sm:text-9xl mb-2 sm:mb-3 filter drop-shadow-md">
+                      <div className="text-8xl sm:text-[9rem] mb-2 sm:mb-3 filter drop-shadow-md">
                         {activePage.illustration}
                       </div>
                       {activePage.soundEffectText && (
@@ -1436,7 +1458,7 @@ export function ToddlerWorldView({
                     </motion.div>
 
                     {/* Page Heading & Story Text */}
-                    <div className="max-w-xl space-y-2 sm:space-y-3 text-center md:text-left mx-auto md:mx-0">
+                    <div className="md:col-span-2 max-w-xl space-y-2 sm:space-y-3 text-center md:text-left mx-auto md:mx-0">
                       <h4 className="text-lg sm:text-2xl font-black text-amber-900 font-display">
                         {activePage.title}
                       </h4>
@@ -1516,28 +1538,18 @@ export function ToddlerWorldView({
                     <button
                       onClick={handlePrevPage}
                       disabled={currentPageIndex === 0}
-                      className="flex items-center gap-1 sm:gap-1.5 min-h-12 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-white border-b-4 border-slate-300 hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none font-black text-sm text-slate-800 transition-all cursor-pointer shadow-md active:translate-y-1"
+                      className="flex items-center gap-1 sm:gap-1.5 min-h-16 px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl bg-white border-b-4 border-slate-300 hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none font-black text-sm text-slate-800 transition-all cursor-pointer shadow-md active:translate-y-1"
                     >
                       <ChevronLeft size={16} /> <span className="hidden sm:inline">Back</span>
                     </button>
 
-                    {/* Dots indicator */}
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      {selectedBook.pages.map((_, idx) => (
-                        <div
-                          key={idx}
-                          className={`h-2.5 sm:h-3 rounded-full transition-all ${
-                            idx === currentPageIndex
-                              ? "w-6 sm:w-8 bg-amber-500 border border-amber-600"
-                              : "w-2.5 sm:w-3 bg-amber-300"
-                          }`}
-                        />
-                      ))}
-                    </div>
+                    <p className="font-black text-amber-900 text-sm sm:text-base">
+                      {currentPageIndex + 1} / {selectedBook.pages.length}
+                    </p>
 
                     <button
                       onClick={handleNextPage}
-                      className="flex items-center gap-1 sm:gap-1.5 min-h-12 px-5 sm:px-7 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-b from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 font-black text-sm text-amber-950 border-b-4 border-orange-700 shadow-lg transition-all active:translate-y-1 cursor-pointer"
+                      className="flex items-center gap-1 sm:gap-1.5 min-h-16 px-5 sm:px-7 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-b from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 font-black text-sm text-amber-950 border-b-4 border-orange-700 shadow-lg transition-all active:translate-y-1 cursor-pointer"
                     >
                       <span>{currentPageIndex === selectedBook.pages.length - 1 ? "Finish ⭐" : "Next"}</span>
                       <ChevronRight size={16} />

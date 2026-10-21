@@ -4,6 +4,7 @@ import {
   COUNTING_CARDS,
   MAKE_TEN_ROUNDS,
   MORE_LESS_ROUNDS,
+  PATTERN_ROUNDS,
   SHAPE_ROUNDS,
   SUBITIZE_ROUNDS,
   type CountingCard,
@@ -13,7 +14,7 @@ import { soundEffects } from "../utils/soundEffects";
 import { recordCountingCardTapped } from "../data/toddler/toddlerDailyAdventure";
 import { CharacterAnchor } from "./landscape/LandscapeDecorations";
 
-type Mode = "frames" | "more" | "ten" | "peek" | "shapes";
+type Mode = "frames" | "more" | "ten" | "peek" | "shapes" | "pattern";
 
 const MODES: { id: Mode; label: string; emoji: string }[] = [
   { id: "frames", label: "1–20", emoji: "🔟" },
@@ -21,6 +22,7 @@ const MODES: { id: Mode; label: string; emoji: string }[] = [
   { id: "ten", label: "Make 10", emoji: "🥚" },
   { id: "peek", label: "Quick look", emoji: "👀" },
   { id: "shapes", label: "Shapes", emoji: "⬛" },
+  { id: "pattern", label: "Next?", emoji: "🔁" },
 ];
 
 function TenFrames({
@@ -88,11 +90,13 @@ export function ToddlerCountingBoard({
   const [peekIndex, setPeekIndex] = useState(0);
   const [peekHidden, setPeekHidden] = useState(false);
   const [shapeIndex, setShapeIndex] = useState(0);
+  const [patternIndex, setPatternIndex] = useState(0);
 
   const more = MORE_LESS_ROUNDS[moreIndex % MORE_LESS_ROUNDS.length];
   const ten = MAKE_TEN_ROUNDS[tenIndex % MAKE_TEN_ROUNDS.length];
   const peek = SUBITIZE_ROUNDS[peekIndex % SUBITIZE_ROUNDS.length];
   const shape = SHAPE_ROUNDS[shapeIndex % SHAPE_ROUNDS.length];
+  const pattern = PATTERN_ROUNDS[patternIndex % PATTERN_ROUNDS.length];
   const moreAnswer = more.left === more.right ? "same" : more.left > more.right ? "left" : "right";
 
   const panel = isMeadow ? "bg-white border-indigo-300 text-slate-900" : "bg-[#16162a] border-indigo-400/50 text-white";
@@ -136,7 +140,7 @@ export function ToddlerCountingBoard({
           <span>🔢</span> Count to Twenty
         </h2>
         <p className={`text-sm sm:text-base font-semibold ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
-          Ten-frames, more and less, make ten, a quick look, and stoop shapes.
+          Ten-frames, more and less, make ten, a quick look, stoop shapes, and what comes next.
         </p>
       </div>
 
@@ -346,6 +350,44 @@ export function ToddlerCountingBoard({
                   const next = (shapeIndex + 1) % SHAPE_ROUNDS.length;
                   setShapeIndex(next);
                   speakText(`${option}. ${SHAPE_ROUNDS[next].spoken}`, { pitch: 1.16, rate: 0.9 });
+                }}
+              >
+              {option}
+                </button>
+              ))}
+          </div>
+        </div>
+      )}
+
+      {mode === "pattern" && (
+        <div className={`rounded-[2rem] border-4 p-5 ${panel}`}>
+          <p className="text-lg font-black mb-4">{pattern.spoken}</p>
+          <div className="flex flex-wrap gap-2 mb-5">
+            {pattern.shown.map((item, index) => (
+              <span
+                key={`${pattern.id}-${index}`}
+                className="min-h-16 min-w-16 rounded-2xl bg-indigo-50 border-4 border-indigo-200 flex items-center justify-center text-4xl"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {pattern.options.map((option) => (
+              <button
+                key={option}
+                type="button"
+                className="min-h-16 min-w-20 rounded-full bg-indigo-100 px-6 py-3 text-4xl border-b-4 border-indigo-500"
+                onClick={() => {
+                  if (option !== pattern.answer) {
+                    speakText("Try the other one.", { pitch: 1.1 });
+                    return;
+                  }
+                  onAddStar?.();
+                  soundEffects.playPop();
+                  const next = (patternIndex + 1) % PATTERN_ROUNDS.length;
+                  setPatternIndex(next);
+                  speakText(`Yes. ${PATTERN_ROUNDS[next].spoken}`, { pitch: 1.16, rate: 0.9 });
                 }}
               >
                 {option}

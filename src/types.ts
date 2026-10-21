@@ -333,6 +333,8 @@ export interface PictureBook {
   coverEmoji: string;
   coverImage?: string;
   coverGradient: string;
+  /** Library row — Epic-style series, not a dump of every title. */
+  series?: "teddy-nana" | "street" | "first-words" | "look-learn";
   pages: PictureBookPage[];
   author: string;
   readTimeMinutes: number;

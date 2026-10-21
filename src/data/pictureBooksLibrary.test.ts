@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { PICTURE_BOOKS } from "./pictureBooksData";
 import { EPIC_PICTURE_BOOKS } from "./pictureBooksEpics";
+import { STUDIO_PICTURE_BOOKS } from "./pictureBooksStudio";
 import { STORY_ADVENTURES } from "./toddler/toddlerWorldsData";
 import { CURRICULUM_SKILL_NODES } from "./curriculumUniverse";
 import { resolveActivityDefinition } from "./activitySkillRegistry";
@@ -25,6 +26,14 @@ describe("story library", () => {
     }
     const bear = PICTURE_BOOKS.find((book) => book.id === "little-bear-bedtime");
     expect(bear?.pages.length).toBeGreaterThanOrEqual(8);
+  });
+
+  it("adds long stoop tales, look-and-learn, and first-word readers", () => {
+    expect(STUDIO_PICTURE_BOOKS.length).toBeGreaterThanOrEqual(12);
+    expect(STUDIO_PICTURE_BOOKS.every((book) => book.pages.length >= 8)).toBe(true);
+    expect(STUDIO_PICTURE_BOOKS.filter((book) => book.series === "look-learn").length).toBeGreaterThanOrEqual(4);
+    expect(STUDIO_PICTURE_BOOKS.filter((book) => book.series === "first-words").length).toBeGreaterThanOrEqual(4);
+    expect(STUDIO_PICTURE_BOOKS.filter((book) => book.pages.length >= 12).length).toBeGreaterThanOrEqual(4);
   });
 
   it("maps every scored page to a real picture-book skill", () => {

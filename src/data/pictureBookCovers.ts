@@ -23,6 +23,16 @@ export const PICTURE_BOOK_COVERS: Record<string, string> = {
   "quilt-square-moon": "/covers/quilt-square-moon.png",
   "snow-plow-dawn": "/covers/snow-plow-dawn.png",
   "icebox-lemonade": "/covers/icebox-lemonade.png",
+  "stoop-watermelon": "/covers/stoop-watermelon.png",
+  "paper-gutter-boat": "/covers/paper-gutter-boat.png",
+  "window-box-tomatoes": "/covers/window-box-tomatoes.png",
+  "block-table-feast": "/covers/block-table-feast.png",
+  "how-mail-travels": "/covers/how-mail-travels.png",
+  "how-bread-rises": "/covers/how-bread-rises.png",
+  "what-rain-does": "/covers/what-rain-does.png",
+  "how-a-ferry-floats": "/covers/how-a-ferry-floats.png",
+  "cat-on-mat": "/covers/cat-on-mat.png",
+  "red-bus-run": "/covers/red-bus-run.png",
 };
 
 export const PLAYHOUSE_COVERS: Record<string, string> = {
@@ -33,4 +43,8 @@ export const PLAYHOUSE_COVERS: Record<string, string> = {
   "soup-steam-secret": "/covers/pancake-saturday.png",
   "lost-mitten-bench": "/covers/snow-maple-street.png",
   "ferry-ticket-please": "/covers/ferry-horn-morning.png",
+  "watermelon-too-pink": "/covers/stoop-watermelon.png",
+  "gutter-paper-boat": "/covers/paper-gutter-boat.png",
+  "tomato-patience": "/covers/window-box-tomatoes.png",
+  "folding-table-wiggle": "/covers/block-table-feast.png",
 };

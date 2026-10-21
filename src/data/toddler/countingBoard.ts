@@ -92,6 +92,25 @@ export interface ShapeRound {
   options: [string, string, string];
 }
 
+export interface PatternRound {
+  id: string;
+  shown: string[];
+  options: [string, string];
+  answer: string;
+  spoken: string;
+}
+
+export const PATTERN_ROUNDS: PatternRound[] = [
+  { id: "pat-sun-moon", shown: ["☀️", "🌙", "☀️", "🌙", "?"], options: ["☀️", "🍋"], answer: "☀️", spoken: "Sun, moon, sun, moon. What comes next?" },
+  { id: "pat-boot", shown: ["👢", "👢", "🪙", "👢", "👢", "?"], options: ["🪙", "🍉"], answer: "🪙", spoken: "Boot boot coin. Boot boot…?" },
+  { id: "pat-bus", shown: ["🚌", "🛑", "🚌", "🛑", "?"], options: ["🚌", "🐱"], answer: "🚌", spoken: "Bus, stop, bus, stop. What comes next?" },
+  { id: "pat-plate", shown: ["🍽️", "🍽️", "🍋", "🍽️", "🍽️", "?"], options: ["🍋", "⛴️"], answer: "🍋", spoken: "Plate plate lemon. Plate plate…?" },
+  { id: "pat-seed", shown: ["🌱", "🍅", "🌱", "🍅", "?"], options: ["🌱", "🚕"], answer: "🌱", spoken: "Seed, tomato, seed, tomato. Next?" },
+  { id: "pat-drop", shown: ["💧", "💧", "⭕", "💧", "💧", "?"], options: ["⭕", "🍞"], answer: "⭕", spoken: "Drop drop ripple. Drop drop…?" },
+  { id: "pat-peg", shown: ["📌", "👕", "📌", "👕", "?"], options: ["📌", "🐧"], answer: "📌", spoken: "Peg, shirt, peg, shirt. Next?" },
+  { id: "pat-loaf", shown: ["🥣", "🍞", "🥣", "🍞", "?"], options: ["🥣", "🚌"], answer: "🥣", spoken: "Bowl, loaf, bowl, loaf. What comes next?" },
+];
+
 export const SHAPE_ROUNDS: ShapeRound[] = [
   { id: "sh-sun", name: "Circle", emoji: "☀️", spoken: "The chalk sun. What shape?", options: ["Circle", "Square", "Triangle"] },
   { id: "sh-mat", name: "Square", emoji: "🟫", spoken: "The welcome mat. What shape?", options: ["Square", "Circle", "Triangle"] },
