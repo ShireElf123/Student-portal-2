@@ -296,4 +296,12 @@ export const PICTURE_BOOK_SPREADS: Record<string, string> = {
   "icebox-lemonade:6": "/spreads/icebox-lemonade-6.jpg",
   "icebox-lemonade:7": "/spreads/icebox-lemonade-7.jpg",
   "icebox-lemonade:8": "/spreads/icebox-lemonade-8.jpg",
+  "pancake-saturday:1": "/spreads/pancake-saturday-1.jpg",
+  "pancake-saturday:2": "/spreads/pancake-saturday-2.jpg",
+  "pancake-saturday:3": "/spreads/pancake-saturday-3.jpg",
+  "pancake-saturday:4": "/spreads/pancake-saturday-4.jpg",
+  "pancake-saturday:5": "/spreads/pancake-saturday-5.jpg",
+  "pancake-saturday:6": "/spreads/pancake-saturday-6.jpg",
+  "pancake-saturday:7": "/spreads/pancake-saturday-7.jpg",
+  "pancake-saturday:8": "/spreads/pancake-saturday-8.jpg",
 };

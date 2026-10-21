@@ -124,6 +124,8 @@ describe("story library", () => {
     expect(quilt?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(plow?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(icebox?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const pancakes = PICTURE_BOOKS.find((book) => book.id === "pancake-saturday");
+    expect(pancakes?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["lemonade-stoop"]).toBe("/covers/lemonade-stoop.jpg");
     expect(PICTURE_BOOK_COVERS["lost-red-mitten"]).toBe("/covers/lost-red-mitten.jpg");
     expect(PICTURE_BOOK_COVERS["nana-porch-swing"]).toBe("/covers/nana-porch-swing.jpg");
@@ -166,6 +168,8 @@ describe("story library", () => {
     expect(PICTURE_BOOK_COVERS["feelings-with-leo"]).toBe("/covers/feelings-with-leo.jpg");
     expect(PICTURE_BOOK_COVERS["atelier-paint-day"]).toBe("/covers/atelier-paint-day.jpg");
     expect(PICTURE_BOOK_COVERS["letter-meadow-abc"]).toBe("/covers/letter-meadow-abc.jpg");
+    expect(PICTURE_BOOK_COVERS["pine-trail-map"]).toBe("/covers/pine-trail-map.jpg");
+    expect(PICTURE_BOOK_COVERS["home-kind-morning"]).toBe("/covers/home-kind-morning.jpg");
     expect(PICTURE_BOOK_COVERS["hot-pot-sip"]).toBe("/covers/hot-pot-sip.jpg");
     expect(PICTURE_BOOK_COVERS["big-hug-bed"]).toBe("/covers/big-hug-bed.jpg");
     expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);

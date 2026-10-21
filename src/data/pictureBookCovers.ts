@@ -65,6 +65,8 @@ export const PICTURE_BOOK_COVERS: Record<string, string> = {
   "feelings-with-leo": "/covers/feelings-with-leo.jpg",
   "atelier-paint-day": "/covers/atelier-paint-day.jpg",
   "letter-meadow-abc": "/covers/letter-meadow-abc.jpg",
+  "pine-trail-map": "/covers/pine-trail-map.jpg",
+  "home-kind-morning": "/covers/home-kind-morning.jpg",
   "stoop-watermelon": "/covers/stoop-watermelon.jpg",
   "paper-gutter-boat": "/covers/paper-gutter-boat.jpg",
   "window-box-tomatoes": "/covers/window-box-tomatoes.jpg",
