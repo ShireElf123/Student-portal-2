@@ -107,6 +107,7 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
   const [buddy, setBuddy] = useState<BuddyCompanionConfig>(currentSaved);
   const [speechBubble, setSpeechBubble] = useState<string>(buddy.catchphrase);
   const [isSavedRecently, setIsSavedRecently] = useState(false);
+  const [walkCounts, setWalkCounts] = useState<Record<string, number>>({});
 
   // Clean speech on unmount
   useEffect(() => {
@@ -287,28 +288,40 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
 
             <div className="mt-6 grid grid-cols-2 gap-2">
               {[
-                { id: "porch", emoji: "🏡", line: `I'm ${buddy.name} on the porch. The swing creaks. That is the floorboard song.` },
-                { id: "bakery", emoji: "🍞", line: `Bakery bell. Flour like quiet snow. I will not eat the stamp.` },
-                { id: "ferry", emoji: "⛴️", line: `A low horn. Ready, not angry. I covered one ear and smiled anyway.` },
-                { id: "bed", emoji: "🌙", line: `The bed is a dock. I am a boat. Goodnight squares. Goodnight circle.` },
-              ].map((room) => (
-                <button
-                  key={room.id}
-                  type="button"
-                  onClick={() => {
-                    setSpeechBubble(room.line);
-                    speakText(room.line, {
-                      pitch: buddy.archetype === "robot" ? 1.0 : buddy.archetype === "forest-bunny" ? 1.4 : 1.25,
-                      rate: 0.92,
-                    });
-                    soundEffects.playPop();
-                  }}
-                  className="min-h-16 rounded-2xl bg-white/10 border border-white/15 px-3 py-3 text-left text-white font-bold text-xs"
-                >
-                  <span className="text-2xl">{room.emoji}</span>
-                  <p className="mt-1">Hear on the {room.id}</p>
-                </button>
-              ))}
+                { id: "porch", emoji: "🏡", need: 3, verb: "Sway", line: `I'm ${buddy.name} on the porch. The swing creaks.` },
+                { id: "bakery", emoji: "🔔", need: 1, verb: "Ding", line: `Bakery bell. Flour like quiet snow.` },
+                { id: "ferry", emoji: "⛴️", need: 1, verb: "Horn", line: `A low horn. Ready, not angry.` },
+                { id: "line", emoji: "👕", need: 4, verb: "Peg", line: `Hang the wash. The wind can work.` },
+                { id: "fountain", emoji: "⛲", need: 3, verb: "Look", line: `Looking is the wish. We do not throw.` },
+                { id: "bed", emoji: "🌙", need: 1, verb: "Tuck", line: `The bed is a dock. Goodnight squares.` },
+              ].map((room) => {
+                const count = walkCounts[room.id] ?? 0;
+                const done = count >= room.need;
+                return (
+                  <button
+                    key={room.id}
+                    type="button"
+                    onClick={() => {
+                      const next = Math.min(room.need, count + 1);
+                      setWalkCounts((prev) => ({ ...prev, [room.id]: next }));
+                      setSpeechBubble(room.line);
+                      speakText(next >= room.need ? room.line : room.verb, {
+                        pitch: buddy.archetype === "robot" ? 1.0 : buddy.archetype === "forest-bunny" ? 1.4 : 1.25,
+                        rate: 0.92,
+                      });
+                      soundEffects.playPop();
+                    }}
+                    className={`min-h-20 rounded-2xl border px-3 py-3 text-left text-white font-bold text-xs ${
+                      done ? "bg-emerald-500/30 border-emerald-300" : "bg-white/10 border-white/15"
+                    }`}
+                  >
+                    <span className="text-2xl">{room.emoji}</span>
+                    <p className="mt-1">
+                      {room.verb} {count}/{room.need}
+                    </p>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

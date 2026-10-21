@@ -61,3 +61,52 @@ export const WORD_FAMILIES: WordFamily[] = [
   { rime: "un", emoji: "☀️", sound: "U-N says un.", words: [{ word: "sun", emoji: "☀️" }, { word: "run", emoji: "🏃" }, { word: "bun", emoji: "🥯" }] },
   { rime: "ut", emoji: "🥜", sound: "U-T says ut.", words: [{ word: "nut", emoji: "🥜" }, { word: "cut", emoji: "✂️" }, { word: "hut", emoji: "🛖" }] },
 ];
+
+export interface SoundHunt {
+  word: string;
+  emoji: string;
+  letter: string;
+  decoys: [string, string];
+  spoken: string;
+}
+
+export const SOUND_HUNTS: SoundHunt[] = [
+  { word: "bus", emoji: "🚌", letter: "B", decoys: ["M", "S"], spoken: "Bus. What letter starts bus?" },
+  { word: "cat", emoji: "🐱", letter: "C", decoys: ["K", "T"], spoken: "Cat. What letter starts cat?" },
+  { word: "dock", emoji: "⚓", letter: "D", decoys: ["B", "P"], spoken: "Dock. What letter starts dock?" },
+  { word: "ferry", emoji: "⛴️", letter: "F", decoys: ["V", "S"], spoken: "Ferry. What letter starts ferry?" },
+  { word: "hat", emoji: "🎩", letter: "H", decoys: ["N", "A"], spoken: "Hat. What letter starts hat?" },
+  { word: "jam", emoji: "🍓", letter: "J", decoys: ["G", "Y"], spoken: "Jam. What letter starts jam?" },
+  { word: "key", emoji: "🔑", letter: "K", decoys: ["C", "Q"], spoken: "Key. What letter starts key?" },
+  { word: "loaf", emoji: "🍞", letter: "L", decoys: ["B", "F"], spoken: "Loaf. What letter starts loaf?" },
+  { word: "mat", emoji: "🟫", letter: "M", decoys: ["N", "W"], spoken: "Mat. What letter starts mat?" },
+  { word: "nest", emoji: "🪺", letter: "N", decoys: ["M", "S"], spoken: "Nest. What letter starts nest?" },
+  { word: "porch", emoji: "🏡", letter: "P", decoys: ["B", "T"], spoken: "Porch. What letter starts porch?" },
+  { word: "quilt", emoji: "🧵", letter: "Q", decoys: ["K", "G"], spoken: "Quilt. What letter starts quilt?" },
+  { word: "rain", emoji: "🌧️", letter: "R", decoys: ["W", "L"], spoken: "Rain. What letter starts rain?" },
+  { word: "stoop", emoji: "🪜", letter: "S", decoys: ["T", "C"], spoken: "Stoop. What letter starts stoop?" },
+  { word: "taxi", emoji: "🚕", letter: "T", decoys: ["D", "X"], spoken: "Taxi. What letter starts taxi?" },
+  { word: "wash", emoji: "👕", letter: "W", decoys: ["R", "V"], spoken: "Wash. What letter starts wash?" },
+];
+
+export interface BlendWord {
+  word: string;
+  emoji: string;
+  letters: [string, string, string];
+  spoken: string;
+}
+
+export const BLEND_WORDS: BlendWord[] = [
+  { word: "cat", emoji: "🐱", letters: ["C", "A", "T"], spoken: "C. A. T. Cat." },
+  { word: "hat", emoji: "🎩", letters: ["H", "A", "T"], spoken: "H. A. T. Hat." },
+  { word: "mat", emoji: "🟫", letters: ["M", "A", "T"], spoken: "M. A. T. Mat." },
+  { word: "bus", emoji: "🚌", letters: ["B", "U", "S"], spoken: "B. U. S. Bus." },
+  { word: "sun", emoji: "☀️", letters: ["S", "U", "N"], spoken: "S. U. N. Sun." },
+  { word: "bun", emoji: "🥯", letters: ["B", "U", "N"], spoken: "B. U. N. Bun." },
+  { word: "pan", emoji: "🍳", letters: ["P", "A", "N"], spoken: "P. A. N. Pan." },
+  { word: "pot", emoji: "🍲", letters: ["P", "O", "T"], spoken: "P. O. T. Pot." },
+  { word: "dog", emoji: "🐕", letters: ["D", "O", "G"], spoken: "D. O. G. Dog." },
+  { word: "pig", emoji: "🐷", letters: ["P", "I", "G"], spoken: "P. I. G. Pig." },
+  { word: "hop", emoji: "🐰", letters: ["H", "O", "P"], spoken: "H. O. P. Hop." },
+  { word: "red", emoji: "🔴", letters: ["R", "E", "D"], spoken: "R. E. D. Red." },
+];

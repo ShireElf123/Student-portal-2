@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { COUNTING_CARDS } from "./countingBoard";
-import { PHONICS_TILES, WORD_FAMILIES } from "./phonicsBoard";
+import { COUNTING_CARDS, MAKE_TEN_ROUNDS, MORE_LESS_ROUNDS, SHAPE_ROUNDS, SUBITIZE_ROUNDS } from "./countingBoard";
+import { BLEND_WORDS, PHONICS_TILES, SOUND_HUNTS, WORD_FAMILIES } from "./phonicsBoard";
 
 describe("phonics and counting boards", () => {
   it("keeps twenty-six unique letters with three neighborhood words each", () => {
@@ -20,5 +20,14 @@ describe("phonics and counting boards", () => {
     const nums = COUNTING_CARDS.map((card) => card.num);
     expect(nums).toEqual(Array.from({ length: 20 }, (_, index) => index + 1));
     expect(COUNTING_CARDS.every((card) => card.scene.length > 8)).toBe(true);
+  });
+
+  it("adds first-sound hunts, CVC blends, more/less, make-ten, peek, and stoop shapes", () => {
+    expect(SOUND_HUNTS.length).toBeGreaterThanOrEqual(16);
+    expect(BLEND_WORDS.every((word) => word.letters.length === 3)).toBe(true);
+    expect(MORE_LESS_ROUNDS.length).toBeGreaterThanOrEqual(8);
+    expect(MAKE_TEN_ROUNDS.every((round) => round.have >= 1 && round.have < 10)).toBe(true);
+    expect(SUBITIZE_ROUNDS.every((round) => round.n >= 1 && round.n <= 5)).toBe(true);
+    expect(SHAPE_ROUNDS.every((round) => round.options.includes(round.name))).toBe(true);
   });
 });
