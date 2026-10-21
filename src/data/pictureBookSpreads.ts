@@ -514,4 +514,13 @@ export const PICTURE_BOOK_SPREADS: Record<string, string> = {
   "busy-beehive-architects:3": "/spreads/busy-beehive-architects-3.jpg",
   "busy-beehive-architects:4": "/spreads/busy-beehive-architects-4.jpg",
   "the-curious-caterpillar:1": "/spreads/the-curious-caterpillar-1.jpg",
+  "the-curious-caterpillar:2": "/spreads/the-curious-caterpillar-2.jpg",
+  "the-curious-caterpillar:3": "/spreads/the-curious-caterpillar-3.jpg",
+  "the-helpful-little-tugboat:1": "/spreads/the-helpful-little-tugboat-1.jpg",
+  "the-helpful-little-tugboat:2": "/spreads/the-helpful-little-tugboat-2.jpg",
+  "the-helpful-little-tugboat:3": "/spreads/the-helpful-little-tugboat-3.jpg",
+  "the-helpful-little-tugboat:4": "/spreads/the-helpful-little-tugboat-4.jpg",
+  "superhero-phonics-squad:1": "/spreads/superhero-phonics-squad-1.jpg",
+  "superhero-phonics-squad:2": "/spreads/superhero-phonics-squad-2.jpg",
+  "superhero-phonics-squad:3": "/spreads/superhero-phonics-squad-3.jpg",
 };
