@@ -115,7 +115,9 @@ describe("story library", () => {
     const fountain = PICTURE_BOOKS.find((book) => book.id === "fountain-three-coins");
     const taxi = PICTURE_BOOKS.find((book) => book.id === "yellow-taxi-puddle");
     expect(fountain?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
-    expect(taxi?.pages.slice(0, 2).every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(taxi?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const keyMat = PICTURE_BOOKS.find((book) => book.id === "lost-key-mat");
+    expect(keyMat?.pages.slice(0, 4).every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["hot-pot-sip"]).toBe("/covers/hot-pot-sip.jpg");
     expect(PICTURE_BOOK_COVERS["big-hug-bed"]).toBe("/covers/big-hug-bed.jpg");
     expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);
