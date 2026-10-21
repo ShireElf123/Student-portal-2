@@ -279,6 +279,27 @@ describe("story library", () => {
     expect(Object.keys(PICTURE_BOOK_SPREADS).length).toBeGreaterThanOrEqual(16);
   });
 
+  it("prints a story the voice can share with the picture", () => {
+    const ipaMark = /\/[A-Za-zæʃθðəɪɒʌɑŋtʃ]{1,4}\//;
+    for (const book of PICTURE_BOOKS) {
+      for (const page of book.pages) {
+        expect(page.text, `${book.id}:${page.pageNumber}`).not.toMatch(ipaMark);
+      }
+    }
+    const meadow = PICTURE_BOOKS.find((book) => book.id === "letter-meadow-abc");
+    expect(meadow?.pages[0].text.toLowerCase()).toContain("apple");
+    expect(meadow?.pages[0].text).not.toMatch(/stands in the grass/i);
+    expect(meadow?.pages[0].learningInteraction?.options[0]).toBe("Apple");
+    expect(meadow?.pages[1].text.toLowerCase()).toContain("two");
+    const pine = PICTURE_BOOKS.find((book) => book.id === "pine-trail-map");
+    expect(pine?.pages[3].text.toLowerCase()).not.toContain("folds");
+    const home = PICTURE_BOOKS.find((book) => book.id === "home-kind-morning");
+    expect(home?.pages[1].text.toLowerCase()).toContain("teddy");
+    expect(home?.pages[1].text).not.toMatch(/\bMum\b/);
+    const safari = PICTURE_BOOKS.find((book) => book.id === "safari-alphabet");
+    expect(safari?.subtitle.toLowerCase()).toContain("a through e");
+  });
+
   it("maps every scored page to a real picture-book skill", () => {
     const skillIds = new Set(CURRICULUM_SKILL_NODES.map((node) => node.id));
     let scored = 0;

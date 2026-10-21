@@ -60,6 +60,65 @@ export const VOICE_PERSONAS: VoicePersona[] = [
   },
 ];
 
+/**
+ * Web Speech reads IPA slashes as "slash ae slash". Turn letter-sound marks
+ * into toddler-friendly talk so stories, cards, and games match the picture.
+ */
+const IPA_TO_SPEECH: Record<string, string> = {
+  tʃ: "ch",
+  dʒ: "juh",
+  kw: "kwuh",
+  ks: "ks",
+  æ: "a",
+  ʃ: "shh",
+  θ: "th",
+  ð: "th",
+  ɛ: "eh",
+  ɪ: "ih",
+  ɒ: "o",
+  ʌ: "uh",
+  ɑ: "ah",
+  e: "eh",
+  i: "ee",
+  o: "oh",
+  b: "buh",
+  k: "kuh",
+  d: "duh",
+  p: "puh",
+  t: "tuh",
+  g: "guh",
+  h: "huh",
+  s: "sss",
+  f: "fff",
+  m: "mmm",
+  n: "nnn",
+  r: "rrr",
+  l: "lll",
+  w: "wuh",
+  v: "vvv",
+  z: "zzz",
+  j: "juh",
+  y: "yuh",
+};
+
+export function prepareSpeechText(text: string): string {
+  let out = (text || "").replace(/\s+/g, " ").trim();
+  if (!out) return "";
+  const keys = Object.keys(IPA_TO_SPEECH).sort((a, b) => b.length - a.length);
+  for (const key of keys) {
+    out = out.replace(new RegExp(`/${key}/`, "gi"), IPA_TO_SPEECH[key]);
+  }
+  out = out.replace(/\/([A-Za-zæʃθðəɪɒʌɑŋ]{1,4})\//g, "$1");
+  return out.replace(/\s+/g, " ").trim();
+}
+
+/** Read-to-me speaks the printed page so the voice matches the picture and tap-words. */
+export function spokenPageText(page: { text?: string; narration?: string }): string {
+  const printed = (page.text || "").trim();
+  if (printed) return printed;
+  return (page.narration || "").trim();
+}
+
 export function getActivePersona(): VoicePersona {
   try {
     const saved = localStorage.getItem("app_voice_persona_id");
@@ -394,7 +453,7 @@ class SpeechCoordinator {
       return false;
     }
 
-    const cleanText = (text || "").trim();
+    const cleanText = prepareSpeechText(text || "");
     if (!cleanText) {
       options?.onEnd?.();
       return false;
@@ -600,7 +659,7 @@ export function testVoice(sampleText?: string): void {
   const info = getActiveVoiceInfo();
   const text =
     sampleText ||
-    `Hello there! I am your AI learning coach. Ready to explore and learn together today?`;
+    `Hello there! I am your learning coach. Ready to explore and learn together today?`;
   speakText(text);
 }
 

@@ -256,7 +256,7 @@ export function ParentView({
     if (isVoiceTesting) {
       stopSpeaking();
     } else {
-      testVoice("Hello! I am your AI learning coach. Ready for today's learning quest?");
+      testVoice("Hello! I am your learning coach. Ready for today's learning quest?");
     }
   };
 

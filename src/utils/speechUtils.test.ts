@@ -177,3 +177,31 @@ describe("speakText callback delivery", () => {
     setVoiceMuted(false);
   });
 });
+
+describe("prepareSpeechText and spokenPageText", () => {
+  it("turns IPA slashes into toddler-friendly sounds", async () => {
+    const { prepareSpeechText } = await loadCoordinator();
+    expect(prepareSpeechText("A says /æ/. Apple.")).toBe("A says a. Apple.");
+    expect(prepareSpeechText("B says /b/. Bus.")).toBe("B says buh. Bus.");
+    expect(prepareSpeechText("S plus H makes /ʃ/.")).toBe("S plus H makes shh.");
+    expect(prepareSpeechText("C plus H makes /tʃ/.")).toBe("C plus H makes ch.");
+  });
+
+  it("reads the printed page, not a hidden phonics overlay", async () => {
+    const { spokenPageText } = await loadCoordinator();
+    expect(
+      spokenPageText({
+        text: "Pip unfolds a map. The pine path is this way.",
+        narration: "M says /m/. Map for the pine trail.",
+      }),
+    ).toBe("Pip unfolds a map. The pine path is this way.");
+  });
+
+  it("sends the cleaned line to the speech engine", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    const { speakText } = await loadCoordinator();
+    speakText("A says /æ/. Apple.");
+    await wait(150);
+    expect(engineLog).toContain("speak:A says a. Apple.");
+  });
+});

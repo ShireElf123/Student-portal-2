@@ -727,7 +727,7 @@ const BUBBLES_BY_WORLD: Record<string, BubbleWord[]> = {
     { letter: "P", word: "Pear", emoji: "🍐", sound: "P says /p/! Pear!" },
     { letter: "C", word: "Corn", emoji: "🌽", sound: "C says /k/! Corn!" },
     { letter: "T", word: "Tea", emoji: "🍵", sound: "T says /t/! Tea!" },
-    { letter: "J", word: "Jam", emoji: "🍓", sound: "J says /j/! Jam!" },
+    { letter: "J", word: "Jam", emoji: "🫙", sound: "J says /j/! Jam!" },
     { letter: "O", word: "Oven", emoji: "🔥", sound: "O says /ɒ/! Oven!" },
     { letter: "K", word: "Kettle", emoji: "🫖", sound: "K says /k/! Kettle!" },
     { letter: "F", word: "Flour", emoji: "🌾", sound: "F says /f/! Flour!" },

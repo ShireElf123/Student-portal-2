@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { PictureBook, PictureBookPage } from "../types";
 import { PICTURE_BOOKS, pictureBookIsOnNamedStoriesShelf } from "../data/pictureBooksData";
-import { speakText, stopSpeaking, speechCoordinator } from "../utils/speechUtils";
+import { speakText, stopSpeaking, speechCoordinator, spokenPageText } from "../utils/speechUtils";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { resolveSkillForActivity } from "../data/activitySkillRegistry";
 import { soundEffects } from "../utils/soundEffects";
@@ -470,10 +470,10 @@ export function ToddlerWorldView({
         };
         aud.play().catch(() => {
           setIsPlayingParentAudio(false);
-          speakText(startingPage.narration);
+          speakText(spokenPageText(startingPage));
         });
       } else if (readModeRef.current === "to-me") {
-        speakText(startingPage.narration);
+        speakText(spokenPageText(startingPage));
       }
     });
   };
@@ -539,10 +539,10 @@ export function ToddlerWorldView({
           };
           aud.play().catch(() => {
             setIsPlayingParentAudio(false);
-            speakText(selectedBook.pages[nextIdx].narration);
+            speakText(spokenPageText(selectedBook.pages[nextIdx]));
           });
         } else if (readModeRef.current === "to-me") {
-          speakText(selectedBook.pages[nextIdx].narration);
+          speakText(spokenPageText(selectedBook.pages[nextIdx]));
         }
       });
       if (!visitedBookPagesRef.current.has(nextIdx)) {
@@ -603,10 +603,10 @@ export function ToddlerWorldView({
         };
         aud.play().catch(() => {
           setIsPlayingParentAudio(false);
-          if (readModeRef.current === "to-me") speakText(selectedBook.pages[prevIdx].narration);
+          if (readModeRef.current === "to-me") speakText(spokenPageText(selectedBook.pages[prevIdx]));
         });
       } else if (readModeRef.current === "to-me") {
-        speakText(selectedBook.pages[prevIdx].narration);
+        speakText(spokenPageText(selectedBook.pages[prevIdx]));
       }
     });
   };
@@ -1385,7 +1385,7 @@ export function ToddlerWorldView({
                   </div>
                   {/* Read to Me / Parent Voice Button */}
                   <button
-                    onClick={() => handleReadAloud(activePage.narration)}
+                    onClick={() => handleReadAloud(spokenPageText(activePage))}
                     className={`flex items-center gap-1 sm:gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 shadow-md active:translate-y-1 ${
                       isPlayingParentAudio
                         ? "bg-rose-500 text-white border-rose-700 animate-pulse"
@@ -1628,7 +1628,7 @@ export function ToddlerWorldView({
                         setCurrentPageIndex(0);
                         setIsBookCompleted(false);
                         if (selectedBook.pages[0]) {
-                          speakText(selectedBook.pages[0].narration);
+                          speakText(spokenPageText(selectedBook.pages[0]));
                         }
                       }}
                       className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-b from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-amber-950 font-black text-sm border-b-4 border-orange-700 shadow-lg transition-all active:translate-y-1 cursor-pointer"
