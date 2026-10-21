@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PICTURE_BOOKS } from "./pictureBooksData";
+import { PICTURE_BOOKS, pictureBookIsOnNamedStoriesShelf } from "./pictureBooksData";
 import { EPIC_PICTURE_BOOKS } from "./pictureBooksEpics";
 import { STUDIO_PICTURE_BOOKS } from "./pictureBooksStudio";
 import { FIRST_WORD_PICTURE_BOOKS } from "./pictureBooksFirstWords";
@@ -43,6 +43,13 @@ describe("story library", () => {
     expect(STOOP_PICTURE_BOOKS.every((book) => book.series === "street")).toBe(true);
     expect(PICTURE_BOOKS.find((book) => book.id === "bakery-window-fog")?.series).toBe("street");
     expect(PICTURE_BOOKS.find((book) => book.id === "park-bandstand-pigeons")?.series).toBe("street");
+    const leftover = PICTURE_BOOKS.filter((book) => !pictureBookIsOnNamedStoriesShelf(book));
+    expect(leftover.map((book) => book.id)).toEqual(
+      expect.arrayContaining(["safari-alphabet", "little-red-fire-truck"]),
+    );
+    expect(new Set([...PICTURE_BOOKS.filter(pictureBookIsOnNamedStoriesShelf), ...leftover]).size).toBe(
+      PICTURE_BOOKS.length,
+    );
   });
 
   it("adds more first-word readers and paints Cat on the Mat page-by-page", () => {
@@ -98,7 +105,9 @@ describe("story library", () => {
     const token = PICTURE_BOOKS.find((book) => book.id === "subway-token-mouse");
     expect(knobs?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(bandstand?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
-    expect(token?.pages.slice(0, 2).every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(token?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const dusk = PICTURE_BOOKS.find((book) => book.id === "porch-dusk-jar");
+    expect(dusk?.pages.slice(0, 4).every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["hot-pot-sip"]).toBe("/covers/hot-pot-sip.jpg");
     expect(PICTURE_BOOK_COVERS["big-hug-bed"]).toBe("/covers/big-hug-bed.jpg");
     expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);

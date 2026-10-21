@@ -26,7 +26,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { PictureBook, PictureBookPage } from "../types";
-import { PICTURE_BOOKS } from "../data/pictureBooksData";
+import { PICTURE_BOOKS, pictureBookIsOnNamedStoriesShelf } from "../data/pictureBooksData";
 import { speakText, stopSpeaking, speechCoordinator } from "../utils/speechUtils";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { resolveSkillForActivity } from "../data/activitySkillRegistry";
@@ -101,6 +101,7 @@ const BOOK_SHELVES = [
   { id: "first-words", label: "First words", emoji: "🔤" },
   { id: "look-learn", label: "Look & learn", emoji: "🔍" },
   { id: "bedtime", label: "Bedtime", emoji: "🌙" },
+  { id: "more", label: "More stories", emoji: "📖" },
   { id: "long", label: "Long tales", emoji: "✨" },
 ] as const;
 
@@ -114,10 +115,11 @@ function bookMatchesShelf(book: PictureBook, shelf: BookShelfId): boolean {
   if (shelf === "first-words") return book.series === "first-words";
   if (shelf === "look-learn") return book.series === "look-learn";
   if (shelf === "bedtime") return book.category === "bedtime" || book.id === "big-hug-bed";
+  if (shelf === "more") return !pictureBookIsOnNamedStoriesShelf(book);
   return true;
 }
 
-function booksForRow(id: "featured" | "teddy-nana" | "street" | "first-words" | "look-learn" | "bedtime"): PictureBook[] {
+function booksForRow(id: "featured" | "teddy-nana" | "street" | "first-words" | "look-learn" | "bedtime" | "more"): PictureBook[] {
   if (id === "featured") {
     return FEATURED_BOOK_IDS.map((bookId) => PICTURE_BOOKS.find((book) => book.id === bookId)).filter(
       (book): book is PictureBook => Boolean(book),
@@ -1195,6 +1197,7 @@ export function ToddlerWorldView({
                     { id: "first-words", label: "First words", emoji: "🔤" },
                     { id: "look-learn", label: "Look & learn", emoji: "🔍" },
                     { id: "bedtime", label: "Bedtime", emoji: "🌙" },
+                    { id: "more", label: "More stories", emoji: "📖" },
                   ] as const
                 ).map((row) => {
                   const rowBooks = booksForRow(row.id);

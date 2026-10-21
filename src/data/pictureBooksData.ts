@@ -2148,3 +2148,15 @@ export const PICTURE_BOOKS: PictureBook[] = [
   }),
 }));
 
+/** Named Stories rows. Everything else belongs on More stories — never hide a book. */
+export function pictureBookIsOnNamedStoriesShelf(book: PictureBook): boolean {
+  return (
+    book.series === "teddy-nana" ||
+    book.series === "street" ||
+    book.series === "first-words" ||
+    book.series === "look-learn" ||
+    book.category === "bedtime" ||
+    book.id === "big-hug-bed"
+  );
+}
+
