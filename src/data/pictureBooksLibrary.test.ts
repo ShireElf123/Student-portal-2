@@ -131,7 +131,9 @@ describe("story library", () => {
     const snowMaple = PICTURE_BOOKS.find((book) => book.id === "snow-maple-street");
     expect(snowMaple?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const libraryMouse = PICTURE_BOOKS.find((book) => book.id === "dot-library-mouse");
-    expect(libraryMouse?.pages.slice(0, 4).every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(libraryMouse?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const lemonadeStoop = PICTURE_BOOKS.find((book) => book.id === "lemonade-stoop");
+    expect(lemonadeStoop?.pages.slice(0, 6).every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["lemonade-stoop"]).toBe("/covers/lemonade-stoop.jpg");
     expect(PICTURE_BOOK_COVERS["lost-red-mitten"]).toBe("/covers/lost-red-mitten.jpg");
     expect(PICTURE_BOOK_COVERS["nana-porch-swing"]).toBe("/covers/nana-porch-swing.jpg");
