@@ -88,7 +88,11 @@ describe("story library", () => {
     expect(chalk?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(bakery?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const knobs = PICTURE_BOOKS.find((book) => book.id === "hardware-drawer-knobs");
+    const bandstand = PICTURE_BOOKS.find((book) => book.id === "park-bandstand-pigeons");
+    const token = PICTURE_BOOKS.find((book) => book.id === "subway-token-mouse");
     expect(knobs?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(bandstand?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(token?.pages.slice(0, 2).every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["hot-pot-sip"]).toBe("/covers/hot-pot-sip.jpg");
     expect(PICTURE_BOOK_COVERS["big-hug-bed"]).toBe("/covers/big-hug-bed.jpg");
     expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);
