@@ -1,6 +1,7 @@
 import { PictureBook } from "../types";
+import { EPIC_PICTURE_BOOKS } from "./pictureBooksEpics";
 
-export const PICTURE_BOOKS: PictureBook[] = [
+const CLASSIC_PICTURE_BOOKS: PictureBook[] = [
   {
     id: "safari-alphabet",
     title: "Animal Phonics Safari",
@@ -202,13 +203,13 @@ export const PICTURE_BOOKS: PictureBook[] = [
   {
     id: "little-bear-bedtime",
     title: "Goodnight, Little Bear",
-    subtitle: "A soothing bedtime story to wind down after a day of learning.",
+    subtitle: "A full bedtime walk from hill to den — moon, teeth, pajamas, and a last window look.",
     ageRange: "Ages 2-5",
     category: "bedtime",
     coverEmoji: "🌙",
     coverGradient: "from-indigo-600 to-purple-800",
     author: "Mama Bear",
-    readTimeMinutes: 3,
+    readTimeMinutes: 5,
     pages: [
       {
         pageNumber: 1,
@@ -224,16 +225,82 @@ export const PICTURE_BOOKS: PictureBook[] = [
       },
       {
         pageNumber: 2,
+        title: "The Path Home",
+        text: "Little Bear follows the pine path. Each cone is a stepping stone. The den window is a gold crumb of light.",
+        illustration: "🧸 🌲 🏡",
+        bgGradient: "from-indigo-950 to-emerald-950 text-emerald-100",
+        narration: "Follow the pine path. The den window is a gold crumb of light. Almost home.",
+        wordHighlights: ["Path", "pine", "home"],
+        interactivePrompt: "Take three quiet steps toward home.",
+        soundEffectText: "Pad pad pad.",
+      },
+      {
+        pageNumber: 3,
+        title: "Warm Water",
+        text: "Mama pours a little bath. The steam is a cloud wearing pajamas. Splash is allowed, then hush.",
+        illustration: "🛁 ☁️ 🧸",
+        bgGradient: "from-sky-950 to-indigo-950 text-sky-100",
+        narration: "A little bath. Steam like a cloud in pajamas. Splash, then hush.",
+        wordHighlights: ["Bath", "steam", "hush"],
+        interactivePrompt: "Splash twice, then put a finger on your lips.",
+        soundEffectText: "Splash… shh.",
+      },
+      {
+        pageNumber: 4,
         title: "Snug in the Cozy Den",
         text: "Little Bear brushes his fluffy teeth, puts on starry pajamas, and tucks under a warm blanket.",
         illustration: "🧸 🛏️ ⭐",
         bgGradient: "from-indigo-950 to-purple-950 text-purple-100",
-        narration: "Tucked in warm and snug. Little Bear feels safe, happy, and loved.",
+        narration: "Brush, pajamas, blanket. Little Bear feels safe, happy, and loved.",
         letterHighlight: "Sleep",
         wordHighlights: ["Warm", "Cozy", "Dream"],
-        interactivePrompt: "Whisper: Goodnight, Little Bear! Sweet dreams!",
+        interactivePrompt: "Pretend to brush, then tug a blanket to your chin.",
         learningInteraction: { id: "bear-bedtime-sequence", prompt: "What does Little Bear do after brushing his teeth?", options: ["Puts on pajamas", "Goes swimming", "Eats breakfast"], correctOptionIndex: 0, skillId: "read-k1-listening-comprehension" },
         soundEffectText: "Yawn... hush.",
+      },
+      {
+        pageNumber: 5,
+        title: "One Window Look",
+        text: "One last look. Owl is a comma in the tree. The moon is still smiling. The hill is still there.",
+        illustration: "🦉 🌙 🪟",
+        bgGradient: "from-violet-950 to-slate-950 text-violet-100",
+        narration: "One last window look. Owl in the tree. The moon is still smiling.",
+        wordHighlights: ["Window", "owl", "moon"],
+        interactivePrompt: "Peek through a window square you make with your fingers.",
+        soundEffectText: "Hoo.",
+      },
+      {
+        pageNumber: 6,
+        title: "Mama’s Song",
+        text: "Mama’s voice is a slow river. No drums. Just the names of things that stayed: hill, moon, bear.",
+        illustration: "💛 🎶 🧸",
+        bgGradient: "from-purple-950 to-indigo-950 text-purple-100",
+        narration: "Mama’s voice is a slow river. Hill. Moon. Bear. The names of things that stayed.",
+        wordHighlights: ["Mama", "song", "bear"],
+        interactivePrompt: "Hum one low note.",
+        soundEffectText: "Mmm…",
+      },
+      {
+        pageNumber: 7,
+        title: "The Blanket Sea",
+        text: "The blanket is a small sea. Little Bear is a boat that does not have to go anywhere.",
+        illustration: "🌊 🛏️ ⛵",
+        bgGradient: "from-blue-950 to-indigo-950 text-blue-100",
+        narration: "The blanket is a small sea. Little Bear is a boat that can stay.",
+        wordHighlights: ["Blanket", "sea", "stay"],
+        interactivePrompt: "Tug the blanket. Stay.",
+        soundEffectText: "Fff soft.",
+      },
+      {
+        pageNumber: 8,
+        title: "Goodnight",
+        text: "Eyes shut. The den keeps watch. Tomorrow the hill will still be the hill. Goodnight, Little Bear.",
+        illustration: "😴 🏡 ⭐",
+        bgGradient: "from-slate-950 to-indigo-950 text-indigo-100",
+        narration: "Eyes shut. The den keeps watch. Goodnight, Little Bear. Sweet dreams.",
+        wordHighlights: ["Goodnight", "dreams", "den"],
+        interactivePrompt: "Whisper: Goodnight, Little Bear.",
+        soundEffectText: "Goodnight.",
       },
     ],
   },
@@ -2029,4 +2096,6 @@ export const PICTURE_BOOKS: PictureBook[] = [
     ],
   },
 ];
+
+export const PICTURE_BOOKS: PictureBook[] = [...EPIC_PICTURE_BOOKS, ...CLASSIC_PICTURE_BOOKS];
 

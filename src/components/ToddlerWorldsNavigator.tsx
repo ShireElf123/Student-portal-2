@@ -905,7 +905,7 @@ export function ToddlerWorldsNavigator({
         {/* 3. STORY ADVENTURE ENGINE */}
         {activeStory && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between text-xs text-white/60 font-bold px-2">
+            <div className="flex items-center justify-between text-sm text-white/90 font-bold px-2">
               <span>Step {storyStepIndex + 1} of {activeStory.steps.length}</span>
               <div className="flex gap-1.5">
                 {activeStory.steps.map((_, i) => (
@@ -922,30 +922,30 @@ export function ToddlerWorldsNavigator({
             {!storyCompleted ? (
               <div className={`p-6 sm:p-8 rounded-3xl bg-gradient-to-b ${activeStory.steps[storyStepIndex].bgGradient} shadow-2xl space-y-5 border-2 border-white/20`}>
                 <div className="text-center space-y-2">
-                  <div className="text-5xl">{activeStory.steps[storyStepIndex].illustration}</div>
-                  <h4 className="text-xl sm:text-2xl font-black">
+                  <div className="text-6xl sm:text-7xl">{activeStory.steps[storyStepIndex].illustration}</div>
+                  <h4 className="text-2xl sm:text-3xl font-black">
                     {activeStory.steps[storyStepIndex].sceneTitle}
                   </h4>
-                  <p className="text-sm font-semibold leading-relaxed max-w-lg mx-auto">
+                  <p className="text-base sm:text-lg font-semibold leading-relaxed max-w-lg mx-auto">
                     {activeStory.steps[storyStepIndex].storyText}
                   </p>
                 </div>
 
                 <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl border border-white/30 text-center space-y-3">
-                  <div className="text-xs font-black uppercase tracking-wider text-amber-900">
-                    Your Choice / Mini Challenge:
+                  <div className="text-sm font-black uppercase tracking-wider text-amber-900">
+                    Your turn
                   </div>
-                  <div className="text-base font-black">
+                  <div className="text-lg font-black">
                     {activeStory.steps[storyStepIndex].question}
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-md mx-auto pt-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg mx-auto pt-2">
                     {activeStory.steps[storyStepIndex].options.map((opt) => (
                       <button
                         key={opt.id}
                         disabled={storySelectedOption !== null}
                         onClick={() => handleSelectStoryOption(activeStory.steps[storyStepIndex], opt.id)}
-                        className={`p-4 rounded-2xl border-2 flex items-center justify-center gap-2 font-black text-xs sm:text-sm cursor-pointer transition-all shadow-md active:scale-95 ${
+                        className={`min-h-14 p-4 rounded-2xl border-2 flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer transition-all shadow-md active:scale-95 ${
                           storySelectedOption === opt.id
                             ? "bg-emerald-500 border-emerald-300 text-white scale-105 shadow-emerald-500/40"
                             : "bg-white/90 hover:bg-white text-slate-800 border-white/60 hover:border-amber-400"

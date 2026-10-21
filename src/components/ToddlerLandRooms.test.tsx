@@ -158,9 +158,9 @@ describe("land rooms", () => {
     mural.unmount();
 
     const stones = render(<ToddlerLandRooms playId="story-stones" onAddStar={() => stars.push(1)} />);
-    fireEvent.click(stones.getByTestId("stone-once"));
-    fireEvent.click(stones.getByTestId("stone-then"));
-    fireEvent.click(stones.getByTestId("stone-end"));
+    for (const id of ["once", "then", "end", "friend", "gift", "owl", "blanket", "sleep"]) {
+      fireEvent.click(stones.getByTestId(`stone-${id}`));
+    }
     await flush();
     stones.unmount();
 

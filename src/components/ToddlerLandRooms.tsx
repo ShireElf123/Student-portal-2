@@ -52,7 +52,7 @@ const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = 
   "fire-hose": { title: "Hang the hoses", line: "Hold the hose. Drag water onto each flame.", done: "The fire house is calm." },
   "fruit-stack": { title: "Stack the stall", line: "Drag fruit onto the plate. Fill five.", done: "A market tower!" },
   "stamp-mural": { title: "Stamp a mural", line: "Drag a stamp onto the wall. Six prints.", done: "A wall full of colour!" },
-  "story-stones": { title: "Story stones", line: "Tap the stones in story order.", done: "Once upon a time… you told it!" },
+  "story-stones": { title: "Story stones", line: "Tell the tale. Tap each stone in order.", done: "Once upon a time… you told it!" },
   "number-pebbles": { title: "Number pebbles", line: "Tap the pebbles from 1 to 10.", done: "The meadow counted with you!" },
   campfire: { title: "Build a campfire", line: "Drag four logs onto the stones, then strike a spark.", done: "Warm light on the trail." },
   "feeling-face": { title: "Make a feeling", line: "Pick eyes, then a mouth.", done: "That face has a feeling!" },
@@ -751,33 +751,43 @@ function StampMural({ onAddStar }: { onAddStar?: () => void }) {
 }
 
 const STONES = [
-  { id: "once", label: "Once", emoji: "🪨" },
-  { id: "then", label: "Then", emoji: "🌙" },
-  { id: "end", label: "The end", emoji: "🏡" },
+  { id: "once", label: "Once", emoji: "📖", line: "Once upon a time, a den light came on." },
+  { id: "then", label: "Then", emoji: "🌙", line: "Then the moon sat down on the pine hill." },
+  { id: "end", label: "Path", emoji: "🏡", line: "Little Bear walked the pine path toward home." },
+  { id: "friend", label: "Friend", emoji: "🦊", line: "A fox offered a berry without being asked." },
+  { id: "gift", label: "Share", emoji: "🍓", line: "They split the berry. Two mouths. One thank-you." },
+  { id: "owl", label: "Owl", emoji: "🦉", line: "Owl asked: did you look where you last felt warm?" },
+  { id: "blanket", label: "Sea", emoji: "🛏️", line: "The blanket was a small sea that did not have to travel." },
+  { id: "sleep", label: "The end", emoji: "⭐", line: "The end. The den kept watch until morning." },
 ];
 
 function StoryStones({ onAddStar }: { onAddStar?: () => void }) {
   const { done, finish } = useCredit(onAddStar);
   const [step, setStep] = useState(0);
+  const spoken = STONES[Math.max(0, step - 1)];
   return (
     <Stage playId="story-stones" done={done} className="bg-gradient-to-b from-orange-200 via-rose-400 to-violet-900">
-      <div className="flex justify-center gap-4 mt-8">
+      <p className="mt-4 px-4 text-center text-lg sm:text-xl font-black text-white drop-shadow-md min-h-14">
+        {step === 0 ? "Tap Once to open the tale." : spoken?.line}
+      </p>
+      <div className="flex flex-wrap justify-center gap-3 mt-6 max-w-lg mx-auto">
         {STONES.map((stone, index) => (
           <button
             key={stone.id}
             type="button"
             data-testid={`stone-${stone.id}`}
-            className={`flex flex-col items-center rounded-3xl px-4 py-5 ${index < step ? "bg-white" : "bg-white/20"}`}
+            className={`flex flex-col items-center rounded-3xl min-h-24 min-w-20 px-3 py-4 ${index < step ? "bg-white text-violet-900" : "bg-white/20 text-white"}`}
             onClick={() => {
               if (index !== step) return;
               soundEffects.playPop();
+              speakText(stone.line, { pitch: 1.12 });
               const next = step + 1;
               setStep(next);
-              if (next >= 3) finish();
+              if (next >= STONES.length) finish();
             }}
           >
-            <span className="text-5xl">{stone.emoji}</span>
-            <span className="font-black text-white drop-shadow">{stone.label}</span>
+            <span className="text-4xl sm:text-5xl">{stone.emoji}</span>
+            <span className="font-black drop-shadow text-sm">{stone.label}</span>
           </button>
         ))}
       </div>
