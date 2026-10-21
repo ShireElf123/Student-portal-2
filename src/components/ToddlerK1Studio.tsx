@@ -109,12 +109,12 @@ export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
     <section className="rounded-[2rem] border-4 border-white/15 bg-slate-950/70 p-5 sm:p-7 shadow-2xl">
       <header className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[11px] font-black uppercase tracking-wider text-white/50">Skill studio</p>
-          <h3 className="mt-1 text-xl font-black text-white sm:text-2xl">
+          <p className="text-xs sm:text-sm font-black uppercase tracking-wider text-white/80">Skill studio</p>
+          <h3 className="mt-1 text-2xl font-black text-white sm:text-3xl">
             <span className="mr-2">{game.emoji}</span>
             {game.title}
           </h3>
-          <p className="mt-1 max-w-xl text-xs font-semibold text-white/70">{game.tagline}</p>
+          <p className="mt-1 max-w-2xl text-sm sm:text-base font-semibold text-white/90">{game.tagline}</p>
         </div>
         <p className="rounded-2xl bg-white/10 px-3 py-1.5 text-xs font-black text-white">
           {done ? `${correctCount}/${game.rounds.length}` : `${roundIndex + 1}/${game.rounds.length}`}
@@ -139,8 +139,8 @@ export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
       ) : (
         <>
           <div className={`mb-5 rounded-3xl bg-gradient-to-br ${game.accent} p-5 text-slate-950 shadow-inner`}>
-            <p className="font-mono text-sm font-black tracking-wide opacity-80">{round.scene}</p>
-            <p className="mt-3 text-lg font-black leading-snug sm:text-xl">{round.prompt}</p>
+            <p className="font-mono text-sm sm:text-base font-black tracking-wide opacity-90">{round.scene}</p>
+            <p className="mt-3 text-xl font-black leading-snug sm:text-2xl">{round.prompt}</p>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {round.choices.map((choice) => (
@@ -153,8 +153,8 @@ export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
                   shakeId === choice.id ? "animate-pulse border-rose-600" : "border-slate-300 hover:border-slate-500"
                 }`}
               >
-                <span className="block text-3xl">{choice.emoji}</span>
-                <span className="mt-2 block text-sm">{choice.label}</span>
+                <span className="block text-4xl sm:text-5xl">{choice.emoji}</span>
+                <span className="mt-2 block text-base sm:text-lg">{choice.label}</span>
               </button>
             ))}
           </div>

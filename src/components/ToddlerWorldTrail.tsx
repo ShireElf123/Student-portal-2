@@ -96,7 +96,7 @@ export function ToddlerWorldTrail({
                   onClick={() => {
                     if (!node.locked) onSelect(node.id);
                   }}
-                  className={`flex h-[88px] w-[88px] items-center justify-center rounded-full border-[6px] text-4xl shadow-lg ${
+                  className={`flex h-[88px] w-[88px] sm:h-[104px] sm:w-[104px] items-center justify-center rounded-full border-[6px] text-4xl sm:text-5xl shadow-lg ${
                     node.locked
                       ? "border-white/40 bg-slate-400 cursor-not-allowed"
                       : node.current
@@ -115,7 +115,7 @@ export function ToddlerWorldTrail({
                     Play
                   </p>
                 )}
-                <p className="mt-1 max-w-[7.5rem] text-center text-sm font-black leading-tight text-slate-900">
+                <p className="mt-1 max-w-[8.5rem] text-center text-sm sm:text-base font-black leading-tight text-slate-900">
                   {node.title}
                 </p>
               </div>

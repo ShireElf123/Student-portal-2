@@ -334,8 +334,8 @@ export function ToddlerRhymeGame({
             🎵
           </div>
           <div>
-            <h3 className="text-base sm:text-lg font-black text-white">Rhyme Time Playground</h3>
-            <p className="text-xs text-white/60">Find words that have matching sounds!</p>
+            <h3 className="text-lg sm:text-xl font-black text-white">Rhyme Time Playground</h3>
+            <p className="text-sm text-white/85">Find words that have matching sounds!</p>
           </div>
         </div>
 
@@ -355,7 +355,7 @@ export function ToddlerRhymeGame({
             <h4 className="text-2xl font-black text-amber-300 tracking-wide">
               {current.targetWord}
             </h4>
-            <p className="text-xs text-white/60 mt-1">Which friend below rhymes with {current.targetWord}?</p>
+            <p className="text-sm sm:text-base text-white/90 mt-1">Which friend below rhymes with {current.targetWord}?</p>
           </div>
 
           {/* Option Choices */}

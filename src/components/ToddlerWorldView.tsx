@@ -829,14 +829,14 @@ export function ToddlerWorldView({
 
       {/* Main Mode Navigation Tabs (Chunky, Tactile 3D Buttons - 6 Agency Tabs) */}
       <div className="max-w-7xl mx-auto px-4 pt-2 pb-2">
-        <div className={`grid grid-cols-2 sm:grid-cols-6 gap-2 p-2 rounded-3xl max-w-4xl mx-auto mb-8 shadow-xl ${
+        <div className={`grid grid-cols-2 sm:grid-cols-6 gap-2 sm:gap-3 p-2 sm:p-3 rounded-3xl max-w-6xl mx-auto mb-8 shadow-xl ${
           isMeadow
             ? "bg-white/95 backdrop-blur-md border-4 border-emerald-300 ring-4 ring-emerald-500/20"
-            : "bg-white/[0.06] border border-white/10"
+            : "bg-white/[0.08] border border-white/15"
         }`}>
           <button
             onClick={() => setActiveTab("worlds")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 px-2 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer select-none ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
               activeTab === "worlds"
                 ? "bg-gradient-to-b from-amber-400 to-orange-500 text-white border-b-4 border-orange-700 shadow-lg scale-102"
                 : isMeadow
@@ -844,13 +844,13 @@ export function ToddlerWorldView({
                 : "text-white/70 hover:text-white hover:bg-white/10 border-b-4 border-transparent"
             }`}
           >
-            <span className="text-xl">🗺️</span>
+            <span className="text-2xl sm:text-3xl">🗺️</span>
             <span>Worlds</span>
           </button>
 
           <button
             onClick={() => setActiveTab("books")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 px-2 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer select-none ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
               activeTab === "books"
                 ? "bg-gradient-to-b from-amber-400 to-amber-500 text-amber-950 border-b-4 border-amber-700 shadow-lg scale-102"
                 : isMeadow
@@ -858,13 +858,13 @@ export function ToddlerWorldView({
                 : "text-white/70 hover:text-white hover:bg-white/10 border-b-4 border-transparent"
             }`}
           >
-            <span className="text-xl">📚</span>
+            <span className="text-2xl sm:text-3xl">📚</span>
             <span>Stories</span>
           </button>
 
           <button
             onClick={() => setActiveTab("phonics")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 px-2 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer select-none ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
               activeTab === "phonics"
                 ? "bg-gradient-to-b from-rose-400 to-pink-500 text-white border-b-4 border-pink-700 shadow-lg scale-102"
                 : isMeadow
@@ -872,13 +872,13 @@ export function ToddlerWorldView({
                 : "text-white/70 hover:text-white hover:bg-white/10 border-b-4 border-transparent"
             }`}
           >
-            <span className="text-xl">🔤</span>
+            <span className="text-2xl sm:text-3xl">🔤</span>
             <span>Phonics</span>
           </button>
 
           <button
             onClick={() => setActiveTab("counting")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 px-2 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer select-none ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
               activeTab === "counting"
                 ? "bg-gradient-to-b from-indigo-400 to-indigo-600 text-white border-b-4 border-indigo-800 shadow-lg scale-102"
                 : isMeadow
@@ -886,13 +886,13 @@ export function ToddlerWorldView({
                 : "text-white/70 hover:text-white hover:bg-white/10 border-b-4 border-transparent"
             }`}
           >
-            <span className="text-xl">🔢</span>
+            <span className="text-2xl sm:text-3xl">🔢</span>
             <span>Counting</span>
           </button>
 
           <button
             onClick={() => setActiveTab("games")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 px-2 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer select-none ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
               activeTab === "games"
                 ? "bg-gradient-to-b from-emerald-400 to-teal-500 text-white border-b-4 border-emerald-800 shadow-lg scale-102"
                 : isMeadow
@@ -900,13 +900,13 @@ export function ToddlerWorldView({
                 : "text-white/70 hover:text-white hover:bg-white/10 border-b-4 border-transparent"
             }`}
           >
-            <span className="text-xl">🎮</span>
+            <span className="text-2xl sm:text-3xl">🎮</span>
             <span>Games</span>
           </button>
 
           <button
             onClick={() => setActiveTab("avatar-studio")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 px-2 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer select-none ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
               activeTab === "avatar-studio"
                 ? "bg-gradient-to-b from-pink-400 to-purple-500 text-white border-b-4 border-purple-800 shadow-lg scale-102"
                 : isMeadow
@@ -914,7 +914,7 @@ export function ToddlerWorldView({
                 : "text-white/70 hover:text-white hover:bg-white/10 border-b-4 border-transparent"
             }`}
           >
-            <span className="text-xl">🐾</span>
+            <span className="text-2xl sm:text-3xl">🐾</span>
             <span>My Buddy</span>
           </button>
         </div>
@@ -1073,8 +1073,8 @@ export function ToddlerWorldView({
                 }`}>
                   <span>📖</span> Illustrated Story &amp; Picture Books
                 </h2>
-                <p className={`text-xs sm:text-sm font-semibold ${
-                  isMeadow ? "text-slate-700" : "text-white/60"
+                <p className={`text-sm sm:text-base font-semibold ${
+                  isMeadow ? "text-slate-800" : "text-white/85"
                 }`}>
                   Click any book to start reading aloud with voice narration, bright artwork, and interactive tap prompts!
                 </p>
@@ -1156,7 +1156,7 @@ export function ToddlerWorldView({
                   <h4 className={`text-sm sm:text-base font-black mb-0.5 ${
                     isMeadow ? "text-slate-900" : "text-white"
                   }`}>Parent &amp; Tutor Reading Co-Pilot</h4>
-                  <p className={`text-xs sm:text-sm font-semibold max-w-xl ${
+                  <p className={`text-sm sm:text-base font-semibold max-w-xl ${
                     isMeadow ? "text-slate-600" : "text-white/60"
                   }`}>
                     Follow the interactive prompts on each page: encourage your child to touch the screen, imitate animal sounds, or find colors to nurture vocabulary!
@@ -1191,8 +1191,8 @@ export function ToddlerWorldView({
                 }`}>
                   <span>🔤</span> ABC Phonics Soundboard
                 </h2>
-                <p className={`text-xs sm:text-sm font-semibold ${
-                  isMeadow ? "text-slate-700" : "text-white/60"
+                <p className={`text-sm sm:text-base font-semibold ${
+                  isMeadow ? "text-slate-800" : "text-white/85"
                 }`}>
                   Tap any letter tile to hear letter names, phonics sounds, and example words spoken aloud!
                 </p>
@@ -1228,18 +1228,18 @@ export function ToddlerWorldView({
                         : "bg-white/[0.03] border-2 border-white/10 hover:border-pink-400/50 hover:bg-white/[0.07] text-white shadow-lg"
                     }`}
                   >
-                    <span className={`text-3xl sm:text-4xl font-black ${
+                    <span className={`text-4xl sm:text-5xl font-black ${
                       isMeadow
                         ? "text-pink-600"
                         : "text-transparent bg-clip-text bg-gradient-to-b from-white to-pink-200"
                     }`}>
                       {tile.letter}
                     </span>
-                    <span className="text-2xl my-1">{tile.emoji}</span>
-                    <span className={`text-xs font-black ${
-                      isMeadow ? "text-slate-800" : "text-white/80"
+                    <span className="text-3xl sm:text-4xl my-1">{tile.emoji}</span>
+                    <span className={`text-sm sm:text-base font-black ${
+                      isMeadow ? "text-slate-800" : "text-white"
                     }`}>{tile.word}</span>
-                    <div className={`mt-1 flex items-center gap-1 text-[10px] font-bold ${
+                    <div className={`mt-1 flex items-center gap-1 text-xs sm:text-sm font-bold ${
                       isMeadow ? "text-pink-700" : "text-pink-300"
                     }`}>
                       <Volume2 size={11} /> Tap Sound
@@ -1266,8 +1266,8 @@ export function ToddlerWorldView({
                 }`}>
                   <span>🔢</span> Count to Ten
                 </h2>
-                <p className={`text-xs sm:text-sm font-semibold ${
-                  isMeadow ? "text-slate-700" : "text-white/60"
+                <p className={`text-sm sm:text-base font-semibold ${
+                  isMeadow ? "text-slate-800" : "text-white/85"
                 }`}>
                   Count from 1 to 10. Tap a card to hear the number. Later lands count past ten.
                 </p>

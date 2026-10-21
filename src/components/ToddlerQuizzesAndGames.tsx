@@ -1033,7 +1033,7 @@ export function ToddlerQuizzesAndGames({
       {/* Top Controls: Voice Status & Audio Mute Toggle */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-white/[0.03] border border-white/10 max-w-3xl mx-auto">
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-400/15 border border-amber-400/30 text-amber-300 font-extrabold text-xs">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-400/15 border border-amber-400/30 text-amber-200 font-extrabold text-xs sm:text-sm">
             <Sparkles size={13} />
             <span>Toddler Play Zone</span>
           </div>
@@ -1054,7 +1054,7 @@ export function ToddlerQuizzesAndGames({
         {/* Child & Parent Voice Mute Button */}
         <button
           onClick={toggleVoiceMute}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs sm:text-sm border transition-all cursor-pointer ${
             voiceMuted
               ? "bg-rose-500/20 border-rose-400/40 text-rose-300 hover:bg-rose-500/30"
               : "bg-white/10 border-white/15 text-white/80 hover:text-white hover:bg-white/20"
@@ -1067,20 +1067,20 @@ export function ToddlerQuizzesAndGames({
       </div>
 
       {/* Game Selector Bar (Big, Touchable, Colorful - 11 Interactive Wonderland Games) */}
-      <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 p-2 rounded-3xl bg-white/[0.04] border border-white/10 max-w-6xl mx-auto">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3 rounded-3xl bg-white/[0.07] border border-white/15 max-w-6xl mx-auto">
         <button
           onClick={() => {
             setCurrentActivity("rainbow-piano");
             soundEffects.playPop();
           }}
-          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "rainbow-piano"
               ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white border-rose-700 shadow-md scale-102 ring-2 ring-pink-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🎹</span>
-          <span className="truncate">Xylophone</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎹</span>
+          <span className="text-center leading-tight">Xylophone</span>
         </button>
 
         <button
@@ -1088,14 +1088,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("animal-safari");
             soundEffects.playPop();
           }}
-          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "animal-safari"
               ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md scale-102 ring-2 ring-emerald-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🌿</span>
-          <span className="truncate">Safari</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🌿</span>
+          <span className="text-center leading-tight">Safari</span>
         </button>
 
         <button
@@ -1103,14 +1103,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("balloon-sky");
             soundEffects.playPop();
           }}
-          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "balloon-sky"
               ? "bg-gradient-to-r from-sky-400 to-blue-500 text-white border-blue-700 shadow-md scale-102 ring-2 ring-sky-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🎈</span>
-          <span className="truncate">Balloons</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎈</span>
+          <span className="text-center leading-tight">Balloons</span>
         </button>
 
         <button
@@ -1118,14 +1118,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("animal-quiz");
             handleRestartQuiz();
           }}
-          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "animal-quiz"
               ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-orange-700 shadow-md scale-102 ring-2 ring-amber-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🦁</span>
-          <span className="truncate">Animal Quiz</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🦁</span>
+          <span className="text-center leading-tight">Animal Quiz</span>
         </button>
 
         <button
@@ -1133,14 +1133,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("shape-match");
             handleRestartShapes();
           }}
-          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "shape-match"
               ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-indigo-700 shadow-md scale-102 ring-2 ring-purple-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">⭐</span>
-          <span className="truncate">Shapes</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">⭐</span>
+          <span className="text-center leading-tight">Shapes</span>
         </button>
 
         <button
@@ -1148,14 +1148,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("memory-match");
             soundEffects.playPop();
           }}
-          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "memory-match"
               ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-cyan-700 shadow-md scale-102 ring-2 ring-cyan-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🧩</span>
-          <span className="truncate">Memory</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🧩</span>
+          <span className="text-center leading-tight">Memory</span>
         </button>
 
         <button
@@ -1163,14 +1163,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("rhyme-time");
             soundEffects.playPop();
           }}
-          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "rhyme-time"
               ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white border-rose-700 shadow-md scale-102 ring-2 ring-pink-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🎵</span>
-          <span className="truncate">Rhymes</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎵</span>
+          <span className="text-center leading-tight">Rhymes</span>
         </button>
 
         <button
@@ -1178,14 +1178,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("color-magic");
             soundEffects.playPop();
           }}
-          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "color-magic"
               ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md scale-102 ring-2 ring-emerald-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🎨</span>
-          <span className="truncate">Color Lab</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎨</span>
+          <span className="text-center leading-tight">Color Lab</span>
         </button>
 
         <button
@@ -1193,14 +1193,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("bubble-pop");
             spawnBubbles();
           }}
-          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "bubble-pop"
               ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white border-fuchsia-700 shadow-md scale-102 ring-2 ring-fuchsia-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🫧</span>
-          <span className="truncate">Bubbles</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🫧</span>
+          <span className="text-center leading-tight">Bubbles</span>
         </button>
 
         <button
@@ -1208,14 +1208,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("bubble-pop-phonics");
             soundEffects.playPop();
           }}
-          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "bubble-pop-phonics"
               ? "bg-gradient-to-r from-sky-500 to-indigo-500 text-white border-indigo-700 shadow-md scale-102 ring-2 ring-sky-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🔤</span>
-          <span className="truncate">Phonics Pop</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🔤</span>
+          <span className="text-center leading-tight">Phonics Pop</span>
         </button>
 
         <button
@@ -1223,22 +1223,22 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("feed-animal");
             handleResetBunny();
           }}
-          className={`flex min-h-16 flex-col items-center justify-center gap-1 py-3 px-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "feed-animal"
               ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white border-amber-700 shadow-md scale-102 ring-2 ring-amber-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🐰</span>
-          <span className="truncate">Feed Bunny</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🐰</span>
+          <span className="text-center leading-tight">Feed Bunny</span>
         </button>
       </div>
 
       <div className="mb-4">
-        <p className="mb-2 px-1 text-[10px] font-black uppercase tracking-wider text-white/50">
+        <p className="mb-3 px-1 text-xs sm:text-sm font-black uppercase tracking-wider text-white/80">
           Skill studio
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {K1_STUDIO_GAMES.map((studioGame) => (
             <button
               key={studioGame.id}
@@ -1247,14 +1247,14 @@ export function ToddlerQuizzesAndGames({
                 setCurrentActivity(studioGame.id);
                 soundEffects.playPop();
               }}
-              className={`flex min-h-20 flex-col items-center justify-center gap-1 px-2 py-3 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer border-b-4 ${
+              className={`flex min-h-[6rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 px-3 py-4 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
                 currentActivity === studioGame.id
                   ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md ring-2 ring-emerald-300/40"
-                  : "bg-white/5 border-white/10 text-white/70 hover:text-white hover:bg-white/10"
+                  : "bg-white/15 border-white/25 text-white hover:bg-white/25"
               }`}
             >
-              <span className="text-2xl">{studioGame.emoji}</span>
-              <span className="text-center leading-tight">{studioGame.title}</span>
+              <span className="text-3xl sm:text-4xl md:text-5xl leading-none">{studioGame.emoji}</span>
+              <span className="text-center leading-tight px-0.5">{studioGame.title}</span>
             </button>
           ))}
         </div>
@@ -1295,7 +1295,7 @@ export function ToddlerQuizzesAndGames({
               {/* Header with Question Progress & Speaker */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 font-extrabold text-xs">
+                  <span className="px-3 py-1 rounded-full bg-amber-400/20 text-amber-200 font-extrabold text-xs sm:text-sm">
                     Question {questionIndex + 1} of {questionDeck.length}
                   </span>
                   <div className="hidden sm:block w-24 h-2 overflow-hidden rounded-full bg-white/10" aria-label={`${questionIndex} of ${questionDeck.length} questions complete`}>
@@ -1360,7 +1360,7 @@ export function ToddlerQuizzesAndGames({
                         {option.label}
                       </span>
                       {option.soundText && (
-                        <span className="text-xs font-semibold text-white/50 mt-0.5">
+                        <span className="text-sm font-semibold text-white/85 mt-0.5">
                           {option.soundText}
                         </span>
                       )}
@@ -1376,11 +1376,11 @@ export function ToddlerQuizzesAndGames({
               </div>
 
               {/* Bottom Guidance for Toddler / Parent */}
-              <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/60">
+              <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-sm text-white/85">
                 <span className="flex items-center gap-1.5 text-amber-300 font-bold">
                   <span>✨</span> Correct taps add golden stars to the Star Jar!
                 </span>
-                <span className="text-white/40">Tap any picture to answer</span>
+                <span className="text-white/80">Tap any picture to answer</span>
               </div>
             </div>
           ) : (
@@ -1521,7 +1521,7 @@ export function ToddlerQuizzesAndGames({
                 })}
               </div>
 
-              <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/60">
+              <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-sm text-white/85">
                 <span className="flex items-center gap-1.5 text-purple-300 font-bold">
                   <span>🎨</span> Great for visual discrimination and color recognition!
                 </span>
