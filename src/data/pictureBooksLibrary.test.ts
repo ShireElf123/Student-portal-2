@@ -60,7 +60,9 @@ describe("story library", () => {
     expect(bug?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(hop?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const melon = PICTURE_BOOKS.find((book) => book.id === "stoop-watermelon");
-    expect(melon?.pages.slice(0, 10).every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const boat = PICTURE_BOOKS.find((book) => book.id === "paper-gutter-boat");
+    expect(melon?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(boat?.pages.slice(0, 8).every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);
     expect(Object.values(PICTURE_BOOK_SPREADS).every((path) => path.endsWith(".jpg"))).toBe(true);
     expect(Object.keys(PICTURE_BOOK_SPREADS).length).toBeGreaterThanOrEqual(16);
