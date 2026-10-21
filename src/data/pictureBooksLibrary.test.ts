@@ -146,6 +146,10 @@ describe("story library", () => {
     expect(harbor?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const dinerBooth = PICTURE_BOOKS.find((book) => book.id === "diner-booth-two");
     expect(dinerBooth?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const yellowBus = PICTURE_BOOKS.find((book) => book.id === "first-day-yellow-bus");
+    expect(yellowBus?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const cornerStore = PICTURE_BOOKS.find((book) => book.id === "corner-store-bell");
+    expect(cornerStore?.pages.slice(0, 2).every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["lemonade-stoop"]).toBe("/covers/lemonade-stoop.jpg");
     expect(PICTURE_BOOK_COVERS["lost-red-mitten"]).toBe("/covers/lost-red-mitten.jpg");
     expect(PICTURE_BOOK_COVERS["nana-porch-swing"]).toBe("/covers/nana-porch-swing.jpg");
@@ -153,6 +157,7 @@ describe("story library", () => {
     expect(PICTURE_BOOK_COVERS["gully-harbor-morning"]).toBe("/covers/gully-harbor-morning.jpg");
     expect(PICTURE_BOOK_COVERS["diner-booth-two"]).toBe("/covers/diner-booth-two.jpg");
     expect(PICTURE_BOOK_COVERS["first-day-yellow-bus"]).toBe("/covers/first-day-yellow-bus.jpg");
+    expect(PICTURE_BOOK_COVERS["corner-store-bell"]).toBe("/covers/corner-store-bell.jpg");
     expect(PICTURE_BOOK_COVERS["laundromat-rain"]).toBe("/covers/laundromat-rain.jpg");
     expect(PICTURE_BOOK_COVERS["backyard-sprinkler"]).toBe("/covers/backyard-sprinkler.jpg");
     expect(PICTURE_BOOK_COVERS["red-wagon-hill"]).toBe("/covers/red-wagon-hill.jpg");
