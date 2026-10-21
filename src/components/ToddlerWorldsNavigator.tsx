@@ -76,6 +76,7 @@ interface ToddlerWorldsNavigatorProps {
   initialWorldId?: string | null;
   onOpenPictureBooks?: () => void;
   onOpenGames?: () => void;
+  onOpenFocus?: () => void;
 }
 
 function countingLevelForActivity(activity: ToddlerActivity) {
@@ -99,6 +100,7 @@ export function ToddlerWorldsNavigator({
   initialWorldId,
   onOpenPictureBooks,
   onOpenGames,
+  onOpenFocus,
 }: ToddlerWorldsNavigatorProps) {
   const openingRoute = worldRouteParts(initialWorldId);
   // Navigation hierarchy state
@@ -1668,6 +1670,18 @@ export function ToddlerWorldsNavigator({
           >
             Letter Lane
           </button>
+          {onOpenFocus && (
+            <button
+              type="button"
+              onClick={() => {
+                onOpenFocus();
+                speakText("Focus body. Check how you feel. Move or push. Then quiet.", { pitch: 1.12 });
+              }}
+              className="px-4 py-2.5 rounded-2xl bg-teal-400 hover:bg-teal-300 text-teal-950 font-black text-base min-h-12 cursor-pointer shadow-sm"
+            >
+              Busy body
+            </button>
+          )}
           {onOpenGames && (
             <button
               onClick={onOpenGames}

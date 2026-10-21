@@ -41,6 +41,7 @@ import { ToddlerQuizzesAndGames } from "./ToddlerQuizzesAndGames";
 import { ToddlerPlayhouse } from "./ToddlerPlayhouse";
 import { ToddlerPhonicsBoard } from "./ToddlerPhonicsBoard";
 import { ToddlerCountingBoard } from "./ToddlerCountingBoard";
+import { ToddlerFocusBoard } from "./ToddlerFocusBoard";
 import { ToddlerWorldsNavigator } from "./ToddlerWorldsNavigator";
 import { ToddlerDailyMissionsModal } from "./ToddlerDailyMissionsModal";
 import { ToddlerStickerAlbumModal } from "./ToddlerStickerAlbumModal";
@@ -229,7 +230,7 @@ export function ToddlerWorldView({
   onSwitchToEducator,
   onRequestExit,
 }: ToddlerWorldViewProps) {
-  const [activeTab, setActiveTab] = useState<"worlds" | "books" | "playhouse" | "phonics" | "counting" | "games" | "avatar-studio">("worlds");
+  const [activeTab, setActiveTab] = useState<"worlds" | "books" | "playhouse" | "phonics" | "counting" | "focus" | "games" | "avatar-studio">("worlds");
   const [gameState, setGameState] = useState(() => getGamificationState());
   const activeBuddy = gameState.buddy ?? DEFAULT_BUDDY;
   const [selectedBook, setSelectedBook] = useState<PictureBook | null>(null);
@@ -922,7 +923,7 @@ export function ToddlerWorldView({
 
       {/* Main Mode Navigation Tabs */}
       <div className="max-w-7xl mx-auto px-4 pt-2 pb-2">
-        <div className={`grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3 p-2 sm:p-3 rounded-3xl max-w-6xl mx-auto mb-8 shadow-xl ${
+        <div className={`grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3 p-2 sm:p-3 rounded-3xl max-w-6xl mx-auto mb-8 shadow-xl ${
           isMeadow
             ? "bg-white/95 backdrop-blur-md border-4 border-emerald-300 ring-4 ring-emerald-500/20"
             : "bg-white/[0.08] border border-white/15"
@@ -995,6 +996,20 @@ export function ToddlerWorldView({
           >
             <span className="text-2xl sm:text-3xl">🔢</span>
             <span>Counting</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("focus")}
+            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
+              activeTab === "focus"
+                ? "bg-gradient-to-b from-teal-400 to-cyan-600 text-white border-b-4 border-teal-800 shadow-lg scale-102"
+                : isMeadow
+                ? "text-slate-700 hover:text-slate-900 hover:bg-teal-100/60 border-b-4 border-transparent"
+                : "text-white hover:bg-white/15 border-b-4 border-transparent"
+            }`}
+          >
+            <span className="text-2xl sm:text-3xl">🫀</span>
+            <span>Focus</span>
           </button>
 
           <button
@@ -1162,6 +1177,7 @@ export function ToddlerWorldView({
                 initialWorldId={initialWorldTarget}
                 onOpenPictureBooks={() => setActiveTab("books")}
                 onOpenGames={() => setActiveTab("games")}
+                onOpenFocus={() => setActiveTab("focus")}
               />
             )}
 
@@ -1295,6 +1311,10 @@ export function ToddlerWorldView({
 
         {activeTab === "counting" && (
           <ToddlerCountingBoard isMeadow={isMeadow} onAddStar={addStar} onStartAssessment={onStartAssessment} />
+        )}
+
+        {activeTab === "focus" && (
+          <ToddlerFocusBoard isMeadow={isMeadow} onAddStar={addStar} onReadyLearn={() => setActiveTab("phonics")} />
         )}
 
         {/* SECTION 4: INTERACTIVE GAMES & PICTURE QUIZZES */}

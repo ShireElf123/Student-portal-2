@@ -5,7 +5,7 @@ export interface DailyMission {
   title: string;
   tagline: string;
   emoji: string;
-  targetTab: "books" | "phonics" | "counting" | "games" | "worlds" | "avatar-studio";
+  targetTab: "books" | "phonics" | "counting" | "games" | "worlds" | "avatar-studio" | "focus";
   targetSubactivity?: string;
   starsReward: number;
   xpReward: number;
@@ -36,6 +36,7 @@ export const TODDLER_STICKERS: CollectibleSticker[] = [
   { id: "stk-twinkle-star", name: "Twinkle Star", emoji: "⭐", category: "space", requiredStars: 30, description: "Filled the golden Star Jar with bright starlight!" },
   { id: "stk-color-wizard", name: "Color Wizard", emoji: "🎨", category: "learning", requiredStars: 35, description: "Mixed bright magical paints in the Color Lab!" },
   { id: "stk-melody-maestro", name: "Melody Maestro", emoji: "🎹", category: "learning", requiredStars: 40, description: "Played rainbow piano notes without missing a beat!" },
+  { id: "stk-focus-body", name: "Steady Body", emoji: "🫀", category: "learning", requiredStars: 42, description: "Moved, pushed, breathed, and settled with Teddy!" },
   { id: "stk-phonics-champ", name: "Phonics Champ", emoji: "🔤", category: "learning", requiredStars: 45, description: "Mastered all 26 letter sounds from A to Z!" },
   { id: "stk-farm-hero", name: "Farm Hero", emoji: "🚜", category: "animal", requiredStars: 50, description: "Helped Mother Hen count her fluffy yellow chicks!" },
   { id: "stk-bubble-pop", name: "Bubble Popper", emoji: "🎈", category: "learning", requiredStars: 55, description: "Popped 10 floating rainbow bubbles in the sky!" },
@@ -139,7 +140,7 @@ const WEEKLY_SCHEDULES: Record<number, DailySchedule> = {
     themeBannerEmoji: "🎈",
     missions: [
       { id: "sat-1", title: "Pop Floating Bubbles", tagline: "Tap bubbles before they float away", emoji: "🎈", targetTab: "games", targetSubactivity: "bubble-pop", starsReward: 2, xpReward: 30 },
-      { id: "sat-2", title: "Memory Card Match", tagline: "Flip and find cute matching friends", emoji: "🃏", targetTab: "games", targetSubactivity: "memory-match", starsReward: 2, xpReward: 30 },
+      { id: "sat-2", title: "Move Then Settle", tagline: "Zoomies, push, breathe, then quiet", emoji: "🫀", targetTab: "focus", starsReward: 2, xpReward: 30 },
       { id: "sat-3", title: "Style Your Learning Buddy", tagline: "Put on astronaut helmets or capes!", emoji: "🐾", targetTab: "avatar-studio", starsReward: 3, xpReward: 50 },
     ],
   },
@@ -281,5 +282,13 @@ export function recordCountingCardTapped(num: number): void {
   const result = recordDailySetMember("counting-cards", String(num));
   if (result.count >= 3) {
     completeActiveMissionIfMatches("counting");
+  }
+}
+
+export function recordFocusRoundDone(): void {
+  const stamp = String(Date.now());
+  const result = recordDailySetMember("focus-rounds", stamp.slice(-8));
+  if (result.count >= 3) {
+    completeActiveMissionIfMatches("focus");
   }
 }

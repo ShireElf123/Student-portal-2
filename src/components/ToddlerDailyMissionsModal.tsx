@@ -23,7 +23,7 @@ import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamifi
 interface ToddlerDailyMissionsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectMissionTab: (tab: "books" | "phonics" | "counting" | "games" | "worlds" | "avatar-studio", subactivity?: string) => void;
+  onSelectMissionTab: (tab: "books" | "phonics" | "counting" | "games" | "worlds" | "avatar-studio" | "focus", subactivity?: string) => void;
   onAddStar: (count: number) => void;
 }
 
