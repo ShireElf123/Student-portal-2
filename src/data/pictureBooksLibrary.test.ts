@@ -187,7 +187,11 @@ describe("story library", () => {
     const teaParty = PICTURE_BOOKS.find((book) => book.id === "magic-manners-tea-party");
     expect(teaParty?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const noisyFarm = PICTURE_BOOKS.find((book) => book.id === "the-noisy-farm-chorus");
-    expect(noisyFarm?.pages.slice(0, 1).every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(noisyFarm?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const dinoPrints = PICTURE_BOOKS.find((book) => book.id === "dino-footprint-detective");
+    expect(dinoPrints?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const rainbowBuilder = PICTURE_BOOKS.find((book) => book.id === "rainy-day-rainbow-builder");
+    expect(rainbowBuilder?.pages.slice(0, 3).every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["lemonade-stoop"]).toBe("/covers/lemonade-stoop.jpg");
     expect(PICTURE_BOOK_COVERS["lost-red-mitten"]).toBe("/covers/lost-red-mitten.jpg");
     expect(PICTURE_BOOK_COVERS["nana-porch-swing"]).toBe("/covers/nana-porch-swing.jpg");
