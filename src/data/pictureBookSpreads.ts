@@ -288,4 +288,12 @@ export const PICTURE_BOOK_SPREADS: Record<string, string> = {
   "snow-plow-dawn:6": "/spreads/snow-plow-dawn-6.jpg",
   "snow-plow-dawn:7": "/spreads/snow-plow-dawn-7.jpg",
   "snow-plow-dawn:8": "/spreads/snow-plow-dawn-8.jpg",
+  "icebox-lemonade:1": "/spreads/icebox-lemonade-1.jpg",
+  "icebox-lemonade:2": "/spreads/icebox-lemonade-2.jpg",
+  "icebox-lemonade:3": "/spreads/icebox-lemonade-3.jpg",
+  "icebox-lemonade:4": "/spreads/icebox-lemonade-4.jpg",
+  "icebox-lemonade:5": "/spreads/icebox-lemonade-5.jpg",
+  "icebox-lemonade:6": "/spreads/icebox-lemonade-6.jpg",
+  "icebox-lemonade:7": "/spreads/icebox-lemonade-7.jpg",
+  "icebox-lemonade:8": "/spreads/icebox-lemonade-8.jpg",
 };

@@ -23,6 +23,8 @@ export const PICTURE_BOOK_COVERS: Record<string, string> = {
   "quilt-square-moon": "/covers/quilt-square-moon.jpg",
   "snow-plow-dawn": "/covers/snow-plow-dawn.jpg",
   "icebox-lemonade": "/covers/icebox-lemonade.jpg",
+  "lemonade-stoop": "/covers/lemonade-stoop.jpg",
+  "lost-red-mitten": "/covers/lost-red-mitten.jpg",
   "stoop-watermelon": "/covers/stoop-watermelon.jpg",
   "paper-gutter-boat": "/covers/paper-gutter-boat.jpg",
   "window-box-tomatoes": "/covers/window-box-tomatoes.jpg",
