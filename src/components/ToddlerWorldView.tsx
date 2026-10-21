@@ -1008,7 +1008,7 @@ export function ToddlerWorldView({
                 : "text-white hover:bg-white/15 border-b-4 border-transparent"
             }`}
           >
-            <span className="text-2xl sm:text-3xl">🫀</span>
+            <span className="text-2xl sm:text-3xl">🎯</span>
             <span>Focus</span>
           </button>
 

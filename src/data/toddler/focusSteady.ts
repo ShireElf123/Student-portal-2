@@ -181,7 +181,7 @@ export const STEADY_TRACKS: SteadyTrack[] = [
   },
   {
     id: "knot",
-    emoji: "🪢",
+    emoji: "➰",
     title: "Pretend knot",
     spoken: "Through the knot. Tiny and slow.",
     lane: 8,

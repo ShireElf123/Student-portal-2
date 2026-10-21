@@ -267,7 +267,7 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
       {/* Top HUD */}
       <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 bg-white/95 backdrop-blur-md p-4 rounded-3xl border-3 border-indigo-200 shadow-xl">
         <div className="flex items-center gap-3">
-          <span className="text-3xl p-2.5 bg-amber-100 border border-amber-300 rounded-2xl shadow-sm">🫧</span>
+          <span className="text-3xl p-2.5 bg-amber-100 border border-amber-300 rounded-2xl shadow-sm">💧</span>
           <div>
             <h3 className="text-base sm:text-lg font-black text-slate-900 font-display">Bubble Pop Phonics</h3>
             <p className="text-xs text-indigo-900 font-semibold">
@@ -293,7 +293,7 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
           <div className="px-3.5 py-1.5 rounded-2xl bg-indigo-100 border-2 border-indigo-300 text-indigo-950 font-black text-xs flex items-center gap-1 shadow-sm">
             <span>Popped:</span>
             <span className="text-indigo-600 font-black text-sm">{poppedCount}</span>
-            <span>🫧</span>
+            <span>💧</span>
           </div>
 
           {onBack && (

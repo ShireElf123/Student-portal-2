@@ -12,7 +12,7 @@ export const COUNTING_CARDS: CountingCard[] = [
   { num: 2, word: "Two", item: "rain boots", emoji: "👢", scene: "Two boots by the mat." },
   { num: 3, word: "Three", item: "lemons", emoji: "🍋", scene: "Three lemons in the icebox." },
   { num: 4, word: "Four", item: "pegs", emoji: "📌", scene: "Four pegs for the wash line." },
-  { num: 5, word: "Five", item: "coins", emoji: "🪙", scene: "Five coins that stay in the pocket." },
+  { num: 5, word: "Five", item: "coins", emoji: "💰", scene: "Five coins that stay in the pocket." },
   { num: 6, word: "Six", item: "cups", emoji: "🥤", scene: "Six cups for the porch table." },
   { num: 7, word: "Seven", item: "crumbs", emoji: "🍞", scene: "Seven crumbs for the pigeons." },
   { num: 8, word: "Eight", item: "books", emoji: "📗", scene: "Eight books on the nook shelf." },
@@ -40,7 +40,7 @@ export interface MoreLessRound {
 
 export const MORE_LESS_ROUNDS: MoreLessRound[] = [
   { id: "ml-1", left: 2, right: 5, emoji: "🍋", spoken: "Which pile has more lemons?" },
-  { id: "ml-2", left: 6, right: 3, emoji: "🪙", spoken: "Which pile has more coins?" },
+  { id: "ml-2", left: 6, right: 3, emoji: "💰", spoken: "Which pile has more coins?" },
   { id: "ml-3", left: 4, right: 4, emoji: "📌", spoken: "Are the pegs the same, or does one have more?" },
   { id: "ml-4", left: 1, right: 7, emoji: "🥚", spoken: "Which pile has more eggs?" },
   { id: "ml-5", left: 8, right: 5, emoji: "📗", spoken: "Which pile has more books?" },
@@ -56,13 +56,13 @@ export interface MakeTenRound {
 }
 
 export const MAKE_TEN_ROUNDS: MakeTenRound[] = [
-  { have: 7, emoji: "🪙", spoken: "Seven coins. Tap until the ten-frame is full." },
+  { have: 7, emoji: "💰", spoken: "Seven coins. Tap until the ten-frame is full." },
   { have: 3, emoji: "🥚", spoken: "Three eggs. Fill the rest of ten." },
   { have: 9, emoji: "📌", spoken: "Nine pegs. One more makes ten." },
   { have: 5, emoji: "🍋", spoken: "Five lemons. Fill to ten." },
   { have: 1, emoji: "☀️", spoken: "One sun. Fill the rest of ten." },
   { have: 8, emoji: "📗", spoken: "Eight books. Two more make ten." },
-  { have: 4, emoji: "🧦", spoken: "Four socks. Fill to ten." },
+  { have: 4, emoji: "👟", spoken: "Four socks. Fill to ten." },
   { have: 6, emoji: "⭐", spoken: "Six stars. Fill to ten." },
 ];
 
@@ -76,10 +76,10 @@ export const SUBITIZE_ROUNDS: SubitizeRound[] = [
   { n: 2, emoji: "👢" },
   { n: 3, emoji: "🍋" },
   { n: 4, emoji: "📌" },
-  { n: 5, emoji: "🪙" },
+  { n: 5, emoji: "💰" },
   { n: 3, emoji: "⭐" },
   { n: 4, emoji: "🥚" },
-  { n: 2, emoji: "🧦" },
+  { n: 2, emoji: "👟" },
   { n: 5, emoji: "🍪" },
   { n: 1, emoji: "🌙" },
 ];
@@ -102,7 +102,7 @@ export interface PatternRound {
 
 export const PATTERN_ROUNDS: PatternRound[] = [
   { id: "pat-sun-moon", shown: ["☀️", "🌙", "☀️", "🌙", "?"], options: ["☀️", "🍋"], answer: "☀️", spoken: "Sun, moon, sun, moon. What comes next?" },
-  { id: "pat-boot", shown: ["👢", "👢", "🪙", "👢", "👢", "?"], options: ["🪙", "🍉"], answer: "🪙", spoken: "Boot boot coin. Boot boot…?" },
+  { id: "pat-boot", shown: ["👢", "👢", "💰", "👢", "👢", "?"], options: ["💰", "🍉"], answer: "💰", spoken: "Boot boot coin. Boot boot…?" },
   { id: "pat-bus", shown: ["🚌", "🛑", "🚌", "🛑", "?"], options: ["🚌", "🐱"], answer: "🚌", spoken: "Bus, stop, bus, stop. What comes next?" },
   { id: "pat-plate", shown: ["🍽️", "🍽️", "🍋", "🍽️", "🍽️", "?"], options: ["🍋", "⛴️"], answer: "🍋", spoken: "Plate plate lemon. Plate plate…?" },
   { id: "pat-seed", shown: ["🌱", "🍅", "🌱", "🍅", "?"], options: ["🌱", "🚕"], answer: "🌱", spoken: "Seed, tomato, seed, tomato. Next?" },
@@ -131,11 +131,11 @@ export const NEXT_NUMBER_ROUNDS: NextNumberRound[] = [
 
 export const SHAPE_ROUNDS: ShapeRound[] = [
   { id: "sh-sun", name: "Circle", emoji: "☀️", spoken: "The chalk sun. What shape?", options: ["Circle", "Square", "Triangle"] },
-  { id: "sh-mat", name: "Square", emoji: "🟫", spoken: "The welcome mat. What shape?", options: ["Square", "Circle", "Triangle"] },
+  { id: "sh-mat", name: "Square", emoji: "📦", spoken: "The welcome mat. What shape?", options: ["Square", "Circle", "Triangle"] },
   { id: "sh-sail", name: "Triangle", emoji: "⛵", spoken: "The boat sail. What shape?", options: ["Triangle", "Square", "Circle"] },
   { id: "sh-door", name: "Rectangle", emoji: "🚪", spoken: "The door. What shape?", options: ["Rectangle", "Circle", "Triangle"] },
-  { id: "sh-coin", name: "Circle", emoji: "🪙", spoken: "A coin. What shape?", options: ["Circle", "Square", "Rectangle"] },
-  { id: "sh-window", name: "Square", emoji: "🪟", spoken: "The snow window. What shape?", options: ["Square", "Triangle", "Circle"] },
+  { id: "sh-coin", name: "Circle", emoji: "💰", spoken: "A coin. What shape?", options: ["Circle", "Square", "Rectangle"] },
+  { id: "sh-window", name: "Square", emoji: "🏠", spoken: "The snow window. What shape?", options: ["Square", "Triangle", "Circle"] },
   { id: "sh-knob", name: "Circle", emoji: "🔘", spoken: "A door knob. What shape?", options: ["Circle", "Triangle", "Rectangle"] },
   { id: "sh-roof", name: "Triangle", emoji: "🏠", spoken: "The little roof. What shape?", options: ["Triangle", "Circle", "Square"] },
 ];

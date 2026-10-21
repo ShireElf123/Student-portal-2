@@ -26,14 +26,14 @@ import { ToddlerSteadyLane } from "./ToddlerSteadyLane";
 type Mode = "check" | "slow" | "move" | "push" | "freeze" | "breathe" | "look" | "quiet";
 
 const MODES: { id: Mode; label: string; emoji: string }[] = [
-  { id: "check", label: "Body", emoji: "🫀" },
+  { id: "check", label: "Body", emoji: "🎯" },
   { id: "slow", label: "Slow", emoji: "🐌" },
-  { id: "move", label: "Move", emoji: "🦶" },
+  { id: "move", label: "Move", emoji: "👟" },
   { id: "push", label: "Push", emoji: "🧱" },
-  { id: "freeze", label: "Freeze", emoji: "🧊" },
+  { id: "freeze", label: "Freeze", emoji: "❄️" },
   { id: "breathe", label: "Breathe", emoji: "🌸" },
   { id: "look", label: "Look", emoji: "👀" },
-  { id: "quiet", label: "Quiet", emoji: "🫙" },
+  { id: "quiet", label: "Quiet", emoji: "⏳" },
 ];
 
 function TimerBar({ seconds, running, onDone }: { seconds: number; running: boolean; onDone: () => void }) {
@@ -155,7 +155,7 @@ export function ToddlerFocusBoard({
       </div>
       <div className="mb-4">
         <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${isMeadow ? "text-slate-900" : "text-white"}`}>
-          <span>🫀</span> Focus Body
+          <span>🎯</span> Focus Body
         </h2>
         <p className={`text-sm sm:text-base font-semibold ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
           Check the body. Slow gold paths buzz if you rush. Move, push, freeze, breathe, look, then quiet.
