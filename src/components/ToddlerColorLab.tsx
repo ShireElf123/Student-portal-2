@@ -5,9 +5,10 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
 import { triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import type { MixFlavor } from "../data/toddler/toddlerWorldPlayThemes";
 
 interface ColorDrop {
-  id: "red" | "yellow" | "blue";
+  id: "red" | "yellow" | "blue" | "white";
   name: string;
   emoji: string;
   colorClass: string;
@@ -18,6 +19,7 @@ const PRIMARY_COLORS: ColorDrop[] = [
   { id: "red", name: "Ruby Red", emoji: "🔴", colorClass: "from-red-500 to-rose-600", glowColor: "shadow-red-500/50" },
   { id: "yellow", name: "Sunny Yellow", emoji: "🟡", colorClass: "from-yellow-400 to-amber-400", glowColor: "shadow-yellow-500/50" },
   { id: "blue", name: "Ocean Blue", emoji: "🔵", colorClass: "from-blue-500 to-indigo-600", glowColor: "shadow-blue-500/50" },
+  { id: "white", name: "Cloud White", emoji: "⚪", colorClass: "from-white to-slate-200", glowColor: "shadow-white/50" },
 ];
 
 interface MixResult {
@@ -35,6 +37,12 @@ const RECIPES: Record<string, MixResult> = {
   "yellow+blue": { title: "Emerald Green!", colorName: "Green", bgGradient: "from-emerald-400 to-teal-500", emoji: "🌱", phrase: "Yellow plus Blue magically mixes into fresh Green!" },
   "red+blue": { title: "Royal Purple!", colorName: "Purple", bgGradient: "from-purple-500 to-indigo-600", emoji: "🍇", phrase: "Red plus Blue creates deep royal Purple!" },
   "blue+red": { title: "Royal Purple!", colorName: "Purple", bgGradient: "from-purple-500 to-indigo-600", emoji: "🍇", phrase: "Blue plus Red creates deep royal Purple!" },
+  "red+white": { title: "Soft Pink!", colorName: "Pink", bgGradient: "from-pink-300 to-rose-400", emoji: "🌸", phrase: "Red plus White makes a soft morning Pink!" },
+  "white+red": { title: "Soft Pink!", colorName: "Pink", bgGradient: "from-pink-300 to-rose-400", emoji: "🌸", phrase: "White plus Red makes a soft morning Pink!" },
+  "yellow+white": { title: "Warm Cream!", colorName: "Cream", bgGradient: "from-amber-100 to-yellow-200", emoji: "🍦", phrase: "Yellow plus White stirs into Warm Cream!" },
+  "white+yellow": { title: "Warm Cream!", colorName: "Cream", bgGradient: "from-amber-100 to-yellow-200", emoji: "🍦", phrase: "White plus Yellow stirs into Warm Cream!" },
+  "blue+white": { title: "Sky Blue!", colorName: "Sky", bgGradient: "from-sky-200 to-blue-400", emoji: "🌤️", phrase: "Blue plus White opens into Sky Blue!" },
+  "white+blue": { title: "Sky Blue!", colorName: "Sky", bgGradient: "from-sky-200 to-blue-400", emoji: "🌤️", phrase: "White plus Blue opens into Sky Blue!" },
 };
 
 const PAINT_COLORS = ["#ef4444", "#f59e0b", "#facc15", "#22c55e", "#06b6d4", "#3b82f6", "#8b5cf6", "#ec4899", "#78350f", "#111827"];
@@ -43,7 +51,7 @@ function PaintCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lastPoint = useRef<{ x: number; y: number } | null>(null);
   const [color, setColor] = useState(PAINT_COLORS[0]);
-  const [brushSize, setBrushSize] = useState(12);
+  const [brushSize, setBrushSize] = useState(22);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -113,24 +121,83 @@ function PaintCanvas() {
   };
 
   return (
-    <section className="mt-6 rounded-3xl border border-pink-300/30 bg-gradient-to-br from-pink-500/10 to-violet-500/10 p-4 sm:p-5 text-left" aria-label="Paint studio">
+    <section className="mt-5 rounded-[1.75rem] border border-pink-300/30 bg-gradient-to-br from-pink-500/10 to-violet-500/10 p-3 sm:p-4 text-left" aria-label="Paint studio">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-        <div><h4 className="text-lg font-black text-white">🖌️ Little Paint Studio</h4><p className="text-xs text-white/65">Choose a color, then draw with your finger or mouse. Your picture stays on this device.</p></div>
+        <div>
+          <h4 className="text-xl font-black text-white">Little Paint Studio</h4>
+          <p className="text-sm text-white/75">Pick a colour. Draw on the big paper.</p>
+        </div>
         <div className="flex gap-2">
-          <button type="button" onClick={clearCanvas} className="rounded-xl bg-white/10 px-3 py-2 text-xs font-bold text-white hover:bg-white/20">Clear paper</button>
-          <button type="button" onClick={() => { const canvas = canvasRef.current; if (!canvas) return; const link = document.createElement("a"); link.download = "my-color-studio-picture.png"; link.href = canvas.toDataURL("image/png"); link.click(); }} className="rounded-xl bg-pink-500/25 px-3 py-2 text-xs font-bold text-white hover:bg-pink-500/40">Save picture</button>
+          <button type="button" onClick={clearCanvas} className="rounded-xl bg-white/10 px-3 py-2.5 text-sm font-bold text-white hover:bg-white/20">Clear</button>
+          <button
+            type="button"
+            onClick={() => {
+              const canvas = canvasRef.current;
+              if (!canvas) return;
+              const link = document.createElement("a");
+              link.download = "my-color-studio-picture.png";
+              link.href = canvas.toDataURL("image/png");
+              link.click();
+            }}
+            className="rounded-xl bg-pink-500/25 px-3 py-2.5 text-sm font-bold text-white hover:bg-pink-500/40"
+          >
+            Save
+          </button>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-3 mb-3" role="group" aria-label="Paint colors">
-        {PAINT_COLORS.map((paintColor, index) => <button key={paintColor} type="button" aria-label={`Paint color ${index + 1}`} aria-pressed={color === paintColor} onClick={() => setColor(paintColor)} className={`h-9 w-9 rounded-full border-2 ${color === paintColor ? "border-white ring-2 ring-white/50 scale-110" : "border-white/40"}`} style={{ backgroundColor: paintColor }} />)}
-        <label className="flex items-center gap-2 text-xs font-bold text-white/80">Brush <input aria-label="Brush size" type="range" min="4" max="32" value={brushSize} onChange={(event) => setBrushSize(Number(event.target.value))} /></label>
+      <div className="flex flex-wrap items-center gap-2.5 mb-3" role="group" aria-label="Paint colors">
+        {PAINT_COLORS.map((paintColor, index) => (
+          <button
+            key={paintColor}
+            type="button"
+            aria-label={`Paint color ${index + 1}`}
+            aria-pressed={color === paintColor}
+            onClick={() => setColor(paintColor)}
+            className={`h-11 w-11 sm:h-12 sm:w-12 rounded-full border-2 ${color === paintColor ? "border-white ring-2 ring-white/50 scale-110" : "border-white/40"}`}
+            style={{ backgroundColor: paintColor }}
+          />
+        ))}
+        <label className="flex items-center gap-2 text-sm font-bold text-white/80 min-w-[9rem]">
+          Brush
+          <input
+            aria-label="Brush size"
+            type="range"
+            min="8"
+            max="48"
+            value={brushSize}
+            onChange={(event) => setBrushSize(Number(event.target.value))}
+            className="w-28"
+          />
+        </label>
       </div>
-      <canvas ref={canvasRef} className="block h-56 w-full touch-none rounded-2xl border-2 border-white/30 shadow-inner sm:h-72" onPointerDown={startPaint} onPointerMove={paint} onPointerUp={() => { lastPoint.current = null; }} onPointerCancel={() => { lastPoint.current = null; }} aria-label="Blank paper for drawing" />
+      <canvas
+        ref={canvasRef}
+        className="block w-full touch-none rounded-[1.5rem] border-[6px] border-amber-100/90 bg-[#fffdf7] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)] min-h-[18rem] h-[min(62vh,34rem)]"
+        onPointerDown={startPaint}
+        onPointerMove={paint}
+        onPointerUp={() => { lastPoint.current = null; }}
+        onPointerCancel={() => { lastPoint.current = null; }}
+        aria-label="Blank paper for drawing"
+      />
     </section>
   );
 }
 
-export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => void }) {
+export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: number) => void; mixFlavor?: MixFlavor }) {
+  const recipes: Record<string, MixResult> = {
+    "red+yellow": { ...RECIPES["red+yellow"], ...(mixFlavor?.orange ?? {}) },
+    "yellow+red": { ...RECIPES["yellow+red"], ...(mixFlavor?.orange ?? {}) },
+    "blue+yellow": { ...RECIPES["blue+yellow"], ...(mixFlavor?.green ?? {}) },
+    "yellow+blue": { ...RECIPES["yellow+blue"], ...(mixFlavor?.green ?? {}) },
+    "red+blue": { ...RECIPES["red+blue"], ...(mixFlavor?.purple ?? {}) },
+    "blue+red": { ...RECIPES["blue+red"], ...(mixFlavor?.purple ?? {}) },
+    "red+white": RECIPES["red+white"],
+    "white+red": RECIPES["white+red"],
+    "yellow+white": RECIPES["yellow+white"],
+    "white+yellow": RECIPES["white+yellow"],
+    "blue+white": RECIPES["blue+white"],
+    "white+blue": RECIPES["white+blue"],
+  };
   const [selectedDrops, setSelectedDrops] = useState<ColorDrop[]>([]);
   const [currentResult, setCurrentResult] = useState<MixResult | null>(null);
   const rewardPaid = useRef(false);
@@ -160,7 +227,7 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
 
     if (next.length === 2) {
       const key = `${next[0].id}+${next[1].id}`;
-      const result = RECIPES[key];
+      const result = recipes[key];
 
       if (result) {
         resolutionTimer.current = setTimeout(() => {
@@ -216,16 +283,16 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
   };
 
   return (
-    <div className="bg-[#121422] border border-white/10 rounded-3xl p-5 sm:p-7 shadow-xl max-w-2xl mx-auto">
+    <div className="bg-[#121422] border border-white/10 rounded-3xl p-4 sm:p-6 shadow-xl max-w-5xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 via-rose-400 to-indigo-500 flex items-center justify-center text-xl shadow-md">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-400 via-rose-400 to-indigo-500 flex items-center justify-center text-xl shadow-md">
             🎨
           </div>
           <div>
-            <h3 className="text-base sm:text-lg font-black text-white">Color Magic Mixing Lab</h3>
-            <p className="text-xs text-white/60">Tap any two primary colors to mix and reveal new colors!</p>
+            <h3 className="text-lg sm:text-xl font-black text-white">Color Magic Mixing Lab</h3>
+            <p className="text-sm text-white/70">Tap two colours. Watch a new colour appear.</p>
           </div>
         </div>
 
@@ -239,7 +306,7 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
       </div>
 
       {/* Center Magic Mixing Cauldron */}
-      <div className="my-6 p-8 rounded-3xl bg-gradient-to-b from-white/[0.08] to-white/[0.02] border-2 border-white/10 flex flex-col items-center justify-center text-center relative overflow-hidden">
+      <div className="my-4 p-5 sm:p-6 rounded-3xl bg-gradient-to-b from-white/[0.08] to-white/[0.02] border-2 border-white/10 flex flex-col items-center justify-center text-center relative overflow-hidden">
         {currentResult ? (
           <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
@@ -250,10 +317,10 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
               {currentResult.emoji}
             </div>
             <h4 className="text-2xl font-black text-white">{currentResult.title}</h4>
-            <p className="text-xs sm:text-sm text-amber-200 font-semibold max-w-xs">{currentResult.phrase}</p>
+            <p className="text-sm text-amber-200 font-semibold max-w-sm">{currentResult.phrase}</p>
             <button
               onClick={handleReset}
-              className="mt-3 px-5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-xs border border-white/20 transition-all cursor-pointer"
+              className="mt-3 px-5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-sm border border-white/20 transition-all cursor-pointer"
             >
               Mix Another Color 🪄
             </button>
@@ -268,10 +335,10 @@ export function ToddlerColorLab({ onAddStar }: { onAddStar?: (amt?: number) => v
               {selectedDrops.length === 2 && <span className="text-5xl animate-spin">✨</span>}
             </div>
 
-            <div className="text-xs font-bold text-white/70">
-              {selectedDrops.length === 0 && "Step 1: Tap your first color drop below"}
-              {selectedDrops.length === 1 && "Step 2: Now tap a second color to mix!"}
-              {selectedDrops.length === 2 && "Mixing magic potion..."}
+            <div className="text-sm font-bold text-white/80">
+              {selectedDrops.length === 0 && "Tap your first colour below"}
+              {selectedDrops.length === 1 && "Now tap a second colour to mix!"}
+              {selectedDrops.length === 2 && "Mixing…"}
             </div>
 
             {selectedDrops.length > 0 && (

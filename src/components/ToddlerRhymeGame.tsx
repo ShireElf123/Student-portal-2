@@ -214,7 +214,14 @@ const RHYME_QUESTIONS: RhymeQuestion[] = [
   },
 ];
 
-export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => void }) {
+export function ToddlerRhymeGame({
+  onAddStar,
+  questions,
+}: {
+  onAddStar?: (amt?: number) => void;
+  questions?: RhymeQuestion[];
+}) {
+  const deck = questions && questions.length >= 3 ? questions : RHYME_QUESTIONS;
   const [index, setIndex] = useState(0);
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -222,7 +229,7 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
   const [wrongShake, setWrongShake] = useState<string | null>(null);
   const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const current = RHYME_QUESTIONS[index];
+  const current = deck[index] ?? deck[0];
 
   // AI Voice speaks welcome prompt on initial mount and questions smoothly
   useEffect(() => {
@@ -281,7 +288,7 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
 
       advanceTimerRef.current = setTimeout(() => {
         advanceTimerRef.current = null;
-        if (index < RHYME_QUESTIONS.length - 1) {
+        if (index < deck.length - 1) {
           setIndex(index + 1);
           setIsAnswered(false);
           setSelectedWord(null);
@@ -327,8 +334,8 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
             🎵
           </div>
           <div>
-            <h3 className="text-base sm:text-lg font-black text-white">Rhyme Time Playground</h3>
-            <p className="text-xs text-white/60">Find words that have matching sounds!</p>
+            <h3 className="text-lg sm:text-xl font-black text-white">Rhyme Time Playground</h3>
+            <p className="text-sm text-white/85">Find words that have matching sounds!</p>
           </div>
         </div>
 
@@ -348,7 +355,7 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
             <h4 className="text-2xl font-black text-amber-300 tracking-wide">
               {current.targetWord}
             </h4>
-            <p className="text-xs text-white/60 mt-1">Which friend below rhymes with {current.targetWord}?</p>
+            <p className="text-sm sm:text-base text-white/90 mt-1">Which friend below rhymes with {current.targetWord}?</p>
           </div>
 
           {/* Option Choices */}
@@ -382,7 +389,7 @@ export function ToddlerRhymeGame({ onAddStar }: { onAddStar?: (amt?: number) => 
 
           {/* Progress dots */}
           <div className="flex items-center justify-center gap-2 pt-2">
-            {RHYME_QUESTIONS.map((_, i) => (
+            {deck.map((_, i) => (
               <div
                 key={i}
                 className={`h-2.5 rounded-full transition-all ${

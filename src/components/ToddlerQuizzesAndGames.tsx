@@ -30,8 +30,9 @@ import { ToddlerColorLab } from "./ToddlerColorLab";
 import { ToddlerMusicPiano } from "./ToddlerMusicPiano";
 import { ToddlerAnimalSafari } from "./ToddlerAnimalSafari";
 import { ToddlerBalloonSky } from "./ToddlerBalloonSky";
-import { GeneratedContentPanel } from "./GeneratedContentPanel";
-import type { GameBlueprint, BubblePopBlueprint } from "../contentEngine/types";
+import { ToddlerK1Studio } from "./ToddlerK1Studio";
+import { K1_STUDIO_GAMES, K1_STUDIO_GAME_IDS, type K1StudioGameId } from "../data/toddler/k1StudioGames";
+import type { BubblePopBlueprint } from "../contentEngine/types";
 
 interface ToddlerQuizzesAndGamesProps {
   starsCount: number;
@@ -53,7 +54,15 @@ type ToddlerActivity =
   | "color-magic"
   | "bubble-pop"
   | "bubble-pop-phonics"
-  | "feed-animal";
+  | "feed-animal"
+  | K1StudioGameId;
+
+const TODDLER_ACTIVITY_IDS: ToddlerActivity[] = [
+  "rainbow-piano", "animal-safari", "balloon-sky", "animal-quiz",
+  "shape-match", "memory-match", "rhyme-time", "color-magic",
+  "bubble-pop", "bubble-pop-phonics", "feed-animal",
+  ...K1_STUDIO_GAME_IDS,
+];
 
 interface QuizQuestion {
   id: string;
@@ -86,6 +95,9 @@ const BONUS_EXPLORER_QUESTIONS: QuizQuestion[] = [
   { id: "q24", prompt: "Which weather means we might need an umbrella?", spokenPrompt: "Drip drop! What falls from clouds and makes puddles?", correctId: "rain", soundCue: "Drip drop!", options: [{ id: "rain", label: "Rain", emoji: "🌧️", soundText: "Take an umbrella in the rain!" }, { id: "sun", label: "Sunshine", emoji: "☀️", soundText: "Bright sunny day!" }, { id: "wind", label: "Wind", emoji: "💨", soundText: "Whoosh goes the wind!" }, { id: "rainbow", label: "Rainbow", emoji: "🌈", soundText: "A rainbow can appear after rain!" }] },
   { id: "q25", prompt: "Which one belongs in the ocean?", spokenPrompt: "Splash into the blue ocean. Which friendly creature swims in the sea?", correctId: "dolphin", soundCue: "Splash!", options: [{ id: "dolphin", label: "Dolphin", emoji: "🐬", soundText: "I swim and leap in the ocean!" }, { id: "chicken", label: "Chicken", emoji: "🐔", soundText: "Cluck cluck on the farm!" }, { id: "camel", label: "Camel", emoji: "🐫", soundText: "I walk in the desert!" }, { id: "sheep", label: "Sheep", emoji: "🐑", soundText: "Baa baa in the meadow!" }] },
   { id: "q26", prompt: "What comes next: red, blue, red, blue...?", spokenPrompt: "Let's spot the repeating colors. Red, blue, red, blue. What comes next?", correctId: "red", soundCue: "Red, blue, red, blue!", options: [{ id: "red", label: "Red", emoji: "🔴", soundText: "The pattern starts again with red!" }, { id: "blue", label: "Blue", emoji: "🔵", soundText: "Blue was just before. What starts again?" }, { id: "green", label: "Green", emoji: "🟢", soundText: "Green is a lovely color, but not in this pattern!" }, { id: "yellow", label: "Yellow", emoji: "🟡", soundText: "Look at the repeating colors again!" }] },
+  { id: "q27", prompt: "Which one is the number six?", spokenPrompt: "After five comes six. Which number is six?", correctId: "six", soundCue: "Six!", options: [{ id: "four", label: "Four", emoji: "4️⃣", soundText: "Four!" }, { id: "six", label: "Six", emoji: "6️⃣", soundText: "Six little bees!" }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "Two!" }, { id: "nine", label: "Nine", emoji: "9️⃣", soundText: "Nine!" }] },
+  { id: "q28", prompt: "Which one is the number eight?", spokenPrompt: "Count up: six, seven, eight. Which number is eight?", correctId: "eight", soundCue: "Eight!", options: [{ id: "three", label: "Three", emoji: "3️⃣", soundText: "Three!" }, { id: "five", label: "Five", emoji: "5️⃣", soundText: "Five!" }, { id: "eight", label: "Eight", emoji: "8️⃣", soundText: "Eight apples!" }, { id: "one", label: "One", emoji: "1️⃣", soundText: "One!" }] },
+  { id: "q29", prompt: "Which one is the number ten?", spokenPrompt: "A full ten-frame. Which number is ten?", correctId: "ten", soundCue: "Ten!", options: [{ id: "seven", label: "Seven", emoji: "7️⃣", soundText: "Seven!" }, { id: "ten", label: "Ten", emoji: "🔟", soundText: "Ten stars!" }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "Two!" }, { id: "four", label: "Four", emoji: "4️⃣", soundText: "Four!" }] },
 ];
 
 const ANIMAL_QUIZ_QUESTIONS: QuizQuestion[] = [
@@ -432,6 +444,42 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
       { id: "square", label: "Green Square", emoji: "🟩", color: "from-emerald-500 to-teal-400" },
     ],
   },
+  {
+    id: "s13",
+    prompt: "Nana cut pizza. Which slice has three corners?",
+    spokenPrompt: "Look at Nana's pizza. Which slice is a triangle with three corners?",
+    correctId: "pizza",
+    options: [
+      { id: "pizza", label: "Pizza slice", emoji: "🍕", color: "from-orange-500 to-red-400" },
+      { id: "plate", label: "Round plate", emoji: "🍽️", color: "from-slate-200 to-stone-400" },
+      { id: "window", label: "Window", emoji: "🪟", color: "from-sky-400 to-cyan-400" },
+      { id: "clock", label: "Clock", emoji: "🕐", color: "from-amber-400 to-yellow-300" },
+    ],
+  },
+  {
+    id: "s14",
+    prompt: "The classroom window has four equal sides. Tap it.",
+    spokenPrompt: "Which shape is the square window with four equal sides?",
+    correctId: "window",
+    options: [
+      { id: "ball", label: "Ball", emoji: "⚽", color: "from-slate-600 to-emerald-500" },
+      { id: "window", label: "Square window", emoji: "🪟", color: "from-sky-400 to-cyan-500" },
+      { id: "slice", label: "Pizza", emoji: "🍕", color: "from-orange-500 to-red-400" },
+      { id: "moon", label: "Moon", emoji: "🌙", color: "from-indigo-400 to-blue-300" },
+    ],
+  },
+  {
+    id: "s15",
+    prompt: "The town clock is a circle. Tap the round clock.",
+    spokenPrompt: "Find the round town clock. A circle has no corners!",
+    correctId: "clock",
+    options: [
+      { id: "door", label: "Door", emoji: "🚪", color: "from-amber-700 to-stone-600" },
+      { id: "slice", label: "Pizza", emoji: "🍕", color: "from-orange-500 to-red-400" },
+      { id: "clock", label: "Town clock", emoji: "🕐", color: "from-amber-400 to-yellow-300" },
+      { id: "book", label: "Book", emoji: "📘", color: "from-indigo-400 to-blue-600" },
+    ],
+  },
 ];
 
 interface BubbleItem {
@@ -453,12 +501,7 @@ export function ToddlerQuizzesAndGames({
   initialBlueprintLearnerId,
 }: ToddlerQuizzesAndGamesProps) {
   const [currentActivity, setCurrentActivity] = useState<ToddlerActivity>(() => {
-    const validActivities: ToddlerActivity[] = [
-      "rainbow-piano", "animal-safari", "balloon-sky", "animal-quiz",
-      "shape-match", "memory-match", "rhyme-time", "color-magic",
-      "bubble-pop", "bubble-pop-phonics", "feed-animal"
-    ];
-    if (targetActivity && validActivities.includes(targetActivity as ToddlerActivity)) {
+    if (targetActivity && TODDLER_ACTIVITY_IDS.includes(targetActivity as ToddlerActivity)) {
       return targetActivity as ToddlerActivity;
     }
     return "animal-quiz";
@@ -496,12 +539,7 @@ export function ToddlerQuizzesAndGames({
   }, [generatedBubbleLearnerId]);
 
   useEffect(() => {
-    const validActivities: ToddlerActivity[] = [
-      "rainbow-piano", "animal-safari", "balloon-sky", "animal-quiz",
-      "shape-match", "memory-match", "rhyme-time", "color-magic",
-      "bubble-pop", "bubble-pop-phonics", "feed-animal"
-    ];
-    if (targetActivity && validActivities.includes(targetActivity as ToddlerActivity)) {
+    if (targetActivity && TODDLER_ACTIVITY_IDS.includes(targetActivity as ToddlerActivity)) {
       setCurrentActivity(targetActivity as ToddlerActivity);
     }
   }, [targetActivity]);
@@ -534,7 +572,9 @@ export function ToddlerQuizzesAndGames({
 
   // Feed the Animal State
   const [carrotsFed, setCarrotsFed] = useState<number>(0);
-  const targetCarrots = 5;
+  const [bunnyGoalIndex, setBunnyGoalIndex] = useState(0);
+  const BUNNY_GOALS = [5, 8, 10] as const;
+  const targetCarrots = BUNNY_GOALS[bunnyGoalIndex];
 
   // Timers refs to ensure seamless synchronization and eliminate any overlap
   const advanceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -977,8 +1017,15 @@ export function ToddlerQuizzesAndGames({
   };
 
   const handleResetBunny = () => {
+    const nextGoal = Math.min(bunnyGoalIndex + 1, BUNNY_GOALS.length - 1);
+    setBunnyGoalIndex(nextGoal);
     setCarrotsFed(0);
-    speakText("Bunny is ready to eat again! Tap the crunchy carrots to feed bunny!", { pitch: 1.2 });
+    speakText(
+      nextGoal === 0
+        ? "Bunny is ready to eat again! Tap the crunchy carrots!"
+        : `Bunny is hungrier! This time count to ${BUNNY_GOALS[nextGoal]}!`,
+      { pitch: 1.2 }
+    );
   };
 
   return (
@@ -986,7 +1033,7 @@ export function ToddlerQuizzesAndGames({
       {/* Top Controls: Voice Status & Audio Mute Toggle */}
       <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-white/[0.03] border border-white/10 max-w-3xl mx-auto">
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-400/15 border border-amber-400/30 text-amber-300 font-extrabold text-xs">
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-400/15 border border-amber-400/30 text-amber-200 font-extrabold text-xs sm:text-sm">
             <Sparkles size={13} />
             <span>Toddler Play Zone</span>
           </div>
@@ -999,7 +1046,7 @@ export function ToddlerQuizzesAndGames({
               className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              <span>AI Voice Speaking...</span>
+              <span>Speaking…</span>
             </motion.div>
           )}
         </div>
@@ -1007,7 +1054,7 @@ export function ToddlerQuizzesAndGames({
         {/* Child & Parent Voice Mute Button */}
         <button
           onClick={toggleVoiceMute}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs sm:text-sm border transition-all cursor-pointer ${
             voiceMuted
               ? "bg-rose-500/20 border-rose-400/40 text-rose-300 hover:bg-rose-500/30"
               : "bg-white/10 border-white/15 text-white/80 hover:text-white hover:bg-white/20"
@@ -1020,20 +1067,20 @@ export function ToddlerQuizzesAndGames({
       </div>
 
       {/* Game Selector Bar (Big, Touchable, Colorful - 11 Interactive Wonderland Games) */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-11 gap-1.5 p-1.5 rounded-3xl bg-white/[0.04] border border-white/10 max-w-6xl mx-auto">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3 rounded-3xl bg-white/[0.07] border border-white/15 max-w-6xl mx-auto">
         <button
           onClick={() => {
             setCurrentActivity("rainbow-piano");
             soundEffects.playPop();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "rainbow-piano"
               ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white border-rose-700 shadow-md scale-102 ring-2 ring-pink-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🎹</span>
-          <span className="truncate">Xylophone</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎹</span>
+          <span className="text-center leading-tight">Xylophone</span>
         </button>
 
         <button
@@ -1041,14 +1088,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("animal-safari");
             soundEffects.playPop();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "animal-safari"
               ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md scale-102 ring-2 ring-emerald-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🌿</span>
-          <span className="truncate">Safari</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🌿</span>
+          <span className="text-center leading-tight">Safari</span>
         </button>
 
         <button
@@ -1056,14 +1103,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("balloon-sky");
             soundEffects.playPop();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "balloon-sky"
               ? "bg-gradient-to-r from-sky-400 to-blue-500 text-white border-blue-700 shadow-md scale-102 ring-2 ring-sky-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🎈</span>
-          <span className="truncate">Balloons</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎈</span>
+          <span className="text-center leading-tight">Balloons</span>
         </button>
 
         <button
@@ -1071,14 +1118,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("animal-quiz");
             handleRestartQuiz();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "animal-quiz"
               ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-orange-700 shadow-md scale-102 ring-2 ring-amber-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🦁</span>
-          <span className="truncate">Animal Quiz</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🦁</span>
+          <span className="text-center leading-tight">Animal Quiz</span>
         </button>
 
         <button
@@ -1086,14 +1133,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("shape-match");
             handleRestartShapes();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "shape-match"
               ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-indigo-700 shadow-md scale-102 ring-2 ring-purple-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">⭐</span>
-          <span className="truncate">Shapes</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">⭐</span>
+          <span className="text-center leading-tight">Shapes</span>
         </button>
 
         <button
@@ -1101,14 +1148,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("memory-match");
             soundEffects.playPop();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "memory-match"
               ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-cyan-700 shadow-md scale-102 ring-2 ring-cyan-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🧩</span>
-          <span className="truncate">Memory</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🧩</span>
+          <span className="text-center leading-tight">Memory</span>
         </button>
 
         <button
@@ -1116,14 +1163,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("rhyme-time");
             soundEffects.playPop();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "rhyme-time"
               ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white border-rose-700 shadow-md scale-102 ring-2 ring-pink-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🎵</span>
-          <span className="truncate">Rhymes</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎵</span>
+          <span className="text-center leading-tight">Rhymes</span>
         </button>
 
         <button
@@ -1131,14 +1178,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("color-magic");
             soundEffects.playPop();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "color-magic"
               ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md scale-102 ring-2 ring-emerald-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🎨</span>
-          <span className="truncate">Color Lab</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎨</span>
+          <span className="text-center leading-tight">Color Lab</span>
         </button>
 
         <button
@@ -1146,14 +1193,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("bubble-pop");
             spawnBubbles();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "bubble-pop"
               ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white border-fuchsia-700 shadow-md scale-102 ring-2 ring-fuchsia-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🫧</span>
-          <span className="truncate">Bubbles</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🫧</span>
+          <span className="text-center leading-tight">Bubbles</span>
         </button>
 
         <button
@@ -1161,14 +1208,14 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("bubble-pop-phonics");
             soundEffects.playPop();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "bubble-pop-phonics"
               ? "bg-gradient-to-r from-sky-500 to-indigo-500 text-white border-indigo-700 shadow-md scale-102 ring-2 ring-sky-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🔤</span>
-          <span className="truncate">Phonics Pop</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🔤</span>
+          <span className="text-center leading-tight">Phonics Pop</span>
         </button>
 
         <button
@@ -1176,15 +1223,41 @@ export function ToddlerQuizzesAndGames({
             setCurrentActivity("feed-animal");
             handleResetBunny();
           }}
-          className={`flex flex-col items-center justify-center gap-1 py-2 px-1 rounded-2xl font-black text-[11px] transition-all cursor-pointer border-b-4 ${
+          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
             currentActivity === "feed-animal"
               ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white border-amber-700 shadow-md scale-102 ring-2 ring-amber-300/40"
-              : "bg-white/5 border-white/10 text-white/60 hover:text-white hover:bg-white/10"
+              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-base sm:text-lg">🐰</span>
-          <span className="truncate">Feed Bunny</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🐰</span>
+          <span className="text-center leading-tight">Feed Bunny</span>
         </button>
+      </div>
+
+      <div className="mb-4">
+        <p className="mb-3 px-1 text-xs sm:text-sm font-black uppercase tracking-wider text-white/80">
+          Skill studio
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {K1_STUDIO_GAMES.map((studioGame) => (
+            <button
+              key={studioGame.id}
+              type="button"
+              onClick={() => {
+                setCurrentActivity(studioGame.id);
+                soundEffects.playPop();
+              }}
+              className={`flex min-h-[6rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 px-3 py-4 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
+                currentActivity === studioGame.id
+                  ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md ring-2 ring-emerald-300/40"
+                  : "bg-white/15 border-white/25 text-white hover:bg-white/25"
+              }`}
+            >
+              <span className="text-3xl sm:text-4xl md:text-5xl leading-none">{studioGame.emoji}</span>
+              <span className="text-center leading-tight px-0.5">{studioGame.title}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* ACTIVITY 0: RAINBOW XYLOPHONE */}
@@ -1194,18 +1267,6 @@ export function ToddlerQuizzesAndGames({
 
       {currentActivity === "bubble-pop-phonics" && (
         <>
-          <GeneratedContentPanel
-            gameType="bubble-pop-phonics"
-            skillId="read-k1-alphabet-letters"
-            onBlueprint={(blueprint: GameBlueprint, learnerId: string) => {
-              if (blueprint.gameType === "bubble-pop-phonics") {
-                setGeneratedBubbleBlueprint(blueprint);
-                setGeneratedBubbleLearnerId(learnerId);
-                setIsGeneratedBubblePlaying(true);
-              }
-            }}
-            disabled={isGeneratedBubblePlaying}
-          />
           <ToddlerBubblePopGame
             key={`${getActiveLearnerId()}:${generatedBubbleLearnerId ?? "curated"}`}
             onAddStar={onAddStar}
@@ -1234,7 +1295,7 @@ export function ToddlerQuizzesAndGames({
               {/* Header with Question Progress & Speaker */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 font-extrabold text-xs">
+                  <span className="px-3 py-1 rounded-full bg-amber-400/20 text-amber-200 font-extrabold text-xs sm:text-sm">
                     Question {questionIndex + 1} of {questionDeck.length}
                   </span>
                   <div className="hidden sm:block w-24 h-2 overflow-hidden rounded-full bg-white/10" aria-label={`${questionIndex} of ${questionDeck.length} questions complete`}>
@@ -1299,7 +1360,7 @@ export function ToddlerQuizzesAndGames({
                         {option.label}
                       </span>
                       {option.soundText && (
-                        <span className="text-xs font-semibold text-white/50 mt-0.5">
+                        <span className="text-sm font-semibold text-white/85 mt-0.5">
                           {option.soundText}
                         </span>
                       )}
@@ -1315,11 +1376,11 @@ export function ToddlerQuizzesAndGames({
               </div>
 
               {/* Bottom Guidance for Toddler / Parent */}
-              <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/60">
+              <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-sm text-white/85">
                 <span className="flex items-center gap-1.5 text-amber-300 font-bold">
                   <span>✨</span> Correct taps add golden stars to the Star Jar!
                 </span>
-                <span className="text-white/40">Tap any picture to answer</span>
+                <span className="text-white/80">Tap any picture to answer</span>
               </div>
             </div>
           ) : (
@@ -1460,11 +1521,11 @@ export function ToddlerQuizzesAndGames({
                 })}
               </div>
 
-              <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/60">
+              <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-sm text-white/85">
                 <span className="flex items-center gap-1.5 text-purple-300 font-bold">
                   <span>🎨</span> Great for visual discrimination and color recognition!
                 </span>
-                <span className="text-white/40">Tap any shape to answer</span>
+                <span className="text-white/80">Tap any shape to answer</span>
               </div>
             </div>
           ) : (
@@ -1519,7 +1580,7 @@ export function ToddlerQuizzesAndGames({
                 <h3 className="text-lg sm:text-xl font-black text-white flex items-center gap-2">
                   <span>🎈</span> Rainbow Bubble Popper
                 </h3>
-                <p className="text-white/60 text-xs">
+                <p className="text-white/90 text-sm sm:text-base">
                   Tap any floating bubble to pop it and collect stars!
                 </p>
               </div>
@@ -1576,10 +1637,10 @@ export function ToddlerQuizzesAndGames({
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 space-y-3">
                   <span className="text-6xl animate-bounce">🌟</span>
                   <h4 className="text-xl font-black text-white">All Bubbles Popped!</h4>
-                  <p className="text-xs text-pink-300">You're super quick!</p>
+                  <p className="text-sm text-pink-200">You're super quick!</p>
                   <button
                     onClick={spawnBubbles}
-                    className="px-5 py-2.5 rounded-2xl bg-pink-500 hover:bg-pink-400 text-white font-black text-xs shadow-lg shadow-pink-500/40 cursor-pointer"
+                    className="px-5 py-2.5 rounded-2xl bg-pink-500 hover:bg-pink-400 text-white font-black text-sm min-h-12 shadow-lg shadow-pink-500/40 cursor-pointer"
                   >
                     More Bubbles! 🎈
                   </button>
@@ -1587,7 +1648,7 @@ export function ToddlerQuizzesAndGames({
               )}
             </div>
 
-            <div className="mt-3 text-center text-xs text-white/40">
+            <div className="mt-3 text-center text-sm text-white/85">
               💡 Parents: Encourages hand-eye coordination and fine motor touch tracking!
             </div>
           </div>
@@ -1599,14 +1660,14 @@ export function ToddlerQuizzesAndGames({
         <div className="max-w-2xl mx-auto">
           <div className="p-6 sm:p-8 rounded-3xl bg-[#131722] border-2 border-emerald-400/30 shadow-2xl text-center space-y-6">
             <div>
-              <span className="px-3 py-1 rounded-full bg-emerald-400/20 text-emerald-300 text-xs font-bold border border-emerald-400/30">
+              <span className="px-3 py-1 rounded-full bg-emerald-400/20 text-emerald-200 text-sm font-bold border border-emerald-400/30">
                 🥕 1-2-3 Counting Safari Game
               </span>
               <h3 className="text-2xl sm:text-3xl font-black text-white mt-2">
                 Feed Hungry Benny Bunny!
               </h3>
-              <p className="text-white/60 text-xs sm:text-sm mt-1">
-                Tap the crunchy orange carrots below to feed Benny 5 delicious snacks!
+              <p className="text-white/90 text-sm sm:text-base sm:text-sm mt-1">
+                Tap carrots to count. First tummy is 5, then 8, then 10.
               </p>
             </div>
 
@@ -1656,11 +1717,11 @@ export function ToddlerQuizzesAndGames({
             ) : (
               <div className="space-y-4">
                 <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 font-bold text-sm">
-                  🎉 Benny Bunny is so full and happy! You finished counting to 5!
+                  🎉 Benny Bunny is so full! You counted to {targetCarrots}! Next time the tummy holds more.
                 </div>
                 <button
                   onClick={handleResetBunny}
-                  className="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-xs transition-all cursor-pointer"
+                  className="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-sm min-h-12 transition-all cursor-pointer"
                 >
                   Feed Bunny Again 🥕
                 </button>
@@ -1683,6 +1744,10 @@ export function ToddlerQuizzesAndGames({
       {/* ACTIVITY 7: COLOR MAGIC LAB */}
       {currentActivity === "color-magic" && (
         <ToddlerColorLab onAddStar={onAddStar} />
+      )}
+
+      {K1_STUDIO_GAME_IDS.includes(currentActivity as K1StudioGameId) && (
+        <ToddlerK1Studio gameId={currentActivity as K1StudioGameId} onAddStar={onAddStar} />
       )}
     </div>
   );

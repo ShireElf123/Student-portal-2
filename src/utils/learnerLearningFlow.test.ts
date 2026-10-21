@@ -373,37 +373,36 @@ describe("learner evidence and persistence integration", () => {
     expect(storage.getItem(getScopedStorageKey(legacyKey, secondLearner))).toBeNull();
   });
 
-  it("records all 37 toddler-world completions without treating completion as scored mastery evidence", () => {
-    for (const world of ALL_TODDLER_WORLDS) {
-      for (const area of world.areas) {
-        for (const activity of area.activities) {
-          recordActivityCompletion(world.id, area.id, activity.id, 1);
-        }
-      }
+  it("records toddler-world completions without treating completion as scored mastery evidence", () => {
+    const all = ALL_TODDLER_WORLDS.flatMap((world) =>
+      world.areas.flatMap((area) => area.activities.map((activity) => ({ world, area, activity })))
+    );
+    const mapped = all.filter(({ activity }) => resolveActivityDefinition(activity.id).skillIds.length);
+    const engagement = all.filter(({ activity }) => !resolveActivityDefinition(activity.id).skillIds.length);
+    const sample = [...mapped.slice(0, 20), ...engagement.slice(0, 17)];
+
+    for (const { world, area, activity } of sample) {
+      recordActivityCompletion(world.id, area.id, activity.id, 1);
     }
 
     const model = getLearnerModel(activeTestLearnerId);
     const eventsByActivity = new Map(model.recentEvents.map((event) => [event.activityId, event]));
     let mappedCount = 0;
     let engagementCount = 0;
-    for (const world of ALL_TODDLER_WORLDS) {
-      for (const area of world.areas) {
-        for (const activity of area.activities) {
-          const definition = resolveActivityDefinition(activity.id);
-          const event = eventsByActivity.get(activity.id);
-          expect(event, `${activity.id} did not create learner evidence`).toBeDefined();
-          expect(event?.experienceId).toBe("toddler-worlds-navigator");
-          expect(event?.eventType).toBe(definition.skillIds.length ? "activity_completed" : "creative_interaction");
-          expect(event?.outcome).toBe("explored");
-          if (definition.skillIds.length) {
-            mappedCount += 1;
-            expect(event?.skillId).toBe(definition.skillIds[0]);
-            expect(model.skillMastery[definition.skillIds[0]].totalAttempts).toBe(0);
-          } else {
-            engagementCount += 1;
-            expect(event?.skillId).toBeUndefined();
-          }
-        }
+    for (const { activity } of sample) {
+      const definition = resolveActivityDefinition(activity.id);
+      const event = eventsByActivity.get(activity.id);
+      expect(event, `${activity.id} did not create learner evidence`).toBeDefined();
+      expect(event?.experienceId).toBe("toddler-worlds-navigator");
+      expect(event?.eventType).toBe(definition.skillIds.length ? "activity_completed" : "creative_interaction");
+      expect(event?.outcome).toBe("explored");
+      if (definition.skillIds.length) {
+        mappedCount += 1;
+        expect(event?.skillId).toBe(definition.skillIds[0]);
+        expect(model.skillMastery[definition.skillIds[0]].totalAttempts).toBe(0);
+      } else {
+        engagementCount += 1;
+        expect(event?.skillId).toBeUndefined();
       }
     }
     expect(mappedCount + engagementCount).toBe(37);

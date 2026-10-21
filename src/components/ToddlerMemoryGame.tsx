@@ -5,6 +5,7 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { awardXP, awardStars, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import type { MemoryPair } from "../data/toddler/toddlerWorldPlayThemes";
 
 interface CardItem {
   id: number;
@@ -30,8 +31,8 @@ const MEMORY_PAIRS = [
   { pairId: "flower", emoji: "🌼", name: "Flower", color: "from-pink-400 to-rose-500" },
 ];
 
-function generateCards(pairCount: number): CardItem[] {
-  const selected = MEMORY_PAIRS.slice(0, pairCount);
+function generateCards(pairCount: number, pairs: MemoryPair[] = MEMORY_PAIRS): CardItem[] {
+  const selected = (pairs.length >= pairCount ? pairs : MEMORY_PAIRS).slice(0, pairCount);
   const deck: CardItem[] = [];
   let id = 1;
   selected.forEach((pair) => {
@@ -45,9 +46,16 @@ function generateCards(pairCount: number): CardItem[] {
   return deck;
 }
 
-export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) => void }) {
-  const [pairCount, setPairCount] = useState(4);
-  const [cards, setCards] = useState<CardItem[]>(() => generateCards(4));
+export function ToddlerMemoryGame({
+  onAddStar,
+  pairs,
+}: {
+  onAddStar?: (amt?: number) => void;
+  pairs?: MemoryPair[];
+}) {
+  const deckPairs = pairs && pairs.length >= 4 ? pairs : MEMORY_PAIRS;
+  const [pairCount, setPairCount] = useState(6);
+  const [cards, setCards] = useState<CardItem[]>(() => generateCards(6, deckPairs));
   const [flippedIds, setFlippedIds] = useState<number[]>([]);
   const [matchesCount, setMatchesCount] = useState<number>(0);
   const [isWon, setIsWon] = useState<boolean>(false);
@@ -70,7 +78,7 @@ export function ToddlerMemoryGame({ onAddStar }: { onAddStar?: (amt?: number) =>
   const resetGame = (nextPairCount = pairCount) => {
     clearGameTimers();
     setPairCount(nextPairCount);
-    setCards(generateCards(nextPairCount));
+    setCards(generateCards(nextPairCount, deckPairs));
     setFlippedIds([]);
     setMatchesCount(0);
     setIsWon(false);

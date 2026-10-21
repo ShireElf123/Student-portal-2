@@ -1,0 +1,52 @@
+import { describe, expect, it } from "vitest";
+import { PICTURE_BOOKS } from "./pictureBooksData";
+import { EPIC_PICTURE_BOOKS } from "./pictureBooksEpics";
+import { STORY_ADVENTURES } from "./toddler/toddlerWorldsData";
+import { CURRICULUM_SKILL_NODES } from "./curriculumUniverse";
+import { resolveActivityDefinition } from "./activitySkillRegistry";
+
+const BOOK_SKILLS = new Set(resolveActivityDefinition("picture-book-interaction").skillIds);
+
+describe("story library", () => {
+  it("keeps every picture-book id unique", () => {
+    const ids = PICTURE_BOOKS.map((book) => book.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it("ships long picture books with a real arc, not two-page flashcards", () => {
+    expect(EPIC_PICTURE_BOOKS.length).toBeGreaterThanOrEqual(16);
+    const longBooks = PICTURE_BOOKS.filter((book) => book.pages.length >= 8);
+    expect(longBooks.length).toBeGreaterThanOrEqual(24);
+    for (const book of EPIC_PICTURE_BOOKS) {
+      expect(book.pages.length, book.id).toBeGreaterThanOrEqual(8);
+      expect(book.pages.map((page) => page.pageNumber)).toEqual(
+        Array.from({ length: book.pages.length }, (_, index) => index + 1),
+      );
+    }
+    const bear = PICTURE_BOOKS.find((book) => book.id === "little-bear-bedtime");
+    expect(bear?.pages.length).toBeGreaterThanOrEqual(8);
+  });
+
+  it("maps every scored page to a real picture-book skill", () => {
+    const skillIds = new Set(CURRICULUM_SKILL_NODES.map((node) => node.id));
+    let scored = 0;
+    for (const book of PICTURE_BOOKS) {
+      for (const page of book.pages) {
+        const interaction = page.learningInteraction;
+        if (!interaction) continue;
+        scored += 1;
+        expect(skillIds.has(interaction.skillId), `${book.id}/${interaction.id}`).toBe(true);
+        expect(BOOK_SKILLS.has(interaction.skillId), `${book.id}/${interaction.id}`).toBe(true);
+      }
+    }
+    expect(scored).toBeGreaterThan(12);
+  });
+
+  it("keeps interactive story adventures unique and longer than a three-beat demo", () => {
+    const ids = STORY_ADVENTURES.map((story) => story.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(STORY_ADVENTURES.length).toBeGreaterThanOrEqual(8);
+    expect(STORY_ADVENTURES.every((story) => story.steps.length >= 3)).toBe(true);
+    expect(STORY_ADVENTURES.filter((story) => story.steps.length >= 6).length).toBeGreaterThanOrEqual(5);
+  });
+});

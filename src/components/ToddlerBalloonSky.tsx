@@ -30,11 +30,13 @@ const NUMBERS = ["1", "2", "3", "4", "5"];
 
 interface ToddlerBalloonSkyProps {
   onAddStar?: (amount?: number) => void;
+  letters?: string[];
 }
 
 const DAILY_TARGET_STAR_GOAL = 10;
 
-export function ToddlerBalloonSky({ onAddStar }: ToddlerBalloonSkyProps) {
+export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps) {
+  const letterSet = letters && letters.length >= 4 ? letters : LETTERS;
   const [balloons, setBalloons] = useState<Balloon[]>([]);
   const [targetLabel, setTargetLabel] = useState<string>("A");
   const [poppedCount, setPoppedCount] = useState(0);
@@ -49,7 +51,7 @@ export function ToddlerBalloonSky({ onAddStar }: ToddlerBalloonSkyProps) {
     const label = forcedLabel
       ? forcedLabel
       : isLetter
-      ? LETTERS[Math.floor(Math.random() * LETTERS.length)]
+      ? letterSet[Math.floor(Math.random() * letterSet.length)]
       : NUMBERS[Math.floor(Math.random() * NUMBERS.length)];
     const colorInfo = BALLOON_COLORS[Math.floor(Math.random() * BALLOON_COLORS.length)];
 

@@ -74,12 +74,28 @@ describe("learning infrastructure integrity", () => {
       (activity) => activity.experienceType === "toddler-world" || activity.launch.targetId.startsWith("world:")
     );
 
-    expect(worldActivities).toHaveLength(37);
-    expect(registeredWorldActivities).toHaveLength(37);
-    expect(new Set(registeredWorldActivities.map((activity) => activity.id)).size).toBe(37);
+    expect(worldActivities.length).toBeGreaterThanOrEqual(160);
+    expect(registeredWorldActivities).toHaveLength(worldActivities.length);
+    expect(new Set(registeredWorldActivities.map((activity) => activity.id)).size).toBe(worldActivities.length);
     const engagementOnlyIds = new Set([
       "act-color-mix-orange", "act-color-mix-green", "act-music-high-low", "act-sticker-crown-pick",
       "act-feelings-happy-smile", "act-habits-toothbrush", "act-habits-listening-ears", "act-family-sweet-baby",
+      "act-color-mix-purple", "act-color-mix-green-leaf", "act-color-shadow",
+      "act-music-loud-soft", "act-music-high-bird", "act-music-frog-drum",
+      "act-feel-sad-hug", "act-feel-mad-breath", "act-feel-scared-light", "act-feel-proud",
+      "act-feel-share", "act-feel-listen", "act-feel-name-happy",
+      "act-habits-soap", "act-habits-sleep", "act-habits-water", "act-habits-nose",
+      "act-family-kind",
+      "act-fruit-colour-mix", "act-light-mix",
+      "act-night-piano", "act-bed-piano", "act-bed-what-next",
+      "act-jungle-memory-leaves", "act-balcony-memory-stars",
+      "act-atelier-sticker-match", "act-bakery-memory-buns", "act-den-snow-memory",
+      "act-dino-memory-bones", "act-feelings-face-memory", "act-habits-brush-piano",
+      "act-heap-bug-memory", "act-lamp-star-memory", "act-market-color-lab",
+      "act-soup-color-lab", "act-stall-color-lab", "act-workshop-memory-beads",
+      "act-soup-stir", "act-street-drive", "act-home-pour", "act-dock-scoop", "act-home-comb",
+      "act-land-feeling-face", "act-land-night-tuck",
+      "act-land-brush-teeth",
     ]);
     const actualEngagementOnlyIds = new Set<string>();
 

@@ -77,6 +77,7 @@ import { ToddlerQuizzesAndGames } from "./ToddlerQuizzesAndGames";
 import { ToddlerColorLab } from "./ToddlerColorLab";
 import { ToddlerMusicPiano } from "./ToddlerMusicPiano";
 import { ToddlerBubblePopGame } from "./ToddlerBubblePopGame";
+import { ToddlerK1Studio } from "./ToddlerK1Studio";
 
 const flush = async (ms = 0) => {
   await act(async () => {
@@ -128,13 +129,13 @@ describe("Memory Match", () => {
     const { container } = render(<ToddlerMemoryGame onAddStar={(amount) => stars.push(amount ?? 1)} />);
     await flush(400);
 
-    const counter = () => Number(container.textContent?.match(/(\d+)\/4 Pairs/)?.[1] ?? -1);
+    const counter = () => Number(container.textContent?.match(/(\d+)\/6 Pairs/)?.[1] ?? -1);
     const faceUp = (card: HTMLButtonElement) => !card.textContent?.includes("Tap");
 
     // Turn cards over the way a child does: hold one card up, then try partners
     // one at a time. Every card must be clickable again after a wrong turn, so a
     // child cannot get stuck — that is the property under test.
-    for (let pair = 0; pair < 4; pair++) {
+    for (let pair = 0; pair < 6; pair++) {
       const open = () => cards(container).filter((card) => !card.disabled);
       const before = counter();
       const first = open()[0];
@@ -158,12 +159,12 @@ describe("Memory Match", () => {
 
     expect(container.textContent).toContain("Super Memory Champion");
     // 1 star per pair + 3 for the win.
-    expect(stars.reduce((total, value) => total + value, 0)).toBe(4 + 3);
+    expect(stars.reduce((total, value) => total + value, 0)).toBe(6 + 3);
 
     const playAgain = buttonsWith(container, "Play Again")[0];
     fireEvent.click(playAgain);
     await flush(600);
-    expect(container.textContent).toContain("0/4 Pairs");
+    expect(container.textContent).toContain("0/6 Pairs");
   });
 });
 
@@ -262,7 +263,7 @@ describe("Feed Benny Bunny", () => {
 
     fireEvent.click(buttonsWith(container, "Feed Bunny Again")[0]);
     await flush(300);
-    expect(container.textContent).toContain("0 of 5 Carrots");
+    expect(container.textContent).toContain("0 of 8 Carrots");
     expect(carrotButton()).toBeTruthy();
   });
 });
@@ -287,10 +288,10 @@ describe("Open-ended toddler games", () => {
     const { container } = render(<ToddlerColorLab onAddStar={(amount) => stars.push(amount ?? 1)} />);
     await flush(200);
 
-    expect(container.textContent).toContain("Step 1: Tap your first color drop below");
+    expect(container.textContent).toContain("Tap your first colour below");
     fireEvent.click(buttonsWith(container, "Ruby Red")[0]);
     await flush(50);
-    expect(container.textContent).toContain("Step 2: Now tap a second color to mix!");
+    expect(container.textContent).toContain("Now tap a second colour to mix!");
 
     fireEvent.click(buttonsWith(container, "Sunny Yellow")[0]);
     // The mix resolves on a timer, not on a speech callback.
@@ -300,7 +301,7 @@ describe("Open-ended toddler games", () => {
 
     fireEvent.click(buttonsWith(container, "Mix Another Color")[0]);
     await flush(200);
-    expect(container.textContent).toContain("Step 1: Tap your first color drop below");
+    expect(container.textContent).toContain("Tap your first colour below");
   });
 
   it("Music Piano plays a whole guided song from the glowing keys", async () => {
@@ -357,4 +358,61 @@ describe("Open-ended toddler games", () => {
     fireEvent.click(poppable(container)[0]);
     await flush(50);
     expect(popped(container)).toBe(7);
-  });});
+  });
+});
+
+describe("K–1 skill studio (curated, AI off)", () => {
+  it("Picnic Plus scores five put-together/take-away rounds and can replay", async () => {
+    const { container, getByText } = render(<ToddlerK1Studio gameId="picnic-plus" />);
+    await flush(250);
+
+    expect(container.textContent).toContain("Picnic Plus");
+
+    const playCorrect = async (label: string) => {
+      fireEvent.click(getByText(label));
+      await flush(800);
+    };
+
+    await playCorrect("5 berries");
+    await playCorrect("8 pretzels");
+    await playCorrect("4 grapes");
+    await playCorrect("0 cookies");
+    await playCorrect("7 sandwiches");
+    await playCorrect("5 apples");
+    await playCorrect("8 muffins");
+    await playCorrect("6 cups");
+    await playCorrect("5 plums");
+    await playCorrect("10 crackers");
+    await playCorrect("6 oranges");
+    await playCorrect("5 pears");
+    await playCorrect("9 peaches");
+    await playCorrect("8 rolls");
+    await playCorrect("10 olives");
+    await playCorrect("7 carrots");
+
+    expect(container.textContent).toContain("You did it!");
+    fireEvent.click(getByText("Play Picnic Plus again"));
+    await flush(250);
+    expect(container.textContent).toContain("3 berries");
+  });
+
+  it("Bus Stop counts riders past five, not a tiny 1-2-3", async () => {
+    const { container, getByText } = render(<ToddlerK1Studio gameId="bus-stop" />);
+    await flush(250);
+    expect(container.textContent).toContain("Bus Stop");
+    expect(container.textContent).toContain("How many riders?");
+    fireEvent.click(getByText("6 riders"));
+    await flush(800);
+    expect(container.textContent).toContain("8 long");
+  });
+
+  it("Bead Train asks for the next bead, not a random quiz", async () => {
+    const { container, getByText } = render(<ToddlerK1Studio gameId="bead-train" />);
+    await flush(250);
+    expect(container.textContent).toContain("Bead Train");
+    expect(container.textContent).toContain("🔴 🔵 🔴 🔵 🔴");
+    fireEvent.click(getByText("Blue bead"));
+    await flush(800);
+    expect(container.textContent).toContain("☀️ ☀️ 🌙");
+  });
+});

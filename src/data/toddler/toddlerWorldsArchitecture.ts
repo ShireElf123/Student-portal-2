@@ -1,4 +1,8 @@
 import { StoryAdventure, STORY_ADVENTURES } from "./toddlerWorldsData";
+import { attachWorldLevelPacks } from "./toddlerWorldLevelPacks";
+import { attachVastDistricts } from "./toddlerWorldVastDistricts";
+import { ATLAS_LANDS } from "./toddlerWorldAtlasLands";
+import { attachWorldToyStations } from "./toddlerWorldToyStations";
 
 export type ToddlerActivityType =
   | "clue-detective"    // Listen/look at environmental clues and identify without answer spoiler
@@ -10,7 +14,16 @@ export type ToddlerActivityType =
   | "color-lab"         // Interactive color mixing
   | "piano-melody"      // Musical play
   | "pattern-match"     // Find what comes next in sequence
-  | "feed-friend";      // Counting & feeding interaction
+  | "feed-friend"       // Counting & feeding interaction
+  | "memory-match"      // Proven Games-tab memory toy, planted on a world road
+  | "balloon-sky"       // Sky letter/number pop
+  | "animal-safari"     // Sound safari
+  | "rhyme-garden"      // Rhyme matching
+  | "bubble-pop"        // Phonics bubbles
+  | "k1-studio"         // Curated skill studio scene
+  | "letter-trace"      // Finger-trace a land letter
+  | "open-play"         // No-fail stir / drive / pour
+  | "land-play";        // Land-unique room (not a quiz skin)
 
 export interface ToddlerActivityOption {
   id: string;
@@ -39,6 +52,52 @@ export interface ToddlerActivity {
   rewardXP: number;
   replayable: boolean;
   storyAdventureId?: string;   // For story-adventure activities
+  /** When type is k1-studio, which curated scene to mount. */
+  studioGameId?: string;
+  /** When type is open-play, which no-fail toy to mount. */
+  openPlayId?: "stir" | "drive" | "pour" | "scoop" | "pet" | "plant" | "comb";
+  /** When type is land-play, which unique land room to mount. */
+  landPlayId?:
+    | "milk-cow"
+    | "firefly-jar"
+    | "penguin-slide"
+    | "load-truck"
+    | "fire-hose"
+    | "fruit-stack"
+    | "stamp-mural"
+    | "story-stones"
+    | "number-pebbles"
+    | "campfire"
+    | "feeling-face"
+    | "night-tuck"
+    | "vine-swing"
+    | "dew-web"
+    | "seal-clap"
+    | "wash-bus"
+    | "pigeon-feed"
+    | "knead-dough"
+    | "drum-boom"
+    | "rocket-stars"
+    | "ten-dots"
+    | "puddle-jump"
+    | "brush-teeth"
+    | "owl-hoot"
+    | "puppet-bow"
+    | "syllable-clap"
+    | "rain-boots"
+    | "water-can"
+    | "set-table"
+    | "pack-bag"
+    | "nest-eggs"
+    | "stack-cups"
+    | "shelf-books"
+    | "feed-fish"
+    | "hang-stars"
+    | "fish-toss"
+    | "coil-rope"
+    | "bag-market"
+    | "scoop-moon"
+    | "pancake-flip";
 }
 
 export interface ToddlerMissionStep {
@@ -1607,7 +1666,7 @@ export const MY_WORLD: ToddlerWorld = {
   ],
 };
 
-// Array of all 6 Master Learning Worlds
+// Original six plus atlas lands — a map of many places, not a six-card demo.
 export const ALL_TODDLER_WORLDS: ToddlerWorld[] = [
   ANIMAL_WORLD,
   ADVENTURE_WORLD,
@@ -1615,4 +1674,4 @@ export const ALL_TODDLER_WORLDS: ToddlerWorld[] = [
   STORY_WORLD,
   LEARNING_WORLD,
   MY_WORLD,
-];
+].map(attachWorldLevelPacks).map(attachVastDistricts).concat(ATLAS_LANDS).map(attachWorldToyStations);

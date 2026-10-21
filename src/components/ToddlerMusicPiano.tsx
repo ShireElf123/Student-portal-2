@@ -85,9 +85,13 @@ const SONGS: Song[] = [
 
 interface ToddlerMusicPianoProps {
   onAddStar?: (amount?: number) => void;
+  songIds?: string[];
 }
 
-export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
+export function ToddlerMusicPiano({ onAddStar, songIds }: ToddlerMusicPianoProps) {
+  const songCatalog = songIds && songIds.length > 0
+    ? SONGS.filter((song) => songIds.includes(song.id))
+    : SONGS;
   const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [currentNoteIdx, setCurrentNoteIdx] = useState<number>(0);
   const [activeKey, setActiveKey] = useState<string | null>(null);
@@ -143,6 +147,7 @@ export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
   }, []);
 
   const handleKeyPress = (k: KeyConfig) => {
+    soundEffects.unlock();
     if (isPlayingDemo) stopDemo();
     setActiveKey(k.note);
     soundEffects.playXylophoneKey(k.freq);
@@ -187,7 +192,7 @@ export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
   const expectedKey = selectedSong && !songCompleted ? selectedSong.notes[currentNoteIdx] : null;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6" onPointerDownCapture={() => soundEffects.unlock()}>
       {/* Top Header Card */}
       <div className="p-6 rounded-3xl bg-gradient-to-r from-pink-500/15 via-purple-500/15 to-indigo-500/15 border-2 border-pink-400/30 text-center space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-400/20 text-pink-300 text-xs font-black uppercase tracking-wider">
@@ -218,7 +223,7 @@ export function ToddlerMusicPiano({ onAddStar }: ToddlerMusicPianoProps) {
             🎨 Free Play Meadow
           </button>
 
-          {SONGS.map((song) => {
+          {songCatalog.map((song) => {
             const isSelected = selectedSong?.id === song.id;
             return (
               <button

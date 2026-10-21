@@ -64,6 +64,8 @@ const startActivity = async () => {
   );
   await flush(500);
   expect(utils.container.textContent).toContain("The Grassy Pasture Sound");
+  expect(utils.container.textContent).toContain("Tap who it is");
+  expect(utils.container.textContent).not.toContain("Beginner");
   return utils;
 };
 
@@ -88,7 +90,9 @@ describe("Animal World detective activity", () => {
     await flush(2000);
 
     expect(speech.spoken.some((line) => line.includes("friendly dairy cow"))).toBe(true);
-    expect(container.textContent).toContain("Discovery Mastered!");
+    expect(container.textContent).toContain("You did it!");
+    expect(container.textContent).not.toContain("Beginner");
+    expect(container.textContent).not.toContain("Observe the clues");
   });
 
   it("still celebrates a correct answer when the engine never reports the end", async () => {
@@ -100,17 +104,17 @@ describe("Animal World detective activity", () => {
 
     // The freeze: answer accepted, cards locked, no way forward yet.
     expect(optionButton(container, "Spotted Cow").disabled).toBe(true);
-    expect(container.textContent).not.toContain("Discovery Mastered!");
+    expect(container.textContent).not.toContain("You did it!");
 
     // The watchdog releases the reveal without any further tap.
     await flush(20000);
-    expect(container.textContent).toContain("Discovery Mastered!");
+    expect(container.textContent).toContain("You did it!");
 
     // And the child can carry on playing.
-    fireEvent.click(optionButton(container, "Continue Journey"));
+    fireEvent.click(container.querySelector("[data-testid=trail-next]") as HTMLButtonElement);
     await flush(200);
     expect(container.textContent).toContain("Farm Valley");
-    expect(container.textContent).not.toContain("Discovery Mastered!");
+    expect(container.textContent).not.toContain("You did it!");
   });
 
   it("coaches a wrong answer without locking the activity", async () => {
@@ -120,7 +124,7 @@ describe("Animal World detective activity", () => {
     await flush(2000);
 
     expect(speech.spoken.at(-1)).toContain("That is Pink Piggy!");
-    expect(container.textContent).not.toContain("Discovery Mastered!");
+    expect(container.textContent).not.toContain("You did it!");
     expect(optionButton(container, "Spotted Cow").disabled).toBe(false);
   });
 });
@@ -155,12 +159,12 @@ describe("Animal World counting activity", () => {
       <ToddlerWorldsNavigator onAddStar={() => {}} starsCount={0} initialWorldId={FARM_COUNT_ROUTE} />
     );
     await flush(500);
-    expect(container.textContent).toContain("Counting Quest");
+    expect(container.textContent).toContain("Count 1 to 5");
 
     await answerCorrectly(container);
     await flush(2000);
 
-    expect(container.textContent).toContain("Discovery Mastered!");
+    expect(container.textContent).toContain("You did it!");
   });
 
   it("still reveals the celebration when the engine never reports the end", async () => {
@@ -174,9 +178,115 @@ describe("Animal World counting activity", () => {
 
     await answerCorrectly(container);
     await flush(200);
-    expect(container.textContent).not.toContain("Discovery Mastered!");
+    expect(container.textContent).not.toContain("You did it!");
 
     await flush(20000);
-    expect(container.textContent).toContain("Discovery Mastered!");
+    expect(container.textContent).toContain("You did it!");
+  });
+});
+
+/** Packed extra on the Farm Valley trail — not one of the original four demo cards. */
+const FARM_DAWN_ROUTE = "world:animal-world:farm-valley:act-farm-rooster-dawn";
+
+describe("wonderland atlas", () => {
+  it("opens as a map of many lands, not six demo cards", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator onAddStar={() => {}} starsCount={0} />
+    );
+    await flush(200);
+    expect(container.textContent).toContain("Wonderland Atlas");
+    expect(container.textContent).toContain("The Wilds");
+    expect(container.textContent).toContain("Busy Town");
+    expect(container.textContent).toContain("Busy Roads");
+    expect(container.textContent).toContain("Bug Garden");
+    expect(container.textContent).toContain("Market Kitchen");
+    expect(container.textContent).toContain("Town Square");
+    expect(container.textContent).toContain("Ice Neighbours");
+    expect(container.textContent).toContain("Night Neighbourhood");
+    expect(container.textContent).toContain("Animal World");
+  });
+});
+
+describe("world level trail stations", () => {
+  it("plays a packed farm station on the same detective contract", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator onAddStar={() => {}} starsCount={0} initialWorldId={FARM_DAWN_ROUTE} />
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Dawn Rooster");
+
+    fireEvent.click(optionButton(container, "Rooster"));
+    await flush(2000);
+    expect(container.textContent).toContain("You did it!");
+
+    fireEvent.click(container.querySelector("[data-testid=trail-next]") as HTMLButtonElement);
+    await flush(200);
+    expect(container.textContent).toContain("Farm Valley");
+  });
+
+  it("plays a planted toy without the quiz overlay", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator
+        onAddStar={() => {}}
+        starsCount={0}
+        initialWorldId="world:animal-world:farm-valley:act-farm-safari-walk"
+      />
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Pasture Safari");
+    expect(container.textContent).not.toContain("Let's play");
+    expect(container.textContent).not.toContain("Observe the clues");
+  });
+
+  it("plays a planted toy on an atlas ice land", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator
+        onAddStar={() => {}}
+        starsCount={0}
+        initialWorldId="world:arctic-world:ice-floe:act-floe-ice-safari"
+      />
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Floe Safari");
+    expect(container.textContent).toContain("🐧");
+    expect(container.textContent).not.toContain("🦁");
+    expect(container.textContent).not.toContain("Let's play");
+    expect(container.textContent).not.toContain("Observe the clues");
+  });
+
+  it("plays a game on a new atlas land", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator
+        onAddStar={() => {}}
+        starsCount={0}
+        initialWorldId="world:vehicle-world:garage-bay:act-garage-who-bus"
+      />
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Who Needs Wheels");
+    fireEvent.click(optionButton(container, "The school bus"));
+    await flush(2000);
+    expect(container.textContent).toContain("You did it!");
+  });
+});
+
+describe("trail ease", () => {
+  it("moves a finished land room onto the next stop after a short beat", async () => {
+    const { container, getByTestId } = render(
+      <ToddlerWorldsNavigator
+        onAddStar={() => {}}
+        starsCount={0}
+        initialWorldId="world:animal-world:farm-valley:act-land-milk-cow"
+      />
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Milk the cow");
+    fireEvent.pointerDown(getByTestId("milk-hold"));
+    await flush(2500);
+    expect(container.textContent).toContain("You did it!");
+    expect(container.textContent).toContain("Next:");
+    await flush(4000);
+    expect(container.textContent).toContain("Pasture Safari");
+    expect(container.textContent).not.toContain("You did it!");
   });
 });
