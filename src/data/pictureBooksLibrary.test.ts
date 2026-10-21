@@ -161,7 +161,13 @@ describe("story library", () => {
     const elevatorButtons = PICTURE_BOOKS.find((book) => book.id === "elevator-buttons");
     expect(elevatorButtons?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const safariAlphabet = PICTURE_BOOKS.find((book) => book.id === "safari-alphabet");
-    expect(safariAlphabet?.pages.slice(0, 4).every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(safariAlphabet?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const gardenCounting = PICTURE_BOOKS.find((book) => book.id === "garden-counting");
+    expect(gardenCounting?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const colorsShapes = PICTURE_BOOKS.find((book) => book.id === "colors-shapes-circus");
+    expect(colorsShapes?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const littleBearBedtime = PICTURE_BOOKS.find((book) => book.id === "little-bear-bedtime");
+    expect(littleBearBedtime?.pages.slice(0, 1).every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["lemonade-stoop"]).toBe("/covers/lemonade-stoop.jpg");
     expect(PICTURE_BOOK_COVERS["lost-red-mitten"]).toBe("/covers/lost-red-mitten.jpg");
     expect(PICTURE_BOOK_COVERS["nana-porch-swing"]).toBe("/covers/nana-porch-swing.jpg");
