@@ -38,6 +38,7 @@ import {
   PageAudioRecord,
 } from "../utils/parentAudioStorage";
 import { ToddlerQuizzesAndGames } from "./ToddlerQuizzesAndGames";
+import { ToddlerPlayhouse } from "./ToddlerPlayhouse";
 import { ToddlerWorldsNavigator } from "./ToddlerWorldsNavigator";
 import { ToddlerDailyMissionsModal } from "./ToddlerDailyMissionsModal";
 import { ToddlerStickerAlbumModal } from "./ToddlerStickerAlbumModal";
@@ -178,6 +179,27 @@ const COUNTING_CARDS = [
   { num: 8, word: "Eight", emojis: "🍎 🍎 🍎 🍎 🍎 🍎 🍎 🍎", item: "Apples", color: "from-orange-400 to-red-300" },
   { num: 9, word: "Nine", emojis: "🦋 🦋 🦋 🦋 🦋 🦋 🦋 🦋 🦋", item: "Butterflies", color: "from-fuchsia-400 to-violet-300" },
   { num: 10, word: "Ten", emojis: "⭐⭐⭐⭐⭐ ⭐⭐⭐⭐⭐", item: "Ten Stars", color: "from-indigo-400 to-blue-300" },
+  { num: 11, word: "Eleven", emojis: "🚌", item: "Bus and a spare seat", color: "from-yellow-400 to-amber-500" },
+  { num: 12, word: "Twelve", emojis: "🥚", item: "A dozen eggs", color: "from-amber-200 to-yellow-400" },
+  { num: 13, word: "Thirteen", emojis: "🎂", item: "Birthday candles", color: "from-pink-400 to-rose-400" },
+  { num: 14, word: "Fourteen", emojis: "📬", item: "Letters in a week of days, twice", color: "from-sky-400 to-blue-500" },
+  { num: 15, word: "Fifteen", emojis: "🏀", item: "Bounces on the stoop", color: "from-orange-400 to-amber-500" },
+  { num: 16, word: "Sixteen", emojis: "🖍️", item: "Crayons in a new box row", color: "from-violet-400 to-fuchsia-500" },
+  { num: 17, word: "Seventeen", emojis: "🌧️", item: "Rain taps on the glass", color: "from-cyan-400 to-slate-500" },
+  { num: 18, word: "Eighteen", emojis: "🍪", item: "Cookies on a cooling rack", color: "from-amber-400 to-orange-500" },
+  { num: 19, word: "Nineteen", emojis: "🌙", item: "Almost twenty moon-steps", color: "from-indigo-500 to-violet-600" },
+  { num: 20, word: "Twenty", emojis: "🔢", item: "Two full ten-frames", color: "from-emerald-400 to-teal-600" },
+];
+
+const WORD_FAMILIES = [
+  { rime: "at", words: "cat · hat · mat", emoji: "🐱", sound: "A-T says at. Cat, hat, mat." },
+  { rime: "an", words: "can · man · pan", emoji: "🍳", sound: "A-N says an. Can, man, pan." },
+  { rime: "op", words: "hop · mop · top", emoji: "🧹", sound: "O-P says op. Hop, mop, top." },
+  { rime: "ig", words: "pig · dig · wig", emoji: "🐷", sound: "I-G says ig. Pig, dig, wig." },
+  { rime: "un", words: "sun · run · bun", emoji: "☀️", sound: "U-N says un. Sun, run, bun." },
+  { rime: "et", words: "net · pet · wet", emoji: "🥅", sound: "E-T says et. Net, pet, wet." },
+  { rime: "in", words: "pin · win · tin", emoji: "📌", sound: "I-N says in. Pin, win, tin." },
+  { rime: "ug", words: "bug · hug · mug", emoji: "🐞", sound: "U-G says ug. Bug, hug, mug." },
 ];
 
 export function ToddlerWorldView({
@@ -191,7 +213,7 @@ export function ToddlerWorldView({
   onSwitchToEducator,
   onRequestExit,
 }: ToddlerWorldViewProps) {
-  const [activeTab, setActiveTab] = useState<"worlds" | "books" | "phonics" | "counting" | "games" | "avatar-studio">("worlds");
+  const [activeTab, setActiveTab] = useState<"worlds" | "books" | "playhouse" | "phonics" | "counting" | "games" | "avatar-studio">("worlds");
   const [gameState, setGameState] = useState(() => getGamificationState());
   const activeBuddy = gameState.buddy ?? DEFAULT_BUDDY;
   const [selectedBook, setSelectedBook] = useState<PictureBook | null>(null);
@@ -886,9 +908,9 @@ export function ToddlerWorldView({
         className="-mt-1 mb-4"
       />
 
-      {/* Main Mode Navigation Tabs (Chunky, Tactile 3D Buttons - 6 Agency Tabs) */}
+      {/* Main Mode Navigation Tabs */}
       <div className="max-w-7xl mx-auto px-4 pt-2 pb-2">
-        <div className={`grid grid-cols-2 sm:grid-cols-6 gap-2 sm:gap-3 p-2 sm:p-3 rounded-3xl max-w-6xl mx-auto mb-8 shadow-xl ${
+        <div className={`grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3 p-2 sm:p-3 rounded-3xl max-w-6xl mx-auto mb-8 shadow-xl ${
           isMeadow
             ? "bg-white/95 backdrop-blur-md border-4 border-emerald-300 ring-4 ring-emerald-500/20"
             : "bg-white/[0.08] border border-white/15"
@@ -919,6 +941,20 @@ export function ToddlerWorldView({
           >
             <span className="text-2xl sm:text-3xl">📚</span>
             <span>Stories</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("playhouse")}
+            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
+              activeTab === "playhouse"
+                ? "bg-gradient-to-b from-violet-400 to-fuchsia-500 text-white border-b-4 border-fuchsia-800 shadow-lg scale-102"
+                : isMeadow
+                ? "text-slate-700 hover:text-slate-900 hover:bg-violet-100/60 border-b-4 border-transparent"
+                : "text-white hover:bg-white/15 border-b-4 border-transparent"
+            }`}
+          >
+            <span className="text-2xl sm:text-3xl">🎭</span>
+            <span>Playhouse</span>
           </button>
 
           <button
@@ -1275,6 +1311,10 @@ export function ToddlerWorldView({
           </div>
         )}
 
+        {activeTab === "playhouse" && (
+          <ToddlerPlayhouse isMeadow={isMeadow} onAddStar={addStar} />
+        )}
+
         {/* SECTION 2: ABC PHONICS SOUNDBOARD */}
         {activeTab === "phonics" && (
           <div className="relative">
@@ -1347,6 +1387,29 @@ export function ToddlerWorldView({
                 );
               })}
             </div>
+
+            <h3 className={`mt-8 mb-3 text-lg sm:text-xl font-black ${isMeadow ? "text-slate-900" : "text-white"}`}>
+              Word families
+            </h3>
+            <p className={`text-sm sm:text-base font-semibold mb-3 ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
+              Same ending, new beginning. Tap a family. Hear cat, hat, mat.
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {WORD_FAMILIES.map((family) => (
+                <button
+                  key={family.rime}
+                  type="button"
+                  onClick={() => speakText(family.sound, { pitch: 1.15, rate: 0.9 })}
+                  className={`min-h-24 rounded-3xl p-4 text-left border-b-4 shadow-md ${
+                    isMeadow ? "bg-white border-pink-300 text-slate-900" : "bg-white/10 border-pink-500 text-white"
+                  }`}
+                >
+                  <span className="text-3xl">{family.emoji}</span>
+                  <p className="text-xl font-black">-{family.rime}</p>
+                  <p className="text-sm font-bold">{family.words}</p>
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
@@ -1363,12 +1426,12 @@ export function ToddlerWorldView({
                 <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${
                   isMeadow ? "text-slate-900" : "text-white"
                 }`}>
-                  <span>🔢</span> Count to Ten
+                  <span>🔢</span> Count to Twenty
                 </h2>
                 <p className={`text-sm sm:text-base font-semibold ${
                   isMeadow ? "text-slate-800" : "text-white/85"
                 }`}>
-                  Count from 1 to 10. Tap a card to hear the number. Later lands count past ten.
+                  Count from 1 to 20. Tap a card. Hear the number. Two ten-frames make twenty.
                 </p>
               </div>
             </div>
