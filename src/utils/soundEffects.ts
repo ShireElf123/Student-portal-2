@@ -285,6 +285,36 @@ class SoundEffectManager {
   }
 
   /**
+   * Short buzz when a slow-finger trail hits the hot edge. Not a song.
+   */
+  playBuzz() {
+    if (this.muted) return;
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "square";
+      osc2.type = "square";
+      osc.frequency.setValueAtTime(92, now);
+      osc2.frequency.setValueAtTime(108, now);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.16);
+      osc.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc2.start(now);
+      osc.stop(now + 0.17);
+      osc2.stop(now + 0.17);
+    } catch {
+      // ignore
+    }
+  }
+
+  /**
    * Shimmering cosmic chime for planetary discovery
    */
   playCosmicChime() {

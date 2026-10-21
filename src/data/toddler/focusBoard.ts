@@ -7,7 +7,7 @@ export interface BodyCheck {
   emoji: string;
   label: string;
   spoken: string;
-  suggest: "move" | "push" | "quiet" | "breathe";
+  suggest: "move" | "push" | "quiet" | "breathe" | "slow";
 }
 
 export const BODY_CHECKS: BodyCheck[] = [
@@ -22,8 +22,8 @@ export const BODY_CHECKS: BodyCheck[] = [
     id: "wiggles",
     emoji: "🐛",
     label: "Wiggles",
-    spoken: "Wiggly legs. Let's move for a short count, then settle.",
-    suggest: "move",
+    spoken: "Wiggly hands. Slow finger on the gold path. If you hit the red edge it buzzes.",
+    suggest: "slow",
   },
   {
     id: "loud",
@@ -54,20 +54,23 @@ export interface MoveRound {
   title: string;
   spoken: string;
   seconds: number;
+  taps: number;
   kind: "cardio" | "stretch";
 }
 
 export const MOVE_ROUNDS: MoveRound[] = [
-  { id: "mv-stomp", emoji: "🦶", title: "Stomp 8", spoken: "Stomp eight times. Hard feet. Then freeze.", seconds: 20, kind: "cardio" },
-  { id: "mv-jump", emoji: "🦘", title: "Jump 6", spoken: "Six small jumps. Then hands on knees.", seconds: 18, kind: "cardio" },
-  { id: "mv-march", emoji: "🚶", title: "March", spoken: "March in place. Knees up. Stop when the bar is done.", seconds: 22, kind: "cardio" },
-  { id: "mv-clap", emoji: "👏", title: "Clap run", spoken: "Clap and step. Fast, then slow, then stop.", seconds: 20, kind: "cardio" },
-  { id: "mv-shake", emoji: "🫧", title: "Shake off", spoken: "Shake hands. Shake feet. Shake stop.", seconds: 16, kind: "cardio" },
-  { id: "mv-star", emoji: "⭐", title: "Star stretch", spoken: "Arms out like a star. Hold. Soft knees.", seconds: 18, kind: "stretch" },
-  { id: "mv-reach", emoji: "🌅", title: "Reach sky", spoken: "Reach up. Reach down. Slow.", seconds: 20, kind: "stretch" },
-  { id: "mv-roll", emoji: "🔄", title: "Shoulder rolls", spoken: "Roll shoulders back. Two slow circles.", seconds: 18, kind: "stretch" },
-  { id: "mv-twist", emoji: "🥨", title: "Gentle twist", spoken: "Twist left. Twist right. Feet stay.", seconds: 18, kind: "stretch" },
-  { id: "mv-toe", emoji: "🧦", title: "Toe taps", spoken: "Tap toes. Left. Right. Soft.", seconds: 16, kind: "stretch" },
+  { id: "mv-stomp", emoji: "🦶", title: "Stomp 8", spoken: "Stomp eight times. Tap each stomp.", seconds: 20, taps: 8, kind: "cardio" },
+  { id: "mv-jump", emoji: "🦘", title: "Jump 6", spoken: "Six small jumps. Tap each jump.", seconds: 18, taps: 6, kind: "cardio" },
+  { id: "mv-march", emoji: "🚶", title: "March 10", spoken: "March ten steps. Tap each step.", seconds: 22, taps: 10, kind: "cardio" },
+  { id: "mv-clap", emoji: "👏", title: "Clap 8", spoken: "Eight claps. Tap each clap.", seconds: 20, taps: 8, kind: "cardio" },
+  { id: "mv-shake", emoji: "🫧", title: "Shake 6", spoken: "Shake six times. Tap each shake.", seconds: 16, taps: 6, kind: "cardio" },
+  { id: "mv-hop", emoji: "🐰", title: "Hop 5", spoken: "Five hops. Tap each hop.", seconds: 16, taps: 5, kind: "cardio" },
+  { id: "mv-wiggle", emoji: "🐟", title: "Wiggle 8", spoken: "Wiggle eight times. Then still.", seconds: 16, taps: 8, kind: "cardio" },
+  { id: "mv-star", emoji: "⭐", title: "Star 4", spoken: "Arms out like a star. Four slow holds. Tap each.", seconds: 18, taps: 4, kind: "stretch" },
+  { id: "mv-reach", emoji: "🌅", title: "Reach 6", spoken: "Reach up, down. Six times. Tap each.", seconds: 20, taps: 6, kind: "stretch" },
+  { id: "mv-roll", emoji: "🔄", title: "Roll 6", spoken: "Shoulder rolls. Six. Tap each.", seconds: 18, taps: 6, kind: "stretch" },
+  { id: "mv-twist", emoji: "🥨", title: "Twist 6", spoken: "Twist left and right. Six. Tap each.", seconds: 18, taps: 6, kind: "stretch" },
+  { id: "mv-toe", emoji: "🧦", title: "Toe taps 8", spoken: "Tap toes eight times. Soft.", seconds: 16, taps: 8, kind: "stretch" },
 ];
 
 export interface HeavyRound {
@@ -76,17 +79,20 @@ export interface HeavyRound {
   title: string;
   spoken: string;
   seconds: number;
+  hold: number;
 }
 
 export const HEAVY_ROUNDS: HeavyRound[] = [
-  { id: "hv-wall", emoji: "🧱", title: "Wall push", spoken: "Hands on the wall. Push. Count to eight.", seconds: 20 },
-  { id: "hv-squeeze", emoji: "🧸", title: "Squeeze Teddy", spoken: "Hug Teddy tight. Squeeze. Let go.", seconds: 16 },
-  { id: "hv-palms", emoji: "🤲", title: "Palm press", spoken: "Press palms together. Hard. Soft.", seconds: 16 },
-  { id: "hv-carry", emoji: "🧺", title: "Carry Teddy", spoken: "Carry Teddy across the room. Slow feet.", seconds: 22 },
-  { id: "hv-chair", emoji: "🪑", title: "Seat push", spoken: "Hands on the seat. Push down. One, two, three.", seconds: 18 },
-  { id: "hv-stomp", emoji: "🐘", title: "Heavy stomp", spoken: "Slow heavy stomps. Like a quiet elephant.", seconds: 20 },
-  { id: "hv-pull", emoji: "🪢", title: "Pretend pull", spoken: "Pull a heavy rope. Lean back. Stop.", seconds: 18 },
-  { id: "hv-curl", emoji: "💪", title: "Curl in", spoken: "Curl into a ball. Squeeze. Open like a flower.", seconds: 18 },
+  { id: "hv-wall", emoji: "🧱", title: "Wall push", spoken: "Hands on the wall. Hold this button while you push.", seconds: 20, hold: 8 },
+  { id: "hv-squeeze", emoji: "🧸", title: "Squeeze Teddy", spoken: "Hug Teddy. Hold this while you squeeze.", seconds: 16, hold: 6 },
+  { id: "hv-palms", emoji: "🤲", title: "Palm press", spoken: "Press palms. Hold this.", seconds: 16, hold: 6 },
+  { id: "hv-carry", emoji: "🧺", title: "Carry Teddy", spoken: "Carry Teddy. Hold this the whole way.", seconds: 22, hold: 8 },
+  { id: "hv-chair", emoji: "🪑", title: "Seat push", spoken: "Push the seat. Hold this.", seconds: 18, hold: 7 },
+  { id: "hv-stomp", emoji: "🐘", title: "Heavy stomp", spoken: "Slow heavy stomps. Hold this.", seconds: 20, hold: 7 },
+  { id: "hv-pull", emoji: "🪢", title: "Pretend pull", spoken: "Pull a heavy rope. Hold this.", seconds: 18, hold: 7 },
+  { id: "hv-curl", emoji: "💪", title: "Curl in", spoken: "Curl in. Hold this. Then open.", seconds: 18, hold: 6 },
+  { id: "hv-floor", emoji: "🪵", title: "Floor press", spoken: "Hands on the floor. Hold this.", seconds: 18, hold: 7 },
+  { id: "hv-book", emoji: "📚", title: "Heavy book", spoken: "Hold a heavy book with two hands. Hold this too.", seconds: 16, hold: 6 },
 ];
 
 export interface BreathRound {
@@ -115,17 +121,182 @@ export interface LookRound {
   title: string;
   spoken: string;
   prompt: string;
+  need: number;
+  field: { emoji: string; hit: boolean }[];
 }
 
 export const LOOK_ROUNDS: LookRound[] = [
-  { id: "lk-yellow", emoji: "💛", title: "Find yellow", spoken: "Look around. Find three yellow things. Tap done.", prompt: "I found 3 yellow" },
-  { id: "lk-round", emoji: "🟠", title: "Something round", spoken: "Find one round thing. Point. Tap done.", prompt: "I found round" },
-  { id: "lk-soft", emoji: "🧸", title: "Something soft", spoken: "Find something soft. Touch it gently. Tap done.", prompt: "I found soft" },
-  { id: "lk-window", emoji: "🪟", title: "Look far", spoken: "Look far, then near. Two looks. Tap done.", prompt: "Far and near" },
-  { id: "lk-quiet", emoji: "👂", title: "One sound", spoken: "Ears open. Name one quiet sound. Tap done.", prompt: "I heard one" },
-  { id: "lk-hands", emoji: "✋", title: "My hands", spoken: "Look at your hands. Wiggle. Still. Tap done.", prompt: "Hands still" },
-  { id: "lk-color", emoji: "🟢", title: "One green", spoken: "Find one green thing. Point. Tap done.", prompt: "I found green" },
-  { id: "lk-square", emoji: "⬛", title: "Air square", spoken: "Draw a square in the air. Slow. Tap done.", prompt: "I drew a square" },
+  {
+    id: "lk-yellow",
+    emoji: "💛",
+    title: "Find yellow",
+    spoken: "Tap every yellow thing.",
+    prompt: "yellow",
+    need: 3,
+    field: [
+      { emoji: "⭐", hit: true },
+      { emoji: "🧸", hit: false },
+      { emoji: "🍋", hit: true },
+      { emoji: "🪟", hit: false },
+      { emoji: "🍌", hit: true },
+      { emoji: "🧦", hit: false },
+      { emoji: "🧱", hit: false },
+      { emoji: "🌸", hit: false },
+      { emoji: "📘", hit: false },
+    ],
+  },
+  {
+    id: "lk-round",
+    emoji: "🟠",
+    title: "Something round",
+    spoken: "Tap the round things.",
+    prompt: "round",
+    need: 3,
+    field: [
+      { emoji: "🟠", hit: true },
+      { emoji: "⬛", hit: false },
+      { emoji: "⚽", hit: true },
+      { emoji: "🪵", hit: false },
+      { emoji: "🍪", hit: true },
+      { emoji: "🔺", hit: false },
+      { emoji: "🧸", hit: false },
+      { emoji: "🪟", hit: false },
+      { emoji: "📚", hit: false },
+    ],
+  },
+  {
+    id: "lk-soft",
+    emoji: "🧸",
+    title: "Something soft",
+    spoken: "Tap the soft things.",
+    prompt: "soft",
+    need: 3,
+    field: [
+      { emoji: "🧸", hit: true },
+      { emoji: "🧱", hit: false },
+      { emoji: "🧦", hit: true },
+      { emoji: "🔑", hit: false },
+      { emoji: "☁️", hit: true },
+      { emoji: "🪨", hit: false },
+      { emoji: "🪑", hit: false },
+      { emoji: "🍋", hit: false },
+      { emoji: "📘", hit: false },
+    ],
+  },
+  {
+    id: "lk-green",
+    emoji: "🟢",
+    title: "Find green",
+    spoken: "Tap every green thing.",
+    prompt: "green",
+    need: 3,
+    field: [
+      { emoji: "🐸", hit: true },
+      { emoji: "🍋", hit: false },
+      { emoji: "🌿", hit: true },
+      { emoji: "🧸", hit: false },
+      { emoji: "🍏", hit: true },
+      { emoji: "🧱", hit: false },
+      { emoji: "⭐", hit: false },
+      { emoji: "🧦", hit: false },
+      { emoji: "📘", hit: false },
+    ],
+  },
+  {
+    id: "lk-hands",
+    emoji: "✋",
+    title: "Find hands",
+    spoken: "Tap every hand.",
+    prompt: "hands",
+    need: 3,
+    field: [
+      { emoji: "✋", hit: true },
+      { emoji: "🦶", hit: false },
+      { emoji: "🤚", hit: true },
+      { emoji: "👀", hit: false },
+      { emoji: "🖐️", hit: true },
+      { emoji: "🧸", hit: false },
+      { emoji: "🍋", hit: false },
+      { emoji: "🧱", hit: false },
+      { emoji: "⭐", hit: false },
+    ],
+  },
+  {
+    id: "lk-quiet",
+    emoji: "🤫",
+    title: "Quiet things",
+    spoken: "Tap the quiet things.",
+    prompt: "quiet",
+    need: 3,
+    field: [
+      { emoji: "📖", hit: true },
+      { emoji: "📣", hit: false },
+      { emoji: "🧸", hit: true },
+      { emoji: "🥁", hit: false },
+      { emoji: "🌙", hit: true },
+      { emoji: "🔔", hit: false },
+      { emoji: "🚗", hit: false },
+      { emoji: "🍋", hit: false },
+      { emoji: "🧱", hit: false },
+    ],
+  },
+  {
+    id: "lk-sky",
+    emoji: "🌤️",
+    title: "Up in the sky",
+    spoken: "Tap things that belong in the sky.",
+    prompt: "sky",
+    need: 3,
+    field: [
+      { emoji: "☁️", hit: true },
+      { emoji: "🧦", hit: false },
+      { emoji: "🌙", hit: true },
+      { emoji: "🪑", hit: false },
+      { emoji: "⭐", hit: true },
+      { emoji: "🍞", hit: false },
+      { emoji: "🧸", hit: false },
+      { emoji: "🧱", hit: false },
+      { emoji: "🍋", hit: false },
+    ],
+  },
+  {
+    id: "lk-square",
+    emoji: "⬛",
+    title: "Find squares",
+    spoken: "Tap the squares.",
+    prompt: "square",
+    need: 3,
+    field: [
+      { emoji: "⬛", hit: true },
+      { emoji: "🟠", hit: false },
+      { emoji: "🟦", hit: true },
+      { emoji: "🔺", hit: false },
+      { emoji: "🟥", hit: true },
+      { emoji: "⭐", hit: false },
+      { emoji: "🧸", hit: false },
+      { emoji: "🌙", hit: false },
+      { emoji: "🍋", hit: false },
+    ],
+  },
+];
+
+export interface FreezeRound {
+  id: string;
+  emoji: string;
+  title: string;
+  spoken: string;
+  wiggle: number;
+}
+
+export const FREEZE_ROUNDS: FreezeRound[] = [
+  { id: "fr-wiggle", emoji: "🧊", title: "Wiggle freeze", spoken: "Wiggle until freeze. Do not tap early.", wiggle: 5 },
+  { id: "fr-dance", emoji: "🕺", title: "Dance freeze", spoken: "Dance in place. Freeze when it says freeze.", wiggle: 6 },
+  { id: "fr-hop", emoji: "🐰", title: "Hop freeze", spoken: "Tiny hops. Freeze when it says freeze.", wiggle: 5 },
+  { id: "fr-shake", emoji: "🫧", title: "Shake freeze", spoken: "Shake. Then statue.", wiggle: 4 },
+  { id: "fr-march", emoji: "🚶", title: "March freeze", spoken: "March. Then freeze.", wiggle: 6 },
+  { id: "fr-silly", emoji: "🤪", title: "Silly freeze", spoken: "Silly face. Then still face.", wiggle: 5 },
+  { id: "fr-reach", emoji: "🙆", title: "Reach freeze", spoken: "Reach up. Freeze at the top.", wiggle: 4 },
+  { id: "fr-spin", emoji: "💫", title: "Slow spin freeze", spoken: "Slow turn. Freeze.", wiggle: 5 },
 ];
 
 export interface QuietRound {
