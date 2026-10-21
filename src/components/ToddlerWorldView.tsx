@@ -1323,7 +1323,9 @@ export function ToddlerWorldView({
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="relative w-full max-w-3xl my-auto rounded-[2.5rem] bg-[#fffbeb] text-slate-900 border-8 border-amber-300 shadow-2xl overflow-hidden flex flex-col max-h-[94vh]"
+              className={`relative w-full my-auto rounded-[2.5rem] bg-[#fffbeb] text-slate-900 border-8 border-amber-300 shadow-2xl overflow-hidden flex flex-col max-h-[94vh] ${
+                activePage.illustrationImage ? "max-w-4xl" : "max-w-3xl"
+              }`}
             >
               {/* Book Header */}
               <div className="flex items-center justify-between p-3.5 sm:p-4 bg-amber-100/90 border-b-2 border-amber-200">
@@ -1439,8 +1441,26 @@ export function ToddlerWorldView({
               {/* Book Canvas / Page Surface */}
               {!isBookCompleted ? (
                 <>
-                  <div className="p-4 sm:p-8 flex-1 overflow-y-auto grid md:grid-cols-5 gap-4 sm:gap-6 items-center">
-                    {/* Visual Scene Box (Pop-up Art Card) */}
+                  <div className={`flex-1 overflow-y-auto ${activePage.illustrationImage ? "" : "p-4 sm:p-8 grid md:grid-cols-5 gap-4 sm:gap-6 items-center"}`}>
+                    {activePage.illustrationImage ? (
+                      <motion.div
+                        key={`page-spread-${activePage.pageNumber}`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="relative min-h-64 sm:min-h-[22rem] w-full overflow-hidden bg-amber-100"
+                      >
+                        <img
+                          src={activePage.illustrationImage}
+                          alt=""
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
+                        {activePage.soundEffectText && (
+                          <span className="absolute top-3 left-3 px-3.5 py-1 text-sm font-black uppercase rounded-full bg-amber-400 text-amber-950 shadow-md border-b-2 border-amber-600">
+                            {activePage.soundEffectText}
+                          </span>
+                        )}
+                      </motion.div>
+                    ) : (
                     <motion.div
                       key={`page-illus-${activePage.pageNumber}`}
                       initial={{ scale: 0.8, opacity: 0 }}
@@ -1456,9 +1476,12 @@ export function ToddlerWorldView({
                         </span>
                       )}
                     </motion.div>
+                    )}
 
                     {/* Page Heading & Story Text */}
-                    <div className="md:col-span-2 max-w-xl space-y-2 sm:space-y-3 text-center md:text-left mx-auto md:mx-0">
+                    <div className={`max-w-xl space-y-2 sm:space-y-3 text-center md:text-left mx-auto md:mx-0 ${
+                      activePage.illustrationImage ? "p-4 sm:p-6 w-full max-w-none" : "md:col-span-2"
+                    }`}>
                       <h4 className="text-lg sm:text-2xl font-black text-amber-900 font-display">
                         {activePage.title}
                       </h4>

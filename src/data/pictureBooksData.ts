@@ -4,6 +4,8 @@ import { EPIC_PICTURE_BOOKS } from "./pictureBooksEpics";
 import { NEIGHBORHOOD_PICTURE_BOOKS } from "./pictureBooksNeighborhood";
 import { STOOP_PICTURE_BOOKS } from "./pictureBooksStoop";
 import { STUDIO_PICTURE_BOOKS } from "./pictureBooksStudio";
+import { FIRST_WORD_PICTURE_BOOKS } from "./pictureBooksFirstWords";
+import { PICTURE_BOOK_SPREADS } from "./pictureBookSpreads";
 
 const CLASSIC_PICTURE_BOOKS: PictureBook[] = [
   {
@@ -2131,6 +2133,7 @@ const SERIES_BY_ID: Record<string, NonNullable<PictureBook["series"]>> = {
 
 export const PICTURE_BOOKS: PictureBook[] = [
   ...STUDIO_PICTURE_BOOKS,
+  ...FIRST_WORD_PICTURE_BOOKS,
   ...EPIC_PICTURE_BOOKS,
   ...NEIGHBORHOOD_PICTURE_BOOKS,
   ...STOOP_PICTURE_BOOKS,
@@ -2139,5 +2142,9 @@ export const PICTURE_BOOKS: PictureBook[] = [
   ...book,
   coverImage: PICTURE_BOOK_COVERS[book.id] ?? book.coverImage,
   series: book.series ?? SERIES_BY_ID[book.id],
+  pages: book.pages.map((page) => {
+    const spread = PICTURE_BOOK_SPREADS[`${book.id}:${page.pageNumber}`];
+    return spread ? { ...page, illustrationImage: spread } : page;
+  }),
 }));
 

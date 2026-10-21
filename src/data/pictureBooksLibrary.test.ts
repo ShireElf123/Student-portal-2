@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { PICTURE_BOOKS } from "./pictureBooksData";
 import { EPIC_PICTURE_BOOKS } from "./pictureBooksEpics";
 import { STUDIO_PICTURE_BOOKS } from "./pictureBooksStudio";
+import { FIRST_WORD_PICTURE_BOOKS } from "./pictureBooksFirstWords";
+import { PICTURE_BOOK_SPREADS } from "./pictureBookSpreads";
 import { STORY_ADVENTURES } from "./toddler/toddlerWorldsData";
 import { CURRICULUM_SKILL_NODES } from "./curriculumUniverse";
 import { resolveActivityDefinition } from "./activitySkillRegistry";
@@ -34,6 +36,15 @@ describe("story library", () => {
     expect(STUDIO_PICTURE_BOOKS.filter((book) => book.series === "look-learn").length).toBeGreaterThanOrEqual(4);
     expect(STUDIO_PICTURE_BOOKS.filter((book) => book.series === "first-words").length).toBeGreaterThanOrEqual(4);
     expect(STUDIO_PICTURE_BOOKS.filter((book) => book.pages.length >= 12).length).toBeGreaterThanOrEqual(4);
+  });
+
+  it("adds more first-word readers and paints Cat on the Mat page-by-page", () => {
+    expect(FIRST_WORD_PICTURE_BOOKS.length).toBeGreaterThanOrEqual(6);
+    expect(FIRST_WORD_PICTURE_BOOKS.every((book) => book.pages.length >= 8)).toBe(true);
+    expect(FIRST_WORD_PICTURE_BOOKS.every((book) => book.series === "first-words")).toBe(true);
+    const cat = PICTURE_BOOKS.find((book) => book.id === "cat-on-mat");
+    expect(cat?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(Object.keys(PICTURE_BOOK_SPREADS).length).toBeGreaterThanOrEqual(8);
   });
 
   it("maps every scored page to a real picture-book skill", () => {

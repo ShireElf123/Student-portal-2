@@ -315,6 +315,8 @@ export interface PictureBookPage {
   title: string;
   text: string;
   illustration: string; // Emoji, SVG representation or visual scene
+  /** Painted interior spread — Vooks-style page art when present. */
+  illustrationImage?: string;
   bgGradient: string;
   narration: string;
   letterHighlight?: string;
