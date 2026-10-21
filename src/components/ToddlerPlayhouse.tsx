@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { PLAYHOUSE_SHOWS, type PlayhouseShow } from "../data/toddler/playhouseShows";
+import { PLAYHOUSE_COVERS } from "../data/pictureBookCovers";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { soundEffects } from "../utils/soundEffects";
 
@@ -78,7 +79,15 @@ export function ToddlerPlayhouse({
               onClick={() => openShow(item)}
               className={`text-left min-h-40 rounded-[2rem] p-5 border-4 shadow-xl bg-gradient-to-br ${item.coverGradient} text-white`}
             >
-              <span className="text-5xl drop-shadow">{item.coverEmoji}</span>
+              {item.coverImage || PLAYHOUSE_COVERS[item.id] ? (
+                <img
+                  src={item.coverImage ?? PLAYHOUSE_COVERS[item.id]}
+                  alt=""
+                  className="h-20 w-20 rounded-2xl object-cover shadow-lg border-2 border-white/50"
+                />
+              ) : (
+                <span className="text-5xl drop-shadow">{item.coverEmoji}</span>
+              )}
               <p className="mt-3 text-xs font-black uppercase tracking-wider text-white/90">
                 {item.scenes.length} scenes · {item.minutes} min
               </p>

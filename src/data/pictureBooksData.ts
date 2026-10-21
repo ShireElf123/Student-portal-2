@@ -1,5 +1,7 @@
 import { PictureBook } from "../types";
+import { PICTURE_BOOK_COVERS } from "./pictureBookCovers";
 import { EPIC_PICTURE_BOOKS } from "./pictureBooksEpics";
+import { NEIGHBORHOOD_PICTURE_BOOKS } from "./pictureBooksNeighborhood";
 
 const CLASSIC_PICTURE_BOOKS: PictureBook[] = [
   {
@@ -2097,5 +2099,11 @@ const CLASSIC_PICTURE_BOOKS: PictureBook[] = [
   },
 ];
 
-export const PICTURE_BOOKS: PictureBook[] = [...EPIC_PICTURE_BOOKS, ...CLASSIC_PICTURE_BOOKS];
+export const PICTURE_BOOKS: PictureBook[] = [
+  ...EPIC_PICTURE_BOOKS,
+  ...NEIGHBORHOOD_PICTURE_BOOKS,
+  ...CLASSIC_PICTURE_BOOKS,
+].map((book) =>
+  PICTURE_BOOK_COVERS[book.id] ? { ...book, coverImage: PICTURE_BOOK_COVERS[book.id] } : book,
+);
 

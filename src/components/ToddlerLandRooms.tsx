@@ -42,7 +42,8 @@ export type LandPlayId =
   | "fish-toss"
   | "coil-rope"
   | "bag-market"
-  | "scoop-moon";
+  | "scoop-moon"
+  | "pancake-flip";
 
 const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = {
   "milk-cow": { title: "Milk the cow", line: "Hold the pail. Fill it to the top.", done: "Warm milk for the barn!" },
@@ -84,6 +85,7 @@ const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = 
   "coil-rope": { title: "Coil the ropes", line: "Drag four ropes onto the bollard.", done: "The dock is tidy." },
   "bag-market": { title: "Fill the market bag", line: "Drag four stall things into the bag.", done: "Home with the shopping!" },
   "scoop-moon": { title: "Scoop moon dust", line: "Drag four scoops into the tin.", done: "Dust for the rocket." },
+  "pancake-flip": { title: "Flip pancakes", line: "Pour. Wait until gold. Flip four onto the plate.", done: "A Saturday stack!" },
 };
 
 
@@ -143,6 +145,7 @@ const SCENERY: Record<LandPlayId, string[]> = {
   "coil-rope": ["⚓", "🚢", "🪢", "🌊", "🪵"],
   "bag-market": ["🛍️", "🥕", "🍞", "🧀", "🌞"],
   "scoop-moon": ["🚀", "🌕", "✨", "🪐", "🛰️"],
+  "pancake-flip": ["🥞", "🧈", "🍓", "🔥", "🫖"],
 };
 
 
@@ -1410,6 +1413,80 @@ function PuppetBow({ onAddStar }: { onAddStar?: () => void }) {
     </Stage>
   );
 }
+
+function PancakeFlip({ onAddStar }: { onAddStar?: () => void }) {
+  const { done, finish } = useCredit(onAddStar);
+  const [stacked, setStacked] = useState(0);
+  const [phase, setPhase] = useState<"empty" | "pale" | "gold">("empty");
+
+  useEffect(() => {
+    if (phase !== "pale") return;
+    const t = window.setTimeout(() => setPhase("gold"), 900);
+    return () => window.clearTimeout(t);
+  }, [phase]);
+
+  const pour = () => {
+    if (done || phase !== "empty") return;
+    soundEffects.playPop();
+    setPhase("pale");
+  };
+
+  const flip = () => {
+    if (done || phase !== "gold") return;
+    soundEffects.playPop();
+    const next = stacked + 1;
+    setStacked(next);
+    setPhase("empty");
+    if (next >= 4) finish();
+  };
+
+  return (
+    <Stage playId="pancake-flip" done={done} className="bg-gradient-to-b from-amber-200 via-orange-400 to-rose-900">
+      <div className="flex flex-col items-center gap-5">
+        <div className="text-6xl" aria-hidden>
+          🔥
+        </div>
+        <div
+          data-testid="pancake-pan"
+          className="relative flex h-36 w-36 items-center justify-center rounded-full border-8 border-stone-800 bg-stone-600 shadow-inner"
+        >
+          {phase === "empty" ? (
+            <span className="text-4xl opacity-40">🍳</span>
+          ) : (
+            <span
+              data-testid="pancake-in-pan"
+              className={`text-6xl ${phase === "gold" ? "scale-110" : "opacity-70"}`}
+            >
+              {phase === "gold" ? "🥞" : "🟡"}
+            </span>
+          )}
+        </div>
+        <p className="font-black text-amber-50" data-testid="pancake-stack">
+          {stacked} of 4 on the plate 🍽️
+        </p>
+        <div className="flex flex-wrap justify-center gap-3">
+          <button
+            type="button"
+            data-testid="pancake-pour"
+            className="min-h-16 min-w-[10rem] rounded-full bg-amber-100 px-8 py-5 text-xl font-black text-amber-950 shadow-lg active:scale-95"
+            onClick={pour}
+          >
+            Pour
+          </button>
+          <button
+            type="button"
+            data-testid="pancake-flip"
+            className="min-h-16 min-w-[10rem] rounded-full bg-rose-100 px-8 py-5 text-xl font-black text-rose-950 shadow-lg active:scale-95"
+            onClick={flip}
+          >
+            Flip
+          </button>
+        </div>
+      </div>
+    </Stage>
+  );
+}
+
 const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX.Element> = {
   "milk-cow": MilkCow,
   "firefly-jar": FireflyJar,
@@ -1552,6 +1629,7 @@ const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX
   "scoop-moon": (props) => (
     <DragBits playId="scoop-moon" className="bg-gradient-to-b from-indigo-300 via-slate-700 to-black" bits={[{ id: "a", emoji: "✨" }, { id: "b", emoji: "✨" }, { id: "c", emoji: "✨" }, { id: "d", emoji: "✨" }]} targetTestId="moon-tin" targetIdle="🥫" {...props} />
   ),
+  "pancake-flip": PancakeFlip,
 };
 
 export function ToddlerLandRooms({

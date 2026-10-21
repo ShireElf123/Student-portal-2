@@ -1,3 +1,5 @@
+import { MORE_PLAYHOUSE_SHOWS } from "./playhouseShowsMore";
+
 export interface PlayhouseLine {
   speaker: string;
   emoji: string;
@@ -18,12 +20,13 @@ export interface PlayhouseShow {
   title: string;
   tagline: string;
   coverEmoji: string;
+  coverImage?: string;
   coverGradient: string;
   minutes: number;
   scenes: PlayhouseScene[];
 }
 
-function show(meta: Omit<PlayhouseShow, "minutes" | "scenes">, scenes: PlayhouseScene[]): PlayhouseShow {
+export function show(meta: Omit<PlayhouseShow, "minutes" | "scenes">, scenes: PlayhouseScene[]): PlayhouseShow {
   return { ...meta, minutes: Math.max(3, Math.ceil(scenes.length / 2)), scenes };
 }
 
@@ -645,4 +648,5 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       },
     ],
   ),
+  ...MORE_PLAYHOUSE_SHOWS,
 ];

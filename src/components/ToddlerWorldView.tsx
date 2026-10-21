@@ -1207,7 +1207,11 @@ export function ToddlerWorldView({
                     onClick={() => handleOpenBook(book)}
                     className={`text-left min-h-40 rounded-[2rem] p-5 border-4 border-white/40 shadow-xl bg-gradient-to-br ${book.coverGradient} text-white`}
                   >
-                    <span className="text-6xl drop-shadow">{book.coverEmoji}</span>
+                    {book.coverImage ? (
+                      <img src={book.coverImage} alt="" className="h-24 w-24 rounded-2xl object-cover shadow-lg border-2 border-white/50" />
+                    ) : (
+                      <span className="text-6xl drop-shadow">{book.coverEmoji}</span>
+                    )}
                     <p className="mt-3 text-xs font-black uppercase tracking-wider text-white/90">Long tale · {book.pages.length} pages</p>
                     <h3 className="text-2xl font-black leading-tight">{book.title}</h3>
                     <p className="text-sm font-semibold text-white/95 line-clamp-2">{book.subtitle}</p>
@@ -1233,11 +1237,19 @@ export function ToddlerWorldView({
                   
                   <div>
                     <div className="flex items-center justify-between mb-4">
+                      {book.coverImage ? (
+                        <img
+                          src={book.coverImage}
+                          alt=""
+                          className="h-16 w-16 rounded-2xl object-cover shadow-sm border-2 border-amber-200 transition-transform group-hover:scale-110"
+                        />
+                      ) : (
                       <span className={`text-4xl p-3 rounded-2xl border transition-transform group-hover:scale-110 shadow-sm ${
                         isMeadow ? "bg-amber-100 border-amber-200" : "bg-white/10 border-white/10"
                       }`}>
                         {book.coverEmoji}
                       </span>
+                      )}
                       <span className={`px-2.5 py-1 text-xs sm:text-sm font-black uppercase rounded-full ${
                         isMeadow ? "bg-amber-200 text-amber-950" : "bg-white/10 text-white/80"
                       }`}>
@@ -1586,7 +1598,11 @@ export function ToddlerWorldView({
               {/* Book Header */}
               <div className="flex items-center justify-between p-3.5 sm:p-4 bg-amber-100/90 border-b-2 border-amber-200">
                 <div className="flex items-center gap-2.5 min-w-0">
+                  {selectedBook.coverImage ? (
+                    <img src={selectedBook.coverImage} alt="" className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 rounded-2xl object-cover border border-amber-200 shadow-sm" />
+                  ) : (
                   <span className="text-2xl sm:text-3xl flex-shrink-0 p-1.5 bg-white rounded-2xl border border-amber-200 shadow-sm">{selectedBook.coverEmoji}</span>
+                  )}
                   <div className="min-w-0">
                     <h3 className="text-base sm:text-lg font-black text-slate-900 truncate">{selectedBook.title}</h3>
                     <p className="text-xs sm:text-sm font-bold text-amber-800">

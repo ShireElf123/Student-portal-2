@@ -255,6 +255,25 @@ describe("land rooms", () => {
     expect(stars).toEqual([1]);
   });
 
+  it("flips four gold pancakes onto the plate and waits if they are still pale", async () => {
+    vi.useFakeTimers();
+    const stars: number[] = [];
+    const { getByTestId, container } = render(
+      <ToddlerLandRooms playId="pancake-flip" onAddStar={() => stars.push(1)} />
+    );
+    for (let i = 0; i < 4; i += 1) {
+      fireEvent.click(getByTestId("pancake-pour"));
+      fireEvent.click(getByTestId("pancake-flip"));
+      expect(stars).toHaveLength(0);
+      await act(async () => {
+        vi.advanceTimersByTime(950);
+      });
+      fireEvent.click(getByTestId("pancake-flip"));
+    }
+    expect(stars).toEqual([1]);
+    expect(container.textContent).toContain("Saturday stack");
+  });
+
   it("packs a trip bag by dragging, not tapping", async () => {
     const stars: number[] = [];
     const { getByTestId } = render(<ToddlerLandRooms playId="pack-bag" onAddStar={() => stars.push(1)} />);

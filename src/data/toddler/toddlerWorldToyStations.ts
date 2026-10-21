@@ -1118,6 +1118,19 @@ const LAND_TOYS: Record<string, ToyStation[]> = {
       skillId: "math-k1-counting",
     }),
   ],
+  "kitchen-world/picnic-basket": [
+    toy({
+      id: "act-land-pancake-flip",
+      title: "Flip Saturday Pancakes",
+      type: "land-play",
+      landPlayId: "pancake-flip",
+      learningObjective: "Pour, wait for gold, and flip four pancakes onto the plate",
+      clueIcon: "🥞",
+      cluePrompt: "Pour. Wait until gold. Flip four onto the plate.",
+      spokenPrompt: "Flip the Saturday pancakes!",
+      skillId: "math-k1-counting",
+    }),
+  ],
 };
 
 export const WORLD_TOY_STATION_SKILLS: Record<string, string | undefined> = {};

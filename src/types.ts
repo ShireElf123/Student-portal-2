@@ -331,6 +331,7 @@ export interface PictureBook {
   ageRange: string; // "Ages 2-4" | "Ages 3-5"
   category: "phonics" | "numbers" | "animals" | "colors" | "bedtime" | "manners" | "nature" | "space" | "ocean" | "feelings";
   coverEmoji: string;
+  coverImage?: string;
   coverGradient: string;
   pages: PictureBookPage[];
   author: string;

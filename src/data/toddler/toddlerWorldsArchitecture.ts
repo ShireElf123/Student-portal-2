@@ -96,7 +96,8 @@ export interface ToddlerActivity {
     | "fish-toss"
     | "coil-rope"
     | "bag-market"
-    | "scoop-moon";
+    | "scoop-moon"
+    | "pancake-flip";
 }
 
 export interface ToddlerMissionStep {
