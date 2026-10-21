@@ -23,7 +23,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         bgGradient: "from-lime-100 to-rose-100 text-lime-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "Nana, this melon is a planet. Planets should be lighter." },
-          { speaker: "Nana", emoji: "🧶", line: "It is a Tuesday planet. Sit. We do not drop Tuesday planets." },
+          { speaker: "Nana", emoji: "🎀", line: "It is a Tuesday planet. Sit. We do not drop Tuesday planets." },
         ],
       },
       {
@@ -44,7 +44,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         illustration: "🖤🖤🖤",
         bgGradient: "from-stone-100 to-rose-100 text-stone-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "Five boats. Count them. Then eat around them like a harbor." },
+          { speaker: "Nana", emoji: "🎀", line: "Five boats. Count them. Then eat around them like a harbor." },
           { speaker: "Teddy", emoji: "🧸", line: "One two three four five. The harbor is my face." },
         ],
       },
@@ -56,18 +56,18 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         bgGradient: "from-stone-200 to-lime-100 text-stone-950",
         lines: [
           { speaker: "Pigeon", emoji: "🐦", line: "We have a union about seeds." },
-          { speaker: "Nana", emoji: "🧶", line: "The union can wait. Chins first." },
+          { speaker: "Nana", emoji: "🎀", line: "The union can wait. Chins first." },
         ],
       },
       {
         id: "wm-5",
         title: "Napkin",
         setting: "Chin",
-        illustration: "🧻 🧸 💗",
+        illustration: "📄 🧸 💗",
         bgGradient: "from-amber-100 to-rose-100 text-amber-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "I am decorated. This is art." },
-          { speaker: "Nana", emoji: "🧶", line: "It is juice. Art goes on paper. Juice goes on napkins." },
+          { speaker: "Nana", emoji: "🎀", line: "It is juice. Art goes on paper. Juice goes on napkins." },
         ],
       },
       {
@@ -78,7 +78,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         bgGradient: "from-violet-100 to-rose-100 text-violet-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "My belly is a drum that learned watermelon." },
-          { speaker: "Nana", emoji: "🧶", line: "Then the drum can rest. The stoop will remember pink." },
+          { speaker: "Nana", emoji: "🎀", line: "Then the drum can rest. The stoop will remember pink." },
         ],
       },
     ],
@@ -96,10 +96,10 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "gb-1",
         title: "Fold",
         setting: "Kitchen table",
-        illustration: "📄 ⛵ 🧶",
+        illustration: "📄 ⛵ 🎀",
         bgGradient: "from-amber-50 to-sky-100 text-amber-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "Corner to corner. A roof. Paper used to be a tree, so it already knows water." },
+          { speaker: "Nana", emoji: "🎀", line: "Corner to corner. A roof. Paper used to be a tree, so it already knows water." },
           { speaker: "Teddy", emoji: "🧸", line: "I will be captain of a tree that remembers." },
         ],
       },
@@ -107,7 +107,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "gb-2",
         title: "Launch",
         setting: "Gutter",
-        illustration: "⛵ 🌧️ 🧱",
+        illustration: "⛵ 🌧️ 🏠",
         bgGradient: "from-cyan-100 to-slate-200 text-cyan-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "It wobbles. Captains wobble. It is in the job." },
@@ -122,17 +122,17 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         bgGradient: "from-indigo-100 to-sky-100 text-indigo-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "Nana the river is late for something!" },
-          { speaker: "Nana", emoji: "🧶", line: "Rivers are always late. My boot is a harbor." },
+          { speaker: "Nana", emoji: "🎀", line: "Rivers are always late. My boot is a harbor." },
         ],
       },
       {
         id: "gb-4",
         title: "Rescue",
         setting: "Boot harbor",
-        illustration: "👢 ⛵ 🪵",
+        illustration: "👢 ⛵ 🌳",
         bgGradient: "from-amber-100 to-cyan-100 text-amber-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "Stick crane. Come home, wet hero." },
+          { speaker: "Nana", emoji: "🎀", line: "Stick crane. Come home, wet hero." },
           { speaker: "Teddy", emoji: "🧸", line: "You are soggy and employed. I am proud." },
         ],
       },
@@ -140,7 +140,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "gb-5",
         title: "Sill",
         setting: "Window",
-        illustration: "🪟 ⛵ ☀️",
+        illustration: "🏠 ⛵ ☀️",
         bgGradient: "from-yellow-50 to-sky-100 text-yellow-950",
         lines: [
           { speaker: "Dot", emoji: "🐭", line: "It is on vacation. Vacations should be dry." },
@@ -154,7 +154,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         illustration: "📖 ⛵ 🌙",
         bgGradient: "from-violet-100 to-sky-100 text-violet-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "Adventures can wait between pages. Pages are patient." },
+          { speaker: "Nana", emoji: "🎀", line: "Adventures can wait between pages. Pages are patient." },
           { speaker: "Teddy", emoji: "🧸", line: "Good night, boat. Do not sail without me." },
         ],
       },
@@ -173,11 +173,11 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "tp-1",
         title: "Dirt",
         setting: "Window box",
-        illustration: "🪴 🪟 🧸",
+        illustration: "🌱 🏠 🧸",
         bgGradient: "from-amber-100 to-lime-100 text-amber-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "This dirt used to live somewhere else. Now it is ours. Hello, dirt." },
-          { speaker: "Nana", emoji: "🧶", line: "Hello is correct. Seeds like manners." },
+          { speaker: "Nana", emoji: "🎀", line: "Hello is correct. Seeds like manners." },
         ],
       },
       {
@@ -188,7 +188,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         bgGradient: "from-yellow-100 to-emerald-100 text-yellow-950",
         lines: [
           { speaker: "Dot", emoji: "🐭", line: "I have watched for one whole minute. Nothing. I resign." },
-          { speaker: "Nana", emoji: "🧶", line: "Roots are shy. Shy things need more than a minute." },
+          { speaker: "Nana", emoji: "🎀", line: "Roots are shy. Shy things need more than a minute." },
         ],
       },
       {
@@ -199,18 +199,18 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         bgGradient: "from-lime-100 to-emerald-200 text-lime-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "Tiny. Also Tiny. I have named the children." },
-          { speaker: "Nana", emoji: "🧶", line: "Good. Named plants try harder." },
+          { speaker: "Nana", emoji: "🎀", line: "Good. Named plants try harder." },
         ],
       },
       {
         id: "tp-4",
         title: "Still Green",
         setting: "August-ish",
-        illustration: "🟢 🍅 🪟",
+        illustration: "💚 🍅 🏠",
         bgGradient: "from-lime-200 to-yellow-100 text-lime-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "They are moons that forgot pink." },
-          { speaker: "Nana", emoji: "🧶", line: "Wait is a flavor. You will like it later." },
+          { speaker: "Nana", emoji: "🎀", line: "Wait is a flavor. You will like it later." },
         ],
       },
       {
@@ -228,10 +228,10 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "tp-6",
         title: "Salt",
         setting: "Kitchen",
-        illustration: "🧂 🍅 🧶",
+        illustration: "🍚 🍅 🎀",
         bgGradient: "from-orange-100 to-rose-100 text-orange-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "Warm from the window. A pinch. Tuesday tastes like August." },
+          { speaker: "Nana", emoji: "🎀", line: "Warm from the window. A pinch. Tuesday tastes like August." },
           { speaker: "Teddy", emoji: "🧸", line: "Thank you, Tiny. Thank you, Also Tiny. Thank you, Show-off." },
         ],
       },
@@ -242,7 +242,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       id: "folding-table-wiggle",
       title: "Folding Table Wiggle",
       tagline: "One leg dances. A napkin makes it sit. Then the block eats.",
-      coverEmoji: "🪑",
+      coverEmoji: "💺",
       coverGradient: "from-amber-400 to-rose-800",
     },
     [
@@ -250,22 +250,22 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "ft-1",
         title: "Unfold",
         setting: "Sidewalk",
-        illustration: "📦 🪑 🧸",
+        illustration: "📦 💺 🧸",
         bgGradient: "from-amber-100 to-stone-200 text-amber-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "The table was a suitcase. Now it is a meadow. I am impressed." },
-          { speaker: "Nana", emoji: "🧶", line: "Legs out. Click. Meadows should not pinch fingers." },
+          { speaker: "Nana", emoji: "🎀", line: "Legs out. Click. Meadows should not pinch fingers." },
         ],
       },
       {
         id: "ft-2",
         title: "Dancer",
         setting: "One leg",
-        illustration: "🦵 🧻 🪑",
+        illustration: "👢 📄 💺",
         bgGradient: "from-yellow-100 to-rose-100 text-yellow-950",
         lines: [
           { speaker: "Dot", emoji: "🐭", line: "That leg has ambitions." },
-          { speaker: "Nana", emoji: "🧶", line: "A napkin under a dancer. Sit, dear." },
+          { speaker: "Nana", emoji: "🎀", line: "A napkin under a dancer. Sit, dear." },
         ],
       },
       {
@@ -276,7 +276,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         bgGradient: "from-stone-50 to-amber-100 text-stone-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "Four moons. They are paper so they will not last. I still like them." },
-          { speaker: "Nana", emoji: "🧶", line: "Enough is a kind of lasting." },
+          { speaker: "Nana", emoji: "🎀", line: "Enough is a kind of lasting." },
         ],
       },
       {
@@ -298,7 +298,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         bgGradient: "from-sky-100 to-rose-100 text-sky-950",
         lines: [
           { speaker: "Rosie", emoji: "🚒", line: "I parked like a guest. Guests do not block hydrants even in plays." },
-          { speaker: "Nana", emoji: "🧶", line: "The block is a long family for one hour. Clink." },
+          { speaker: "Nana", emoji: "🎀", line: "The block is a long family for one hour. Clink." },
         ],
       },
       {
@@ -309,7 +309,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         bgGradient: "from-indigo-100 to-amber-100 text-indigo-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "Meadow, be a suitcase. My belly is already a drum." },
-          { speaker: "Nana", emoji: "🧶", line: "Fold. The sidewalk will remember the legs." },
+          { speaker: "Nana", emoji: "🎀", line: "Fold. The sidewalk will remember the legs." },
         ],
       },
     ],

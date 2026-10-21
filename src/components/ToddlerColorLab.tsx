@@ -17,7 +17,7 @@ interface ColorDrop {
 
 const PRIMARY_COLORS: ColorDrop[] = [
   { id: "red", name: "Ruby Red", emoji: "🔴", colorClass: "from-red-500 to-rose-600", glowColor: "shadow-red-500/50" },
-  { id: "yellow", name: "Sunny Yellow", emoji: "🟡", colorClass: "from-yellow-400 to-amber-400", glowColor: "shadow-yellow-500/50" },
+  { id: "yellow", name: "Sunny Yellow", emoji: "💛", colorClass: "from-yellow-400 to-amber-400", glowColor: "shadow-yellow-500/50" },
   { id: "blue", name: "Ocean Blue", emoji: "🔵", colorClass: "from-blue-500 to-indigo-600", glowColor: "shadow-blue-500/50" },
   { id: "white", name: "Cloud White", emoji: "⚪", colorClass: "from-white to-slate-200", glowColor: "shadow-white/50" },
 ];
@@ -322,13 +322,13 @@ export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: n
               onClick={handleReset}
               className="mt-3 px-5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-sm border border-white/20 transition-all cursor-pointer"
             >
-              Mix Another Color 🪄
+              Mix Another Color ✨
             </button>
           </motion.div>
         ) : (
           <div className="flex flex-col items-center space-y-4">
             <div className="w-24 h-24 rounded-3xl bg-white/5 border-2 border-dashed border-white/20 flex items-center justify-center text-4xl">
-              {selectedDrops.length === 0 && <span className="opacity-40 animate-pulse">🧪</span>}
+              {selectedDrops.length === 0 && <span className="opacity-40 animate-pulse">⚗️</span>}
               {selectedDrops.length === 1 && (
                 <span className="text-5xl animate-bounce">{selectedDrops[0].emoji}</span>
               )}

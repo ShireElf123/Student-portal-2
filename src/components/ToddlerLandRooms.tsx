@@ -108,47 +108,47 @@ function useCredit(onAddStar?: () => void) {
 }
 
 const SCENERY: Record<LandPlayId, string[]> = {
-  "milk-cow": ["☁️", "🏡", "🌾", "🌻", "🪵"],
+  "milk-cow": ["☁️", "🏡", "🌾", "🌻", "🌳"],
   "firefly-jar": ["🌙", "🌸", "🌿", "⭐", "🍃"],
-  "penguin-slide": ["❄️", "🧊", "🌨️", "🐟", "🏔️"],
-  "load-truck": ["🛢️", "🧰", "🛞", "🚧", "📦"],
-  "fire-hose": ["🚒", "🔔", "🪜", "💧", "🧯"],
-  "fruit-stack": ["🧺", "🍋", "🍉", "🥕", "🌽"],
+  "penguin-slide": ["❄️", "❄️", "🌨️", "🐟", "🏔️"],
+  "load-truck": ["🛢️", "🔧", "🚗", "🚧", "📦"],
+  "fire-hose": ["🚒", "🔔", "🏡", "💧", "🚒"],
+  "fruit-stack": ["👜", "🍋", "🍉", "🥕", "🌽"],
   "stamp-mural": ["🎨", "🖌️", "🌈", "✨", "🖼️"],
   "story-stones": ["📖", "🌙", "🏡", "⭐", "🌲"],
-  "number-pebbles": ["🌼", "🍃", "🦋", "🪨", "☀️"],
+  "number-pebbles": ["🌼", "🍃", "🦋", "⛰️", "☀️"],
   campfire: ["🌲", "🦉", "🌙", "⭐", "🏕️"],
   "feeling-face": ["💗", "🌼", "🌈", "🧸", "☀️"],
   "night-tuck": ["🌙", "⭐", "🦉", "🛏️", "🕯️"],
   "vine-swing": ["🌴", "🦜", "🍃", "🍌", "☀️"],
-  "dew-web": ["🕸️", "💧", "🌿", "🪲", "🌸"],
-  "seal-clap": ["🦭", "❄️", "🧊", "🌊", "🐟"],
-  "wash-bus": ["🚌", "🧽", "💧", "☀️", "🛞"],
-  "pigeon-feed": ["🕊️", "🍞", "🌳", "🪑", "🌤️"],
-  "knead-dough": ["🍞", "🌾", "🥣", "🔥", "🧈"],
+  "dew-web": ["🕸️", "💧", "🌿", "🐛", "🌸"],
+  "seal-clap": ["🐬", "❄️", "❄️", "🌊", "🐟"],
+  "wash-bus": ["🚌", "🛁", "💧", "☀️", "🚗"],
+  "pigeon-feed": ["🕊️", "🍞", "🌳", "💺", "🌤️"],
+  "knead-dough": ["🍞", "🌾", "🥣", "🔥", "🍞"],
   "drum-boom": ["🥁", "🎵", "🌈", "🎺", "⭐"],
-  "rocket-stars": ["🚀", "🌙", "⭐", "🪐", "✨"],
+  "rocket-stars": ["🚀", "🌙", "⭐", "🌍", "✨"],
   "ten-dots": ["🔟", "🌼", "📗", "⭐", "🔷"],
   "puddle-jump": ["🌧️", "🌈", "🌲", "💧", "☔"],
-  "brush-teeth": ["🪥", "😁", "💧", "🌙", "⭐"],
-  "owl-hoot": ["🦉", "🌙", "🌲", "⭐", "🪵"],
-  "puppet-bow": ["🎭", "🎪", "🌟", "🧵", "👏"],
+  "brush-teeth": ["😁", "😁", "💧", "🌙", "⭐"],
+  "owl-hoot": ["🦉", "🌙", "🌲", "⭐", "🌳"],
+  "puppet-bow": ["🎭", "🎪", "🌟", "🎀", "👏"],
   "syllable-clap": ["👏", "🐟", "🔤", "💧", "🌙"],
-  "rain-boots": ["👢", "🌧️", "🪟", "☕", "☂️"],
+  "rain-boots": ["👢", "🌧️", "🏠", "☕", "☂️"],
   "water-can": ["🌱", "💧", "🐞", "🌸", "🌤️"],
-  "set-table": ["🍽️", "🕯️", "🧺", "🍞", "🏡"],
-  "pack-bag": ["🧳", "🎫", "✈️", "🧦", "📘"],
-  "nest-eggs": ["🦕", "🌿", "🥚", "🪨", "☀️"],
-  "stack-cups": ["🔷", "🔶", "⭐", "📗", "🧩"],
-  "shelf-books": ["📚", "🕯️", "🪟", "🪑", "🌙"],
-  "feed-fish": ["🐠", "🪸", "🌊", "🫧", "🐚"],
+  "set-table": ["🍽️", "🕯️", "👜", "🍞", "🏡"],
+  "pack-bag": ["🎒", "🎫", "✈️", "👟", "📘"],
+  "nest-eggs": ["🦕", "🌿", "🥚", "⛰️", "☀️"],
+  "stack-cups": ["🔷", "🔶", "⭐", "📗", "🎲"],
+  "shelf-books": ["📚", "🕯️", "🏠", "💺", "🌙"],
+  "feed-fish": ["🐠", "🌊", "🌊", "💧", "🐚"],
   "hang-stars": ["⭐", "🌙", "🌃", "✨", "🦉"],
-  "fish-toss": ["🦭", "🐟", "🧊", "🌊", "❄️"],
-  "coil-rope": ["⚓", "🚢", "🪢", "🌊", "🪵"],
+  "fish-toss": ["🐬", "🐟", "❄️", "🌊", "❄️"],
+  "coil-rope": ["⚓", "🚢", "➰", "🌊", "🌳"],
   "bag-market": ["🛍️", "🥕", "🍞", "🧀", "🌞"],
-  "scoop-moon": ["🚀", "🌕", "✨", "🪐", "🛰️"],
-  "pancake-flip": ["🥞", "🧈", "🍓", "🔥", "🫖"],
-  "hang-wash": ["👕", "🧦", "🧺", "🌤️", "🏡"],
+  "scoop-moon": ["🚀", "🌕", "✨", "🌍", "🛰️"],
+  "pancake-flip": ["🥞", "🍞", "🍓", "🔥", "☕"],
+  "hang-wash": ["👕", "👟", "👜", "🌤️", "🏡"],
 };
 
 
@@ -307,7 +307,7 @@ function FireflyJar({ onAddStar }: { onAddStar?: () => void }) {
         )}
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center">
           <div className="text-6xl" aria-hidden>
-            🫙
+            🍯
           </div>
           <p className="text-amber-200 font-black" data-testid="firefly-count">
             {caught.length} of 6
@@ -853,13 +853,13 @@ function Campfire({ onAddStar }: { onAddStar?: () => void }) {
     <Stage playId="campfire" done={done} className="bg-gradient-to-b from-sky-900 via-indigo-950 to-black">
       <div className="flex flex-col items-center gap-5 mt-6">
         <div ref={pitRef} className="text-7xl min-h-24 min-w-32 text-center" data-testid="fire-pit">
-          {lit ? "🔥" : logs.length ? "🪵".repeat(logs.length) : "🪨"}
+          {lit ? "🔥" : logs.length ? "🌳".repeat(logs.length) : "⛰️"}
         </div>
         <div className="flex gap-3">
           {[0, 1, 2, 3].map((log) =>
             logs.includes(log) ? (
               <span key={log} className="min-h-16 min-w-16 text-5xl opacity-20">
-                🪵
+                🌳
               </span>
             ) : (
               <button
@@ -880,7 +880,7 @@ function Campfire({ onAddStar }: { onAddStar?: () => void }) {
                   dragging.current = null;
                 }}
               >
-                🪵
+                🌳
               </button>
             )
           )}
@@ -963,7 +963,7 @@ function NightTuck({ onAddStar }: { onAddStar?: () => void }) {
               soundEffects.playPop();
             }}
           >
-            {shut.includes(w) ? "🌙" : "🪟"}
+            {shut.includes(w) ? "🌙" : "🏠"}
           </button>
         ))}
       </div>
@@ -1460,7 +1460,7 @@ function PancakeFlip({ onAddStar }: { onAddStar?: () => void }) {
               data-testid="pancake-in-pan"
               className={`text-6xl ${phase === "gold" ? "scale-110" : "opacity-70"}`}
             >
-              {phase === "gold" ? "🥞" : "🟡"}
+              {phase === "gold" ? "🥞" : "💛"}
             </span>
           )}
         </div>
@@ -1495,8 +1495,8 @@ function HangWash({ onAddStar }: { onAddStar?: () => void }) {
   const { done, finish } = useCredit(onAddStar);
   const bits = [
     { id: "shirt", emoji: "👕" },
-    { id: "sock", emoji: "🧦" },
-    { id: "towel", emoji: "🧻" },
+    { id: "sock", emoji: "👟" },
+    { id: "towel", emoji: "📄" },
     { id: "dress", emoji: "👗" },
   ];
   const [hung, setHung] = useState<string[]>([]);
@@ -1524,7 +1524,7 @@ function HangWash({ onAddStar }: { onAddStar?: () => void }) {
           <div className="absolute left-4 right-4 top-1/2 h-1 -translate-y-1/2 bg-stone-700" />
           <p className="relative text-center text-4xl min-h-12">
             {hung.map((id) => bits.find((bit) => bit.id === id)?.emoji).join(" ")}
-            {hung.length ? " 📌" : "🧵"}
+            {hung.length ? " 📌" : "🎀"}
           </p>
         </div>
         <div className="flex flex-wrap justify-center gap-4">
@@ -1595,19 +1595,19 @@ const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX
     />
   ),
   "seal-clap": (props) => (
-    <HoldPlay playId="seal-clap" className="bg-gradient-to-b from-sky-200 via-cyan-500 to-blue-900" emoji="🦭" testId="seal" holds={5} {...props} />
+    <HoldPlay playId="seal-clap" className="bg-gradient-to-b from-sky-200 via-cyan-500 to-blue-900" emoji="🐬" testId="seal" holds={5} {...props} />
   ),
   "wash-bus": (props) => (
     <ScrubPlay
       playId="wash-bus"
       className="bg-gradient-to-b from-yellow-200 via-orange-400 to-slate-700"
-      tool="🧽"
+      tool="🛁"
       spots={[
-        { id: "a", emoji: "🟫", top: "20%", left: "18%" },
-        { id: "b", emoji: "🟫", top: "28%", left: "55%" },
-        { id: "c", emoji: "🟫", top: "48%", left: "32%" },
-        { id: "d", emoji: "🟫", top: "58%", left: "68%" },
-        { id: "e", emoji: "🟫", top: "70%", left: "44%" },
+        { id: "a", emoji: "📦", top: "20%", left: "18%" },
+        { id: "b", emoji: "📦", top: "28%", left: "55%" },
+        { id: "c", emoji: "📦", top: "48%", left: "32%" },
+        { id: "d", emoji: "📦", top: "58%", left: "68%" },
+        { id: "e", emoji: "📦", top: "70%", left: "44%" },
       ]}
       {...props}
     />
@@ -1672,13 +1672,13 @@ const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX
     <DragToolSpots playId="water-can" className="bg-gradient-to-b from-lime-200 via-emerald-500 to-green-950" toolTestId="water-can" tool="🚿" spots={[{ id: "a", emoji: "🌱" }, { id: "b", emoji: "🌿" }, { id: "c", emoji: "🌸" }, { id: "d", emoji: "🥬" }]} {...props} />
   ),
   "set-table": (props) => (
-    <DragBits playId="set-table" className="bg-gradient-to-b from-amber-100 via-orange-300 to-rose-800" bits={[{ id: "plate", emoji: "🍽️" }, { id: "cup", emoji: "🥤" }, { id: "spoon", emoji: "🥄" }, { id: "napkin", emoji: "🧻" }]} targetTestId="table-cloth" targetIdle="🧺" {...props} />
+    <DragBits playId="set-table" className="bg-gradient-to-b from-amber-100 via-orange-300 to-rose-800" bits={[{ id: "plate", emoji: "🍽️" }, { id: "cup", emoji: "🥤" }, { id: "spoon", emoji: "🥄" }, { id: "napkin", emoji: "📄" }]} targetTestId="table-cloth" targetIdle="👜" {...props} />
   ),
   "pack-bag": (props) => (
-    <DragBits playId="pack-bag" className="bg-gradient-to-b from-sky-200 via-blue-400 to-indigo-900" bits={[{ id: "shirt", emoji: "👕" }, { id: "book", emoji: "📘" }, { id: "apple", emoji: "🍎" }, { id: "sock", emoji: "🧦" }]} targetTestId="trip-bag" targetIdle="🧳" {...props} />
+    <DragBits playId="pack-bag" className="bg-gradient-to-b from-sky-200 via-blue-400 to-indigo-900" bits={[{ id: "shirt", emoji: "👕" }, { id: "book", emoji: "📘" }, { id: "apple", emoji: "🍎" }, { id: "sock", emoji: "👟" }]} targetTestId="trip-bag" targetIdle="🎒" {...props} />
   ),
   "nest-eggs": (props) => (
-    <DragBits playId="nest-eggs" className="bg-gradient-to-b from-lime-200 via-stone-400 to-amber-900" bits={[{ id: "a", emoji: "🥚" }, { id: "b", emoji: "🥚" }, { id: "c", emoji: "🥚" }, { id: "d", emoji: "🥚" }]} targetTestId="dino-nest" targetIdle="🪺" {...props} />
+    <DragBits playId="nest-eggs" className="bg-gradient-to-b from-lime-200 via-stone-400 to-amber-900" bits={[{ id: "a", emoji: "🥚" }, { id: "b", emoji: "🥚" }, { id: "c", emoji: "🥚" }, { id: "d", emoji: "🥚" }]} targetTestId="dino-nest" targetIdle="🐦" {...props} />
   ),
   "stack-cups": (props) => (
     <DragBits playId="stack-cups" className="bg-gradient-to-b from-violet-200 via-fuchsia-400 to-indigo-900" bits={[{ id: "a", emoji: "🥤" }, { id: "b", emoji: "🥤" }, { id: "c", emoji: "🥤" }, { id: "d", emoji: "🥤" }, { id: "e", emoji: "🥤" }]} targetTestId="cup-tower" targetIdle="⬜" {...props} />
@@ -1693,10 +1693,10 @@ const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX
     <DragBits playId="hang-stars" className="bg-gradient-to-b from-indigo-400 via-violet-700 to-black" bits={[{ id: "a", emoji: "⭐" }, { id: "b", emoji: "⭐" }, { id: "c", emoji: "⭐" }, { id: "d", emoji: "⭐" }, { id: "e", emoji: "⭐" }]} targetTestId="night-sky" targetIdle="🌃" {...props} />
   ),
   "fish-toss": (props) => (
-    <DragBits playId="fish-toss" className="bg-gradient-to-b from-sky-200 via-cyan-400 to-blue-900" bits={[{ id: "a", emoji: "🐟" }, { id: "b", emoji: "🐟" }, { id: "c", emoji: "🐟" }, { id: "d", emoji: "🐟" }]} targetTestId="seal-mouth" targetIdle="🦭" {...props} />
+    <DragBits playId="fish-toss" className="bg-gradient-to-b from-sky-200 via-cyan-400 to-blue-900" bits={[{ id: "a", emoji: "🐟" }, { id: "b", emoji: "🐟" }, { id: "c", emoji: "🐟" }, { id: "d", emoji: "🐟" }]} targetTestId="seal-mouth" targetIdle="🐬" {...props} />
   ),
   "coil-rope": (props) => (
-    <DragBits playId="coil-rope" className="bg-gradient-to-b from-amber-200 via-sky-400 to-slate-800" bits={[{ id: "a", emoji: "🪢" }, { id: "b", emoji: "🪢" }, { id: "c", emoji: "🪢" }, { id: "d", emoji: "🪢" }]} targetTestId="bollard" targetIdle="⚓" {...props} />
+    <DragBits playId="coil-rope" className="bg-gradient-to-b from-amber-200 via-sky-400 to-slate-800" bits={[{ id: "a", emoji: "➰" }, { id: "b", emoji: "➰" }, { id: "c", emoji: "➰" }, { id: "d", emoji: "➰" }]} targetTestId="bollard" targetIdle="⚓" {...props} />
   ),
   "bag-market": (props) => (
     <DragBits playId="bag-market" className="bg-gradient-to-b from-yellow-200 via-orange-400 to-rose-800" bits={[{ id: "carrot", emoji: "🥕" }, { id: "bread", emoji: "🍞" }, { id: "cheese", emoji: "🧀" }, { id: "pear", emoji: "🍐" }]} targetTestId="market-bag" targetIdle="🛍️" {...props} />

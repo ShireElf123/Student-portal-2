@@ -189,7 +189,7 @@ export function ToddlerMemoryGame({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-xl shadow-md">
-            🧩
+            🎲
           </div>
           <div>
             <h3 className="text-base sm:text-lg font-black text-white">Memory Card Match</h3>

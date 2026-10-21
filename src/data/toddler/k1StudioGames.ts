@@ -314,8 +314,8 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "F + L → fl",
         choices: [
           { id: "flour", label: "Flour", emoji: "🌾", correct: true },
-          { id: "salt", label: "Salt", emoji: "🧂", correct: false },
-          { id: "oil", label: "Oil", emoji: "🫒", correct: false },
+          { id: "salt", label: "Salt", emoji: "🍚", correct: false },
+          { id: "oil", label: "Oil", emoji: "🍇", correct: false },
         ],
       },
       {
@@ -337,7 +337,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "smoothie", label: "Smoothie", emoji: "🥤", correct: true },
           { id: "carrot", label: "Carrot", emoji: "🥕", correct: false },
-          { id: "pea", label: "Pea", emoji: "🟢", correct: false },
+          { id: "pea", label: "Pea", emoji: "💚", correct: false },
         ],
       },
       {
@@ -346,7 +346,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "P and L. Pl. What starts with pl?",
         scene: "P + L → pl",
         choices: [
-          { id: "plum", label: "Plum", emoji: "🟣", correct: true },
+          { id: "plum", label: "Plum", emoji: "💜", correct: true },
           { id: "kiwi", label: "Kiwi", emoji: "🥝", correct: false },
           { id: "lime", label: "Lime", emoji: "🍋", correct: false },
         ],
@@ -357,8 +357,8 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "D and R. Dr. What starts with dr?",
         scene: "D + R → dr",
         choices: [
-          { id: "drink", label: "Drink", emoji: "🧃", correct: true },
-          { id: "napkin", label: "Napkin", emoji: "🧻", correct: false },
+          { id: "drink", label: "Drink", emoji: "🥤", correct: true },
+          { id: "napkin", label: "Napkin", emoji: "📄", correct: false },
           { id: "spoon", label: "Spoon", emoji: "🥄", correct: false },
         ],
       },
@@ -392,7 +392,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "sweet", label: "Sweet", emoji: "🍬", correct: true },
           { id: "sour", label: "Sour", emoji: "🍋", correct: false },
-          { id: "salt", label: "Salt", emoji: "🧂", correct: false },
+          { id: "salt", label: "Salt", emoji: "🍚", correct: false },
         ],
       },
       {
@@ -412,8 +412,8 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "S and N. Sn. What starts with sn?",
         scene: "S + N → sn",
         choices: [
-          { id: "snap-pea", label: "Snap pea", emoji: "🫛", correct: true },
-          { id: "bean", label: "Bean", emoji: "🫘", correct: false },
+          { id: "snap-pea", label: "Snap pea", emoji: "🌽", correct: true },
+          { id: "bean", label: "Bean", emoji: "🌰", correct: false },
           { id: "corn", label: "Corn", emoji: "🌽", correct: false },
         ],
       },
@@ -425,7 +425,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "skewer", label: "Skewer", emoji: "🍡", correct: true },
           { id: "plate", label: "Plate", emoji: "🍽️", correct: false },
-          { id: "lid", label: "Lid", emoji: "🫕", correct: false },
+          { id: "lid", label: "Lid", emoji: "🍲", correct: false },
         ],
       },
     ],
@@ -449,7 +449,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "blue", label: "Blue bead", emoji: "🔵", correct: true },
           { id: "red", label: "Red bead", emoji: "🔴", correct: false },
-          { id: "yellow", label: "Yellow bead", emoji: "🟡", correct: false },
+          { id: "yellow", label: "Yellow bead", emoji: "💛", correct: false },
         ],
       },
       {
@@ -487,23 +487,23 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
       },
       {
         id: "clap-stomp",
-        prompt: "👏 👏 🦶 👏 👏 ?",
+        prompt: "👏 👏 👟 👏 👏 ?",
         spoken: "Clap clap stomp, clap clap. What comes next?",
         scene: "Body percussion",
         choices: [
-          { id: "stomp", label: "Stomp", emoji: "🦶", correct: true },
+          { id: "stomp", label: "Stomp", emoji: "👟", correct: true },
           { id: "clap", label: "Clap", emoji: "👏", correct: false },
           { id: "wave", label: "Wave", emoji: "👋", correct: false },
         ],
       },
       {
         id: "abab-green-yellow",
-        prompt: "🟢 🟡 🟢 🟡 🟢 ?",
+        prompt: "💚 💛 💚 💛 💚 ?",
         spoken: "Green, yellow, green, yellow, green. What bead comes next?",
         scene: "ABAB paint beads",
         choices: [
-          { id: "yellow", label: "Yellow bead", emoji: "🟡", correct: true },
-          { id: "green", label: "Green bead", emoji: "🟢", correct: false },
+          { id: "yellow", label: "Yellow bead", emoji: "💛", correct: true },
+          { id: "green", label: "Green bead", emoji: "💚", correct: false },
           { id: "blue", label: "Blue bead", emoji: "🔵", correct: false },
         ],
       },
@@ -553,13 +553,13 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
       },
       {
         id: "abab-orange",
-        prompt: "🟠 🟣 🟠 🟣 🟠 ?",
+        prompt: "🔶 💜 🔶 💜 🔶 ?",
         spoken: "Orange, purple, orange, purple, orange. What bead comes next?",
         scene: "ABAB paint",
         choices: [
-          { id: "purple", label: "Purple bead", emoji: "🟣", correct: true },
-          { id: "orange", label: "Orange bead", emoji: "🟠", correct: false },
-          { id: "pink", label: "Pink bead", emoji: "🩷", correct: false },
+          { id: "purple", label: "Purple bead", emoji: "💜", correct: true },
+          { id: "orange", label: "Orange bead", emoji: "🔶", correct: false },
+          { id: "pink", label: "Pink bead", emoji: "💗", correct: false },
         ],
       },
       {
@@ -627,7 +627,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
     domain: "math",
     title: "Picnic Plus",
     tagline: "Two plates on a blanket. Put together, or take away.",
-    emoji: "🧺",
+    emoji: "👜",
     accent: "from-lime-500 to-emerald-500",
     rounds: [
       {
@@ -700,7 +700,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "9-minus-1",
         prompt: "9 muffins. Pip eats 1. How many left?",
         spoken: "Nine muffins. Pip eats one. How many left?",
-        scene: "🧁🧁🧁🧁🧁🧁🧁🧁🧁 − 1",
+        scene: "🍰🍰🍰🍰🍰🍰🍰🍰🍰 − 1",
         choices: [
           { id: "8", label: "8 muffins", emoji: "8️⃣", correct: true },
           { id: "10", label: "10 muffins", emoji: "🔟", correct: false },
@@ -722,7 +722,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "8-minus-3",
         prompt: "8 plums. Nana takes 3 for later. How many left?",
         spoken: "Eight plums. Nana takes three. How many left?",
-        scene: "🟣🟣🟣🟣🟣🟣🟣🟣 − 3",
+        scene: "💜💜💜💜💜💜💜💜 − 3",
         choices: [
           { id: "5", label: "5 plums", emoji: "5️⃣", correct: true },
           { id: "11", label: "11 plums", emoji: "📦", correct: false },
@@ -788,7 +788,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "6-plus-4",
         prompt: "6 olives and 4 olives. How many?",
         spoken: "Six olives and four olives. How many?",
-        scene: "🫒🫒🫒🫒🫒🫒 + 🫒🫒🫒🫒",
+        scene: "🍇🍇🍇🍇🍇🍇 + 🍇🍇🍇🍇",
         choices: [
           { id: "10", label: "10 olives", emoji: "🔟", correct: true },
           { id: "64", label: "64 olives", emoji: "😵", correct: false },
@@ -825,7 +825,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "It is raining on the porch. What should Pip wear?",
         scene: "🌧️ window",
         choices: [
-          { id: "raincoat", label: "Raincoat", emoji: "🧥", correct: true },
+          { id: "raincoat", label: "Raincoat", emoji: "👕", correct: true },
           { id: "sunglasses", label: "Sunglasses", emoji: "🕶️", correct: false },
           { id: "swim-cap", label: "Swim cap", emoji: "🏊", correct: false },
         ],
@@ -837,8 +837,8 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "☀️ window",
         choices: [
           { id: "hat", label: "Sun hat", emoji: "👒", correct: true },
-          { id: "snow-boots", label: "Snow boots", emoji: "🥾", correct: false },
-          { id: "scarf", label: "Wool scarf", emoji: "🧣", correct: false },
+          { id: "snow-boots", label: "Snow boots", emoji: "👢", correct: false },
+          { id: "scarf", label: "Wool scarf", emoji: "🎀", correct: false },
         ],
       },
       {
@@ -847,9 +847,9 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "It is very windy. What should stay on the porch so it does not blow away?",
         scene: "💨 chimes",
         choices: [
-          { id: "paperweight", label: "Heavy stone", emoji: "🪨", correct: true },
-          { id: "kite-only", label: "Loose kite", emoji: "🪁", correct: false },
-          { id: "feather", label: "Feather", emoji: "🪶", correct: false },
+          { id: "paperweight", label: "Heavy stone", emoji: "⛰️", correct: true },
+          { id: "kite-only", label: "Loose kite", emoji: "🎈", correct: false },
+          { id: "feather", label: "Feather", emoji: "🐔", correct: false },
         ],
       },
       {
@@ -858,9 +858,9 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "Snow on the porch. What does Pip need?",
         scene: "❄️ rail",
         choices: [
-          { id: "mittens", label: "Mittens", emoji: "🧤", correct: true },
-          { id: "flipflops", label: "Flip-flops", emoji: "🩴", correct: false },
-          { id: "fan", label: "Fan", emoji: "🪭", correct: false },
+          { id: "mittens", label: "Mittens", emoji: "👋", correct: true },
+          { id: "flipflops", label: "Flip-flops", emoji: "👟", correct: false },
+          { id: "fan", label: "Fan", emoji: "🌸", correct: false },
         ],
       },
       {
@@ -892,7 +892,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "⚡ porch",
         choices: [
           { id: "inside", label: "Come inside", emoji: "🏠", correct: true },
-          { id: "kite", label: "Fly a kite", emoji: "🪁", correct: false },
+          { id: "kite", label: "Fly a kite", emoji: "🎈", correct: false },
           { id: "tree", label: "Stand under a tall tree", emoji: "🌳", correct: false },
         ],
       },
@@ -924,18 +924,18 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "Night on the porch and the air is cool. What does Pip fetch?",
         scene: "🌙 porch",
         choices: [
-          { id: "sweater", label: "A sweater", emoji: "🧥", correct: true },
-          { id: "swimsuit", label: "A swimsuit", emoji: "🩱", correct: false },
-          { id: "fan", label: "A fan", emoji: "🪭", correct: false },
+          { id: "sweater", label: "A sweater", emoji: "👕", correct: true },
+          { id: "swimsuit", label: "A swimsuit", emoji: "👙", correct: false },
+          { id: "fan", label: "A fan", emoji: "🌸", correct: false },
         ],
       },
       {
         id: "hail",
         prompt: "Hard ice pebbles bounce on the rail. What is falling?",
         spoken: "Hard ice pebbles bouncing. What is falling?",
-        scene: "🧊 rail",
+        scene: "❄️ rail",
         choices: [
-          { id: "hail", label: "Hail", emoji: "🧊", correct: true },
+          { id: "hail", label: "Hail", emoji: "❄️", correct: true },
           { id: "blossom", label: "Blossom", emoji: "🌸", correct: false },
           { id: "sand", label: "Sand", emoji: "🏖️", correct: false },
         ],
@@ -948,7 +948,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "rainbow", label: "A rainbow", emoji: "🌈", correct: true },
           { id: "tunnel", label: "A tunnel", emoji: "🚇", correct: false },
-          { id: "fence", label: "A fence", emoji: "🪵", correct: false },
+          { id: "fence", label: "A fence", emoji: "🌳", correct: false },
         ],
       },
       {
@@ -1005,16 +1005,16 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
     domain: "logic",
     title: "Laundry Sort",
     tagline: "Nana’s baskets: socks, shirts, or toys. Sort by what it is.",
-    emoji: "🧺",
+    emoji: "👜",
     accent: "from-teal-500 to-cyan-400",
     rounds: [
       {
         id: "sock",
         prompt: "A wet striped sock. Which basket?",
         spoken: "A wet sock. Which basket?",
-        scene: "🧦",
+        scene: "👟",
         choices: [
-          { id: "socks", label: "Socks basket", emoji: "🧦", correct: true },
+          { id: "socks", label: "Socks basket", emoji: "👟", correct: true },
           { id: "shirts", label: "Shirts basket", emoji: "👕", correct: false },
           { id: "toys", label: "Toys basket", emoji: "🧸", correct: false },
         ],
@@ -1026,7 +1026,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "🧸",
         choices: [
           { id: "toys", label: "Toys basket", emoji: "🧸", correct: true },
-          { id: "socks", label: "Socks basket", emoji: "🧦", correct: false },
+          { id: "socks", label: "Socks basket", emoji: "👟", correct: false },
           { id: "shirts", label: "Shirts basket", emoji: "👕", correct: false },
         ],
       },
@@ -1037,7 +1037,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "👕",
         choices: [
           { id: "shirts", label: "Shirts basket", emoji: "👕", correct: true },
-          { id: "socks", label: "Socks basket", emoji: "🧦", correct: false },
+          { id: "socks", label: "Socks basket", emoji: "👟", correct: false },
           { id: "toys", label: "Toys basket", emoji: "🧸", correct: false },
         ],
       },
@@ -1045,7 +1045,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "pair-socks",
         prompt: "Two tiny socks that match. Same basket or split them?",
         spoken: "Two socks that match. Keep them together?",
-        scene: "🧦🧦",
+        scene: "👟👟",
         choices: [
           { id: "together", label: "Keep the pair", emoji: "🤝", correct: true },
           { id: "split", label: "Split the pair", emoji: "✂️", correct: false },
@@ -1056,11 +1056,11 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "block",
         prompt: "A wooden block in the pocket. Clothes or not clothes?",
         spoken: "A wooden block in a pocket. Is it clothes?",
-        scene: "🧱",
+        scene: "🏠",
         choices: [
           { id: "not-clothes", label: "Not clothes — toys", emoji: "🧸", correct: true },
           { id: "shirt-ish", label: "Shirts basket", emoji: "👕", correct: false },
-          { id: "sock-ish", label: "Socks basket", emoji: "🧦", correct: false },
+          { id: "sock-ish", label: "Socks basket", emoji: "👟", correct: false },
         ],
       },
       {
@@ -1071,7 +1071,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "clothes", label: "Clothes — hats with shirts", emoji: "👕", correct: true },
           { id: "toys", label: "Toys basket", emoji: "🧸", correct: false },
-          { id: "socks", label: "Socks basket", emoji: "🧦", correct: false },
+          { id: "socks", label: "Socks basket", emoji: "👟", correct: false },
         ],
       },
       {
@@ -1081,7 +1081,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "👖",
         choices: [
           { id: "shirts", label: "Clothes basket", emoji: "👕", correct: true },
-          { id: "socks", label: "Socks basket", emoji: "🧦", correct: false },
+          { id: "socks", label: "Socks basket", emoji: "👟", correct: false },
           { id: "toys", label: "Toys basket", emoji: "🧸", correct: false },
         ],
       },
@@ -1093,7 +1093,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "not-clothes", label: "Not clothes — toys", emoji: "🧸", correct: true },
           { id: "shirt-ish", label: "Shirts basket", emoji: "👕", correct: false },
-          { id: "sock-ish", label: "Socks basket", emoji: "🧦", correct: false },
+          { id: "sock-ish", label: "Socks basket", emoji: "👟", correct: false },
         ],
       },
       {
@@ -1111,7 +1111,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "gloves",
         prompt: "Two mittens that match. Keep them together?",
         spoken: "Two mittens that match. Keep them together?",
-        scene: "🧤🧤",
+        scene: "👋👋",
         choices: [
           { id: "together", label: "Keep the pair", emoji: "🤝", correct: true },
           { id: "split", label: "Split the pair", emoji: "✂️", correct: false },
@@ -1122,18 +1122,18 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "scarf",
         prompt: "A long wool scarf. Which basket?",
         spoken: "A wool scarf. Which basket?",
-        scene: "🧣",
+        scene: "🎀",
         choices: [
           { id: "clothes", label: "Clothes basket", emoji: "👕", correct: true },
           { id: "toys", label: "Toys basket", emoji: "🧸", correct: false },
-          { id: "socks", label: "Socks basket", emoji: "🧦", correct: false },
+          { id: "socks", label: "Socks basket", emoji: "👟", correct: false },
         ],
       },
       {
         id: "shorts",
         prompt: "Pip's garden shorts. Which basket?",
         spoken: "Garden shorts. Which basket?",
-        scene: "🩳",
+        scene: "👖",
         choices: [
           { id: "clothes", label: "Clothes basket", emoji: "👕", correct: true },
           { id: "toys", label: "Toys basket", emoji: "🧸", correct: false },
@@ -1144,11 +1144,11 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "puzzle",
         prompt: "A puzzle piece in a pocket. Clothes or not?",
         spoken: "A puzzle piece in a pocket. Is it clothes?",
-        scene: "🧩",
+        scene: "🎲",
         choices: [
           { id: "not", label: "Not clothes — toys", emoji: "🧸", correct: true },
           { id: "shirts", label: "Shirts basket", emoji: "👕", correct: false },
-          { id: "socks", label: "Socks basket", emoji: "🧦", correct: false },
+          { id: "socks", label: "Socks basket", emoji: "👟", correct: false },
         ],
       },
       {
@@ -1159,18 +1159,18 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "home", label: "Home linens, not toys", emoji: "👕", correct: true },
           { id: "toys", label: "Toys basket", emoji: "🧸", correct: false },
-          { id: "socks", label: "Socks basket", emoji: "🧦", correct: false },
+          { id: "socks", label: "Socks basket", emoji: "👟", correct: false },
         ],
       },
       {
         id: "boot",
         prompt: "A muddy boot by the washer. Clothes or shoe?",
         spoken: "A muddy boot. Is it laundry clothes?",
-        scene: "🥾",
+        scene: "👢",
         choices: [
           { id: "shoe", label: "Shoes stay out", emoji: "👟", correct: true },
           { id: "shirts", label: "Shirts basket", emoji: "👕", correct: false },
-          { id: "socks", label: "Wash it with socks", emoji: "🧦", correct: false },
+          { id: "socks", label: "Wash it with socks", emoji: "👟", correct: false },
         ],
       },
       {
@@ -1203,7 +1203,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "Listen. Pip hid a red apple under the blue hat. Who hid it?",
         scene: "Porch: hat + apple",
         choices: [
-          { id: "pip", label: "Pip", emoji: "🧒", correct: true },
+          { id: "pip", label: "Pip", emoji: "👧", correct: true },
           { id: "nana", label: "Nana", emoji: "👵", correct: false },
           { id: "cat", label: "The cat", emoji: "🐱", correct: false },
         ],
@@ -1227,7 +1227,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "red", label: "Red", emoji: "🔴", correct: true },
           { id: "blue", label: "Blue", emoji: "🔵", correct: false },
-          { id: "green", label: "Green", emoji: "🟢", correct: false },
+          { id: "green", label: "Green", emoji: "💚", correct: false },
         ],
       },
       {
@@ -1236,8 +1236,8 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "Nana set a tin bucket out for the rain. What did she set out?",
         scene: "Rain barrel porch",
         choices: [
-          { id: "bucket", label: "A tin bucket", emoji: "🪣", correct: true },
-          { id: "kite", label: "A kite", emoji: "🪁", correct: false },
+          { id: "bucket", label: "A tin bucket", emoji: "🥄", correct: true },
+          { id: "kite", label: "A kite", emoji: "🎈", correct: false },
           { id: "cake", label: "A cake", emoji: "🎂", correct: false },
         ],
       },
@@ -1248,7 +1248,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "Evening rail",
         choices: [
           { id: "cat", label: "The cat", emoji: "🐱", correct: true },
-          { id: "pip", label: "Pip", emoji: "🧒", correct: false },
+          { id: "pip", label: "Pip", emoji: "👧", correct: false },
           { id: "nana", label: "Nana", emoji: "👵", correct: false },
         ],
       },
@@ -1259,7 +1259,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "Porch: oven smell",
         choices: [
           { id: "nana", label: "Nana", emoji: "👵", correct: true },
-          { id: "pip", label: "Pip", emoji: "🧒", correct: false },
+          { id: "pip", label: "Pip", emoji: "👧", correct: false },
           { id: "cat", label: "The cat", emoji: "🐱", correct: false },
         ],
       },
@@ -1280,7 +1280,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "Nana baked a warm bun and Pip waited on the step. Where did Pip wait?",
         scene: "Porch: oven smell",
         choices: [
-          { id: "step", label: "On the step", emoji: "🪜", correct: true },
+          { id: "step", label: "On the step", emoji: "🏡", correct: true },
           { id: "bed", label: "In bed", emoji: "🛏️", correct: false },
           { id: "barn", label: "In the barn", emoji: "🏚️", correct: false },
         ],
@@ -1293,7 +1293,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "frog", label: "The frog", emoji: "🐸", correct: true },
           { id: "owl", label: "An owl", emoji: "🦉", correct: false },
-          { id: "pip", label: "Pip", emoji: "🧒", correct: false },
+          { id: "pip", label: "Pip", emoji: "👧", correct: false },
         ],
       },
       {
@@ -1302,7 +1302,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "A frog hopped onto the rail and sang. Where did it hop?",
         scene: "Evening rail",
         choices: [
-          { id: "rail", label: "Onto the rail", emoji: "🪵", correct: true },
+          { id: "rail", label: "Onto the rail", emoji: "🌳", correct: true },
           { id: "pond", label: "Into the pond", emoji: "💧", correct: false },
           { id: "hat", label: "Into a hat", emoji: "🎩", correct: false },
         ],
@@ -1314,7 +1314,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "Step: bun",
         choices: [
           { id: "fox", label: "The fox", emoji: "🦊", correct: true },
-          { id: "pip", label: "Pip", emoji: "🧒", correct: false },
+          { id: "pip", label: "Pip", emoji: "👧", correct: false },
           { id: "nana", label: "Nana", emoji: "👵", correct: false },
         ],
       },
@@ -1335,7 +1335,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "A fox stole a bun from the step and ran. Where did it run from?",
         scene: "Step: bun",
         choices: [
-          { id: "step", label: "The step", emoji: "🪜", correct: true },
+          { id: "step", label: "The step", emoji: "🏡", correct: true },
           { id: "river", label: "The river", emoji: "🌊", correct: false },
           { id: "shop", label: "The shop", emoji: "🏪", correct: false },
         ],
@@ -1383,28 +1383,28 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
     domain: "logic",
     title: "Sock Drawer",
     tagline: "Open Nana's drawer. Keep the pair. Spot the odd sock.",
-    emoji: "🧦",
+    emoji: "👟",
     accent: "from-rose-400 to-fuchsia-500",
     rounds: [
       {
         id: "match-red",
         prompt: "Two red stripe socks and one blue. Which is the pair?",
         spoken: "Two red stripe socks and one blue sock. Which is the pair?",
-        scene: "🧦🔴 🧦🔴 🧦🔵",
+        scene: "👟🔴 👟🔴 👟🔵",
         choices: [
           { id: "reds", label: "The two red socks", emoji: "🔴", correct: true },
           { id: "blue", label: "The blue sock", emoji: "🔵", correct: false },
-          { id: "all", label: "All three together", emoji: "🧺", correct: false },
+          { id: "all", label: "All three together", emoji: "👜", correct: false },
         ],
       },
       {
         id: "odd-spot",
         prompt: "Three socks: spot, spot, stripe. Which is the odd one?",
         spoken: "Spot, spot, stripe. Which sock does not match?",
-        scene: "🧦 🧦 🦓",
+        scene: "👟 👟 🦓",
         choices: [
           { id: "stripe", label: "The stripe sock", emoji: "🦓", correct: true },
-          { id: "spots", label: "A spot sock", emoji: "🧦", correct: false },
+          { id: "spots", label: "A spot sock", emoji: "👟", correct: false },
           { id: "drawer", label: "The whole drawer", emoji: "📦", correct: false },
         ],
       },
@@ -1412,7 +1412,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "tiny-big",
         prompt: "A tiny sock and a giant sock. Same pair?",
         spoken: "A tiny sock and a giant sock. Are they a pair?",
-        scene: "🧦 🧦",
+        scene: "👟 👟",
         choices: [
           { id: "no", label: "No — different sizes", emoji: "🚫", correct: true },
           { id: "yes", label: "Yes — both socks", emoji: "✅", correct: false },
@@ -1434,10 +1434,10 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "color-sort",
         prompt: "Yellow sock, yellow sock, green sock. What goes in the yellow pile?",
         spoken: "Yellow, yellow, green. What goes in the yellow pile?",
-        scene: "🟡 🟡 🟢",
+        scene: "💛 💛 💚",
         choices: [
-          { id: "yellows", label: "The two yellow socks", emoji: "🟡", correct: true },
-          { id: "green", label: "The green sock", emoji: "🟢", correct: false },
+          { id: "yellows", label: "The two yellow socks", emoji: "💛", correct: true },
+          { id: "green", label: "The green sock", emoji: "💚", correct: false },
           { id: "all", label: "All of them", emoji: "🌈", correct: false },
         ],
       },
@@ -1445,9 +1445,9 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "lost-mate",
         prompt: "Pip has one dotted sock. What is missing?",
         spoken: "Pip has one dotted sock. What is missing?",
-        scene: "🧦 · · ·",
+        scene: "👟 · · ·",
         choices: [
-          { id: "mate", label: "Its matching sock", emoji: "🧦", correct: true },
+          { id: "mate", label: "Its matching sock", emoji: "👟", correct: true },
           { id: "shirt", label: "A shirt", emoji: "👕", correct: false },
           { id: "shoe", label: "A shoe", emoji: "👟", correct: false },
         ],
@@ -1456,7 +1456,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "long-short",
         prompt: "A long sock and a short sock, same colour. Pair or not?",
         spoken: "A long sock and a short sock, same colour. Are they a pair?",
-        scene: "🧦 🩳",
+        scene: "👟 👖",
         choices: [
           { id: "not", label: "Not a pair — different length", emoji: "🚫", correct: true },
           { id: "yes", label: "Yes — same colour", emoji: "✅", correct: false },
@@ -1467,7 +1467,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "three-pairs",
         prompt: "The drawer has 3 red pairs. How many red socks is that?",
         spoken: "Three red pairs. How many red socks?",
-        scene: "🧦🧦 🧦🧦 🧦🧦",
+        scene: "👟👟 👟👟 👟👟",
         choices: [
           { id: "6", label: "6 socks", emoji: "6️⃣", correct: true },
           { id: "3", label: "3 socks", emoji: "3️⃣", correct: false },
@@ -1478,11 +1478,11 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "match-dots",
         prompt: "Two dotted socks and one plain. Which is the pair?",
         spoken: "Two dotted socks and one plain. Which is the pair?",
-        scene: "🧦· 🧦· 🧦",
+        scene: "👟· 👟· 👟",
         choices: [
           { id: "dots", label: "The two dotted socks", emoji: "🔵", correct: true },
           { id: "plain", label: "The plain sock", emoji: "⚪", correct: false },
-          { id: "all", label: "All three", emoji: "🧺", correct: false },
+          { id: "all", label: "All three", emoji: "👜", correct: false },
         ],
       },
       {
@@ -1500,7 +1500,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "pair-count",
         prompt: "The drawer has 4 yellow pairs. How many yellow socks?",
         spoken: "Four yellow pairs. How many yellow socks?",
-        scene: "🧦🧦 × 4",
+        scene: "👟👟 × 4",
         choices: [
           { id: "8", label: "8 socks", emoji: "8️⃣", correct: true },
           { id: "4", label: "4 socks", emoji: "4️⃣", correct: false },
@@ -1511,7 +1511,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "fold",
         prompt: "A matched pair is ready. What next?",
         spoken: "A matched pair is ready. What next?",
-        scene: "🧦🧦",
+        scene: "👟👟",
         choices: [
           { id: "fold", label: "Fold them together", emoji: "🤝", correct: true },
           { id: "split", label: "Hide one", emoji: "🙈", correct: false },
@@ -1522,7 +1522,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "wet-dry",
         prompt: "One wet sock, one dry sock, same pattern. Wear them now?",
         spoken: "One wet, one dry, same pattern. Wear them now?",
-        scene: "💧🧦 🧦",
+        scene: "💧👟 👟",
         choices: [
           { id: "no", label: "No — wait for dry", emoji: "🚫", correct: true },
           { id: "yes", label: "Yes — they match", emoji: "✅", correct: false },
@@ -1533,7 +1533,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "stripe-spot",
         prompt: "Stripe sock and spot sock. Same pair?",
         spoken: "A stripe sock and a spot sock. Are they a pair?",
-        scene: "🦓 🧦",
+        scene: "🦓 👟",
         choices: [
           { id: "no", label: "No — different pattern", emoji: "🚫", correct: true },
           { id: "yes", label: "Yes — both socks", emoji: "✅", correct: false },
@@ -1544,7 +1544,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "one-missing",
         prompt: "Five socks in the wash. How many complete pairs can you make?",
         spoken: "Five socks. How many complete pairs?",
-        scene: "🧦🧦🧦🧦🧦",
+        scene: "👟👟👟👟👟",
         choices: [
           { id: "2", label: "2 pairs, one left over", emoji: "2️⃣", correct: true },
           { id: "5", label: "5 pairs", emoji: "5️⃣", correct: false },
@@ -1559,7 +1559,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "no", label: "No — need a left too", emoji: "⬅️", correct: true },
           { id: "yes", label: "Yes — two is a pair", emoji: "✅", correct: false },
-          { id: "glove", label: "They are gloves", emoji: "🧤", correct: false },
+          { id: "glove", label: "They are gloves", emoji: "👋", correct: false },
         ],
       },
     ],
@@ -1667,7 +1667,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "five-plus-three",
         prompt: "5 geese, then 3 more land. How many geese?",
         spoken: "Five geese, then three more. How many?",
-        scene: "🪿🪿🪿🪿🪿 + 3",
+        scene: "🦆🦆🦆🦆🦆 + 3",
         choices: [
           { id: "8", label: "8 geese", emoji: "8️⃣", correct: true },
           { id: "53", label: "53 geese", emoji: "🤯", correct: false },
@@ -1834,9 +1834,9 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "seal",
         prompt: "A seal hunts fish, then rests on a rock. Both?",
         spoken: "A seal hunts fish then rests on a rock. Both water and land?",
-        scene: "🦭",
+        scene: "🐬",
         choices: [
-          { id: "both", label: "Both — sea and rock", emoji: "🦭", correct: true },
+          { id: "both", label: "Both — sea and rock", emoji: "🐬", correct: true },
           { id: "only-sky", label: "Only sky", emoji: "☁️", correct: false },
           { id: "only-tree", label: "Only trees", emoji: "🌳", correct: false },
         ],
@@ -1881,7 +1881,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "🐙",
         choices: [
           { id: "under", label: "Under the water", emoji: "🌊", correct: true },
-          { id: "nest", label: "A bird nest", emoji: "🪺", correct: false },
+          { id: "nest", label: "A bird nest", emoji: "🐦", correct: false },
           { id: "bag", label: "A shopping bag", emoji: "🛍️", correct: false },
         ],
       },
@@ -1946,7 +1946,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "window",
         prompt: "The baker's window is longer than it is tall, four corners. Shape?",
         spoken: "A long window with four corners. Shape?",
-        scene: "🪟",
+        scene: "🏠",
         choices: [
           { id: "rect", label: "Rectangle", emoji: "▭", correct: true },
           { id: "circle", label: "Circle", emoji: "⚪", correct: false },
@@ -2056,7 +2056,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
     rounds: [
       {
         id: "six-stop",
-        prompt: "🚌 seats: 🧍🧍🧍🧍🧍🧍 How many riders?",
+        prompt: "🚌 seats: 🚶🚶🚶🚶🚶🚶 How many riders?",
         spoken: "Count the riders at the stop. How many?",
         scene: "bus stop",
         choices: [
@@ -2260,9 +2260,9 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "Pip is still. The shadow is still. What happens if Pip hops?",
         scene: "balcony",
         choices: [
-          { id: "hop", label: "The shadow hops too", emoji: "🦶", correct: true },
+          { id: "hop", label: "The shadow hops too", emoji: "👟", correct: true },
           { id: "stay", label: "The shadow stays glued", emoji: "📌", correct: false },
-          { id: "colour", label: "It turns green", emoji: "🟢", correct: false },
+          { id: "colour", label: "It turns green", emoji: "💚", correct: false },
         ],
       },
       {
@@ -2284,7 +2284,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "bat", label: "A bat", emoji: "🦇", correct: true },
           { id: "whale", label: "A whale", emoji: "🐋", correct: false },
-          { id: "boot", label: "A boot", emoji: "🥾", correct: false },
+          { id: "boot", label: "A boot", emoji: "👢", correct: false },
         ],
       },
       {
@@ -2295,7 +2295,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "gone", label: "You cannot see it", emoji: "🌑", correct: true },
           { id: "pocket", label: "In a pocket", emoji: "👖", correct: false },
-          { id: "fridge", label: "In the fridge", emoji: "🧊", correct: false },
+          { id: "fridge", label: "In the fridge", emoji: "❄️", correct: false },
         ],
       },
       {
@@ -2395,7 +2395,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "drag mark",
         choices: [
           { id: "tail", label: "A tail", emoji: "🦕", correct: true },
-          { id: "kite", label: "A kite string", emoji: "🪁", correct: false },
+          { id: "kite", label: "A kite string", emoji: "🎈", correct: false },
           { id: "soup", label: "Soup", emoji: "🍲", correct: false },
         ],
       },
@@ -2427,7 +2427,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "A ring of eggs in the dust. What is this place?",
         scene: "🥚🥚🥚",
         choices: [
-          { id: "nest", label: "A nest", emoji: "🪺", correct: true },
+          { id: "nest", label: "A nest", emoji: "🐦", correct: true },
           { id: "garage", label: "A garage", emoji: "🔧", correct: false },
           { id: "library", label: "A library", emoji: "📚", correct: false },
         ],
@@ -2471,7 +2471,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "A stone bone in the cliff. Is the dinosaur here now?",
         scene: "cliff",
         choices: [
-          { id: "then", label: "It lived long ago", emoji: "🦴", correct: true },
+          { id: "then", label: "It lived long ago", emoji: "🍖", correct: true },
           { id: "now", label: "It is hiding in the shop", emoji: "🏪", correct: false },
           { id: "sky", label: "It is a cloud", emoji: "☁️", correct: false },
         ],
@@ -2493,11 +2493,11 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "coat",
         prompt: "The floe wind bites. What does Pip put on?",
         spoken: "Icy wind on the floe. What does Pip put on?",
-        scene: "🧊 wind",
+        scene: "❄️ wind",
         choices: [
-          { id: "coat", label: "A warm coat", emoji: "🧥", correct: true },
-          { id: "shorts", label: "Shorts", emoji: "🩳", correct: false },
-          { id: "fan", label: "A fan", emoji: "🪭", correct: false },
+          { id: "coat", label: "A warm coat", emoji: "👕", correct: true },
+          { id: "shorts", label: "Shorts", emoji: "👖", correct: false },
+          { id: "fan", label: "A fan", emoji: "🌸", correct: false },
         ],
       },
       {
@@ -2506,9 +2506,9 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "The ice is slick. What helps feet?",
         scene: "ice path",
         choices: [
-          { id: "boots", label: "Grip boots", emoji: "🥾", correct: true },
-          { id: "socks-only", label: "Socks only", emoji: "🧦", correct: false },
-          { id: "skates-no", label: "Bare feet", emoji: "🦶", correct: false },
+          { id: "boots", label: "Grip boots", emoji: "👢", correct: true },
+          { id: "socks-only", label: "Socks only", emoji: "👟", correct: false },
+          { id: "skates-no", label: "Bare feet", emoji: "👟", correct: false },
         ],
       },
       {
@@ -2528,9 +2528,9 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "Watching seals, not diving. Swim cap or parka?",
         scene: "seal shore",
         choices: [
-          { id: "parka", label: "A parka", emoji: "🧥", correct: true },
+          { id: "parka", label: "A parka", emoji: "👕", correct: true },
           { id: "cap", label: "A swim cap", emoji: "🏊", correct: false },
-          { id: "cape", label: "A thin cape", emoji: "🦸", correct: false },
+          { id: "cape", label: "A thin cape", emoji: "⭐", correct: false },
         ],
       },
       {
@@ -2561,7 +2561,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "A seal's coat is thick. Why?",
         scene: "seal",
         choices: [
-          { id: "cold", label: "The water is cold", emoji: "🧊", correct: true },
+          { id: "cold", label: "The water is cold", emoji: "❄️", correct: true },
           { id: "fashion", label: "It likes stripes", emoji: "🎀", correct: false },
           { id: "sand", label: "The desert is near", emoji: "🌵", correct: false },
         ],
@@ -2583,7 +2583,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "Snow glare. What helps?",
         scene: "bright snow",
         choices: [
-          { id: "goggles", label: "Goggles", emoji: "🥽", correct: true },
+          { id: "goggles", label: "Goggles", emoji: "👓", correct: true },
           { id: "umbrella-dark", label: "A closed umbrella on the foot", emoji: "☂️", correct: false },
           { id: "soup", label: "Soup on the nose", emoji: "🍲", correct: false },
         ],
@@ -2607,7 +2607,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "wait", label: "Wait — it may break", emoji: "🛑", correct: true },
           { id: "run", label: "Run to the middle", emoji: "🏃", correct: false },
-          { id: "jump", label: "Jump to make more cracks", emoji: "🦶", correct: false },
+          { id: "jump", label: "Jump to make more cracks", emoji: "👟", correct: false },
         ],
       },
       {
@@ -2617,8 +2617,8 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "hut",
         choices: [
           { id: "in", label: "Come in and warm up", emoji: "🔥", correct: true },
-          { id: "sleep-ice", label: "Sleep on the open ice", emoji: "🧊", correct: false },
-          { id: "fan", label: "Turn on a fan", emoji: "🪭", correct: false },
+          { id: "sleep-ice", label: "Sleep on the open ice", emoji: "❄️", correct: false },
+          { id: "fan", label: "Turn on a fan", emoji: "🌸", correct: false },
         ],
       },
     ],
@@ -2649,11 +2649,11 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         id: "crawl",
         prompt: "A beetle under a leaf, six legs, no lift. How does it move?",
         spoken: "A beetle under a leaf. How does it move?",
-        scene: "🪲 leaf",
+        scene: "🐛 leaf",
         choices: [
-          { id: "crawl", label: "It crawls", emoji: "🪲", correct: true },
+          { id: "crawl", label: "It crawls", emoji: "🐛", correct: true },
           { id: "jet", label: "It jets like a plane", emoji: "✈️", correct: false },
-          { id: "roll-only", label: "It only rolls like a tyre", emoji: "🛞", correct: false },
+          { id: "roll-only", label: "It only rolls like a tyre", emoji: "🚗", correct: false },
         ],
       },
       {
@@ -2729,7 +2729,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "🐞",
         choices: [
           { id: "garden", label: "The garden", emoji: "🌿", correct: true },
-          { id: "fridge", label: "The fridge", emoji: "🧊", correct: false },
+          { id: "fridge", label: "The fridge", emoji: "❄️", correct: false },
           { id: "wallet", label: "A wallet", emoji: "👛", correct: false },
         ],
       },
@@ -2763,7 +2763,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "strider", label: "The strider", emoji: "💧", correct: true },
           { id: "bee", label: "The bee", emoji: "🐝", correct: false },
-          { id: "beetle", label: "The leaf beetle", emoji: "🪲", correct: false },
+          { id: "beetle", label: "The leaf beetle", emoji: "🐛", correct: false },
         ],
       },
     ],

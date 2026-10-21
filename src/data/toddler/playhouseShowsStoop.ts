@@ -22,7 +22,7 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         bgGradient: "from-amber-100 to-orange-200 text-amber-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "The toaster has two mouths. I respect mouths that wait." },
-          { speaker: "Nana", emoji: "🧶", line: "Bread goes in. Patience comes out. Sometimes loudly." },
+          { speaker: "Nana", emoji: "🎀", line: "Bread goes in. Patience comes out. Sometimes loudly." },
         ],
       },
       {
@@ -51,10 +51,10 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "tt-4",
         title: "Butter Lake",
         setting: "Plate",
-        illustration: "🧈 🍞 🍽️",
+        illustration: "🍞 🍞 🍽️",
         bgGradient: "from-yellow-100 to-lime-100 text-yellow-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "Butter is a yellow lake. Spread. Do not swim." },
+          { speaker: "Nana", emoji: "🎀", line: "Butter is a yellow lake. Spread. Do not swim." },
           { speaker: "Dot", emoji: "🐭", line: "I will not swim. I am a guest of toast." },
         ],
       },
@@ -76,7 +76,7 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         illustration: "🍽️ 🍞 💛",
         bgGradient: "from-orange-100 to-amber-100 text-orange-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "The toaster is done talking. We may chew." },
+          { speaker: "Nana", emoji: "🎀", line: "The toaster is done talking. We may chew." },
           { speaker: "Teddy", emoji: "🧸", line: "Thank you, loud machine. Breakfast still happened." },
         ],
       },
@@ -87,7 +87,7 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       id: "elevator-please",
       title: "Elevator Please",
       tagline: "A button, a wait, a ding, and doors that have manners.",
-      coverEmoji: "🛗",
+      coverEmoji: "🏢",
       coverGradient: "from-slate-400 to-indigo-800",
     },
     [
@@ -95,11 +95,11 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "el-1",
         title: "The Button",
         setting: "Lobby",
-        illustration: "🔘 🛗 🧸",
+        illustration: "🔘 🏢 🧸",
         bgGradient: "from-slate-100 to-yellow-100 text-slate-900",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "The button is a circle that calls a room." },
-          { speaker: "Nana", emoji: "🧶", line: "Press once. Twice does not make it kinder." },
+          { speaker: "Nana", emoji: "🎀", line: "Press once. Twice does not make it kinder." },
         ],
       },
       {
@@ -120,7 +120,7 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         illustration: "🔔 🚪 ✨",
         bgGradient: "from-yellow-100 to-sky-100 text-yellow-950",
         lines: [
-          { speaker: "Elevator", emoji: "🛗", line: "Ding. I have arrived. Please do not run." },
+          { speaker: "Elevator", emoji: "🏢", line: "Ding. I have arrived. Please do not run." },
           { speaker: "Rosie", emoji: "🚒", line: "Walk. Doors have opinions about running. I respect doors." },
         ],
       },
@@ -132,14 +132,14 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         bgGradient: "from-sky-100 to-slate-200 text-sky-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "We are in a traveling closet. I like closets that move." },
-          { speaker: "Nana", emoji: "🧶", line: "Hold the rail. The closet leans like a ferry that decided to be a room." },
+          { speaker: "Nana", emoji: "🎀", line: "Hold the rail. The closet leans like a ferry that decided to be a room." },
         ],
       },
       {
         id: "el-5",
         title: "Three",
         setting: "Buttons",
-        illustration: "3️⃣ 🔘 🛗",
+        illustration: "3️⃣ 🔘 🏢",
         bgGradient: "from-lime-100 to-yellow-100 text-lime-950",
         lines: [
           { speaker: "Dot", emoji: "🐭", line: "Three is our floor. Numbers are addresses for air." },
@@ -153,7 +153,7 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         illustration: "🚪 🏡 💛",
         bgGradient: "from-orange-100 to-slate-100 text-orange-950",
         lines: [
-          { speaker: "Elevator", emoji: "🛗", line: "Your stop is a name. I stay and collect other mornings." },
+          { speaker: "Elevator", emoji: "🏢", line: "Your stop is a name. I stay and collect other mornings." },
           { speaker: "Teddy", emoji: "🧸", line: "Thank you, traveling closet. We had this ride." },
         ],
       },
@@ -172,7 +172,7 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "ll-1",
         title: "Stone Paws",
         setting: "Steps",
-        illustration: "🦁 🪜 📚",
+        illustration: "🦁 🏡 📚",
         bgGradient: "from-amber-100 to-stone-200 text-amber-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "The lion is a statue. Statues nap with their eyes open." },
@@ -186,7 +186,7 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         illustration: "🚪 🌬️ 🤫",
         bgGradient: "from-sky-100 to-amber-100 text-sky-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "The doors whoosh. Then we borrow the quiet." },
+          { speaker: "Nana", emoji: "🎀", line: "The doors whoosh. Then we borrow the quiet." },
           { speaker: "Teddy", emoji: "🧸", line: "I can be quiet. Watch my paws. They are almost quiet." },
         ],
       },
@@ -209,7 +209,7 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         bgGradient: "from-rose-100 to-amber-100 text-rose-950",
         lines: [
           { speaker: "Stamp", emoji: "📮", line: "I am a kiss that paid. Due date is a promise." },
-          { speaker: "Nana", emoji: "🧶", line: "We keep promises. Books like coming home twice." },
+          { speaker: "Nana", emoji: "🎀", line: "We keep promises. Books like coming home twice." },
         ],
       },
       {
@@ -249,21 +249,21 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "ln-1",
         title: "The Basket",
         setting: "Yard",
-        illustration: "🧺 👕 🧸",
+        illustration: "👜 👕 🧸",
         bgGradient: "from-sky-100 to-amber-100 text-sky-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "The basket is a boat of wet flags." },
-          { speaker: "Nana", emoji: "🧶", line: "Not flags yet. They become flags on the line." },
+          { speaker: "Nana", emoji: "🎀", line: "Not flags yet. They become flags on the line." },
         ],
       },
       {
         id: "ln-2",
         title: "The Line",
         setting: "Backyard",
-        illustration: "🧵 🌤️ 🏡",
+        illustration: "🎀 🌤️ 🏡",
         bgGradient: "from-lime-100 to-sky-200 text-lime-950",
         lines: [
-          { speaker: "Line", emoji: "🧵", line: "I am a road in the air. Hang things. I will hold." },
+          { speaker: "Line", emoji: "🎀", line: "I am a road in the air. Hang things. I will hold." },
           { speaker: "Dot", emoji: "🐭", line: "I cannot hang. I am a guest of gravity." },
         ],
       },
@@ -274,7 +274,7 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         illustration: "📌 👕 ✋",
         bgGradient: "from-yellow-100 to-rose-100 text-yellow-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "A peg is a little mouth that bites cloth, not fingers." },
+          { speaker: "Nana", emoji: "🎀", line: "A peg is a little mouth that bites cloth, not fingers." },
           { speaker: "Teddy", emoji: "🧸", line: "I will not feed it my paw. I thought about it. I will not." },
         ],
       },
@@ -293,18 +293,18 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "ln-5",
         title: "Sock Pair",
         setting: "Line",
-        illustration: "🧦🧦 🧵 💛",
+        illustration: "👟👟 🎀 💛",
         bgGradient: "from-rose-100 to-lime-100 text-rose-950",
         lines: [
           { speaker: "Dot", emoji: "🐭", line: "Two socks. They should stay cousins." },
-          { speaker: "Nana", emoji: "🧶", line: "Peg them together. Families can share a clip." },
+          { speaker: "Nana", emoji: "🎀", line: "Peg them together. Families can share a clip." },
         ],
       },
       {
         id: "ln-6",
         title: "Wind Work",
         setting: "Afternoon",
-        illustration: "🌬️ 🧺 🏡",
+        illustration: "🌬️ 👜 🏡",
         bgGradient: "from-sky-200 to-amber-100 text-sky-950",
         lines: [
           { speaker: "Wind", emoji: "🌬️", line: "I work. You may sit. Sitting is allowed." },

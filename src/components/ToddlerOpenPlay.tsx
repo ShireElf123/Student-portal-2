@@ -10,9 +10,9 @@ const COPY: Record<OpenPlayId, { title: string; line: string; emoji: string }> =
   stir: { title: "Stir the pot", line: "Drag round and round. There is no wrong way.", emoji: "🍲" },
   drive: { title: "Drive the bus", line: "Slide the bus. Beep when you like.", emoji: "🚌" },
   pour: { title: "Pour a cup", line: "Hold to pour. Stop when the cup is happy.", emoji: "🥛" },
-  scoop: { title: "Scoop the sand", line: "Dip and pour. There is no wrong way.", emoji: "🪣" },
-  pet: { title: "Pet the cub", line: "Stroke slowly. The cub likes kind hands.", emoji: "🐻‍❄️" },
-  plant: { title: "Water the plant", line: "Hold to rain. The leaves drink.", emoji: "🪴" },
+  scoop: { title: "Scoop the sand", line: "Dip and pour. There is no wrong way.", emoji: "🥄" },
+  pet: { title: "Pet the cub", line: "Stroke slowly. The cub likes kind hands.", emoji: "🐻" },
+  plant: { title: "Water the plant", line: "Hold to rain. The leaves drink.", emoji: "🌱" },
   comb: { title: "Comb the mane", line: "Stroke the comb. There is no wrong way.", emoji: "🐴" },
 };
 
@@ -166,7 +166,7 @@ export function ToddlerOpenPlay({
             });
           }}
         >
-          {done ? "🏰" : scoops > 20 ? "🪣" : "🏖️"}
+          {done ? "🏰" : scoops > 20 ? "🥄" : "🏖️"}
         </button>
       )}
 
@@ -186,7 +186,7 @@ export function ToddlerOpenPlay({
             });
           }}
         >
-          {done ? "😴" : "🐻‍❄️"}
+          {done ? "😴" : "🐻"}
         </button>
       )}
 

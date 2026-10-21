@@ -89,10 +89,10 @@ export const MY_WORLD_CHALLENGES: ActivityChallenge[] = [
     title: "Brushing Our Teeth",
     instruction: "What do we use before bedtime to keep our teeth clean and shiny?",
     spokenPrompt: "What do we use morning and night with foamy bubbles to brush our teeth?",
-    badgeEmoji: "🪥",
+    badgeEmoji: "😁",
     correctId: "toothbrush",
     options: [
-      { id: "toothbrush", label: "Toothbrush", emoji: "🪥", soundCue: "Brush brush brush! Sparkly clean teeth!" },
+      { id: "toothbrush", label: "Toothbrush", emoji: "😁", soundCue: "Brush brush brush! Sparkly clean teeth!" },
       { id: "pillow", label: "Soft Pillow", emoji: "枕", soundCue: "Pillow is for resting our head!" },
       { id: "spoon", label: "Soup Spoon", emoji: "🥄", soundCue: "Spoon is for yummy breakfast!" },
       { id: "crayon", label: "Crayon", emoji: "🖍️", soundCue: "Crayon is for drawing pictures!" },
@@ -198,8 +198,8 @@ export const ADVENTURE_WORLD_CHALLENGES: ActivityChallenge[] = [
     options: [
       { id: "sunglasses", label: "Sunglasses", emoji: "🕶️", soundCue: "Sunglasses are for bright sunny days!" },
       { id: "umbrella", label: "Bright Umbrella", emoji: "☂️", soundCue: "Pop! The umbrella keeps our head completely dry!" },
-      { id: "swimsuit", label: "Swimsuit", emoji: "🩱", soundCue: "Swimsuit is for swimming in the pool!" },
-      { id: "fan", label: "Paper Fan", emoji: "🪭", soundCue: "Fan is for cooling down in hot weather!" },
+      { id: "swimsuit", label: "Swimsuit", emoji: "👙", soundCue: "Swimsuit is for swimming in the pool!" },
+      { id: "fan", label: "Paper Fan", emoji: "🌸", soundCue: "Fan is for cooling down in hot weather!" },
     ],
   },
   {

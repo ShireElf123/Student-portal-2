@@ -22,7 +22,7 @@ type Mode = "letters" | "hunt" | "blend" | "families" | "sight" | "order";
 const MODES: { id: Mode; label: string; emoji: string }[] = [
   { id: "letters", label: "Letters", emoji: "🔤" },
   { id: "hunt", label: "First sound", emoji: "👂" },
-  { id: "blend", label: "Blend", emoji: "🧩" },
+  { id: "blend", label: "Blend", emoji: "🎲" },
   { id: "families", label: "Families", emoji: "🐱" },
   { id: "sight", label: "Sight words", emoji: "👀" },
   { id: "order", label: "ABC order", emoji: "➡️" },

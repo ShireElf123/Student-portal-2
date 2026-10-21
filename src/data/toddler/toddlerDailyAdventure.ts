@@ -41,7 +41,7 @@ export const TODDLER_STICKERS: CollectibleSticker[] = [
   { id: "stk-farm-hero", name: "Farm Hero", emoji: "🚜", category: "animal", requiredStars: 50, description: "Helped Mother Hen count her fluffy yellow chicks!" },
   { id: "stk-bubble-pop", name: "Bubble Popper", emoji: "🎈", category: "learning", requiredStars: 55, description: "Popped 10 floating rainbow bubbles in the sky!" },
   { id: "stk-sunshine-sprout", name: "Sunshine Sprout", emoji: "☀️", category: "learning", requiredStars: 60, description: "Greeted the morning sun with a cheerful smile!" },
-  { id: "stk-puzzle-whiz", name: "Puzzle Whiz", emoji: "🧩", category: "learning", requiredStars: 65, description: "Matched every shape, circle, and star perfectly!" },
+  { id: "stk-puzzle-whiz", name: "Puzzle Whiz", emoji: "🎲", category: "learning", requiredStars: 65, description: "Matched every shape, circle, and star perfectly!" },
   { id: "stk-story-reader", name: "Story Reader", emoji: "📚", category: "buddy", requiredStars: 70, description: "Turned pages and read aloud illustrated tales!" },
   { id: "stk-buddy-bestie", name: "Buddy Bestie", emoji: "🧸", category: "buddy", requiredStars: 75, description: "Customized Pip with hats, capes, and bowties!" },
   { id: "stk-sweet-explorer", name: "Fruit Picker", emoji: "🍓", category: "learning", requiredStars: 80, description: "Sorted delicious fruits and healthy snacks!" },

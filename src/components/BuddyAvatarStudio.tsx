@@ -64,13 +64,13 @@ const EYES: { id: BuddyEyeStyle; label: string; icon: string }[] = [
   { id: "happy", label: "Happy Sparkle", icon: "👀" },
   { id: "starry", label: "Starry Wonder", icon: "⭐" },
   { id: "wink", label: "Cheeky Wink", icon: "😉" },
-  { id: "goggles", label: "Explorer Goggles", icon: "🥽" },
+  { id: "goggles", label: "Explorer Goggles", icon: "👓" },
 ];
 
 const HATS: { id: BuddyHat; label: string; icon: string }[] = [
   { id: "explorer", label: "Camp Scout Hat", icon: "🏕️" },
   { id: "party", label: "Party Cone", icon: "🎉" },
-  { id: "wizard", label: "Wizard Star Hat", icon: "🧙" },
+  { id: "wizard", label: "Wizard Star Hat", icon: "🎩" },
   { id: "astronaut", label: "Space Visor", icon: "🚀" },
   { id: "crown", label: "Golden Crown", icon: "👑" },
   { id: "baker", label: "Bakery Hat", icon: "🍞" },
@@ -81,7 +81,7 @@ const HATS: { id: BuddyHat; label: string; icon: string }[] = [
 
 const ACCESSORIES: { id: BuddyAccessory; label: string; icon: string }[] = [
   { id: "bowtie", label: "Red Bowtie", icon: "🎀" },
-  { id: "cape", label: "Hero Cape", icon: "🦸" },
+  { id: "cape", label: "Hero Cape", icon: "⭐" },
   { id: "medal", label: "Star Medal", icon: "🏅" },
   { id: "balloon", label: "Joy Balloon", icon: "🎈" },
   { id: "letter", label: "Mail Letter", icon: "✉️" },

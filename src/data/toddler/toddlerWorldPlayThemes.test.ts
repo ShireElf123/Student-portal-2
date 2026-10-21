@@ -82,11 +82,11 @@ describe("world play themes", () => {
     const tale = getWorldPlayTheme("story-world", "barnyard-tales");
     expect(tale.safari.map((friend) => friend.emoji)).toEqual(expect.arrayContaining(["📖", "👑", "🐉"]));
     const trail = getWorldPlayTheme("adventure-world");
-    expect(trail.safari.map((friend) => friend.emoji)).toEqual(expect.arrayContaining(["🥾", "💎", "🌲"]));
+    expect(trail.safari.map((friend) => friend.emoji)).toEqual(expect.arrayContaining(["👢", "💎", "🌲"]));
     expect(trail.safari.map((friend) => friend.emoji)).not.toContain("🐵");
     const heap = getWorldPlayTheme("bug-world", "compost-heap");
     expect(heap.safariTitle).toBe("Compost Safari");
-    expect(heap.safari.map((friend) => friend.emoji)).toContain("🪱");
+    expect(heap.safari.map((friend) => friend.emoji)).toContain("🐛");
     const bed = getWorldPlayTheme("night-world", "bedroom-lamp");
     expect(bed.safari.map((friend) => friend.emoji)).toEqual(expect.arrayContaining(["🛏️", "🧸"]));
   });

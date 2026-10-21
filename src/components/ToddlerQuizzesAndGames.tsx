@@ -1158,7 +1158,7 @@ export function ToddlerQuizzesAndGames({
               : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🧩</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎲</span>
           <span className="text-center leading-tight">Memory</span>
         </button>
 

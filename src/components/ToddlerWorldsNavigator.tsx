@@ -1448,7 +1448,7 @@ export function ToddlerWorldsNavigator({
             return (
               <ToddlerWorldTrail
                 label={`${selectedArea.title} · ${selectedArea.activities.length} stations`}
-                buddyEmoji="🧒"
+                buddyEmoji="👧"
                 coverSrc={WORLD_COVER[selectedWorld.id]}
                 sceneryEmojis={selectedArea.environment.sceneryEmojis}
                 onSelect={(id) => {

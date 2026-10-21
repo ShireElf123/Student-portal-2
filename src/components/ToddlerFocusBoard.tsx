@@ -29,7 +29,7 @@ const MODES: { id: Mode; label: string; emoji: string }[] = [
   { id: "check", label: "Body", emoji: "🎯" },
   { id: "slow", label: "Slow", emoji: "🐌" },
   { id: "move", label: "Move", emoji: "👟" },
-  { id: "push", label: "Push", emoji: "🧱" },
+  { id: "push", label: "Push", emoji: "💪" },
   { id: "freeze", label: "Freeze", emoji: "❄️" },
   { id: "breathe", label: "Breathe", emoji: "🌸" },
   { id: "look", label: "Look", emoji: "👀" },

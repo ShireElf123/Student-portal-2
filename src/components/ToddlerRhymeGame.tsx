@@ -76,7 +76,7 @@ const RHYME_QUESTIONS: RhymeQuestion[] = [
     correctWord: "Tree",
     options: [
       { word: "Tree", emoji: "🌳", isCorrect: true },
-      { word: "Rock", emoji: "🪨", isCorrect: false },
+      { word: "Rock", emoji: "⛰️", isCorrect: false },
       { word: "Car", emoji: "🚗", isCorrect: false },
     ],
   },
@@ -208,7 +208,7 @@ const RHYME_QUESTIONS: RhymeQuestion[] = [
     correctWord: "Wig",
     options: [
       { word: "Wig", emoji: "🦱", isCorrect: true },
-      { word: "Mud", emoji: "🪵", isCorrect: false },
+      { word: "Mud", emoji: "🌳", isCorrect: false },
       { word: "Farm", emoji: "🌾", isCorrect: false },
     ],
   },
