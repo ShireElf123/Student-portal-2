@@ -55,4 +55,13 @@ export const PICTURE_BOOK_SPREADS: Record<string, string> = {
   "bug-in-mug:5": "/spreads/bug-in-mug-5.jpg",
   "bug-in-mug:6": "/spreads/bug-in-mug-6.jpg",
   "bug-in-mug:7": "/spreads/bug-in-mug-7.jpg",
+  "bug-in-mug:8": "/spreads/bug-in-mug-8.jpg",
+  "hop-on-top:1": "/spreads/hop-on-top-1.jpg",
+  "hop-on-top:2": "/spreads/hop-on-top-2.jpg",
+  "hop-on-top:3": "/spreads/hop-on-top-3.jpg",
+  "hop-on-top:4": "/spreads/hop-on-top-4.jpg",
+  "hop-on-top:5": "/spreads/hop-on-top-5.jpg",
+  "hop-on-top:6": "/spreads/hop-on-top-6.jpg",
+  "hop-on-top:7": "/spreads/hop-on-top-7.jpg",
+  "hop-on-top:8": "/spreads/hop-on-top-8.jpg",
 };

@@ -38,6 +38,7 @@ export const PICTURE_BOOK_COVERS: Record<string, string> = {
   "dog-on-log": "/covers/dog-on-log.jpg",
   "hen-in-pen": "/covers/hen-in-pen.jpg",
   "bug-in-mug": "/covers/bug-in-mug.jpg",
+  "hop-on-top": "/covers/hop-on-top.jpg",
 };
 
 export const PLAYHOUSE_COVERS: Record<string, string> = {

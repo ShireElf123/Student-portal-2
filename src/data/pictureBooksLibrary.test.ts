@@ -49,12 +49,16 @@ describe("story library", () => {
     const fox = PICTURE_BOOKS.find((book) => book.id === "fox-in-box");
     const dog = PICTURE_BOOKS.find((book) => book.id === "dog-on-log");
     const hen = PICTURE_BOOKS.find((book) => book.id === "hen-in-pen");
+    const bug = PICTURE_BOOKS.find((book) => book.id === "bug-in-mug");
+    const hop = PICTURE_BOOKS.find((book) => book.id === "hop-on-top");
     expect(cat?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(bus?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(pig?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(fox?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(dog?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(hen?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(bug?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(hop?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);
     expect(Object.values(PICTURE_BOOK_SPREADS).every((path) => path.endsWith(".jpg"))).toBe(true);
     expect(Object.keys(PICTURE_BOOK_SPREADS).length).toBeGreaterThanOrEqual(16);
