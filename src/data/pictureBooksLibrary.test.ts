@@ -206,6 +206,12 @@ describe("story library", () => {
     expect(clockTower?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const lostButton = PICTURE_BOOKS.find((book) => book.id === "little-bear-lost-button");
     expect(lostButton?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const penguinFloe = PICTURE_BOOKS.find((book) => book.id === "penguin-floe-night");
+    expect(penguinFloe?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const owlWood = PICTURE_BOOKS.find((book) => book.id === "owl-wood-lullaby");
+    expect(owlWood?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const highStreetBus = PICTURE_BOOKS.find((book) => book.id === "high-street-bus");
+    expect(highStreetBus?.pages.slice(0, 2).every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["lemonade-stoop"]).toBe("/covers/lemonade-stoop.jpg");
     expect(PICTURE_BOOK_COVERS["lost-red-mitten"]).toBe("/covers/lost-red-mitten.jpg");
     expect(PICTURE_BOOK_COVERS["nana-porch-swing"]).toBe("/covers/nana-porch-swing.jpg");
