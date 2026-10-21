@@ -3,6 +3,7 @@ import { PICTURE_BOOKS } from "./pictureBooksData";
 import { EPIC_PICTURE_BOOKS } from "./pictureBooksEpics";
 import { STUDIO_PICTURE_BOOKS } from "./pictureBooksStudio";
 import { FIRST_WORD_PICTURE_BOOKS } from "./pictureBooksFirstWords";
+import { PICTURE_BOOK_COVERS } from "./pictureBookCovers";
 import { PICTURE_BOOK_SPREADS } from "./pictureBookSpreads";
 import { STORY_ADVENTURES } from "./toddler/toddlerWorldsData";
 import { CURRICULUM_SKILL_NODES } from "./curriculumUniverse";
@@ -48,6 +49,7 @@ describe("story library", () => {
     expect(cat?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(bus?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(pig?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);
     expect(Object.values(PICTURE_BOOK_SPREADS).every((path) => path.endsWith(".jpg"))).toBe(true);
     expect(Object.keys(PICTURE_BOOK_SPREADS).length).toBeGreaterThanOrEqual(16);
   });

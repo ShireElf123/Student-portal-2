@@ -83,6 +83,8 @@ export function ToddlerPlayhouse({
                 <img
                   src={item.coverImage ?? PLAYHOUSE_COVERS[item.id]}
                   alt=""
+                  width={160}
+                  height={160}
                   loading="lazy"
                   decoding="async"
                   className="h-20 w-20 rounded-2xl object-cover shadow-lg border-2 border-white/50"

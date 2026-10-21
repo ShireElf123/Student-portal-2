@@ -598,7 +598,7 @@ export function ToddlerSecretZonePlay({
   return (
     <div className={`overflow-hidden rounded-[2rem] border-2 border-white/20 bg-gradient-to-br ${zone.bgGradient} shadow-2xl`}>
       {SECRET_COVER[zone.id] && (
-        <img src={SECRET_COVER[zone.id]} alt="" className="h-36 sm:h-48 w-full object-cover" />
+        <img src={SECRET_COVER[zone.id]} alt="" width={800} height={447} decoding="async" className="h-36 sm:h-48 w-full object-cover" />
       )}
       <div className="p-4 sm:p-6 space-y-4">
       <div className="text-center space-y-1">

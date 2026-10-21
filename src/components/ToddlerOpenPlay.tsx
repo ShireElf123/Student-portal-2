@@ -64,7 +64,7 @@ export function ToddlerOpenPlay({
     <div className="space-y-4">
       <div className="overflow-hidden rounded-[2rem] border-4 border-white/20 h-44 sm:h-52">
         {still ? (
-          <img src={still} alt="" className="h-full w-full object-cover" />
+          <img src={still} alt="" width={720} height={720} decoding="async" className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full items-center justify-center bg-gradient-to-br from-amber-200 via-orange-300 to-stone-800 text-8xl">
             {copy.emoji}

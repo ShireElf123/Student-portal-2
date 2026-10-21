@@ -166,10 +166,12 @@ function StoryCoverCard({
   book,
   onOpen,
   large,
+  eager,
 }: {
   book: PictureBook;
   onOpen: (book: PictureBook) => void;
   large?: boolean;
+  eager?: boolean;
 }) {
   return (
     <button
@@ -183,7 +185,16 @@ function StoryCoverCard({
         }`}
       >
         {book.coverImage ? (
-          <img src={book.coverImage} alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+          <img
+            src={book.coverImage}
+            alt=""
+            width={640}
+            height={640}
+            loading={eager ? "eager" : "lazy"}
+            decoding="async"
+            fetchPriority={eager ? "high" : "low"}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
         ) : (
           <span className="absolute inset-0 flex items-center justify-center text-7xl drop-shadow">{book.coverEmoji}</span>
         )}
@@ -1194,8 +1205,14 @@ export function ToddlerWorldView({
                         {row.emoji} {row.label}
                       </h3>
                       <div className="flex gap-4 overflow-x-auto pb-3 snap-x">
-                        {rowBooks.map((book) => (
-                          <StoryCoverCard key={`${row.id}-${book.id}`} book={book} large onOpen={handleOpenBook} />
+                        {rowBooks.map((book, index) => (
+                          <StoryCoverCard
+                            key={`${row.id}-${book.id}`}
+                            book={book}
+                            large
+                            eager={row.id === "featured" && index < 3}
+                            onOpen={handleOpenBook}
+                          />
                         ))}
                       </div>
                     </section>
@@ -1331,7 +1348,7 @@ export function ToddlerWorldView({
               <div className="flex items-center justify-between p-3.5 sm:p-4 bg-amber-100/90 border-b-2 border-amber-200">
                 <div className="flex items-center gap-2.5 min-w-0">
                   {selectedBook.coverImage ? (
-                    <img src={selectedBook.coverImage} alt="" className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 rounded-2xl object-cover border border-amber-200 shadow-sm" />
+                    <img src={selectedBook.coverImage} alt="" width={48} height={48} decoding="async" className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 rounded-2xl object-cover border border-amber-200 shadow-sm" />
                   ) : (
                   <span className="text-2xl sm:text-3xl flex-shrink-0 p-1.5 bg-white rounded-2xl border border-amber-200 shadow-sm">{selectedBook.coverEmoji}</span>
                   )}

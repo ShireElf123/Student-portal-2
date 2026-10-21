@@ -1530,6 +1530,8 @@ export function ToddlerWorldsNavigator({
             <img
               src={WORLD_COVER[selectedWorld.id]}
               alt=""
+              decoding="async"
+              fetchPriority="high"
               className="absolute inset-0 h-full w-full object-cover"
             />
           )}
@@ -1694,10 +1696,11 @@ export function ToddlerWorldsNavigator({
                 <p className="text-sm font-bold text-slate-700">{continent.blurb}</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {lands.map((world) => {
+                {lands.map((world, landIndex) => {
                   const stats = getWorldProgressStats(world, progress);
                   const stations = world.areas.reduce((sum, area) => sum + area.activities.length, 0);
                   const here = progress.lastVisitedWorldId === world.id;
+                  const eagerLand = continent.id === ATLAS_CONTINENTS[0]?.id && landIndex < 3;
                   return (
                     <motion.button
                       key={world.id}
@@ -1711,7 +1714,16 @@ export function ToddlerWorldsNavigator({
                     >
                       <span className="relative mb-0 block h-44 sm:h-48 md:h-56 w-full overflow-hidden">
                         {WORLD_COVER[world.id] ? (
-                          <img src={WORLD_COVER[world.id]} alt="" className="h-full w-full object-cover" />
+                          <img
+                            src={WORLD_COVER[world.id]}
+                            alt=""
+                            width={800}
+                            height={437}
+                            loading={eagerLand ? "eager" : "lazy"}
+                            decoding="async"
+                            fetchPriority={eagerLand ? "high" : "low"}
+                            className="h-full w-full object-cover"
+                          />
                         ) : (
                           <span className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${world.gradient} text-5xl`}>
                             {world.emoji}
@@ -1779,6 +1791,10 @@ export function ToddlerWorldsNavigator({
                     <img
                       src={SECRET_COVER[zone.id]}
                       alt=""
+                      width={800}
+                      height={447}
+                      loading="lazy"
+                      decoding="async"
                       className={`h-full w-full object-cover ${isUnlocked ? "" : "grayscale"}`}
                     />
                   ) : (

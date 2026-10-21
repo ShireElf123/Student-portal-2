@@ -53,6 +53,7 @@ export function ToddlerWorldTrail({
             <img
               src={coverSrc}
               alt=""
+              decoding="async"
               className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-55"
             />
           )}
@@ -81,6 +82,9 @@ export function ToddlerWorldTrail({
                       <img
                         src={buddySrc}
                         alt=""
+                        width={48}
+                        height={48}
+                        decoding="async"
                         className="h-12 w-12 rounded-full object-cover object-top ring-2 ring-white shadow-md"
                       />
                     ) : (
