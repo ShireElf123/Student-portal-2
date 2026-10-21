@@ -39,6 +39,8 @@ import {
 } from "../utils/parentAudioStorage";
 import { ToddlerQuizzesAndGames } from "./ToddlerQuizzesAndGames";
 import { ToddlerPlayhouse } from "./ToddlerPlayhouse";
+import { ToddlerPhonicsBoard } from "./ToddlerPhonicsBoard";
+import { ToddlerCountingBoard } from "./ToddlerCountingBoard";
 import { ToddlerWorldsNavigator } from "./ToddlerWorldsNavigator";
 import { ToddlerDailyMissionsModal } from "./ToddlerDailyMissionsModal";
 import { ToddlerStickerAlbumModal } from "./ToddlerStickerAlbumModal";
@@ -80,35 +82,6 @@ interface ToddlerWorldViewProps {
   onSwitchToEducator?: () => void;
   onRequestExit?: () => void;
 }
-
-const PHONICS_TILES = [
-  { letter: "A", word: "Apple", emoji: "🍎", sound: "A says ah! Like delicious red Apple." },
-  { letter: "B", word: "Bear", emoji: "🐻", sound: "B says buh! Like friendly brown Bear." },
-  { letter: "C", word: "Cat", emoji: "🐱", sound: "C says kuh! Like playful kitten Cat." },
-  { letter: "D", word: "Duck", emoji: "🦆", sound: "D says duh! Quack quack says the Duck." },
-  { letter: "E", word: "Elephant", emoji: "🐘", sound: "E says eh! Huge friendly Elephant." },
-  { letter: "F", word: "Fish", emoji: "🐠", sound: "F says fff! Swimming orange Fish." },
-  { letter: "G", word: "Giraffe", emoji: "🦒", sound: "G says guh! Tall spotted Giraffe." },
-  { letter: "H", word: "Heart", emoji: "💖", sound: "H says huh! Happy warm Heart." },
-  { letter: "I", word: "Ice Cream", emoji: "🍦", sound: "I says ih! Sweet cool Ice cream." },
-  { letter: "J", word: "Jellyfish", emoji: "🪼", sound: "J says juh! Bouncy purple Jellyfish." },
-  { letter: "K", word: "Kangaroo", emoji: "🦘", sound: "K says kuh! Hop hop Kangaroo." },
-  { letter: "L", word: "Lion", emoji: "🦁", sound: "L says lll! Brave golden Lion." },
-  { letter: "M", word: "Monkey", emoji: "🐵", sound: "M says mmm! Cheerful cheeky Monkey." },
-  { letter: "N", word: "Nest", emoji: "🪺", sound: "N says nnn! Cozy bird Nest." },
-  { letter: "O", word: "Owl", emoji: "🦉", sound: "O says ah! Wise nighttime Owl." },
-  { letter: "P", word: "Puppy", emoji: "🐶", sound: "P says puh! Waggy tail Puppy." },
-  { letter: "Q", word: "Queen", emoji: "👑", sound: "Q says kwuh! Shiny golden Queen." },
-  { letter: "R", word: "Rainbow", emoji: "🌈", sound: "R says rrr! Seven colorful Rainbow." },
-  { letter: "S", word: "Star", emoji: "⭐", sound: "S says sss! Shiny twinkle Star." },
-  { letter: "T", word: "Tiger", emoji: "🐯", sound: "T says tuh! Striped orange Tiger." },
-  { letter: "U", word: "Umbrella", emoji: "☂️", sound: "U says uh! Rain protection Umbrella." },
-  { letter: "V", word: "Violin", emoji: "🎻", sound: "V says vvv! Sweet music Violin." },
-  { letter: "W", word: "Whale", emoji: "🐳", sound: "W says wuh! Giant blue Whale." },
-  { letter: "X", word: "Xylophone", emoji: "🎵", sound: "X says ks! Ding dong Xylophone." },
-  { letter: "Y", word: "Yacht", emoji: "⛵", sound: "Y says yuh! Sailing white Yacht." },
-  { letter: "Z", word: "Zebra", emoji: "🦓", sound: "Z says zzz! Black and white Zebra." },
-];
 
 const BOOK_SHELVES = [
   { id: "all", label: "All", emoji: "📚" },
@@ -168,40 +141,6 @@ function StoryReadAloudText({
   );
 }
 
-const COUNTING_CARDS = [
-  { num: 1, word: "One", emojis: "☀️", item: "Smiling Sun", color: "from-amber-400 to-yellow-300" },
-  { num: 2, word: "Two", emojis: "🎈 🎈", item: "Balloons", color: "from-sky-400 to-blue-300" },
-  { num: 3, word: "Three", emojis: "🍓 🍓 🍓", item: "Strawberries", color: "from-rose-400 to-pink-300" },
-  { num: 4, word: "Four", emojis: "🚗 🚗 🚗 🚗", item: "Toy Cars", color: "from-emerald-400 to-teal-300" },
-  { num: 5, word: "Five", emojis: "⭐ ⭐ ⭐ ⭐ ⭐", item: "Shiny Stars", color: "from-purple-400 to-indigo-300" },
-  { num: 6, word: "Six", emojis: "🐝 🐝 🐝 🐝 🐝 🐝", item: "Busy Bees", color: "from-yellow-400 to-amber-300" },
-  { num: 7, word: "Seven", emojis: "🐞 🐞 🐞 🐞 🐞 🐞 🐞", item: "Ladybugs", color: "from-red-400 to-rose-300" },
-  { num: 8, word: "Eight", emojis: "🍎 🍎 🍎 🍎 🍎 🍎 🍎 🍎", item: "Apples", color: "from-orange-400 to-red-300" },
-  { num: 9, word: "Nine", emojis: "🦋 🦋 🦋 🦋 🦋 🦋 🦋 🦋 🦋", item: "Butterflies", color: "from-fuchsia-400 to-violet-300" },
-  { num: 10, word: "Ten", emojis: "⭐⭐⭐⭐⭐ ⭐⭐⭐⭐⭐", item: "Ten Stars", color: "from-indigo-400 to-blue-300" },
-  { num: 11, word: "Eleven", emojis: "🚌", item: "Bus and a spare seat", color: "from-yellow-400 to-amber-500" },
-  { num: 12, word: "Twelve", emojis: "🥚", item: "A dozen eggs", color: "from-amber-200 to-yellow-400" },
-  { num: 13, word: "Thirteen", emojis: "🎂", item: "Birthday candles", color: "from-pink-400 to-rose-400" },
-  { num: 14, word: "Fourteen", emojis: "📬", item: "Letters in a week of days, twice", color: "from-sky-400 to-blue-500" },
-  { num: 15, word: "Fifteen", emojis: "🏀", item: "Bounces on the stoop", color: "from-orange-400 to-amber-500" },
-  { num: 16, word: "Sixteen", emojis: "🖍️", item: "Crayons in a new box row", color: "from-violet-400 to-fuchsia-500" },
-  { num: 17, word: "Seventeen", emojis: "🌧️", item: "Rain taps on the glass", color: "from-cyan-400 to-slate-500" },
-  { num: 18, word: "Eighteen", emojis: "🍪", item: "Cookies on a cooling rack", color: "from-amber-400 to-orange-500" },
-  { num: 19, word: "Nineteen", emojis: "🌙", item: "Almost twenty moon-steps", color: "from-indigo-500 to-violet-600" },
-  { num: 20, word: "Twenty", emojis: "🔢", item: "Two full ten-frames", color: "from-emerald-400 to-teal-600" },
-];
-
-const WORD_FAMILIES = [
-  { rime: "at", words: "cat · hat · mat", emoji: "🐱", sound: "A-T says at. Cat, hat, mat." },
-  { rime: "an", words: "can · man · pan", emoji: "🍳", sound: "A-N says an. Can, man, pan." },
-  { rime: "op", words: "hop · mop · top", emoji: "🧹", sound: "O-P says op. Hop, mop, top." },
-  { rime: "ig", words: "pig · dig · wig", emoji: "🐷", sound: "I-G says ig. Pig, dig, wig." },
-  { rime: "un", words: "sun · run · bun", emoji: "☀️", sound: "U-N says un. Sun, run, bun." },
-  { rime: "et", words: "net · pet · wet", emoji: "🥅", sound: "E-T says et. Net, pet, wet." },
-  { rime: "in", words: "pin · win · tin", emoji: "📌", sound: "I-N says in. Pin, win, tin." },
-  { rime: "ug", words: "bug · hug · mug", emoji: "🐞", sound: "U-G says ug. Bug, hug, mug." },
-];
-
 export function ToddlerWorldView({
   initialActivityId,
   initialLaunchNonce,
@@ -231,7 +170,6 @@ export function ToddlerWorldView({
   const [starsCount, setStarsCount] = useState<number>(() => {
     return getGamificationState().starsCount;
   });
-  const [activePhonicsLetter, setActivePhonicsLetter] = useState<string | null>(null);
 
   // Daily Quests and Sticker Album modals
   const [isDailyMissionsOpen, setIsDailyMissionsOpen] = useState<boolean>(false);
@@ -691,28 +629,6 @@ export function ToddlerWorldView({
       setParentAudioRecord(null);
       soundEffects.playGentleBoing();
     }
-  };
-
-  // Stars for the soundboard and counting cards reward fresh discovery: each
-  // distinct tile earns one star per day, repeats are free play without pay.
-  const handlePhonicsClick = (tile: typeof PHONICS_TILES[0]) => {
-    setActivePhonicsLetter(tile.letter);
-    speakText(tile.sound, {
-      pitch: 1.2,
-      rate: 0.85,
-      onEnd: () => {
-        // slight pause
-      },
-    });
-    recordPhonicsLetterTapped(tile.letter);
-  };
-
-  const handleCountingClick = (card: typeof COUNTING_CARDS[0]) => {
-    speakText(`${card.word}! Number ${card.num}! Let's count: ${Array.from({ length: card.num }, (_, i) => i + 1).join(", ")}! ${card.item}!`, {
-      pitch: 1.2,
-      rate: 0.85,
-    });
-    recordCountingCardTapped(card.num);
   };
 
   const isMeadow = gameState.wonderlandTheme === "sunny-meadow";
@@ -1327,201 +1243,12 @@ export function ToddlerWorldView({
           <ToddlerPlayhouse isMeadow={isMeadow} onAddStar={addStar} />
         )}
 
-        {/* SECTION 2: ABC PHONICS SOUNDBOARD */}
         {activeTab === "phonics" && (
-          <div className="relative">
-            {/* Mascot peeking over phonics board */}
-            <div className="hidden sm:block">
-              <CharacterAnchor emoji="🦜" title="Phonics Polly" subtitle="Tap any letter!" position="top-right" />
-            </div>
-
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${
-                  isMeadow ? "text-slate-900" : "text-white"
-                }`}>
-                  <span>🔤</span> ABC Phonics Soundboard
-                </h2>
-                <p className={`text-sm sm:text-base font-semibold ${
-                  isMeadow ? "text-slate-800" : "text-white/85"
-                }`}>
-                  Tap any letter tile to hear letter names, phonics sounds, and example words spoken aloud!
-                </p>
-              </div>
-              <button
-                onClick={() => speakText("Let's learn our ABCs! Tap any letter to hear its sound!", { pitch: 1.2 })}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl font-black text-sm min-h-12 border-b-4 shadow-md transition-all active:translate-y-1 cursor-pointer ${
-                  isMeadow
-                    ? "bg-white text-pink-700 border-pink-300 hover:bg-pink-50"
-                    : "bg-rose-500/20 text-rose-300 border-rose-600 hover:bg-rose-500/30"
-                }`}
-              >
-                <Volume2 size={15} /> Listen to Intro
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-3">
-              {PHONICS_TILES.map((tile) => {
-                const isActive = activePhonicsLetter === tile.letter;
-                return (
-                  <motion.button
-                    key={tile.letter}
-                    whileHover={{ scale: 1.06, y: -4 }}
-                    whileTap={{ scale: 0.92 }}
-                    onClick={() => handlePhonicsClick(tile)}
-                    className={`relative p-4 rounded-3xl flex flex-col items-center justify-center transition-all cursor-pointer select-none ${
-                      isMeadow
-                        ? isActive
-                          ? "bg-pink-100 border-b-4 border-pink-600 ring-4 ring-pink-400/40 shadow-xl scale-105"
-                          : "bg-white text-slate-900 border-b-4 border-pink-200 hover:border-pink-400 shadow-md active:translate-y-1"
-                        : isActive
-                        ? "bg-rose-500/30 border-2 border-rose-400 ring-4 ring-rose-400/30 text-white scale-105 shadow-lg"
-                        : "bg-white/[0.03] border-2 border-white/10 hover:border-pink-400/50 hover:bg-white/[0.07] text-white shadow-lg"
-                    }`}
-                  >
-                    <span className={`text-4xl sm:text-5xl font-black ${
-                      isMeadow
-                        ? "text-pink-600"
-                        : "text-transparent bg-clip-text bg-gradient-to-b from-white to-pink-200"
-                    }`}>
-                      {tile.letter}
-                    </span>
-                    <span className="text-3xl sm:text-4xl my-1">{tile.emoji}</span>
-                    <span className={`text-sm sm:text-base font-black ${
-                      isMeadow ? "text-slate-800" : "text-white"
-                    }`}>{tile.word}</span>
-                    <div className={`mt-1 flex items-center gap-1 text-xs sm:text-sm font-bold ${
-                      isMeadow ? "text-pink-700" : "text-pink-300"
-                    }`}>
-                      <Volume2 size={11} /> Tap Sound
-                    </div>
-                  </motion.button>
-                );
-              })}
-            </div>
-
-            <h3 className={`mt-8 mb-3 text-lg sm:text-xl font-black ${isMeadow ? "text-slate-900" : "text-white"}`}>
-              Word families
-            </h3>
-            <p className={`text-sm sm:text-base font-semibold mb-3 ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
-              Same ending, new beginning. Tap a family. Hear cat, hat, mat.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {WORD_FAMILIES.map((family) => (
-                <button
-                  key={family.rime}
-                  type="button"
-                  onClick={() => speakText(family.sound, { pitch: 1.15, rate: 0.9 })}
-                  className={`min-h-24 rounded-3xl p-4 text-left border-b-4 shadow-md ${
-                    isMeadow ? "bg-white border-pink-300 text-slate-900" : "bg-white/10 border-pink-500 text-white"
-                  }`}
-                >
-                  <span className="text-3xl">{family.emoji}</span>
-                  <p className="text-xl font-black">-{family.rime}</p>
-                  <p className="text-sm font-bold">{family.words}</p>
-                </button>
-              ))}
-            </div>
-          </div>
+          <ToddlerPhonicsBoard isMeadow={isMeadow} onAddStar={addStar} />
         )}
 
-        {/* SECTION 3: 1-2-3 COUNTING SAFARI */}
         {activeTab === "counting" && (
-          <div className="relative">
-            {/* Mascot peeking over counting safari */}
-            <div className="hidden sm:block">
-              <CharacterAnchor emoji="🦁" title="Safari Buddy" subtitle="Count with me!" position="top-right" />
-            </div>
-
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${
-                  isMeadow ? "text-slate-900" : "text-white"
-                }`}>
-                  <span>🔢</span> Count to Twenty
-                </h2>
-                <p className={`text-sm sm:text-base font-semibold ${
-                  isMeadow ? "text-slate-800" : "text-white/85"
-                }`}>
-                  Count from 1 to 20. Tap a card. Hear the number. Two ten-frames make twenty.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {COUNTING_CARDS.map((card) => (
-                <motion.div
-                  key={card.num}
-                  whileHover={{ scale: 1.03, y: -4 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => handleCountingClick(card)}
-                  className={`p-6 rounded-[2.25rem] transition-all cursor-pointer flex flex-col justify-between shadow-xl ${
-                    isMeadow
-                      ? "bg-white text-slate-800 border-4 border-indigo-200 hover:border-indigo-400 shadow-[0_14px_30px_-6px_rgba(20,83,45,0.18)]"
-                      : "bg-white/[0.03] border-2 border-white/10 hover:border-purple-400/50 hover:bg-white/[0.06] text-white"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-b from-purple-500 to-indigo-600 flex items-center justify-center text-3xl font-black text-white shadow-md border-b-4 border-indigo-800">
-                      {card.num}
-                    </div>
-                    <span className={`text-xl font-black uppercase tracking-wider ${
-                      isMeadow ? "text-indigo-800" : "text-purple-300"
-                    }`}>
-                      {card.word}
-                    </span>
-                  </div>
-
-                  <div className={`py-6 my-2 rounded-2xl border flex items-center justify-center text-4xl sm:text-5xl tracking-widest ${
-                    isMeadow
-                      ? "bg-indigo-50/80 border-indigo-100"
-                      : "bg-black/30 border-white/5"
-                  }`}>
-                    {card.emojis}
-                  </div>
-
-                  <div className={`flex items-center justify-between pt-3 border-t text-xs ${
-                    isMeadow ? "border-slate-100" : "border-white/5"
-                  }`}>
-                    <span className={`font-black ${
-                      isMeadow ? "text-slate-900" : "text-white/90"
-                    }`}>{card.item}</span>
-                    <span className={`flex items-center gap-1 font-bold ${
-                      isMeadow ? "text-indigo-700" : "text-purple-300"
-                    }`}>
-                      <Volume2 size={13} /> Count Aloud
-                    </span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Toddler Math Assessment Prompt */}
-            {onStartAssessment && (
-              <div className={`mt-8 p-6 rounded-[2.25rem] flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left shadow-xl ${
-                isMeadow
-                  ? "bg-white/95 backdrop-blur-md border-4 border-emerald-300 text-slate-800"
-                  : "bg-gradient-to-r from-emerald-950/40 to-teal-950/40 border border-emerald-500/30 text-white"
-              }`}>
-                <div>
-                  <h4 className={`text-base font-black mb-1 ${
-                    isMeadow ? "text-slate-900" : "text-white"
-                  }`}>Lead a 5-Minute Toddler Math Milestone Check</h4>
-                  <p className={`text-xs font-semibold ${
-                    isMeadow ? "text-slate-600" : "text-white/60"
-                  }`}>
-                    Observe whether the child can count 3 physical items, distinguish a circle from a square, and identify 'more'.
-                  </p>
-                </div>
-                <button
-                  onClick={() => onStartAssessment("toddler-counting-shapes")}
-                  className="px-5 py-3 rounded-2xl bg-gradient-to-b from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-black text-xs sm:text-sm border-b-4 border-emerald-800 shadow-md transition-all active:translate-y-1 cursor-pointer whitespace-nowrap"
-                >
-                  Start Toddler Math Check →
-                </button>
-              </div>
-            )}
-          </div>
+          <ToddlerCountingBoard isMeadow={isMeadow} onAddStar={addStar} onStartAssessment={onStartAssessment} />
         )}
 
         {/* SECTION 4: INTERACTIVE GAMES & PICTURE QUIZZES */}

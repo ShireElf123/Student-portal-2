@@ -33,8 +33,8 @@ export type NavigationTab =
 export type BuddyArchetype = "monster" | "alien" | "robot" | "forest-bunny";
 export type BuddyColor = "pink" | "blue" | "lime" | "amber" | "purple" | "coral";
 export type BuddyEyeStyle = "happy" | "cyclops" | "starry" | "wink" | "goggles";
-export type BuddyHat = "none" | "explorer" | "party" | "wizard" | "astronaut" | "crown";
-export type BuddyAccessory = "none" | "bowtie" | "cape" | "medal" | "balloon";
+export type BuddyHat = "none" | "explorer" | "party" | "wizard" | "astronaut" | "crown" | "baker" | "rain" | "sailor";
+export type BuddyAccessory = "none" | "bowtie" | "cape" | "medal" | "balloon" | "letter" | "lantern";
 
 export interface BuddyCompanionConfig {
   id: string;

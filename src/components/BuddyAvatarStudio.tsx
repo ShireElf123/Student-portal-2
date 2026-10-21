@@ -73,6 +73,9 @@ const HATS: { id: BuddyHat; label: string; icon: string }[] = [
   { id: "wizard", label: "Wizard Star Hat", icon: "🧙" },
   { id: "astronaut", label: "Space Visor", icon: "🚀" },
   { id: "crown", label: "Golden Crown", icon: "👑" },
+  { id: "baker", label: "Bakery Hat", icon: "🍞" },
+  { id: "rain", label: "Rain Hat", icon: "🌧️" },
+  { id: "sailor", label: "Ferry Cap", icon: "⛴️" },
   { id: "none", label: "No Hat", icon: "✨" },
 ];
 
@@ -81,6 +84,8 @@ const ACCESSORIES: { id: BuddyAccessory; label: string; icon: string }[] = [
   { id: "cape", label: "Hero Cape", icon: "🦸" },
   { id: "medal", label: "Star Medal", icon: "🏅" },
   { id: "balloon", label: "Joy Balloon", icon: "🎈" },
+  { id: "letter", label: "Mail Letter", icon: "✉️" },
+  { id: "lantern", label: "Porch Lantern", icon: "🏮" },
   { id: "none", label: "None", icon: "🌟" },
 ];
 
@@ -113,9 +118,9 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
   const handleHearVoice = () => {
     soundEffects.playPop();
     const greetings = [
-      `Hi friend! I'm ${buddy.name}! Ready to learn together?`,
-      `Yay! You made me look so cool! Let's go earn some golden stars!`,
-      `Beep boop! High five! Today is going to be amazing!`,
+      `Hi. I'm ${buddy.name}. The porch knows us.`,
+      `I am ready. Waiting is a kind of hug.`,
+      `Let's walk. Not run. Doors have opinions about running.`,
     ];
     const phrase = greetings[Math.floor(Math.random() * greetings.length)];
     setSpeechBubble(phrase);
@@ -134,7 +139,7 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
     setIsSavedRecently(true);
     soundEffects.playFanfare();
     triggerCelebrationConfetti();
-    speakText(`Hooray! ${buddy.name} is now your learning buddy! Let's conquer the odyssey!`, {
+    speakText(`${buddy.name} is your buddy now. The house keeps us.`, {
       pitch: 1.3,
       rate: 0.95,
     });
@@ -278,6 +283,32 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
                 <RefreshCw size={14} className="text-amber-300" />
                 <span>Surprise Me!</span>
               </button>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-2">
+              {[
+                { id: "porch", emoji: "🏡", line: `I'm ${buddy.name} on the porch. The swing creaks. That is the floorboard song.` },
+                { id: "bakery", emoji: "🍞", line: `Bakery bell. Flour like quiet snow. I will not eat the stamp.` },
+                { id: "ferry", emoji: "⛴️", line: `A low horn. Ready, not angry. I covered one ear and smiled anyway.` },
+                { id: "bed", emoji: "🌙", line: `The bed is a dock. I am a boat. Goodnight squares. Goodnight circle.` },
+              ].map((room) => (
+                <button
+                  key={room.id}
+                  type="button"
+                  onClick={() => {
+                    setSpeechBubble(room.line);
+                    speakText(room.line, {
+                      pitch: buddy.archetype === "robot" ? 1.0 : buddy.archetype === "forest-bunny" ? 1.4 : 1.25,
+                      rate: 0.92,
+                    });
+                    soundEffects.playPop();
+                  }}
+                  className="min-h-16 rounded-2xl bg-white/10 border border-white/15 px-3 py-3 text-left text-white font-bold text-xs"
+                >
+                  <span className="text-2xl">{room.emoji}</span>
+                  <p className="mt-1">Hear on the {room.id}</p>
+                </button>
+              ))}
             </div>
           </div>
         </div>
