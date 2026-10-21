@@ -987,6 +987,17 @@ const LAND_TOYS: Record<string, ToyStation[]> = {
       spokenPrompt: "Set the table for supper!",
       skillId: "logic-k1-sorting",
     }),
+    toy({
+      id: "act-land-hang-wash",
+      title: "Hang the Wash",
+      type: "land-play",
+      landPlayId: "hang-wash",
+      learningObjective: "Peg four clothes up onto the backyard line",
+      clueIcon: "👕",
+      cluePrompt: "Drag four clothes up onto the line.",
+      spokenPrompt: "Hang the wash on the line!",
+      skillId: "logic-k1-sorting",
+    }),
   ],
   "vehicle-world/airport-runway": [
     toy({

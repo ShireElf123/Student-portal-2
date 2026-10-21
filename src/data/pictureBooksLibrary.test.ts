@@ -16,7 +16,7 @@ describe("story library", () => {
   it("ships long picture books with a real arc, not two-page flashcards", () => {
     expect(EPIC_PICTURE_BOOKS.length).toBeGreaterThanOrEqual(16);
     const longBooks = PICTURE_BOOKS.filter((book) => book.pages.length >= 8);
-    expect(longBooks.length).toBeGreaterThanOrEqual(24);
+    expect(longBooks.length).toBeGreaterThanOrEqual(32);
     for (const book of EPIC_PICTURE_BOOKS) {
       expect(book.pages.length, book.id).toBeGreaterThanOrEqual(8);
       expect(book.pages.map((page) => page.pageNumber)).toEqual(

@@ -274,6 +274,18 @@ describe("land rooms", () => {
     expect(container.textContent).toContain("Saturday stack");
   });
 
+  it("hangs four clothes on the backyard line", async () => {
+    const stars: number[] = [];
+    const { getByTestId, container } = render(
+      <ToddlerLandRooms playId="hang-wash" onAddStar={() => stars.push(1)} />
+    );
+    const line = getByTestId("wash-line");
+    for (const id of ["shirt", "sock", "towel", "dress"]) dragOnto(getByTestId(`wash-${id}`), line);
+    await flush();
+    expect(stars).toEqual([1]);
+    expect(container.textContent).toContain("wind can work");
+  });
+
   it("packs a trip bag by dragging, not tapping", async () => {
     const stars: number[] = [];
     const { getByTestId } = render(<ToddlerLandRooms playId="pack-bag" onAddStar={() => stars.push(1)} />);

@@ -1,0 +1,213 @@
+import type { PictureBook, PictureBookPage } from "../types";
+
+type PageDraft = Omit<PictureBookPage, "pageNumber">;
+
+function book(meta: Omit<PictureBook, "pages">, pages: PageDraft[]): PictureBook {
+  return {
+    ...meta,
+    readTimeMinutes: Math.max(meta.readTimeMinutes, Math.ceil(pages.length / 2)),
+    pages: pages.map((page, index) => ({ ...page, pageNumber: index + 1 })),
+  };
+}
+
+function p(
+  title: string,
+  text: string,
+  illustration: string,
+  bgGradient: string,
+  narration: string,
+  wordHighlights: string[],
+  interactivePrompt: string,
+  soundEffectText: string,
+  extra: Partial<PictureBookPage> = {},
+): PageDraft {
+  return { title, text, illustration, bgGradient, narration, wordHighlights, interactivePrompt, soundEffectText, ...extra };
+}
+
+/** Third shelf of long stoop-and-street tales. */
+export const STOOP_PICTURE_BOOKS: PictureBook[] = [
+  book(
+    {
+      id: "lighthouse-blink",
+      title: "The Lighthouse Blink",
+      subtitle: "A tall lamp, a slow blink, and boats that already know the way.",
+      ageRange: "Ages 2-5",
+      category: "ocean",
+      coverEmoji: "🗼",
+      coverGradient: "from-sky-500 to-indigo-900",
+      author: "Harbor Light Books",
+      readTimeMinutes: 5,
+    },
+    [
+      p("The Stairs", "The lighthouse stairs go round like a snail. Teddy counts them until the numbers get tired.", "🪜 🗼 🧸", "from-sky-100 to-stone-200 text-sky-950", "Round stairs. Count until the numbers get tired.", ["Stairs", "round", "lighthouse"], "Climb three pretend stairs.", "Step."),
+      p("The Lamp", "The lamp is a giant jar of light. It does not hurry. Night is its job.", "💡 🫙 🌙", "from-yellow-100 to-indigo-200 text-yellow-950", "A giant jar of light. Night is its job.", ["Lamp", "light", "night"], "Hold a pretend lamp still.", "Glow."),
+      p("One Blink", "One blink for the boats. On. Off. The water writes it back.", "✨ 🚢 🌊", "from-cyan-100 to-indigo-200 text-cyan-950", "One blink. The water writes it back.", ["One", "blink", "boats"], "Blink once, slowly.", "On. Off.", { letterHighlight: "1", learningInteraction: { id: "lh-one-blink", prompt: "How many blinks does the lamp start with?", options: ["One", "Nine", "Zero"], correctOptionIndex: 0, skillId: "math-k1-counting" } }),
+      p("Four Boats", "Four boats wait in a polite line. They already know the way. They still like the hello.", "🚢🚢 🚢🚢", "from-blue-100 to-slate-200 text-blue-950", "Four boats in a polite line.", ["Four", "boats", "line"], "Count four boats.", "Four.", { letterHighlight: "4", learningInteraction: { id: "lh-four-boats", prompt: "How many boats wait in line?", options: ["Four", "Two", "Eleven"], correctOptionIndex: 0, skillId: "math-k1-counting" } }),
+      p("Fog Hat", "Fog puts a hat on the lamp. The blink is still there. Soft, but there.", "🌫️ 🗼 💛", "from-slate-200 to-yellow-100 text-slate-900", "Fog hat. The blink is still there.", ["Fog", "hat", "still"], "Pat a fog hat.", "Fff."),
+      p("Circle Window", "The window is a circle on purpose. Lighthouses believe in circles.", "⭕ 🪟 🌊", "from-amber-100 to-sky-200 text-amber-950", "A circle window on purpose.", ["Circle", "window", "lamp"], "Trace a circle window.", "Round.", { learningInteraction: { id: "lh-circle", prompt: "What shape is the lighthouse window?", options: ["Circle", "Triangle", "Bus"], correctOptionIndex: 0, skillId: "math-k1-shapes" } }),
+      p("Keeper Cat", "A cat who works nights. She owns the warm step. We salute.", "🐱 🌙 🪜", "from-orange-100 to-indigo-200 text-orange-950", "Night-shift cat. Salute the warm step.", ["Cat", "night", "step"], "Salute the keeper cat.", "Mrrp."),
+      p("Down at Dawn", "Dawn takes the job. The lamp rests. Boats are already home.", "🌅 🗼 🧸", "from-orange-200 to-sky-100 text-orange-950", "Dawn takes the job. The lamp rests.", ["Dawn", "rest", "home"], "Wave to the lamp. Good morning.", "Bye."),
+    ],
+  ),
+  book(
+    {
+      id: "corner-shop-ding",
+      title: "Corner Shop Ding",
+      subtitle: "A short ding, a cold box, and a red crate of tomatoes.",
+      ageRange: "Ages 2-5",
+      category: "manners",
+      coverEmoji: "🔔",
+      coverGradient: "from-red-500 to-amber-700",
+      author: "Block Press",
+      readTimeMinutes: 5,
+    },
+    [
+      p("The Ding", "The bell is shorter than the bakery’s. It still means hello. Teddy practices a quiet ding.", "🔔 🚪 🧸", "from-red-100 to-amber-100 text-red-950", "A short ding. Hello.", ["Bell", "hello", "quiet"], "Ding once, quietly.", "Ding."),
+      p("Cold Box", "The cold box hums a small weather. Milk stands in a row like polite soldiers.", "🧊 🥛 📦", "from-sky-100 to-slate-100 text-sky-950", "The cold box hums. Milk in a row.", ["Cold", "milk", "row"], "Open a pretend fridge. Close it kindly.", "Hum."),
+      p("Red Crate", "Tomatoes in a red crate. Round on purpose. Nana takes three.", "🍅 🔴 🧺", "from-rose-100 to-red-200 text-rose-950", "Round tomatoes. Nana takes three.", ["Three", "tomatoes", "round"], "Count three tomatoes.", "Three.", { letterHighlight: "3", learningInteraction: { id: "store-three-tomatoes", prompt: "How many tomatoes does Nana take?", options: ["Three", "Eight", "One"], correctOptionIndex: 0, skillId: "math-k1-counting" } }),
+      p("Please", "Please is a coin that does not jingle. The counter still hears it.", "🙏 🛒 💛", "from-yellow-100 to-orange-100 text-yellow-950", "Please is a quiet coin. The counter hears it.", ["Please", "counter", "hear"], "Say please to the counter.", "Please."),
+      p("Paper Bag", "The bag is not warm like bread. It is useful. Handles like ears.", "🛍️ 👂 🧸", "from-amber-100 to-stone-100 text-amber-950", "A useful bag. Handles like ears.", ["Bag", "handles", "useful"], "Hold bag handles.", "Hup."),
+      p("Circle Coin", "A coin is a circle that can leave. Teddy does not pocket extra ones.", "🪙 ⭕ 👛", "from-yellow-200 to-amber-200 text-yellow-950", "A circle coin that can leave.", ["Coin", "circle", "leave"], "Trace a round coin.", "Clink.", { learningInteraction: { id: "store-coin-shape", prompt: "What shape is the coin?", options: ["Circle", "Star", "Loaf"], correctOptionIndex: 0, skillId: "math-k1-shapes" } }),
+      p("Cat Again", "The same philosophy of cat, different sun patch. We salute. She pretends not to work here.", "🐱 ☀️ 🔔", "from-orange-100 to-lime-100 text-orange-950", "Another sun-patch cat. Salute anyway.", ["Cat", "sun", "salute"], "Salute the store cat.", "Mrrp."),
+      p("Ding Behind", "The bell behind us is for the next hello. We had this one.", "🔔 🏘️ 💛", "from-red-100 to-yellow-100 text-red-950", "The bell behind is for the next hello.", ["Bell", "next", "hello"], "Wave to the store.", "Bye."),
+    ],
+  ),
+  book(
+    {
+      id: "fountain-three-coins",
+      title: "Three Coins in the Fountain",
+      subtitle: "A park bowl of water, three circles, and a wish that is only looking.",
+      ageRange: "Ages 2-5",
+      category: "numbers",
+      coverEmoji: "⛲",
+      coverGradient: "from-cyan-400 to-indigo-700",
+      author: "Park Green Press",
+      readTimeMinutes: 5,
+    },
+    [
+      p("The Bowl", "The fountain is a stone bowl that never finishes drinking. Pigeons approve.", "⛲ 🕊️ 🪨", "from-cyan-100 to-stone-200 text-cyan-950", "A stone bowl of water. Pigeons approve.", ["Fountain", "bowl", "water"], "Listen to the water.", "Shhh."),
+      p("Three Coins", "Nana has three coins. Circles. They like to skip, but today they sit.", "🪙🪙🪙", "from-yellow-100 to-cyan-100 text-yellow-950", "Three circle coins.", ["Three", "coins", "circles"], "Count three coins.", "Three.", { letterHighlight: "3", learningInteraction: { id: "fountain-three", prompt: "How many coins does Nana have?", options: ["Three", "Ten", "Zero"], correctOptionIndex: 0, skillId: "math-k1-counting" } }),
+      p("A Wish That Looks", "We do not throw them. Looking is the wish. The water is already busy.", "👀 ⛲ 💛", "from-sky-100 to-amber-100 text-sky-950", "Looking is the wish. We do not throw.", ["Look", "wish", "water"], "Look into the water. Don’t throw.", "Look."),
+      p("Ripple Circles", "A leaf makes ripple circles. The fountain copies. Circles teaching circles.", "🍃 ⭕ ⛲", "from-lime-100 to-cyan-100 text-lime-950", "Ripple circles. Circles teaching circles.", ["Circle", "ripple", "leaf"], "Draw a ripple with your finger.", "Loop.", { learningInteraction: { id: "fountain-circle", prompt: "What shape are the ripples?", options: ["Circle", "Square", "Truck"], correctOptionIndex: 0, skillId: "math-k1-shapes" } }),
+      p("Shade Rim", "We sit on the rim in the shade. Stone is cool on purpose.", "🪑 🧊 🌳", "from-emerald-100 to-sky-100 text-emerald-950", "Cool stone rim. Shade.", ["Shade", "stone", "cool"], "Sit on a cool pretend rim.", "Ahh."),
+      p("Pigeon Union", "Two pigeons drink. They have a union about fountains. We do not argue.", "🐦🐦 ⛲", "from-stone-100 to-cyan-100 text-stone-900", "Two pigeons. A fountain union.", ["Two", "pigeons", "drink"], "Count two pigeons.", "Two.", { letterHighlight: "2" }),
+      p("Coins Stay", "The coins stay in Nana’s pocket. The wish still happened. Looking counts.", "👛 ⛲ ✨", "from-amber-100 to-indigo-100 text-amber-950", "Coins stay. Looking still counts.", ["Stay", "looking", "counts"], "Pat a pocket. The wish happened.", "Pat."),
+      p("Path Home", "The path home is wet at the edges. Fountain weather follows a little.", "🚶 💧 🏡", "from-yellow-100 to-cyan-100 text-yellow-950", "Path home. A little fountain weather.", ["Path", "home", "wet"], "Walk home. Wave to water.", "Bye."),
+    ],
+  ),
+  book(
+    {
+      id: "yellow-taxi-puddle",
+      title: "Yellow Taxi Puddle",
+      subtitle: "A taxi like a lemon, a puddle like a mirror, and one polite honk.",
+      ageRange: "Ages 2-5",
+      category: "colors",
+      coverEmoji: "🚕",
+      coverGradient: "from-yellow-400 to-slate-800",
+      author: "Route 7 Press",
+      readTimeMinutes: 5,
+    },
+    [
+      p("Lemon Car", "The taxi is yellow like a lemon that learned wheels. It waits at the curb like a polite animal.", "🚕 🍋 🌧️", "from-yellow-100 to-slate-200 text-yellow-950", "A lemon taxi waiting at the curb.", ["Yellow", "taxi", "wait"], "Pat a yellow taxi.", "Tap."),
+      p("Puddle Mirror", "A puddle copies the taxi. Upside-down lemon. Teddy does not step in. Looking first.", "🪞 🚕 💧", "from-sky-100 to-yellow-100 text-sky-950", "A puddle copies the taxi. Looking first.", ["Puddle", "copy", "look"], "Look at a puddle. Don’t splash yet.", "Oh."),
+      p("One Honk", "One honk, not angry. A throat saying ready. Teddy covers one ear and smiles anyway.", "📯 🚕 🧸", "from-amber-100 to-yellow-200 text-amber-950", "One polite honk. Ready.", ["One", "honk", "ready"], "Make a short honk.", "Beep.", { letterHighlight: "1", learningInteraction: { id: "taxi-one-honk", prompt: "How many honks?", options: ["One", "Seven", "Zero"], correctOptionIndex: 0, skillId: "math-k1-counting" } }),
+      p("Circle Light", "The taxi light is a little circle on the roof. On means working. Off means napping.", "⭕ 🚕 💡", "from-yellow-200 to-orange-100 text-yellow-950", "A circle roof light. On means working.", ["Circle", "light", "roof"], "Tap a roof light on.", "Click.", { learningInteraction: { id: "taxi-light-shape", prompt: "What shape is the taxi light?", options: ["Circle", "Triangle", "Loaf"], correctOptionIndex: 0, skillId: "math-k1-shapes" } }),
+      p("Back Seat", "The back seat is a small couch that travels. Seatbelt is a hug that clicks.", "🛋️ 🔒 🚕", "from-stone-100 to-yellow-100 text-stone-900", "A traveling couch. Click-hug seatbelt.", ["Seat", "click", "hug"], "Click a pretend seatbelt.", "Click."),
+      p("Wiper Weather", "Wipers write two rainbows that keep disappearing. That is their whole job.", "🌧️ 🌈 🚕", "from-slate-200 to-yellow-100 text-slate-900", "Wipers write disappearing rainbows.", ["Wipers", "rain", "job"], "Wave two wiper arms.", "Swipe."),
+      p("Curb Again", "The curb is a doorstep for cars. We step out. The puddle is still copying.", "🧱 🚕 💧", "from-amber-100 to-sky-100 text-amber-950", "Curb doorstep. The puddle still copies.", ["Curb", "step", "puddle"], "Step onto a curb.", "Step."),
+      p("Yellow Stays", "The taxi leaves. Yellow stays in the story like a coin you already spent.", "🚕 📖 💛", "from-yellow-200 to-slate-200 text-yellow-950", "The taxi leaves. Yellow stays in the story.", ["Yellow", "story", "leaves"], "Wave to the lemon taxi.", "Bye."),
+    ],
+  ),
+  book(
+    {
+      id: "lost-key-mat",
+      title: "The Key Under the Mat",
+      subtitle: "A square mat, a small metal song, and the door that was waiting.",
+      ageRange: "Ages 2-5",
+      category: "feelings",
+      coverEmoji: "🔑",
+      coverGradient: "from-amber-600 to-stone-800",
+      author: "Nana Bear",
+      readTimeMinutes: 5,
+    },
+    [
+      p("The Porch Again", "The porch knows us. The mat is a square that says welcome even when it is quiet.", "🏡 🟫 🧸", "from-amber-100 to-stone-200 text-amber-950", "A square welcome mat. The porch knows us.", ["Porch", "mat", "square"], "Wipe two feet.", "Wipe.", { learningInteraction: { id: "key-mat-shape", prompt: "What shape is the mat?", options: ["Square", "Circle", "Boat"], correctOptionIndex: 0, skillId: "math-k1-shapes" } }),
+      p("No Jingle", "Nana’s pocket has no jingle. The key went walking without us.", "🔇 🔑 😟", "from-stone-100 to-rose-100 text-stone-900", "No jingle. The key went walking.", ["Key", "pocket", "gone"], "Pat an empty pocket.", "Hmm."),
+      p("Lift the Square", "We lift the mat like a blanket. Under it: a small metal song, waiting.", "🟫 🔑 ✨", "from-yellow-100 to-amber-200 text-yellow-950", "Lift the mat. A metal song waiting.", ["Lift", "mat", "key"], "Lift a pretend mat.", "Ffft."),
+      p("The Click", "The key fits like a hello. Click is a whole sentence: we are home.", "🔑 🚪 ✅", "from-lime-100 to-amber-100 text-lime-950", "The key fits. Click. We are home.", ["Key", "click", "home"], "Turn a pretend key.", "Click."),
+      p("Two Shoes", "Two shoes take a rest by the door. They did their walking.", "👟👟 🚪", "from-orange-100 to-stone-100 text-orange-950", "Two shoes resting by the door.", ["Two", "shoes", "rest"], "Count two shoes.", "Two.", { letterHighlight: "2", learningInteraction: { id: "key-two-shoes", prompt: "How many shoes rest by the door?", options: ["Two", "Nine", "Zero"], correctOptionIndex: 0, skillId: "math-k1-counting" } }),
+      p("Mat Down", "The square goes back to work. Welcome is a job that does not clock out.", "🟫 🏡 💛", "from-amber-200 to-rose-100 text-amber-950", "The mat goes back to work.", ["Mat", "welcome", "work"], "Set the mat down.", "Set."),
+      p("Inside Light", "Inside light is a different weather. The porch keeps the outside.", "💡 🚪 🌙", "from-yellow-100 to-indigo-100 text-yellow-950", "Inside light. The porch keeps the outside.", ["Inside", "light", "porch"], "Flip a light on.", "Click."),
+      p("Key Dish", "The key sits in a little dish like a sleeping fish. Tomorrow it can walk again.", "🔑 🍽️ 😴", "from-stone-100 to-yellow-100 text-stone-900", "Key in a dish. Sleeping until tomorrow.", ["Key", "dish", "sleep"], "Lay the key down gently.", "Clink."),
+    ],
+  ),
+  book(
+    {
+      id: "quilt-square-moon",
+      title: "Quilt Square Moon",
+      subtitle: "Squares of cloth, one circle moon, and a bed that already knows you.",
+      ageRange: "Ages 2-5",
+      category: "bedtime",
+      coverEmoji: "🧵",
+      coverGradient: "from-violet-500 to-amber-800",
+      author: "Nana Bear",
+      readTimeMinutes: 5,
+    },
+    [
+      p("The Bed", "The bed is a dock for tired boats. Teddy is a boat. Nana is the harbor.", "🛏️ 🧸 🌙", "from-indigo-100 to-amber-100 text-indigo-950", "The bed is a dock. Teddy is a boat.", ["Bed", "dock", "tired"], "Climb into bed.", "Foomp."),
+      p("Squares", "The quilt is squares that agreed to be a blanket. Four in a row by Teddy’s chin.", "🧵 ⬜⬜⬜⬜", "from-violet-100 to-rose-100 text-violet-950", "Quilt squares. Four by the chin.", ["Four", "squares", "quilt"], "Count four squares.", "Four.", { letterHighlight: "4", learningInteraction: { id: "quilt-four", prompt: "How many squares by Teddy’s chin?", options: ["Four", "One", "Twelve"], correctOptionIndex: 0, skillId: "math-k1-counting" } }),
+      p("Moon Patch", "One patch is a circle moon. It does not glow. It remembers glowing.", "🌙 ⭕ 🧵", "from-yellow-100 to-indigo-200 text-yellow-950", "A circle moon patch that remembers glowing.", ["Moon", "circle", "patch"], "Pat the moon square.", "Soft.", { learningInteraction: { id: "quilt-moon-shape", prompt: "What shape is the moon patch?", options: ["Circle", "Triangle", "Taxi"], correctOptionIndex: 0, skillId: "math-k1-shapes" } }),
+      p("Window Weather", "The window writes night. Not scary. A dark blanket with holes for stars.", "🪟 ⭐ 🏡", "from-indigo-200 to-slate-800 text-indigo-50", "Night window. A dark blanket with star holes.", ["Window", "night", "stars"], "Look at one star.", "Oh."),
+      p("Story Thin", "Nana reads the thin book from the attic. The lion on it is still listening.", "📗 🦁 🧸", "from-amber-100 to-violet-100 text-amber-950", "The thin attic book. The lion listens.", ["Book", "lion", "listen"], "Open a thin book.", "Ffft."),
+      p("Last Page", "Last page is not a cliff. It is a porch. You can sit there.", "📖 🏡 💛", "from-rose-100 to-indigo-100 text-rose-950", "Last page is a porch. You can sit.", ["Last", "page", "porch"], "Close the book gently.", "Soft."),
+      p("Lamp Off", "The lamp goes off like a polite guest. The moon patch keeps a little day.", "💡 🌙 🛏️", "from-indigo-900 to-violet-950 text-indigo-50", "Lamp off. The moon patch keeps a little day.", ["Lamp", "off", "moon"], "Click a lamp off.", "Click."),
+      p("Harbor", "Teddy is docked. The house keeps the weather. Goodnight squares. Goodnight circle.", "🧸 🧵 🌙", "from-indigo-950 to-amber-950 text-amber-50", "Docked. Goodnight squares. Goodnight circle.", ["Goodnight", "house", "keeps"], "Whisper goodnight.", "Goodnight."),
+    ],
+  ),
+  book(
+    {
+      id: "snow-plow-dawn",
+      title: "Snowplow Dawn",
+      subtitle: "A quiet street, a yellow plow, and a path the width of two boots.",
+      ageRange: "Ages 2-5",
+      category: "nature",
+      coverEmoji: "🚜",
+      coverGradient: "from-yellow-400 to-slate-700",
+      author: "Maple Street Press",
+      readTimeMinutes: 5,
+    },
+    [
+      p("White Page", "Morning is a white page. The street forgot its lines. That is allowed.", "❄️ 🏘️ ⬜", "from-sky-100 to-slate-100 text-slate-900", "A white page morning. The street forgot its lines.", ["Snow", "street", "white"], "Look at a white street.", "Ohh."),
+      p("The Plow", "A yellow plow like a taxi that learned a shovel. It writes a path.", "🚜 💛 ❄️", "from-yellow-100 to-sky-200 text-yellow-950", "A yellow plow writes a path.", ["Yellow", "plow", "path"], "Push a pretend plow.", "Vrr."),
+      p("Two Boots", "The path is the width of two boots. Nana and Teddy fit if they agree.", "👢👢 🛤️ ❄️", "from-amber-100 to-slate-100 text-amber-950", "A path two boots wide.", ["Two", "boots", "path"], "Count two boots.", "Two.", { letterHighlight: "2", learningInteraction: { id: "plow-two-boots", prompt: "How many boots wide is the path?", options: ["Two", "Ten", "Zero"], correctOptionIndex: 0, skillId: "math-k1-counting" } }),
+      p("Mitten Bench", "The bench wears a white hat. No lost mitten today. The bench is off duty.", "🪑 🧤 ❄️", "from-rose-100 to-sky-100 text-rose-950", "Bench with a white hat. Off duty.", ["Bench", "hat", "snow"], "Brush snow off a bench.", "Brush."),
+      p("Quiet Horn", "The plow horn is low, like the ferry’s cousin. Ready, not angry.", "📯 🚜 🌫️", "from-yellow-200 to-slate-200 text-yellow-950", "A low plow horn. Ready, not angry.", ["Horn", "low", "ready"], "Make a low horn.", "Brrn."),
+      p("Square Window", "Our window is a square of weather. We watch from inside like a theater.", "🪟 ⬜ 🚜", "from-cyan-100 to-yellow-100 text-cyan-950", "A square window of weather.", ["Square", "window", "watch"], "Trace the window square.", "Square.", { learningInteraction: { id: "plow-window-shape", prompt: "What shape is the window?", options: ["Square", "Circle", "Banana"], correctOptionIndex: 0, skillId: "math-k1-shapes" } }),
+      p("Path Done", "The plow goes. The path stays. That is a kind of gift.", "🛤️ 💛 🏡", "from-amber-100 to-sky-100 text-amber-950", "The plow goes. The path stays.", ["Path", "stays", "gift"], "Wave to the plow.", "Thanks."),
+      p("Boots By Door", "Boots drip a little map on the mat. The square mat does not mind. It is used to weather.", "👢 🟫 💧", "from-stone-100 to-yellow-100 text-stone-900", "Boots drip a map. The mat does not mind.", ["Boots", "mat", "drip"], "Stamp snow off boots.", "Stamp."),
+    ],
+  ),
+  book(
+    {
+      id: "icebox-lemonade",
+      title: "Icebox Lemonade",
+      subtitle: "Cold glass, yellow moons, and a pitcher that sweats on purpose.",
+      ageRange: "Ages 2-5",
+      category: "colors",
+      coverEmoji: "🍋",
+      coverGradient: "from-yellow-300 to-lime-700",
+      author: "Stoop Tales",
+      readTimeMinutes: 5,
+    },
+    [
+      p("The Icebox", "The icebox is a cave of cold. It keeps summer from melting too fast.", "🧊 🚪 🍋", "from-sky-100 to-yellow-100 text-sky-950", "A cave of cold. Summer waits inside.", ["Icebox", "cold", "summer"], "Open the icebox. Close it.", "Ahh."),
+      p("Yellow Moons", "Four lemon slices like yellow moons. They float. That is their job.", "🍋🍋 🍋🍋", "from-yellow-100 to-lime-100 text-yellow-950", "Four lemon moons floating.", ["Four", "lemons", "float"], "Count four slices.", "Four.", { letterHighlight: "4", learningInteraction: { id: "lemon-four", prompt: "How many lemon slices float?", options: ["Four", "One", "Nine"], correctOptionIndex: 0, skillId: "math-k1-counting" } }),
+      p("Pitcher Sweat", "The pitcher sweats on purpose. Cold talking to warm air. Not a mess yet. Weather.", "🥤 💧 ☀️", "from-lime-100 to-yellow-200 text-lime-950", "The pitcher sweats. Cold talking to warm.", ["Pitcher", "cold", "weather"], "Touch a cold pitcher.", "Ooh."),
+      p("Circle Ice", "Ice is circles if the tray says so. Clink. They join the moons.", "⭕ 🧊 🍋", "from-cyan-100 to-yellow-100 text-cyan-950", "Circle ice. Clink. Join the moons.", ["Circle", "ice", "clink"], "Drop two ice circles.", "Clink.", { learningInteraction: { id: "lemon-ice-shape", prompt: "What shape is the ice?", options: ["Circle", "Triangle", "Truck"], correctOptionIndex: 0, skillId: "math-k1-shapes" } }),
+      p("Porch Pour", "Nana pours. The cups get a yellow lake. Teddy waits. Waiting is thirst manners.", "🥤 🍋 🏡", "from-amber-100 to-lime-100 text-amber-950", "Pour a yellow lake. Wait. Manners.", ["Pour", "wait", "cups"], "Wait, then sip.", "Sip."),
+      p("Sour Hello", "Sour is a hello that pinches. Then sweet comes. Two feelings in one cup.", "🍋 😊 🥤", "from-yellow-200 to-rose-100 text-yellow-950", "Sour hello, then sweet. Two feelings.", ["Sour", "sweet", "cup"], "Make a sour face, then a smile.", "Ooh. Ahh."),
+      p("Shade Cups", "We drink in the shade. The sun can have the rest of the yard.", "🌳 🥤 ☀️", "from-lime-200 to-yellow-100 text-lime-950", "Shade cups. The sun can have the yard.", ["Shade", "drink", "yard"], "Sit in shade.", "Ahh."),
+      p("Empty Lake", "The pitcher is an empty lake. The ice is gone and also still cold in the story.", "🥤 🧊 📖", "from-stone-100 to-yellow-100 text-stone-900", "Empty pitcher. The cold stays in the story.", ["Empty", "cold", "story"], "Set the pitcher down.", "Set."),
+    ],
+  ),
+];

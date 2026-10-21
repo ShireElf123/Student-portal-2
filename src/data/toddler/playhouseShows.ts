@@ -1,4 +1,5 @@
 import { MORE_PLAYHOUSE_SHOWS } from "./playhouseShowsMore";
+import { STOOP_PLAYHOUSE_SHOWS } from "./playhouseShowsStoop";
 
 export interface PlayhouseLine {
   speaker: string;
@@ -649,4 +650,5 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
     ],
   ),
   ...MORE_PLAYHOUSE_SHOWS,
+  ...STOOP_PLAYHOUSE_SHOWS,
 ];

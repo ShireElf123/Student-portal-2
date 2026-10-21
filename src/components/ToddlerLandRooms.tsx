@@ -43,7 +43,8 @@ export type LandPlayId =
   | "coil-rope"
   | "bag-market"
   | "scoop-moon"
-  | "pancake-flip";
+  | "pancake-flip"
+  | "hang-wash";
 
 const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = {
   "milk-cow": { title: "Milk the cow", line: "Hold the pail. Fill it to the top.", done: "Warm milk for the barn!" },
@@ -86,6 +87,7 @@ const COPY: Record<LandPlayId, { title: string; line: string; done: string }> = 
   "bag-market": { title: "Fill the market bag", line: "Drag four stall things into the bag.", done: "Home with the shopping!" },
   "scoop-moon": { title: "Scoop moon dust", line: "Drag four scoops into the tin.", done: "Dust for the rocket." },
   "pancake-flip": { title: "Flip pancakes", line: "Pour. Wait until gold. Flip four onto the plate.", done: "A Saturday stack!" },
+  "hang-wash": { title: "Hang the wash", line: "Drag four clothes up onto the line.", done: "Pegged. The wind can work." },
 };
 
 
@@ -146,6 +148,7 @@ const SCENERY: Record<LandPlayId, string[]> = {
   "bag-market": ["🛍️", "🥕", "🍞", "🧀", "🌞"],
   "scoop-moon": ["🚀", "🌕", "✨", "🪐", "🛰️"],
   "pancake-flip": ["🥞", "🧈", "🍓", "🔥", "🫖"],
+  "hang-wash": ["👕", "🧦", "🧺", "🌤️", "🏡"],
 };
 
 
@@ -1487,6 +1490,78 @@ function PancakeFlip({ onAddStar }: { onAddStar?: () => void }) {
   );
 }
 
+
+function HangWash({ onAddStar }: { onAddStar?: () => void }) {
+  const { done, finish } = useCredit(onAddStar);
+  const bits = [
+    { id: "shirt", emoji: "👕" },
+    { id: "sock", emoji: "🧦" },
+    { id: "towel", emoji: "🧻" },
+    { id: "dress", emoji: "👗" },
+  ];
+  const [hung, setHung] = useState<string[]>([]);
+  const hungRef = useRef<string[]>([]);
+  const lineRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef<string | null>(null);
+
+  const drop = (id: string, clientX: number, clientY: number) => {
+    if (hungRef.current.includes(id)) return;
+    if (!pointerHits(lineRef.current, clientX, clientY, 56)) return;
+    hungRef.current = [...hungRef.current, id];
+    setHung(hungRef.current);
+    soundEffects.playPop();
+    if (hungRef.current.length >= bits.length) finish();
+  };
+
+  return (
+    <Stage playId="hang-wash" done={done} className="bg-gradient-to-b from-sky-300 via-lime-300 to-amber-700">
+      <div className="flex flex-col items-center gap-6">
+        <div
+          ref={lineRef}
+          data-testid="wash-line"
+          className="relative w-full max-w-md min-h-24 rounded-full border-4 border-amber-100 bg-white/40 px-4 py-3"
+        >
+          <div className="absolute left-4 right-4 top-1/2 h-1 -translate-y-1/2 bg-stone-700" />
+          <p className="relative text-center text-4xl min-h-12">
+            {hung.map((id) => bits.find((bit) => bit.id === id)?.emoji).join(" ")}
+            {hung.length ? " 📌" : "🧵"}
+          </p>
+        </div>
+        <div className="flex flex-wrap justify-center gap-4">
+          {bits.map((bit) =>
+            hung.includes(bit.id) ? (
+              <span key={bit.id} className="min-h-16 min-w-16 text-5xl opacity-20">
+                {bit.emoji}
+              </span>
+            ) : (
+              <button
+                key={bit.id}
+                type="button"
+                data-testid={`wash-${bit.id}`}
+                className="min-h-16 min-w-16 text-5xl touch-none"
+                onPointerDown={(event) => {
+                  dragging.current = bit.id;
+                  event.currentTarget.setPointerCapture?.(event.pointerId);
+                }}
+                onPointerMove={(event) => {
+                  if (dragging.current !== bit.id) return;
+                  drop(bit.id, event.clientX, event.clientY);
+                }}
+                onPointerUp={(event) => {
+                  if (dragging.current === bit.id) drop(bit.id, event.clientX, event.clientY);
+                  dragging.current = null;
+                }}
+              >
+                {bit.emoji}
+              </button>
+            )
+          )}
+        </div>
+      </div>
+    </Stage>
+  );
+}
+
 const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX.Element> = {
   "milk-cow": MilkCow,
   "firefly-jar": FireflyJar,
@@ -1630,6 +1705,7 @@ const ROOMS: Record<LandPlayId, (props: { onAddStar?: () => void }) => React.JSX
     <DragBits playId="scoop-moon" className="bg-gradient-to-b from-indigo-300 via-slate-700 to-black" bits={[{ id: "a", emoji: "✨" }, { id: "b", emoji: "✨" }, { id: "c", emoji: "✨" }, { id: "d", emoji: "✨" }]} targetTestId="moon-tin" targetIdle="🥫" {...props} />
   ),
   "pancake-flip": PancakeFlip,
+  "hang-wash": HangWash,
 };
 
 export function ToddlerLandRooms({

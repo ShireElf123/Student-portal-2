@@ -14,6 +14,15 @@ export const PICTURE_BOOK_COVERS: Record<string, string> = {
   "park-bandstand-pigeons": "/covers/park-bandstand-pigeons.png",
   "subway-token-mouse": "/covers/subway-token-mouse.png",
   "porch-dusk-jar": "/covers/porch-dusk-jar.png",
+  "lighthouse-blink": "/covers/lighthouse-blink.png",
+  "corner-shop-ding": "/covers/corner-store-bell.png",
+  "corner-store-bell": "/covers/corner-store-bell.png",
+  "fountain-three-coins": "/covers/fountain-three-coins.png",
+  "yellow-taxi-puddle": "/covers/yellow-taxi-puddle.png",
+  "lost-key-mat": "/covers/lost-key-mat.png",
+  "quilt-square-moon": "/covers/quilt-square-moon.png",
+  "snow-plow-dawn": "/covers/snow-plow-dawn.png",
+  "icebox-lemonade": "/covers/icebox-lemonade.png",
 };
 
 export const PLAYHOUSE_COVERS: Record<string, string> = {
