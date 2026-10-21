@@ -183,7 +183,7 @@ function StoryCoverCard({
         }`}
       >
         {book.coverImage ? (
-          <img src={book.coverImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          <img src={book.coverImage} alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
         ) : (
           <span className="absolute inset-0 flex items-center justify-center text-7xl drop-shadow">{book.coverEmoji}</span>
         )}
@@ -1452,6 +1452,8 @@ export function ToddlerWorldView({
                         <img
                           src={activePage.illustrationImage}
                           alt=""
+                          decoding="async"
+                          fetchPriority="high"
                           className="absolute inset-0 h-full w-full object-cover"
                         />
                         {activePage.soundEffectText && (

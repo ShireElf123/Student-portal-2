@@ -43,8 +43,11 @@ describe("story library", () => {
     expect(FIRST_WORD_PICTURE_BOOKS.every((book) => book.pages.length >= 8)).toBe(true);
     expect(FIRST_WORD_PICTURE_BOOKS.every((book) => book.series === "first-words")).toBe(true);
     const cat = PICTURE_BOOKS.find((book) => book.id === "cat-on-mat");
+    const bus = PICTURE_BOOKS.find((book) => book.id === "red-bus-run");
     expect(cat?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
-    expect(Object.keys(PICTURE_BOOK_SPREADS).length).toBeGreaterThanOrEqual(8);
+    expect(bus?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(Object.values(PICTURE_BOOK_SPREADS).every((path) => path.endsWith(".jpg"))).toBe(true);
+    expect(Object.keys(PICTURE_BOOK_SPREADS).length).toBeGreaterThanOrEqual(16);
   });
 
   it("maps every scored page to a real picture-book skill", () => {
