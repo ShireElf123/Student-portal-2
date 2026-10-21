@@ -159,7 +159,9 @@ describe("story library", () => {
     const marketBerries = PICTURE_BOOKS.find((book) => book.id === "market-saturday-berries");
     expect(marketBerries?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const elevatorButtons = PICTURE_BOOKS.find((book) => book.id === "elevator-buttons");
-    expect(elevatorButtons?.pages.slice(0, 2).every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(elevatorButtons?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const safariAlphabet = PICTURE_BOOKS.find((book) => book.id === "safari-alphabet");
+    expect(safariAlphabet?.pages.slice(0, 4).every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["lemonade-stoop"]).toBe("/covers/lemonade-stoop.jpg");
     expect(PICTURE_BOOK_COVERS["lost-red-mitten"]).toBe("/covers/lost-red-mitten.jpg");
     expect(PICTURE_BOOK_COVERS["nana-porch-swing"]).toBe("/covers/nana-porch-swing.jpg");
