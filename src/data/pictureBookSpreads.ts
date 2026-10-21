@@ -152,4 +152,12 @@ export const PICTURE_BOOK_SPREADS: Record<string, string> = {
   "how-a-ferry-floats:8": "/spreads/how-a-ferry-floats-8.jpg",
   "how-a-ferry-floats:9": "/spreads/how-a-ferry-floats-9.jpg",
   "how-a-ferry-floats:10": "/spreads/how-a-ferry-floats-10.jpg",
+  "hot-pot-sip:1": "/spreads/hot-pot-sip-1.jpg",
+  "hot-pot-sip:2": "/spreads/hot-pot-sip-2.jpg",
+  "hot-pot-sip:3": "/spreads/hot-pot-sip-3.jpg",
+  "hot-pot-sip:4": "/spreads/hot-pot-sip-4.jpg",
+  "hot-pot-sip:5": "/spreads/hot-pot-sip-5.jpg",
+  "hot-pot-sip:6": "/spreads/hot-pot-sip-6.jpg",
+  "hot-pot-sip:7": "/spreads/hot-pot-sip-7.jpg",
+  "hot-pot-sip:8": "/spreads/hot-pot-sip-8.jpg",
 };
