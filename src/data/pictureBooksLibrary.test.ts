@@ -216,6 +216,12 @@ describe("story library", () => {
     expect(nanaSoup?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const pondBugs = PICTURE_BOOKS.find((book) => book.id === "pond-edge-bugs");
     expect(pondBugs?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const parkPicnic = PICTURE_BOOKS.find((book) => book.id === "park-green-picnic");
+    expect(parkPicnic?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const atelierDay = PICTURE_BOOKS.find((book) => book.id === "atelier-paint-day");
+    expect(atelierDay?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const letterMeadow = PICTURE_BOOKS.find((book) => book.id === "letter-meadow-abc");
+    expect(letterMeadow?.pages.slice(0, 2).every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["lemonade-stoop"]).toBe("/covers/lemonade-stoop.jpg");
     expect(PICTURE_BOOK_COVERS["lost-red-mitten"]).toBe("/covers/lost-red-mitten.jpg");
     expect(PICTURE_BOOK_COVERS["nana-porch-swing"]).toBe("/covers/nana-porch-swing.jpg");
