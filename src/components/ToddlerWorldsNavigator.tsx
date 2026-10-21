@@ -762,7 +762,7 @@ export function ToddlerWorldsNavigator({
         <div className="flex items-center justify-between">
           <button
             onClick={handleBackToAreaHub}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs cursor-pointer transition-all border border-white/10"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm min-h-12 cursor-pointer transition-all border border-white/10"
           >
             <ChevronLeft size={16} /> Back to {selectedArea?.title || "Area"}
           </button>
@@ -1245,7 +1245,7 @@ export function ToddlerWorldsNavigator({
                   </div>
 
                   {/* Queue indicator */}
-                  <div className="text-[11px] text-white/40 pt-1">
+                  <div className="text-sm text-white/85 pt-1">
                     {unsortedItems.length} friends waiting to be sorted
                   </div>
                 </div>
@@ -1399,13 +1399,13 @@ export function ToddlerWorldsNavigator({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <button
             onClick={handleBackToWorldHub}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-xs cursor-pointer transition-all border border-white/10"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-sm min-h-12 cursor-pointer transition-all border border-white/10"
           >
             <ChevronLeft size={16} /> Back to {selectedWorld.title} Map
           </button>
 
           <div className="flex items-center gap-2">
-            <span className="px-3.5 py-1.5 rounded-2xl bg-white/10 text-white font-bold text-xs border border-white/10">
+            <span className="px-3.5 py-1.5 rounded-2xl bg-white/10 text-white font-bold text-sm border border-white/10">
               {areaStats.completedCount}/{areaStats.totalCount} Discoveries Made
             </span>
           </div>
@@ -1421,10 +1421,10 @@ export function ToddlerWorldsNavigator({
                 </span>
                 <div>
                   <h2 className="text-2xl sm:text-3xl font-black">{selectedArea.title}</h2>
-                  <p className="text-xs sm:text-sm font-semibold opacity-90">{selectedArea.tagline}</p>
+                  <p className="text-sm sm:text-base font-semibold opacity-95">{selectedArea.tagline}</p>
                 </div>
               </div>
-              <p className="text-xs italic opacity-80 max-w-lg mt-1">
+              <p className="text-sm italic opacity-90 max-w-lg mt-1">
                 "{selectedArea.environment.ambientDescription}"
               </p>
             </div>
@@ -1476,7 +1476,7 @@ export function ToddlerWorldsNavigator({
                   key={mission.id}
                   type="button"
                   onClick={() => handleStartMission(mission)}
-                  className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-black cursor-pointer border ${
+                  className={`flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-black min-h-11 cursor-pointer border ${
                     isCompleted
                       ? "bg-white/10 border-white/15 text-white"
                       : "bg-amber-400/20 border-amber-300 text-amber-100"
@@ -1505,7 +1505,7 @@ export function ToddlerWorldsNavigator({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <button
             onClick={handleBackToWorldsMap}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-xs cursor-pointer transition-all border border-white/10"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-sm min-h-12 cursor-pointer transition-all border border-white/10"
           >
             <ChevronLeft size={16} /> All lands
           </button>
@@ -1609,7 +1609,7 @@ export function ToddlerWorldsNavigator({
         <button
           type="button"
           onClick={() => setActiveSecretZone(null)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs cursor-pointer border border-white/10"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm min-h-12 cursor-pointer border border-white/10"
         >
           <ChevronLeft size={16} /> Back to atlas
         </button>
@@ -1628,7 +1628,7 @@ export function ToddlerWorldsNavigator({
         <button
           type="button"
           onClick={() => setLetterLaneOpen(false)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs cursor-pointer border border-white/10"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm min-h-12 cursor-pointer border border-white/10"
         >
           <ChevronLeft size={16} /> Back to atlas
         </button>
@@ -1650,7 +1650,7 @@ export function ToddlerWorldsNavigator({
           <button
             type="button"
             onClick={toggleTapSounds}
-            className="px-4 py-2.5 rounded-2xl bg-white text-slate-900 font-bold text-sm cursor-pointer border border-white/60 shadow-sm inline-flex items-center gap-1.5"
+            className="px-4 py-2.5 rounded-2xl bg-white text-slate-900 font-bold text-base min-h-12 cursor-pointer border border-white/60 shadow-sm inline-flex items-center gap-1.5"
             title={tapsMuted ? "Tap sounds are off" : "Quiet tap sounds"}
           >
             {tapsMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
@@ -1662,14 +1662,14 @@ export function ToddlerWorldsNavigator({
               setLetterLaneOpen(true);
               speakText("Letter Lane. Three letters. About five minutes. No streak.", { pitch: 1.15 });
             }}
-            className="px-4 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-sm cursor-pointer shadow-sm"
+            className="px-4 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-base min-h-12 cursor-pointer shadow-sm"
           >
             Letter Lane
           </button>
           {onOpenGames && (
             <button
               onClick={onOpenGames}
-              className="px-4 py-2.5 rounded-2xl bg-white text-slate-900 font-bold text-sm cursor-pointer border border-white/60 shadow-sm"
+              className="px-4 py-2.5 rounded-2xl bg-white text-slate-900 font-bold text-base min-h-12 cursor-pointer border border-white/60 shadow-sm"
             >
               Free Play
             </button>
@@ -1722,8 +1722,8 @@ export function ToddlerWorldsNavigator({
                         </span>
                       </span>
                       <span className="block p-4 sm:p-5">
-                      <h4 className="text-xl font-black text-slate-900 leading-tight">{world.title}</h4>
-                      <p className="mt-1 text-sm font-bold text-slate-500">
+                      <h4 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">{world.title}</h4>
+                      <p className="mt-1 text-base font-bold text-slate-700">
                         {world.areas.length} areas · {stations} games
                       </p>
                       <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100">
@@ -1798,8 +1798,8 @@ export function ToddlerWorldsNavigator({
                   )}
                 </span>
                 <span className="block p-4 sm:p-5">
-                  <h4 className="text-xl font-black text-slate-900 leading-tight">{zone.title}</h4>
-                  <p className="mt-1 text-sm font-bold text-slate-500">{zone.subtitle}</p>
+                  <h4 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">{zone.title}</h4>
+                  <p className="mt-1 text-base font-bold text-slate-700">{zone.subtitle}</p>
                 </span>
               </motion.button>
             );

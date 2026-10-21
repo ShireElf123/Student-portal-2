@@ -1525,7 +1525,7 @@ export function ToddlerQuizzesAndGames({
                 <span className="flex items-center gap-1.5 text-purple-300 font-bold">
                   <span>🎨</span> Great for visual discrimination and color recognition!
                 </span>
-                <span className="text-white/40">Tap any shape to answer</span>
+                <span className="text-white/80">Tap any shape to answer</span>
               </div>
             </div>
           ) : (
@@ -1580,7 +1580,7 @@ export function ToddlerQuizzesAndGames({
                 <h3 className="text-lg sm:text-xl font-black text-white flex items-center gap-2">
                   <span>🎈</span> Rainbow Bubble Popper
                 </h3>
-                <p className="text-white/60 text-xs">
+                <p className="text-white/90 text-sm sm:text-base">
                   Tap any floating bubble to pop it and collect stars!
                 </p>
               </div>
@@ -1637,10 +1637,10 @@ export function ToddlerQuizzesAndGames({
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 space-y-3">
                   <span className="text-6xl animate-bounce">🌟</span>
                   <h4 className="text-xl font-black text-white">All Bubbles Popped!</h4>
-                  <p className="text-xs text-pink-300">You're super quick!</p>
+                  <p className="text-sm text-pink-200">You're super quick!</p>
                   <button
                     onClick={spawnBubbles}
-                    className="px-5 py-2.5 rounded-2xl bg-pink-500 hover:bg-pink-400 text-white font-black text-xs shadow-lg shadow-pink-500/40 cursor-pointer"
+                    className="px-5 py-2.5 rounded-2xl bg-pink-500 hover:bg-pink-400 text-white font-black text-sm min-h-12 shadow-lg shadow-pink-500/40 cursor-pointer"
                   >
                     More Bubbles! 🎈
                   </button>
@@ -1648,7 +1648,7 @@ export function ToddlerQuizzesAndGames({
               )}
             </div>
 
-            <div className="mt-3 text-center text-xs text-white/40">
+            <div className="mt-3 text-center text-sm text-white/85">
               💡 Parents: Encourages hand-eye coordination and fine motor touch tracking!
             </div>
           </div>
@@ -1660,13 +1660,13 @@ export function ToddlerQuizzesAndGames({
         <div className="max-w-2xl mx-auto">
           <div className="p-6 sm:p-8 rounded-3xl bg-[#131722] border-2 border-emerald-400/30 shadow-2xl text-center space-y-6">
             <div>
-              <span className="px-3 py-1 rounded-full bg-emerald-400/20 text-emerald-300 text-xs font-bold border border-emerald-400/30">
+              <span className="px-3 py-1 rounded-full bg-emerald-400/20 text-emerald-200 text-sm font-bold border border-emerald-400/30">
                 🥕 1-2-3 Counting Safari Game
               </span>
               <h3 className="text-2xl sm:text-3xl font-black text-white mt-2">
                 Feed Hungry Benny Bunny!
               </h3>
-              <p className="text-white/60 text-xs sm:text-sm mt-1">
+              <p className="text-white/90 text-sm sm:text-base sm:text-sm mt-1">
                 Tap carrots to count. First tummy is 5, then 8, then 10.
               </p>
             </div>
@@ -1721,7 +1721,7 @@ export function ToddlerQuizzesAndGames({
                 </div>
                 <button
                   onClick={handleResetBunny}
-                  className="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-xs transition-all cursor-pointer"
+                  className="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-sm min-h-12 transition-all cursor-pointer"
                 >
                   Feed Bunny Again 🥕
                 </button>

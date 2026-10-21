@@ -687,7 +687,7 @@ export function ToddlerWorldView({
                 Toddler Wonderland
               </h1>
               <p className={`text-sm sm:text-base font-bold ${
-                isMeadow ? "text-slate-700 max-w-xl" : "text-white/70 max-w-xl"
+                isMeadow ? "text-slate-800 max-w-xl" : "text-white/90 max-w-xl"
               }`}>
                 Pick a land. Play inside.
               </p>
@@ -703,7 +703,7 @@ export function ToddlerWorldView({
                 setWonderlandTheme(nextTheme);
                 soundEffects.playPop();
               }}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl text-xs font-black transition-all cursor-pointer shadow-md active:translate-y-1 ${
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl text-sm font-black min-h-12 transition-all cursor-pointer shadow-md active:translate-y-1 ${
                 isMeadow
                   ? "bg-white text-slate-800 border-b-4 border-slate-300 hover:bg-slate-50"
                   : "bg-white/10 text-white border-b-4 border-white/20 hover:bg-white/20"
@@ -719,12 +719,12 @@ export function ToddlerWorldView({
                 soundEffects.playPop();
                 setIsDailyMissionsOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-black bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 text-white border-b-4 border-indigo-800 shadow-md transition-all active:translate-y-1 cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl text-sm font-black min-h-12 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 text-white border-b-4 border-indigo-800 shadow-md transition-all active:translate-y-1 cursor-pointer"
               title="Today's 3 Adventure Missions"
             >
               <Calendar size={14} />
               <span>Quests</span>
-              <span className="px-1.5 py-0.2 rounded-full bg-white/20 text-[10px]">
+              <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-xs">
                 {completedMissions.length}/3
               </span>
             </button>
@@ -735,12 +735,12 @@ export function ToddlerWorldView({
                 soundEffects.playPop();
                 setIsStickerAlbumOpen(true);
               }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-black bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 text-amber-950 border-b-4 border-amber-700 shadow-md transition-all active:translate-y-1 cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl text-sm font-black min-h-12 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 text-amber-950 border-b-4 border-amber-700 shadow-md transition-all active:translate-y-1 cursor-pointer"
               title="Explorer Sticker Album"
             >
               <Trophy size={14} />
               <span>Stickers</span>
-              <span className="px-1.5 py-0.2 rounded-full bg-amber-950/20 text-[10px] font-black">
+              <span className="px-1.5 py-0.5 rounded-full bg-amber-950/20 text-xs font-black">
                 {unlockedStickersCount}/{TODDLER_STICKERS.length}
               </span>
             </button>
@@ -760,15 +760,15 @@ export function ToddlerWorldView({
             >
               <BuddyCompanionBadge buddy={activeBuddy} size="sm" animated />
               <div className="text-left hidden sm:block">
-                <div className="text-[9px] uppercase font-black text-pink-600">Buddy</div>
-                <div className="text-xs font-black text-slate-900">{activeBuddy.name}</div>
+                <div className="text-xs uppercase font-black text-pink-600">Buddy</div>
+                <div className="text-sm font-black text-slate-900">{activeBuddy.name}</div>
               </div>
             </button>
 
             {/* Audio Voice Toggle */}
             <button
               onClick={toggleMute}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-black transition-all cursor-pointer border-b-4 shadow-md active:translate-y-1 ${
+              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-sm font-black min-h-12 transition-all cursor-pointer border-b-4 shadow-md active:translate-y-1 ${
                 isMuted
                   ? "bg-rose-500 text-white border-rose-700"
                   : isMeadow
@@ -785,11 +785,11 @@ export function ToddlerWorldView({
             <div className="flex items-center gap-2 bg-gradient-to-b from-amber-400 to-amber-500 border-b-4 border-amber-600 rounded-2xl px-3.5 py-1.5 text-amber-950 shadow-md">
               <Star className="w-5 h-5 fill-amber-300 text-amber-950 animate-pulse" />
               <div>
-                <div className="text-[9px] uppercase font-black tracking-wider leading-none">
+                <div className="text-xs uppercase font-black tracking-wider leading-none">
                   {currentRank.emoji} {currentRank.title}
                 </div>
                 <div className="text-base font-black leading-tight">
-                  {starsCount} <span className="text-[10px] font-bold">Stars</span>
+                  {starsCount} <span className="text-sm font-bold">Stars</span>
                 </div>
               </div>
             </div>
@@ -797,7 +797,7 @@ export function ToddlerWorldView({
             {onStartAssessment && (
               <button
                 onClick={() => onStartAssessment("toddler-phonics-basics")}
-                className="flex items-center gap-1.5 bg-gradient-to-b from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-black text-xs px-3.5 py-2 rounded-2xl border-b-4 border-emerald-800 shadow-md transition-all active:translate-y-1 cursor-pointer"
+                className="flex items-center gap-1.5 bg-gradient-to-b from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-black text-sm min-h-12 px-4 py-2.5 rounded-2xl border-b-4 border-emerald-800 shadow-md transition-all active:translate-y-1 cursor-pointer"
               >
                 <GraduationCap size={16} />
                 <span className="hidden sm:inline">Milestone Check</span>
@@ -808,7 +808,7 @@ export function ToddlerWorldView({
             {onRequestExit && (
               <button
                 onClick={onRequestExit}
-                className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-white font-black text-xs px-3 py-2 rounded-2xl border-b-4 border-slate-950 transition-all cursor-pointer shadow-md active:translate-y-1"
+                className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-white font-black text-sm min-h-12 px-4 py-2.5 rounded-2xl border-b-4 border-slate-950 transition-all cursor-pointer shadow-md active:translate-y-1"
                 title="Grown-Up Gate: Exit Toddler Space or Switch Profile"
               >
                 <Lock size={14} className="text-amber-400" />
@@ -841,7 +841,7 @@ export function ToddlerWorldView({
                 ? "bg-gradient-to-b from-amber-400 to-orange-500 text-white border-b-4 border-orange-700 shadow-lg scale-102"
                 : isMeadow
                 ? "text-slate-700 hover:text-slate-900 hover:bg-amber-100/60 border-b-4 border-transparent"
-                : "text-white/70 hover:text-white hover:bg-white/10 border-b-4 border-transparent"
+                : "text-white hover:bg-white/15 border-b-4 border-transparent"
             }`}
           >
             <span className="text-2xl sm:text-3xl">🗺️</span>
@@ -855,7 +855,7 @@ export function ToddlerWorldView({
                 ? "bg-gradient-to-b from-amber-400 to-amber-500 text-amber-950 border-b-4 border-amber-700 shadow-lg scale-102"
                 : isMeadow
                 ? "text-slate-700 hover:text-slate-900 hover:bg-amber-100/60 border-b-4 border-transparent"
-                : "text-white/70 hover:text-white hover:bg-white/10 border-b-4 border-transparent"
+                : "text-white hover:bg-white/15 border-b-4 border-transparent"
             }`}
           >
             <span className="text-2xl sm:text-3xl">📚</span>
@@ -869,7 +869,7 @@ export function ToddlerWorldView({
                 ? "bg-gradient-to-b from-rose-400 to-pink-500 text-white border-b-4 border-pink-700 shadow-lg scale-102"
                 : isMeadow
                 ? "text-slate-700 hover:text-slate-900 hover:bg-pink-100/60 border-b-4 border-transparent"
-                : "text-white/70 hover:text-white hover:bg-white/10 border-b-4 border-transparent"
+                : "text-white hover:bg-white/15 border-b-4 border-transparent"
             }`}
           >
             <span className="text-2xl sm:text-3xl">🔤</span>
@@ -883,7 +883,7 @@ export function ToddlerWorldView({
                 ? "bg-gradient-to-b from-indigo-400 to-indigo-600 text-white border-b-4 border-indigo-800 shadow-lg scale-102"
                 : isMeadow
                 ? "text-slate-700 hover:text-slate-900 hover:bg-indigo-100/60 border-b-4 border-transparent"
-                : "text-white/70 hover:text-white hover:bg-white/10 border-b-4 border-transparent"
+                : "text-white hover:bg-white/15 border-b-4 border-transparent"
             }`}
           >
             <span className="text-2xl sm:text-3xl">🔢</span>
@@ -897,7 +897,7 @@ export function ToddlerWorldView({
                 ? "bg-gradient-to-b from-emerald-400 to-teal-500 text-white border-b-4 border-emerald-800 shadow-lg scale-102"
                 : isMeadow
                 ? "text-slate-700 hover:text-slate-900 hover:bg-emerald-100/60 border-b-4 border-transparent"
-                : "text-white/70 hover:text-white hover:bg-white/10 border-b-4 border-transparent"
+                : "text-white hover:bg-white/15 border-b-4 border-transparent"
             }`}
           >
             <span className="text-2xl sm:text-3xl">🎮</span>
@@ -911,7 +911,7 @@ export function ToddlerWorldView({
                 ? "bg-gradient-to-b from-pink-400 to-purple-500 text-white border-b-4 border-purple-800 shadow-lg scale-102"
                 : isMeadow
                 ? "text-slate-700 hover:text-slate-900 hover:bg-purple-100/60 border-b-4 border-transparent"
-                : "text-white/70 hover:text-white hover:bg-white/10 border-b-4 border-transparent"
+                : "text-white hover:bg-white/15 border-b-4 border-transparent"
             }`}
           >
             <span className="text-2xl sm:text-3xl">🐾</span>
@@ -932,12 +932,12 @@ export function ToddlerWorldView({
               <div className="flex items-center gap-3 mb-3">
                 <BuddyCompanionBadge buddy={activeBuddy} size="md" animated />
                 <div>
-                  <div className="text-[10px] font-black uppercase text-pink-500">Learning Coach</div>
-                  <h3 className="text-base font-black">{activeBuddy.name}</h3>
-                  <div className="text-xs text-amber-500 font-bold">Level {gameState.level} Explorer</div>
+                  <div className="text-xs font-black uppercase text-pink-500">Learning Coach</div>
+                  <h3 className="text-lg font-black">{activeBuddy.name}</h3>
+                  <div className="text-sm text-amber-500 font-bold">Level {gameState.level} Explorer</div>
                 </div>
               </div>
-              <p className="text-xs italic bg-pink-500/10 p-2.5 rounded-2xl border border-pink-400/20 mb-3">
+              <p className="text-sm italic bg-pink-500/10 p-2.5 rounded-2xl border border-pink-400/20 mb-3">
                 "{activeBuddy.catchphrase || "Ready for another magical adventure!"}"
               </p>
               <div className="flex gap-2">
@@ -946,7 +946,7 @@ export function ToddlerWorldView({
                     soundEffects.playPop();
                     speakText(`Hello little explorer! I am ${activeBuddy.name}! You are doing fantastic! Let's explore together!`, { pitch: 1.2 });
                   }}
-                  className="flex-1 py-2 px-3 rounded-xl bg-pink-500 hover:bg-pink-400 text-white font-black text-xs text-center cursor-pointer shadow-sm transition-all"
+                  className="flex-1 min-h-12 py-2.5 px-3 rounded-xl bg-pink-500 hover:bg-pink-400 text-white font-black text-sm text-center cursor-pointer shadow-sm transition-all"
                 >
                   Say Hello 💬
                 </button>
@@ -955,7 +955,7 @@ export function ToddlerWorldView({
                     soundEffects.playPop();
                     setActiveTab("avatar-studio");
                   }}
-                  className="py-2 px-3 rounded-xl bg-white/10 hover:bg-white/20 font-black text-xs text-center cursor-pointer transition-all"
+                  className="min-h-12 py-2.5 px-3 rounded-xl bg-white/15 hover:bg-white/25 font-black text-sm text-center cursor-pointer transition-all"
                   title="Customize Buddy"
                 >
                   Wardrobe 🎨
@@ -970,12 +970,12 @@ export function ToddlerWorldView({
                 : "bg-white/[0.04] border-white/10 text-white"
             }`}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-black uppercase tracking-wider text-amber-500">Explorer Rank</span>
+                <span className="text-sm font-black uppercase tracking-wider text-amber-500">Explorer Rank</span>
                 <span className="text-2xl">{currentRank.emoji}</span>
               </div>
               <h4 className="text-base font-black mb-1">{currentRank.title}</h4>
-              <p className="text-xs text-slate-500 dark:text-white/60 mb-3">{currentRank.description}</p>
-              <div className="space-y-1.5 text-xs font-bold">
+              <p className="text-sm text-slate-700 dark:text-white/90 mb-3">{currentRank.description}</p>
+              <div className="space-y-1.5 text-sm font-bold">
                 <div className="flex justify-between">
                   <span>Star Jar Balance:</span>
                   <span className="text-amber-500 font-black">{starsCount} ⭐</span>
@@ -990,7 +990,7 @@ export function ToddlerWorldView({
                   soundEffects.playPop();
                   setIsStickerAlbumOpen(true);
                 }}
-                className="w-full mt-3 py-2 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-600 dark:text-amber-300 border border-amber-400/30 font-black text-xs cursor-pointer transition-all text-center"
+                className="w-full mt-3 min-h-12 py-2.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-600 dark:text-amber-300 border border-amber-400/30 font-black text-sm cursor-pointer transition-all text-center"
               >
                 View Sticker Album 🏆
               </button>
@@ -1003,8 +1003,8 @@ export function ToddlerWorldView({
                 : "bg-white/[0.04] border-white/10 text-white"
             }`}>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-black uppercase tracking-wider text-indigo-500">Today's Missions</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-400">
+                <span className="text-sm font-black uppercase tracking-wider text-indigo-500">Today's Missions</span>
+                <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-400">
                   {completedMissions.length}/3 Done
                 </span>
               </div>
@@ -1018,7 +1018,7 @@ export function ToddlerWorldView({
                         soundEffects.playPop();
                         setIsDailyMissionsOpen(true);
                       }}
-                      className={`p-2 rounded-xl text-xs flex items-center justify-between cursor-pointer transition-all ${
+                      className={`p-3 rounded-xl text-sm flex items-center justify-between cursor-pointer transition-all ${
                         done
                           ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                           : "bg-white/5 hover:bg-white/10"
@@ -1038,7 +1038,7 @@ export function ToddlerWorldView({
                   soundEffects.playPop();
                   setIsDailyMissionsOpen(true);
                 }}
-                className="w-full py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-black text-xs cursor-pointer shadow-md transition-all text-center"
+                className="w-full min-h-12 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-black text-sm cursor-pointer shadow-md transition-all text-center"
               >
                 Launch Today's Quests 🎯
               </button>
@@ -1103,7 +1103,7 @@ export function ToddlerWorldView({
                       }`}>
                         {book.coverEmoji}
                       </span>
-                      <span className={`px-2.5 py-1 text-[11px] font-black uppercase rounded-full ${
+                      <span className={`px-2.5 py-1 text-xs sm:text-sm font-black uppercase rounded-full ${
                         isMeadow ? "bg-amber-200 text-amber-950" : "bg-white/10 text-white/80"
                       }`}>
                         {book.ageRange}
@@ -1117,14 +1117,14 @@ export function ToddlerWorldView({
                     }`}>
                       {book.title}
                     </h3>
-                    <p className={`text-xs line-clamp-2 mb-3 ${
-                      isMeadow ? "text-slate-600 font-medium" : "text-white/60"
+                    <p className={`text-sm line-clamp-2 mb-3 ${
+                      isMeadow ? "text-slate-700 font-medium" : "text-white/90"
                     }`}>
                       {book.subtitle}
                     </p>
                   </div>
 
-                  <div className={`pt-3 border-t flex items-center justify-between text-xs ${
+                  <div className={`pt-3 border-t flex items-center justify-between text-sm ${
                     isMeadow ? "border-slate-100" : "border-white/5"
                   }`}>
                     <span className={`flex items-center gap-1 font-black ${
@@ -1132,7 +1132,7 @@ export function ToddlerWorldView({
                     }`}>
                       <Play size={13} className={isMeadow ? "fill-amber-700" : "fill-amber-300"} /> Read Now ({book.pages.length}p)
                     </span>
-                    <span className={`text-[11px] font-black px-2.5 py-0.5 rounded-lg border shadow-sm ${
+                    <span className={`text-xs sm:text-sm font-black px-2.5 py-1 rounded-lg border shadow-sm ${
                       isMeadow
                         ? "bg-amber-100 border-amber-300 text-amber-900"
                         : "bg-amber-500/20 border-amber-400/30 text-amber-300"
@@ -1199,7 +1199,7 @@ export function ToddlerWorldView({
               </div>
               <button
                 onClick={() => speakText("Let's learn our ABCs! Tap any letter to hear its sound!", { pitch: 1.2 })}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl font-black text-xs border-b-4 shadow-md transition-all active:translate-y-1 cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl font-black text-sm min-h-12 border-b-4 shadow-md transition-all active:translate-y-1 cursor-pointer ${
                   isMeadow
                     ? "bg-white text-pink-700 border-pink-300 hover:bg-pink-50"
                     : "bg-rose-500/20 text-rose-300 border-rose-600 hover:bg-rose-500/30"
@@ -1426,8 +1426,8 @@ export function ToddlerWorldView({
                 <div className="flex items-center gap-2.5 min-w-0">
                   <span className="text-2xl sm:text-3xl flex-shrink-0 p-1.5 bg-white rounded-2xl border border-amber-200 shadow-sm">{selectedBook.coverEmoji}</span>
                   <div className="min-w-0">
-                    <h3 className="text-sm sm:text-base font-black text-slate-900 truncate">{selectedBook.title}</h3>
-                    <p className="text-[10px] sm:text-xs font-bold text-amber-800">
+                    <h3 className="text-base sm:text-lg font-black text-slate-900 truncate">{selectedBook.title}</h3>
+                    <p className="text-xs sm:text-sm font-bold text-amber-800">
                       Page {activePage.pageNumber} of {selectedBook.pages.length}
                     </p>
                   </div>

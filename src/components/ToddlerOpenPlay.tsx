@@ -73,7 +73,7 @@ export function ToddlerOpenPlay({
       </div>
       <div className="text-center">
         <h3 className="text-2xl font-black text-white">{copy.title}</h3>
-        <p className="text-white/70 text-sm">{copy.line}</p>
+        <p className="text-white/90 text-base sm:text-lg">{copy.line}</p>
       </div>
 
       {playId === "stir" && (
