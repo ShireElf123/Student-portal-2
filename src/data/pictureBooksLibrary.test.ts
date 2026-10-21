@@ -197,11 +197,15 @@ describe("story library", () => {
     const beeHive = PICTURE_BOOKS.find((book) => book.id === "busy-beehive-architects");
     expect(beeHive?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const curiousCat = PICTURE_BOOKS.find((book) => book.id === "the-curious-caterpillar");
-    expect(curiousCat?.pages.slice(0, 3).every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(curiousCat?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const tugboat = PICTURE_BOOKS.find((book) => book.id === "the-helpful-little-tugboat");
     expect(tugboat?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const phonicsSquad = PICTURE_BOOKS.find((book) => book.id === "superhero-phonics-squad");
-    expect(phonicsSquad?.pages.slice(0, 3).every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(phonicsSquad?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const clockTower = PICTURE_BOOKS.find((book) => book.id === "the-clock-tower-chimes");
+    expect(clockTower?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const lostButton = PICTURE_BOOKS.find((book) => book.id === "little-bear-lost-button");
+    expect(lostButton?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["lemonade-stoop"]).toBe("/covers/lemonade-stoop.jpg");
     expect(PICTURE_BOOK_COVERS["lost-red-mitten"]).toBe("/covers/lost-red-mitten.jpg");
     expect(PICTURE_BOOK_COVERS["nana-porch-swing"]).toBe("/covers/nana-porch-swing.jpg");
