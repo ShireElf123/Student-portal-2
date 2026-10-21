@@ -126,6 +126,10 @@ describe("story library", () => {
     expect(icebox?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     const pancakes = PICTURE_BOOKS.find((book) => book.id === "pancake-saturday");
     expect(pancakes?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const fireTruck = PICTURE_BOOKS.find((book) => book.id === "little-red-fire-truck");
+    expect(fireTruck?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    const snowMaple = PICTURE_BOOKS.find((book) => book.id === "snow-maple-street");
+    expect(snowMaple?.pages.slice(0, 2).every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(PICTURE_BOOK_COVERS["lemonade-stoop"]).toBe("/covers/lemonade-stoop.jpg");
     expect(PICTURE_BOOK_COVERS["lost-red-mitten"]).toBe("/covers/lost-red-mitten.jpg");
     expect(PICTURE_BOOK_COVERS["nana-porch-swing"]).toBe("/covers/nana-porch-swing.jpg");
