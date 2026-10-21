@@ -63,10 +63,12 @@ describe("story library", () => {
     const boat = PICTURE_BOOKS.find((book) => book.id === "paper-gutter-boat");
     const tomatoes = PICTURE_BOOKS.find((book) => book.id === "window-box-tomatoes");
     const feast = PICTURE_BOOKS.find((book) => book.id === "block-table-feast");
+    const mail = PICTURE_BOOKS.find((book) => book.id === "how-mail-travels");
     expect(melon?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(boat?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(tomatoes?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
-    expect(feast?.pages.slice(0, 4).every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(feast?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(mail?.pages.slice(0, 2).every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);
     expect(Object.values(PICTURE_BOOK_SPREADS).every((path) => path.endsWith(".jpg"))).toBe(true);
     expect(Object.keys(PICTURE_BOOK_SPREADS).length).toBeGreaterThanOrEqual(16);
