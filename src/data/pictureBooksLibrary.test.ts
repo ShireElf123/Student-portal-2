@@ -47,10 +47,12 @@ describe("story library", () => {
     const bus = PICTURE_BOOKS.find((book) => book.id === "red-bus-run");
     const pig = PICTURE_BOOKS.find((book) => book.id === "pig-in-mud");
     const fox = PICTURE_BOOKS.find((book) => book.id === "fox-in-box");
+    const dog = PICTURE_BOOKS.find((book) => book.id === "dog-on-log");
     expect(cat?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(bus?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(pig?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(fox?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
+    expect(dog?.pages.every((page) => Boolean(page.illustrationImage))).toBe(true);
     expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);
     expect(Object.values(PICTURE_BOOK_SPREADS).every((path) => path.endsWith(".jpg"))).toBe(true);
     expect(Object.keys(PICTURE_BOOK_SPREADS).length).toBeGreaterThanOrEqual(16);

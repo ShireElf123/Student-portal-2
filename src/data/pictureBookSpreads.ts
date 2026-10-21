@@ -37,4 +37,13 @@ export const PICTURE_BOOK_SPREADS: Record<string, string> = {
   "dog-on-log:3": "/spreads/dog-on-log-3.jpg",
   "dog-on-log:4": "/spreads/dog-on-log-4.jpg",
   "dog-on-log:5": "/spreads/dog-on-log-5.jpg",
+  "dog-on-log:6": "/spreads/dog-on-log-6.jpg",
+  "dog-on-log:7": "/spreads/dog-on-log-7.jpg",
+  "dog-on-log:8": "/spreads/dog-on-log-8.jpg",
+  "hen-in-pen:1": "/spreads/hen-in-pen-1.jpg",
+  "hen-in-pen:2": "/spreads/hen-in-pen-2.jpg",
+  "hen-in-pen:3": "/spreads/hen-in-pen-3.jpg",
+  "hen-in-pen:4": "/spreads/hen-in-pen-4.jpg",
+  "hen-in-pen:5": "/spreads/hen-in-pen-5.jpg",
+  "hen-in-pen:6": "/spreads/hen-in-pen-6.jpg",
 };
