@@ -146,6 +146,16 @@ describe("story library", () => {
     expect(PICTURE_BOOK_COVERS["the-brave-little-firefly"]).toBe("/covers/the-brave-little-firefly.jpg");
     expect(PICTURE_BOOK_COVERS["busy-beehive-architects"]).toBe("/covers/busy-beehive-architects.jpg");
     expect(PICTURE_BOOK_COVERS["the-curious-caterpillar"]).toBe("/covers/the-curious-caterpillar.jpg");
+    expect(PICTURE_BOOK_COVERS["the-helpful-little-tugboat"]).toBe("/covers/the-helpful-little-tugboat.jpg");
+    expect(PICTURE_BOOK_COVERS["superhero-phonics-squad"]).toBe("/covers/superhero-phonics-squad.jpg");
+    expect(PICTURE_BOOK_COVERS["the-clock-tower-chimes"]).toBe("/covers/the-clock-tower-chimes.jpg");
+    expect(PICTURE_BOOK_COVERS["little-bear-lost-button"]).toBe("/covers/little-bear-lost-button.jpg");
+    expect(PICTURE_BOOK_COVERS["penguin-floe-night"]).toBe("/covers/penguin-floe-night.jpg");
+    expect(PICTURE_BOOK_COVERS["owl-wood-lullaby"]).toBe("/covers/owl-wood-lullaby.jpg");
+    expect(PICTURE_BOOK_COVERS["high-street-bus"]).toBe("/covers/high-street-bus.jpg");
+    expect(PICTURE_BOOK_COVERS["nana-soup-pot"]).toBe("/covers/nana-soup-pot.jpg");
+    expect(PICTURE_BOOK_COVERS["pond-edge-bugs"]).toBe("/covers/pond-edge-bugs.jpg");
+    expect(PICTURE_BOOK_COVERS["park-green-picnic"]).toBe("/covers/park-green-picnic.jpg");
     expect(PICTURE_BOOK_COVERS["hot-pot-sip"]).toBe("/covers/hot-pot-sip.jpg");
     expect(PICTURE_BOOK_COVERS["big-hug-bed"]).toBe("/covers/big-hug-bed.jpg");
     expect(Object.values(PICTURE_BOOK_COVERS).every((path) => path.endsWith(".jpg"))).toBe(true);
