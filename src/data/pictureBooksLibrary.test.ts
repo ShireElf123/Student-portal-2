@@ -3,6 +3,8 @@ import { PICTURE_BOOKS } from "./pictureBooksData";
 import { EPIC_PICTURE_BOOKS } from "./pictureBooksEpics";
 import { STUDIO_PICTURE_BOOKS } from "./pictureBooksStudio";
 import { FIRST_WORD_PICTURE_BOOKS } from "./pictureBooksFirstWords";
+import { NEIGHBORHOOD_PICTURE_BOOKS } from "./pictureBooksNeighborhood";
+import { STOOP_PICTURE_BOOKS } from "./pictureBooksStoop";
 import { PICTURE_BOOK_COVERS } from "./pictureBookCovers";
 import { PICTURE_BOOK_SPREADS } from "./pictureBookSpreads";
 import { STORY_ADVENTURES } from "./toddler/toddlerWorldsData";
@@ -37,6 +39,10 @@ describe("story library", () => {
     expect(STUDIO_PICTURE_BOOKS.filter((book) => book.series === "look-learn").length).toBeGreaterThanOrEqual(4);
     expect(STUDIO_PICTURE_BOOKS.filter((book) => book.series === "first-words").length).toBeGreaterThanOrEqual(4);
     expect(STUDIO_PICTURE_BOOKS.filter((book) => book.pages.length >= 12).length).toBeGreaterThanOrEqual(4);
+    expect(NEIGHBORHOOD_PICTURE_BOOKS.every((book) => book.series === "street")).toBe(true);
+    expect(STOOP_PICTURE_BOOKS.every((book) => book.series === "street")).toBe(true);
+    expect(PICTURE_BOOKS.find((book) => book.id === "bakery-window-fog")?.series).toBe("street");
+    expect(PICTURE_BOOKS.find((book) => book.id === "park-bandstand-pigeons")?.series).toBe("street");
   });
 
   it("adds more first-word readers and paints Cat on the Mat page-by-page", () => {
