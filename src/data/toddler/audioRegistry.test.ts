@@ -732,6 +732,16 @@ describe("audio registry", () => {
       "/audio/voice/night-letter-welcome.mp3",
       "/audio/voice/night-clue-letter.mp3",
       "/audio/voice/night-fb-m.mp3",
+      "/audio/voice/night-fb-n.mp3",
+      "/audio/voice/night-who-welcome.mp3",
+      "/audio/voice/night-clue-who.mp3",
+      "/audio/voice/night-fb-nana.mp3",
+      "/audio/voice/night-fb-pip.mp3",
+      "/audio/voice/night-fb-dog.mp3",
+      "/audio/voice/night-blink-welcome.mp3",
+      "/audio/voice/night-fb-dim.mp3",
+      "/audio/voice/night-fb-crash-pattern.mp3",
+      "/audio/voice/night-fb-glow.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1604,6 +1614,16 @@ describe("audio registry", () => {
     expect(narrationClipForText("Which letter starts moth?")?.id).toBe("voice.night.letter-welcome");
     expect(narrationClipForText("Moth starts with mmm. Which letter?")?.id).toBe(
       "voice.night.clue.letter",
+    );
+    expect(narrationClipForText("N starts nest.")?.id).toBe("voice.night.fb.n");
+    expect(narrationClipForText("Pip whispered, then Nana. Who spoke last?")?.id).toBe(
+      "voice.night.who-welcome",
+    );
+    expect(
+      narrationClipForText("Pip whispered, then Nana whispered lower. Who spoke last?")?.id,
+    ).toBe("voice.night.clue.who");
+    expect(narrationClipForText("Glow, dim, glow, dim, glow. Next?")?.id).toBe(
+      "voice.night.blink-welcome",
     );
   });
 
