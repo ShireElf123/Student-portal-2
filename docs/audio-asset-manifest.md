@@ -60,6 +60,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/farm-count-lambs.mp3` | `voice.farm.count.lambs` |
 | `public/audio/voice/farm-count-bees.mp3` | `voice.farm.count.bees` |
 | `public/audio/voice/farm-count-turkeys.mp3` | `voice.farm.count.turkeys` |
+| `public/audio/voice/jungle-area-welcome.mp3` | `voice.jungle.area-welcome` |
+| `public/audio/voice/jungle-memory-welcome.mp3` | `voice.jungle.memory-welcome` |
+| `public/audio/voice/jungle-vine-station.mp3` | `voice.jungle.vine-station` |
+| `public/audio/voice/jungle-vine-line.mp3` | `voice.jungle.vine-line` |
+| `public/audio/voice/jungle-vine-done.mp3` | `voice.jungle.vine-done` |
+| `public/audio/voice/jungle-quiz-monkey.mp3` | `voice.jungle.quiz-monkey` |
+| `public/audio/voice/jungle-quiz-lion.mp3` | `voice.jungle.quiz-lion` |
+| `public/audio/voice/jungle-quiz-parrot.mp3` | `voice.jungle.quiz-parrot` |
+| `public/audio/voice/jungle-quiz-bananas.mp3` | `voice.jungle.quiz-bananas` |
+| `public/audio/voice/jungle-fb-monkey.mp3` | `voice.jungle.fb.monkey` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -424,7 +434,9 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 
 Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are **unchanged**. Every Safari explore call+fun-fact now has a voice-01 MP3. The eight Worlds Safari stations play their own welcome clip instead of the generic Games welcome. Detective praise stays visual + mouth-call. Letter A explore plays the A bio (“A says a like apple…”).
 
-**Farm Valley** (next island after Safari) is a closed kit on the same voice-01: area welcome, milk-cow hold/done, letter-trace and pen-count station prompts, four quiz spokenPrompts, all quiz option feedbacks, and every Pen Farm Count round line. Missing Farm lines stay quiet — no device narrator inside Farm Valley. Generic studio “Yes!” is not registered (would leak her voice onto other islands). Dynamic counting taps still wait.
+**Farm Valley** is a closed kit on the same voice-01: area welcome, milk-cow hold/done, letter-trace and pen-count station prompts, four quiz spokenPrompts, all quiz option feedbacks, and every Pen Farm Count round line. Missing Farm lines stay quiet. Generic studio “Yes!” is not registered (would leak her voice onto other islands). Dynamic counting taps still wait.
+
+**Jungle Canopy** is the next closed island: area welcome, canopy memory station, vine-swing hold/done, four quiz spokenPrompts, and the monkey correct feedback. Missing Jungle lines stay quiet — no device narrator on that island. Remaining quiz feedbacks wait.
 
 ## Mute keys (unchanged)
 

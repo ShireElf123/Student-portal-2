@@ -320,6 +320,11 @@ export function ToddlerWorldsNavigator({
         return;
       }
 
+      // Jungle canopy memory plays the station clip inside the toy.
+      if (activeActivity.areaId === "jungle-canopy" && activeActivity.type === "memory-match") {
+        return;
+      }
+
       if (activeActivity.type === "piano-melody") {
         speakText("Welcome to the Rainbow Piano! Tap the colorful keys to play sweet musical notes and nursery songs!", { pitch: 1.15 });
         return;
@@ -872,6 +877,8 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerMemoryGame
               pairs={playTheme.memory}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
               onAddStar={(amount) => onAddStar(amount ?? 1)}
               onComplete={() => completeWorldToy(activeActivity)}
             />
@@ -1190,9 +1197,7 @@ export function ToddlerWorldsNavigator({
             </div>
 
             <div className="space-y-1.5">
-              <h3 className="text-2xl sm:text-3xl font-black text-white">{dynamicSorting.title}</h3>
-              <p className="text-white text-base font-bold">{dynamicSorting.instruction}</p>
-              <div>
+              <h3 cl<div>
                 <button
                   type="button"
                   onClick={() => {
@@ -1913,6 +1918,16 @@ export function ToddlerWorldsNavigator({
                 <span className="block p-4 sm:p-5">
                   <h4 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">{zone.title}</h4>
                   <p className="mt-1 text-base font-bold text-slate-700">{zone.subtitle}</p>
+                </span>
+              </motion.button>
+            );
+          })}
+        </div>
+      </section>
+    </div>
+  );
+}
+xt-base font-bold text-slate-700">{zone.subtitle}</p>
                 </span>
               </motion.button>
             );

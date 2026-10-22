@@ -50,10 +50,14 @@ export function ToddlerMemoryGame({
   onAddStar,
   onComplete,
   pairs,
+  closedKit = false,
+  welcomeLine,
 }: {
   onAddStar?: (amt?: number) => void;
   onComplete?: () => void;
   pairs?: MemoryPair[];
+  closedKit?: boolean;
+  welcomeLine?: string;
 }) {
   const deckPairs = pairs && pairs.length >= 4 ? pairs : MEMORY_PAIRS;
   const [pairCount, setPairCount] = useState(6);
@@ -93,18 +97,27 @@ export function ToddlerMemoryGame({
     setIsWon(false);
     setMoves(0);
     soundEffects.playPop();
-    speakText("Find the matching friends! Tap two cards to turn them over!", { pitch: 1.2 });
+    speakText(closedKit ? welcomeLine || "" : "Find the matching friends! Tap two cards to turn them over!", {
+      pitch: 1.2,
+      closedKit,
+    });
   };
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      speakText("Welcome to Memory Match! Can you find the matching friends? Tap two cards to turn them over!", {
-        pitch: 1.2,
-        rate: 0.92,
-      });
+      speakText(
+        closedKit
+          ? welcomeLine || ""
+          : "Welcome to Memory Match! Can you find the matching friends? Tap two cards to turn them over!",
+        {
+          pitch: 1.2,
+          rate: 0.92,
+          closedKit,
+        },
+      );
     }, 240);
     return () => clearTimeout(timer);
-  }, []);
+  }, [closedKit, welcomeLine]);
 
   useEffect(() => () => clearGameTimers(), []);
 
@@ -127,7 +140,7 @@ export function ToddlerMemoryGame({
       if (firstCard.pairId === secondCard.pairId) {
         // MATCH!
         soundEffects.playSuccessChime();
-        speakText(`Match! You found the ${secondCard.name}!`, { pitch: 1.3 });
+        speakText(`Match! You found the ${secondCard.name}!`, { pitch: 1.3, closedKit });
         awardXP(20);
         payStars(1);
 
@@ -147,7 +160,7 @@ export function ToddlerMemoryGame({
               setIsWon(true);
               soundEffects.playFanfare();
               triggerCelebrationConfetti();
-              speakText("Hooray! You matched all the friends! You are a superstar!", { pitch: 1.2 });
+              speakText("Hooray! You matched all the friends! You are a superstar!", { pitch: 1.2, closedKit });
               awardXP(50);
               const firstClear = !boardPaid.current;
               payStars(3);

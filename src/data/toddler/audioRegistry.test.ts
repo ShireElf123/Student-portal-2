@@ -62,6 +62,16 @@ describe("audio registry", () => {
       "/audio/voice/farm-count-lambs.mp3",
       "/audio/voice/farm-count-bees.mp3",
       "/audio/voice/farm-count-turkeys.mp3",
+      "/audio/voice/jungle-area-welcome.mp3",
+      "/audio/voice/jungle-memory-welcome.mp3",
+      "/audio/voice/jungle-vine-station.mp3",
+      "/audio/voice/jungle-vine-line.mp3",
+      "/audio/voice/jungle-vine-done.mp3",
+      "/audio/voice/jungle-quiz-monkey.mp3",
+      "/audio/voice/jungle-quiz-lion.mp3",
+      "/audio/voice/jungle-quiz-parrot.mp3",
+      "/audio/voice/jungle-quiz-bananas.mp3",
+      "/audio/voice/jungle-fb-monkey.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -357,6 +367,16 @@ describe("audio registry", () => {
     expect(narrationClipForText("Count the chicks. How many?")?.id).toBe("voice.farm.count.chicks");
     expect(narrationClipForText("A baker's dozen in the nest. How many eggs?")?.id).toBe("voice.farm.count.eggs");
     expect(narrationClipForText("Nine turkeys. Four go in. How many still in the yard?")?.id).toBe("voice.farm.count.turkeys");
+  });
+
+  it("maps Jungle Canopy closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText("Jungle Canopy! Tall Treetops, Green Vines & Mysterious Calls. Let's explore together!")?.id,
+    ).toBe("voice.jungle.area-welcome");
+    expect(
+      narrationClipForText("Listen to the treetop chatter! Who is swinging on the vines shouting ooh ooh aah aah?")?.id,
+    ).toBe("voice.jungle.quiz-monkey");
+    expect(narrationClipForText("Hold the vine. Swing across.")?.id).toBe("voice.jungle.vine-line");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
