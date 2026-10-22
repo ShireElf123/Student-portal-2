@@ -77,7 +77,8 @@ function isClosedVoiceIsland(areaId?: string | null) {
     areaId === "farm-valley" ||
     areaId === "jungle-canopy" ||
     areaId === "ocean-reef" ||
-    areaId === "dino-valley"
+    areaId === "dino-valley" ||
+    areaId === "forest-trail"
   );
 }
 
@@ -327,7 +328,8 @@ export function ToddlerWorldsNavigator({
         (activeActivity.type === "letter-trace" ||
           activeActivity.type === "k1-studio" ||
           activeActivity.type === "memory-match" ||
-          activeActivity.type === "bubble-pop")
+          activeActivity.type === "bubble-pop" ||
+          activeActivity.type === "balloon-sky")
       ) {
         return;
       }
@@ -895,6 +897,8 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerBalloonSky
               letters={playTheme.balloonLetters}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
               onAddStar={(amount) => onAddStar(amount ?? 1)}
               onComplete={() => completeWorldToy(activeActivity)}
             />

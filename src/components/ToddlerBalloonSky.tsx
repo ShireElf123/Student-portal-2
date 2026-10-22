@@ -32,12 +32,14 @@ interface ToddlerBalloonSkyProps {
   onAddStar?: (amount?: number) => void;
   onComplete?: () => void;
   letters?: string[];
+  closedKit?: boolean;
+  welcomeLine?: string;
 }
 
 const DAILY_TARGET_STAR_GOAL = 10;
 const STATION_HIT_GOAL = 3;
 
-export function ToddlerBalloonSky({ onAddStar, onComplete, letters }: ToddlerBalloonSkyProps) {
+export function ToddlerBalloonSky({ onAddStar, onComplete, letters, closedKit = false, welcomeLine }: ToddlerBalloonSkyProps) {
   const letterSet = letters && letters.length >= 4 ? letters : LETTERS;
   const [balloons, setBalloons] = useState<Balloon[]>([]);
   const [targetLabel, setTargetLabel] = useState<string>("A");
@@ -84,10 +86,16 @@ export function ToddlerBalloonSky({ onAddStar, onComplete, letters }: ToddlerBal
     const interval = setInterval(() => spawnBalloon(), 2200);
 
     const speechTimer = setTimeout(() => {
-      speakText(`Welcome to Balloon Sky! Can you find and pop balloon ${targetLabel}?`, {
-        pitch: 1.3,
-        rate: 0.95,
-      });
+      speakText(
+        closedKit
+          ? welcomeLine || ""
+          : `Welcome to Balloon Sky! Can you find and pop balloon ${targetLabel}?`,
+        {
+          pitch: 1.3,
+          rate: 0.95,
+          closedKit,
+        },
+      );
     }, 150);
 
     return () => {
@@ -105,7 +113,7 @@ export function ToddlerBalloonSky({ onAddStar, onComplete, letters }: ToddlerBal
     setPoppedCount(poppedRef.current);
 
     // Speak letter or number
-    speakText(balloon.label, { pitch: 1.3, rate: 1.0 });
+    speakText(balloon.label, { pitch: 1.3, rate: 1.0, closedKit });
 
     const targetIsNumber = !isNaN(Number(targetLabel));
     const targetSkillId = targetIsNumber ? "math-k1-counting" : "read-k1-alphabet-letters";
@@ -152,7 +160,7 @@ export function ToddlerBalloonSky({ onAddStar, onComplete, letters }: ToddlerBal
       const nextTarget = nextLetters[Math.floor(Math.random() * nextLetters.length)];
       setTargetLabel(nextTarget);
       spawnBalloon(nextTarget);
-      speakText(`Great job! Now can you pop ${nextTarget}?`, { pitch: 1.3, rate: 0.95 });
+      speakText(`Great job! Now can you pop ${nextTarget}?`, { pitch: 1.3, rate: 0.95, closedKit });
     }
 
     if (poppedRef.current > 0 && poppedRef.current % 10 === 0) {

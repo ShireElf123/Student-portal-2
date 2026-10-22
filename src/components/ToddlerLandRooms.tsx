@@ -174,7 +174,8 @@ function Stage({
             playId === "milk-cow" ||
             playId === "vine-swing" ||
             playId === "feed-fish" ||
-            playId === "nest-eggs",
+            playId === "nest-eggs" ||
+            playId === "campfire",
         }),
       180,
     );
@@ -191,7 +192,8 @@ function Stage({
           playId === "milk-cow" ||
           playId === "vine-swing" ||
           playId === "feed-fish" ||
-          playId === "nest-eggs",
+          playId === "nest-eggs" ||
+          playId === "campfire",
       });
     }
   }, [done, copy.done]);

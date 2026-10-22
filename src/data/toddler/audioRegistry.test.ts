@@ -132,6 +132,16 @@ describe("audio registry", () => {
       "/audio/voice/dino-tracks-round.mp3",
       "/audio/voice/dino-tracks-toes.mp3",
       "/audio/voice/dino-tracks-tiny.mp3",
+      "/audio/voice/dino-tracks-tyre.mp3",
+      "/audio/voice/dino-tracks-drag.mp3",
+      "/audio/voice/dino-tracks-river.mp3",
+      "/audio/voice/dino-tracks-count.mp3",
+      "/audio/voice/dino-tracks-eggs.mp3",
+      "/audio/voice/dino-tracks-shake.mp3",
+      "/audio/voice/dino-tracks-ferns.mp3",
+      "/audio/voice/dino-tracks-legs.mp3",
+      "/audio/voice/dino-tracks-bone.mp3",
+      "/audio/voice/forest-area-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -473,6 +483,15 @@ describe("audio registry", () => {
       "voice.dino.fb.trex",
     );
     expect(narrationClipForText("Who walked in the valley?")?.id).toBe("voice.dino.tracks.welcome");
+    expect(narrationClipForText("A stone bone in the cliff. Is the dinosaur here now?")?.id).toBe(
+      "voice.dino.tracks.bone",
+    );
+  });
+
+  it("maps Forest Trail closed-kit welcome to voice-01", () => {
+    expect(
+      narrationClipForText("Forest Trail! Pinecones, Singing Birds & Mossy Pathways. Let's explore together!")?.id,
+    ).toBe("voice.forest.area-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
