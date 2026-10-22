@@ -692,6 +692,16 @@ describe("audio registry", () => {
       "/audio/voice/pond-fb-plane.mp3",
       "/audio/voice/pond-fb-bell.mp3",
       "/audio/voice/pond-letter-welcome.mp3",
+      "/audio/voice/pond-clue-letter.mp3",
+      "/audio/voice/pond-fb-p.mp3",
+      "/audio/voice/pond-fb-b.mp3",
+      "/audio/voice/pond-shape-welcome.mp3",
+      "/audio/voice/pond-clue-shape.mp3",
+      "/audio/voice/pond-fb-circle.mp3",
+      "/audio/voice/pond-fb-star.mp3",
+      "/audio/voice/pond-fb-square.mp3",
+      "/audio/voice/pond-banks-welcome.mp3",
+      "/audio/voice/pond-clue-banks.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1519,6 +1529,16 @@ describe("audio registry", () => {
       "voice.pond.clue.plop",
     );
     expect(narrationClipForText("Which letter starts pond?")?.id).toBe("voice.pond.letter-welcome");
+    expect(narrationClipForText("Pond starts with puh. Which letter?")?.id).toBe(
+      "voice.pond.clue.letter",
+    );
+    expect(narrationClipForText("What shape is the lily pad?")?.id).toBe("voice.pond.shape-welcome");
+    expect(narrationClipForText("A lily pad is round and flat. What shape?")?.id).toBe(
+      "voice.pond.clue.shape",
+    );
+    expect(narrationClipForText("Two and four frogs. How many?")?.id).toBe(
+      "voice.pond.banks-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
