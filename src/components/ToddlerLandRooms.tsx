@@ -190,7 +190,8 @@ function Stage({
             playId === "set-table" ||
             playId === "hang-wash" ||
             playId === "load-truck" ||
-            playId === "wash-bus",
+            playId === "wash-bus" ||
+            playId === "pack-bag",
         }),
       180,
     );
@@ -223,7 +224,8 @@ function Stage({
           playId === "set-table" ||
           playId === "hang-wash" ||
           playId === "load-truck" ||
-          playId === "wash-bus",
+          playId === "wash-bus" ||
+          playId === "pack-bag",
       });
     }
   }, [done, copy.done]);

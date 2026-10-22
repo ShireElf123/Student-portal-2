@@ -532,6 +532,16 @@ describe("audio registry", () => {
       "/audio/voice/street-wash-done.mp3",
       "/audio/voice/street-drive-welcome.mp3",
       "/audio/voice/street-busstop-welcome.mp3",
+      "/audio/voice/runway-area-welcome.mp3",
+      "/audio/voice/runway-whoosh-welcome.mp3",
+      "/audio/voice/runway-clue-whoosh.mp3",
+      "/audio/voice/runway-fb-plane.mp3",
+      "/audio/voice/runway-fb-cow.mp3",
+      "/audio/voice/runway-fb-sub.mp3",
+      "/audio/voice/runway-planes-welcome.mp3",
+      "/audio/voice/runway-clue-planes.mp3",
+      "/audio/voice/runway-fb-five.mp3",
+      "/audio/voice/runway-fb-apron.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1237,6 +1247,18 @@ describe("audio registry", () => {
     expect(narrationClipForText("Drive the bus down the high street!")?.id).toBe(
       "voice.street.drive-welcome",
     );
+  });
+
+  it("maps Windy Runway closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Windy Runway! Planes, hangars and a control tower. Let's explore together!",
+      )?.id,
+    ).toBe("voice.runway.area-welcome");
+    expect(narrationClipForText("Who whooshes down the runway?")?.id).toBe(
+      "voice.runway.whoosh-welcome",
+    );
+    expect(narrationClipForText("How many planes?")?.id).toBe("voice.runway.planes-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
