@@ -25,6 +25,8 @@ interface ToddlerAnimalSafariProps {
   onComplete?: () => void;
   animals?: SafariFriend[];
   sceneTitle?: string;
+  /** Worlds station spokenPrompt — her clip, not the generic Games welcome. */
+  exploreWelcome?: string;
   /** Worlds play already pays a worlds mission — do not also pay Games. */
   missionSurface?: "games" | "off";
 }
@@ -43,6 +45,7 @@ export function ToddlerAnimalSafari({
   onComplete,
   animals,
   sceneTitle = "Savanna Animal Detective",
+  exploreWelcome,
   missionSurface = "games",
 }: ToddlerAnimalSafariProps) {
   const roster = animals && animals.length >= 3 ? animals : DEFAULT_SAFARI_FRIENDS;
@@ -86,12 +89,12 @@ export function ToddlerAnimalSafari({
         playSafariVoiceLine(SAFARI_DETECTIVE_STEM_PROMPT);
         playSafariAnimalSfx(targetAnimal.id);
       } else {
-        playSafariVoiceLine(SAFARI_EXPLORE_WELCOME_PROMPT);
+        playSafariVoiceLine(exploreWelcome || SAFARI_EXPLORE_WELCOME_PROMPT);
       }
     }, 150);
 
     return () => clearTimeout(timer);
-  }, [activeMode]);
+  }, [activeMode, exploreWelcome]);
 
   // Never leave a scheduled round running after the game is closed.
   useEffect(() => clearCelebrationTimers, []);

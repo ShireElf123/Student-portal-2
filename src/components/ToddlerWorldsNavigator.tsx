@@ -296,6 +296,11 @@ export function ToddlerWorldsNavigator({
         return;
       }
 
+      // Safari owns its closed voice kit (station welcome + bios + mouth-calls).
+      if (activeActivity.type === "animal-safari") {
+        return;
+      }
+
       if (activeActivity.type === "piano-melody") {
         speakText("Welcome to the Rainbow Piano! Tap the colorful keys to play sweet musical notes and nursery songs!", { pitch: 1.15 });
         return;
@@ -858,6 +863,7 @@ export function ToddlerWorldsNavigator({
             <ToddlerAnimalSafari
               animals={playTheme.safari}
               sceneTitle={playTheme.safariTitle}
+              exploreWelcome={activeActivity.spokenPrompt}
               missionSurface="off"
               onAddStar={(amount) => onAddStar(amount ?? 1)}
               onComplete={() => completeWorldToy(activeActivity)}

@@ -14,6 +14,14 @@ describe("audio registry", () => {
     expect(EXPECTED_AUDIO_FILES).toEqual([
       "/audio/voice/narrator-safari-explore-welcome.mp3",
       "/audio/voice/narrator-safari-detective-stem.mp3",
+      "/audio/voice/safari-welcome-pasture.mp3",
+      "/audio/voice/safari-welcome-flower-bed.mp3",
+      "/audio/voice/safari-welcome-barnyard-tale.mp3",
+      "/audio/voice/safari-welcome-pond.mp3",
+      "/audio/voice/safari-welcome-night-walk.mp3",
+      "/audio/voice/safari-welcome-park.mp3",
+      "/audio/voice/safari-welcome-ice-floe.mp3",
+      "/audio/voice/safari-welcome-owl-wood.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -287,6 +295,12 @@ describe("audio registry", () => {
       funFact: "Cows chew clover and like a slow, sunny walk.",
     });
     expect(narrationClipForText(bio)?.id).toBe("voice.safari.bio.farm-cow");
+  });
+
+  it("maps pasture safari station welcome to voice-01", () => {
+    expect(
+      narrationClipForText("Let's walk the pasture safari and listen for animal friends!")?.id,
+    ).toBe("voice.safari.welcome.pasture");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

@@ -1,6 +1,6 @@
 # Toddler audio asset manifest (Safari kits)
 
-**Animal Safari** (the in-app Safari section — Games tab plus each world’s Safari station) uses **one owner-selected Arena voice** (`voice-01`): explore welcome, detective stem, and mouth-performed calls. Chat still cannot play or receive MP3s — hear them in the app after a Vercel push. If a file 404s, duck/cow/bird fall back to short Web Audio cartoon calls; other friends stay quiet (no device narrator inside Safari).
+**Animal Safari** (the in-app Safari section — Games tab plus each world’s Safari station) uses **one owner-selected Arena voice** (`voice-01`): explore welcome, per-station Worlds welcomes, detective stem, explore bios, and mouth-performed calls. Worlds does not also fire the device narrator on Safari stations. Chat still cannot play or receive MP3s — hear them in the app after a Vercel push. If a file 404s, duck/cow/bird fall back to short Web Audio cartoon calls; other friends stay quiet (no device narrator inside Safari).
 
 Do **not** claim phone playback is verified until the owner listens on a device.
 
@@ -12,6 +12,14 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 |---|---|
 | `public/audio/voice/narrator-safari-explore-welcome.mp3` | `voice.narrator.safari-explore-welcome` |
 | `public/audio/voice/narrator-safari-detective-stem.mp3` | `voice.narrator.safari-detective-stem` |
+| `public/audio/voice/safari-welcome-pasture.mp3` | `voice.safari.welcome.pasture` |
+| `public/audio/voice/safari-welcome-flower-bed.mp3` | `voice.safari.welcome.flower-bed` |
+| `public/audio/voice/safari-welcome-barnyard-tale.mp3` | `voice.safari.welcome.barnyard-tale` |
+| `public/audio/voice/safari-welcome-pond.mp3` | `voice.safari.welcome.pond` |
+| `public/audio/voice/safari-welcome-night-walk.mp3` | `voice.safari.welcome.night-walk` |
+| `public/audio/voice/safari-welcome-park.mp3` | `voice.safari.welcome.park` |
+| `public/audio/voice/safari-welcome-ice-floe.mp3` | `voice.safari.welcome.ice-floe` |
+| `public/audio/voice/safari-welcome-owl-wood.mp3` | `voice.safari.welcome.owl-wood` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -374,7 +382,7 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 
 ## What stays synthesised
 
-Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are **unchanged**. Every Safari explore call+fun-fact now has a voice-01 MP3. Detective praise stays visual + mouth-call. Letter A explore plays the A bio (“A says a like apple…”).
+Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are **unchanged**. Every Safari explore call+fun-fact now has a voice-01 MP3. The eight Worlds Safari stations play their own welcome clip instead of the generic Games welcome. Detective praise stays visual + mouth-call. Letter A explore plays the A bio (“A says a like apple…”).
 
 ## Mute keys (unchanged)
 
