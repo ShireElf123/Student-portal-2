@@ -39,6 +39,7 @@ import {
   isAreaUnlocked,
   ToddlerWorldProgressState,
 } from "../data/toddler/toddlerProgressManager";
+import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
 import {
   countingLevelForPlace,
   generateCountingScenario,
@@ -129,12 +130,18 @@ export function ToddlerWorldsNavigator({
     toyCreditedRef.current = activity.id;
     recordActivityCompletion(activity.worldId, activity.areaId, activity.id, activity.rewardStars);
     onAddStar(activity.rewardStars);
+    try {
+      payDailyMissionIfMatches("worlds", activity.worldId);
+    } catch {
+      // ignore
+    }
     if (
       activity.type === "color-lab" ||
       activity.type === "letter-trace" ||
       activity.type === "balloon-sky" ||
       activity.type === "animal-safari" ||
-      activity.type === "bubble-pop"
+      activity.type === "bubble-pop" ||
+      activity.type === "piano-melody"
     ) {
       setStayPlayDone(true);
       return;
@@ -149,7 +156,6 @@ export function ToddlerWorldsNavigator({
     "memory-match",
     "rhyme-garden",
     "k1-studio",
-    "piano-melody",
   ]);
 
   // Activity execution states
@@ -899,6 +905,14 @@ export function ToddlerWorldsNavigator({
               gameId={activeActivity.studioGameId as K1StudioGameId}
               onComplete={() => completeWorldToy(activeActivity)}
             />
+          </div>
+        )}
+        {((activeActivity.type === "open-play" && !activeActivity.openPlayId) ||
+          (activeActivity.type === "land-play" && !activeActivity.landPlayId) ||
+          (activeActivity.type === "k1-studio" && !activeActivity.studioGameId)) && (
+          <div className="rounded-[2rem] border-4 border-amber-400/40 bg-slate-950/70 p-6 text-center">
+            <p className="text-xl font-black text-white">This toy is packing up.</p>
+            <p className="mt-2 text-sm font-semibold text-white/80">Pick another Play tile on the trail.</p>
           </div>
         )}
 

@@ -33,7 +33,7 @@ import {
 import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import {
-  completeActiveMissionIfMatches,
+  payDailyMissionIfMatches,
   getDailyCount,
   recordDailyCount,
 } from "../data/toddler/toddlerDailyAdventure";
@@ -145,7 +145,7 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
       rate: 0.95,
     });
     try {
-      completeActiveMissionIfMatches("avatar-studio");
+      payDailyMissionIfMatches("avatar-studio");
     } catch {
       // ignore
     }

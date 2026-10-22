@@ -6,7 +6,7 @@ import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import {
-  completeActiveMissionIfMatches,
+  payDailyMissionIfMatches,
   recordDailyCount,
   recordDailySetMember,
 } from "../data/toddler/toddlerDailyAdventure";
@@ -167,7 +167,7 @@ export function ToddlerAnimalSafari({
       }
       if (solvesToday === 3) {
         try {
-          completeActiveMissionIfMatches("games", "animal-safari");
+          payDailyMissionIfMatches("games", "animal-safari");
         } catch {
           // ignore
         }

@@ -52,9 +52,7 @@ import {
   getExplorerRank,
   getTodayAdventure,
   getCompletedDailyMissionIds,
-  completeActiveMissionIfMatches,
-  recordPhonicsLetterTapped,
-  recordCountingCardTapped,
+  payDailyMissionIfMatches,
   TODDLER_STICKERS,
 } from "../data/toddler/toddlerDailyAdventure";
 import type { GameBlueprint } from "../contentEngine/types";
@@ -587,7 +585,7 @@ export function ToddlerWorldView({
         rate: 0.9,
       });
       try {
-        completeActiveMissionIfMatches("books");
+        payDailyMissionIfMatches("books");
       } catch {
         // ignore
       }

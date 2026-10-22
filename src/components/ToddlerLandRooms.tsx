@@ -163,7 +163,7 @@ function Stage({
   children: React.ReactNode;
   done: boolean;
 }) {
-  const copy = COPY[playId];
+  const copy = COPY[playId] ?? { title: "This land's room", line: "Pick another Play on the trail.", done: "All done." };
   useEffect(() => {
     const t = setTimeout(() => speakText(copy.line, { pitch: 1.2, rate: 0.92 }), 180);
     return () => {

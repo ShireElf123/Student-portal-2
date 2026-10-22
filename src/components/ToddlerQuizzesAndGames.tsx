@@ -23,6 +23,7 @@ import {
 } from "../utils/speechUtils";
 import { soundEffects } from "../utils/soundEffects";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
 import { ToddlerMemoryGame } from "./ToddlerMemoryGame";
 import { ToddlerBubblePopGame } from "./ToddlerBubblePopGame";
 import { ToddlerRhymeGame } from "./ToddlerRhymeGame";
@@ -87,7 +88,7 @@ const BONUS_EXPLORER_QUESTIONS: QuizQuestion[] = [
   { id: "q16", prompt: "Which tiny helper makes sweet honey?", spokenPrompt: "Which little buzzing friend visits flowers and helps make honey?", correctId: "bee", soundCue: "Bzzzz!", options: [{ id: "bee", label: "Busy Bee", emoji: "🐝", soundText: "Buzz buzz! I love flowers!" }, { id: "frog", label: "Frog", emoji: "🐸", soundText: "Ribbit ribbit!" }, { id: "duck", label: "Duck", emoji: "🦆", soundText: "Quack quack!" }, { id: "cat", label: "Kitten", emoji: "🐱", soundText: "Meow!" }] },
   { id: "q17", prompt: "Which animal lives in a cold, icy place and waddles?", spokenPrompt: "Who wears a black and white coat and waddles across the chilly ice?", correctId: "penguin", soundCue: "Waddle waddle!", options: [{ id: "penguin", label: "Penguin", emoji: "🐧", soundText: "Waddle, slide, splash!" }, { id: "camel", label: "Camel", emoji: "🐫", soundText: "I walk in the warm desert!" }, { id: "monkey", label: "Monkey", emoji: "🐵", soundText: "Ooh ooh aah aah!" }, { id: "cow", label: "Cow", emoji: "🐮", soundText: "Moo!" }] },
   { id: "q18", prompt: "What do plants need from the sky to help them grow?", spokenPrompt: "Plants drink rain and reach toward the warm sunshine. What shines in the daytime sky?", correctId: "sun", soundCue: "Shine bright!", options: [{ id: "sun", label: "Sunny Sun", emoji: "☀️", soundText: "Warm sunshine helps plants grow!" }, { id: "moon", label: "Moon", emoji: "🌙", soundText: "The moon glows at night!" }, { id: "snow", label: "Snowflake", emoji: "❄️", soundText: "Snow is cold and fluffy!" }, { id: "star", label: "Star", emoji: "⭐", soundText: "Stars twinkle at night!" }] },
-  { id: "q19", prompt: "Which shape has three straight sides?", spokenPrompt: "Let's count the sides together. One, two, three. Which shape has three sides?", correctId: "triangle", soundCue: "One, two, three!", options: [{ id: "triangle", label: "Triangle", emoji: "🔺", soundText: "Three sides make a triangle!" }, { id: "circle", label: "Circle", emoji: "🔶", soundText: "A circle is round!" }, { id: "square", label: "Square", emoji: "📗", soundText: "A square has four sides!" }, { id: "star", label: "Star", emoji: "⭐", soundText: "A star has pointy tips!" }] },
+  { id: "q19", prompt: "Which shape has three straight sides?", spokenPrompt: "Let's count the sides together. One, two, three. Which shape has three sides?", correctId: "triangle", soundCue: "One, two, three!", options: [{ id: "triangle", label: "Triangle", emoji: "🔺", soundText: "Three sides make a triangle!" }, { id: "circle", label: "Circle", emoji: "🔵", soundText: "A circle is round!" }, { id: "square", label: "Square", emoji: "📗", soundText: "A square has four sides!" }, { id: "star", label: "Star", emoji: "⭐", soundText: "A star has pointy tips!" }] },
   { id: "q20", prompt: "Which one is the number three?", spokenPrompt: "Listen carefully. Which number comes after two: one, two, three?", correctId: "three", soundCue: "1, 2, 3!", options: [{ id: "one", label: "One", emoji: "1️⃣", soundText: "One little sun!" }, { id: "three", label: "Three", emoji: "3️⃣", soundText: "One, two, three!" }, { id: "five", label: "Five", emoji: "5️⃣", soundText: "Five little stars!" }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "One, two!" }] },
   { id: "q21", prompt: "Which fruit is yellow and monkeys love to eat?", spokenPrompt: "Peel it, take a bite, and say yum! Which yellow fruit do monkeys love?", correctId: "banana", soundCue: "Yummy banana!", options: [{ id: "banana", label: "Banana", emoji: "🍌", soundText: "A tasty yellow banana!" }, { id: "apple", label: "Apple", emoji: "🍎", soundText: "Crunchy red apple!" }, { id: "grapes", label: "Grapes", emoji: "🍇", soundText: "Juicy grapes!" }, { id: "lemon", label: "Lemon", emoji: "🍋", soundText: "A sour yellow lemon!" }] },
   { id: "q22", prompt: "What should you do before crossing a road?", spokenPrompt: "We keep safe near roads. Before crossing with a grown-up, what should we do?", correctId: "stop", soundCue: "Stop, look, listen!", options: [{ id: "stop", label: "Stop and Look", emoji: "🛑", soundText: "Hold a grown-up's hand and look both ways!" }, { id: "run", label: "Run fast", emoji: "🏃", soundText: "Let's stay safe and walk with a grown-up!" }, { id: "play", label: "Play ball", emoji: "⚽", soundText: "Roads are not a place to play!" }, { id: "hide", label: "Hide", emoji: "🙈", soundText: "We need to see and listen carefully!" }] },
@@ -879,6 +880,11 @@ export function ToddlerQuizzesAndGames({
           setIsShapeCompleted(true);
           soundEffects.playFanfare();
           onAddStar(3);
+          try {
+            payDailyMissionIfMatches("games", "shape-match");
+          } catch {
+            // ignore
+          }
           setTimeout(() => {
             speakText("Hooray! You found all the beautiful shapes and colors! You are so smart!", {
               pitch: 1.25,
@@ -906,7 +912,8 @@ export function ToddlerQuizzesAndGames({
     } else {
       soundEffects.playGentleBoing();
       setWrongShapeShakeId(optionId);
-      speakText(`That's the ${chosen?.label}! Let's find ${currentShape.correctId}!`, {
+      const answerLabel = currentShape.options.find((option) => option.id === currentShape.correctId)?.label ?? "the right one";
+      speakText(`That's the ${chosen?.label}! Let's find ${answerLabel}!`, {
         pitch: 1.15,
         rate: 0.9,
       });
@@ -968,7 +975,17 @@ export function ToddlerQuizzesAndGames({
   const handlePopBubble = (bubble: BubbleItem) => {
     soundEffects.playPop();
     soundEffects.playStarSparkle();
-    setBubbles((prev) => prev.filter((b) => b.id !== bubble.id));
+    setBubbles((prev) => {
+      const next = prev.filter((b) => b.id !== bubble.id);
+      if (next.length === 0) {
+        try {
+          payDailyMissionIfMatches("games", "bubble-pop");
+        } catch {
+          // ignore
+        }
+      }
+      return next;
+    });
     setBubblesPoppedCount((prev) => prev + 1);
     onAddStar(1);
 
@@ -992,6 +1009,11 @@ export function ToddlerQuizzesAndGames({
     } else {
       soundEffects.playFanfare();
       onAddStar(3);
+      try {
+        payDailyMissionIfMatches("games", "feed-animal");
+      } catch {
+        // ignore
+      }
       speakText("Thank you so much! Benny Bunny is so full and happy! You earned three golden stars!", {
         pitch: 1.25,
       });

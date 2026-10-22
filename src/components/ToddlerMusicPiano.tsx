@@ -4,6 +4,7 @@ import { Music, Sparkles, Star, RotateCcw, Volume2, Award, Play } from "lucide-r
 import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
 import { awardXP, triggerCelebrationConfetti } from "../utils/gamification";
+import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
 
 interface KeyConfig {
   note: string;
@@ -169,6 +170,11 @@ export function ToddlerMusicPiano({ onAddStar, songIds }: ToddlerMusicPianoProps
           triggerCelebrationConfetti();
           awardXP(35, `Played ${selectedSong.title}`);
           if (onAddStar) onAddStar(2);
+          try {
+            payDailyMissionIfMatches("games", "rainbow-piano");
+          } catch {
+            // ignore
+          }
           speakText(`Bravo! You played ${selectedSong.title}! What a wonderful musician!`, {
             pitch: 1.3,
             rate: 0.95,

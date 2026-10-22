@@ -1,4 +1,5 @@
 import { getActiveLearnerId } from "../../utils/learnerBrain";
+import { awardStars, awardXP } from "../../utils/gamification";
 
 export interface DailyMission {
   id: string;
@@ -271,10 +272,31 @@ export function completeActiveMissionIfMatches(
   }
 }
 
+/** Mark a matching mission complete and pay its stars — only after real play. */
+export function payDailyMissionIfMatches(
+  targetTab: string,
+  targetSubactivity?: string,
+): { completed: boolean; mission?: DailyMission } {
+  const beforeCount = getCompletedDailyMissionIds().length;
+  const result = completeActiveMissionIfMatches(targetTab, targetSubactivity);
+  if (!result.completed || !result.mission) return result;
+  try {
+    awardStars(result.mission.starsReward);
+    awardXP(result.mission.xpReward, `Completed daily mission: ${result.mission.title}`);
+    if (beforeCount < 3 && getCompletedDailyMissionIds().length >= 3) {
+      awardStars(5);
+      awardXP(100, "Completed all daily missions bonus");
+    }
+  } catch {
+    // Stars are best-effort; the mission is already marked done.
+  }
+  return result;
+}
+
 export function recordPhonicsLetterTapped(letter: string): void {
   const result = recordDailySetMember("phonics-letters", letter);
   if (result.count >= 3) {
-    completeActiveMissionIfMatches("phonics");
+    payDailyMissionIfMatches("phonics");
   }
 }
 
@@ -289,6 +311,6 @@ export function recordFocusRoundDone(): void {
   const stamp = String(Date.now());
   const result = recordDailySetMember("focus-rounds", stamp.slice(-8));
   if (result.count >= 3) {
-    completeActiveMissionIfMatches("focus");
+    payDailyMissionIfMatches("focus");
   }
 }

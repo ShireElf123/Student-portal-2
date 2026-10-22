@@ -13,12 +13,14 @@
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { setActiveLearnerId } from "../../utils/learnerBrain";
+import { getGamificationState } from "../../utils/gamification";
 import {
   completeActiveMissionIfMatches,
   getCompletedDailyMissionIds,
   getDailyCount,
   getTodayAdventure,
   markDailyMissionCompleted,
+  payDailyMissionIfMatches,
   recordCountingCardTapped,
   recordDailyCount,
   recordDailySetMember,
@@ -126,6 +128,18 @@ describe("mission completion", () => {
 
     expect(result.mission?.id).not.toBe(withSubactivity!.id);
     expect(getCompletedDailyMissionIds()).not.toContain(withSubactivity!.id);
+  });
+
+  it("pays stars only when play matches the mission, not twice", () => {
+    const mission = getTodayAdventure().missions.find((item) => item.targetSubactivity) ?? getTodayAdventure().missions[0];
+    const before = getGamificationState().starsCount;
+    const first = payDailyMissionIfMatches(mission.targetTab, mission.targetSubactivity);
+    expect(first.completed).toBe(true);
+    expect(getGamificationState().starsCount).toBeGreaterThanOrEqual(before + mission.starsReward);
+    const after = getGamificationState().starsCount;
+    const second = payDailyMissionIfMatches(mission.targetTab, mission.targetSubactivity);
+    expect(second.completed).toBe(false);
+    expect(getGamificationState().starsCount).toBe(after);
   });
 
   it("reports nothing to complete once today's missions are done", () => {

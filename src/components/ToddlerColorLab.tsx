@@ -5,6 +5,7 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
 import { triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
 import type { MixFlavor } from "../data/toddler/toddlerWorldPlayThemes";
 
 interface ColorDrop {
@@ -273,6 +274,11 @@ export function ToddlerColorLab({
           if (!rewardPaid.current) {
             rewardPaid.current = true;
             onAddStar?.(1);
+            try {
+              payDailyMissionIfMatches("games", "color-magic");
+            } catch {
+              // ignore
+            }
           }
 
           try {

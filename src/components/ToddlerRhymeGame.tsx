@@ -5,6 +5,7 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { awardXP, awardStars, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
 
 interface RhymeQuestion {
   id: string;
@@ -303,6 +304,11 @@ export function ToddlerRhymeGame({
           if (onAddStar) onAddStar(3);
           else awardStars(3);
           onComplete?.();
+          try {
+            payDailyMissionIfMatches("games", "rhyme-time");
+          } catch {
+            // ignore
+          }
         }
       }, 1500);
     } else {

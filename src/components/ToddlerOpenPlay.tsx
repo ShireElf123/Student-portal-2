@@ -42,6 +42,15 @@ export function ToddlerOpenPlay({
   const copy = COPY[playId];
   const still = TOY_STILL[playId];
 
+  if (!copy) {
+    return (
+      <div className="rounded-[2rem] border-4 border-amber-400/40 bg-slate-950/70 p-6 text-center">
+        <p className="text-xl font-black text-white">This toy is packing up.</p>
+        <p className="mt-2 text-sm font-semibold text-white/80">Pick another Play tile on the trail.</p>
+      </div>
+    );
+  }
+
   useEffect(() => {
     const t = setTimeout(() => speakText(copy.line, { pitch: 1.2, rate: 0.92 }), 200);
     return () => {
