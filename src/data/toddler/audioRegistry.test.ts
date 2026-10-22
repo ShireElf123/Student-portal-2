@@ -252,6 +252,16 @@ describe("audio registry", () => {
       "/audio/voice/music-rhyme-drum.mp3",
       "/audio/voice/music-rhyme-art.mp3",
       "/audio/voice/music-rhyme-note.mp3",
+      "/audio/voice/music-rhyme-star.mp3",
+      "/audio/voice/music-rhyme-red.mp3",
+      "/audio/voice/music-rhyme-blue.mp3",
+      "/audio/voice/music-rhyme-clay.mp3",
+      "/audio/voice/music-rhyme-mark.mp3",
+      "/audio/voice/music-rhyme-dot.mp3",
+      "/audio/voice/music-rhyme-tune.mp3",
+      "/audio/voice/music-rhyme-clip.mp3",
+      "/audio/voice/music-rhyme-fold.mp3",
+      "/audio/voice/pattern-area-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -708,6 +718,15 @@ describe("audio registry", () => {
       narrationClipForText("Listen to the notes! Who sings high up in the sky like a sweet flute?")?.id,
     ).toBe("voice.music.quiz-flute");
     expect(narrationClipForText("What rhymes with Drum in the music garden?")?.id).toBe("voice.music.rhyme-drum");
+    expect(narrationClipForText("What rhymes with Fold in the atelier?")?.id).toBe("voice.music.rhyme-fold");
+  });
+
+  it("maps Pattern Workshop closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Pattern Workshop! AB Patterns, Rhythm Chains & Matching Shapes. Let's explore together!",
+      )?.id,
+    ).toBe("voice.pattern.area-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

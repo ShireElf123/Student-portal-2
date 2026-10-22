@@ -250,6 +250,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/music-rhyme-drum.mp3` | `voice.music.rhyme-drum` |
 | `public/audio/voice/music-rhyme-art.mp3` | `voice.music.rhyme-art` |
 | `public/audio/voice/music-rhyme-note.mp3` | `voice.music.rhyme-note` |
+| `public/audio/voice/music-rhyme-star.mp3` | `voice.music.rhyme-star` |
+| `public/audio/voice/music-rhyme-red.mp3` | `voice.music.rhyme-red` |
+| `public/audio/voice/music-rhyme-blue.mp3` | `voice.music.rhyme-blue` |
+| `public/audio/voice/music-rhyme-clay.mp3` | `voice.music.rhyme-clay` |
+| `public/audio/voice/music-rhyme-mark.mp3` | `voice.music.rhyme-mark` |
+| `public/audio/voice/music-rhyme-dot.mp3` | `voice.music.rhyme-dot` |
+| `public/audio/voice/music-rhyme-tune.mp3` | `voice.music.rhyme-tune` |
+| `public/audio/voice/music-rhyme-clip.mp3` | `voice.music.rhyme-clip` |
+| `public/audio/voice/music-rhyme-fold.mp3` | `voice.music.rhyme-fold` |
+| `public/audio/voice/pattern-area-welcome.mp3` | `voice.pattern.area-welcome` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -632,7 +642,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Color Magic Studio** unique spoken mix phrases are complete on voice-01. Drop names stay quiet.
 
-**Music Garden** is a closed island: area welcome, drums, pitch quiz plus flute/tuba feedbacks, and the first seven rhyme rounds (paint through note). Remaining creative-world rhyme rounds still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Music Garden** unique spoken lines are complete on voice-01.
+
+**Pattern Workshop** is the next closed island: area welcome only so far. Bead memory station, fruit pattern quiz, and option feedbacks still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
