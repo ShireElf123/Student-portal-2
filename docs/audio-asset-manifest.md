@@ -32,6 +32,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/safari-bio-tiger.mp3` | `voice.safari.bio.tiger` |
 | `public/audio/voice/safari-bio-snake.mp3` | `voice.safari.bio.snake` |
 | `public/audio/voice/safari-bio-gorilla.mp3` | `voice.safari.bio.gorilla` |
+| `public/audio/voice/safari-bio-jungle-monkey.mp3` | `voice.safari.bio.jungle-monkey` |
+| `public/audio/voice/safari-bio-jungle-frog.mp3` | `voice.safari.bio.jungle-frog` |
+| `public/audio/voice/safari-bio-sloth.mp3` | `voice.safari.bio.sloth` |
+| `public/audio/voice/safari-bio-leopard.mp3` | `voice.safari.bio.leopard` |
+| `public/audio/voice/safari-bio-penguin.mp3` | `voice.safari.bio.penguin` |
+| `public/audio/voice/safari-bio-seal.mp3` | `voice.safari.bio.seal` |
+| `public/audio/voice/safari-bio-bear.mp3` | `voice.safari.bio.bear` |
+| `public/audio/voice/safari-bio-whale.mp3` | `voice.safari.bio.whale` |
+| `public/audio/voice/safari-bio-fox.mp3` | `voice.safari.bio.fox` |
+| `public/audio/voice/safari-bio-owl.mp3` | `voice.safari.bio.owl` |
 | `public/audio/sfx/animal-lion.mp3` | `sfx.animal.lion` |
 | `public/audio/sfx/animal-elephant.mp3` | `sfx.animal.elephant` |
 | `public/audio/sfx/animal-monkey.mp3` | `sfx.animal.monkey` |
