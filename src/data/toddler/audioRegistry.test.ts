@@ -622,6 +622,16 @@ describe("audio registry", () => {
       "/audio/voice/flower-spots-welcome.mp3",
       "/audio/voice/flower-clue-spots.mp3",
       "/audio/voice/flower-fb-ladybird.mp3",
+      "/audio/voice/flower-firefly-station.mp3",
+      "/audio/voice/flower-firefly-line.mp3",
+      "/audio/voice/flower-firefly-done.mp3",
+      "/audio/voice/flower-letter-trace.mp3",
+      "/audio/voice/flower-fb-whale.mp3",
+      "/audio/voice/flower-fb-bus.mp3",
+      "/audio/voice/flower-buzz-welcome.mp3",
+      "/audio/voice/flower-fb-bee.mp3",
+      "/audio/voice/flower-fb-frog.mp3",
+      "/audio/voice/flower-fb-owl.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1378,6 +1388,19 @@ describe("audio registry", () => {
     ).toBe("voice.flower.area-welcome");
     expect(narrationClipForText("Who has black spots on a red back?")?.id).toBe(
       "voice.flower.spots-welcome",
+    );
+    expect(narrationClipForText("Catch the fireflies in the flower bed!")?.id).toBe(
+      "voice.flower.firefly-station",
+    );
+    expect(narrationClipForText("Tap six glow-bugs into the jar.")?.id).toBe(
+      "voice.flower.firefly-line",
+    );
+    expect(narrationClipForText("A lantern of tiny stars!")?.id).toBe("voice.flower.firefly-done");
+    expect(narrationClipForText("Trace the garden letter with your finger!")?.id).toBe(
+      "voice.flower.letter-trace",
+    );
+    expect(narrationClipForText("Who is buzzing in the flower?")?.id).toBe(
+      "voice.flower.buzz-welcome",
     );
   });
 
