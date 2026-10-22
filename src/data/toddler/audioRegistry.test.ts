@@ -122,6 +122,16 @@ describe("audio registry", () => {
       "/audio/voice/dino-nest-done.mp3",
       "/audio/voice/dino-quiz-neck.mp3",
       "/audio/voice/dino-quiz-roar.mp3",
+      "/audio/voice/dino-fb-brachio.mp3",
+      "/audio/voice/dino-fb-crab.mp3",
+      "/audio/voice/dino-fb-duck.mp3",
+      "/audio/voice/dino-fb-trex.mp3",
+      "/audio/voice/dino-fb-mouse.mp3",
+      "/audio/voice/dino-fb-turtle.mp3",
+      "/audio/voice/dino-tracks-welcome.mp3",
+      "/audio/voice/dino-tracks-round.mp3",
+      "/audio/voice/dino-tracks-toes.mp3",
+      "/audio/voice/dino-tracks-tiny.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -459,6 +469,10 @@ describe("audio registry", () => {
       )?.id,
     ).toBe("voice.dino.quiz-neck");
     expect(narrationClipForText("Drag four eggs into the nest.")?.id).toBe("voice.dino.nest-line");
+    expect(narrationClipForText("ROOOOAR! Giant T-Rex takes big stomping steps across Dino Valley!")?.id).toBe(
+      "voice.dino.fb.trex",
+    );
+    expect(narrationClipForText("Who walked in the valley?")?.id).toBe("voice.dino.tracks.welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

@@ -120,6 +120,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/dino-nest-done.mp3` | `voice.dino.nest-done` |
 | `public/audio/voice/dino-quiz-neck.mp3` | `voice.dino.quiz-neck` |
 | `public/audio/voice/dino-quiz-roar.mp3` | `voice.dino.quiz-roar` |
+| `public/audio/voice/dino-fb-brachio.mp3` | `voice.dino.fb.brachio` |
+| `public/audio/voice/dino-fb-crab.mp3` | `voice.dino.fb.crab` |
+| `public/audio/voice/dino-fb-duck.mp3` | `voice.dino.fb.duck` |
+| `public/audio/voice/dino-fb-trex.mp3` | `voice.dino.fb.trex` |
+| `public/audio/voice/dino-fb-mouse.mp3` | `voice.dino.fb.mouse` |
+| `public/audio/voice/dino-fb-turtle.mp3` | `voice.dino.fb.turtle` |
+| `public/audio/voice/dino-tracks-welcome.mp3` | `voice.dino.tracks.welcome` |
+| `public/audio/voice/dino-tracks-round.mp3` | `voice.dino.tracks.round` |
+| `public/audio/voice/dino-tracks-toes.mp3` | `voice.dino.tracks.toes` |
+| `public/audio/voice/dino-tracks-tiny.mp3` | `voice.dino.tracks.tiny` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -490,7 +500,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Ocean Reef** unique spoken lines are complete on voice-01 (Reef Sort through plane).
 
-**Dino Valley** is the next closed island: area welcome, bone memory, nest eggs hold/done, and two quiz prompts. Missing Dino lines stay quiet. Quiz option feedbacks and dino-tracks studio rounds still wait.
+**Dino Valley** is a closed island: area welcome, bone memory, nest eggs, two quiz prompts and all option feedbacks, plus Dino Tracks station and the first three rounds. Missing Dino lines stay quiet. Later Dino Tracks rounds still wait.
 
 ## Mute keys (unchanged)
 
