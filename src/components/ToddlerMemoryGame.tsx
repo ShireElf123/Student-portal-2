@@ -63,6 +63,13 @@ export function ToddlerMemoryGame({
   const [isWon, setIsWon] = useState<boolean>(false);
   const [moves, setMoves] = useState<number>(0);
   const gameTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const boardPaid = useRef(false);
+
+  const payStars = (amount: number) => {
+    if (boardPaid.current) return;
+    if (onAddStar) onAddStar(amount);
+    else awardStars(amount);
+  };
 
   const scheduleGameTimer = (callback: () => void, delay: number) => {
     const timer = setTimeout(() => {
@@ -122,8 +129,7 @@ export function ToddlerMemoryGame({
         soundEffects.playSuccessChime();
         speakText(`Match! You found the ${secondCard.name}!`, { pitch: 1.3 });
         awardXP(20);
-        if (onAddStar) onAddStar(1);
-        else awardStars(1);
+        payStars(1);
 
         const nextMatchCount = matchesCount + 1;
         scheduleGameTimer(() => {
@@ -143,9 +149,10 @@ export function ToddlerMemoryGame({
               triggerCelebrationConfetti();
               speakText("Hooray! You matched all the friends! You are a superstar!", { pitch: 1.2 });
               awardXP(50);
-              if (onAddStar) onAddStar(3);
-              else awardStars(3);
-              onComplete?.();
+              const firstClear = !boardPaid.current;
+              payStars(3);
+              boardPaid.current = true;
+              if (firstClear) onComplete?.();
 
               try {
                 recordLearningEvent({
@@ -238,6 +245,7 @@ export function ToddlerMemoryGame({
             return (
               <motion.button
                 key={card.id}
+                data-testid={`memory-card-${card.pairId}-${card.id}`}
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleCardClick(card)}

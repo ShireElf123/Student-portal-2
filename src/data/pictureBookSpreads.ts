@@ -465,6 +465,7 @@ export const PICTURE_BOOK_SPREADS: Record<string, string> = {
   "safari-alphabet:23": "/spreads/safari-alphabet-23.jpg",
   "safari-alphabet:24": "/spreads/safari-alphabet-24.jpg",
   "safari-alphabet:25": "/spreads/safari-alphabet-25.jpg",
+  "safari-alphabet:26": "/spreads/safari-alphabet-26.jpg",
   "garden-counting:1": "/spreads/garden-counting-1.jpg",
   "garden-counting:2": "/spreads/garden-counting-2.jpg",
   "garden-counting:3": "/spreads/garden-counting-3.jpg",

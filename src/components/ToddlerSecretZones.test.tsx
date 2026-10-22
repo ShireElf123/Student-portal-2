@@ -169,4 +169,20 @@ describe("secret rooms", () => {
     expect(second.container.textContent).toContain("Pearl pouch");
     expect(second.container.textContent).not.toContain("Royal Pearl");
   });
+
+  it("migrates legacy device-wide finds once, then ignores malformed storage", () => {
+    localStorage.setItem("toddler-secret-zone-finds", JSON.stringify(["zone-dino-cave"]));
+    learner.id = "learner-a";
+    expect(secretZoneIsFound("zone-dino-cave")).toBe(true);
+    expect(localStorage.getItem("toddler-secret-zone-finds")).toBeNull();
+    expect(localStorage.getItem("toddler-secret-zone-finds:learner-a")).toContain("zone-dino-cave");
+
+    learner.id = "learner-b";
+    expect(secretZoneIsFound("zone-dino-cave")).toBe(false);
+
+    localStorage.setItem("toddler-secret-zone-finds:learner-b", "{not-json");
+    expect(secretZoneIsFound("zone-coral-cavern")).toBe(false);
+    localStorage.setItem("toddler-secret-zone-finds:learner-b", JSON.stringify({ found: true }));
+    expect(secretZoneIsFound("zone-coral-cavern")).toBe(false);
+  });
 });

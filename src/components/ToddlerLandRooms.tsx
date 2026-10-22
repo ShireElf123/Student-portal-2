@@ -1456,7 +1456,7 @@ function TenDots({ onAddStar }: { onAddStar?: () => void }) {
                 type="button"
                 data-testid={`counter-${i}`}
                 className="h-12 w-12 rounded-full bg-amber-300 border-4 border-white touch-none"
-                {...bindFollowDrag(dragging, i, "🟡", setGhost, drop, () => filledRef.current.includes(i))}
+                {...bindFollowDrag(dragging, i, "💛", setGhost, drop, () => filledRef.current.includes(i))}
               />
             )
           )}

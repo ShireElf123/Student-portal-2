@@ -149,7 +149,18 @@ export function ToddlerPlayhouse({
       ) : (
         <div className={`p-5 sm:p-8 space-y-4 bg-gradient-to-b ${scene.bgGradient}`}>
           <div className="text-center">
-            <div className="text-6xl sm:text-8xl mb-2">{scene.illustration}</div>
+            <div className="relative mx-auto mb-3 h-36 sm:h-48 w-full overflow-hidden rounded-[1.75rem] border-4 border-white/70 shadow-lg">
+              <img
+                src={show.coverImage ?? PLAYHOUSE_COVERS[show.id] ?? "/covers/playhouse-curtain.jpg"}
+                alt=""
+                width={800}
+                height={448}
+                decoding="async"
+                className="absolute inset-0 h-full w-full object-cover"
+                data-testid="playhouse-scene-art"
+              />
+              <span className="absolute bottom-2 right-2 rounded-2xl bg-white/90 px-2 py-1 text-3xl shadow">{scene.illustration}</span>
+            </div>
             <p className="text-xs font-black uppercase tracking-wider opacity-80">{scene.setting}</p>
             <h4 className="text-2xl font-black">{scene.title}</h4>
           </div>

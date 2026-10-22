@@ -51,4 +51,38 @@ describe("Quiet TimerBar", () => {
     });
     expect(late).not.toHaveBeenCalled();
   });
+
+  const tick = async (times: number) => {
+    for (let i = 0; i < times; i += 1) {
+      await act(async () => {
+        vi.advanceTimersByTime(1000);
+      });
+    }
+  };
+
+  it("pauses without resetting, then resumes the remaining seconds", async () => {
+    vi.useFakeTimers();
+    const onDone = vi.fn();
+    const { rerender, getByTestId } = render(<TimerBar seconds={5} running onDone={onDone} />);
+    await tick(2);
+    expect(getByTestId("quiet-seconds-left").textContent).toBe("3s");
+    rerender(<TimerBar seconds={5} running={false} onDone={onDone} />);
+    await tick(4);
+    expect(getByTestId("quiet-seconds-left").textContent).toBe("3s");
+    expect(onDone).not.toHaveBeenCalled();
+    rerender(<TimerBar seconds={5} running onDone={onDone} />);
+    await tick(3);
+    expect(onDone).toHaveBeenCalledTimes(1);
+  });
+
+  it("starts a fresh countdown when resetToken changes", async () => {
+    vi.useFakeTimers();
+    const onDone = vi.fn();
+    const { rerender, getByTestId } = render(<TimerBar seconds={4} running resetToken={0} onDone={onDone} />);
+    await tick(2);
+    rerender(<TimerBar seconds={4} running resetToken={1} onDone={onDone} />);
+    expect(getByTestId("quiet-seconds-left").textContent).toBe("4s");
+    await tick(4);
+    expect(onDone).toHaveBeenCalledTimes(1);
+  });
 });

@@ -64,18 +64,29 @@ export function secretZoneFindsStorageKey(learnerId = getActiveLearnerId()): str
   return `toddler-secret-zone-finds:${learnerId}`;
 }
 
-function readFoundIds(learnerId = getActiveLearnerId()): string[] {
+function parseFoundIds(raw: string | null): string[] | null {
+  if (raw == null) return null;
   try {
-    const namespaced = localStorage.getItem(secretZoneFindsStorageKey(learnerId));
-    if (namespaced) return JSON.parse(namespaced) as string[];
-    const legacy = localStorage.getItem(LEGACY_FINDS_KEY);
-    if (!legacy) return [];
-    localStorage.setItem(secretZoneFindsStorageKey(learnerId), legacy);
-    localStorage.removeItem(LEGACY_FINDS_KEY);
-    return JSON.parse(legacy) as string[];
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((id): id is string => typeof id === "string");
   } catch {
     return [];
   }
+}
+
+function readFoundIds(learnerId = getActiveLearnerId()): string[] {
+  const namespaced = parseFoundIds(localStorage.getItem(secretZoneFindsStorageKey(learnerId)));
+  if (namespaced) return namespaced;
+  const legacy = parseFoundIds(localStorage.getItem(LEGACY_FINDS_KEY));
+  if (!legacy) return [];
+  try {
+    localStorage.setItem(secretZoneFindsStorageKey(learnerId), JSON.stringify(legacy));
+    localStorage.removeItem(LEGACY_FINDS_KEY);
+  } catch {
+    /* ignore quota */
+  }
+  return legacy;
 }
 
 export function secretZoneIsFound(zoneId: string, learnerId = getActiveLearnerId()): boolean {

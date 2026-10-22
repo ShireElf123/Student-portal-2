@@ -36,7 +36,17 @@ const MODES: { id: Mode; label: string; emoji: string }[] = [
   { id: "quiet", label: "Quiet", emoji: "⏳" },
 ];
 
-export function TimerBar({ seconds, running, onDone }: { seconds: number; running: boolean; onDone: () => void }) {
+export function TimerBar({
+  seconds,
+  running,
+  resetToken = 0,
+  onDone,
+}: {
+  seconds: number;
+  running: boolean;
+  resetToken?: number;
+  onDone: () => void;
+}) {
   const [left, setLeft] = useState(seconds);
   const fired = React.useRef(false);
   const onDoneRef = React.useRef(onDone);
@@ -45,7 +55,7 @@ export function TimerBar({ seconds, running, onDone }: { seconds: number; runnin
   useEffect(() => {
     fired.current = false;
     setLeft(seconds);
-  }, [seconds, running]);
+  }, [seconds, resetToken]);
 
   useEffect(() => {
     if (!running || fired.current) return;
@@ -61,9 +71,14 @@ export function TimerBar({ seconds, running, onDone }: { seconds: number; runnin
   const pct = Math.max(0, Math.min(100, (left / seconds) * 100));
   return (
     <div className="mt-4">
-      <p className="text-4xl font-black tabular-nums mb-2">{left}s</p>
+      <p className="text-4xl font-black tabular-nums mb-2" data-testid="quiet-seconds-left">
+        {left}s
+      </p>
       <div className="h-5 rounded-full bg-teal-100 border-2 border-teal-400 overflow-hidden">
-        <div className="h-full bg-teal-500 transition-all duration-1000 linear" style={{ width: `${pct}%` }} />
+        <div
+          className="h-full bg-teal-500 transition-all duration-1000 linear motion-reduce:transition-none"
+          style={{ width: `${pct}%` }}
+        />
       </div>
     </div>
   );
@@ -91,6 +106,8 @@ export function ToddlerFocusBoard({
   const [holdMs, setHoldMs] = useState(0);
   const [holding, setHolding] = useState(false);
   const [timerOn, setTimerOn] = useState(false);
+  const [quietResetToken, setQuietResetToken] = useState(0);
+  const [quietStarted, setQuietStarted] = useState(false);
   const [breathStep, setBreathStep] = useState(0);
   const [lookHits, setLookHits] = useState<number[]>([]);
   const [freezeLeft, setFreezeLeft] = useState(0);
@@ -510,6 +527,8 @@ export function ToddlerFocusBoard({
                 onClick={() => {
                   setQuiet(item);
                   setTimerOn(false);
+                  setQuietStarted(false);
+                  setQuietResetToken((token) => token + 1);
                   speakText(item.spoken, { pitch: 1.05, rate: 0.86 });
                 }}
                 className={`min-h-16 rounded-2xl px-3 py-2 font-black border-4 ${quiet.id === item.id ? "bg-teal-200 border-teal-700" : ghost}`}
@@ -520,11 +539,13 @@ export function ToddlerFocusBoard({
           </div>
           <p className="text-5xl mb-2">{quiet.emoji}</p>
           <p className="text-lg font-black mb-3">{quiet.spoken}</p>
-          {!timerOn ? (
+          {!quietStarted ? (
             <button
               type="button"
               className="block min-h-16 rounded-full bg-teal-400 px-8 py-3 text-xl font-black text-teal-950 border-b-4 border-teal-700"
               onClick={() => {
+                setQuietResetToken((token) => token + 1);
+                setQuietStarted(true);
                 setTimerOn(true);
                 speakText(quiet.spoken, { pitch: 1.05, rate: 0.86 });
               }}
@@ -532,15 +553,39 @@ export function ToddlerFocusBoard({
               Start quiet
             </button>
           ) : (
-            <TimerBar
-              seconds={quiet.seconds}
-              running={timerOn}
-              onDone={() => {
-                setTimerOn(false);
-                finishRound();
-                speakText("The body is quieter. Ready to learn if you want.", { pitch: 1.08, rate: 0.88 });
-              }}
-            />
+            <div>
+              <TimerBar
+                seconds={quiet.seconds}
+                running={timerOn}
+                resetToken={quietResetToken}
+                onDone={() => {
+                  setTimerOn(false);
+                  setQuietStarted(false);
+                  finishRound();
+                  speakText("The body is quieter. Ready to learn if you want.", { pitch: 1.08, rate: 0.88 });
+                }}
+              />
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  className="min-h-12 rounded-full bg-white px-5 py-2 font-black text-teal-950 border-b-4 border-teal-300"
+                  onClick={() => setTimerOn((on) => !on)}
+                >
+                  {timerOn ? "Pause" : "Resume"}
+                </button>
+                <button
+                  type="button"
+                  className="min-h-12 rounded-full bg-teal-100 px-5 py-2 font-black text-teal-950 border-b-4 border-teal-300"
+                  onClick={() => {
+                    setQuietResetToken((token) => token + 1);
+                    setTimerOn(true);
+                    setQuietStarted(true);
+                  }}
+                >
+                  Start over
+                </button>
+              </div>
+            </div>
           )}
           {onReadyLearn && (
             <button
