@@ -162,6 +162,16 @@ describe("audio registry", () => {
       "/audio/voice/weather-puddle-done.mp3",
       "/audio/voice/weather-quiz-rain.mp3",
       "/audio/voice/weather-quiz-sun.mp3",
+      "/audio/voice/weather-fb-umbrella.mp3",
+      "/audio/voice/weather-fb-sunglasses.mp3",
+      "/audio/voice/weather-fb-swimsuit.mp3",
+      "/audio/voice/weather-fb-sun.mp3",
+      "/audio/voice/weather-fb-moon.mp3",
+      "/audio/voice/weather-fb-cloud.mp3",
+      "/audio/voice/weather-porch-rain.mp3",
+      "/audio/voice/weather-porch-sun.mp3",
+      "/audio/voice/weather-porch-wind.mp3",
+      "/audio/voice/weather-porch-snow.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -531,6 +541,12 @@ describe("audio registry", () => {
       narrationClipForText("Pitter patter rain is falling! What do we pop open to keep our head dry?")?.id,
     ).toBe("voice.weather.quiz-rain");
     expect(narrationClipForText("Drag the boot through the puddles.")?.id).toBe("voice.weather.puddle-line");
+    expect(narrationClipForText("Pop! The umbrella shields us from every cool raindrop!")?.id).toBe(
+      "voice.weather.fb.umbrella",
+    );
+    expect(narrationClipForText("It is raining on the porch. What should Pip wear?")?.id).toBe(
+      "voice.weather.porch-rain",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

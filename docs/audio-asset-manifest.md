@@ -160,6 +160,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/weather-puddle-done.mp3` | `voice.weather.puddle-done` |
 | `public/audio/voice/weather-quiz-rain.mp3` | `voice.weather.quiz-rain` |
 | `public/audio/voice/weather-quiz-sun.mp3` | `voice.weather.quiz-sun` |
+| `public/audio/voice/weather-fb-umbrella.mp3` | `voice.weather.fb.umbrella` |
+| `public/audio/voice/weather-fb-sunglasses.mp3` | `voice.weather.fb.sunglasses` |
+| `public/audio/voice/weather-fb-swimsuit.mp3` | `voice.weather.fb.swimsuit` |
+| `public/audio/voice/weather-fb-sun.mp3` | `voice.weather.fb.sun` |
+| `public/audio/voice/weather-fb-moon.mp3` | `voice.weather.fb.moon` |
+| `public/audio/voice/weather-fb-cloud.mp3` | `voice.weather.fb.cloud` |
+| `public/audio/voice/weather-porch-rain.mp3` | `voice.weather.porch-rain` |
+| `public/audio/voice/weather-porch-sun.mp3` | `voice.weather.porch-sun` |
+| `public/audio/voice/weather-porch-wind.mp3` | `voice.weather.porch-wind` |
+| `public/audio/voice/weather-porch-snow.mp3` | `voice.weather.porch-snow` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -534,7 +544,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Forest Trail** unique spoken lines are complete on voice-01.
 
-**Weather Adventure** is the next closed island: area welcome, hill porch station, puddle jump hold/done, and rain/sun quiz prompts. Missing Weather lines stay quiet. Quiz option feedbacks and weather-porch rounds still wait.
+**Weather Adventure** is a closed island: area welcome, hill porch station, puddle jump hold/done, rain/sun quiz prompts and all six option feedbacks, plus the first four porch rounds (rain, sun, wind, snow). Missing porch rounds stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
