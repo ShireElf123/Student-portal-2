@@ -520,6 +520,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/street-fb-heart.mp3` | `voice.street.fb.heart` |
 | `public/audio/voice/street-fb-moon.mp3` | `voice.street.fb.moon` |
 | `public/audio/voice/street-lights-welcome.mp3` | `voice.street.lights-welcome` |
+| `public/audio/voice/street-fb-green.mp3` | `voice.street.fb.green` |
+| `public/audio/voice/street-fb-purple.mp3` | `voice.street.fb.purple` |
+| `public/audio/voice/street-fb-red-already.mp3` | `voice.street.fb.red-already` |
+| `public/audio/voice/street-balloon-welcome.mp3` | `voice.street.balloon-welcome` |
+| `public/audio/voice/street-trace-welcome.mp3` | `voice.street.trace-welcome` |
+| `public/audio/voice/street-wash-welcome.mp3` | `voice.street.wash-welcome` |
+| `public/audio/voice/street-wash-line.mp3` | `voice.street.wash-line` |
+| `public/audio/voice/street-wash-done.mp3` | `voice.street.wash-done` |
+| `public/audio/voice/street-drive-welcome.mp3` | `voice.street.drive-welcome` |
+| `public/audio/voice/street-busstop-welcome.mp3` | `voice.street.busstop-welcome` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -928,7 +938,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Sunny Garage** unique spoken lines are complete on voice-01.
 
-**High Street** is a closed island: stop light through truck letter and stop sign. Remaining lights-cycle feedback, wash-bus, and drive still wait. The octagon draft clue stays silent. Do not register generic `Yes!`.
+**High Street** unique spoken lines are complete on voice-01. The octagon draft clue stays silent. Next closed island is **Windy Runway**. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

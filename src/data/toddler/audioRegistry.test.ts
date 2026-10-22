@@ -522,6 +522,16 @@ describe("audio registry", () => {
       "/audio/voice/street-fb-heart.mp3",
       "/audio/voice/street-fb-moon.mp3",
       "/audio/voice/street-lights-welcome.mp3",
+      "/audio/voice/street-fb-green.mp3",
+      "/audio/voice/street-fb-purple.mp3",
+      "/audio/voice/street-fb-red-already.mp3",
+      "/audio/voice/street-balloon-welcome.mp3",
+      "/audio/voice/street-trace-welcome.mp3",
+      "/audio/voice/street-wash-welcome.mp3",
+      "/audio/voice/street-wash-line.mp3",
+      "/audio/voice/street-wash-done.mp3",
+      "/audio/voice/street-drive-welcome.mp3",
+      "/audio/voice/street-busstop-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1222,6 +1232,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("Which sign says stop?")?.id).toBe("voice.street.sign-welcome");
     expect(narrationClipForText("Red, wait, green, red, wait. Next?")?.id).toBe(
       "voice.street.lights-welcome",
+    );
+    expect(narrationClipForText("Shiny bus. Beep beep!")?.id).toBe("voice.street.wash-done");
+    expect(narrationClipForText("Drive the bus down the high street!")?.id).toBe(
+      "voice.street.drive-welcome",
     );
   });
 
