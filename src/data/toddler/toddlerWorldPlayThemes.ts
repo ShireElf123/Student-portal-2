@@ -190,8 +190,8 @@ const studio: SafariFriend[] = [
 ];
 
 const letters: SafariFriend[] = [
-  { id: "ay", name: "Letter A", emoji: "🅰️", soundText: "A /æ/!", call: "A says /æ/ like apple!", funFact: "A is the first letter of the alphabet.", habitat: "Phonics Meadow", bgGradient: "from-rose-400 to-red-500" },
-  { id: "bee-letter", name: "Letter B", emoji: "🅱️", soundText: "B /b/!", call: "B says /b/ like book!", funFact: "B has two bumps.", habitat: "Letter Lane", bgGradient: "from-sky-400 to-blue-500" },
+  { id: "ay", name: "Letter A", emoji: "🅰️", soundText: "A!", call: "A says a like apple!", funFact: "A is the first letter of the alphabet.", habitat: "Phonics Meadow", bgGradient: "from-rose-400 to-red-500" },
+  { id: "bee-letter", name: "Letter B", emoji: "🅱️", soundText: "B!", call: "B says buh like book!", funFact: "B has two bumps.", habitat: "Letter Lane", bgGradient: "from-sky-400 to-blue-500" },
   { id: "ten", name: "Number Ten", emoji: "🔟", soundText: "TEN!", call: "Ten fills a whole ten-frame!", funFact: "Ten is two hands of fingers.", habitat: "Counting Grove", bgGradient: "from-amber-400 to-yellow-500" },
   { id: "book", name: "Little Book", emoji: "📘", soundText: "FLIP!", call: "Flip a page and listen!", funFact: "Books have a beginning, middle and end.", habitat: "Story Nook", bgGradient: "from-indigo-400 to-blue-600" },
   { id: "pen", name: "Pencil", emoji: "✏️", soundText: "SCRIBBLE!", call: "Trace a big letter!", funFact: "Pencils can be rubbed out.", habitat: "Writing Desk", bgGradient: "from-yellow-300 to-amber-500" },

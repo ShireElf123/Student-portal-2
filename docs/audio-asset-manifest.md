@@ -92,6 +92,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/safari-bio-boat.mp3` | `voice.safari.bio.boat` |
 | `public/audio/voice/safari-bio-heli.mp3` | `voice.safari.bio.heli` |
 | `public/audio/voice/safari-bio-lights.mp3` | `voice.safari.bio.lights` |
+| `public/audio/voice/safari-bio-paint.mp3` | `voice.safari.bio.paint` |
+| `public/audio/voice/safari-bio-drum.mp3` | `voice.safari.bio.drum` |
+| `public/audio/voice/safari-bio-bead.mp3` | `voice.safari.bio.bead` |
+| `public/audio/voice/safari-bio-brush.mp3` | `voice.safari.bio.brush` |
+| `public/audio/voice/safari-bio-note.mp3` | `voice.safari.bio.note` |
+| `public/audio/voice/safari-bio-sticker.mp3` | `voice.safari.bio.sticker` |
+| `public/audio/voice/safari-bio-crayon.mp3` | `voice.safari.bio.crayon` |
+| `public/audio/voice/safari-bio-scissors.mp3` | `voice.safari.bio.scissors` |
+| `public/audio/voice/safari-bio-ay.mp3` | `voice.safari.bio.ay` |
+| `public/audio/voice/safari-bio-bee-letter.mp3` | `voice.safari.bio.bee-letter` |
 | `public/audio/sfx/animal-lion.mp3` | `sfx.animal.lion` |
 | `public/audio/sfx/animal-elephant.mp3` | `sfx.animal.elephant` |
 | `public/audio/sfx/animal-monkey.mp3` | `sfx.animal.monkey` |

@@ -94,6 +94,16 @@ describe("audio registry", () => {
       "/audio/voice/safari-bio-boat.mp3",
       "/audio/voice/safari-bio-heli.mp3",
       "/audio/voice/safari-bio-lights.mp3",
+      "/audio/voice/safari-bio-paint.mp3",
+      "/audio/voice/safari-bio-drum.mp3",
+      "/audio/voice/safari-bio-bead.mp3",
+      "/audio/voice/safari-bio-brush.mp3",
+      "/audio/voice/safari-bio-note.mp3",
+      "/audio/voice/safari-bio-sticker.mp3",
+      "/audio/voice/safari-bio-crayon.mp3",
+      "/audio/voice/safari-bio-scissors.mp3",
+      "/audio/voice/safari-bio-ay.mp3",
+      "/audio/voice/safari-bio-bee-letter.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -231,6 +241,14 @@ describe("audio registry", () => {
       funFact: "Cows chew clover and like a slow, sunny walk.",
     });
     expect(narrationClipForText(bio)?.id).toBe("voice.safari.bio.farm-cow");
+  });
+
+  it("maps letter A explore bio to A says a like apple", () => {
+    const bio = safariFriendBioText({
+      call: "A says a like apple!",
+      funFact: "A is the first letter of the alphabet.",
+    });
+    expect(narrationClipForText(bio)?.id).toBe("voice.safari.bio.ay");
   });
 
   it("maps safari friend ids including the park bird clip", () => {
