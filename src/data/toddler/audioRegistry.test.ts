@@ -17,7 +17,8 @@ describe("audio registry", () => {
       "/audio/sfx/animal-bird.mp3",
     ]);
     expect(new Set(AUDIO_ASSETS.map((asset) => asset.id)).size).toBe(AUDIO_ASSETS.length);
-    expect(AUDIO_ASSETS.every((asset) => asset.fileStatus === "awaiting-user-file")).toBe(true);
+    expect(getAudioAsset("voice.narrator.safari-explore-welcome")?.fileStatus).toBe("present");
+    expect(AUDIO_ASSETS.filter((asset) => asset.channel === "sfx").every((asset) => asset.fileStatus === "awaiting-user-file")).toBe(true);
   });
 
   it("maps the existing Savanna explore welcome line to the narrator clip", () => {

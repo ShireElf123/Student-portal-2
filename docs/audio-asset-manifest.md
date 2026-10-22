@@ -1,8 +1,8 @@
 # Toddler audio asset manifest (Phase 1 sample pack)
 
-Files are **not** in the repo yet. The owner will add MP3s at the exact paths below. Until then the manager treats every clip as missing and falls back to Web Speech / Web Audio synth.
+The Safari explore welcome MP3 is in the repo (Arena spoken clip). Duck / cow / bird still need Pixabay downloads. Missing files fail closed and fall back to Web Speech / Web Audio synth.
 
-Do **not** claim phone playback is verified until those files are supplied and tested on a device.
+Do **not** claim animal-SFX phone playback is verified until those three files are supplied and tested on a device.
 
 No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this repository.
 
@@ -23,7 +23,7 @@ Source of truth: `src/data/toddler/audioRegistry.ts`.
 
 | id | Channel | Exact spoken line (if any) | Source | Licence | URL | Author | Notes |
 |---|---|---|---|---|---|---|---|
-| `voice.narrator.safari-explore-welcome` | voice | `Welcome to Savanna Animal Detective! Tap any animal friend to hear their call and fun secrets!` | ElevenLabs TTS, generated **offline** by the owner | Paid-plan commercial rights required to ship commercially. Free plan is non-commercial ([TTS FAQ](https://elevenlabs.io/docs/overview/capabilities/text-to-speech), [Terms](https://elevenlabs.io/terms-of-use)). | https://elevenlabs.io/docs/overview/capabilities/text-to-speech | Pending (voice name) | Only this default Savanna explore welcome. Other titles stay on Web Speech. Parent recordings still win. |
+| `voice.narrator.safari-explore-welcome` | voice | `Welcome to Savanna Animal Detective! Tap any animal friend to hear their call and fun secrets!` | Arena `generate_speech` (file in repo, ~29 KB) | App-owned generated speech. Swap later if you want ElevenLabs. | — | Arena voice-00 (owner-selected) | Only this default Savanna explore welcome. Other titles stay on Web Speech. Parent recordings still win. |
 | `sfx.animal.duck` | sfx | — | Pixabay SFX, **manual** download | [Pixabay Content License](https://pixabay.com/service/license-summary/) — free commercial use; no standalone redistribution; attribution optional | https://pixabay.com/sound-effects/ | Pending (contributor) | Safari friend id `duck` |
 | `sfx.animal.cow` | sfx | — | Pixabay SFX, manual download | Pixabay Content License | https://pixabay.com/sound-effects/ | Pending (contributor) | Safari friend id `cow` |
 | `sfx.animal.bird` | sfx | — | Pixabay SFX, manual download | Pixabay Content License | https://pixabay.com/sound-effects/ | Pending (contributor) | Safari friend id `bird` (park roster) |

@@ -1,14 +1,13 @@
 /**
  * Local audio asset registry for the toddler app.
  *
- * Files are not generated in this environment. Until the owner drops MP3s
- * into the paths below, playback must fail closed and fall back to Web Audio
- * / Web Speech. Do not call ElevenLabs (or any TTS API) from the browser.
+ * Missing files fail closed and fall back to Web Audio / Web Speech.
+ * Do not call ElevenLabs (or any TTS API) from the browser.
  */
 
 export type AudioChannel = "sfx" | "voice";
 
-export type AudioFileStatus = "awaiting-user-file";
+export type AudioFileStatus = "awaiting-user-file" | "present";
 
 export interface AudioAsset {
   id: string;
@@ -44,11 +43,11 @@ export const AUDIO_ASSETS: AudioAsset[] = [
     volume: 0.7,
     title: "Safari explore welcome",
     promptText: SAFARI_EXPLORE_WELCOME_PROMPT,
-    fileStatus: "awaiting-user-file",
-    source: "ElevenLabs text-to-speech (owner-generated, not runtime API)",
-    licence: "ElevenLabs paid-plan commercial licence required to ship in a commercial app. Free-plan output is non-commercial.",
-    sourceUrl: "https://elevenlabs.io/docs/overview/capabilities/text-to-speech",
-    author: "Pending — record the ElevenLabs voice name when the file is added",
+    fileStatus: "present",
+    source: "Arena generate_speech (offline clip in repo; not ElevenLabs, not a runtime API)",
+    licence: "App-owned generated speech. Swap this file if you later want a licensed ElevenLabs voice.",
+    sourceUrl: "",
+    author: "Arena Agent Mode voice-00 (owner-selected)",
     notes:
       "Replaces the default Savanna explore-mode welcome only. Other scene titles keep Web Speech. Parent page recordings still win.",
   },
@@ -62,9 +61,9 @@ export const AUDIO_ASSETS: AudioAsset[] = [
     fileStatus: "awaiting-user-file",
     source: "Pixabay sound effect (manual download; official API has no audio endpoint)",
     licence: "Pixabay Content License — free commercial use; no standalone redistribution; attribution optional",
-    sourceUrl: "https://pixabay.com/sound-effects/",
+    sourceUrl: "https://pixabay.com/sound-effects/075176-duck-quack-40345/",
     author: "Pending — copy the Pixabay contributor name from the download page",
-    notes: "Played on existing Animal Safari explore tap and Hear Sound Again when the friend id is duck.",
+    notes: "Played on existing Animal Safari explore tap and Hear Sound Again when the friend id is duck. Suggested short clip: Pixabay 075176 Duck Quack (~3s).",
   },
   {
     id: "sfx.animal.cow",
@@ -76,7 +75,7 @@ export const AUDIO_ASSETS: AudioAsset[] = [
     fileStatus: "awaiting-user-file",
     source: "Pixabay sound effect (manual download; official API has no audio endpoint)",
     licence: "Pixabay Content License — free commercial use; no standalone redistribution; attribution optional",
-    sourceUrl: "https://pixabay.com/sound-effects/",
+    sourceUrl: "https://pixabay.com/sound-effects/nature-cow-moo-122255/",
     author: "Pending — copy the Pixabay contributor name from the download page",
     notes: "Played on existing Animal Safari explore tap and Hear Sound Again when the friend id is cow.",
   },
@@ -90,7 +89,7 @@ export const AUDIO_ASSETS: AudioAsset[] = [
     fileStatus: "awaiting-user-file",
     source: "Pixabay sound effect (manual download; official API has no audio endpoint)",
     licence: "Pixabay Content License — free commercial use; no standalone redistribution; attribution optional",
-    sourceUrl: "https://pixabay.com/sound-effects/",
+    sourceUrl: "https://pixabay.com/sound-effects/birds-tweet-126648/",
     author: "Pending — copy the Pixabay contributor name from the download page",
     notes:
       "Played on existing Animal Safari explore tap and Hear Sound Again when the friend id is bird (park roster; savanna default has duck and cow).",
