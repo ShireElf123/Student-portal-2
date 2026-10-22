@@ -102,6 +102,16 @@ describe("audio registry", () => {
       "/audio/voice/ocean-sort-prompt.mp3",
       "/audio/voice/ocean-fb-whale.mp3",
       "/audio/voice/ocean-fb-lion.mp3",
+      "/audio/voice/ocean-reef-sort-welcome.mp3",
+      "/audio/voice/ocean-reef-sort-fish.mp3",
+      "/audio/voice/ocean-reef-sort-crab.mp3",
+      "/audio/voice/ocean-reef-sort-gull.mp3",
+      "/audio/voice/ocean-reef-sort-turtle.mp3",
+      "/audio/voice/ocean-reef-sort-cow.mp3",
+      "/audio/voice/ocean-reef-sort-clownfish.mp3",
+      "/audio/voice/ocean-reef-sort-seal.mp3",
+      "/audio/voice/ocean-reef-sort-whale.mp3",
+      "/audio/voice/ocean-reef-sort-heron.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -422,6 +432,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("Drag flakes onto every fish.")?.id).toBe("voice.ocean.feed-line");
     expect(narrationClipForText("Click click splash! The dolphin leaps high and smiles!")?.id).toBe("voice.ocean.fb.dolphin");
     expect(narrationClipForText("An old rubber boot doesn't glow or swim!")?.id).toBe("voice.ocean.fb.boot");
+    expect(narrationClipForText("Where does this reef friend live?")?.id).toBe("voice.ocean.reef-sort.welcome");
+    expect(narrationClipForText("A fish by the coral. Where does it live?")?.id).toBe("voice.ocean.reef-sort.fish");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

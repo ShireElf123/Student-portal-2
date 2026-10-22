@@ -100,6 +100,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/ocean-sort-prompt.mp3` | `voice.ocean.sort-prompt` |
 | `public/audio/voice/ocean-fb-whale.mp3` | `voice.ocean.fb.whale` |
 | `public/audio/voice/ocean-fb-lion.mp3` | `voice.ocean.fb.lion` |
+| `public/audio/voice/ocean-reef-sort-welcome.mp3` | `voice.ocean.reef-sort.welcome` |
+| `public/audio/voice/ocean-reef-sort-fish.mp3` | `voice.ocean.reef-sort.fish` |
+| `public/audio/voice/ocean-reef-sort-crab.mp3` | `voice.ocean.reef-sort.crab` |
+| `public/audio/voice/ocean-reef-sort-gull.mp3` | `voice.ocean.reef-sort.gull` |
+| `public/audio/voice/ocean-reef-sort-turtle.mp3` | `voice.ocean.reef-sort.turtle` |
+| `public/audio/voice/ocean-reef-sort-cow.mp3` | `voice.ocean.reef-sort.cow` |
+| `public/audio/voice/ocean-reef-sort-clownfish.mp3` | `voice.ocean.reef-sort.clownfish` |
+| `public/audio/voice/ocean-reef-sort-seal.mp3` | `voice.ocean.reef-sort.seal` |
+| `public/audio/voice/ocean-reef-sort-whale.mp3` | `voice.ocean.reef-sort.whale` |
+| `public/audio/voice/ocean-reef-sort-heron.mp3` | `voice.ocean.reef-sort.heron` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -468,7 +478,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Jungle Canopy** unique spoken lines are complete on voice-01.
 
-**Ocean Reef** is a closed island: area welcome, reef bubbles, feed-the-reef, dolphin/jellyfish quiz prompts and option feedbacks, plus the architecture land-vs-sea sort prompt. Missing Ocean lines stay quiet. Reef-sort studio rounds still wait.
+**Ocean Reef** is a closed island: area welcome, reef bubbles, feed-the-reef, dolphin/jellyfish quiz prompts and option feedbacks, land-vs-sea sort prompt, and Reef Sort station plus rounds through heron. Missing Ocean lines stay quiet. Starfish, octopus, and plane Reef Sort rounds still wait.
 
 ## Mute keys (unchanged)
 
