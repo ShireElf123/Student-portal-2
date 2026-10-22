@@ -442,6 +442,16 @@ describe("audio registry", () => {
       "/audio/voice/family-wash-line.mp3",
       "/audio/voice/family-wash-done.mp3",
       "/audio/voice/garage-area-welcome.mp3",
+      "/audio/voice/garage-bus-welcome.mp3",
+      "/audio/voice/garage-fb-bus.mp3",
+      "/audio/voice/garage-fb-fish.mp3",
+      "/audio/voice/garage-fb-cloud.mp3",
+      "/audio/voice/garage-clue-bus.mp3",
+      "/audio/voice/garage-tyres-welcome.mp3",
+      "/audio/voice/garage-fb-four.mp3",
+      "/audio/voice/garage-fb-two.mp3",
+      "/audio/voice/garage-fb-eight.mp3",
+      "/audio/voice/garage-clue-tyres.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1107,6 +1117,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Sunny Garage! Tools, tyres and a sleepy bus. Let's explore together!")?.id,
     ).toBe("voice.garage.area-welcome");
+    expect(narrationClipForText("Who is waiting for wheels in the garage?")?.id).toBe(
+      "voice.garage.bus-welcome",
+    );
+    expect(narrationClipForText("How many tyres does the car need?")?.id).toBe(
+      "voice.garage.tyres-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
