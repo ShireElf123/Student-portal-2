@@ -402,6 +402,16 @@ describe("audio registry", () => {
       "/audio/voice/feelings-cue-yay.mp3",
       "/audio/voice/feelings-clue-happy.mp3",
       "/audio/voice/feelings-memory-welcome.mp3",
+      "/audio/voice/feelings-face-welcome.mp3",
+      "/audio/voice/feelings-face-line.mp3",
+      "/audio/voice/feelings-face-done.mp3",
+      "/audio/voice/habits-area-welcome.mp3",
+      "/audio/voice/habits-brush-welcome.mp3",
+      "/audio/voice/habits-fb-brush.mp3",
+      "/audio/voice/habits-fb-pillow.mp3",
+      "/audio/voice/habits-fb-crayon.mp3",
+      "/audio/voice/habits-sfx-brush.mp3",
+      "/audio/voice/habits-cue-brush.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1022,6 +1032,21 @@ describe("audio registry", () => {
     expect(narrationClipForText("Flip the feeling faces and find the match!")?.id).toBe(
       "voice.feelings.memory-welcome",
     );
+    expect(narrationClipForText("That face has a feeling!")?.id).toBe("voice.feelings.face-done");
+  });
+
+  it("maps Healthy Habits closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Healthy Habits & Body! Sparkly Clean Teeth, Crunchy Apples & Listening Ears. Let's explore together!",
+      )?.id,
+    ).toBe("voice.habits.area-welcome");
+    expect(
+      narrationClipForText(
+        "What do we use morning and night with foamy bubbles to brush our teeth sparkly clean?",
+      )?.id,
+    ).toBe("voice.habits.brush-welcome");
+    expect(narrationClipForText("Brush brush!")?.id).toBe("voice.habits.cue.brush");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
