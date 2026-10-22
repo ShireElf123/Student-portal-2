@@ -67,6 +67,10 @@ function voiceClip(
   };
 }
 
+export function safariFriendBioText(friend: { call?: string; funFact?: string }): string {
+  return `${friend.call || ""} ${friend.funFact || ""}`.replace(/\s+/g, " ").trim();
+}
+
 function animalClip(
   animalId: string,
   title: string,
@@ -103,6 +107,76 @@ export const AUDIO_ASSETS: AudioAsset[] = [
     "Safari detective stem",
     SAFARI_DETECTIVE_STEM_PROMPT,
     "Closed Safari kit: mystery prompt, then the friend mouth-sound. Does not speak the animal's name.",
+  ),
+  voiceClip(
+    "voice.safari.bio.lion",
+    "/audio/voice/safari-bio-lion.mp3",
+    "Savanna lion bio",
+    "Rrrroaaar! Roar! I am the brave golden Lion with a fuzzy mane! Lions live in families called prides and love resting under big acacia trees!",
+    "Explore tap. Mouth-call still used in detective.",
+  ),
+  voiceClip(
+    "voice.safari.bio.elephant",
+    "/audio/voice/safari-bio-elephant.mp3",
+    "Savanna elephant bio",
+    "Pawoooo! I am the big gentle Elephant! I spray water with my long trunk! Elephants have gigantic floppy ears that help keep them cool in the sunshine!",
+    "Explore tap.",
+  ),
+  voiceClip(
+    "voice.safari.bio.monkey",
+    "/audio/voice/safari-bio-monkey.mp3",
+    "Savanna monkey bio",
+    "Ooh ooh aah aah! I am a playful Monkey swinging through the green jungle vines! Monkeys have long tails that act like an extra hand to hold onto tree branches!",
+    "Explore tap.",
+  ),
+  voiceClip(
+    "voice.safari.bio.duck",
+    "/audio/voice/safari-bio-duck.mp3",
+    "Savanna duck bio",
+    "Quack quack! Splish splash! I am a cheerful Duck swimming in the blue pond! Duck feathers are waterproof, keeping them warm and dry while swimming!",
+    "Explore tap. Farm duck copy is a later clip.",
+  ),
+  voiceClip(
+    "voice.safari.bio.frog",
+    "/audio/voice/safari-bio-frog.mp3",
+    "Savanna frog bio",
+    "Ribbit ribbit! Hop hop! I am a green tree frog catching bugs with my long tongue! Frogs can breathe through their skin and take giant leaping jumps!",
+    "Explore tap.",
+  ),
+  voiceClip(
+    "voice.safari.bio.cow",
+    "/audio/voice/safari-bio-cow.mp3",
+    "Savanna cow bio",
+    "Moooo moooo! I am the spotted dairy Cow munching on delicious green clover! Cows have excellent senses of smell and enjoy making friends in grassy pastures!",
+    "Explore tap. Farm cow copy is a later clip.",
+  ),
+  voiceClip(
+    "voice.safari.bio.giraffe",
+    "/audio/voice/safari-bio-giraffe.mp3",
+    "Savanna giraffe bio",
+    "I stretch my long neck to the highest leaves! Giraffes sleep standing up for short naps.",
+    "Explore tap.",
+  ),
+  voiceClip(
+    "voice.safari.bio.zebra",
+    "/audio/voice/safari-bio-zebra.mp3",
+    "Savanna zebra bio",
+    "Gallop with my black and white stripes! Every zebra's stripes are a different pattern.",
+    "Explore tap.",
+  ),
+  voiceClip(
+    "voice.safari.bio.pig",
+    "/audio/voice/safari-bio-pig.mp3",
+    "Farm pig bio",
+    "Oink oink! I am a happy pig in the cool mud! Pigs stay cool by rolling in mud on hot days.",
+    "Explore tap.",
+  ),
+  voiceClip(
+    "voice.safari.bio.horse",
+    "/audio/voice/safari-bio-horse.mp3",
+    "Farm horse bio",
+    "Neigh! I am the tall horse. Want a gentle ride? Horses sleep standing up in the barn.",
+    "Explore tap.",
   ),
   animalClip("lion", "Lion roar", "Rrrroaaar!", "Savanna friend id lion."),
   animalClip("elephant", "Elephant trumpet", "Pawoooo!", "Savanna friend id elephant."),

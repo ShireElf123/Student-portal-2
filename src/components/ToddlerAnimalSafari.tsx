@@ -7,6 +7,7 @@ import { playSafariAnimalSfx, playSafariVoiceLine } from "../utils/toddlerAudio"
 import {
   SAFARI_DETECTIVE_STEM_PROMPT,
   SAFARI_EXPLORE_WELCOME_PROMPT,
+  safariFriendBioText,
 } from "../data/toddler/audioRegistry";
 import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
@@ -146,7 +147,8 @@ export function ToddlerAnimalSafari({
     if (activeMode === "explore") {
       setSelectedAnimal(animal);
       soundEffects.playSuccessChime();
-      playSafariAnimalSfx(animal.id);
+      const bio = safariFriendBioText(animal);
+      if (!playSafariVoiceLine(bio)) playSafariAnimalSfx(animal.id);
       // Discovery stars: the first tap on each animal each day earns a star;
       // repeats are free play so stars cannot be farmed from one animal.
       if (recordDailySetMember("safari-explore", animal.id).isNew) {

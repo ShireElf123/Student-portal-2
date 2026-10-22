@@ -6,6 +6,7 @@ import {
   animalClipForFriendId,
   getAudioAsset,
   narrationClipForText,
+  safariFriendBioText,
 } from "./audioRegistry";
 
 describe("audio registry", () => {
@@ -13,6 +14,16 @@ describe("audio registry", () => {
     expect(EXPECTED_AUDIO_FILES).toEqual([
       "/audio/voice/narrator-safari-explore-welcome.mp3",
       "/audio/voice/narrator-safari-detective-stem.mp3",
+      "/audio/voice/safari-bio-lion.mp3",
+      "/audio/voice/safari-bio-elephant.mp3",
+      "/audio/voice/safari-bio-monkey.mp3",
+      "/audio/voice/safari-bio-duck.mp3",
+      "/audio/voice/safari-bio-frog.mp3",
+      "/audio/voice/safari-bio-cow.mp3",
+      "/audio/voice/safari-bio-giraffe.mp3",
+      "/audio/voice/safari-bio-zebra.mp3",
+      "/audio/voice/safari-bio-pig.mp3",
+      "/audio/voice/safari-bio-horse.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -134,6 +145,14 @@ describe("audio registry", () => {
     const clip = narrationClipForText(SAFARI_EXPLORE_WELCOME_PROMPT);
     expect(clip?.id).toBe("voice.narrator.safari-explore-welcome");
     expect(narrationClipForText("some other prompt")).toBeUndefined();
+  });
+
+  it("maps savanna lion explore bio to the voice clip", () => {
+    const bio = safariFriendBioText({
+      call: "Rrrroaaar! Roar! I am the brave golden Lion with a fuzzy mane!",
+      funFact: "Lions live in families called prides and love resting under big acacia trees!",
+    });
+    expect(narrationClipForText(bio)?.id).toBe("voice.safari.bio.lion");
   });
 
   it("maps safari friend ids including the park bird clip", () => {

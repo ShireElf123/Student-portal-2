@@ -12,6 +12,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 |---|---|
 | `public/audio/voice/narrator-safari-explore-welcome.mp3` | `voice.narrator.safari-explore-welcome` |
 | `public/audio/voice/narrator-safari-detective-stem.mp3` | `voice.narrator.safari-detective-stem` |
+| `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
+| `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
+| `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
+| `public/audio/voice/safari-bio-duck.mp3` | `voice.safari.bio.duck` |
+| `public/audio/voice/safari-bio-frog.mp3` | `voice.safari.bio.frog` |
+| `public/audio/voice/safari-bio-cow.mp3` | `voice.safari.bio.cow` |
+| `public/audio/voice/safari-bio-giraffe.mp3` | `voice.safari.bio.giraffe` |
+| `public/audio/voice/safari-bio-zebra.mp3` | `voice.safari.bio.zebra` |
+| `public/audio/voice/safari-bio-pig.mp3` | `voice.safari.bio.pig` |
+| `public/audio/voice/safari-bio-horse.mp3` | `voice.safari.bio.horse` |
 | `public/audio/sfx/animal-lion.mp3` | `sfx.animal.lion` |
 | `public/audio/sfx/animal-elephant.mp3` | `sfx.animal.elephant` |
 | `public/audio/sfx/animal-monkey.mp3` | `sfx.animal.monkey` |
@@ -238,7 +248,7 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 
 ## What stays synthesised
 
-Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are **unchanged**. Fun-facts and “Yes! Correct!” lines are on-screen this batch (call+fact MP3s are the next Safari turn).
+Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are **unchanged**. Savanna explore bios (and farm pig/horse) play as voice-01 MP3s. Other worlds still show fun-facts on screen until their bio clips exist. Detective praise stays visual + mouth-call.
 
 ## Mute keys (unchanged)
 
