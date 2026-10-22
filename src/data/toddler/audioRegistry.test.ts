@@ -52,6 +52,16 @@ describe("audio registry", () => {
       "/audio/voice/farm-count-ducks.mp3",
       "/audio/voice/farm-count-hens.mp3",
       "/audio/voice/farm-count-goats.mp3",
+      "/audio/voice/farm-count-cows.mp3",
+      "/audio/voice/farm-count-horses.mp3",
+      "/audio/voice/farm-count-geese.mp3",
+      "/audio/voice/farm-count-hens-row.mp3",
+      "/audio/voice/farm-count-rabbits.mp3",
+      "/audio/voice/farm-count-eggs.mp3",
+      "/audio/voice/farm-count-calves.mp3",
+      "/audio/voice/farm-count-lambs.mp3",
+      "/audio/voice/farm-count-bees.mp3",
+      "/audio/voice/farm-count-turkeys.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -345,6 +355,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("Cock a doodle doo! That's the morning rooster.")?.id).toBe("voice.farm.fb.rooster");
     expect(narrationClipForText("Munch crunch! Barnaby neighs with joy as he crunches the carrot!")?.id).toBe("voice.farm.fb.carrot");
     expect(narrationClipForText("Count the chicks. How many?")?.id).toBe("voice.farm.count.chicks");
+    expect(narrationClipForText("A baker's dozen in the nest. How many eggs?")?.id).toBe("voice.farm.count.eggs");
+    expect(narrationClipForText("Nine turkeys. Four go in. How many still in the yard?")?.id).toBe("voice.farm.count.turkeys");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

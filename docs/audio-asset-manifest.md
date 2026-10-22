@@ -50,6 +50,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/farm-count-ducks.mp3` | `voice.farm.count.ducks` |
 | `public/audio/voice/farm-count-hens.mp3` | `voice.farm.count.hens` |
 | `public/audio/voice/farm-count-goats.mp3` | `voice.farm.count.goats` |
+| `public/audio/voice/farm-count-cows.mp3` | `voice.farm.count.cows` |
+| `public/audio/voice/farm-count-horses.mp3` | `voice.farm.count.horses` |
+| `public/audio/voice/farm-count-geese.mp3` | `voice.farm.count.geese` |
+| `public/audio/voice/farm-count-hens-row.mp3` | `voice.farm.count.hens-row` |
+| `public/audio/voice/farm-count-rabbits.mp3` | `voice.farm.count.rabbits` |
+| `public/audio/voice/farm-count-eggs.mp3` | `voice.farm.count.eggs` |
+| `public/audio/voice/farm-count-calves.mp3` | `voice.farm.count.calves` |
+| `public/audio/voice/farm-count-lambs.mp3` | `voice.farm.count.lambs` |
+| `public/audio/voice/farm-count-bees.mp3` | `voice.farm.count.bees` |
+| `public/audio/voice/farm-count-turkeys.mp3` | `voice.farm.count.turkeys` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -414,7 +424,7 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 
 Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are **unchanged**. Every Safari explore call+fun-fact now has a voice-01 MP3. The eight Worlds Safari stations play their own welcome clip instead of the generic Games welcome. Detective praise stays visual + mouth-call. Letter A explore plays the A bio (“A says a like apple…”).
 
-**Farm Valley** (next island after Safari) is a closed kit on the same voice-01: area welcome, milk-cow hold/done, letter-trace and pen-count station prompts, four quiz spokenPrompts, all quiz option feedbacks, and the first six Pen Farm Count round lines after the station welcome. Missing Farm lines stay quiet — no device narrator inside Farm Valley. Later pen-count rounds and studio “Yes!” still wait.
+**Farm Valley** (next island after Safari) is a closed kit on the same voice-01: area welcome, milk-cow hold/done, letter-trace and pen-count station prompts, four quiz spokenPrompts, all quiz option feedbacks, and every Pen Farm Count round line. Missing Farm lines stay quiet — no device narrator inside Farm Valley. Generic studio “Yes!” is not registered (would leak her voice onto other islands). Dynamic counting taps still wait.
 
 ## Mute keys (unchanged)
 
