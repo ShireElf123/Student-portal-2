@@ -112,6 +112,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/safari-bio-home-brush.mp3` | `voice.safari.bio.home-brush` |
 | `public/audio/voice/safari-bio-cup.mp3` | `voice.safari.bio.cup` |
 | `public/audio/voice/safari-bio-heart.mp3` | `voice.safari.bio.heart` |
+| `public/audio/voice/safari-bio-bed.mp3` | `voice.safari.bio.bed` |
+| `public/audio/voice/safari-bio-smile.mp3` | `voice.safari.bio.smile` |
+| `public/audio/voice/safari-bio-soap.mp3` | `voice.safari.bio.soap` |
+| `public/audio/voice/safari-bio-towel.mp3` | `voice.safari.bio.towel` |
+| `public/audio/voice/safari-bio-compost-worm.mp3` | `voice.safari.bio.compost-worm` |
+| `public/audio/voice/safari-bio-compost-beetle.mp3` | `voice.safari.bio.compost-beetle` |
+| `public/audio/voice/safari-bio-mushroom.mp3` | `voice.safari.bio.mushroom` |
+| `public/audio/voice/safari-bio-spider.mp3` | `voice.safari.bio.spider` |
+| `public/audio/voice/safari-bio-slug.mp3` | `voice.safari.bio.slug` |
+| `public/audio/voice/safari-bio-compost-ant.mp3` | `voice.safari.bio.compost-ant` |
 | `public/audio/sfx/animal-lion.mp3` | `sfx.animal.lion` |
 | `public/audio/sfx/animal-elephant.mp3` | `sfx.animal.elephant` |
 | `public/audio/sfx/animal-monkey.mp3` | `sfx.animal.monkey` |
