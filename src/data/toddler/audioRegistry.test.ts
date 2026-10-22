@@ -752,6 +752,16 @@ describe("audio registry", () => {
       "/audio/voice/compost-water-line.mp3",
       "/audio/voice/compost-water-done.mp3",
       "/audio/voice/compost-memory-welcome.mp3",
+      "/audio/voice/compost-home-welcome.mp3",
+      "/audio/voice/compost-clue-home.mp3",
+      "/audio/voice/compost-fb-soil.mp3",
+      "/audio/voice/compost-fb-fridge.mp3",
+      "/audio/voice/compost-fb-sky.mp3",
+      "/audio/voice/compost-heap-welcome.mp3",
+      "/audio/voice/compost-clue-heap.mp3",
+      "/audio/voice/compost-fb-peel.mp3",
+      "/audio/voice/compost-fb-boot.mp3",
+      "/audio/voice/compost-fb-key.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1658,6 +1668,18 @@ describe("audio registry", () => {
     expect(narrationClipForText("The garden drinks!")?.id).toBe("voice.compost.water-done");
     expect(narrationClipForText("Flip the compost leaves and find the matching bugs!")?.id).toBe(
       "voice.compost.memory-welcome",
+    );
+    expect(narrationClipForText("Where does the worm belong?")?.id).toBe(
+      "voice.compost.home-welcome",
+    );
+    expect(narrationClipForText("Worms belong in damp soil, not the fridge. Where?")?.id).toBe(
+      "voice.compost.clue.home",
+    );
+    expect(narrationClipForText("Which belongs in the compost?")?.id).toBe(
+      "voice.compost.heap-welcome",
+    );
+    expect(narrationClipForText("The compost is for leaves and peels. Which belongs?")?.id).toBe(
+      "voice.compost.clue.heap",
     );
   });
 
