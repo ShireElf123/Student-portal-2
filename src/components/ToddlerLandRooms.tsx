@@ -380,7 +380,7 @@ function DragFollowGhost({ ghost }: { ghost: { emoji: string; x: number; y: numb
     <span
       data-testid="drag-ghost"
       aria-hidden
-      className="pointer-events-none fixed z-[90] select-none text-6xl drop-shadow-[0_8px_12px_rgba(0,0,0,0.35)]"
+      className="pointer-events-none fixed z-[200] select-none text-6xl drop-shadow-[0_8px_12px_rgba(0,0,0,0.35)]"
       style={{ left: ghost.x, top: ghost.y, transform: "translate(-50%, -50%)" }}
     >
       {ghost.emoji}
@@ -407,7 +407,6 @@ function bindFollowDrag(
     onPointerMove: (event: React.PointerEvent) => {
       if (dragging.current !== id) return;
       setGhost({ emoji, x: event.clientX, y: event.clientY });
-      drop(id, event.clientX, event.clientY);
     },
     onPointerUp: (event: React.PointerEvent) => {
       if (dragging.current !== id) return;

@@ -17,6 +17,7 @@ vi.mock("../utils/learnerBrain", () => ({
 
 import { GuidedAssessmentBridge } from "./GuidedAssessmentBridge";
 import { GUIDED_ASSESSMENTS } from "../data/assessmentTemplates";
+import type { AssessmentResult } from "../types";
 
 beforeEach(() => {
   cleanup();
@@ -26,7 +27,7 @@ afterEach(() => cleanup());
 
 describe("GuidedAssessmentBridge scoring", () => {
   it("blocks Next until a score, and skipped items are not developing", () => {
-    const finished: Array<{ developingCount: number; unansweredCount?: number; masteredCount: number }> = [];
+    const finished: AssessmentResult[] = [];
     const { getByText, getByRole } = render(
       <GuidedAssessmentBridge onAssessmentCompleted={(result) => finished.push(result)} />,
     );
@@ -45,5 +46,16 @@ describe("GuidedAssessmentBridge scoring", () => {
     expect(finished[0].masteredCount).toBe(1);
     expect(finished[0].developingCount).toBe(0);
     expect(finished[0].unansweredCount).toBe(first.items.length - 1);
+    expect(finished[0].itemScores[first.items[0].id]).toBe("mastered");
+    expect(Object.values(finished[0].itemScores).filter((score) => score === "not_assessed")).toHaveLength(
+      first.items.length - 1,
+    );
+
+    const stored = Object.keys(localStorage)
+      .map((key) => localStorage.getItem(key))
+      .find((value) => value?.includes(finished[0].id));
+    expect(stored).toBeTruthy();
+    expect(stored).toContain("\"unansweredCount\":");
+    expect(stored).not.toMatch(/"developingCount":[1-9]/);
   });
 });

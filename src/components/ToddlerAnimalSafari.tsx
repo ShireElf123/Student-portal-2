@@ -16,8 +16,11 @@ type Animal = SafariFriend;
 
 interface ToddlerAnimalSafariProps {
   onAddStar?: (amount?: number) => void;
+  onComplete?: () => void;
   animals?: SafariFriend[];
   sceneTitle?: string;
+  /** Worlds play already pays a worlds mission — do not also pay Games. */
+  missionSurface?: "games" | "off";
 }
 
 /**
@@ -27,10 +30,14 @@ interface ToddlerAnimalSafariProps {
  */
 const CELEBRATION_PAUSE_MS = 900;
 
+const STATION_HIT_GOAL = 3;
+
 export function ToddlerAnimalSafari({
   onAddStar,
+  onComplete,
   animals,
   sceneTitle = "Savanna Animal Detective",
+  missionSurface = "games",
 }: ToddlerAnimalSafariProps) {
   const roster = animals && animals.length >= 3 ? animals : DEFAULT_SAFARI_FRIENDS;
   const [activeMode, setActiveMode] = useState<"explore" | "detective">("detective");
@@ -52,6 +59,13 @@ export function ToddlerAnimalSafari({
   const advancePendingRef = useRef(false);
   const activeModeRef = useRef(activeMode);
   activeModeRef.current = activeMode;
+  const stationHits = useRef(0);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+  const noteStationHit = () => {
+    stationHits.current += 1;
+    if (stationHits.current === STATION_HIT_GOAL) onCompleteRef.current?.();
+  };
 
   const clearCelebrationTimers = () => {
     celebrationTimersRef.current.forEach((timer) => clearTimeout(timer));
@@ -145,6 +159,7 @@ export function ToddlerAnimalSafari({
       if (recordDailySetMember("safari-explore", animal.id).isNew) {
         if (onAddStar) onAddStar(1);
         else awardStars(1);
+        noteStationHit();
       }
       return;
     }
@@ -165,7 +180,7 @@ export function ToddlerAnimalSafari({
         else awardStars(2);
         awardXP(25, `Identified ${animal.name}`);
       }
-      if (solvesToday === 3) {
+      if (solvesToday === 3 && missionSurface === "games") {
         try {
           payDailyMissionIfMatches("games", "animal-safari");
         } catch {
@@ -173,6 +188,7 @@ export function ToddlerAnimalSafari({
         }
       }
       setScore((s) => s + 1);
+      noteStationHit();
 
       try {
         recordLearningEvent({

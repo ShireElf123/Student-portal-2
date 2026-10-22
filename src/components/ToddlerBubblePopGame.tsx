@@ -50,6 +50,7 @@ const GRADIENTS = [
 
 export interface ToddlerBubblePopGameProps {
   onAddStar?: (amount?: number) => void;
+  onComplete?: () => void;
   onBack?: () => void;
   blueprint?: BubblePopBlueprint;
   blueprintLearnerId?: string;
@@ -57,7 +58,9 @@ export interface ToddlerBubblePopGameProps {
   catalog?: BubbleWord[];
 }
 
-export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLearnerId, onPlayingChange, catalog }: ToddlerBubblePopGameProps) {
+const STATION_HIT_GOAL = 3;
+
+export function ToddlerBubblePopGame({ onAddStar, onComplete, onBack, blueprint, blueprintLearnerId, onPlayingChange, catalog }: ToddlerBubblePopGameProps) {
   const words = catalog && catalog.length >= 4 ? catalog : BUBBLE_CATALOG;
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [poppedCount, setPoppedCount] = useState(0);
@@ -68,6 +71,9 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
   const bubbleIdCounter = useRef(0);
   const blueprintRoundIndex = useRef(0);
   const responseSessionId = useRef("");
+  const stationHits = useRef(0);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   // Spawn the first authored or generated round without changing the game engine.
   useEffect(() => {
@@ -229,6 +235,8 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
       soundEffects.playSuccessChime();
       awardStars(1);
       onAddStar?.(1);
+      stationHits.current += 1;
+      if (stationHits.current === STATION_HIT_GOAL) onCompleteRef.current?.();
     }
 
     // Check completion milestone
@@ -249,6 +257,7 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
             setIsWon(true);
             speakText(blueprint.feedback.completion, { pitch: 1.1, rate: 0.95 });
             finishGeneratedSession();
+            onCompleteRef.current?.();
             triggerCelebrationConfetti();
           } else {
             spawnWave();

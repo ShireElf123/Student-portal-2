@@ -844,7 +844,11 @@ export function ToddlerWorldsNavigator({
         {activeActivity.type === "balloon-sky" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-sky-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerBalloonSky letters={playTheme.balloonLetters} onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerBalloonSky
+              letters={playTheme.balloonLetters}
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
+            />
           </div>
         )}
         {activeActivity.type === "animal-safari" && (
@@ -853,7 +857,9 @@ export function ToddlerWorldsNavigator({
             <ToddlerAnimalSafari
               animals={playTheme.safari}
               sceneTitle={playTheme.safariTitle}
-              onAddStar={() => completeWorldToy(activeActivity)}
+              missionSurface="off"
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
             />
           </div>
         )}
@@ -871,7 +877,11 @@ export function ToddlerWorldsNavigator({
         {activeActivity.type === "bubble-pop" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-cyan-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerBubblePopGame catalog={playTheme.bubbles} onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerBubblePopGame
+              catalog={playTheme.bubbles}
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
+            />
           </div>
         )}
         {activeActivity.type === "letter-trace" && (

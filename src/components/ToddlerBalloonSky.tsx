@@ -30,12 +30,14 @@ const NUMBERS = ["1", "2", "3", "4", "5"];
 
 interface ToddlerBalloonSkyProps {
   onAddStar?: (amount?: number) => void;
+  onComplete?: () => void;
   letters?: string[];
 }
 
 const DAILY_TARGET_STAR_GOAL = 10;
+const STATION_HIT_GOAL = 3;
 
-export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps) {
+export function ToddlerBalloonSky({ onAddStar, onComplete, letters }: ToddlerBalloonSkyProps) {
   const letterSet = letters && letters.length >= 4 ? letters : LETTERS;
   const [balloons, setBalloons] = useState<Balloon[]>([]);
   const [targetLabel, setTargetLabel] = useState<string>("A");
@@ -44,6 +46,9 @@ export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps
   // Ref mirror so the every-10-pops celebration fires exactly on time even
   // when taps land faster than React re-renders.
   const poppedRef = useRef(0);
+  const stationHits = useRef(0);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   // Initialize and spawn balloons
   const spawnBalloon = (forcedLabel?: string) => {
@@ -138,6 +143,8 @@ export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps
         if (onAddStar) onAddStar(1);
         else awardStars(1);
       }
+      stationHits.current += 1;
+      if (stationHits.current === STATION_HIT_GOAL) onCompleteRef.current?.();
 
       // pick new target and release a balloon carrying it, so the new
       // request is always answerable instead of hoping random spawns help.

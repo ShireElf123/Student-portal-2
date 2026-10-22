@@ -286,6 +286,28 @@ describe("land rooms", () => {
     expect(container.textContent).toContain("wind can work");
   });
 
+  it("does not drop a crate until the pointer is released", async () => {
+    const stars: number[] = [];
+    const { getByTestId, queryByTestId } = render(
+      <ToddlerLandRooms playId="load-truck" onAddStar={() => stars.push(1)} />,
+    );
+    const bed = getByTestId("truck-bed");
+    bed.getBoundingClientRect = box;
+    const crate = getByTestId("crate-0");
+    fireEvent.pointerDown(crate, { clientX: 10, clientY: 10, pointerId: 1 });
+    fireEvent.pointerMove(crate, { clientX: 50, clientY: 50, pointerId: 1, buttons: 1 });
+    expect(getByTestId("drag-ghost").textContent).toContain("📦");
+    expect(stars).toEqual([]);
+    fireEvent.pointerUp(crate, { clientX: 50, clientY: 50, pointerId: 1 });
+    expect(queryByTestId("drag-ghost")).toBeNull();
+    expect(getByTestId("crate-1")).toBeTruthy();
+    dragOnto(getByTestId("crate-1"), bed);
+    dragOnto(getByTestId("crate-2"), bed);
+    dragOnto(getByTestId("crate-3"), bed);
+    await flush();
+    expect(stars).toEqual([1]);
+  });
+
   it("follows the crate with a ghost and does not credit a miss", async () => {
     const stars: number[] = [];
     const { getByTestId, queryByTestId } = render(

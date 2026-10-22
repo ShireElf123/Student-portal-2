@@ -26,4 +26,29 @@ describe("Quiet TimerBar", () => {
     expect(first).not.toHaveBeenCalled();
     expect(second).toHaveBeenCalledTimes(1);
   });
+
+  it("does not fire while stopped, and does not fire after unmount", async () => {
+    vi.useFakeTimers();
+    const onDone = vi.fn();
+    const { rerender } = render(<TimerBar seconds={3} running onDone={onDone} />);
+    await act(async () => {
+      vi.advanceTimersByTime(1000);
+    });
+    rerender(<TimerBar seconds={3} running={false} onDone={onDone} />);
+    await act(async () => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(onDone).not.toHaveBeenCalled();
+
+    const late = vi.fn();
+    const second = render(<TimerBar seconds={2} running onDone={late} />);
+    await act(async () => {
+      vi.advanceTimersByTime(500);
+    });
+    second.unmount();
+    await act(async () => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(late).not.toHaveBeenCalled();
+  });
 });
