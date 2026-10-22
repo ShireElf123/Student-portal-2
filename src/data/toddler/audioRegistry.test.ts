@@ -652,6 +652,16 @@ describe("audio registry", () => {
       "/audio/voice/flower-fb-pink.mp3",
       "/audio/voice/flower-fb-blue.mp3",
       "/audio/voice/flower-fb-yellow.mp3",
+      "/audio/voice/flower-rhyme-welcome.mp3",
+      "/audio/voice/flower-clue-rhyme.mp3",
+      "/audio/voice/flower-fb-tree.mp3",
+      "/audio/voice/flower-fb-bug.mp3",
+      "/audio/voice/flower-fb-leaf.mp3",
+      "/audio/voice/flower-blooms-welcome.mp3",
+      "/audio/voice/flower-clue-blooms.mp3",
+      "/audio/voice/flower-fb-five.mp3",
+      "/audio/voice/flower-fb-groups.mp3",
+      "/audio/voice/flower-fb-both-blooms.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1436,6 +1446,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("Which letter starts bee?")?.id).toBe("voice.flower.letter-welcome");
     expect(narrationClipForText("Yellow, pink, yellow, pink, yellow. Next?")?.id).toBe(
       "voice.flower.row-welcome",
+    );
+    expect(narrationClipForText("What rhymes with bee?")?.id).toBe("voice.flower.rhyme-welcome");
+    expect(narrationClipForText("Bee. What rhymes with bee?")?.id).toBe("voice.flower.clue.rhyme");
+    expect(narrationClipForText("Three and two bees. How many?")?.id).toBe(
+      "voice.flower.blooms-welcome",
+    );
+    expect(narrationClipForText("3 bees on this bloom, 2 on that bloom. How many?")?.id).toBe(
+      "voice.flower.clue.blooms",
     );
   });
 
