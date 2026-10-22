@@ -80,6 +80,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/jungle-fb-treetop.mp3` | `voice.jungle.fb.treetop` |
 | `public/audio/voice/jungle-fb-ocean.mp3` | `voice.jungle.fb.ocean` |
 | `public/audio/voice/jungle-fb-desert.mp3` | `voice.jungle.fb.desert` |
+| `public/audio/voice/jungle-fb-bananas-low.mp3` | `voice.jungle.fb.bananas-low` |
+| `public/audio/voice/jungle-fb-bananas-yes.mp3` | `voice.jungle.fb.bananas-yes` |
+| `public/audio/voice/jungle-fb-bananas-together.mp3` | `voice.jungle.fb.bananas-together` |
+| `public/audio/voice/ocean-area-welcome.mp3` | `voice.ocean.area-welcome` |
+| `public/audio/voice/ocean-bubbles-welcome.mp3` | `voice.ocean.bubbles-welcome` |
+| `public/audio/voice/ocean-feed-station.mp3` | `voice.ocean.feed-station` |
+| `public/audio/voice/ocean-feed-line.mp3` | `voice.ocean.feed-line` |
+| `public/audio/voice/ocean-feed-done.mp3` | `voice.ocean.feed-done` |
+| `public/audio/voice/ocean-quiz-dolphin.mp3` | `voice.ocean.quiz-dolphin` |
+| `public/audio/voice/ocean-quiz-jellyfish.mp3` | `voice.ocean.quiz-jellyfish` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -446,7 +456,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Farm Valley** is a closed kit on the same voice-01: area welcome, milk-cow hold/done, letter-trace and pen-count station prompts, four quiz spokenPrompts, all quiz option feedbacks, and every Pen Farm Count round line. Missing Farm lines stay quiet. Generic studio “Yes!” is not registered (would leak her voice onto other islands). Dynamic counting taps still wait.
 
-**Jungle Canopy** is a closed island: area welcome, canopy memory station, vine-swing hold/done, four quiz spokenPrompts, and monkey/tracks/parrot quiz feedbacks. Missing Jungle lines stay quiet. Banana-count option feedbacks still wait.
+**Jungle Canopy** unique spoken lines are complete on voice-01.
+
+**Ocean Reef** is the next closed island: area welcome, reef bubbles station, feed-the-reef hold/done, and dolphin/jellyfish quiz prompts. Missing Ocean lines stay quiet. Quiz feedbacks, land-vs-sea sorting, and reef-sort studio rounds still wait.
 
 ## Mute keys (unchanged)
 

@@ -170,7 +170,7 @@ function Stage({
         speakText(copy.line, {
           pitch: 1.2,
           rate: 0.92,
-          closedKit: playId === "milk-cow" || playId === "vine-swing",
+          closedKit: playId === "milk-cow" || playId === "vine-swing" || playId === "feed-fish",
         }),
       180,
     );
@@ -180,7 +180,12 @@ function Stage({
     };
   }, [copy.line]);
   useEffect(() => {
-    if (done) speakText(copy.done, { pitch: 1.22, closedKit: playId === "milk-cow" || playId === "vine-swing" });
+    if (done) {
+      speakText(copy.done, {
+        pitch: 1.22,
+        closedKit: playId === "milk-cow" || playId === "vine-swing" || playId === "feed-fish",
+      });
+    }
   }, [done, copy.done]);
 
   return (

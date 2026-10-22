@@ -82,6 +82,16 @@ describe("audio registry", () => {
       "/audio/voice/jungle-fb-treetop.mp3",
       "/audio/voice/jungle-fb-ocean.mp3",
       "/audio/voice/jungle-fb-desert.mp3",
+      "/audio/voice/jungle-fb-bananas-low.mp3",
+      "/audio/voice/jungle-fb-bananas-yes.mp3",
+      "/audio/voice/jungle-fb-bananas-together.mp3",
+      "/audio/voice/ocean-area-welcome.mp3",
+      "/audio/voice/ocean-bubbles-welcome.mp3",
+      "/audio/voice/ocean-feed-station.mp3",
+      "/audio/voice/ocean-feed-line.mp3",
+      "/audio/voice/ocean-feed-done.mp3",
+      "/audio/voice/ocean-quiz-dolphin.mp3",
+      "/audio/voice/ocean-quiz-jellyfish.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -389,6 +399,17 @@ describe("audio registry", () => {
     expect(narrationClipForText("Hold the vine. Swing across.")?.id).toBe("voice.jungle.vine-line");
     expect(narrationClipForText("Yes! Giant padded paws belong to the majestic lion!")?.id).toBe("voice.jungle.fb.lion-yes");
     expect(narrationClipForText("The ocean is home to fish and dolphins, not parrots!")?.id).toBe("voice.jungle.fb.ocean");
+    expect(narrationClipForText("Look closer! There are more bananas up there.")?.id).toBe("voice.jungle.fb.bananas-low");
+  });
+
+  it("maps Ocean Reef closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText("Ocean Reef! Turquoise Waves, Coral Gardens & Swimming Friends. Let's explore together!")?.id,
+    ).toBe("voice.ocean.area-welcome");
+    expect(
+      narrationClipForText("Listen to the sparkling water! Who clicks happily and leaps high out of ocean waves?")?.id,
+    ).toBe("voice.ocean.quiz-dolphin");
+    expect(narrationClipForText("Drag flakes onto every fish.")?.id).toBe("voice.ocean.feed-line");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

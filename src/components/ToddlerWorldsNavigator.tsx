@@ -72,6 +72,10 @@ import { getWorldPlayTheme } from "../data/toddler/toddlerWorldPlayThemes";
 import { quizTapHint } from "../data/toddler/activityQuality";
 import { SECRET_COVER, WORLD_COVER } from "../data/toddler/toddlerWorldArt";
 
+function isClosedVoiceIsland(areaId?: string | null) {
+  return areaId === "farm-valley" || areaId === "jungle-canopy" || areaId === "ocean-reef";
+}
+
 interface ToddlerWorldsNavigatorProps {
   onAddStar: (count: number) => void;
   starsCount: number;
@@ -272,7 +276,7 @@ export function ToddlerWorldsNavigator({
   const speakText = (text: string, options?: SpeakOptions) =>
     speakDevice(text, {
       ...options,
-      closedKit: Boolean(options?.closedKit || activeActivity?.areaId === "farm-valley"),
+      closedKit: Boolean(options?.closedKit || isClosedVoiceIsland(activeActivity?.areaId)),
     });
 
   // Speak activity prompt automatically after view renders
@@ -322,6 +326,13 @@ export function ToddlerWorldsNavigator({
 
       // Jungle canopy memory plays the station clip inside the toy.
       if (activeActivity.areaId === "jungle-canopy" && activeActivity.type === "memory-match") {
+        return;
+      }
+
+      if (
+        activeActivity.areaId === "ocean-reef" &&
+        (activeActivity.type === "bubble-pop" || activeActivity.type === "k1-studio")
+      ) {
         return;
       }
 
@@ -380,7 +391,7 @@ export function ToddlerWorldsNavigator({
 
     speakText(`${area.title}! ${area.tagline}. Let's explore together!`, {
       pitch: 1.15,
-      closedKit: area.id === "farm-valley",
+      closedKit: isClosedVoiceIsland(area.id),
     });
   };
 
@@ -529,10 +540,9 @@ export function ToddlerWorldsNavigator({
         setUnlockedNotice(newlyUnlockedAreas);
       }
 
-      const victoryFeedback =
-        activeActivity.areaId === "farm-valley"
-          ? chosen.feedback
-          : `Hooray! ${chosen.label}! ${chosen.feedback}`;
+      const victoryFeedback = isClosedVoiceIsland(activeActivity.areaId)
+        ? chosen.feedback
+        : `Hooray! ${chosen.label}! ${chosen.feedback}`;
       speakThenRun(victoryFeedback, 600, () => {
         setShowCelebration(true);
         soundEffects.playFanfare();
@@ -566,7 +576,7 @@ export function ToddlerWorldsNavigator({
         }
       }
       speakText(
-        activeActivity.areaId === "farm-valley"
+        isClosedVoiceIsland(activeActivity.areaId)
           ? chosen.feedback
           : `That is ${chosen.label}! ${chosen.feedback} Let's try again!`,
         { pitch: 1.15 },
@@ -923,6 +933,8 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerBubblePopGame
               catalog={playTheme.bubbles}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
               onAddStar={(amount) => onAddStar(amount ?? 1)}
               onComplete={() => completeWorldToy(activeActivity)}
             />
@@ -935,7 +947,7 @@ export function ToddlerWorldsNavigator({
               key={activeActivity.id}
               catalog={playTheme.bubbles}
               prompt={`${activeActivity.title}. ${activeActivity.cluePrompt}`}
-              closedKit={activeActivity.areaId === "farm-valley"}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
               welcomeLine={activeActivity.spokenPrompt}
               onAddStar={() => completeWorldToy(activeActivity)}
             />
@@ -962,7 +974,7 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerK1Studio
               gameId={activeActivity.studioGameId as K1StudioGameId}
-              closedKit={activeActivity.areaId === "farm-valley"}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
               welcomeLine={activeActivity.spokenPrompt}
               onComplete={() => completeWorldToy(activeActivity)}
             />

@@ -56,11 +56,13 @@ export interface ToddlerBubblePopGameProps {
   blueprintLearnerId?: string;
   onPlayingChange?: (isPlaying: boolean) => void;
   catalog?: BubbleWord[];
+  closedKit?: boolean;
+  welcomeLine?: string;
 }
 
 const STATION_HIT_GOAL = 3;
 
-export function ToddlerBubblePopGame({ onAddStar, onComplete, onBack, blueprint, blueprintLearnerId, onPlayingChange, catalog }: ToddlerBubblePopGameProps) {
+export function ToddlerBubblePopGame({ onAddStar, onComplete, onBack, blueprint, blueprintLearnerId, onPlayingChange, catalog, closedKit = false, welcomeLine }: ToddlerBubblePopGameProps) {
   const words = catalog && catalog.length >= 4 ? catalog : BUBBLE_CATALOG;
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [poppedCount, setPoppedCount] = useState(0);
@@ -81,10 +83,16 @@ export function ToddlerBubblePopGame({ onAddStar, onComplete, onBack, blueprint,
     blueprintRoundIndex.current = 0;
     setPoppedCount(0);
     setIsWon(false);
-    speakText(blueprint?.voice.introduction ?? "Welcome to Bubble Pop Phonics! Tap the floating bubbles to hear their letter sounds!", {
-      pitch: 1.2,
-      rate: 0.95,
-    });
+    speakText(
+      closedKit
+        ? welcomeLine || ""
+        : blueprint?.voice.introduction ?? "Welcome to Bubble Pop Phonics! Tap the floating bubbles to hear their letter sounds!",
+      {
+        pitch: 1.2,
+        rate: 0.95,
+        closedKit,
+      },
+    );
     spawnWave();
   }, [blueprint?.id]);
 
@@ -165,9 +173,9 @@ export function ToddlerBubblePopGame({ onAddStar, onComplete, onBack, blueprint,
     soundEffects.playPop();
     const item = words.find((b) => b.letter === bubble.letter) ?? BUBBLE_CATALOG.find((b) => b.letter === bubble.letter);
     if (blueprint) {
-      speakText(`${bubble.letter} begins ${bubble.word}.`, { pitch: 1.25, rate: 0.92 });
+      speakText(`${bubble.letter} begins ${bubble.word}.`, { pitch: 1.25, rate: 0.92, closedKit });
     } else if (item) {
-      speakText(item.sound, { pitch: 1.25, rate: 0.92 });
+      speakText(item.sound, { pitch: 1.25, rate: 0.92, closedKit });
     }
 
     // Add sparkle particle
@@ -255,7 +263,7 @@ export function ToddlerBubblePopGame({ onAddStar, onComplete, onBack, blueprint,
           if (blueprintRoundIndex.current >= blueprint.content.rounds.length) {
             setBubbles([]);
             setIsWon(true);
-            speakText(blueprint.feedback.completion, { pitch: 1.1, rate: 0.95 });
+            speakText(blueprint.feedback.completion, { pitch: 1.1, rate: 0.95, closedKit });
             finishGeneratedSession();
             onCompleteRef.current?.();
             triggerCelebrationConfetti();
