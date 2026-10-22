@@ -340,6 +340,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/sea-fb-open.mp3` | `voice.sea.fb.open` |
 | `public/audio/voice/sea-bubbles-welcome.mp3` | `voice.sea.bubbles-welcome` |
 | `public/audio/voice/sea-rhyme-welcome.mp3` | `voice.sea.rhyme-welcome` |
+| `public/audio/voice/sea-dive.mp3` | `voice.sea.dive` |
+| `public/audio/voice/sea-fb-turtle.mp3` | `voice.sea.fb.turtle` |
+| `public/audio/voice/sea-fb-crab.mp3` | `voice.sea.fb.crab` |
+| `public/audio/voice/sea-fb-octopus.mp3` | `voice.sea.fb.octopus` |
+| `public/audio/voice/sea-jelly.mp3` | `voice.sea.jelly` |
+| `public/audio/voice/sea-fb-pink.mp3` | `voice.sea.fb.pink` |
+| `public/audio/voice/sea-fb-rock.mp3` | `voice.sea.fb.rock` |
+| `public/audio/voice/sea-treasure.mp3` | `voice.sea.treasure` |
+| `public/audio/voice/sea-fb-done.mp3` | `voice.sea.fb.done` |
+| `public/audio/voice/sea-q-turtle.mp3` | `voice.sea.q.turtle` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -732,7 +742,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Starlight Tales** unique spoken lines are complete on voice-01. Rocket Pip step lines reuse the Space Blast-Off kit.
 
-**Deep Sea Tales** is the next closed island: area welcome, submarine station, sea bubbles, and tide rhyme station. Submarine step lines still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Deep Sea Tales** is a closed island: area welcome, submarine station, sea bubbles, tide rhyme, and the submarine story through treasure. Remaining story questions (jellyfish / stars) still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

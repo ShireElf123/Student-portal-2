@@ -342,6 +342,16 @@ describe("audio registry", () => {
       "/audio/voice/sea-fb-open.mp3",
       "/audio/voice/sea-bubbles-welcome.mp3",
       "/audio/voice/sea-rhyme-welcome.mp3",
+      "/audio/voice/sea-dive.mp3",
+      "/audio/voice/sea-fb-turtle.mp3",
+      "/audio/voice/sea-fb-crab.mp3",
+      "/audio/voice/sea-fb-octopus.mp3",
+      "/audio/voice/sea-jelly.mp3",
+      "/audio/voice/sea-fb-pink.mp3",
+      "/audio/voice/sea-fb-rock.mp3",
+      "/audio/voice/sea-treasure.mp3",
+      "/audio/voice/sea-fb-done.mp3",
+      "/audio/voice/sea-q-turtle.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -885,6 +895,14 @@ describe("audio registry", () => {
       narrationClipForText("Glug glug glug! Climb aboard the yellow submarine for an ocean journey!")?.id,
     ).toBe("voice.sea.story-welcome");
     expect(narrationClipForText("Pop the deep-sea story bubbles!")?.id).toBe("voice.sea.bubbles-welcome");
+    expect(
+      narrationClipForText(
+        "Glug glug glug! Down goes our yellow submarine! Can you spot the ocean creature with a hard shell?",
+      )?.id,
+    ).toBe("voice.sea.dive");
+    expect(narrationClipForText("Splish splash! You completed the submarine dive!")?.id).toBe(
+      "voice.sea.fb.done",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
