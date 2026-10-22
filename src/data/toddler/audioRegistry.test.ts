@@ -91,6 +91,16 @@ describe("audio registry", () => {
       "/audio/sfx/animal-ay.mp3",
       "/audio/sfx/animal-bee-letter.mp3",
       "/audio/sfx/animal-ten.mp3",
+      "/audio/sfx/animal-book.mp3",
+      "/audio/sfx/animal-pen.mp3",
+      "/audio/sfx/animal-dot.mp3",
+      "/audio/sfx/animal-ess.mp3",
+      "/audio/sfx/animal-map.mp3",
+      "/audio/sfx/animal-house.mp3",
+      "/audio/sfx/animal-cup.mp3",
+      "/audio/sfx/animal-heart.mp3",
+      "/audio/sfx/animal-bed.mp3",
+      "/audio/sfx/animal-smile.mp3",
       "/audio/sfx/animal-bird.mp3",
     ]);
     expect(new Set(AUDIO_ASSETS.map((asset) => asset.id)).size).toBe(AUDIO_ASSETS.length);
@@ -126,8 +136,10 @@ describe("audio registry", () => {
     expect(animalClipForFriendId("paint")?.src).toBe("/audio/sfx/animal-paint.mp3");
     expect(animalClipForFriendId("drum")?.src).toBe("/audio/sfx/animal-drum.mp3");
     expect(animalClipForFriendId("ten")?.src).toBe("/audio/sfx/animal-ten.mp3");
+    expect(animalClipForFriendId("book")?.src).toBe("/audio/sfx/animal-book.mp3");
+    expect(animalClipForFriendId("smile")?.src).toBe("/audio/sfx/animal-smile.mp3");
     expect(animalClipForFriendId("bird")?.src).toBe("/audio/sfx/animal-bird.mp3");
-    expect(animalClipForFriendId("book")).toBeUndefined();
+    expect(animalClipForFriendId("soap")).toBeUndefined();
     expect(getAudioAsset("sfx.animal.duck")?.animalId).toBe("duck");
   });
 });

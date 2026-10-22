@@ -90,6 +90,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/sfx/animal-ay.mp3` | `sfx.animal.ay` |
 | `public/audio/sfx/animal-bee-letter.mp3` | `sfx.animal.bee-letter` |
 | `public/audio/sfx/animal-ten.mp3` | `sfx.animal.ten` |
+| `public/audio/sfx/animal-book.mp3` | `sfx.animal.book` |
+| `public/audio/sfx/animal-pen.mp3` | `sfx.animal.pen` |
+| `public/audio/sfx/animal-dot.mp3` | `sfx.animal.dot` |
+| `public/audio/sfx/animal-ess.mp3` | `sfx.animal.ess` |
+| `public/audio/sfx/animal-map.mp3` | `sfx.animal.map` |
+| `public/audio/sfx/animal-house.mp3` | `sfx.animal.house` |
+| `public/audio/sfx/animal-cup.mp3` | `sfx.animal.cup` |
+| `public/audio/sfx/animal-heart.mp3` | `sfx.animal.heart` |
+| `public/audio/sfx/animal-bed.mp3` | `sfx.animal.bed` |
+| `public/audio/sfx/animal-smile.mp3` | `sfx.animal.smile` |
 | `public/audio/sfx/animal-bird.mp3` | `sfx.animal.bird` (park roster; previous voice-00 until a park batch) |
 
 ## Spoken lines
@@ -176,6 +186,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | ay | `A says a like apple!` |
 | bee-letter | `B says buh like book!` |
 | ten | `Ten!` |
+| book | `Flip!` |
+| pen | `Scribble!` |
+| dot | `Tap!` |
+| ess | `S says sss like snake and sun!` |
+| map | `Look!` |
+| house | `Knock knock!` |
+| cup | `Sip sip!` |
+| heart | `Beat beat!` |
+| bed | `Yawn!` |
+| smile | `Giggle!` |
 | bird | `Chirp chirp!` |
 
 ## What stays synthesised
