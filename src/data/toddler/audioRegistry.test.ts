@@ -222,6 +222,16 @@ describe("audio registry", () => {
       "/audio/voice/color-letter-trace.mp3",
       "/audio/voice/color-quiz-orange.mp3",
       "/audio/voice/color-quiz-green.mp3",
+      "/audio/voice/color-fb-orange.mp3",
+      "/audio/voice/color-fb-citrus.mp3",
+      "/audio/voice/color-fb-warm.mp3",
+      "/audio/voice/color-fb-green.mp3",
+      "/audio/voice/color-fb-leaves.mp3",
+      "/audio/voice/color-fb-garden.mp3",
+      "/audio/voice/color-mix-atelier.mp3",
+      "/audio/voice/color-mix-bead.mp3",
+      "/audio/voice/color-mix-ink.mp3",
+      "/audio/voice/color-mix-pink.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -657,6 +667,10 @@ describe("audio registry", () => {
       narrationClipForText("When we mix ruby Red with sunny Yellow paint, what magical color appears?")?.id,
     ).toBe("voice.color.quiz-orange");
     expect(narrationClipForText("Drag a stamp onto the wall. Six prints.")?.id).toBe("voice.color.stamp-line");
+    expect(narrationClipForText("Hooray! Red plus Yellow creates juicy sweet Orange!")?.id).toBe(
+      "voice.color.fb.orange",
+    );
+    expect(narrationClipForText("Red plus Yellow on the atelier paper!")?.id).toBe("voice.color.mix.atelier");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

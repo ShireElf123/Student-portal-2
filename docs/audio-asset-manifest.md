@@ -220,6 +220,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/color-letter-trace.mp3` | `voice.color.letter-trace` |
 | `public/audio/voice/color-quiz-orange.mp3` | `voice.color.quiz-orange` |
 | `public/audio/voice/color-quiz-green.mp3` | `voice.color.quiz-green` |
+| `public/audio/voice/color-fb-orange.mp3` | `voice.color.fb.orange` |
+| `public/audio/voice/color-fb-citrus.mp3` | `voice.color.fb.citrus` |
+| `public/audio/voice/color-fb-warm.mp3` | `voice.color.fb.warm` |
+| `public/audio/voice/color-fb-green.mp3` | `voice.color.fb.green` |
+| `public/audio/voice/color-fb-leaves.mp3` | `voice.color.fb.leaves` |
+| `public/audio/voice/color-fb-garden.mp3` | `voice.color.fb.garden` |
+| `public/audio/voice/color-mix-atelier.mp3` | `voice.color.mix.atelier` |
+| `public/audio/voice/color-mix-bead.mp3` | `voice.color.mix.bead` |
+| `public/audio/voice/color-mix-ink.mp3` | `voice.color.mix.ink` |
+| `public/audio/voice/color-mix-pink.mp3` | `voice.color.mix.pink` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -600,7 +610,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Treasure Quest** unique spoken lines are complete on voice-01.
 
-**Color Magic Studio** is the next closed island: area welcome, paint balloons, stamp mural hold/done, letter-trace, and orange/green mix prompts. Mix option feedbacks and Color Lab tap phrases still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Color Magic Studio** is a closed island: area welcome, paint balloons, stamp mural, letter-trace, orange/green mix prompts and all six option feedbacks, plus atelier/bead/ink mixFlavor phrases and morning pink. Remaining white-mix phrases and drop names stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
