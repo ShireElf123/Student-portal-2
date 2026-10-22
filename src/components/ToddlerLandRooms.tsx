@@ -189,7 +189,8 @@ function Stage({
             playId === "brush-teeth" ||
             playId === "set-table" ||
             playId === "hang-wash" ||
-            playId === "load-truck",
+            playId === "load-truck" ||
+            playId === "wash-bus",
         }),
       180,
     );
@@ -221,7 +222,8 @@ function Stage({
           playId === "brush-teeth" ||
           playId === "set-table" ||
           playId === "hang-wash" ||
-          playId === "load-truck",
+          playId === "load-truck" ||
+          playId === "wash-bus",
       });
     }
   }, [done, copy.done]);

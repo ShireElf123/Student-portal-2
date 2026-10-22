@@ -95,7 +95,8 @@ function isClosedVoiceIsland(areaId?: string | null) {
     areaId === "feelings-emotions" ||
     areaId === "healthy-habits" ||
     areaId === "family-home" ||
-    areaId === "garage-bay"
+    areaId === "garage-bay" ||
+    areaId === "town-road"
   );
 }
 

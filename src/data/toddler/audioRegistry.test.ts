@@ -482,6 +482,16 @@ describe("audio registry", () => {
       "/audio/voice/garage-fb-square.mp3",
       "/audio/voice/garage-fb-triangle.mp3",
       "/audio/voice/garage-bead-welcome.mp3",
+      "/audio/voice/garage-truck-welcome.mp3",
+      "/audio/voice/garage-truck-line.mp3",
+      "/audio/voice/garage-truck-done.mp3",
+      "/audio/voice/street-area-welcome.mp3",
+      "/audio/voice/street-light-welcome.mp3",
+      "/audio/voice/street-fb-stop.mp3",
+      "/audio/voice/street-fb-wait.mp3",
+      "/audio/voice/street-fb-watch.mp3",
+      "/audio/voice/street-clue-light.mp3",
+      "/audio/voice/street-fire-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1161,6 +1171,17 @@ describe("audio registry", () => {
     expect(narrationClipForText("What bead comes next on the garage train?")?.id).toBe(
       "voice.garage.bead-welcome",
     );
+    expect(narrationClipForText("All loaded. Ready to roll!")?.id).toBe("voice.garage.truck-done");
+  });
+
+  it("maps High Street closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "High Street! Lights, crossings and a fire truck. Let's explore together!",
+      )?.id,
+    ).toBe("voice.street.area-welcome");
+    expect(narrationClipForText("The light is red. What do we do?")?.id).toBe("voice.street.light-welcome");
+    expect(narrationClipForText("Who rides the long red truck?")?.id).toBe("voice.street.fire-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

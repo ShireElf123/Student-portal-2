@@ -480,6 +480,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/garage-fb-square.mp3` | `voice.garage.fb.square` |
 | `public/audio/voice/garage-fb-triangle.mp3` | `voice.garage.fb.triangle` |
 | `public/audio/voice/garage-bead-welcome.mp3` | `voice.garage.bead-welcome` |
+| `public/audio/voice/garage-truck-welcome.mp3` | `voice.garage.truck-welcome` |
+| `public/audio/voice/garage-truck-line.mp3` | `voice.garage.truck-line` |
+| `public/audio/voice/garage-truck-done.mp3` | `voice.garage.truck-done` |
+| `public/audio/voice/street-area-welcome.mp3` | `voice.street.area-welcome` |
+| `public/audio/voice/street-light-welcome.mp3` | `voice.street.light-welcome` |
+| `public/audio/voice/street-fb-stop.mp3` | `voice.street.fb.stop` |
+| `public/audio/voice/street-fb-wait.mp3` | `voice.street.fb.wait` |
+| `public/audio/voice/street-fb-watch.mp3` | `voice.street.fb.watch` |
+| `public/audio/voice/street-clue-light.mp3` | `voice.street.clue.light` |
+| `public/audio/voice/street-fire-welcome.mp3` | `voice.street.fire-welcome` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -886,7 +896,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Family & Cozy Home** unique spoken lines are complete on voice-01.
 
-**Sunny Garage** is a closed island: wheels through bead train. Remaining load-truck station and land still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Sunny Garage** unique spoken lines are complete on voice-01.
+
+**High Street** is the next closed island: area welcome, stop light, and fire-truck station. Remaining fire feedback, sky/street, cones, crossing, wash-bus, and drive still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
