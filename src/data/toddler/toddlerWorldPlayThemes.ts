@@ -196,7 +196,7 @@ const letters: SafariFriend[] = [
   { id: "book", name: "Little Book", emoji: "📘", soundText: "FLIP!", call: "Flip a page and listen!", funFact: "Books have a beginning, middle and end.", habitat: "Story Nook", bgGradient: "from-indigo-400 to-blue-600" },
   { id: "pen", name: "Pencil", emoji: "✏️", soundText: "SCRIBBLE!", call: "Trace a big letter!", funFact: "Pencils can be rubbed out.", habitat: "Writing Desk", bgGradient: "from-yellow-300 to-amber-500" },
   { id: "dot", name: "Counting Dot", emoji: "🔵", soundText: "TAP!", call: "Tap each dot once!", funFact: "One tap for one thing is how we count.", habitat: "Dot Tray", bgGradient: "from-cyan-400 to-sky-500" },
-  { id: "ess", name: "Letter S", emoji: "🐍", soundText: "S /s/!", call: "S says /s/ like snake and sun!", funFact: "S looks a little like a snake.", habitat: "Phonics Meadow", bgGradient: "from-lime-400 to-emerald-600" },
+  { id: "ess", name: "Letter S", emoji: "🐍", soundText: "S!", call: "S says sss like snake and sun!", funFact: "S looks a little like a snake.", habitat: "Phonics Meadow", bgGradient: "from-lime-400 to-emerald-600" },
   { id: "map", name: "Picture Map", emoji: "🗺️", soundText: "LOOK!", call: "Find the path on the picture map!", funFact: "Maps show where things are, smaller.", habitat: "Counting Grove", bgGradient: "from-emerald-400 to-sky-500" },
 ];
 

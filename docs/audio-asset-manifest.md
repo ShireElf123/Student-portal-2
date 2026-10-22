@@ -102,6 +102,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/safari-bio-scissors.mp3` | `voice.safari.bio.scissors` |
 | `public/audio/voice/safari-bio-ay.mp3` | `voice.safari.bio.ay` |
 | `public/audio/voice/safari-bio-bee-letter.mp3` | `voice.safari.bio.bee-letter` |
+| `public/audio/voice/safari-bio-ten.mp3` | `voice.safari.bio.ten` |
+| `public/audio/voice/safari-bio-book.mp3` | `voice.safari.bio.book` |
+| `public/audio/voice/safari-bio-pen.mp3` | `voice.safari.bio.pen` |
+| `public/audio/voice/safari-bio-dot.mp3` | `voice.safari.bio.dot` |
+| `public/audio/voice/safari-bio-ess.mp3` | `voice.safari.bio.ess` |
+| `public/audio/voice/safari-bio-map.mp3` | `voice.safari.bio.map` |
+| `public/audio/voice/safari-bio-house.mp3` | `voice.safari.bio.house` |
+| `public/audio/voice/safari-bio-home-brush.mp3` | `voice.safari.bio.home-brush` |
+| `public/audio/voice/safari-bio-cup.mp3` | `voice.safari.bio.cup` |
+| `public/audio/voice/safari-bio-heart.mp3` | `voice.safari.bio.heart` |
 | `public/audio/sfx/animal-lion.mp3` | `sfx.animal.lion` |
 | `public/audio/sfx/animal-elephant.mp3` | `sfx.animal.elephant` |
 | `public/audio/sfx/animal-monkey.mp3` | `sfx.animal.monkey` |
