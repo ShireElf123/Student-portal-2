@@ -43,6 +43,8 @@ import { ToddlerPhonicsBoard } from "./ToddlerPhonicsBoard";
 import { ToddlerCountingBoard } from "./ToddlerCountingBoard";
 import { ToddlerFocusBoard } from "./ToddlerFocusBoard";
 import { ToddlerWorldsNavigator } from "./ToddlerWorldsNavigator";
+import { ToddlerSpaceNav } from "./ToddlerSpaceNav";
+import type { ToddlerSpaceTabId } from "../data/toddler/toddlerSpaceTabs";
 import { ToddlerDailyMissionsModal } from "./ToddlerDailyMissionsModal";
 import { ToddlerStickerAlbumModal } from "./ToddlerStickerAlbumModal";
 import { BuddyCompanionBadge } from "./BuddyCompanionBadge";
@@ -228,7 +230,7 @@ export function ToddlerWorldView({
   onSwitchToEducator,
   onRequestExit,
 }: ToddlerWorldViewProps) {
-  const [activeTab, setActiveTab] = useState<"worlds" | "books" | "playhouse" | "phonics" | "counting" | "focus" | "games" | "avatar-studio">("worlds");
+  const [activeTab, setActiveTab] = useState<ToddlerSpaceTabId>("worlds");
   const [gameState, setGameState] = useState(() => getGamificationState());
   const activeBuddy = gameState.buddy ?? DEFAULT_BUDDY;
   const [selectedBook, setSelectedBook] = useState<PictureBook | null>(null);
@@ -919,125 +921,9 @@ export function ToddlerWorldView({
         className="-mt-1 mb-4"
       />
 
-      {/* Main Mode Navigation Tabs */}
+      {/* Main Mode Navigation Tabs — Worlds/Stories/Games/Focus first on the phone row */}
       <div className="max-w-7xl mx-auto px-4 pt-2 pb-2">
-        <div className={`grid grid-cols-4 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3 p-2 sm:p-3 rounded-3xl max-w-6xl mx-auto mb-8 shadow-xl ${
-          isMeadow
-            ? "bg-white/95 backdrop-blur-md border-4 border-emerald-300 ring-4 ring-emerald-500/20"
-            : "bg-white/[0.08] border border-white/15"
-        }`}>
-          <button
-            onClick={() => setActiveTab("worlds")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "worlds"
-                ? "bg-gradient-to-b from-amber-400 to-orange-500 text-white border-b-4 border-orange-700 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-amber-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">🗺️</span>
-            <span>Worlds</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("books")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "books"
-                ? "bg-gradient-to-b from-amber-400 to-amber-500 text-amber-950 border-b-4 border-amber-700 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-amber-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">📚</span>
-            <span>Stories</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("playhouse")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "playhouse"
-                ? "bg-gradient-to-b from-violet-400 to-fuchsia-500 text-white border-b-4 border-fuchsia-800 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-violet-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">🎭</span>
-            <span>Playhouse</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("phonics")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "phonics"
-                ? "bg-gradient-to-b from-rose-400 to-pink-500 text-white border-b-4 border-pink-700 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-pink-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">🔤</span>
-            <span>Phonics</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("counting")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "counting"
-                ? "bg-gradient-to-b from-indigo-400 to-indigo-600 text-white border-b-4 border-indigo-800 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-indigo-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">🔢</span>
-            <span>Counting</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("focus")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "focus"
-                ? "bg-gradient-to-b from-teal-400 to-cyan-600 text-white border-b-4 border-teal-800 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-teal-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">🎯</span>
-            <span>Focus</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("games")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "games"
-                ? "bg-gradient-to-b from-emerald-400 to-teal-500 text-white border-b-4 border-emerald-800 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-emerald-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">🎮</span>
-            <span>Games</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("avatar-studio")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "avatar-studio"
-                ? "bg-gradient-to-b from-pink-400 to-purple-500 text-white border-b-4 border-purple-800 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-purple-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">🐾</span>
-            <span>My Buddy</span>
-          </button>
-        </div>
+        <ToddlerSpaceNav activeTab={activeTab} onSelect={setActiveTab} isMeadow={isMeadow} />
 
         {/* Worlds is the front page: full width like the phone. Other tabs keep the desktop sidebar. */}
         <div className={`grid grid-cols-1 gap-6 items-start ${activeTab === "worlds" ? "" : "lg:grid-cols-12"}`}>

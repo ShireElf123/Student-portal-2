@@ -10,38 +10,17 @@ import { ALL_TODDLER_WORLDS } from "./toddlerWorldsArchitecture";
 import { PLAYHOUSE_SHOWS } from "./playhouseShows";
 import { K1_STUDIO_GAMES } from "./k1StudioGames";
 import { SECRET_ZONES } from "../../components/ToddlerSecretZones";
-
-const MECHANIC_FAMILY: Record<string, string> = {
-  "sound-detective": "tap-quiz",
-  "clue-detective": "tap-quiz",
-  counting: "tap-count-or-quiz",
-  sorting: "tap-sort",
-  "habitat-match": "tap-quiz",
-  "color-lab": "tap-mix-plus-paint-canvas",
-  "piano-melody": "tap-keys",
-  "memory-match": "tap-memory",
-  "balloon-sky": "tap-moving-targets",
-  "animal-safari": "tap-explore-or-detective",
-  "rhyme-garden": "tap-quiz",
-  "bubble-pop": "tap-moving-targets",
-  "letter-trace": "freeform-trace",
-  "open-play": "hold-or-drag-room",
-  "land-play": "hold-or-drag-room",
-  "k1-studio": "tap-quiz-rounds",
-  "story-adventure": "multi-step-story",
-  "pattern-match": "tap-pattern",
-};
+import {
+  ACTIVITY_ENGINE,
+  MECHANIC_FAMILY,
+  activityHasCorrectOption,
+  listWorldActivities,
+  patternPromptIsHonest,
+  quizTapHint,
+} from "./activityQuality";
 
 describe("activity inventory (source coverage)", () => {
-  const worldActivities = ALL_TODDLER_WORLDS.flatMap((world) =>
-    world.areas.flatMap((area) =>
-      area.activities.map((activity) => ({
-        ...activity,
-        worldId: world.id,
-        areaId: area.id,
-      })),
-    ),
-  );
+  const worldActivities = listWorldActivities();
 
   it("reconciles unique world activity IDs and registers them", () => {
     const ids = worldActivities.map((activity) => activity.id);
@@ -95,6 +74,11 @@ describe("activity inventory (source coverage)", () => {
     expect(worldActivities.length).toBe(510);
     expect(LEARNING_ACTIVITY_DEFINITIONS.length).toBeGreaterThanOrEqual(worldActivities.length);
     expect(PICTURE_BOOKS.length).toBeGreaterThanOrEqual(80);
+    expect(worldActivities.filter((activity) => !activityHasCorrectOption(activity)).map((activity) => activity.id)).toEqual([]);
+    expect(worldActivities.filter((activity) => !patternPromptIsHonest(activity)).map((activity) => activity.id)).toEqual([]);
+    expect(worldActivities.filter((activity) => !ACTIVITY_ENGINE[activity.type]).map((activity) => activity.id)).toEqual([]);
+    expect(quizTapHint("pattern-match")).toBe("Tap what comes next");
+    expect(quizTapHint("sound-detective")).toBe("Tap who made the sound");
     // Visible in vitest logs so the quality report can cite exact source counts.
     // eslint-disable-next-line no-console
     console.log("ACTIVITY_INVENTORY", {

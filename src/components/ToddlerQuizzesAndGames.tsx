@@ -88,7 +88,7 @@ const BONUS_EXPLORER_QUESTIONS: QuizQuestion[] = [
   { id: "q16", prompt: "Which tiny helper makes sweet honey?", spokenPrompt: "Which little buzzing friend visits flowers and helps make honey?", correctId: "bee", soundCue: "Bzzzz!", options: [{ id: "bee", label: "Busy Bee", emoji: "🐝", soundText: "Buzz buzz! I love flowers!" }, { id: "frog", label: "Frog", emoji: "🐸", soundText: "Ribbit ribbit!" }, { id: "duck", label: "Duck", emoji: "🦆", soundText: "Quack quack!" }, { id: "cat", label: "Kitten", emoji: "🐱", soundText: "Meow!" }] },
   { id: "q17", prompt: "Which animal lives in a cold, icy place and waddles?", spokenPrompt: "Who wears a black and white coat and waddles across the chilly ice?", correctId: "penguin", soundCue: "Waddle waddle!", options: [{ id: "penguin", label: "Penguin", emoji: "🐧", soundText: "Waddle, slide, splash!" }, { id: "camel", label: "Camel", emoji: "🐫", soundText: "I walk in the warm desert!" }, { id: "monkey", label: "Monkey", emoji: "🐵", soundText: "Ooh ooh aah aah!" }, { id: "cow", label: "Cow", emoji: "🐮", soundText: "Moo!" }] },
   { id: "q18", prompt: "What do plants need from the sky to help them grow?", spokenPrompt: "Plants drink rain and reach toward the warm sunshine. What shines in the daytime sky?", correctId: "sun", soundCue: "Shine bright!", options: [{ id: "sun", label: "Sunny Sun", emoji: "☀️", soundText: "Warm sunshine helps plants grow!" }, { id: "moon", label: "Moon", emoji: "🌙", soundText: "The moon glows at night!" }, { id: "snow", label: "Snowflake", emoji: "❄️", soundText: "Snow is cold and fluffy!" }, { id: "star", label: "Star", emoji: "⭐", soundText: "Stars twinkle at night!" }] },
-  { id: "q19", prompt: "Which shape has three straight sides?", spokenPrompt: "Let's count the sides together. One, two, three. Which shape has three sides?", correctId: "triangle", soundCue: "One, two, three!", options: [{ id: "triangle", label: "Triangle", emoji: "🔺", soundText: "Three sides make a triangle!" }, { id: "circle", label: "Circle", emoji: "🔵", soundText: "A circle is round!" }, { id: "square", label: "Square", emoji: "📗", soundText: "A square has four sides!" }, { id: "star", label: "Star", emoji: "⭐", soundText: "A star has pointy tips!" }] },
+  { id: "q19", prompt: "Which shape has three straight sides?", spokenPrompt: "Let's count the sides together. One, two, three. Which shape has three sides?", correctId: "triangle", soundCue: "One, two, three!", options: [{ id: "triangle", label: "Triangle", emoji: "🔺", soundText: "Three sides make a triangle!" }, { id: "circle", label: "Circle", emoji: "🔵", soundText: "A circle is round!" }, { id: "square", label: "Square", emoji: "📦", soundText: "A square has four sides!" }, { id: "star", label: "Star", emoji: "⭐", soundText: "A star has pointy tips!" }] },
   { id: "q20", prompt: "Which one is the number three?", spokenPrompt: "Listen carefully. Which number comes after two: one, two, three?", correctId: "three", soundCue: "1, 2, 3!", options: [{ id: "one", label: "One", emoji: "1️⃣", soundText: "One little sun!" }, { id: "three", label: "Three", emoji: "3️⃣", soundText: "One, two, three!" }, { id: "five", label: "Five", emoji: "5️⃣", soundText: "Five little stars!" }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "One, two!" }] },
   { id: "q21", prompt: "Which fruit is yellow and monkeys love to eat?", spokenPrompt: "Peel it, take a bite, and say yum! Which yellow fruit do monkeys love?", correctId: "banana", soundCue: "Yummy banana!", options: [{ id: "banana", label: "Banana", emoji: "🍌", soundText: "A tasty yellow banana!" }, { id: "apple", label: "Apple", emoji: "🍎", soundText: "Crunchy red apple!" }, { id: "grapes", label: "Grapes", emoji: "🍇", soundText: "Juicy grapes!" }, { id: "lemon", label: "Lemon", emoji: "🍋", soundText: "A sour yellow lemon!" }] },
   { id: "q22", prompt: "What should you do before crossing a road?", spokenPrompt: "We keep safe near roads. Before crossing with a grown-up, what should we do?", correctId: "stop", soundCue: "Stop, look, listen!", options: [{ id: "stop", label: "Stop and Look", emoji: "🛑", soundText: "Hold a grown-up's hand and look both ways!" }, { id: "run", label: "Run fast", emoji: "🏃", soundText: "Let's stay safe and walk with a grown-up!" }, { id: "play", label: "Play ball", emoji: "⚽", soundText: "Roads are not a place to play!" }, { id: "hide", label: "Hide", emoji: "🙈", soundText: "We need to see and listen carefully!" }] },
@@ -302,6 +302,28 @@ interface ShapeQuestion {
     emoji: string;
     color: string;
   }[];
+}
+
+function ShapeGlyph({ option }: { option: ShapeQuestion["options"][number] }) {
+  if (option.id === "square" || option.id === "circle" || option.id === "triangle") {
+    const clip =
+      option.id === "circle"
+        ? "circle(50% at 50% 50%)"
+        : option.id === "triangle"
+        ? "polygon(50% 8%, 4% 92%, 96% 92%)"
+        : undefined;
+    return (
+      <span
+        aria-hidden
+        data-testid={`shape-glyph-${option.id}`}
+        className={`inline-block h-14 w-14 sm:h-16 sm:w-16 mb-2 bg-gradient-to-br ${option.color} ${
+          option.id === "square" ? "rounded-sm border-2 border-white/80" : ""
+        }`}
+        style={clip ? { clipPath: clip } : undefined}
+      />
+    );
+  }
+  return <span className="text-6xl sm:text-7xl mb-2 filter drop-shadow-md">{option.emoji}</span>;
 }
 
 const SHAPE_QUESTIONS: ShapeQuestion[] = [
@@ -1530,9 +1552,7 @@ export function ToddlerQuizzesAndGames({
                           : "bg-white/[0.04] border-white/15 hover:border-purple-400/60 hover:bg-white/[0.08] text-white"
                       }`}
                     >
-                      <span className="text-6xl sm:text-7xl mb-2 filter drop-shadow-md">
-                        {option.emoji}
-                      </span>
+                      <ShapeGlyph option={option} />
                       <span className="text-lg sm:text-xl font-black text-white">
                         {option.label}
                       </span>

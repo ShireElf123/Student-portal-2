@@ -57,25 +57,36 @@ export const SECRET_ZONES: SecretZoneDef[] = [
   },
 ];
 
-const FINDS_KEY = "toddler-secret-zone-finds";
+const LEGACY_FINDS_KEY = "toddler-secret-zone-finds";
 const BRUSH_STROKES_TO_REVEAL = 10;
 
-export function secretZoneIsFound(zoneId: string): boolean {
+export function secretZoneFindsStorageKey(learnerId = getActiveLearnerId()): string {
+  return `toddler-secret-zone-finds:${learnerId}`;
+}
+
+function readFoundIds(learnerId = getActiveLearnerId()): string[] {
   try {
-    const raw = localStorage.getItem(FINDS_KEY);
-    const found = raw ? (JSON.parse(raw) as string[]) : [];
-    return found.includes(zoneId);
+    const namespaced = localStorage.getItem(secretZoneFindsStorageKey(learnerId));
+    if (namespaced) return JSON.parse(namespaced) as string[];
+    const legacy = localStorage.getItem(LEGACY_FINDS_KEY);
+    if (!legacy) return [];
+    localStorage.setItem(secretZoneFindsStorageKey(learnerId), legacy);
+    localStorage.removeItem(LEGACY_FINDS_KEY);
+    return JSON.parse(legacy) as string[];
   } catch {
-    return false;
+    return [];
   }
 }
 
-function markFound(zoneId: string) {
+export function secretZoneIsFound(zoneId: string, learnerId = getActiveLearnerId()): boolean {
+  return readFoundIds(learnerId).includes(zoneId);
+}
+
+function markFound(zoneId: string, learnerId = getActiveLearnerId()) {
   try {
-    const raw = localStorage.getItem(FINDS_KEY);
-    const found = raw ? (JSON.parse(raw) as string[]) : [];
+    const found = readFoundIds(learnerId);
     if (!found.includes(zoneId)) {
-      localStorage.setItem(FINDS_KEY, JSON.stringify([...found, zoneId]));
+      localStorage.setItem(secretZoneFindsStorageKey(learnerId), JSON.stringify([...found, zoneId]));
     }
   } catch {
     /* ignore quota */

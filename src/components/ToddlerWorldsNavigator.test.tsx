@@ -64,7 +64,7 @@ const startActivity = async () => {
   );
   await flush(500);
   expect(utils.container.textContent).toContain("The Grassy Pasture Sound");
-  expect(utils.container.textContent).toContain("Tap who it is");
+  expect(utils.container.textContent).toContain("Tap who made the sound");
   expect(utils.container.textContent).not.toContain("Beginner");
   return utils;
 };

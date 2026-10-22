@@ -69,6 +69,7 @@ import type { K1StudioGameId } from "../data/toddler/k1StudioGames";
 import { ToddlerWorldTrail } from "./ToddlerWorldTrail";
 import { ATLAS_CONTINENTS, TOY_ACTIVITY_TYPES } from "../data/toddler/toddlerWorldAtlasLayout";
 import { getWorldPlayTheme } from "../data/toddler/toddlerWorldPlayThemes";
+import { quizTapHint } from "../data/toddler/activityQuality";
 import { SECRET_COVER, WORLD_COVER } from "../data/toddler/toddlerWorldArt";
 
 interface ToddlerWorldsNavigatorProps {
@@ -1316,6 +1317,9 @@ export function ToddlerWorldsNavigator({
               <p className="text-slate-800 text-base sm:text-lg max-w-lg mx-auto font-bold">
                 {activeActivity.cluePrompt}
               </p>
+              {activeActivity.type === "pattern-match" && (
+                <p className="text-xs font-black uppercase tracking-wider text-slate-700">Pattern puzzle — look at the rhythm, then pick what comes next.</p>
+              )}
               <button
                 type="button"
                 onClick={() => {
@@ -1351,7 +1355,7 @@ export function ToddlerWorldsNavigator({
                   );
                 })}
               </div>
-              <p className="text-slate-800/80 text-sm font-black">Tap who it is</p>
+              <p className="text-slate-800/80 text-sm font-black">{quizTapHint(activeActivity.type)}</p>
             </div>
           </div>
         )}

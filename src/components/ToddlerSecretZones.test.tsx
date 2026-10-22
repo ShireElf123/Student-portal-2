@@ -11,8 +11,10 @@ vi.mock("../utils/speechUtils", () => ({
   speechCoordinator: { subscribe: () => () => {} },
 }));
 vi.mock("canvas-confetti", () => ({ default: () => {} }));
+const learner = vi.hoisted(() => ({ id: "test-learner" }));
+
 vi.mock("../utils/learnerBrain", () => ({
-  getActiveLearnerId: () => "test-learner",
+  getActiveLearnerId: () => learner.id,
   recordLearningEvent: () => {},
 }));
 vi.mock("../utils/gamification", () => ({
@@ -51,6 +53,7 @@ function brushCanvas(canvas: HTMLCanvasElement) {
 
 beforeEach(() => {
   cleanup();
+  learner.id = "test-learner";
   localStorage.clear();
   vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
 });
@@ -142,5 +145,28 @@ describe("secret rooms", () => {
     await flush();
     expect(container.textContent).toContain("Royal Pearl");
     expect(stars).toEqual([3]);
+  });
+
+  it("does not mix secret-zone finds between learners", async () => {
+    const zone = SECRET_ZONES[2];
+    learner.id = "learner-a";
+    const first = render(
+      <ToddlerSecretZonePlay zone={zone} onAddStar={() => {}} onLeave={() => {}} />,
+    );
+    const clams = Array.from(first.container.querySelectorAll("button")).filter(
+      (button) => button.getAttribute("aria-label") === "Closed clam",
+    );
+    for (const clam of clams) fireEvent.click(clam);
+    await flush();
+    expect(secretZoneIsFound(zone.id)).toBe(true);
+    cleanup();
+
+    learner.id = "learner-b";
+    expect(secretZoneIsFound(zone.id)).toBe(false);
+    const second = render(
+      <ToddlerSecretZonePlay zone={zone} onAddStar={() => {}} onLeave={() => {}} />,
+    );
+    expect(second.container.textContent).toContain("Pearl pouch");
+    expect(second.container.textContent).not.toContain("Royal Pearl");
   });
 });

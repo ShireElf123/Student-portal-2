@@ -1,62 +1,86 @@
-# Activity issue register (Phase 1.2)
+# Activity issue register (Phase 1.3)
 
-Labels: **severity** (child cannot complete the promised play), **suspected** (source-only, needs device), **design** (intentional).
+Verification labels: **source-inspected** | **unit-tested** | **browser-tested** | **device-tested**.
 
-Verification: `source` | `unit` | `preview` | `device`.
+Classes: **confirmed-source** | **confirmed-test** | **suspected** | **design** | **verified-working**.
 
-## Inventory (source)
+Stamp Mural is **unit-tested**, not device-tested. This conversation did not confirm a finger pass.
+
+## Inventory (source-inspected)
 
 | Surface | Count | Notes |
 |---|---|---|
 | Worlds | 12 | `ALL_TODDLER_WORLDS` |
-| World activities | **510** unique IDs | All registered as `toddler-world` |
+| World activities | **510** unique IDs | All registered; `listWorldActivities()` |
 | Registry | 567 | Worlds plus books/games/assessments |
 | Picture books | 85 | Stories tab |
 | Playhouse shows | 20 | Playhouse tab |
 | K1 studio games | 16 | Worlds `k1-studio` rows |
 | Secret zones | 3 | Worlds extras |
-| Guided assessments | 12 | Parent/teacher, not toddler catalogue |
+| Guided assessments | 12 | Not toddler catalogue |
 
-World activity types: clue-detective 163, counting 85, sorting 44, land-play 41, pattern-match 30, sound-detective 24, k1-studio 16, letter-trace 15, habitat-match 13, memory-match 12, balloon-sky 12, color-lab 9, rhyme-garden 9, story-adventure 9, animal-safari 8, piano-melody 7, open-play 7, bubble-pop 6.
+World types (engine in `activityQuality.ts`): clue-detective 163, counting 85, sorting 44, land-play 41, pattern-match 30, sound-detective 24, k1-studio 16, letter-trace 15, habitat-match 13, memory-match 12, balloon-sky 12, color-lab 9, rhyme-garden 9, story-adventure 9, animal-safari 8, piano-melody 7, open-play 7, bubble-pop 6.
 
-This is **source coverage**, not 510 device plays.
+**510/510 source-accounted.** Not 510 device plays.
 
-## Fixed this phase
+## Engine audit (source-inspected, sample unit-tested)
 
-| ID | Severity | Activity | Verification |
+| Engine | IDs | Mechanic | Notes |
 |---|---|---|---|
-| ISS-STAMP-2 | severity | Stamp Mural (`stamp-mural`) | `unit` — wall-local pointer; preview follows path; print at release %. Not `device`. |
+| WorldsNavigator.quiz | clue 163 + sound 24 + habitat 13 + pattern 30 | tap-quiz | Pattern now uses “Tap what comes next”. Not device-tested. |
+| WorldsNavigator.counting | 85 | tap-count | |
+| WorldsNavigator.sorting | 44 | tap-sort | |
+| ToddlerLandRooms | 41 | hold/drag | Stamp mural unit-tested; crate drop-on-up unit-tested |
+| ToddlerK1Studio | 16 | tap rounds | |
+| ToddlerLetterTrace | 15 | freeform-trace | Accuracy not 100% |
+| ToddlerMemoryGame | 12 | tap-memory | Per-match stars + station complete — suspected farming on replay |
+| ToddlerBalloonSky | 12 | 3-hit station | unit 1.1 |
+| ToddlerColorLab | 9 | tap-mix + paint | Mix is tap, not stamp |
+| ToddlerRhymeGame | 9 | tap-quiz | |
+| WorldsNavigator.story | 9 | multi-step | |
+| ToddlerAnimalSafari | 8 | tap explore | Games surface `missionSurface` 1.1 |
+| ToddlerMusicPiano | 7 | tap keys | |
+| ToddlerOpenPlay | 7 | hold | |
+| ToddlerBubblePopGame | 6 | 3-hit station | unit 1.1 |
+| unmounted `feed-friend` | 0 | — | Type exists; no rows |
 
-Root cause of the remaining jump after 1.1: tray drag + 48px hit pad + 6–88 / 8–78 clamp + fallback `12 + n*12` path. Land crate drag was left on `bindFollowDrag` (drop-on-up). Color Lab mix is still tap-droplets; paint uses canvas-local coords.
+## Fixed this phase (1.3)
 
-## Open / not claimed done
-
-| ID | Class | Notes | Verification |
+| ID | Class | Fix | Verification |
 |---|---|---|---|
-| ISS-05 | suspected | Safari extra missions / Games pay gate beyond 3-hit station | source + unit 1.1 |
-| ISS-06 | suspected | Playhouse leftover emoji interiors | source |
-| ISS-quiet | design | Quiet Corner has no pause control | source |
-| ISS-pattern | design | `pattern-match` reuses quiz option UI | source |
-| ISS-nav | design | 8 tabs wrap on small screens; Worlds and Games share engines | source |
-| ISS-books-alt | suspected | some book images `alt=""` | source |
-| ISS-emoji | suspected | tofu leftover outside Focus | source; not re-audited 1.2 |
-| ISS-trace | suspected | letter-trace accuracy not 100% | unit earlier |
+| ISS-nav | confirmed-source | Phone first row is Worlds, Stories, Games, Focus. All eight tabs remain. | unit-tested (`toddlerSpaceTabs`, `ToddlerSpaceNav`) |
+| ISS-pattern | confirmed-source | Pattern activities no longer say “Tap who it is”. Badge + `quizTapHint`. | unit-tested (farm sound still “Tap who made the sound”) |
+| ISS-secret-mix | confirmed-source | Secret finds key is `toddler-secret-zone-finds:{learnerId}`. Legacy global key migrates once. | unit-tested |
+| ISS-shape-square | confirmed-source | Shape match draws CSS square/circle/triangle; explorer square option is a box, not a book. | source-inspected + unit suite |
 
-## Navigation (smallest coherent proposal)
+## Still open
 
-Keep the eight tabs (Worlds, Stories, Playhouse, Phonics, Counting, Focus, Games, My Buddy). Do **not** add a ninth tab or hide Worlds toys.
+| ID | Class | Severity | Why open |
+|---|---|---|---|
+| ISS-STAMP-2 | verified-working at unit | — | Wall-local stamp. **Not device-tested** this phase. |
+| ISS-safari-z | confirmed-source | content gap | Safari alphabet is A–Y (25 pages); subtitle already says Z comes next. Adding Z needs a painted page — not this phase (no catalogue/art expansion). |
+| ISS-06 | suspected | presentation | Playhouse scene interiors are still emoji (`scene.illustration`). Covers can be images. Needs art, not a mechanic rewrite. |
+| ISS-quiet | design | low | Quiet Corner is a short finite body timer. Pause would turn it into a stay-on-screen control. Left as designed. |
+| ISS-books-alt | design | a11y | Many `alt=""` sit inside buttons that already name the work. Empty alt avoids double-speaking. |
+| ISS-emoji | suspected | presentation | Full-app tofu not re-swept this phase. Prefer Unicode 6–9 in new chrome. |
+| ISS-trace | suspected | feedback | Letter-trace accuracy is not 100%. Do not restore max-index advance. |
+| ISS-memory-farm | suspected | rewards | Memory pays a star per match and again on board clear; replay can farm. Needs a product rule before changing delight stars. |
+| ISS-05 | suspected | missions | Safari extras / Games pay gate beyond 3-hit station. 1.1 unit still green. |
 
-Smallest next change, if any: on a 4-column phone, the second row of tabs is easy to miss — pin Worlds + Stories + Games + Focus as the first row by reordering, not by redesigning the Worlds map. Trail-next already exists for auto-trail types. Do not implement that reorder in 1.2 without a product go-ahead.
+## Navigation before / after
 
-## Representative validation plan
+**Before:** 4-column phone row 1 = Worlds, Stories, Playhouse, Phonics. Games and Focus sat on row 2.
 
-| Sample | Why | Done |
+**After:** row 1 = Worlds, Stories, Games, Focus. Row 2 = Playhouse, Phonics, Counting, My Buddy. Same eight destinations, same colours, tighter mobile padding.
+
+## Representative validation
+
+| Sample | Label | Result |
 |---|---|---|
-| Stamp Mural | freeform vs path | unit (jsdom pointer events) |
-| Crate truck | drop-on-up drag | unit (1.1, still green) |
-| Safari / Balloon / Bubble | 3-hit station complete | unit (1.1) |
-| Clue-detective | quiz integrity | unit (Phase 1) |
-| Color Lab | tap-mix not stamp | source |
-| One picture book | page turn | **not** this phase |
-| Focus path game | gold lane | unit earlier |
-| Device finger pass | smoothness | **not run** — agent cannot drive LIVE PREVIEW |
+| 510 IDs + quiz correctness + pattern prompts | source + unit | inventory test |
+| Space tabs first row | unit | pass |
+| Secret finds isolated per learner | unit | pass |
+| Farm sound detective copy | unit | “Tap who made the sound” |
+| Stamp mural path | unit (prior) | not device |
+| Safari Z page | source | missing, not added |
+| Live preview / device | — | **not run** |
