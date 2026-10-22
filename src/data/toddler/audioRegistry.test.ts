@@ -182,6 +182,16 @@ describe("audio registry", () => {
       "/audio/voice/weather-porch-rainbow.mp3",
       "/audio/voice/weather-porch-summer.mp3",
       "/audio/voice/weather-porch-dry.mp3",
+      "/audio/voice/weather-porch-frost.mp3",
+      "/audio/voice/weather-porch-dusk.mp3",
+      "/audio/voice/space-area-welcome.mp3",
+      "/audio/voice/space-picnic-welcome.mp3",
+      "/audio/voice/space-scoop-station.mp3",
+      "/audio/voice/space-scoop-line.mp3",
+      "/audio/voice/space-scoop-done.mp3",
+      "/audio/voice/space-quiz-launch.mp3",
+      "/audio/voice/space-quiz-stars.mp3",
+      "/audio/voice/space-story-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -561,6 +571,22 @@ describe("audio registry", () => {
     expect(narrationClipForText("The rain stopped. A coloured arc is in the sky. What is it?")?.id).toBe(
       "voice.weather.porch-rainbow",
     );
+    expect(narrationClipForText("White crunchy grass at dawn. What is on it?")?.id).toBe("voice.weather.porch-frost");
+    expect(narrationClipForText("The lamp clicked on. The sky is peach. What time is it?")?.id).toBe(
+      "voice.weather.porch-dusk",
+    );
+  });
+
+  it("maps Space Blast-Off closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Space Blast-Off! Countdown 3-2-1, Twinkling Constellations & Moon Bounce. Let's explore together!",
+      )?.id,
+    ).toBe("voice.space.area-welcome");
+    expect(
+      narrationClipForText("Pip is ready! Countdown: 3, 2, 1! Tap the glowing launch button to blast off!")?.id,
+    ).toBe("voice.space.quiz-launch");
+    expect(narrationClipForText("Drag four scoops into the tin.")?.id).toBe("voice.space.scoop-line");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

@@ -180,6 +180,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/weather-porch-rainbow.mp3` | `voice.weather.porch-rainbow` |
 | `public/audio/voice/weather-porch-summer.mp3` | `voice.weather.porch-summer` |
 | `public/audio/voice/weather-porch-dry.mp3` | `voice.weather.porch-dry` |
+| `public/audio/voice/weather-porch-frost.mp3` | `voice.weather.porch-frost` |
+| `public/audio/voice/weather-porch-dusk.mp3` | `voice.weather.porch-dusk` |
+| `public/audio/voice/space-area-welcome.mp3` | `voice.space.area-welcome` |
+| `public/audio/voice/space-picnic-welcome.mp3` | `voice.space.picnic-welcome` |
+| `public/audio/voice/space-scoop-station.mp3` | `voice.space.scoop-station` |
+| `public/audio/voice/space-scoop-line.mp3` | `voice.space.scoop-line` |
+| `public/audio/voice/space-scoop-done.mp3` | `voice.space.scoop-done` |
+| `public/audio/voice/space-quiz-launch.mp3` | `voice.space.quiz-launch` |
+| `public/audio/voice/space-quiz-stars.mp3` | `voice.space.quiz-stars` |
+| `public/audio/voice/space-story-welcome.mp3` | `voice.space.story-welcome` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -554,7 +564,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Forest Trail** unique spoken lines are complete on voice-01.
 
-**Weather Adventure** is a closed island: area welcome, hill porch station, puddle jump, rain/sun quizzes, and porch rounds through dry. Frost and dusk porch spoken still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Weather Adventure** unique spoken lines are complete on voice-01.
+
+**Space Blast-Off** is the next closed island: area welcome, moon picnic station, scoop-moon hold/done, launch/stars quiz prompts, and story spokenPrompt. Quiz option feedbacks and Rocket Pip step narrations still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

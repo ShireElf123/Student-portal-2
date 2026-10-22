@@ -176,7 +176,8 @@ function Stage({
             playId === "feed-fish" ||
             playId === "nest-eggs" ||
             playId === "campfire" ||
-            playId === "puddle-jump",
+            playId === "puddle-jump" ||
+            playId === "scoop-moon",
         }),
       180,
     );
@@ -195,7 +196,8 @@ function Stage({
           playId === "feed-fish" ||
           playId === "nest-eggs" ||
           playId === "campfire" ||
-          playId === "puddle-jump",
+          playId === "puddle-jump" ||
+          playId === "scoop-moon",
       });
     }
   }, [done, copy.done]);
