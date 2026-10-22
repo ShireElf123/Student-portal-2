@@ -132,6 +132,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/safari-bio-tale-boat.mp3` | `voice.safari.bio.tale-boat` |
 | `public/audio/voice/safari-bio-tale-star.mp3` | `voice.safari.bio.tale-star` |
 | `public/audio/voice/safari-bio-castle.mp3` | `voice.safari.bio.castle` |
+| `public/audio/voice/safari-bio-pine.mp3` | `voice.safari.bio.pine` |
+| `public/audio/voice/safari-bio-trail-owl.mp3` | `voice.safari.bio.trail-owl` |
+| `public/audio/voice/safari-bio-boot.mp3` | `voice.safari.bio.boot` |
+| `public/audio/voice/safari-bio-gem.mp3` | `voice.safari.bio.gem` |
+| `public/audio/voice/safari-bio-trail-map.mp3` | `voice.safari.bio.trail-map` |
+| `public/audio/voice/safari-bio-trail-fox.mp3` | `voice.safari.bio.trail-fox` |
+| `public/audio/voice/safari-bio-cave.mp3` | `voice.safari.bio.cave` |
+| `public/audio/voice/safari-bio-rain.mp3` | `voice.safari.bio.rain` |
+| `public/audio/voice/safari-bio-bedroom-bed.mp3` | `voice.safari.bio.bedroom-bed` |
+| `public/audio/voice/safari-bio-lamp.mp3` | `voice.safari.bio.lamp` |
 | `public/audio/sfx/animal-lion.mp3` | `sfx.animal.lion` |
 | `public/audio/sfx/animal-elephant.mp3` | `sfx.animal.elephant` |
 | `public/audio/sfx/animal-monkey.mp3` | `sfx.animal.monkey` |
