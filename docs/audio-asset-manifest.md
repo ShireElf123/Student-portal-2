@@ -30,6 +30,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/sfx/animal-tiger.mp3` | `sfx.animal.tiger` |
 | `public/audio/sfx/animal-snake.mp3` | `sfx.animal.snake` |
 | `public/audio/sfx/animal-gorilla.mp3` | `sfx.animal.gorilla` |
+| `public/audio/sfx/animal-sloth.mp3` | `sfx.animal.sloth` |
+| `public/audio/sfx/animal-leopard.mp3` | `sfx.animal.leopard` |
+| `public/audio/sfx/animal-penguin.mp3` | `sfx.animal.penguin` |
+| `public/audio/sfx/animal-seal.mp3` | `sfx.animal.seal` |
+| `public/audio/sfx/animal-bear.mp3` | `sfx.animal.bear` |
+| `public/audio/sfx/animal-whale.mp3` | `sfx.animal.whale` |
+| `public/audio/sfx/animal-fox.mp3` | `sfx.animal.fox` |
+| `public/audio/sfx/animal-owl.mp3` | `sfx.animal.owl` |
+| `public/audio/sfx/animal-flake.mp3` | `sfx.animal.flake` |
+| `public/audio/sfx/animal-igloo.mp3` | `sfx.animal.igloo` |
 | `public/audio/sfx/animal-bird.mp3` | `sfx.animal.bird` (park roster; previous voice-00 until a park batch) |
 
 ## Spoken lines
@@ -56,6 +66,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | tiger | `Grrr!` |
 | snake | `Hisss!` |
 | gorilla | `Hoot hoot!` |
+| sloth | `Yawn!` |
+| leopard | `Grrr!` |
+| penguin | `Honk honk!` |
+| seal | `Arf arf!` |
+| bear | `Groowl!` |
+| whale | `Whooom!` |
+| fox | `Yip yip!` |
+| owl | `Hoo hoo!` |
+| flake | `Shhh!` |
+| igloo | `Clink!` |
 | bird | `Chirp chirp!` |
 
 ## What stays synthesised
