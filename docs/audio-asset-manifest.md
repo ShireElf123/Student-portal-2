@@ -290,6 +290,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/barn-story-fb-three.mp3` | `voice.barn.story-fb.three` |
 | `public/audio/voice/barn-story-fb-five.mp3` | `voice.barn.story-fb.five` |
 | `public/audio/voice/barn-story-fb-apple.mp3` | `voice.barn.story-fb.apple` |
+| `public/audio/voice/barn-story-fb-pizza.mp3` | `voice.barn.story-fb.pizza` |
+| `public/audio/voice/barn-story-fb-carrot.mp3` | `voice.barn.story-fb.carrot` |
+| `public/audio/voice/barn-story-fb-cheer.mp3` | `voice.barn.story-fb.cheer` |
+| `public/audio/voice/barn-pancake-open.mp3` | `voice.barn.pancake-open` |
+| `public/audio/voice/barn-pancake-stir.mp3` | `voice.barn.pancake-stir` |
+| `public/audio/voice/barn-pancake-flip.mp3` | `voice.barn.pancake-flip` |
+| `public/audio/voice/barn-pancake-count.mp3` | `voice.barn.pancake-count` |
+| `public/audio/voice/barn-pancake-share.mp3` | `voice.barn.pancake-share` |
+| `public/audio/voice/barn-pancake-syrup.mp3` | `voice.barn.pancake-syrup` |
+| `public/audio/voice/barn-pancake-fb-eggs.mp3` | `voice.barn.pancake-fb.eggs` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -678,7 +688,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Sticker Atelier** unique spoken lines are complete on voice-01.
 
-**Barnyard Tales** is a closed island: area welcome, Buddy farm story open, chicks/horse/tractor steps, cow through apple feedbacks, story stones, letter-trace, pancake station, and tale safari. Remaining horse/tractor option lines and Pancake Saturday steps still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Barnyard Tales** Buddy farm unique spoken lines are complete on voice-01. Pancake Saturday open, remaining steps, and eggs feedback are in; remaining pancake option lines still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

@@ -292,6 +292,16 @@ describe("audio registry", () => {
       "/audio/voice/barn-story-fb-three.mp3",
       "/audio/voice/barn-story-fb-five.mp3",
       "/audio/voice/barn-story-fb-apple.mp3",
+      "/audio/voice/barn-story-fb-pizza.mp3",
+      "/audio/voice/barn-story-fb-carrot.mp3",
+      "/audio/voice/barn-story-fb-cheer.mp3",
+      "/audio/voice/barn-pancake-open.mp3",
+      "/audio/voice/barn-pancake-stir.mp3",
+      "/audio/voice/barn-pancake-flip.mp3",
+      "/audio/voice/barn-pancake-count.mp3",
+      "/audio/voice/barn-pancake-share.mp3",
+      "/audio/voice/barn-pancake-syrup.mp3",
+      "/audio/voice/barn-pancake-fb-eggs.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -795,6 +805,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("Yes! 1, 2, 3 fluffy yellow chicks! Good counting!")?.id).toBe(
       "voice.barn.story-fb.three",
     );
+    expect(
+      narrationClipForText("High five! You finished Buddy's Farm Adventure and earned 3 stars!")?.id,
+    ).toBe("voice.barn.story-fb.cheer");
+    expect(
+      narrationClipForText("Pancake Saturday. Saturday! Nana taps the bowl. What do we crack into breakfast?")?.id,
+    ).toBe("voice.barn.pancake-open");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
