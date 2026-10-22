@@ -712,6 +712,16 @@ describe("audio registry", () => {
       "/audio/voice/night-fb-plane.mp3",
       "/audio/voice/night-lamp-welcome.mp3",
       "/audio/voice/night-clue-lamp.mp3",
+      "/audio/voice/night-fb-moth.mp3",
+      "/audio/voice/night-fb-bus.mp3",
+      "/audio/voice/night-day-welcome.mp3",
+      "/audio/voice/night-clue-day.mp3",
+      "/audio/voice/night-fb-night-cricket.mp3",
+      "/audio/voice/night-fb-day-bee.mp3",
+      "/audio/voice/night-fb-rooster.mp3",
+      "/audio/voice/night-moths-welcome.mp3",
+      "/audio/voice/night-clue-moths.mp3",
+      "/audio/voice/night-fb-four.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1568,6 +1578,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("Who comes to the lantern?")?.id).toBe("voice.night.lamp-welcome");
     expect(narrationClipForText("Soft wings at the lantern, not a stinger. Who?")?.id).toBe(
       "voice.night.clue.lamp",
+    );
+    expect(narrationClipForText("A moth at the lamp.")?.id).toBe("voice.night.fb.moth");
+    expect(narrationClipForText("Who belongs on the night walk?")?.id).toBe(
+      "voice.night.day-welcome",
+    );
+    expect(narrationClipForText("How many moths?")?.id).toBe("voice.night.moths-welcome");
+    expect(narrationClipForText("Four moths on the lantern glass. How many?")?.id).toBe(
+      "voice.night.clue.moths",
     );
   });
 
