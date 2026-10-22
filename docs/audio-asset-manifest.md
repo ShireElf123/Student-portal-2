@@ -150,6 +150,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/forest-fb-bird.mp3` | `voice.forest.fb.bird` |
 | `public/audio/voice/forest-fb-bear.mp3` | `voice.forest.fb.bear` |
 | `public/audio/voice/forest-fb-snake.mp3` | `voice.forest.fb.snake` |
+| `public/audio/voice/forest-fb-pinecones-low.mp3` | `voice.forest.fb.pinecones-low` |
+| `public/audio/voice/forest-fb-pinecones-yes.mp3` | `voice.forest.fb.pinecones-yes` |
+| `public/audio/voice/forest-fb-pinecones-again.mp3` | `voice.forest.fb.pinecones-again` |
+| `public/audio/voice/weather-area-welcome.mp3` | `voice.weather.area-welcome` |
+| `public/audio/voice/weather-porch-welcome.mp3` | `voice.weather.porch-welcome` |
+| `public/audio/voice/weather-puddle-station.mp3` | `voice.weather.puddle-station` |
+| `public/audio/voice/weather-puddle-line.mp3` | `voice.weather.puddle-line` |
+| `public/audio/voice/weather-puddle-done.mp3` | `voice.weather.puddle-done` |
+| `public/audio/voice/weather-quiz-rain.mp3` | `voice.weather.quiz-rain` |
+| `public/audio/voice/weather-quiz-sun.mp3` | `voice.weather.quiz-sun` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -522,7 +532,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Dino Valley** unique spoken lines are complete on voice-01 (Dino Tracks through the cliff bone).
 
-**Forest Trail** is a closed island: area welcome, sky balloons, campfire hold/done, letter-trace station, bird quiz prompt and feedbacks, and the pinecone count prompt. Missing Forest lines stay quiet. Pinecone option feedbacks still wait.
+**Forest Trail** unique spoken lines are complete on voice-01.
+
+**Weather Adventure** is the next closed island: area welcome, hill porch station, puddle jump hold/done, and rain/sun quiz prompts. Missing Weather lines stay quiet. Quiz option feedbacks and weather-porch rounds still wait.
 
 ## Mute keys (unchanged)
 

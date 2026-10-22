@@ -78,7 +78,8 @@ function isClosedVoiceIsland(areaId?: string | null) {
     areaId === "jungle-canopy" ||
     areaId === "ocean-reef" ||
     areaId === "dino-valley" ||
-    areaId === "forest-trail"
+    areaId === "forest-trail" ||
+    areaId === "weather-adventure"
   );
 }
 

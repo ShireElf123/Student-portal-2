@@ -152,6 +152,16 @@ describe("audio registry", () => {
       "/audio/voice/forest-fb-bird.mp3",
       "/audio/voice/forest-fb-bear.mp3",
       "/audio/voice/forest-fb-snake.mp3",
+      "/audio/voice/forest-fb-pinecones-low.mp3",
+      "/audio/voice/forest-fb-pinecones-yes.mp3",
+      "/audio/voice/forest-fb-pinecones-again.mp3",
+      "/audio/voice/weather-area-welcome.mp3",
+      "/audio/voice/weather-porch-welcome.mp3",
+      "/audio/voice/weather-puddle-station.mp3",
+      "/audio/voice/weather-puddle-line.mp3",
+      "/audio/voice/weather-puddle-done.mp3",
+      "/audio/voice/weather-quiz-rain.mp3",
+      "/audio/voice/weather-quiz-sun.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -506,6 +516,21 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Listen to the sweet forest song! Who sings chirp chirp tweedle dee high in the trees?")?.id,
     ).toBe("voice.forest.quiz-bird");
+    expect(narrationClipForText("Hooray! 1, 2, 3 pinecones collected for craft time!")?.id).toBe(
+      "voice.forest.fb.pinecones-yes",
+    );
+  });
+
+  it("maps Weather Adventure closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Weather Adventure! Raindrops, Sunbeams & Dressing for the Day. Let's explore together!",
+      )?.id,
+    ).toBe("voice.weather.area-welcome");
+    expect(
+      narrationClipForText("Pitter patter rain is falling! What do we pop open to keep our head dry?")?.id,
+    ).toBe("voice.weather.quiz-rain");
+    expect(narrationClipForText("Drag the boot through the puddles.")?.id).toBe("voice.weather.puddle-line");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
