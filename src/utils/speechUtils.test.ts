@@ -211,3 +211,78 @@ describe("prepareSpeechText and spokenPageText", () => {
     expect(engineLog).toContain("speak:A says a. Apple.");
   });
 });
+
+describe("narrator clip and parent priority", () => {
+  it("plays the registered welcome clip instead of Web Speech when the file works", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const { SAFARI_EXPLORE_WELCOME_PROMPT } = await import("../data/toddler/audioRegistry");
+    const played: string[] = [];
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => {
+        played.push(src);
+        return Promise.resolve();
+      },
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    const { speakText } = await import("./speechUtils");
+    let ended = false;
+    speakText(SAFARI_EXPLORE_WELCOME_PROMPT, { onEnd: () => { ended = true; } });
+    await wait(50);
+    expect(played).toEqual(["/audio/voice/narrator-safari-explore-welcome.mp3"]);
+    expect(engineLog.some((line) => line.startsWith("speak:Welcome to Savanna"))).toBe(false);
+
+    // Clip end should still release callers.
+    // Fake clip never fires onended here; not required for "used clip instead of speech".
+    expect(ended).toBe(false);
+  });
+
+  it("falls back to Web Speech when the narrator file cannot play", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const { SAFARI_EXPLORE_WELCOME_PROMPT } = await import("../data/toddler/audioRegistry");
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => Promise.reject(new Error("404")),
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    const { speakText } = await import("./speechUtils");
+    speakText(SAFARI_EXPLORE_WELCOME_PROMPT);
+    await wait(200);
+    expect(engineLog.some((line) => line.includes("Welcome to Savanna Animal Detective"))).toBe(true);
+  });
+
+  it("does not start Web Speech or a narrator clip while parent audio is playing", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const { SAFARI_EXPLORE_WELCOME_PROMPT } = await import("../data/toddler/audioRegistry");
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => Promise.resolve(),
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    audio.toddlerAudio.beginParentPlayback();
+    const { speakText } = await import("./speechUtils");
+    let ended = false;
+    const spoken = speakText(SAFARI_EXPLORE_WELCOME_PROMPT, { onEnd: () => { ended = true; } });
+    await wait(150);
+    expect(spoken).toBe(false);
+    expect(ended).toBe(true);
+    expect(engineLog).toHaveLength(0);
+    audio.toddlerAudio.endParentPlayback();
+  });
+});
+

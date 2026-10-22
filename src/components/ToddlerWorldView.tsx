@@ -28,6 +28,7 @@ import {
 import { PictureBook, PictureBookPage } from "../types";
 import { PICTURE_BOOKS, pictureBookIsOnNamedStoriesShelf } from "../data/pictureBooksData";
 import { speakText, stopSpeaking, speechCoordinator, spokenPageText } from "../utils/speechUtils";
+import { toddlerAudio } from "../utils/toddlerAudio";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { resolveSkillForActivity } from "../data/activitySkillRegistry";
 import { soundEffects } from "../utils/soundEffects";
@@ -329,12 +330,14 @@ export function ToddlerWorldView({
       audioPlayerRef.current = null;
       setIsPlayingParentAudio(false);
     }
+    toddlerAudio.endParentPlayback();
     return () => {
       stopSpeaking();
       if (audioPlayerRef.current) {
         audioPlayerRef.current.pause();
         audioPlayerRef.current = null;
       }
+      toddlerAudio.endParentPlayback();
     };
   }, [activeTab]);
 
@@ -457,6 +460,45 @@ export function ToddlerWorldView({
     });
   };
 
+  const releaseParentAudio = () => {
+    if (audioPlayerRef.current) {
+      try {
+        audioPlayerRef.current.pause();
+      } catch {
+        // ignore
+      }
+      audioPlayerRef.current = null;
+    }
+    setIsPlayingParentAudio(false);
+    toddlerAudio.endParentPlayback();
+  };
+
+  const playParentBlob = (blob: Blob, onFail: () => void) => {
+    stopSpeaking();
+    const url = URL.createObjectURL(blob);
+    const aud = new Audio(url);
+    audioPlayerRef.current = aud;
+    toddlerAudio.beginParentPlayback();
+    setIsPlayingParentAudio(true);
+    aud.onended = () => {
+      setIsPlayingParentAudio(false);
+      audioPlayerRef.current = null;
+      toddlerAudio.endParentPlayback();
+    };
+    aud.onerror = () => {
+      setIsPlayingParentAudio(false);
+      audioPlayerRef.current = null;
+      toddlerAudio.endParentPlayback();
+      onFail();
+    };
+    aud.play().catch(() => {
+      setIsPlayingParentAudio(false);
+      audioPlayerRef.current = null;
+      toddlerAudio.endParentPlayback();
+      onFail();
+    });
+  };
+
   const handleOpenBook = (book: PictureBook, pageIndex = 0, learnerId?: string) => {
     const startingPage = book.pages[pageIndex];
     if (!startingPage) return;
@@ -469,27 +511,12 @@ export function ToddlerWorldView({
     setIsBookCompleted(false);
     recordBookEngagement(book, pageIndex, "experience_opened", learnerId);
     stopSpeaking();
-    if (audioPlayerRef.current) {
-      audioPlayerRef.current.pause();
-      audioPlayerRef.current = null;
-      setIsPlayingParentAudio(false);
-    }
+    releaseParentAudio();
     // Check if this page has parent recording, else auto narrate.
     getPageAudio(book.id, startingPage.pageNumber).then((rec) => {
       setParentAudioRecord(rec);
       if (rec?.audioBlob) {
-        const url = URL.createObjectURL(rec.audioBlob);
-        const aud = new Audio(url);
-        audioPlayerRef.current = aud;
-        setIsPlayingParentAudio(true);
-        aud.onended = () => {
-          setIsPlayingParentAudio(false);
-          audioPlayerRef.current = null;
-        };
-        aud.play().catch(() => {
-          setIsPlayingParentAudio(false);
-          speakPrintedPage(startingPage);
-        });
+        playParentBlob(rec.audioBlob, () => speakPrintedPage(startingPage));
       } else if (readModeRef.current === "to-me") {
         speakPrintedPage(startingPage);
       }
@@ -516,11 +543,7 @@ export function ToddlerWorldView({
   const handleCloseBook = () => {
     stopSpeaking();
     setReadAlongWordIndex(null);
-    if (audioPlayerRef.current) {
-      audioPlayerRef.current.pause();
-      audioPlayerRef.current = null;
-      setIsPlayingParentAudio(false);
-    }
+    releaseParentAudio();
     if (mediaRecorderRef.current && isRecordingParentVoice) {
       try {
         mediaRecorderRef.current.stop();
@@ -536,11 +559,7 @@ export function ToddlerWorldView({
   const handleNextPage = () => {
     if (!selectedBook) return;
     stopSpeaking();
-    if (audioPlayerRef.current) {
-      audioPlayerRef.current.pause();
-      audioPlayerRef.current = null;
-      setIsPlayingParentAudio(false);
-    }
+    releaseParentAudio();
     if (currentPageIndex < selectedBook.pages.length - 1) {
       const nextIdx = currentPageIndex + 1;
       setCurrentPageIndex(nextIdx);
@@ -548,18 +567,7 @@ export function ToddlerWorldView({
       getPageAudio(selectedBook.id, nextPageNum).then((rec) => {
         setParentAudioRecord(rec);
         if (rec?.audioBlob) {
-          const url = URL.createObjectURL(rec.audioBlob);
-          const aud = new Audio(url);
-          audioPlayerRef.current = aud;
-          setIsPlayingParentAudio(true);
-          aud.onended = () => {
-            setIsPlayingParentAudio(false);
-            audioPlayerRef.current = null;
-          };
-          aud.play().catch(() => {
-            setIsPlayingParentAudio(false);
-            speakPrintedPage(selectedBook.pages[nextIdx]);
-          });
+          playParentBlob(rec.audioBlob, () => speakPrintedPage(selectedBook.pages[nextIdx]));
         } else if (readModeRef.current === "to-me") {
           speakPrintedPage(selectedBook.pages[nextIdx]);
         }
@@ -597,11 +605,7 @@ export function ToddlerWorldView({
   const handlePrevPage = () => {
     if (!selectedBook || currentPageIndex === 0) return;
     stopSpeaking();
-    if (audioPlayerRef.current) {
-      audioPlayerRef.current.pause();
-      audioPlayerRef.current = null;
-      setIsPlayingParentAudio(false);
-    }
+    releaseParentAudio();
     const prevIdx = currentPageIndex - 1;
     setCurrentPageIndex(prevIdx);
     if (!visitedBookPagesRef.current.has(prevIdx)) {
@@ -612,16 +616,7 @@ export function ToddlerWorldView({
     getPageAudio(selectedBook.id, prevPageNum).then((rec) => {
       setParentAudioRecord(rec);
       if (rec?.audioBlob) {
-        const url = URL.createObjectURL(rec.audioBlob);
-        const aud = new Audio(url);
-        audioPlayerRef.current = aud;
-        setIsPlayingParentAudio(true);
-        aud.onended = () => {
-          setIsPlayingParentAudio(false);
-          audioPlayerRef.current = null;
-        };
-        aud.play().catch(() => {
-          setIsPlayingParentAudio(false);
+        playParentBlob(rec.audioBlob, () => {
           if (readModeRef.current === "to-me") speakPrintedPage(selectedBook.pages[prevIdx]);
         });
       } else if (readModeRef.current === "to-me") {
@@ -632,9 +627,7 @@ export function ToddlerWorldView({
 
   const handleReadAloud = (text: string) => {
     if (audioPlayerRef.current && isPlayingParentAudio) {
-      audioPlayerRef.current.pause();
-      audioPlayerRef.current = null;
-      setIsPlayingParentAudio(false);
+      releaseParentAudio();
       return;
     }
 
@@ -646,24 +639,8 @@ export function ToddlerWorldView({
 
     // Play parent recording if available
     if (parentAudioRecord?.audioBlob) {
-      stopSpeaking();
       setReadAlongWordIndex(null);
-      const url = URL.createObjectURL(parentAudioRecord.audioBlob);
-      const aud = new Audio(url);
-      audioPlayerRef.current = aud;
-      setIsPlayingParentAudio(true);
-      aud.onended = () => {
-        setIsPlayingParentAudio(false);
-        audioPlayerRef.current = null;
-      };
-      aud.onerror = () => {
-        setIsPlayingParentAudio(false);
-        audioPlayerRef.current = null;
-        if (activePage) speakPrintedPage(activePage);
-        else speakText(text);
-      };
-      aud.play().catch(() => {
-        setIsPlayingParentAudio(false);
+      playParentBlob(parentAudioRecord.audioBlob, () => {
         if (activePage) speakPrintedPage(activePage);
         else speakText(text);
       });

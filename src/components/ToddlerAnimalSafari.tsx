@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Volume2, Sparkles, Star, RotateCcw, Award, CheckCircle2 } from "lucide-react";
 import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
+import { playSafariAnimalSfx } from "../utils/toddlerAudio";
 import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import {
@@ -153,6 +154,7 @@ export function ToddlerAnimalSafari({
     if (activeMode === "explore") {
       setSelectedAnimal(animal);
       soundEffects.playSuccessChime();
+      playSafariAnimalSfx(animal.id);
       speakText(`${animal.call} ${animal.funFact}`, { pitch: 1.2, rate: 0.9 });
       // Discovery stars: the first tap on each animal each day earns a star;
       // repeats are free play so stars cannot be farmed from one animal.
@@ -245,6 +247,7 @@ export function ToddlerAnimalSafari({
 
   const handlePlayTargetSound = () => {
     soundEffects.playPop();
+    playSafariAnimalSfx(targetAnimal.id);
     speakText(`Listen carefully: ${targetAnimal.soundText}! Who says ${targetAnimal.soundText}?`, {
       pitch: 1.25,
       rate: 0.9,

@@ -2,7 +2,11 @@
  * Speech synthesis utility for Toddler and Primary school learning.
  * Uses the best available English system voice with a user-selectable override.
  * Speech quality depends on voices installed by the browser/operating system.
+ * One registered narrator MP3 may replace a matching line; missing files fall
+ * back here. Parent recordings (toddlerAudio parent channel) outrank both.
  */
+
+import { toddlerAudio } from "./toddlerAudio";
 
 export interface VoiceProfile {
   id: string;
@@ -167,6 +171,8 @@ export interface SpeakOptions {
   timeoutFallbackMs?: number;
   profile?: VoiceProfile;
   isRetry?: boolean;
+  /** Skip the local narrator MP3 and use Web Speech (clip miss / fallback). */
+  skipClip?: boolean;
 }
 
 /** Start indexes of each spoken word, for read-along highlight. */
@@ -447,6 +453,7 @@ class SpeechCoordinator {
   public stop(): void {
     this.activeToken++;
     this.clearActiveWatchdog();
+    toddlerAudio.stopVoice();
 
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       try {
@@ -480,6 +487,11 @@ class SpeechCoordinator {
       return false;
     }
 
+    if (toddlerAudio.isParentPlaying()) {
+      options?.onEnd?.();
+      return false;
+    }
+
     // Cancel any current utterance and increment token so stale callbacks don't fire
     this.stop();
 
@@ -493,6 +505,34 @@ class SpeechCoordinator {
     }
 
     const token = ++this.activeToken;
+
+    if (!options?.skipClip) {
+      const clipStarted = toddlerAudio.tryNarrationClip(cleanText, {
+        onStart: () => {
+          if (token !== this.activeToken) return;
+          this.notify(true);
+          try {
+            options?.onStart?.();
+          } catch {
+            // ignore
+          }
+        },
+        onEnd: () => {
+          if (token !== this.activeToken) return;
+          this.notify(false);
+          try {
+            options?.onEnd?.();
+          } catch {
+            // ignore
+          }
+        },
+        onFail: () => {
+          if (token !== this.activeToken) return;
+          this.speak(cleanText, { ...options, skipClip: true, isRetry: true });
+        },
+      });
+      if (clipStarted) return true;
+    }
 
     // Generous spacing (100ms) before triggering speech prevents WebKit / Chromium audio collisions
     setTimeout(() => {
