@@ -682,6 +682,16 @@ describe("audio registry", () => {
       "/audio/voice/pond-fb-ring.mp3",
       "/audio/voice/pond-fb-eleven.mp3",
       "/audio/voice/pond-frog-welcome.mp3",
+      "/audio/voice/pond-clue-frog.mp3",
+      "/audio/voice/pond-fb-reeds.mp3",
+      "/audio/voice/pond-fb-bakery.mp3",
+      "/audio/voice/pond-fb-runway.mp3",
+      "/audio/voice/pond-plop-welcome.mp3",
+      "/audio/voice/pond-clue-plop.mp3",
+      "/audio/voice/pond-fb-plop-frog.mp3",
+      "/audio/voice/pond-fb-plane.mp3",
+      "/audio/voice/pond-fb-bell.mp3",
+      "/audio/voice/pond-letter-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1501,6 +1511,14 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("How many lily pads?")?.id).toBe("voice.pond.pads-welcome");
     expect(narrationClipForText("Where does the frog belong?")?.id).toBe("voice.pond.frog-welcome");
+    expect(narrationClipForText("The frog belongs by wet reeds, not the bakery. Where?")?.id).toBe(
+      "voice.pond.clue.frog",
+    );
+    expect(narrationClipForText("Who made the plop?")?.id).toBe("voice.pond.plop-welcome");
+    expect(narrationClipForText("A plop, then rings on the water. Who landed?")?.id).toBe(
+      "voice.pond.clue.plop",
+    );
+    expect(narrationClipForText("Which letter starts pond?")?.id).toBe("voice.pond.letter-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
