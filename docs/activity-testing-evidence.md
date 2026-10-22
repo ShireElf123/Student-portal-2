@@ -15,6 +15,24 @@ Other projects’ tests were not copied. They only suggested failure modes (paus
 | Label | This phase |
 |---|---|
 | source-inspected | Safari A–Z mapping, Playhouse covers, tofu scan |
-| unit-tested | Z page, timer pause/resume, memory replay, secret JSON, letter wobble, nav, stamp tests re-run |
+| unit-tested | Z page, timer pause/resume, memory replay, secret JSON, letter wobble, nav, stamp tests re-run. Final run on `457291e`: **310 passed / 9 skipped**. |
 | automated-browser-tested | none (no Playwright runner in this repo) |
-| device-tested | none |
+| device-tested | **Six user checks on a physical phone, 2026-10-22.** Not every activity, not every device. |
+
+## Physical phone (user, 2026-10-22)
+
+The product owner reported all six succeeded:
+
+1. Safari Alphabet — opened the story; Zebra/Z page present.
+2. Quiet Corner — Start, Pause, Resume, Start over.
+3. Playhouse — scene interiors and painted artwork.
+4. Memory Match — completed a round; Play Again replay/rewards.
+5. Stamp Mural — stamping succeeded.
+6. Mobile nav — Worlds, Stories, Games, Focus on the first row; eight tabs kept.
+
+## Automated final verification (`457291e`)
+
+- `./node_modules/.bin/tsc --noEmit` — exit 0
+- `./node_modules/.bin/vitest run` — 310 passed, 9 skipped (firestore rules without emulator)
+- `npm run build` — ok; Vite chunk-size warnings (`ToddlerWorldView` ~971 kB gzip 244 kB, plus other >500 kB vendor chunks)
+- Inventory — 510 unique world activity IDs, registry 567, 85 picture books

@@ -62,3 +62,5 @@ Future rows of an existing type inherit the engine checklist. A new mechanic nee
 | `device-tested` | Real finger on a phone |
 
 Unlabeled activities are **not** runtime-verified. Catalogue quality is the sum of these labels, not the ID count.
+
+Phase 1.4 phone and unit evidence lives in `docs/activity-issue-register.md` and `docs/activity-testing-evidence.md`. Six physical-phone checks on 2026-10-22 do **not** label the full 510-ID catalogue `device-tested`.
