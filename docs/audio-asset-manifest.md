@@ -300,6 +300,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/barn-pancake-share.mp3` | `voice.barn.pancake-share` |
 | `public/audio/voice/barn-pancake-syrup.mp3` | `voice.barn.pancake-syrup` |
 | `public/audio/voice/barn-pancake-fb-eggs.mp3` | `voice.barn.pancake-fb.eggs` |
+| `public/audio/voice/barn-pancake-fb-boots.mp3` | `voice.barn.pancake-fb.boots` |
+| `public/audio/voice/barn-pancake-fb-circle.mp3` | `voice.barn.pancake-fb.circle` |
+| `public/audio/voice/barn-pancake-fb-square.mp3` | `voice.barn.pancake-fb.square` |
+| `public/audio/voice/barn-pancake-fb-clap.mp3` | `voice.barn.pancake-fb.clap` |
+| `public/audio/voice/barn-pancake-fb-whisper.mp3` | `voice.barn.pancake-fb.whisper` |
+| `public/audio/voice/barn-pancake-fb-five.mp3` | `voice.barn.pancake-fb.five` |
+| `public/audio/voice/barn-pancake-fb-two.mp3` | `voice.barn.pancake-fb.two` |
+| `public/audio/voice/barn-pancake-fb-thanks.mp3` | `voice.barn.pancake-fb.thanks` |
+| `public/audio/voice/barn-pancake-fb-mine.mp3` | `voice.barn.pancake-fb.mine` |
+| `public/audio/voice/barn-pancake-fb-highfive.mp3` | `voice.barn.pancake-fb.highfive` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -688,7 +698,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Sticker Atelier** unique spoken lines are complete on voice-01.
 
-**Barnyard Tales** Buddy farm unique spoken lines are complete on voice-01. Pancake Saturday open, remaining steps, and eggs feedback are in; remaining pancake option lines still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Barnyard Tales** unique spoken lines are complete on voice-01.
+
+**Space Tales** is the next closed island. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

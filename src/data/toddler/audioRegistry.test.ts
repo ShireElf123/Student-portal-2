@@ -302,6 +302,16 @@ describe("audio registry", () => {
       "/audio/voice/barn-pancake-share.mp3",
       "/audio/voice/barn-pancake-syrup.mp3",
       "/audio/voice/barn-pancake-fb-eggs.mp3",
+      "/audio/voice/barn-pancake-fb-boots.mp3",
+      "/audio/voice/barn-pancake-fb-circle.mp3",
+      "/audio/voice/barn-pancake-fb-square.mp3",
+      "/audio/voice/barn-pancake-fb-clap.mp3",
+      "/audio/voice/barn-pancake-fb-whisper.mp3",
+      "/audio/voice/barn-pancake-fb-five.mp3",
+      "/audio/voice/barn-pancake-fb-two.mp3",
+      "/audio/voice/barn-pancake-fb-thanks.mp3",
+      "/audio/voice/barn-pancake-fb-mine.mp3",
+      "/audio/voice/barn-pancake-fb-highfive.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -811,6 +821,9 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Pancake Saturday. Saturday! Nana taps the bowl. What do we crack into breakfast?")?.id,
     ).toBe("voice.barn.pancake-open");
+    expect(narrationClipForText("High five! Pancake Saturday is done.")?.id).toBe(
+      "voice.barn.pancake-fb.highfive",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
