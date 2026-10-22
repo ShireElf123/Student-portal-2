@@ -60,6 +60,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/sfx/animal-star.mp3` | `sfx.animal.star` |
 | `public/audio/sfx/animal-moon.mp3` | `sfx.animal.moon` |
 | `public/audio/sfx/animal-squirrel.mp3` | `sfx.animal.squirrel` |
+| `public/audio/sfx/animal-dog.mp3` | `sfx.animal.dog` |
+| `public/audio/sfx/animal-bunny.mp3` | `sfx.animal.bunny` |
+| `public/audio/sfx/animal-bench.mp3` | `sfx.animal.bench` |
+| `public/audio/sfx/animal-fountain.mp3` | `sfx.animal.fountain` |
+| `public/audio/sfx/animal-pot.mp3` | `sfx.animal.pot` |
+| `public/audio/sfx/animal-bread.mp3` | `sfx.animal.bread` |
+| `public/audio/sfx/animal-apple.mp3` | `sfx.animal.apple` |
+| `public/audio/sfx/animal-spoon.mp3` | `sfx.animal.spoon` |
+| `public/audio/sfx/animal-milk.mp3` | `sfx.animal.milk` |
+| `public/audio/sfx/animal-jam.mp3` | `sfx.animal.jam` |
 | `public/audio/sfx/animal-bird.mp3` | `sfx.animal.bird` (park roster; previous voice-00 until a park batch) |
 
 ## Spoken lines
@@ -116,6 +126,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | star | `Twinkle!` |
 | moon | `Glow!` |
 | squirrel | `Chk chk!` |
+| dog | `Woof woof!` |
+| bunny | `Sniff sniff!` |
+| bench | `Sit!` |
+| fountain | `Splash splash!` |
+| pot | `Bubble bubble!` |
+| bread | `Crackle!` |
+| apple | `Crunch!` |
+| spoon | `Clink clink!` |
+| milk | `Pour!` |
+| jam | `Pop!` |
 | bird | `Chirp chirp!` |
 
 ## What stays synthesised
