@@ -320,6 +320,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/starlight-snow-welcome.mp3` | `voice.starlight.snow-welcome` |
 | `public/audio/voice/starlight-snow-open.mp3` | `voice.starlight.snow-open` |
 | `public/audio/voice/starlight-snow-fb-mittens.mp3` | `voice.starlight.snow-fb.mittens` |
+| `public/audio/voice/starlight-snow-fb-goggles.mp3` | `voice.starlight.snow-fb.goggles` |
+| `public/audio/voice/starlight-snow-mailbox.mp3` | `voice.starlight.snow-mailbox` |
+| `public/audio/voice/starlight-snow-fb-hat.mp3` | `voice.starlight.snow-fb.hat` |
+| `public/audio/voice/starlight-snow-fb-boat.mp3` | `voice.starlight.snow-fb.boat` |
+| `public/audio/voice/starlight-snow-balls.mp3` | `voice.starlight.snow-balls` |
+| `public/audio/voice/starlight-snow-fb-three.mp3` | `voice.starlight.snow-fb.three` |
+| `public/audio/voice/starlight-snow-fb-eight.mp3` | `voice.starlight.snow-fb.eight` |
+| `public/audio/voice/starlight-snow-plow.mp3` | `voice.starlight.snow-plow` |
+| `public/audio/voice/starlight-snow-fb-wave.mp3` | `voice.starlight.snow-fb.wave` |
+| `public/audio/voice/starlight-snow-fb-hide.mp3` | `voice.starlight.snow-fb.hide` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -710,7 +720,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Barnyard Tales** unique spoken lines are complete on voice-01.
 
-**Starlight Tales** (area id `space-tales`) is the next closed island: area welcome, Rocket Pip station, star balloons, rocket land-play, and Snow Day open plus mittens. Remaining snow-day steps still wait. Rocket Pip step lines reuse the Space Blast-Off kit. Missing lines stay quiet. Do not register generic `Yes!`.
+**Starlight Tales** (area id `space-tales`) is a closed island: area welcome, Rocket Pip station, star balloons, rocket land-play, Snow Day open, and snow-day through the plow. Remaining cocoa and goodnight lines still wait. Rocket Pip step lines reuse the Space Blast-Off kit. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

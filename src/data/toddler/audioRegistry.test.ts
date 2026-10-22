@@ -322,6 +322,16 @@ describe("audio registry", () => {
       "/audio/voice/starlight-snow-welcome.mp3",
       "/audio/voice/starlight-snow-open.mp3",
       "/audio/voice/starlight-snow-fb-mittens.mp3",
+      "/audio/voice/starlight-snow-fb-goggles.mp3",
+      "/audio/voice/starlight-snow-mailbox.mp3",
+      "/audio/voice/starlight-snow-fb-hat.mp3",
+      "/audio/voice/starlight-snow-fb-boat.mp3",
+      "/audio/voice/starlight-snow-balls.mp3",
+      "/audio/voice/starlight-snow-fb-three.mp3",
+      "/audio/voice/starlight-snow-fb-eight.mp3",
+      "/audio/voice/starlight-snow-plow.mp3",
+      "/audio/voice/starlight-snow-fb-wave.mp3",
+      "/audio/voice/starlight-snow-fb-hide.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -845,6 +855,10 @@ describe("audio registry", () => {
     ).toBe("voice.starlight.snow-open");
     expect(narrationClipForText("Drag five stars onto the rocket, then hold to launch.")?.id).toBe(
       "voice.starlight.rocket-line",
+    );
+    expect(narrationClipForText("How many snowballs make the pal?")?.id).toBe("voice.starlight.snow-balls");
+    expect(narrationClipForText("Peek-a-boo, then a wave. The plow likes waves.")?.id).toBe(
+      "voice.starlight.snow-fb.hide",
     );
   });
 
