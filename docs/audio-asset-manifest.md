@@ -80,6 +80,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/sfx/animal-heli.mp3` | `sfx.animal.heli` |
 | `public/audio/sfx/animal-lights.mp3` | `sfx.animal.lights` |
 | `public/audio/sfx/animal-paint.mp3` | `sfx.animal.paint` |
+| `public/audio/sfx/animal-drum.mp3` | `sfx.animal.drum` |
+| `public/audio/sfx/animal-bead.mp3` | `sfx.animal.bead` |
+| `public/audio/sfx/animal-brush.mp3` | `sfx.animal.brush` |
+| `public/audio/sfx/animal-note.mp3` | `sfx.animal.note` |
+| `public/audio/sfx/animal-sticker.mp3` | `sfx.animal.sticker` |
+| `public/audio/sfx/animal-crayon.mp3` | `sfx.animal.crayon` |
+| `public/audio/sfx/animal-scissors.mp3` | `sfx.animal.scissors` |
+| `public/audio/sfx/animal-ay.mp3` | `sfx.animal.ay` |
+| `public/audio/sfx/animal-bee-letter.mp3` | `sfx.animal.bee-letter` |
+| `public/audio/sfx/animal-ten.mp3` | `sfx.animal.ten` |
 | `public/audio/sfx/animal-bird.mp3` | `sfx.animal.bird` (park roster; previous voice-00 until a park batch) |
 
 ## Spoken lines
@@ -156,6 +166,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | heli | `Chop chop!` |
 | lights | `Click!` |
 | paint | `Splash!` |
+| drum | `Boom tap!` |
+| bead | `Click!` |
+| brush | `Swish!` |
+| note | `La la!` |
+| sticker | `Stick!` |
+| crayon | `Scribble!` |
+| scissors | `Snip snip!` |
+| ay | `A says a like apple!` |
+| bee-letter | `B says buh like book!` |
+| ten | `Ten!` |
 | bird | `Chirp chirp!` |
 
 ## What stays synthesised
