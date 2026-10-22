@@ -72,6 +72,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/safari-bio-squirrel.mp3` | `voice.safari.bio.squirrel` |
 | `public/audio/voice/safari-bio-dog.mp3` | `voice.safari.bio.dog` |
 | `public/audio/voice/safari-bio-bunny.mp3` | `voice.safari.bio.bunny` |
+| `public/audio/voice/safari-bio-park-duck.mp3` | `voice.safari.bio.park-duck` |
+| `public/audio/voice/safari-bio-park-bee.mp3` | `voice.safari.bio.park-bee` |
+| `public/audio/voice/safari-bio-bench.mp3` | `voice.safari.bio.bench` |
+| `public/audio/voice/safari-bio-fountain.mp3` | `voice.safari.bio.fountain` |
+| `public/audio/voice/safari-bio-pot.mp3` | `voice.safari.bio.pot` |
+| `public/audio/voice/safari-bio-bread.mp3` | `voice.safari.bio.bread` |
+| `public/audio/voice/safari-bio-apple.mp3` | `voice.safari.bio.apple` |
+| `public/audio/voice/safari-bio-spoon.mp3` | `voice.safari.bio.spoon` |
+| `public/audio/voice/safari-bio-milk.mp3` | `voice.safari.bio.milk` |
+| `public/audio/voice/safari-bio-jam.mp3` | `voice.safari.bio.jam` |
 | `public/audio/sfx/animal-lion.mp3` | `sfx.animal.lion` |
 | `public/audio/sfx/animal-elephant.mp3` | `sfx.animal.elephant` |
 | `public/audio/sfx/animal-monkey.mp3` | `sfx.animal.monkey` |
