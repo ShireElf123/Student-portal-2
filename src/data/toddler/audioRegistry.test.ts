@@ -782,6 +782,16 @@ describe("audio registry", () => {
       "/audio/voice/compost-fb-leaf.mp3",
       "/audio/voice/compost-fb-worm-rhyme.mp3",
       "/audio/voice/compost-damp-welcome.mp3",
+      "/audio/voice/compost-clue-damp.mp3",
+      "/audio/voice/compost-fb-slide.mp3",
+      "/audio/voice/compost-fb-boats.mp3",
+      "/audio/voice/compost-fb-fire.mp3",
+      "/audio/voice/compost-sort-welcome.mp3",
+      "/audio/voice/compost-clue-sort.mp3",
+      "/audio/voice/fruit-area-welcome.mp3",
+      "/audio/voice/fruit-orange-welcome.mp3",
+      "/audio/voice/fruit-clue-orange.mp3",
+      "/audio/voice/fruit-fb-orange.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1722,6 +1732,28 @@ describe("audio registry", () => {
     expect(narrationClipForText("Why is the heap kept damp?")?.id).toBe(
       "voice.compost.damp-welcome",
     );
+    expect(narrationClipForText("The heap stays damp so worms can slide. Why damp?")?.id).toBe(
+      "voice.compost.clue.damp",
+    );
+    expect(narrationClipForText("Is this friend a flyer, a crawler, or a pond bug?")?.id).toBe(
+      "voice.compost.sort-welcome",
+    );
+    expect(narrationClipForText("Flyer, crawler, or pond?")?.id).toBe("voice.compost.clue.sort");
+  });
+
+  it("maps Fruit Stall closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Fruit Stall! Citrus pyramids and a hanging scale. Let's explore together!",
+      )?.id,
+    ).toBe("voice.fruit.area-welcome");
+    expect(narrationClipForText("Which fruit is round and orange?")?.id).toBe(
+      "voice.fruit.orange-welcome",
+    );
+    expect(narrationClipForText("Round, bright, and citrus-smelling. Which fruit?")?.id).toBe(
+      "voice.fruit.clue.orange",
+    );
+    expect(narrationClipForText("A sweet orange.")?.id).toBe("voice.fruit.fb.orange");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
