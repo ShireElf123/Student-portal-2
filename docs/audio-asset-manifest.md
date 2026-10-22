@@ -70,6 +70,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/sfx/animal-spoon.mp3` | `sfx.animal.spoon` |
 | `public/audio/sfx/animal-milk.mp3` | `sfx.animal.milk` |
 | `public/audio/sfx/animal-jam.mp3` | `sfx.animal.jam` |
+| `public/audio/sfx/animal-oven.mp3` | `sfx.animal.oven` |
+| `public/audio/sfx/animal-bus.mp3` | `sfx.animal.bus` |
+| `public/audio/sfx/animal-car.mp3` | `sfx.animal.car` |
+| `public/audio/sfx/animal-plane.mp3` | `sfx.animal.plane` |
+| `public/audio/sfx/animal-train.mp3` | `sfx.animal.train` |
+| `public/audio/sfx/animal-bike.mp3` | `sfx.animal.bike` |
+| `public/audio/sfx/animal-boat.mp3` | `sfx.animal.boat` |
+| `public/audio/sfx/animal-heli.mp3` | `sfx.animal.heli` |
+| `public/audio/sfx/animal-lights.mp3` | `sfx.animal.lights` |
+| `public/audio/sfx/animal-paint.mp3` | `sfx.animal.paint` |
 | `public/audio/sfx/animal-bird.mp3` | `sfx.animal.bird` (park roster; previous voice-00 until a park batch) |
 
 ## Spoken lines
@@ -136,6 +146,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | spoon | `Clink clink!` |
 | milk | `Pour!` |
 | jam | `Pop!` |
+| oven | `Whoosh!` |
+| bus | `Beep beep!` |
+| car | `Vroom!` |
+| plane | `Whoosh!` |
+| train | `Choo choo!` |
+| bike | `Ring ring!` |
+| boat | `Toot toot!` |
+| heli | `Chop chop!` |
+| lights | `Click!` |
+| paint | `Splash!` |
 | bird | `Chirp chirp!` |
 
 ## What stays synthesised
