@@ -362,6 +362,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-s-welcome.mp3",
       "/audio/voice/phonics-fb-star.mp3",
       "/audio/voice/phonics-rhyme-welcome.mp3",
+      "/audio/voice/phonics-cue-buh.mp3",
+      "/audio/voice/phonics-cue-sss.mp3",
+      "/audio/voice/phonics-fb-elephant.mp3",
+      "/audio/voice/phonics-fb-lion.mp3",
+      "/audio/voice/phonics-blend-welcome.mp3",
+      "/audio/voice/phonics-trace-welcome.mp3",
+      "/audio/voice/phonics-pebbles-welcome.mp3",
+      "/audio/voice/phonics-pebbles-line.mp3",
+      "/audio/voice/phonics-pebbles-done.mp3",
+      "/audio/voice/phonics-clue-b.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -929,6 +939,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("Find the rhyming friends in the meadow garden!")?.id).toBe(
       "voice.phonics.rhyme-welcome",
     );
+    expect(narrationClipForText("Buh buh!")?.id).toBe("voice.phonics.cue.buh");
+    expect(narrationClipForText("The meadow counted with you!")?.id).toBe("voice.phonics.pebbles-done");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

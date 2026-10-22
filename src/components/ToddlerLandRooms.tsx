@@ -181,7 +181,8 @@ function Stage({
             playId === "stamp-mural" ||
             playId === "drum-boom" ||
             playId === "story-stones" ||
-            playId === "rocket-stars",
+            playId === "rocket-stars" ||
+            playId === "number-pebbles",
         }),
       180,
     );
@@ -205,7 +206,8 @@ function Stage({
           playId === "stamp-mural" ||
           playId === "drum-boom" ||
           playId === "story-stones" ||
-          playId === "rocket-stars",
+          playId === "rocket-stars" ||
+          playId === "number-pebbles",
       });
     }
   }, [done, copy.done]);

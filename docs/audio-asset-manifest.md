@@ -360,6 +360,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/phonics-s-welcome.mp3` | `voice.phonics.s-welcome` |
 | `public/audio/voice/phonics-fb-star.mp3` | `voice.phonics.fb.star` |
 | `public/audio/voice/phonics-rhyme-welcome.mp3` | `voice.phonics.rhyme-welcome` |
+| `public/audio/voice/phonics-cue-buh.mp3` | `voice.phonics.cue.buh` |
+| `public/audio/voice/phonics-cue-sss.mp3` | `voice.phonics.cue.sss` |
+| `public/audio/voice/phonics-fb-elephant.mp3` | `voice.phonics.fb.elephant` |
+| `public/audio/voice/phonics-fb-lion.mp3` | `voice.phonics.fb.lion` |
+| `public/audio/voice/phonics-blend-welcome.mp3` | `voice.phonics.blend-welcome` |
+| `public/audio/voice/phonics-trace-welcome.mp3` | `voice.phonics.trace-welcome` |
+| `public/audio/voice/phonics-pebbles-welcome.mp3` | `voice.phonics.pebbles-welcome` |
+| `public/audio/voice/phonics-pebbles-line.mp3` | `voice.phonics.pebbles-line` |
+| `public/audio/voice/phonics-pebbles-done.mp3` | `voice.phonics.pebbles-done` |
+| `public/audio/voice/phonics-clue-b.mp3` | `voice.phonics.clue.b` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -754,7 +764,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Deep Sea Tales** unique spoken lines are complete on voice-01.
 
-**Phonics Meadow** is the next closed island: area welcome, letter B and S stations, and meadow rhyme. Remaining S distractors, sound cues, blend kitchen, letter-trace, and pebbles still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Phonics Meadow** is a closed island: B and S stations, meadow rhyme, blend kitchen, letter-trace, and number pebbles. Remaining S cluePrompt still waits. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
