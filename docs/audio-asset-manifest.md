@@ -200,6 +200,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/space-story-stars.mp3` | `voice.space.story-stars` |
 | `public/audio/voice/space-story-moon.mp3` | `voice.space.story-moon` |
 | `public/audio/voice/space-story-fb-whoosh.mp3` | `voice.space.story-fb.whoosh` |
+| `public/audio/voice/space-story-fb-alert.mp3` | `voice.space.story-fb.alert` |
+| `public/audio/voice/space-story-fb-count.mp3` | `voice.space.story-fb.count` |
+| `public/audio/voice/space-story-fb-four.mp3` | `voice.space.story-fb.four` |
+| `public/audio/voice/space-story-fb-almost.mp3` | `voice.space.story-fb.almost` |
+| `public/audio/voice/space-story-fb-alien.mp3` | `voice.space.story-fb.alien` |
+| `public/audio/voice/space-story-fb-bounce.mp3` | `voice.space.story-fb.bounce` |
+| `public/audio/voice/treasure-area-welcome.mp3` | `voice.treasure.area-welcome` |
+| `public/audio/voice/treasure-bubbles-welcome.mp3` | `voice.treasure.bubbles-welcome` |
+| `public/audio/voice/treasure-quiz-key.mp3` | `voice.treasure.quiz-key` |
+| `public/audio/voice/treasure-fb-key.mp3` | `voice.treasure.fb.key` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -576,7 +586,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Weather Adventure** unique spoken lines are complete on voice-01.
 
-**Space Blast-Off** is a closed island: area welcome, moon picnic station, scoop-moon, launch/stars quizzes and all option feedbacks, Rocket Pip open plus stars/moon steps, and the launch-step whoosh. Remaining story option feedbacks still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Space Blast-Off** unique spoken lines are complete on voice-01.
+
+**Treasure Quest** is the next closed island: area welcome, letter bubbles, key quiz prompt, and key yes. Spoon and pencil option feedbacks still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

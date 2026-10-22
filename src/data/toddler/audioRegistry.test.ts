@@ -202,6 +202,16 @@ describe("audio registry", () => {
       "/audio/voice/space-story-stars.mp3",
       "/audio/voice/space-story-moon.mp3",
       "/audio/voice/space-story-fb-whoosh.mp3",
+      "/audio/voice/space-story-fb-alert.mp3",
+      "/audio/voice/space-story-fb-count.mp3",
+      "/audio/voice/space-story-fb-four.mp3",
+      "/audio/voice/space-story-fb-almost.mp3",
+      "/audio/voice/space-story-fb-alien.mp3",
+      "/audio/voice/space-story-fb-bounce.mp3",
+      "/audio/voice/treasure-area-welcome.mp3",
+      "/audio/voice/treasure-bubbles-welcome.mp3",
+      "/audio/voice/treasure-quiz-key.mp3",
+      "/audio/voice/treasure-fb-key.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -605,6 +615,25 @@ describe("audio registry", () => {
         "Rocket Pip Goes to the Moon. Pip puts on his space helmet! The rocket is ready to blast off. What button launches the rocket?",
       )?.id,
     ).toBe("voice.space.story-open");
+    expect(narrationClipForText("Wheee! Bouncing high in low moon gravity!")?.id).toBe(
+      "voice.space.story-fb.bounce",
+    );
+  });
+
+  it("maps Treasure Quest closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Treasure Quest! Mysterious Island Maps & Golden Chests. Let's explore together!",
+      )?.id,
+    ).toBe("voice.treasure.area-welcome");
+    expect(
+      narrationClipForText(
+        "The treasure chest is locked! What shiny golden item turns the keyhole to open it?",
+      )?.id,
+    ).toBe("voice.treasure.quiz-key");
+    expect(narrationClipForText("Click clack! The golden key fits right into the lock!")?.id).toBe(
+      "voice.treasure.fb.key",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
