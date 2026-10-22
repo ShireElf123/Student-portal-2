@@ -762,6 +762,16 @@ describe("audio registry", () => {
       "/audio/voice/compost-fb-peel.mp3",
       "/audio/voice/compost-fb-boot.mp3",
       "/audio/voice/compost-fb-key.mp3",
+      "/audio/voice/compost-worms-welcome.mp3",
+      "/audio/voice/compost-clue-worms.mp3",
+      "/audio/voice/compost-fb-five.mp3",
+      "/audio/voice/compost-fb-two-worms.mp3",
+      "/audio/voice/compost-fb-eight-worms.mp3",
+      "/audio/voice/compost-letter-welcome.mp3",
+      "/audio/voice/compost-clue-letter.mp3",
+      "/audio/voice/compost-fb-w.mp3",
+      "/audio/voice/compost-fb-m.mp3",
+      "/audio/voice/compost-fb-v.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1680,6 +1690,16 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("The compost is for leaves and peels. Which belongs?")?.id).toBe(
       "voice.compost.clue.heap",
+    );
+    expect(narrationClipForText("How many worms?")?.id).toBe("voice.compost.worms-welcome");
+    expect(narrationClipForText("Five worms after the rain. How many?")?.id).toBe(
+      "voice.compost.clue.worms",
+    );
+    expect(narrationClipForText("Which letter starts worm?")?.id).toBe(
+      "voice.compost.letter-welcome",
+    );
+    expect(narrationClipForText("Worm starts with wuh. Which letter?")?.id).toBe(
+      "voice.compost.clue.letter",
     );
   });
 
