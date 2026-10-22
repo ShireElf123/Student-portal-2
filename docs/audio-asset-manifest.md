@@ -330,6 +330,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/starlight-snow-plow.mp3` | `voice.starlight.snow-plow` |
 | `public/audio/voice/starlight-snow-fb-wave.mp3` | `voice.starlight.snow-fb.wave` |
 | `public/audio/voice/starlight-snow-fb-hide.mp3` | `voice.starlight.snow-fb.hide` |
+| `public/audio/voice/starlight-snow-cocoa.mp3` | `voice.starlight.snow-cocoa` |
+| `public/audio/voice/starlight-snow-fb-cocoa.mp3` | `voice.starlight.snow-fb.cocoa` |
+| `public/audio/voice/starlight-snow-fb-soup.mp3` | `voice.starlight.snow-fb.soup` |
+| `public/audio/voice/starlight-snow-lamps.mp3` | `voice.starlight.snow-lamps` |
+| `public/audio/voice/starlight-snow-fb-night.mp3` | `voice.starlight.snow-fb.night` |
+| `public/audio/voice/sea-area-welcome.mp3` | `voice.sea.area-welcome` |
+| `public/audio/voice/sea-story-welcome.mp3` | `voice.sea.story-welcome` |
+| `public/audio/voice/sea-fb-open.mp3` | `voice.sea.fb.open` |
+| `public/audio/voice/sea-bubbles-welcome.mp3` | `voice.sea.bubbles-welcome` |
+| `public/audio/voice/sea-rhyme-welcome.mp3` | `voice.sea.rhyme-welcome` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -720,7 +730,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Barnyard Tales** unique spoken lines are complete on voice-01.
 
-**Starlight Tales** (area id `space-tales`) is a closed island: area welcome, Rocket Pip station, star balloons, rocket land-play, Snow Day open, and snow-day through the plow. Remaining cocoa and goodnight lines still wait. Rocket Pip step lines reuse the Space Blast-Off kit. Missing lines stay quiet. Do not register generic `Yes!`.
+**Starlight Tales** unique spoken lines are complete on voice-01. Rocket Pip step lines reuse the Space Blast-Off kit.
+
+**Deep Sea Tales** is the next closed island: area welcome, submarine station, sea bubbles, and tide rhyme station. Submarine step lines still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

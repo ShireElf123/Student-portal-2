@@ -332,6 +332,16 @@ describe("audio registry", () => {
       "/audio/voice/starlight-snow-plow.mp3",
       "/audio/voice/starlight-snow-fb-wave.mp3",
       "/audio/voice/starlight-snow-fb-hide.mp3",
+      "/audio/voice/starlight-snow-cocoa.mp3",
+      "/audio/voice/starlight-snow-fb-cocoa.mp3",
+      "/audio/voice/starlight-snow-fb-soup.mp3",
+      "/audio/voice/starlight-snow-lamps.mp3",
+      "/audio/voice/starlight-snow-fb-night.mp3",
+      "/audio/voice/sea-area-welcome.mp3",
+      "/audio/voice/sea-story-welcome.mp3",
+      "/audio/voice/sea-fb-open.mp3",
+      "/audio/voice/sea-bubbles-welcome.mp3",
+      "/audio/voice/sea-rhyme-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -860,6 +870,21 @@ describe("audio registry", () => {
     expect(narrationClipForText("Peek-a-boo, then a wave. The plow likes waves.")?.id).toBe(
       "voice.starlight.snow-fb.hide",
     );
+    expect(narrationClipForText("Goodnight Maple Street. The pal keeps watch.")?.id).toBe(
+      "voice.starlight.snow-fb.night",
+    );
+  });
+
+  it("maps Deep Sea Tales closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Deep Sea Tales! Deep Sea Submarine Journey & Captain Turtle. Let's explore together!",
+      )?.id,
+    ).toBe("voice.sea.area-welcome");
+    expect(
+      narrationClipForText("Glug glug glug! Climb aboard the yellow submarine for an ocean journey!")?.id,
+    ).toBe("voice.sea.story-welcome");
+    expect(narrationClipForText("Pop the deep-sea story bubbles!")?.id).toBe("voice.sea.bubbles-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
