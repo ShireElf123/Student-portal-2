@@ -72,6 +72,16 @@ describe("audio registry", () => {
       "/audio/voice/jungle-quiz-parrot.mp3",
       "/audio/voice/jungle-quiz-bananas.mp3",
       "/audio/voice/jungle-fb-monkey.mp3",
+      "/audio/voice/jungle-fb-frog.mp3",
+      "/audio/voice/jungle-fb-lion-sound.mp3",
+      "/audio/voice/jungle-fb-elephant.mp3",
+      "/audio/voice/jungle-fb-mouse.mp3",
+      "/audio/voice/jungle-fb-lion-yes.mp3",
+      "/audio/voice/jungle-fb-turtle.mp3",
+      "/audio/voice/jungle-fb-ladybug.mp3",
+      "/audio/voice/jungle-fb-treetop.mp3",
+      "/audio/voice/jungle-fb-ocean.mp3",
+      "/audio/voice/jungle-fb-desert.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -377,6 +387,8 @@ describe("audio registry", () => {
       narrationClipForText("Listen to the treetop chatter! Who is swinging on the vines shouting ooh ooh aah aah?")?.id,
     ).toBe("voice.jungle.quiz-monkey");
     expect(narrationClipForText("Hold the vine. Swing across.")?.id).toBe("voice.jungle.vine-line");
+    expect(narrationClipForText("Yes! Giant padded paws belong to the majestic lion!")?.id).toBe("voice.jungle.fb.lion-yes");
+    expect(narrationClipForText("The ocean is home to fish and dolphins, not parrots!")?.id).toBe("voice.jungle.fb.ocean");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

@@ -70,6 +70,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/jungle-quiz-parrot.mp3` | `voice.jungle.quiz-parrot` |
 | `public/audio/voice/jungle-quiz-bananas.mp3` | `voice.jungle.quiz-bananas` |
 | `public/audio/voice/jungle-fb-monkey.mp3` | `voice.jungle.fb.monkey` |
+| `public/audio/voice/jungle-fb-frog.mp3` | `voice.jungle.fb.frog` |
+| `public/audio/voice/jungle-fb-lion-sound.mp3` | `voice.jungle.fb.lion-sound` |
+| `public/audio/voice/jungle-fb-elephant.mp3` | `voice.jungle.fb.elephant` |
+| `public/audio/voice/jungle-fb-mouse.mp3` | `voice.jungle.fb.mouse` |
+| `public/audio/voice/jungle-fb-lion-yes.mp3` | `voice.jungle.fb.lion-yes` |
+| `public/audio/voice/jungle-fb-turtle.mp3` | `voice.jungle.fb.turtle` |
+| `public/audio/voice/jungle-fb-ladybug.mp3` | `voice.jungle.fb.ladybug` |
+| `public/audio/voice/jungle-fb-treetop.mp3` | `voice.jungle.fb.treetop` |
+| `public/audio/voice/jungle-fb-ocean.mp3` | `voice.jungle.fb.ocean` |
+| `public/audio/voice/jungle-fb-desert.mp3` | `voice.jungle.fb.desert` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -436,7 +446,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Farm Valley** is a closed kit on the same voice-01: area welcome, milk-cow hold/done, letter-trace and pen-count station prompts, four quiz spokenPrompts, all quiz option feedbacks, and every Pen Farm Count round line. Missing Farm lines stay quiet. Generic studio “Yes!” is not registered (would leak her voice onto other islands). Dynamic counting taps still wait.
 
-**Jungle Canopy** is the next closed island: area welcome, canopy memory station, vine-swing hold/done, four quiz spokenPrompts, and the monkey correct feedback. Missing Jungle lines stay quiet — no device narrator on that island. Remaining quiz feedbacks wait.
+**Jungle Canopy** is a closed island: area welcome, canopy memory station, vine-swing hold/done, four quiz spokenPrompts, and monkey/tracks/parrot quiz feedbacks. Missing Jungle lines stay quiet. Banana-count option feedbacks still wait.
 
 ## Mute keys (unchanged)
 
