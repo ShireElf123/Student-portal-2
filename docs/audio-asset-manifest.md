@@ -110,7 +110,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/sfx/animal-crown.mp3` | `sfx.animal.crown` |
 | `public/audio/sfx/animal-king.mp3` | `sfx.animal.king` |
 | `public/audio/sfx/animal-dragon.mp3` | `sfx.animal.dragon` |
-| `public/audio/sfx/animal-bird.mp3` | `sfx.animal.bird` (park roster; previous voice-00 until a park batch) |
+| `public/audio/sfx/animal-castle.mp3` | `sfx.animal.castle` |
+| `public/audio/sfx/animal-pine.mp3` | `sfx.animal.pine` |
+| `public/audio/sfx/animal-boot.mp3` | `sfx.animal.boot` |
+| `public/audio/sfx/animal-gem.mp3` | `sfx.animal.gem` |
+| `public/audio/sfx/animal-cave.mp3` | `sfx.animal.cave` |
+| `public/audio/sfx/animal-rain.mp3` | `sfx.animal.rain` |
+| `public/audio/sfx/animal-lamp.mp3` | `sfx.animal.lamp` |
+| `public/audio/sfx/animal-teddy.mp3` | `sfx.animal.teddy` |
+| `public/audio/sfx/animal-sock.mp3` | `sfx.animal.sock` |
+| `public/audio/sfx/animal-bird.mp3` | `sfx.animal.bird` |
 
 ## Spoken lines
 
@@ -216,7 +225,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | crown | `Shine!` |
 | king | `Hello!` |
 | dragon | `Whoosh!` |
-| bird | `Chirp chirp!` |
+| castle | `Echo!` |
+| pine | `Swish!` |
+| boot | `Thud thud!` |
+| gem | `Sparkle!` |
+| cave | `Drip drip!` |
+| rain | `Pitter patter!` |
+| lamp | `Click!` |
+| teddy | `Squeeze!` |
+| sock | `Flop!` |
+| bird | `Tweet tweet!` |
 
 ## What stays synthesised
 

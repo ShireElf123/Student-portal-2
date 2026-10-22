@@ -9,7 +9,7 @@ import {
 } from "./audioRegistry";
 
 describe("audio registry", () => {
-  it("lists the Savanna closed-kit files plus the earlier park bird clip", () => {
+  it("lists the Safari closed-kit voice lines and every friend mouth-call", () => {
     expect(EXPECTED_AUDIO_FILES).toEqual([
       "/audio/voice/narrator-safari-explore-welcome.mp3",
       "/audio/voice/narrator-safari-detective-stem.mp3",
@@ -111,6 +111,15 @@ describe("audio registry", () => {
       "/audio/sfx/animal-crown.mp3",
       "/audio/sfx/animal-king.mp3",
       "/audio/sfx/animal-dragon.mp3",
+      "/audio/sfx/animal-castle.mp3",
+      "/audio/sfx/animal-pine.mp3",
+      "/audio/sfx/animal-boot.mp3",
+      "/audio/sfx/animal-gem.mp3",
+      "/audio/sfx/animal-cave.mp3",
+      "/audio/sfx/animal-rain.mp3",
+      "/audio/sfx/animal-lamp.mp3",
+      "/audio/sfx/animal-teddy.mp3",
+      "/audio/sfx/animal-sock.mp3",
       "/audio/sfx/animal-bird.mp3",
     ]);
     expect(new Set(AUDIO_ASSETS.map((asset) => asset.id)).size).toBe(AUDIO_ASSETS.length);
@@ -127,7 +136,7 @@ describe("audio registry", () => {
     expect(narrationClipForText("some other prompt")).toBeUndefined();
   });
 
-  it("maps savanna friend ids plus the park bird clip", () => {
+  it("maps safari friend ids including the park bird clip", () => {
     expect(animalClipForFriendId("duck")?.src).toBe("/audio/sfx/animal-duck.mp3");
     expect(animalClipForFriendId("cow")?.src).toBe("/audio/sfx/animal-cow.mp3");
     expect(animalClipForFriendId("lion")?.src).toBe("/audio/sfx/animal-lion.mp3");
@@ -150,8 +159,11 @@ describe("audio registry", () => {
     expect(animalClipForFriendId("smile")?.src).toBe("/audio/sfx/animal-smile.mp3");
     expect(animalClipForFriendId("soap")?.src).toBe("/audio/sfx/animal-soap.mp3");
     expect(animalClipForFriendId("dragon")?.src).toBe("/audio/sfx/animal-dragon.mp3");
+    expect(animalClipForFriendId("castle")?.src).toBe("/audio/sfx/animal-castle.mp3");
+    expect(animalClipForFriendId("teddy")?.src).toBe("/audio/sfx/animal-teddy.mp3");
     expect(animalClipForFriendId("bird")?.src).toBe("/audio/sfx/animal-bird.mp3");
-    expect(animalClipForFriendId("castle")).toBeUndefined();
+    expect(getAudioAsset("sfx.animal.bird")?.author).toContain("voice-01");
+    expect(animalClipForFriendId("unicorn")).toBeUndefined();
     expect(getAudioAsset("sfx.animal.duck")?.animalId).toBe("duck");
   });
 });
