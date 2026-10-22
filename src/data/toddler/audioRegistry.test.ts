@@ -92,6 +92,16 @@ describe("audio registry", () => {
       "/audio/voice/ocean-feed-done.mp3",
       "/audio/voice/ocean-quiz-dolphin.mp3",
       "/audio/voice/ocean-quiz-jellyfish.mp3",
+      "/audio/voice/ocean-fb-dolphin.mp3",
+      "/audio/voice/ocean-fb-horse.mp3",
+      "/audio/voice/ocean-fb-camel.mp3",
+      "/audio/voice/ocean-fb-chicken.mp3",
+      "/audio/voice/ocean-fb-jellyfish.mp3",
+      "/audio/voice/ocean-fb-rock.mp3",
+      "/audio/voice/ocean-fb-boot.mp3",
+      "/audio/voice/ocean-sort-prompt.mp3",
+      "/audio/voice/ocean-fb-whale.mp3",
+      "/audio/voice/ocean-fb-lion.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -410,6 +420,8 @@ describe("audio registry", () => {
       narrationClipForText("Listen to the sparkling water! Who clicks happily and leaps high out of ocean waves?")?.id,
     ).toBe("voice.ocean.quiz-dolphin");
     expect(narrationClipForText("Drag flakes onto every fish.")?.id).toBe("voice.ocean.feed-line");
+    expect(narrationClipForText("Click click splash! The dolphin leaps high and smiles!")?.id).toBe("voice.ocean.fb.dolphin");
+    expect(narrationClipForText("An old rubber boot doesn't glow or swim!")?.id).toBe("voice.ocean.fb.boot");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

@@ -90,6 +90,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/ocean-feed-done.mp3` | `voice.ocean.feed-done` |
 | `public/audio/voice/ocean-quiz-dolphin.mp3` | `voice.ocean.quiz-dolphin` |
 | `public/audio/voice/ocean-quiz-jellyfish.mp3` | `voice.ocean.quiz-jellyfish` |
+| `public/audio/voice/ocean-fb-dolphin.mp3` | `voice.ocean.fb.dolphin` |
+| `public/audio/voice/ocean-fb-horse.mp3` | `voice.ocean.fb.horse` |
+| `public/audio/voice/ocean-fb-camel.mp3` | `voice.ocean.fb.camel` |
+| `public/audio/voice/ocean-fb-chicken.mp3` | `voice.ocean.fb.chicken` |
+| `public/audio/voice/ocean-fb-jellyfish.mp3` | `voice.ocean.fb.jellyfish` |
+| `public/audio/voice/ocean-fb-rock.mp3` | `voice.ocean.fb.rock` |
+| `public/audio/voice/ocean-fb-boot.mp3` | `voice.ocean.fb.boot` |
+| `public/audio/voice/ocean-sort-prompt.mp3` | `voice.ocean.sort-prompt` |
+| `public/audio/voice/ocean-fb-whale.mp3` | `voice.ocean.fb.whale` |
+| `public/audio/voice/ocean-fb-lion.mp3` | `voice.ocean.fb.lion` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -458,7 +468,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Jungle Canopy** unique spoken lines are complete on voice-01.
 
-**Ocean Reef** is the next closed island: area welcome, reef bubbles station, feed-the-reef hold/done, and dolphin/jellyfish quiz prompts. Missing Ocean lines stay quiet. Quiz feedbacks, land-vs-sea sorting, and reef-sort studio rounds still wait.
+**Ocean Reef** is a closed island: area welcome, reef bubbles, feed-the-reef, dolphin/jellyfish quiz prompts and option feedbacks, plus the architecture land-vs-sea sort prompt. Missing Ocean lines stay quiet. Reef-sort studio rounds still wait.
 
 ## Mute keys (unchanged)
 
