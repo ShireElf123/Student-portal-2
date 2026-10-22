@@ -562,6 +562,16 @@ describe("audio registry", () => {
       "/audio/voice/runway-fb-rows.mp3",
       "/audio/voice/runway-clue-window.mp3",
       "/audio/voice/runway-window-welcome.mp3",
+      "/audio/voice/runway-fb-oval.mp3",
+      "/audio/voice/runway-fb-stars.mp3",
+      "/audio/voice/runway-fb-cabin.mp3",
+      "/audio/voice/runway-clue-blink.mp3",
+      "/audio/voice/runway-blink-welcome.mp3",
+      "/audio/voice/runway-fb-rest.mp3",
+      "/audio/voice/runway-fb-blinks.mp3",
+      "/audio/voice/runway-fb-blink.mp3",
+      "/audio/voice/runway-balloon-welcome.mp3",
+      "/audio/voice/runway-pack-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1286,6 +1296,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("Which shape is most like a cabin window?")?.id).toBe(
       "voice.runway.window-welcome",
     );
+    expect(narrationClipForText("Blink, rest, blink, rest, blink. Next?")?.id).toBe(
+      "voice.runway.blink-welcome",
+    );
+    expect(narrationClipForText("Pack the bag for the trip!")?.id).toBe("voice.runway.pack-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
