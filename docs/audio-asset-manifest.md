@@ -870,7 +870,7 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | id | Exact spoken line |
 |---|---|
 | explore welcome | `Tap any animal friend to hear their call and fun secrets!` |
-| detective stem | `Who makes this sound? Tap the right animal!` |
+| detective stem | `Who makes this sound? Tap the right animal!` then the mouth-call. Not stacked. |
 | lion | `Rrrroaaar!` |
 | elephant | `Pawoooo!` |
 | monkey | `Ooh ooh aah aah!` |

@@ -3,9 +3,8 @@ import { motion, AnimatePresence } from "motion/react";
 import { Volume2, Sparkles, Star, RotateCcw, Award, CheckCircle2 } from "lucide-react";
 import { soundEffects } from "../utils/soundEffects";
 import { stopSpeaking } from "../utils/speechUtils";
-import { playSafariAnimalSfx, playSafariVoiceLine } from "../utils/toddlerAudio";
+import { playSafariAnimalSfx, playSafariDetectiveMystery, playSafariVoiceLine } from "../utils/toddlerAudio";
 import {
-  SAFARI_DETECTIVE_STEM_PROMPT,
   SAFARI_EXPLORE_WELCOME_PROMPT,
   safariFriendBioText,
 } from "../data/toddler/audioRegistry";
@@ -86,8 +85,7 @@ export function ToddlerAnimalSafari({
     const timer = setTimeout(() => {
       stopSpeaking();
       if (activeMode === "detective") {
-        playSafariVoiceLine(SAFARI_DETECTIVE_STEM_PROMPT);
-        playSafariAnimalSfx(targetAnimal.id);
+        playSafariDetectiveMystery(targetAnimal.id);
       } else {
         playSafariVoiceLine(exploreWelcome || SAFARI_EXPLORE_WELCOME_PROMPT);
       }
@@ -108,8 +106,7 @@ export function ToddlerAnimalSafari({
     setSelectedAnimal(null);
     setShowCelebration(false);
     stopSpeaking();
-    playSafariVoiceLine(SAFARI_DETECTIVE_STEM_PROMPT);
-    playSafariAnimalSfx(nextTarget.id);
+    playSafariDetectiveMystery(nextTarget.id);
   };
 
   /**

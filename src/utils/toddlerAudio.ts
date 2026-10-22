@@ -12,6 +12,7 @@ import {
   AUDIO_MASTER_GAIN,
   getAudioAsset,
   narrationClipForText,
+  SAFARI_DETECTIVE_STEM_PROMPT,
   type AudioAsset,
 } from "../data/toddler/audioRegistry";
 
@@ -164,6 +165,21 @@ class ToddlerAudioManager {
     return this.tryNarrationClip(text, options);
   }
 
+  /**
+   * Sound detective: her question first, then the mouth-call.
+   * Playing both at once stacked the same woman (Who makes this sound? + Moo).
+   */
+  playSafariDetectiveMystery(animalId: string): boolean {
+    this.stopSfx();
+    const playCall = () => this.playSafariAnimalSfx(animalId);
+    const started = this.playSafariVoiceLine(SAFARI_DETECTIVE_STEM_PROMPT, {
+      onEnd: playCall,
+      onFail: playCall,
+    });
+    if (!started) return playCall();
+    return true;
+  }
+
   private playVoiceAsset(asset: AudioAsset, options?: ClipPlayOptions): boolean {
     if (this.parentPlaying) return false;
     if (isVoiceMutedStored()) return false;
@@ -285,8 +301,12 @@ export function playSafariAnimalSfx(animalId: string): boolean {
   return toddlerAudio.playSafariAnimalSfx(animalId);
 }
 
-export function playSafariVoiceLine(text: string): boolean {
-  return toddlerAudio.playSafariVoiceLine(text);
+export function playSafariVoiceLine(text: string, options?: ClipPlayOptions): boolean {
+  return toddlerAudio.playSafariVoiceLine(text, options);
+}
+
+export function playSafariDetectiveMystery(animalId: string): boolean {
+  return toddlerAudio.playSafariDetectiveMystery(animalId);
 }
 
 export function setAudioFactoryForTests(factory: AudioFactory | null) {

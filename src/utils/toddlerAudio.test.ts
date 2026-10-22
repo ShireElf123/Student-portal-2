@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { SAFARI_EXPLORE_WELCOME_PROMPT } from "../data/toddler/audioRegistry";
+import { SAFARI_DETECTIVE_STEM_PROMPT, SAFARI_EXPLORE_WELCOME_PROMPT } from "../data/toddler/audioRegistry";
 import { soundEffects } from "./soundEffects";
 import {
   resetToddlerAudioForTests,
@@ -124,6 +124,19 @@ describe("toddlerAudio overlapping speech and effects", () => {
     expect(created[0].playCalls).toBe(1);
     expect(created[1].playCalls).toBe(1);
     expect(created[2].src).toContain("animal-lion");
+  });
+
+  it("plays who-makes-this-sound before the cow call, not stacked", async () => {
+    installFactory();
+    expect(toddlerAudio.playSafariDetectiveMystery("cow")).toBe(true);
+    await Promise.resolve();
+    expect(created).toHaveLength(1);
+    expect(created[0].src).toContain("narrator-safari-detective-stem");
+    created[0].onended?.call(created[0]);
+    await Promise.resolve();
+    expect(created).toHaveLength(2);
+    expect(created[1].src).toContain("animal-cow");
+    expect(created[0].pauseCalls).toBeGreaterThanOrEqual(0);
   });
 
   it("does not stop animal sfx when a voice clip starts", async () => {
