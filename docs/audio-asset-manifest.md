@@ -82,6 +82,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/safari-bio-spoon.mp3` | `voice.safari.bio.spoon` |
 | `public/audio/voice/safari-bio-milk.mp3` | `voice.safari.bio.milk` |
 | `public/audio/voice/safari-bio-jam.mp3` | `voice.safari.bio.jam` |
+| `public/audio/voice/safari-bio-kitchen-cat.mp3` | `voice.safari.bio.kitchen-cat` |
+| `public/audio/voice/safari-bio-oven.mp3` | `voice.safari.bio.oven` |
+| `public/audio/voice/safari-bio-bus.mp3` | `voice.safari.bio.bus` |
+| `public/audio/voice/safari-bio-car.mp3` | `voice.safari.bio.car` |
+| `public/audio/voice/safari-bio-plane.mp3` | `voice.safari.bio.plane` |
+| `public/audio/voice/safari-bio-train.mp3` | `voice.safari.bio.train` |
+| `public/audio/voice/safari-bio-bike.mp3` | `voice.safari.bio.bike` |
+| `public/audio/voice/safari-bio-boat.mp3` | `voice.safari.bio.boat` |
+| `public/audio/voice/safari-bio-heli.mp3` | `voice.safari.bio.heli` |
+| `public/audio/voice/safari-bio-lights.mp3` | `voice.safari.bio.lights` |
 | `public/audio/sfx/animal-lion.mp3` | `sfx.animal.lion` |
 | `public/audio/sfx/animal-elephant.mp3` | `sfx.animal.elephant` |
 | `public/audio/sfx/animal-monkey.mp3` | `sfx.animal.monkey` |
