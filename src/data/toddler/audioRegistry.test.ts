@@ -722,6 +722,16 @@ describe("audio registry", () => {
       "/audio/voice/night-moths-welcome.mp3",
       "/audio/voice/night-clue-moths.mp3",
       "/audio/voice/night-fb-four.mp3",
+      "/audio/voice/night-fb-one-moth.mp3",
+      "/audio/voice/night-fb-seven.mp3",
+      "/audio/voice/night-lullaby-welcome.mp3",
+      "/audio/voice/night-clue-lullaby.mp3",
+      "/audio/voice/night-fb-soft.mp3",
+      "/audio/voice/night-fb-crash.mp3",
+      "/audio/voice/night-fb-shout.mp3",
+      "/audio/voice/night-letter-welcome.mp3",
+      "/audio/voice/night-clue-letter.mp3",
+      "/audio/voice/night-fb-m.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1586,6 +1596,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("How many moths?")?.id).toBe("voice.night.moths-welcome");
     expect(narrationClipForText("Four moths on the lantern glass. How many?")?.id).toBe(
       "voice.night.clue.moths",
+    );
+    expect(narrationClipForText("Count the whole glass.")?.id).toBe("voice.night.fb.one-moth");
+    expect(narrationClipForText("Play a quiet lullaby for the lantern moths.")?.id).toBe(
+      "voice.night.lullaby-welcome",
+    );
+    expect(narrationClipForText("Which letter starts moth?")?.id).toBe("voice.night.letter-welcome");
+    expect(narrationClipForText("Moth starts with mmm. Which letter?")?.id).toBe(
+      "voice.night.clue.letter",
     );
   });
 
