@@ -1,8 +1,8 @@
 # Toddler audio asset manifest (Phase 1 sample pack)
 
-The Safari explore welcome MP3 is in the repo (Arena spoken clip). Chat cannot accept MP3 uploads. Duck / cow / bird play a short Web Audio cartoon call until Pixabay files are added via GitHub (`public/audio/sfx/`). Missing files fail closed for voice clips and fall back to synth for those three animals.
+All four sample clips are in the repo, spoken by the **same owner-selected Arena voice** (welcome + mouth-performed quack / moo / chirp). Chat still cannot play or receive MP3s — hear them in the app after a Vercel push. If a file 404s, duck/cow/bird fall back to the short Web Audio cartoon calls.
 
-Do **not** claim animal-SFX phone playback is verified until those three files are supplied and tested on a device.
+Do **not** claim phone playback is verified until the owner listens on a device.
 
 No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this repository.
 
@@ -24,11 +24,9 @@ Source of truth: `src/data/toddler/audioRegistry.ts`.
 | id | Channel | Exact spoken line (if any) | Source | Licence | URL | Author | Notes |
 |---|---|---|---|---|---|---|---|
 | `voice.narrator.safari-explore-welcome` | voice | `Welcome to Savanna Animal Detective! Tap any animal friend to hear their call and fun secrets!` | Arena `generate_speech` (file in repo, ~29 KB) | App-owned generated speech. Swap later if you want ElevenLabs. | — | Arena voice-00 (owner-selected) | Only this default Savanna explore welcome. Other titles stay on Web Speech. Parent recordings still win. |
-| `sfx.animal.duck` | sfx | — | Pixabay SFX, **manual** download | [Pixabay Content License](https://pixabay.com/service/license-summary/) — free commercial use; no standalone redistribution; attribution optional | https://pixabay.com/sound-effects/ | Pending (contributor) | Safari friend id `duck` |
-| `sfx.animal.cow` | sfx | — | Pixabay SFX, manual download | Pixabay Content License | https://pixabay.com/sound-effects/ | Pending (contributor) | Safari friend id `cow` |
-| `sfx.animal.bird` | sfx | — | Pixabay SFX, manual download | Pixabay Content License | https://pixabay.com/sound-effects/ | Pending (contributor) | Safari friend id `bird` (park roster) |
-
-The [official Pixabay API](https://pixabay.com/api/docs/) documents **images and videos only**. Do not use it to fetch these sounds.
+| `sfx.animal.duck` | sfx | `Quack quack!` | Arena `generate_speech` (same voice-00) | App-owned generated speech | — | Arena voice-00 | Safari friend id `duck`. Mouth sound, not a farm recording. |
+| `sfx.animal.cow` | sfx | `Mooo mooo!` | Arena `generate_speech` (same voice-00) | App-owned generated speech | — | Arena voice-00 | Safari friend id `cow` |
+| `sfx.animal.bird` | sfx | `Chirp chirp!` | Arena `generate_speech` (same voice-00) | App-owned generated speech | — | Arena voice-00 | Safari friend id `bird` (park roster) |
 
 ## What stays synthesised
 
