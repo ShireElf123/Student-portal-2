@@ -792,6 +792,16 @@ describe("audio registry", () => {
       "/audio/voice/fruit-orange-welcome.mp3",
       "/audio/voice/fruit-clue-orange.mp3",
       "/audio/voice/fruit-fb-orange.mp3",
+      "/audio/voice/fruit-fb-pea.mp3",
+      "/audio/voice/fruit-fb-loaf.mp3",
+      "/audio/voice/fruit-apples-welcome.mp3",
+      "/audio/voice/fruit-clue-apples.mp3",
+      "/audio/voice/fruit-fb-five.mp3",
+      "/audio/voice/fruit-fb-two-apples.mp3",
+      "/audio/voice/fruit-fb-eight-apples.mp3",
+      "/audio/voice/fruit-veg-welcome.mp3",
+      "/audio/voice/fruit-clue-veg.mp3",
+      "/audio/voice/fruit-fb-carrot.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1754,6 +1764,14 @@ describe("audio registry", () => {
       "voice.fruit.clue.orange",
     );
     expect(narrationClipForText("A sweet orange.")?.id).toBe("voice.fruit.fb.orange");
+    expect(narrationClipForText("Peas are small and green.")?.id).toBe("voice.fruit.fb.pea");
+    expect(narrationClipForText("How many apples?")?.id).toBe("voice.fruit.apples-welcome");
+    expect(narrationClipForText("Five red apples in the crate. How many?")?.id).toBe(
+      "voice.fruit.clue.apples",
+    );
+    expect(narrationClipForText("Which belongs in the veg crate?")?.id).toBe(
+      "voice.fruit.veg-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
