@@ -170,7 +170,11 @@ function Stage({
         speakText(copy.line, {
           pitch: 1.2,
           rate: 0.92,
-          closedKit: playId === "milk-cow" || playId === "vine-swing" || playId === "feed-fish",
+          closedKit:
+            playId === "milk-cow" ||
+            playId === "vine-swing" ||
+            playId === "feed-fish" ||
+            playId === "nest-eggs",
         }),
       180,
     );
@@ -183,7 +187,11 @@ function Stage({
     if (done) {
       speakText(copy.done, {
         pitch: 1.22,
-        closedKit: playId === "milk-cow" || playId === "vine-swing" || playId === "feed-fish",
+        closedKit:
+          playId === "milk-cow" ||
+          playId === "vine-swing" ||
+          playId === "feed-fish" ||
+          playId === "nest-eggs",
       });
     }
   }, [done, copy.done]);

@@ -73,7 +73,12 @@ import { quizTapHint } from "../data/toddler/activityQuality";
 import { SECRET_COVER, WORLD_COVER } from "../data/toddler/toddlerWorldArt";
 
 function isClosedVoiceIsland(areaId?: string | null) {
-  return areaId === "farm-valley" || areaId === "jungle-canopy" || areaId === "ocean-reef";
+  return (
+    areaId === "farm-valley" ||
+    areaId === "jungle-canopy" ||
+    areaId === "ocean-reef" ||
+    areaId === "dino-valley"
+  );
 }
 
 interface ToddlerWorldsNavigatorProps {
@@ -316,22 +321,13 @@ export function ToddlerWorldsNavigator({
         return;
       }
 
-      // Farm Valley letter-trace and pen-count play the station clip inside the toy.
+      // Closed islands: toys speak their own station clip.
       if (
-        activeActivity.areaId === "farm-valley" &&
-        (activeActivity.type === "letter-trace" || activeActivity.type === "k1-studio")
-      ) {
-        return;
-      }
-
-      // Jungle canopy memory plays the station clip inside the toy.
-      if (activeActivity.areaId === "jungle-canopy" && activeActivity.type === "memory-match") {
-        return;
-      }
-
-      if (
-        activeActivity.areaId === "ocean-reef" &&
-        (activeActivity.type === "bubble-pop" || activeActivity.type === "k1-studio")
+        isClosedVoiceIsland(activeActivity.areaId) &&
+        (activeActivity.type === "letter-trace" ||
+          activeActivity.type === "k1-studio" ||
+          activeActivity.type === "memory-match" ||
+          activeActivity.type === "bubble-pop")
       ) {
         return;
       }

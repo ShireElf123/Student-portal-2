@@ -112,6 +112,16 @@ describe("audio registry", () => {
       "/audio/voice/ocean-reef-sort-seal.mp3",
       "/audio/voice/ocean-reef-sort-whale.mp3",
       "/audio/voice/ocean-reef-sort-heron.mp3",
+      "/audio/voice/ocean-reef-sort-starfish.mp3",
+      "/audio/voice/ocean-reef-sort-octopus.mp3",
+      "/audio/voice/ocean-reef-sort-plane.mp3",
+      "/audio/voice/dino-area-welcome.mp3",
+      "/audio/voice/dino-memory-welcome.mp3",
+      "/audio/voice/dino-nest-station.mp3",
+      "/audio/voice/dino-nest-line.mp3",
+      "/audio/voice/dino-nest-done.mp3",
+      "/audio/voice/dino-quiz-neck.mp3",
+      "/audio/voice/dino-quiz-roar.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -434,6 +444,21 @@ describe("audio registry", () => {
     expect(narrationClipForText("An old rubber boot doesn't glow or swim!")?.id).toBe("voice.ocean.fb.boot");
     expect(narrationClipForText("Where does this reef friend live?")?.id).toBe("voice.ocean.reef-sort.welcome");
     expect(narrationClipForText("A fish by the coral. Where does it live?")?.id).toBe("voice.ocean.reef-sort.fish");
+    expect(narrationClipForText("A plane over the reef. Is it a reef animal?")?.id).toBe("voice.ocean.reef-sort.plane");
+  });
+
+  it("maps Dino Valley closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Dino Valley! Prehistoric Jungles, Giant Footprints & Friendly Giants. Let's explore together!",
+      )?.id,
+    ).toBe("voice.dino.area-welcome");
+    expect(
+      narrationClipForText(
+        "Who had the magnificent extra-long neck to reach sweet green leaves in the highest treetops?",
+      )?.id,
+    ).toBe("voice.dino.quiz-neck");
+    expect(narrationClipForText("Drag four eggs into the nest.")?.id).toBe("voice.dino.nest-line");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
