@@ -9,16 +9,26 @@ import {
 } from "./audioRegistry";
 
 describe("audio registry", () => {
-  it("lists the four sample-pack files the owner must provide", () => {
+  it("lists the Savanna closed-kit files plus the earlier park bird clip", () => {
     expect(EXPECTED_AUDIO_FILES).toEqual([
       "/audio/voice/narrator-safari-explore-welcome.mp3",
+      "/audio/voice/narrator-safari-detective-stem.mp3",
+      "/audio/sfx/animal-lion.mp3",
+      "/audio/sfx/animal-elephant.mp3",
+      "/audio/sfx/animal-monkey.mp3",
       "/audio/sfx/animal-duck.mp3",
+      "/audio/sfx/animal-frog.mp3",
       "/audio/sfx/animal-cow.mp3",
+      "/audio/sfx/animal-giraffe.mp3",
+      "/audio/sfx/animal-zebra.mp3",
       "/audio/sfx/animal-bird.mp3",
     ]);
     expect(new Set(AUDIO_ASSETS.map((asset) => asset.id)).size).toBe(AUDIO_ASSETS.length);
     expect(AUDIO_ASSETS.every((asset) => asset.fileStatus === "present")).toBe(true);
-    expect(getAudioAsset("voice.narrator.safari-explore-welcome")?.author).toContain("voice-00");
+    expect(getAudioAsset("voice.narrator.safari-explore-welcome")?.author).toContain("voice-01");
+    expect(getAudioAsset("voice.narrator.safari-detective-stem")?.promptText).toBe(
+      "Who makes this sound? Tap the right animal!",
+    );
   });
 
   it("maps the existing Savanna explore welcome line to the narrator clip", () => {
@@ -27,11 +37,13 @@ describe("audio registry", () => {
     expect(narrationClipForText("some other prompt")).toBeUndefined();
   });
 
-  it("maps safari friend ids duck, cow, and bird", () => {
+  it("maps savanna friend ids plus the park bird clip", () => {
     expect(animalClipForFriendId("duck")?.src).toBe("/audio/sfx/animal-duck.mp3");
     expect(animalClipForFriendId("cow")?.src).toBe("/audio/sfx/animal-cow.mp3");
+    expect(animalClipForFriendId("lion")?.src).toBe("/audio/sfx/animal-lion.mp3");
+    expect(animalClipForFriendId("zebra")?.src).toBe("/audio/sfx/animal-zebra.mp3");
     expect(animalClipForFriendId("bird")?.src).toBe("/audio/sfx/animal-bird.mp3");
-    expect(animalClipForFriendId("lion")).toBeUndefined();
+    expect(animalClipForFriendId("penguin")).toBeUndefined();
     expect(getAudioAsset("sfx.animal.duck")?.animalId).toBe("duck");
   });
 });

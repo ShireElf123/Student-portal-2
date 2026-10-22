@@ -94,7 +94,7 @@ describe("toddlerAudio missing files", () => {
 
   it("leaves unknown safari friends on the synth/speech path", () => {
     installFactory();
-    expect(toddlerAudio.playSafariAnimalSfx("lion")).toBe(false);
+    expect(toddlerAudio.playSafariAnimalSfx("penguin")).toBe(false);
     expect(created).toHaveLength(0);
   });
 });
@@ -117,11 +117,13 @@ describe("toddlerAudio overlapping speech and effects", () => {
     installFactory();
     expect(toddlerAudio.playSafariAnimalSfx("duck")).toBe(true);
     expect(toddlerAudio.playSafariAnimalSfx("cow")).toBe(true);
+    expect(toddlerAudio.playSafariAnimalSfx("lion")).toBe(true);
     await Promise.resolve();
-    expect(created).toHaveLength(2);
+    expect(created).toHaveLength(3);
     expect(created[0].pauseCalls).toBe(0);
     expect(created[0].playCalls).toBe(1);
     expect(created[1].playCalls).toBe(1);
+    expect(created[2].src).toContain("animal-lion");
   });
 
   it("does not stop animal sfx when a voice clip starts", async () => {

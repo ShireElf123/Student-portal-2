@@ -156,6 +156,14 @@ class ToddlerAudioManager {
     return soundEffects.playAnimalCall(animalId);
   }
 
+  /**
+   * Safari island: play a registered narrator clip only.
+   * Never fall through to Web Speech — missing files stay quiet.
+   */
+  playSafariVoiceLine(text: string, options?: ClipPlayOptions): boolean {
+    return this.tryNarrationClip(text, options);
+  }
+
   private playVoiceAsset(asset: AudioAsset, options?: ClipPlayOptions): boolean {
     if (this.parentPlaying) return false;
     if (isVoiceMutedStored()) return false;
@@ -275,6 +283,10 @@ export const toddlerAudio = new ToddlerAudioManager();
 
 export function playSafariAnimalSfx(animalId: string): boolean {
   return toddlerAudio.playSafariAnimalSfx(animalId);
+}
+
+export function playSafariVoiceLine(text: string): boolean {
+  return toddlerAudio.playSafariVoiceLine(text);
 }
 
 export function setAudioFactoryForTests(factory: AudioFactory | null) {

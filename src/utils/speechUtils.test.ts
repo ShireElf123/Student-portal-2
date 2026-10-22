@@ -235,7 +235,7 @@ describe("narrator clip and parent priority", () => {
     speakText(SAFARI_EXPLORE_WELCOME_PROMPT, { onEnd: () => { ended = true; } });
     await wait(50);
     expect(played).toEqual(["/audio/voice/narrator-safari-explore-welcome.mp3"]);
-    expect(engineLog.some((line) => line.startsWith("speak:Welcome to Savanna"))).toBe(false);
+    expect(engineLog.some((line) => line.startsWith("speak:Tap any animal friend"))).toBe(false);
 
     // Clip end should still release callers.
     // Fake clip never fires onended here; not required for "used clip instead of speech".
@@ -258,7 +258,7 @@ describe("narrator clip and parent priority", () => {
     const { speakText } = await import("./speechUtils");
     speakText(SAFARI_EXPLORE_WELCOME_PROMPT);
     await wait(200);
-    expect(engineLog.some((line) => line.includes("Welcome to Savanna Animal Detective"))).toBe(true);
+    expect(engineLog.some((line) => line.includes("Tap any animal friend to hear their call"))).toBe(true);
   });
 
   it("does not start Web Speech or a narrator clip while parent audio is playing", async () => {

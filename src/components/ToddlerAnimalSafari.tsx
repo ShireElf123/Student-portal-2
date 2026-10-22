@@ -2,8 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Volume2, Sparkles, Star, RotateCcw, Award, CheckCircle2 } from "lucide-react";
 import { soundEffects } from "../utils/soundEffects";
-import { speakText, stopSpeaking } from "../utils/speechUtils";
-import { playSafariAnimalSfx } from "../utils/toddlerAudio";
+import { stopSpeaking } from "../utils/speechUtils";
+import { playSafariAnimalSfx, playSafariVoiceLine } from "../utils/toddlerAudio";
+import {
+  SAFARI_DETECTIVE_STEM_PROMPT,
+  SAFARI_EXPLORE_WELCOME_PROMPT,
+} from "../data/toddler/audioRegistry";
 import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import {
@@ -73,19 +77,15 @@ export function ToddlerAnimalSafari({
     celebrationTimersRef.current = [];
   };
 
-  // Automatically speak instructions on initial load and mode switch
+  // Closed Safari kit: narrator MP3s only. Missing clips stay quiet — no Web Speech.
   useEffect(() => {
     const timer = setTimeout(() => {
+      stopSpeaking();
       if (activeMode === "detective") {
-        speakText(`Welcome to ${sceneTitle}! Who makes this sound? ${targetAnimal.soundText}! Tap the right animal!`, {
-          pitch: 1.25,
-          rate: 0.9,
-        });
+        playSafariVoiceLine(SAFARI_DETECTIVE_STEM_PROMPT);
+        playSafariAnimalSfx(targetAnimal.id);
       } else {
-        speakText(`Welcome to ${sceneTitle}! Tap any animal friend to hear their call and fun secrets!`, {
-          pitch: 1.2,
-          rate: 0.9,
-        });
+        playSafariVoiceLine(SAFARI_EXPLORE_WELCOME_PROMPT);
       }
     }, 150);
 
@@ -103,10 +103,9 @@ export function ToddlerAnimalSafari({
     setTargetAnimal(nextTarget);
     setSelectedAnimal(null);
     setShowCelebration(false);
-    speakText(`Who makes this sound? ${nextTarget.soundText}! Tap the right animal!`, {
-      pitch: 1.25,
-      rate: 0.9,
-    });
+    stopSpeaking();
+    playSafariVoiceLine(SAFARI_DETECTIVE_STEM_PROMPT);
+    playSafariAnimalSfx(nextTarget.id);
   };
 
   /**
@@ -117,7 +116,6 @@ export function ToddlerAnimalSafari({
    * an end — the child must never be left on a screen that no longer responds.
    */
   const celebrateAndAdvance = (animal: Animal) => {
-    const praise = `Yes! Correct! It's the ${animal.name}! ${animal.call}`;
     advancePendingRef.current = true;
     clearCelebrationTimers();
 
@@ -134,17 +132,11 @@ export function ToddlerAnimalSafari({
       );
     };
 
-    speakText(praise, {
-      pitch: 1.25,
-      rate: 0.9,
-      onEnd: () => {
-        if (!advancePendingRef.current) return;
-        clearCelebrationTimers();
-        scheduleAdvance(CELEBRATION_PAUSE_MS);
-      },
-    });
-
-    scheduleAdvance(Math.max(CELEBRATION_PAUSE_MS + 1500, Math.ceil(praise.length / 10) * 1000 + 2500));
+    stopSpeaking();
+    playSafariAnimalSfx(animal.id);
+    // Visual celebration + her call; do not mix in the device narrator.
+    scheduleAdvance(CELEBRATION_PAUSE_MS);
+    scheduleAdvance(CELEBRATION_PAUSE_MS + 4000);
   };
 
 
@@ -155,7 +147,6 @@ export function ToddlerAnimalSafari({
       setSelectedAnimal(animal);
       soundEffects.playSuccessChime();
       playSafariAnimalSfx(animal.id);
-      speakText(`${animal.call} ${animal.funFact}`, { pitch: 1.2, rate: 0.9 });
       // Discovery stars: the first tap on each animal each day earns a star;
       // repeats are free play so stars cannot be farmed from one animal.
       if (recordDailySetMember("safari-explore", animal.id).isNew) {
@@ -238,20 +229,13 @@ export function ToddlerAnimalSafari({
       } catch (error) {
         console.error("Failed to record safari response:", error);
       }
-      speakText(`That's the ${animal.name}! Listen again: ${targetAnimal.soundText}! Try finding the right one!`, {
-        pitch: 1.2,
-        rate: 0.9,
-      });
+      playSafariAnimalSfx(targetAnimal.id);
     }
   };
 
   const handlePlayTargetSound = () => {
     soundEffects.playPop();
     playSafariAnimalSfx(targetAnimal.id);
-    speakText(`Listen carefully: ${targetAnimal.soundText}! Who says ${targetAnimal.soundText}?`, {
-      pitch: 1.25,
-      rate: 0.9,
-    });
   };
 
   return (

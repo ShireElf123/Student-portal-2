@@ -118,8 +118,7 @@ describe("Animal Safari detective loop", () => {
 
     await solveCurrentMystery(container);
 
-    // Step 3 of the reported flow: feedback for the animal that was tapped.
-    expect(speech.spoken.some((line) => line.startsWith("Yes! Correct! It's the Brave Lion!"))).toBe(true);
+    // Confirmation is on-screen (ring + score). Safari no longer mixes in Web Speech.
     expect(solved(container)).toBe(1);
     expect(card(container, "🦁").className).toContain("ring-4");
 
@@ -206,8 +205,6 @@ describe("Animal Safari detective loop", () => {
 
     // Not the lion (which the game used to show every single time)…
     expect(mystery(container)).toBe("WHINNY!");
-    // …and the welcome announcement matches what is on screen.
-    expect(speech.spoken[0]).toContain("WHINNY!");
     expect(solved(container)).toBe(0);
   });
 
@@ -219,7 +216,6 @@ describe("Animal Safari detective loop", () => {
     fireEvent.click(card(container, "🦆"));
     await flush();
 
-    expect(speech.spoken.at(-1)).toContain("That's the Happy Duck!");
     expect(solved(container)).toBe(0);
     expect(stars).toEqual([]);
 
@@ -280,7 +276,7 @@ describe("Animal Safari detective loop", () => {
 
     fireEvent.click(card(container, "🐸"));
     await flush();
-    expect(speech.spoken.at(-1)).toContain("Ribbit ribbit!");
+    expect(container.textContent).toContain("Frogs can breathe through their skin");
     expect(stars).toEqual([1]);
 
     fireEvent.click(card(container, "🐸"));
