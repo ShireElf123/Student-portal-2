@@ -142,6 +142,16 @@ describe("audio registry", () => {
       "/audio/voice/dino-tracks-legs.mp3",
       "/audio/voice/dino-tracks-bone.mp3",
       "/audio/voice/forest-area-welcome.mp3",
+      "/audio/voice/forest-balloons-welcome.mp3",
+      "/audio/voice/forest-campfire-station.mp3",
+      "/audio/voice/forest-campfire-line.mp3",
+      "/audio/voice/forest-campfire-done.mp3",
+      "/audio/voice/forest-letter-trace.mp3",
+      "/audio/voice/forest-quiz-bird.mp3",
+      "/audio/voice/forest-quiz-pinecones.mp3",
+      "/audio/voice/forest-fb-bird.mp3",
+      "/audio/voice/forest-fb-bear.mp3",
+      "/audio/voice/forest-fb-snake.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -492,6 +502,10 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Forest Trail! Pinecones, Singing Birds & Mossy Pathways. Let's explore together!")?.id,
     ).toBe("voice.forest.area-welcome");
+    expect(narrationClipForText("Tap the forest sky balloons!")?.id).toBe("voice.forest.balloons-welcome");
+    expect(
+      narrationClipForText("Listen to the sweet forest song! Who sings chirp chirp tweedle dee high in the trees?")?.id,
+    ).toBe("voice.forest.quiz-bird");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

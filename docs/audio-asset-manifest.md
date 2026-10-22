@@ -140,6 +140,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/dino-tracks-legs.mp3` | `voice.dino.tracks.legs` |
 | `public/audio/voice/dino-tracks-bone.mp3` | `voice.dino.tracks.bone` |
 | `public/audio/voice/forest-area-welcome.mp3` | `voice.forest.area-welcome` |
+| `public/audio/voice/forest-balloons-welcome.mp3` | `voice.forest.balloons-welcome` |
+| `public/audio/voice/forest-campfire-station.mp3` | `voice.forest.campfire-station` |
+| `public/audio/voice/forest-campfire-line.mp3` | `voice.forest.campfire-line` |
+| `public/audio/voice/forest-campfire-done.mp3` | `voice.forest.campfire-done` |
+| `public/audio/voice/forest-letter-trace.mp3` | `voice.forest.letter-trace` |
+| `public/audio/voice/forest-quiz-bird.mp3` | `voice.forest.quiz-bird` |
+| `public/audio/voice/forest-quiz-pinecones.mp3` | `voice.forest.quiz-pinecones` |
+| `public/audio/voice/forest-fb-bird.mp3` | `voice.forest.fb.bird` |
+| `public/audio/voice/forest-fb-bear.mp3` | `voice.forest.fb.bear` |
+| `public/audio/voice/forest-fb-snake.mp3` | `voice.forest.fb.snake` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -512,7 +522,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Dino Valley** unique spoken lines are complete on voice-01 (Dino Tracks through the cliff bone).
 
-**Forest Trail** is the next closed island: area welcome so far. Missing Forest lines stay quiet. Station prompts, quizzes, campfire, and letter-trace still wait.
+**Forest Trail** is a closed island: area welcome, sky balloons, campfire hold/done, letter-trace station, bird quiz prompt and feedbacks, and the pinecone count prompt. Missing Forest lines stay quiet. Pinecone option feedbacks still wait.
 
 ## Mute keys (unchanged)
 
