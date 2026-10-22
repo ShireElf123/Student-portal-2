@@ -352,6 +352,16 @@ describe("audio registry", () => {
       "/audio/voice/sea-treasure.mp3",
       "/audio/voice/sea-fb-done.mp3",
       "/audio/voice/sea-q-turtle.mp3",
+      "/audio/voice/sea-q-jelly.mp3",
+      "/audio/voice/sea-q-stars.mp3",
+      "/audio/voice/phonics-area-welcome.mp3",
+      "/audio/voice/phonics-b-welcome.mp3",
+      "/audio/voice/phonics-fb-bear.mp3",
+      "/audio/voice/phonics-fb-apple.mp3",
+      "/audio/voice/phonics-fb-cat.mp3",
+      "/audio/voice/phonics-s-welcome.mp3",
+      "/audio/voice/phonics-fb-star.mp3",
+      "/audio/voice/phonics-rhyme-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -902,6 +912,22 @@ describe("audio registry", () => {
     ).toBe("voice.sea.dive");
     expect(narrationClipForText("Splish splash! You completed the submarine dive!")?.id).toBe(
       "voice.sea.fb.done",
+    );
+    expect(narrationClipForText("Claim your explorer ocean stars!")?.id).toBe("voice.sea.q.stars");
+  });
+
+  it("maps Phonics Meadow closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Phonics Meadow! Letter Sounds, Beginning Words & Singing Letters. Let's explore together!",
+      )?.id,
+    ).toBe("voice.phonics.area-welcome");
+    expect(
+      narrationClipForText("B says buh! Which item starts with the buh buh sound of letter B?")?.id,
+    ).toBe("voice.phonics.b-welcome");
+    expect(narrationClipForText("Yes! B is for Bear! Buh buh Bear!")?.id).toBe("voice.phonics.fb.bear");
+    expect(narrationClipForText("Find the rhyming friends in the meadow garden!")?.id).toBe(
+      "voice.phonics.rhyme-welcome",
     );
   });
 

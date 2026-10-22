@@ -350,6 +350,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/sea-treasure.mp3` | `voice.sea.treasure` |
 | `public/audio/voice/sea-fb-done.mp3` | `voice.sea.fb.done` |
 | `public/audio/voice/sea-q-turtle.mp3` | `voice.sea.q.turtle` |
+| `public/audio/voice/sea-q-jelly.mp3` | `voice.sea.q.jelly` |
+| `public/audio/voice/sea-q-stars.mp3` | `voice.sea.q.stars` |
+| `public/audio/voice/phonics-area-welcome.mp3` | `voice.phonics.area-welcome` |
+| `public/audio/voice/phonics-b-welcome.mp3` | `voice.phonics.b-welcome` |
+| `public/audio/voice/phonics-fb-bear.mp3` | `voice.phonics.fb.bear` |
+| `public/audio/voice/phonics-fb-apple.mp3` | `voice.phonics.fb.apple` |
+| `public/audio/voice/phonics-fb-cat.mp3` | `voice.phonics.fb.cat` |
+| `public/audio/voice/phonics-s-welcome.mp3` | `voice.phonics.s-welcome` |
+| `public/audio/voice/phonics-fb-star.mp3` | `voice.phonics.fb.star` |
+| `public/audio/voice/phonics-rhyme-welcome.mp3` | `voice.phonics.rhyme-welcome` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -742,7 +752,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Starlight Tales** unique spoken lines are complete on voice-01. Rocket Pip step lines reuse the Space Blast-Off kit.
 
-**Deep Sea Tales** is a closed island: area welcome, submarine station, sea bubbles, tide rhyme, and the submarine story through treasure. Remaining story questions (jellyfish / stars) still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Deep Sea Tales** unique spoken lines are complete on voice-01.
+
+**Phonics Meadow** is the next closed island: area welcome, letter B and S stations, and meadow rhyme. Remaining S distractors, sound cues, blend kitchen, letter-trace, and pebbles still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
