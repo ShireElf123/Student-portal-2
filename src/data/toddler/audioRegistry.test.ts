@@ -232,6 +232,16 @@ describe("audio registry", () => {
       "/audio/voice/color-mix-bead.mp3",
       "/audio/voice/color-mix-ink.mp3",
       "/audio/voice/color-mix-pink.mp3",
+      "/audio/voice/color-mix-pink-rev.mp3",
+      "/audio/voice/color-mix-cream.mp3",
+      "/audio/voice/color-mix-cream-rev.mp3",
+      "/audio/voice/color-mix-sky.mp3",
+      "/audio/voice/color-mix-sky-rev.mp3",
+      "/audio/voice/music-area-welcome.mp3",
+      "/audio/voice/music-rhyme-welcome.mp3",
+      "/audio/voice/music-drum-station.mp3",
+      "/audio/voice/music-drum-line.mp3",
+      "/audio/voice/music-drum-done.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -671,6 +681,19 @@ describe("audio registry", () => {
       "voice.color.fb.orange",
     );
     expect(narrationClipForText("Red plus Yellow on the atelier paper!")?.id).toBe("voice.color.mix.atelier");
+    expect(narrationClipForText("White plus Blue opens into Sky Blue!")?.id).toBe("voice.color.mix.sky-rev");
+  });
+
+  it("maps Music Garden closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Music Garden! Rainbow Piano, High Notes & Joyful Rhythm. Let's explore together!",
+      )?.id,
+    ).toBe("voice.music.area-welcome");
+    expect(narrationClipForText("Find the rhyming friends in the music garden!")?.id).toBe(
+      "voice.music.rhyme-welcome",
+    );
+    expect(narrationClipForText("Tap the drums from 1 to 8.")?.id).toBe("voice.music.drum-line");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

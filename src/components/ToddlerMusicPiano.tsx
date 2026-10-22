@@ -87,10 +87,18 @@ const SONGS: Song[] = [
 interface ToddlerMusicPianoProps {
   onAddStar?: (amount?: number) => void;
   songIds?: string[];
+  closedKit?: boolean;
+  welcomeLine?: string;
   missionSurface?: "games" | "off";
 }
 
-export function ToddlerMusicPiano({ onAddStar, songIds, missionSurface = "games" }: ToddlerMusicPianoProps) {
+export function ToddlerMusicPiano({
+  onAddStar,
+  songIds,
+  closedKit = false,
+  welcomeLine,
+  missionSurface = "games",
+}: ToddlerMusicPianoProps) {
   const songCatalog = songIds && songIds.length > 0
     ? SONGS.filter((song) => songIds.includes(song.id))
     : SONGS;
@@ -139,14 +147,20 @@ export function ToddlerMusicPiano({ onAddStar, songIds, missionSurface = "games"
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      speakText("Welcome to the Rainbow Piano! Tap the colorful keys to play sweet musical notes or pick a song to play along!", {
-        pitch: 1.25,
-        rate: 0.95,
-      });
+      speakText(
+        closedKit && welcomeLine
+          ? welcomeLine
+          : "Welcome to the Rainbow Piano! Tap the colorful keys to play sweet musical notes or pick a song to play along!",
+        {
+          pitch: 1.25,
+          rate: 0.95,
+          closedKit,
+        },
+      );
     }, 150);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [closedKit, welcomeLine]);
 
   const handleKeyPress = (k: KeyConfig) => {
     soundEffects.unlock();
@@ -179,6 +193,7 @@ export function ToddlerMusicPiano({ onAddStar, songIds, missionSurface = "games"
           speakText(`Bravo! You played ${selectedSong.title}! What a wonderful musician!`, {
             pitch: 1.3,
             rate: 0.95,
+            closedKit,
           });
         }
       }
@@ -193,6 +208,7 @@ export function ToddlerMusicPiano({ onAddStar, songIds, missionSurface = "games"
     speakText(`Let's play ${song.title}! Tap the glowing rainbow keys!`, {
       pitch: 1.25,
       rate: 0.9,
+      closedKit,
     });
   };
 

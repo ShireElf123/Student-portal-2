@@ -82,7 +82,8 @@ function isClosedVoiceIsland(areaId?: string | null) {
     areaId === "weather-adventure" ||
     areaId === "space-blastoff" ||
     areaId === "treasure-quest" ||
-    areaId === "color-studio"
+    areaId === "color-studio" ||
+    areaId === "music-garden"
   );
 }
 
@@ -333,7 +334,9 @@ export function ToddlerWorldsNavigator({
           activeActivity.type === "k1-studio" ||
           activeActivity.type === "memory-match" ||
           activeActivity.type === "bubble-pop" ||
-          activeActivity.type === "balloon-sky")
+          activeActivity.type === "balloon-sky" ||
+          activeActivity.type === "rhyme-garden" ||
+          activeActivity.type === "piano-melody")
       ) {
         return;
       }
@@ -877,6 +880,8 @@ export function ToddlerWorldsNavigator({
             </div>
             <ToddlerMusicPiano
               songIds={playTheme.songIds}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
               missionSurface="off"
               onAddStar={() => {
                 completeWorldToy(activeActivity);
@@ -927,6 +932,8 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerRhymeGame
               questions={playTheme.rhymes}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
               missionSurface="off"
               onAddStar={(amount) => onAddStar(amount ?? 1)}
               onComplete={() => completeWorldToy(activeActivity)}

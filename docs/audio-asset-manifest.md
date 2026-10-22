@@ -230,6 +230,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/color-mix-bead.mp3` | `voice.color.mix.bead` |
 | `public/audio/voice/color-mix-ink.mp3` | `voice.color.mix.ink` |
 | `public/audio/voice/color-mix-pink.mp3` | `voice.color.mix.pink` |
+| `public/audio/voice/color-mix-pink-rev.mp3` | `voice.color.mix.pink-rev` |
+| `public/audio/voice/color-mix-cream.mp3` | `voice.color.mix.cream` |
+| `public/audio/voice/color-mix-cream-rev.mp3` | `voice.color.mix.cream-rev` |
+| `public/audio/voice/color-mix-sky.mp3` | `voice.color.mix.sky` |
+| `public/audio/voice/color-mix-sky-rev.mp3` | `voice.color.mix.sky-rev` |
+| `public/audio/voice/music-area-welcome.mp3` | `voice.music.area-welcome` |
+| `public/audio/voice/music-rhyme-welcome.mp3` | `voice.music.rhyme-welcome` |
+| `public/audio/voice/music-drum-station.mp3` | `voice.music.drum-station` |
+| `public/audio/voice/music-drum-line.mp3` | `voice.music.drum-line` |
+| `public/audio/voice/music-drum-done.mp3` | `voice.music.drum-done` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -610,7 +620,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Treasure Quest** unique spoken lines are complete on voice-01.
 
-**Color Magic Studio** is a closed island: area welcome, paint balloons, stamp mural, letter-trace, orange/green mix prompts and all six option feedbacks, plus atelier/bead/ink mixFlavor phrases and morning pink. Remaining white-mix phrases and drop names stay quiet. Do not register generic `Yes!`.
+**Color Magic Studio** unique spoken mix phrases are complete on voice-01. Drop names stay quiet.
+
+**Music Garden** is the next closed island: area welcome, rhyme station, and drum hold/done. Piano welcome, pitch quiz, and rhyme rounds still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
