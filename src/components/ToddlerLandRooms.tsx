@@ -180,7 +180,8 @@ function Stage({
             playId === "scoop-moon" ||
             playId === "stamp-mural" ||
             playId === "drum-boom" ||
-            playId === "story-stones",
+            playId === "story-stones" ||
+            playId === "rocket-stars",
         }),
       180,
     );
@@ -203,7 +204,8 @@ function Stage({
           playId === "scoop-moon" ||
           playId === "stamp-mural" ||
           playId === "drum-boom" ||
-          playId === "story-stones",
+          playId === "story-stones" ||
+          playId === "rocket-stars",
       });
     }
   }, [done, copy.done]);

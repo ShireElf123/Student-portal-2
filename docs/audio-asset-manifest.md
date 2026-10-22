@@ -310,6 +310,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/barn-pancake-fb-thanks.mp3` | `voice.barn.pancake-fb.thanks` |
 | `public/audio/voice/barn-pancake-fb-mine.mp3` | `voice.barn.pancake-fb.mine` |
 | `public/audio/voice/barn-pancake-fb-highfive.mp3` | `voice.barn.pancake-fb.highfive` |
+| `public/audio/voice/starlight-area-welcome.mp3` | `voice.starlight.area-welcome` |
+| `public/audio/voice/starlight-story-welcome.mp3` | `voice.starlight.story-welcome` |
+| `public/audio/voice/starlight-fb-open.mp3` | `voice.starlight.fb.open` |
+| `public/audio/voice/starlight-balloons-welcome.mp3` | `voice.starlight.balloons-welcome` |
+| `public/audio/voice/starlight-rocket-station.mp3` | `voice.starlight.rocket-station` |
+| `public/audio/voice/starlight-rocket-line.mp3` | `voice.starlight.rocket-line` |
+| `public/audio/voice/starlight-rocket-done.mp3` | `voice.starlight.rocket-done` |
+| `public/audio/voice/starlight-snow-welcome.mp3` | `voice.starlight.snow-welcome` |
+| `public/audio/voice/starlight-snow-open.mp3` | `voice.starlight.snow-open` |
+| `public/audio/voice/starlight-snow-fb-mittens.mp3` | `voice.starlight.snow-fb.mittens` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -700,7 +710,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Barnyard Tales** unique spoken lines are complete on voice-01.
 
-**Space Tales** is the next closed island. Missing lines stay quiet. Do not register generic `Yes!`.
+**Starlight Tales** (area id `space-tales`) is the next closed island: area welcome, Rocket Pip station, star balloons, rocket land-play, and Snow Day open plus mittens. Remaining snow-day steps still wait. Rocket Pip step lines reuse the Space Blast-Off kit. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

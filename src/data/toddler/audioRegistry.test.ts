@@ -312,6 +312,16 @@ describe("audio registry", () => {
       "/audio/voice/barn-pancake-fb-thanks.mp3",
       "/audio/voice/barn-pancake-fb-mine.mp3",
       "/audio/voice/barn-pancake-fb-highfive.mp3",
+      "/audio/voice/starlight-area-welcome.mp3",
+      "/audio/voice/starlight-story-welcome.mp3",
+      "/audio/voice/starlight-fb-open.mp3",
+      "/audio/voice/starlight-balloons-welcome.mp3",
+      "/audio/voice/starlight-rocket-station.mp3",
+      "/audio/voice/starlight-rocket-line.mp3",
+      "/audio/voice/starlight-rocket-done.mp3",
+      "/audio/voice/starlight-snow-welcome.mp3",
+      "/audio/voice/starlight-snow-open.mp3",
+      "/audio/voice/starlight-snow-fb-mittens.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -823,6 +833,18 @@ describe("audio registry", () => {
     ).toBe("voice.barn.pancake-open");
     expect(narrationClipForText("High five! Pancake Saturday is done.")?.id).toBe(
       "voice.barn.pancake-fb.highfive",
+    );
+  });
+
+  it("maps Starlight Tales closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText("Starlight Tales! Rocket Pip Goes to the Moon. Let's explore together!")?.id,
+    ).toBe("voice.starlight.area-welcome");
+    expect(
+      narrationClipForText("Snow Day on Maple Street. Snow day! What do we put on first?")?.id,
+    ).toBe("voice.starlight.snow-open");
+    expect(narrationClipForText("Drag five stars onto the rocket, then hold to launch.")?.id).toBe(
+      "voice.starlight.rocket-line",
     );
   });
 
