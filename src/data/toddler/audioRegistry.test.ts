@@ -242,6 +242,16 @@ describe("audio registry", () => {
       "/audio/voice/music-drum-station.mp3",
       "/audio/voice/music-drum-line.mp3",
       "/audio/voice/music-drum-done.mp3",
+      "/audio/voice/music-quiz-flute.mp3",
+      "/audio/voice/music-fb-flute.mp3",
+      "/audio/voice/music-fb-tuba.mp3",
+      "/audio/voice/music-rhyme-paint.mp3",
+      "/audio/voice/music-rhyme-bead.mp3",
+      "/audio/voice/music-rhyme-song.mp3",
+      "/audio/voice/music-rhyme-glue.mp3",
+      "/audio/voice/music-rhyme-drum.mp3",
+      "/audio/voice/music-rhyme-art.mp3",
+      "/audio/voice/music-rhyme-note.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -694,6 +704,10 @@ describe("audio registry", () => {
       "voice.music.rhyme-welcome",
     );
     expect(narrationClipForText("Tap the drums from 1 to 8.")?.id).toBe("voice.music.drum-line");
+    expect(
+      narrationClipForText("Listen to the notes! Who sings high up in the sky like a sweet flute?")?.id,
+    ).toBe("voice.music.quiz-flute");
+    expect(narrationClipForText("What rhymes with Drum in the music garden?")?.id).toBe("voice.music.rhyme-drum");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

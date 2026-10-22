@@ -240,6 +240,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/music-drum-station.mp3` | `voice.music.drum-station` |
 | `public/audio/voice/music-drum-line.mp3` | `voice.music.drum-line` |
 | `public/audio/voice/music-drum-done.mp3` | `voice.music.drum-done` |
+| `public/audio/voice/music-quiz-flute.mp3` | `voice.music.quiz-flute` |
+| `public/audio/voice/music-fb-flute.mp3` | `voice.music.fb.flute` |
+| `public/audio/voice/music-fb-tuba.mp3` | `voice.music.fb.tuba` |
+| `public/audio/voice/music-rhyme-paint.mp3` | `voice.music.rhyme-paint` |
+| `public/audio/voice/music-rhyme-bead.mp3` | `voice.music.rhyme-bead` |
+| `public/audio/voice/music-rhyme-song.mp3` | `voice.music.rhyme-song` |
+| `public/audio/voice/music-rhyme-glue.mp3` | `voice.music.rhyme-glue` |
+| `public/audio/voice/music-rhyme-drum.mp3` | `voice.music.rhyme-drum` |
+| `public/audio/voice/music-rhyme-art.mp3` | `voice.music.rhyme-art` |
+| `public/audio/voice/music-rhyme-note.mp3` | `voice.music.rhyme-note` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -622,7 +632,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Color Magic Studio** unique spoken mix phrases are complete on voice-01. Drop names stay quiet.
 
-**Music Garden** is the next closed island: area welcome, rhyme station, and drum hold/done. Piano welcome, pitch quiz, and rhyme rounds still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Music Garden** is a closed island: area welcome, drums, pitch quiz plus flute/tuba feedbacks, and the first seven rhyme rounds (paint through note). Remaining creative-world rhyme rounds still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
