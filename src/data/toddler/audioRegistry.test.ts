@@ -552,6 +552,16 @@ describe("audio registry", () => {
       "/audio/voice/runway-pilot-welcome.mp3",
       "/audio/voice/runway-fb-cockpit.mp3",
       "/audio/voice/runway-fb-hold.mp3",
+      "/audio/voice/runway-fb-runway.mp3",
+      "/audio/voice/runway-clue-letter.mp3",
+      "/audio/voice/runway-letter-welcome.mp3",
+      "/audio/voice/runway-fb-p.mp3",
+      "/audio/voice/runway-clue-seats.mp3",
+      "/audio/voice/runway-seats-welcome.mp3",
+      "/audio/voice/runway-fb-seven.mp3",
+      "/audio/voice/runway-fb-rows.mp3",
+      "/audio/voice/runway-clue-window.mp3",
+      "/audio/voice/runway-window-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1271,6 +1281,11 @@ describe("audio registry", () => {
     expect(narrationClipForText("How many planes?")?.id).toBe("voice.runway.planes-welcome");
     expect(narrationClipForText("Which belongs on the bag belt?")?.id).toBe("voice.runway.belt-welcome");
     expect(narrationClipForText("Where does the pilot sit?")?.id).toBe("voice.runway.pilot-welcome");
+    expect(narrationClipForText("Which letter starts plane?")?.id).toBe("voice.runway.letter-welcome");
+    expect(narrationClipForText("Four and three seats. How many?")?.id).toBe("voice.runway.seats-welcome");
+    expect(narrationClipForText("Which shape is most like a cabin window?")?.id).toBe(
+      "voice.runway.window-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
