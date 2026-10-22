@@ -600,6 +600,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/harbour-rhyme-welcome.mp3` | `voice.harbour.rhyme-welcome` |
 | `public/audio/voice/harbour-clue-rhyme.mp3` | `voice.harbour.clue.rhyme` |
 | `public/audio/voice/harbour-fb-coat.mp3` | `voice.harbour.fb.coat` |
+| `public/audio/voice/harbour-fb-ship-rhyme.mp3` | `voice.harbour.fb.ship-rhyme` |
+| `public/audio/voice/harbour-fb-dock-rhyme.mp3` | `voice.harbour.fb.dock-rhyme` |
+| `public/audio/voice/harbour-clue-crates.mp3` | `voice.harbour.clue.crates` |
+| `public/audio/voice/harbour-crates-welcome.mp3` | `voice.harbour.crates-welcome` |
+| `public/audio/voice/harbour-fb-two-five.mp3` | `voice.harbour.fb.two-five` |
+| `public/audio/voice/harbour-fb-stacks.mp3` | `voice.harbour.fb.stacks` |
+| `public/audio/voice/harbour-clue-anchor.mp3` | `voice.harbour.clue.anchor` |
+| `public/audio/voice/harbour-anchor-welcome.mp3` | `voice.harbour.anchor-welcome` |
+| `public/audio/voice/harbour-fb-bed.mp3` | `voice.harbour.fb.bed` |
+| `public/audio/voice/harbour-fb-bakery.mp3` | `voice.harbour.fb.bakery` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -1010,7 +1020,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Windy Runway** unique spoken lines are complete on voice-01.
 
-**Busy Harbour** is a closed island: ferry horn through ship letter and boat rhyme. Remaining crate stacks, anchor, coil-rope, and bubbles still wait. The ship-letter draft clue stays silent. Do not register generic `Yes!`.
+**Busy Harbour** is a closed island: ferry horn through crate stacks and harbour-bed. Remaining attic, coil-rope, bubbles, and scoop still wait. The ship-letter draft clue stays silent. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
