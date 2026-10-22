@@ -190,6 +190,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/space-quiz-launch.mp3` | `voice.space.quiz-launch` |
 | `public/audio/voice/space-quiz-stars.mp3` | `voice.space.quiz-stars` |
 | `public/audio/voice/space-story-welcome.mp3` | `voice.space.story-welcome` |
+| `public/audio/voice/space-fb-launch.mp3` | `voice.space.fb.launch` |
+| `public/audio/voice/space-fb-nap.mp3` | `voice.space.fb.nap` |
+| `public/audio/voice/space-fb-stars-low.mp3` | `voice.space.fb.stars-low` |
+| `public/audio/voice/space-fb-stars-yes.mp3` | `voice.space.fb.stars-yes` |
+| `public/audio/voice/space-fb-stars-again.mp3` | `voice.space.fb.stars-again` |
+| `public/audio/voice/space-fb-story-start.mp3` | `voice.space.fb.story-start` |
+| `public/audio/voice/space-story-open.mp3` | `voice.space.story-open` |
+| `public/audio/voice/space-story-stars.mp3` | `voice.space.story-stars` |
+| `public/audio/voice/space-story-moon.mp3` | `voice.space.story-moon` |
+| `public/audio/voice/space-story-fb-whoosh.mp3` | `voice.space.story-fb.whoosh` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -566,7 +576,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Weather Adventure** unique spoken lines are complete on voice-01.
 
-**Space Blast-Off** is the next closed island: area welcome, moon picnic station, scoop-moon hold/done, launch/stars quiz prompts, and story spokenPrompt. Quiz option feedbacks and Rocket Pip step narrations still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Space Blast-Off** is a closed island: area welcome, moon picnic station, scoop-moon, launch/stars quizzes and all option feedbacks, Rocket Pip open plus stars/moon steps, and the launch-step whoosh. Remaining story option feedbacks still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

@@ -192,6 +192,16 @@ describe("audio registry", () => {
       "/audio/voice/space-quiz-launch.mp3",
       "/audio/voice/space-quiz-stars.mp3",
       "/audio/voice/space-story-welcome.mp3",
+      "/audio/voice/space-fb-launch.mp3",
+      "/audio/voice/space-fb-nap.mp3",
+      "/audio/voice/space-fb-stars-low.mp3",
+      "/audio/voice/space-fb-stars-yes.mp3",
+      "/audio/voice/space-fb-stars-again.mp3",
+      "/audio/voice/space-fb-story-start.mp3",
+      "/audio/voice/space-story-open.mp3",
+      "/audio/voice/space-story-stars.mp3",
+      "/audio/voice/space-story-moon.mp3",
+      "/audio/voice/space-story-fb-whoosh.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -587,6 +597,14 @@ describe("audio registry", () => {
       narrationClipForText("Pip is ready! Countdown: 3, 2, 1! Tap the glowing launch button to blast off!")?.id,
     ).toBe("voice.space.quiz-launch");
     expect(narrationClipForText("Drag four scoops into the tin.")?.id).toBe("voice.space.scoop-line");
+    expect(
+      narrationClipForText("WHOOOOSH! Flames roar and the rocket zooms into the starlight!")?.id,
+    ).toBe("voice.space.fb.launch");
+    expect(
+      narrationClipForText(
+        "Rocket Pip Goes to the Moon. Pip puts on his space helmet! The rocket is ready to blast off. What button launches the rocket?",
+      )?.id,
+    ).toBe("voice.space.story-open");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
