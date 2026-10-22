@@ -270,6 +270,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/sticker-quiz-crown.mp3` | `voice.sticker.quiz-crown` |
 | `public/audio/voice/sticker-fb-crown.mp3` | `voice.sticker.fb.crown` |
 | `public/audio/voice/sticker-fb-bucket.mp3` | `voice.sticker.fb.bucket` |
+| `public/audio/voice/barn-area-welcome.mp3` | `voice.barn.area-welcome` |
+| `public/audio/voice/barn-story-welcome.mp3` | `voice.barn.story-welcome` |
+| `public/audio/voice/barn-fb-open.mp3` | `voice.barn.fb.open` |
+| `public/audio/voice/barn-story-open.mp3` | `voice.barn.story-open` |
+| `public/audio/voice/barn-stones-station.mp3` | `voice.barn.stones-station` |
+| `public/audio/voice/barn-stones-line.mp3` | `voice.barn.stones-line` |
+| `public/audio/voice/barn-stones-done.mp3` | `voice.barn.stones-done` |
+| `public/audio/voice/barn-letter-trace.mp3` | `voice.barn.letter-trace` |
+| `public/audio/voice/barn-pancake-welcome.mp3` | `voice.barn.pancake-welcome` |
+| `public/audio/voice/barn-safari-welcome.mp3` | `voice.barn.safari-welcome` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -656,7 +666,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Pattern Workshop** unique spoken lines are complete on voice-01.
 
-**Sticker Atelier** is the next closed island: area welcome, sticker match, and crown quiz plus both option feedbacks. Missing lines stay quiet. Do not register generic `Yes!`.
+**Sticker Atelier** unique spoken lines are complete on voice-01.
+
+**Barnyard Tales** is the next closed island: area welcome, Buddy farm story open, story stones, letter-trace, pancake station, and tale safari prompt. Farm/pancake step lines still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

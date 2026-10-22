@@ -272,6 +272,16 @@ describe("audio registry", () => {
       "/audio/voice/sticker-quiz-crown.mp3",
       "/audio/voice/sticker-fb-crown.mp3",
       "/audio/voice/sticker-fb-bucket.mp3",
+      "/audio/voice/barn-area-welcome.mp3",
+      "/audio/voice/barn-story-welcome.mp3",
+      "/audio/voice/barn-fb-open.mp3",
+      "/audio/voice/barn-story-open.mp3",
+      "/audio/voice/barn-stones-station.mp3",
+      "/audio/voice/barn-stones-line.mp3",
+      "/audio/voice/barn-stones-done.mp3",
+      "/audio/voice/barn-letter-trace.mp3",
+      "/audio/voice/barn-pancake-welcome.mp3",
+      "/audio/voice/barn-safari-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -755,6 +765,20 @@ describe("audio registry", () => {
       narrationClipForText("Buddy worked so hard! Which shiny golden crown marks learning royalty?")?.id,
     ).toBe("voice.sticker.quiz-crown");
     expect(narrationClipForText("Flip the stickers and find the twin!")?.id).toBe("voice.sticker.match-welcome");
+  });
+
+  it("maps Barnyard Tales closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Barnyard Tales! Buddy's Sunny Farm Day & Animal Friends. Let's explore together!",
+      )?.id,
+    ).toBe("voice.barn.area-welcome");
+    expect(
+      narrationClipForText(
+        "Buddy's Sunny Farm Day. Cock a doodle doo! The bright sun is rising over the farm. Who is waking up in the barn?",
+      )?.id,
+    ).toBe("voice.barn.story-open");
+    expect(narrationClipForText("Tell the tale. Tap each stone in order.")?.id).toBe("voice.barn.stones-line");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
