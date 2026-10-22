@@ -122,6 +122,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/safari-bio-spider.mp3` | `voice.safari.bio.spider` |
 | `public/audio/voice/safari-bio-slug.mp3` | `voice.safari.bio.slug` |
 | `public/audio/voice/safari-bio-compost-ant.mp3` | `voice.safari.bio.compost-ant` |
+| `public/audio/voice/safari-bio-leaf.mp3` | `voice.safari.bio.leaf` |
+| `public/audio/voice/safari-bio-sowbug.mp3` | `voice.safari.bio.sowbug` |
+| `public/audio/voice/safari-bio-tale-hen.mp3` | `voice.safari.bio.tale-hen` |
+| `public/audio/voice/safari-bio-tale-book.mp3` | `voice.safari.bio.tale-book` |
+| `public/audio/voice/safari-bio-crown.mp3` | `voice.safari.bio.crown` |
+| `public/audio/voice/safari-bio-king.mp3` | `voice.safari.bio.king` |
+| `public/audio/voice/safari-bio-dragon.mp3` | `voice.safari.bio.dragon` |
+| `public/audio/voice/safari-bio-tale-boat.mp3` | `voice.safari.bio.tale-boat` |
+| `public/audio/voice/safari-bio-tale-star.mp3` | `voice.safari.bio.tale-star` |
+| `public/audio/voice/safari-bio-castle.mp3` | `voice.safari.bio.castle` |
 | `public/audio/sfx/animal-lion.mp3` | `sfx.animal.lion` |
 | `public/audio/sfx/animal-elephant.mp3` | `sfx.animal.elephant` |
 | `public/audio/sfx/animal-monkey.mp3` | `sfx.animal.monkey` |
