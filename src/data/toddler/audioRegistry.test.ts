@@ -24,6 +24,16 @@ describe("audio registry", () => {
       "/audio/voice/safari-bio-zebra.mp3",
       "/audio/voice/safari-bio-pig.mp3",
       "/audio/voice/safari-bio-horse.mp3",
+      "/audio/voice/safari-bio-farm-cow.mp3",
+      "/audio/voice/safari-bio-hen.mp3",
+      "/audio/voice/safari-bio-sheep.mp3",
+      "/audio/voice/safari-bio-farm-duck.mp3",
+      "/audio/voice/safari-bio-goat.mp3",
+      "/audio/voice/safari-bio-chick.mp3",
+      "/audio/voice/safari-bio-parrot.mp3",
+      "/audio/voice/safari-bio-tiger.mp3",
+      "/audio/voice/safari-bio-snake.mp3",
+      "/audio/voice/safari-bio-gorilla.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -155,7 +165,16 @@ describe("audio registry", () => {
     expect(narrationClipForText(bio)?.id).toBe("voice.safari.bio.lion");
   });
 
+  it("maps farm cow explore bio separately from savanna cow", () => {
+    const bio = safariFriendBioText({
+      call: "Moooo! I am the pasture cow. Come walk the grass with me!",
+      funFact: "Cows chew clover and like a slow, sunny walk.",
+    });
+    expect(narrationClipForText(bio)?.id).toBe("voice.safari.bio.farm-cow");
+  });
+
   it("maps safari friend ids including the park bird clip", () => {
+    expect(animalClipForFriendId("ay")?.src).toBe("/audio/sfx/animal-ay.mp3");
     expect(animalClipForFriendId("duck")?.src).toBe("/audio/sfx/animal-duck.mp3");
     expect(animalClipForFriendId("cow")?.src).toBe("/audio/sfx/animal-cow.mp3");
     expect(animalClipForFriendId("lion")?.src).toBe("/audio/sfx/animal-lion.mp3");

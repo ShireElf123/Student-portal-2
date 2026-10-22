@@ -22,6 +22,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/safari-bio-zebra.mp3` | `voice.safari.bio.zebra` |
 | `public/audio/voice/safari-bio-pig.mp3` | `voice.safari.bio.pig` |
 | `public/audio/voice/safari-bio-horse.mp3` | `voice.safari.bio.horse` |
+| `public/audio/voice/safari-bio-farm-cow.mp3` | `voice.safari.bio.farm-cow` |
+| `public/audio/voice/safari-bio-hen.mp3` | `voice.safari.bio.hen` |
+| `public/audio/voice/safari-bio-sheep.mp3` | `voice.safari.bio.sheep` |
+| `public/audio/voice/safari-bio-farm-duck.mp3` | `voice.safari.bio.farm-duck` |
+| `public/audio/voice/safari-bio-goat.mp3` | `voice.safari.bio.goat` |
+| `public/audio/voice/safari-bio-chick.mp3` | `voice.safari.bio.chick` |
+| `public/audio/voice/safari-bio-parrot.mp3` | `voice.safari.bio.parrot` |
+| `public/audio/voice/safari-bio-tiger.mp3` | `voice.safari.bio.tiger` |
+| `public/audio/voice/safari-bio-snake.mp3` | `voice.safari.bio.snake` |
+| `public/audio/voice/safari-bio-gorilla.mp3` | `voice.safari.bio.gorilla` |
 | `public/audio/sfx/animal-lion.mp3` | `sfx.animal.lion` |
 | `public/audio/sfx/animal-elephant.mp3` | `sfx.animal.elephant` |
 | `public/audio/sfx/animal-monkey.mp3` | `sfx.animal.monkey` |
@@ -248,7 +258,7 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 
 ## What stays synthesised
 
-Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are **unchanged**. Savanna explore bios (and farm pig/horse) play as voice-01 MP3s. Other worlds still show fun-facts on screen until their bio clips exist. Detective praise stays visual + mouth-call.
+Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are **unchanged**. Savanna and Farm explore bios (plus jungle parrot/tiger/snake/gorilla) play as voice-01 MP3s. Other worlds still show fun-facts on screen until their bio clips exist. Detective praise stays visual + mouth-call. Letter A explore/detective plays `animal-ay.mp3` (“A says a like apple!”).
 
 ## Mute keys (unchanged)
 
