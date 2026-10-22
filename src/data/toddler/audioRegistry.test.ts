@@ -702,6 +702,16 @@ describe("audio registry", () => {
       "/audio/voice/pond-fb-square.mp3",
       "/audio/voice/pond-banks-welcome.mp3",
       "/audio/voice/pond-clue-banks.mp3",
+      "/audio/voice/pond-fb-six-frogs.mp3",
+      "/audio/voice/pond-fb-both-banks.mp3",
+      "/audio/voice/night-area-welcome.mp3",
+      "/audio/voice/night-chirp-welcome.mp3",
+      "/audio/voice/night-clue-chirp.mp3",
+      "/audio/voice/night-fb-cricket.mp3",
+      "/audio/voice/night-fb-cow.mp3",
+      "/audio/voice/night-fb-plane.mp3",
+      "/audio/voice/night-lamp-welcome.mp3",
+      "/audio/voice/night-clue-lamp.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1538,6 +1548,26 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Two and four frogs. How many?")?.id).toBe(
       "voice.pond.banks-welcome",
+    );
+    expect(narrationClipForText("Two and four make six.")?.id).toBe("voice.pond.fb.six-frogs");
+    expect(narrationClipForText("Count both banks.")?.id).toBe("voice.pond.fb.both-banks");
+  });
+
+  it("maps Night Jar Walk closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Night Jar Walk! Crickets, moths and a lantern. Let's explore together!",
+      )?.id,
+    ).toBe("voice.night.area-welcome");
+    expect(narrationClipForText("Who is chirping in the grass?")?.id).toBe(
+      "voice.night.chirp-welcome",
+    );
+    expect(narrationClipForText("Chirp chirp from the dark grass. Who?")?.id).toBe(
+      "voice.night.clue.chirp",
+    );
+    expect(narrationClipForText("Who comes to the lantern?")?.id).toBe("voice.night.lamp-welcome");
+    expect(narrationClipForText("Soft wings at the lantern, not a stinger. Who?")?.id).toBe(
+      "voice.night.clue.lamp",
     );
   });
 
