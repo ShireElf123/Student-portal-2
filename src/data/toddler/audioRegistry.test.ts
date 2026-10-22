@@ -632,6 +632,16 @@ describe("audio registry", () => {
       "/audio/voice/flower-fb-bee.mp3",
       "/audio/voice/flower-fb-frog.mp3",
       "/audio/voice/flower-fb-owl.mp3",
+      "/audio/voice/flower-clue-buzz.mp3",
+      "/audio/voice/flower-six-welcome.mp3",
+      "/audio/voice/flower-clue-six.mp3",
+      "/audio/voice/flower-fb-six.mp3",
+      "/audio/voice/flower-fb-two-spots.mp3",
+      "/audio/voice/flower-fb-nine.mp3",
+      "/audio/voice/flower-petal-welcome.mp3",
+      "/audio/voice/flower-clue-petal.mp3",
+      "/audio/voice/flower-fb-petal-bee.mp3",
+      "/audio/voice/flower-fb-shark.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1401,6 +1411,16 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Who is buzzing in the flower?")?.id).toBe(
       "voice.flower.buzz-welcome",
+    );
+    expect(narrationClipForText("Bzz from the yellow flower. Who is gathering?")?.id).toBe(
+      "voice.flower.clue.buzz",
+    );
+    expect(narrationClipForText("How many spots?")?.id).toBe("voice.flower.six-welcome");
+    expect(narrationClipForText("This ladybird has six spots. How many?")?.id).toBe(
+      "voice.flower.clue.six",
+    );
+    expect(narrationClipForText("Who belongs on the flower?")?.id).toBe(
+      "voice.flower.petal-welcome",
     );
   });
 
