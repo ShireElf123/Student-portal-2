@@ -41,6 +41,16 @@ describe("audio registry", () => {
       "/audio/sfx/animal-owl.mp3",
       "/audio/sfx/animal-flake.mp3",
       "/audio/sfx/animal-igloo.mp3",
+      "/audio/sfx/animal-bee.mp3",
+      "/audio/sfx/animal-butterfly.mp3",
+      "/audio/sfx/animal-beetle.mp3",
+      "/audio/sfx/animal-cricket.mp3",
+      "/audio/sfx/animal-ladybug.mp3",
+      "/audio/sfx/animal-snail.mp3",
+      "/audio/sfx/animal-ant.mp3",
+      "/audio/sfx/animal-worm.mp3",
+      "/audio/sfx/animal-fish.mp3",
+      "/audio/sfx/animal-turtle.mp3",
       "/audio/sfx/animal-bird.mp3",
     ]);
     expect(new Set(AUDIO_ASSETS.map((asset) => asset.id)).size).toBe(AUDIO_ASSETS.length);
@@ -66,8 +76,10 @@ describe("audio registry", () => {
     expect(animalClipForFriendId("gorilla")?.src).toBe("/audio/sfx/animal-gorilla.mp3");
     expect(animalClipForFriendId("penguin")?.src).toBe("/audio/sfx/animal-penguin.mp3");
     expect(animalClipForFriendId("igloo")?.src).toBe("/audio/sfx/animal-igloo.mp3");
+    expect(animalClipForFriendId("bee")?.src).toBe("/audio/sfx/animal-bee.mp3");
+    expect(animalClipForFriendId("turtle")?.src).toBe("/audio/sfx/animal-turtle.mp3");
     expect(animalClipForFriendId("bird")?.src).toBe("/audio/sfx/animal-bird.mp3");
-    expect(animalClipForFriendId("bee")).toBeUndefined();
+    expect(animalClipForFriendId("dragonfly")).toBeUndefined();
     expect(getAudioAsset("sfx.animal.duck")?.animalId).toBe("duck");
   });
 });
