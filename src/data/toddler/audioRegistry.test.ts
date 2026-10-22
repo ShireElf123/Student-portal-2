@@ -772,6 +772,16 @@ describe("audio registry", () => {
       "/audio/voice/compost-fb-w.mp3",
       "/audio/voice/compost-fb-m.mp3",
       "/audio/voice/compost-fb-v.mp3",
+      "/audio/voice/compost-piles-welcome.mp3",
+      "/audio/voice/compost-clue-piles.mp3",
+      "/audio/voice/compost-fb-eight-leaves.mp3",
+      "/audio/voice/compost-fb-both-piles.mp3",
+      "/audio/voice/compost-rhyme-welcome.mp3",
+      "/audio/voice/compost-clue-rhyme.mp3",
+      "/audio/voice/compost-fb-dog.mp3",
+      "/audio/voice/compost-fb-leaf.mp3",
+      "/audio/voice/compost-fb-worm-rhyme.mp3",
+      "/audio/voice/compost-damp-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1700,6 +1710,17 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Worm starts with wuh. Which letter?")?.id).toBe(
       "voice.compost.clue.letter",
+    );
+    expect(narrationClipForText("Four and four leaves. How many?")?.id).toBe(
+      "voice.compost.piles-welcome",
+    );
+    expect(narrationClipForText("4 leaves here, 4 leaves there. How many?")?.id).toBe(
+      "voice.compost.clue.piles",
+    );
+    expect(narrationClipForText("What rhymes with log?")?.id).toBe("voice.compost.rhyme-welcome");
+    expect(narrationClipForText("Log. What rhymes with log?")?.id).toBe("voice.compost.clue.rhyme");
+    expect(narrationClipForText("Why is the heap kept damp?")?.id).toBe(
+      "voice.compost.damp-welcome",
     );
   });
 
