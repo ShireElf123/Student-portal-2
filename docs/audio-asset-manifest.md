@@ -62,6 +62,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/safari-bio-reed.mp3` | `voice.safari.bio.reed` |
 | `public/audio/voice/safari-bio-bat.mp3` | `voice.safari.bio.bat` |
 | `public/audio/voice/safari-bio-moth.mp3` | `voice.safari.bio.moth` |
+| `public/audio/voice/safari-bio-night-owl.mp3` | `voice.safari.bio.night-owl` |
+| `public/audio/voice/safari-bio-night-cat.mp3` | `voice.safari.bio.night-cat` |
+| `public/audio/voice/safari-bio-night-fox.mp3` | `voice.safari.bio.night-fox` |
+| `public/audio/voice/safari-bio-mouse.mp3` | `voice.safari.bio.mouse` |
+| `public/audio/voice/safari-bio-star.mp3` | `voice.safari.bio.star` |
+| `public/audio/voice/safari-bio-moon.mp3` | `voice.safari.bio.moon` |
+| `public/audio/voice/safari-bio-bird.mp3` | `voice.safari.bio.bird` |
+| `public/audio/voice/safari-bio-squirrel.mp3` | `voice.safari.bio.squirrel` |
+| `public/audio/voice/safari-bio-dog.mp3` | `voice.safari.bio.dog` |
+| `public/audio/voice/safari-bio-bunny.mp3` | `voice.safari.bio.bunny` |
 | `public/audio/sfx/animal-lion.mp3` | `sfx.animal.lion` |
 | `public/audio/sfx/animal-elephant.mp3` | `sfx.animal.elephant` |
 | `public/audio/sfx/animal-monkey.mp3` | `sfx.animal.monkey` |
