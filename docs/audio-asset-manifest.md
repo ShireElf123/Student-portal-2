@@ -170,6 +170,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/weather-porch-sun.mp3` | `voice.weather.porch-sun` |
 | `public/audio/voice/weather-porch-wind.mp3` | `voice.weather.porch-wind` |
 | `public/audio/voice/weather-porch-snow.mp3` | `voice.weather.porch-snow` |
+| `public/audio/voice/weather-porch-leaves.mp3` | `voice.weather.porch-leaves` |
+| `public/audio/voice/weather-porch-fog.mp3` | `voice.weather.porch-fog` |
+| `public/audio/voice/weather-porch-thunder.mp3` | `voice.weather.porch-thunder` |
+| `public/audio/voice/weather-porch-spring.mp3` | `voice.weather.porch-spring` |
+| `public/audio/voice/weather-porch-puddles.mp3` | `voice.weather.porch-puddles` |
+| `public/audio/voice/weather-porch-night.mp3` | `voice.weather.porch-night` |
+| `public/audio/voice/weather-porch-hail.mp3` | `voice.weather.porch-hail` |
+| `public/audio/voice/weather-porch-rainbow.mp3` | `voice.weather.porch-rainbow` |
+| `public/audio/voice/weather-porch-summer.mp3` | `voice.weather.porch-summer` |
+| `public/audio/voice/weather-porch-dry.mp3` | `voice.weather.porch-dry` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -544,7 +554,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Forest Trail** unique spoken lines are complete on voice-01.
 
-**Weather Adventure** is a closed island: area welcome, hill porch station, puddle jump hold/done, rain/sun quiz prompts and all six option feedbacks, plus the first four porch rounds (rain, sun, wind, snow). Missing porch rounds stay quiet. Do not register generic `Yes!`.
+**Weather Adventure** is a closed island: area welcome, hill porch station, puddle jump, rain/sun quizzes, and porch rounds through dry. Frost and dusk porch spoken still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

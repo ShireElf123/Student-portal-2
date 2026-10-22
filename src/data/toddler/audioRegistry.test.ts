@@ -172,6 +172,16 @@ describe("audio registry", () => {
       "/audio/voice/weather-porch-sun.mp3",
       "/audio/voice/weather-porch-wind.mp3",
       "/audio/voice/weather-porch-snow.mp3",
+      "/audio/voice/weather-porch-leaves.mp3",
+      "/audio/voice/weather-porch-fog.mp3",
+      "/audio/voice/weather-porch-thunder.mp3",
+      "/audio/voice/weather-porch-spring.mp3",
+      "/audio/voice/weather-porch-puddles.mp3",
+      "/audio/voice/weather-porch-night.mp3",
+      "/audio/voice/weather-porch-hail.mp3",
+      "/audio/voice/weather-porch-rainbow.mp3",
+      "/audio/voice/weather-porch-summer.mp3",
+      "/audio/voice/weather-porch-dry.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -546,6 +556,10 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("It is raining on the porch. What should Pip wear?")?.id).toBe(
       "voice.weather.porch-rain",
+    );
+    expect(narrationClipForText("Orange leaves falling. Which season is it?")?.id).toBe("voice.weather.porch-leaves");
+    expect(narrationClipForText("The rain stopped. A coloured arc is in the sky. What is it?")?.id).toBe(
+      "voice.weather.porch-rainbow",
     );
   });
 
