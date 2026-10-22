@@ -1627,7 +1627,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "9", label: "9 ducks", emoji: "9️⃣", correct: true },
           { id: "8", label: "8 ducks", emoji: "8️⃣", correct: false },
-          { id: "11", label: "11 ducks", emoji: "🚌", correct: false },
+          { id: "11", label: "11 ducks", emoji: "🦆", correct: false },
         ],
       },
       {
@@ -1636,7 +1636,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         spoken: "Two nests of six hens. How many hens in all?",
         scene: "🐔🐔🐔🐔🐔🐔 + 🐔🐔🐔🐔🐔🐔",
         choices: [
-          { id: "12", label: "12 hens", emoji: "📦", correct: true },
+          { id: "12", label: "12 hens", emoji: "🐔", correct: true },
           { id: "6", label: "6 hens", emoji: "6️⃣", correct: false },
           { id: "2", label: "2 hens", emoji: "2️⃣", correct: false },
         ],
@@ -1660,7 +1660,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         choices: [
           { id: "10", label: "10 horses", emoji: "🔟", correct: true },
           { id: "11", label: "11 horses", emoji: "🐴", correct: false },
-          { id: "12", label: "12 horses", emoji: "📦", correct: false },
+          { id: "12", label: "12 horses", emoji: "🐴", correct: false },
         ],
       },
       {
@@ -1670,7 +1670,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "🦆🦆🦆🦆🦆 + 3",
         choices: [
           { id: "8", label: "8 geese", emoji: "8️⃣", correct: true },
-          { id: "53", label: "53 geese", emoji: "🤯", correct: false },
+          { id: "53", label: "53 geese", emoji: "🦆", correct: false },
           { id: "3", label: "3 geese", emoji: "3️⃣", correct: false },
         ],
       },
@@ -1692,7 +1692,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "🐰🐰🐰🐰 + 🐰🐰🐰🐰",
         choices: [
           { id: "8", label: "8 rabbits", emoji: "8️⃣", correct: true },
-          { id: "44", label: "44 rabbits", emoji: "😵", correct: false },
+          { id: "44", label: "44 rabbits", emoji: "🐰", correct: false },
           { id: "4", label: "4 rabbits", emoji: "4️⃣", correct: false },
         ],
       },
@@ -1703,7 +1703,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "🥚 × 13",
         choices: [
           { id: "13", label: "13 eggs", emoji: "🥚", correct: true },
-          { id: "12", label: "12 eggs", emoji: "📦", correct: false },
+          { id: "12", label: "12 eggs", emoji: "🥚", correct: false },
           { id: "6", label: "6 eggs", emoji: "6️⃣", correct: false },
         ],
       },
@@ -1714,7 +1714,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "🐮 × 10 − 2",
         choices: [
           { id: "8", label: "8 calves", emoji: "8️⃣", correct: true },
-          { id: "12", label: "12 calves", emoji: "📦", correct: false },
+          { id: "12", label: "12 calves", emoji: "🐮", correct: false },
           { id: "2", label: "2 calves", emoji: "2️⃣", correct: false },
         ],
       },
@@ -1747,7 +1747,7 @@ export const K1_STUDIO_GAMES: K1StudioGame[] = [
         scene: "🦃 × 9 − 4",
         choices: [
           { id: "5", label: "5 turkeys", emoji: "5️⃣", correct: true },
-          { id: "13", label: "13 turkeys", emoji: "📦", correct: false },
+          { id: "13", label: "13 turkeys", emoji: "🦃", correct: false },
           { id: "4", label: "4 turkeys", emoji: "4️⃣", correct: false },
         ],
       },
