@@ -32,6 +32,16 @@ describe("audio registry", () => {
       "/audio/voice/farm-quiz-kitten.mp3",
       "/audio/voice/farm-quiz-chicks.mp3",
       "/audio/voice/farm-quiz-horse.mp3",
+      "/audio/voice/farm-fb-pig.mp3",
+      "/audio/voice/farm-fb-cow.mp3",
+      "/audio/voice/farm-fb-sheep.mp3",
+      "/audio/voice/farm-fb-rooster.mp3",
+      "/audio/voice/farm-fb-puppy.mp3",
+      "/audio/voice/farm-fb-kitten.mp3",
+      "/audio/voice/farm-fb-duckling.mp3",
+      "/audio/voice/farm-fb-piglet.mp3",
+      "/audio/voice/farm-fb-chicks-low.mp3",
+      "/audio/voice/farm-fb-chicks-yes.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -321,6 +331,8 @@ describe("audio registry", () => {
       narrationClipForText("Listen with your ears! Who is chewing sweet clover in the meadow and says Moooo?")?.id,
     ).toBe("voice.farm.quiz-cow");
     expect(narrationClipForText("Hold the pail. Fill it to the top.")?.id).toBe("voice.farm.milk-line");
+    expect(narrationClipForText("Moooo! Yes, friendly dairy cow gives fresh milk!")?.id).toBe("voice.farm.fb.cow");
+    expect(narrationClipForText("Cock a doodle doo! That's the morning rooster.")?.id).toBe("voice.farm.fb.rooster");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
