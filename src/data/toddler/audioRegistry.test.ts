@@ -812,6 +812,16 @@ describe("audio registry", () => {
       "/audio/voice/fruit-letter-welcome.mp3",
       "/audio/voice/fruit-clue-letter.mp3",
       "/audio/voice/fruit-fb-a.mp3",
+      "/audio/voice/fruit-fb-b.mp3",
+      "/audio/voice/fruit-fb-p.mp3",
+      "/audio/voice/fruit-row-welcome.mp3",
+      "/audio/voice/fruit-fb-pear.mp3",
+      "/audio/voice/fruit-fb-melon.mp3",
+      "/audio/voice/fruit-fb-apple-row.mp3",
+      "/audio/voice/fruit-bags-welcome.mp3",
+      "/audio/voice/fruit-clue-bags.mp3",
+      "/audio/voice/fruit-fb-six-pears.mp3",
+      "/audio/voice/fruit-fb-both-bags.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1791,6 +1801,14 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Apple starts with a. Which letter?")?.id).toBe(
       "voice.fruit.clue.letter",
+    );
+    expect(narrationClipForText("B starts banana.")?.id).toBe("voice.fruit.fb.b");
+    expect(narrationClipForText("P starts pear.")?.id).toBe("voice.fruit.fb.p");
+    expect(narrationClipForText("Apple, pear, apple, pear, apple. Next?")?.id).toBe(
+      "voice.fruit.row-welcome",
+    );
+    expect(narrationClipForText("Three and three pears. How many?")?.id).toBe(
+      "voice.fruit.bags-welcome",
     );
   });
 
