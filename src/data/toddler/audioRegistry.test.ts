@@ -382,6 +382,16 @@ describe("audio registry", () => {
       "/audio/voice/grove-taxi-welcome.mp3",
       "/audio/voice/grove-frame-welcome.mp3",
       "/audio/voice/grove-dots-line.mp3",
+      "/audio/voice/grove-dots-done.mp3",
+      "/audio/voice/shapes-area-welcome.mp3",
+      "/audio/voice/shapes-circle-welcome.mp3",
+      "/audio/voice/shapes-fb-circle.mp3",
+      "/audio/voice/shapes-fb-square.mp3",
+      "/audio/voice/shapes-fb-triangle.mp3",
+      "/audio/voice/shapes-cue-boing.mp3",
+      "/audio/voice/shapes-clue-circle.mp3",
+      "/audio/voice/shapes-balloons-welcome.mp3",
+      "/audio/voice/shapes-cups-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -970,6 +980,21 @@ describe("audio registry", () => {
     expect(narrationClipForText("Fill the ten-frame taxi in the counting grove!")?.id).toBe(
       "voice.grove.taxi-welcome",
     );
+    expect(narrationClipForText("Ten. A full frame!")?.id).toBe("voice.grove.dots-done");
+  });
+
+  it("maps Shapes & Patterns closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Shapes & Patterns! Circles, Squares, Triangles & Star Bridges. Let's explore together!",
+      )?.id,
+    ).toBe("voice.shapes.area-welcome");
+    expect(
+      narrationClipForText(
+        "I have no sharp corners and roll round and round like a ball! Which shape am I?",
+      )?.id,
+    ).toBe("voice.shapes.circle-welcome");
+    expect(narrationClipForText("Tap the shape-sky balloons!")?.id).toBe("voice.shapes.balloons-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

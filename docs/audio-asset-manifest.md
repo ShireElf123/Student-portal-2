@@ -380,6 +380,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/grove-taxi-welcome.mp3` | `voice.grove.taxi-welcome` |
 | `public/audio/voice/grove-frame-welcome.mp3` | `voice.grove.frame-welcome` |
 | `public/audio/voice/grove-dots-line.mp3` | `voice.grove.dots-line` |
+| `public/audio/voice/grove-dots-done.mp3` | `voice.grove.dots-done` |
+| `public/audio/voice/shapes-area-welcome.mp3` | `voice.shapes.area-welcome` |
+| `public/audio/voice/shapes-circle-welcome.mp3` | `voice.shapes.circle-welcome` |
+| `public/audio/voice/shapes-fb-circle.mp3` | `voice.shapes.fb.circle` |
+| `public/audio/voice/shapes-fb-square.mp3` | `voice.shapes.fb.square` |
+| `public/audio/voice/shapes-fb-triangle.mp3` | `voice.shapes.fb.triangle` |
+| `public/audio/voice/shapes-cue-boing.mp3` | `voice.shapes.cue.boing` |
+| `public/audio/voice/shapes-clue-circle.mp3` | `voice.shapes.clue.circle` |
+| `public/audio/voice/shapes-balloons-welcome.mp3` | `voice.shapes.balloons-welcome` |
+| `public/audio/voice/shapes-cups-welcome.mp3` | `voice.shapes.cups-welcome` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -776,7 +786,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Phonics Meadow** unique spoken lines are complete on voice-01.
 
-**Counting Grove** is the next closed island: area welcome, more-stars, ten-frame taxi, and ten-dots line. Remaining land done (`Ten. A full frame!`) still waits. Missing lines stay quiet. Do not register generic `Yes!`.
+**Counting Grove** unique spoken lines are complete on voice-01.
+
+**Shapes & Patterns** is the next closed island: area welcome, circle riddle, shape balloons, and stack-cups station. Remaining cup land line and done still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
