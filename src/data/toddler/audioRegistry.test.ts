@@ -372,6 +372,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-pebbles-line.mp3",
       "/audio/voice/phonics-pebbles-done.mp3",
       "/audio/voice/phonics-clue-b.mp3",
+      "/audio/voice/phonics-clue-s.mp3",
+      "/audio/voice/grove-area-welcome.mp3",
+      "/audio/voice/grove-stars-welcome.mp3",
+      "/audio/voice/grove-fb-four.mp3",
+      "/audio/voice/grove-fb-one.mp3",
+      "/audio/voice/grove-cue-tada.mp3",
+      "/audio/voice/grove-clue-stars.mp3",
+      "/audio/voice/grove-taxi-welcome.mp3",
+      "/audio/voice/grove-frame-welcome.mp3",
+      "/audio/voice/grove-dots-line.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -941,6 +951,25 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Buh buh!")?.id).toBe("voice.phonics.cue.buh");
     expect(narrationClipForText("The meadow counted with you!")?.id).toBe("voice.phonics.pebbles-done");
+    expect(
+      narrationClipForText(
+        "S says /s/! Can you find what sparkles in the night sky with the /s/ /s/ sound?",
+      )?.id,
+    ).toBe("voice.phonics.clue.s");
+  });
+
+  it("maps Counting Grove closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Counting Grove! Carrots, Strawberries & More vs. Less Comparisons. Let's explore together!",
+      )?.id,
+    ).toBe("voice.grove.area-welcome");
+    expect(
+      narrationClipForText("Look at both groups: which one has MORE shiny golden stars?")?.id,
+    ).toBe("voice.grove.stars-welcome");
+    expect(narrationClipForText("Fill the ten-frame taxi in the counting grove!")?.id).toBe(
+      "voice.grove.taxi-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

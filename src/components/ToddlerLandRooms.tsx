@@ -182,7 +182,8 @@ function Stage({
             playId === "drum-boom" ||
             playId === "story-stones" ||
             playId === "rocket-stars" ||
-            playId === "number-pebbles",
+            playId === "number-pebbles" ||
+            playId === "ten-dots",
         }),
       180,
     );
@@ -207,7 +208,8 @@ function Stage({
           playId === "drum-boom" ||
           playId === "story-stones" ||
           playId === "rocket-stars" ||
-          playId === "number-pebbles",
+          playId === "number-pebbles" ||
+          playId === "ten-dots",
       });
     }
   }, [done, copy.done]);

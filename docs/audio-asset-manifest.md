@@ -370,6 +370,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/phonics-pebbles-line.mp3` | `voice.phonics.pebbles-line` |
 | `public/audio/voice/phonics-pebbles-done.mp3` | `voice.phonics.pebbles-done` |
 | `public/audio/voice/phonics-clue-b.mp3` | `voice.phonics.clue.b` |
+| `public/audio/voice/phonics-clue-s.mp3` | `voice.phonics.clue.s` |
+| `public/audio/voice/grove-area-welcome.mp3` | `voice.grove.area-welcome` |
+| `public/audio/voice/grove-stars-welcome.mp3` | `voice.grove.stars-welcome` |
+| `public/audio/voice/grove-fb-four.mp3` | `voice.grove.fb.four` |
+| `public/audio/voice/grove-fb-one.mp3` | `voice.grove.fb.one` |
+| `public/audio/voice/grove-cue-tada.mp3` | `voice.grove.cue.tada` |
+| `public/audio/voice/grove-clue-stars.mp3` | `voice.grove.clue.stars` |
+| `public/audio/voice/grove-taxi-welcome.mp3` | `voice.grove.taxi-welcome` |
+| `public/audio/voice/grove-frame-welcome.mp3` | `voice.grove.frame-welcome` |
+| `public/audio/voice/grove-dots-line.mp3` | `voice.grove.dots-line` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -764,7 +774,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Deep Sea Tales** unique spoken lines are complete on voice-01.
 
-**Phonics Meadow** is a closed island: B and S stations, meadow rhyme, blend kitchen, letter-trace, and number pebbles. Remaining S cluePrompt still waits. Missing lines stay quiet. Do not register generic `Yes!`.
+**Phonics Meadow** unique spoken lines are complete on voice-01.
+
+**Counting Grove** is the next closed island: area welcome, more-stars, ten-frame taxi, and ten-dots line. Remaining land done (`Ten. A full frame!`) still waits. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
