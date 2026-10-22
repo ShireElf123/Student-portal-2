@@ -472,6 +472,16 @@ describe("audio registry", () => {
       "/audio/voice/garage-fb-green.mp3",
       "/audio/voice/garage-fb-red.mp3",
       "/audio/voice/garage-clue-bolts.mp3",
+      "/audio/voice/garage-bolts-welcome.mp3",
+      "/audio/voice/garage-fb-five.mp3",
+      "/audio/voice/garage-fb-add.mp3",
+      "/audio/voice/garage-fb-count.mp3",
+      "/audio/voice/garage-clue-wheel.mp3",
+      "/audio/voice/garage-wheel-welcome.mp3",
+      "/audio/voice/garage-fb-circle.mp3",
+      "/audio/voice/garage-fb-square.mp3",
+      "/audio/voice/garage-fb-triangle.mp3",
+      "/audio/voice/garage-bead-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1147,6 +1157,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("What colour is the school bus?")?.id).toBe("voice.garage.colour-welcome");
     expect(narrationClipForText("Which letter starts bus?")?.id).toBe("voice.garage.letter-welcome");
     expect(narrationClipForText("Red, blue, red, blue, red. Next?")?.id).toBe("voice.garage.lights-welcome");
+    expect(narrationClipForText("What shape is a wheel?")?.id).toBe("voice.garage.wheel-welcome");
+    expect(narrationClipForText("What bead comes next on the garage train?")?.id).toBe(
+      "voice.garage.bead-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

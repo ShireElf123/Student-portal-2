@@ -470,6 +470,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/garage-fb-green.mp3` | `voice.garage.fb.green` |
 | `public/audio/voice/garage-fb-red.mp3` | `voice.garage.fb.red` |
 | `public/audio/voice/garage-clue-bolts.mp3` | `voice.garage.clue.bolts` |
+| `public/audio/voice/garage-bolts-welcome.mp3` | `voice.garage.bolts-welcome` |
+| `public/audio/voice/garage-fb-five.mp3` | `voice.garage.fb.five` |
+| `public/audio/voice/garage-fb-add.mp3` | `voice.garage.fb.add` |
+| `public/audio/voice/garage-fb-count.mp3` | `voice.garage.fb.count` |
+| `public/audio/voice/garage-clue-wheel.mp3` | `voice.garage.clue.wheel` |
+| `public/audio/voice/garage-wheel-welcome.mp3` | `voice.garage.wheel-welcome` |
+| `public/audio/voice/garage-fb-circle.mp3` | `voice.garage.fb.circle` |
+| `public/audio/voice/garage-fb-square.mp3` | `voice.garage.fb.square` |
+| `public/audio/voice/garage-fb-triangle.mp3` | `voice.garage.fb.triangle` |
+| `public/audio/voice/garage-bead-welcome.mp3` | `voice.garage.bead-welcome` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -876,7 +886,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Family & Cozy Home** unique spoken lines are complete on voice-01.
 
-**Sunny Garage** is a closed island: wheels, tyres, toolbox, bus colour, letter B, and bay lights. Remaining bolts spoken lines, wheel shape, bead train, and load-truck still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Sunny Garage** is a closed island: wheels through bead train. Remaining load-truck station and land still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
