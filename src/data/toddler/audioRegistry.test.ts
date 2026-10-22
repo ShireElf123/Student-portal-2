@@ -592,6 +592,16 @@ describe("audio registry", () => {
       "/audio/voice/harbour-fb-ten.mp3",
       "/audio/voice/harbour-clue-crane.mp3",
       "/audio/voice/harbour-crane-welcome.mp3",
+      "/audio/voice/harbour-fb-crane.mp3",
+      "/audio/voice/harbour-fb-kitten.mp3",
+      "/audio/voice/harbour-fb-spoon.mp3",
+      "/audio/voice/harbour-letter-welcome.mp3",
+      "/audio/voice/harbour-fb-s.mp3",
+      "/audio/voice/harbour-fb-h.mp3",
+      "/audio/voice/harbour-fb-b-ship.mp3",
+      "/audio/voice/harbour-rhyme-welcome.mp3",
+      "/audio/voice/harbour-clue-rhyme.mp3",
+      "/audio/voice/harbour-fb-coat.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1333,6 +1343,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("Which belongs on the water?")?.id).toBe("voice.harbour.water-welcome");
     expect(narrationClipForText("How many buoys?")?.id).toBe("voice.harbour.buoys-welcome");
     expect(narrationClipForText("What lifts the crate?")?.id).toBe("voice.harbour.crane-welcome");
+    expect(narrationClipForText("Which letter starts ship?")?.id).toBe("voice.harbour.letter-welcome");
+    expect(narrationClipForText("What rhymes with boat?")?.id).toBe("voice.harbour.rhyme-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
