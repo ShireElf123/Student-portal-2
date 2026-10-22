@@ -500,6 +500,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/street-fb-plane.mp3` | `voice.street.fb.plane` |
 | `public/audio/voice/street-fb-bus.mp3` | `voice.street.fb.bus` |
 | `public/audio/voice/street-fb-boat.mp3` | `voice.street.fb.boat` |
+| `public/audio/voice/street-clue-cones.mp3` | `voice.street.clue.cones` |
+| `public/audio/voice/street-cones-welcome.mp3` | `voice.street.cones-welcome` |
+| `public/audio/voice/street-fb-six.mp3` | `voice.street.fb.six` |
+| `public/audio/voice/street-fb-count.mp3` | `voice.street.fb.count` |
+| `public/audio/voice/street-fb-nine.mp3` | `voice.street.fb.nine` |
+| `public/audio/voice/street-clue-cross.mp3` | `voice.street.clue.cross` |
+| `public/audio/voice/street-cross-welcome.mp3` | `voice.street.cross-welcome` |
+| `public/audio/voice/street-fb-look.mp3` | `voice.street.fb.look` |
+| `public/audio/voice/street-fb-looking.mp3` | `voice.street.fb.looking` |
+| `public/audio/voice/street-fb-rule.mp3` | `voice.street.fb.rule` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -908,7 +918,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Sunny Garage** unique spoken lines are complete on voice-01.
 
-**High Street** is a closed island: stop light, firefighters, and sky vs street. Remaining cones, crossing, truck letter, stop sign, wash-bus, and drive still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**High Street** is a closed island: stop light through look-first crossing. Remaining truck letter, stop sign, wash-bus, and drive still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
