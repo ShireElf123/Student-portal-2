@@ -1226,7 +1226,9 @@ export function ToddlerWorldsNavigator({
             </div>
 
             <div className="space-y-1.5">
-              <h3 cl<div>
+              <h3 className="text-2xl sm:text-3xl font-black text-white">{dynamicSorting.title}</h3>
+              <p className="text-white text-base font-bold">{dynamicSorting.instruction}</p>
+              <div>
                 <button
                   type="button"
                   onClick={() => {
@@ -1947,16 +1949,6 @@ export function ToddlerWorldsNavigator({
                 <span className="block p-4 sm:p-5">
                   <h4 className="text-xl sm:text-2xl font-black text-slate-900 leading-tight">{zone.title}</h4>
                   <p className="mt-1 text-base font-bold text-slate-700">{zone.subtitle}</p>
-                </span>
-              </motion.button>
-            );
-          })}
-        </div>
-      </section>
-    </div>
-  );
-}
-xt-base font-bold text-slate-700">{zone.subtitle}</p>
                 </span>
               </motion.button>
             );
