@@ -100,6 +100,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/sfx/animal-heart.mp3` | `sfx.animal.heart` |
 | `public/audio/sfx/animal-bed.mp3` | `sfx.animal.bed` |
 | `public/audio/sfx/animal-smile.mp3` | `sfx.animal.smile` |
+| `public/audio/sfx/animal-soap.mp3` | `sfx.animal.soap` |
+| `public/audio/sfx/animal-towel.mp3` | `sfx.animal.towel` |
+| `public/audio/sfx/animal-mushroom.mp3` | `sfx.animal.mushroom` |
+| `public/audio/sfx/animal-spider.mp3` | `sfx.animal.spider` |
+| `public/audio/sfx/animal-slug.mp3` | `sfx.animal.slug` |
+| `public/audio/sfx/animal-leaf.mp3` | `sfx.animal.leaf` |
+| `public/audio/sfx/animal-sowbug.mp3` | `sfx.animal.sowbug` |
+| `public/audio/sfx/animal-crown.mp3` | `sfx.animal.crown` |
+| `public/audio/sfx/animal-king.mp3` | `sfx.animal.king` |
+| `public/audio/sfx/animal-dragon.mp3` | `sfx.animal.dragon` |
 | `public/audio/sfx/animal-bird.mp3` | `sfx.animal.bird` (park roster; previous voice-00 until a park batch) |
 
 ## Spoken lines
@@ -196,6 +206,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | heart | `Beat beat!` |
 | bed | `Yawn!` |
 | smile | `Giggle!` |
+| soap | `Scrub!` |
+| towel | `Pat pat!` |
+| mushroom | `Pop!` |
+| spider | `Spin!` |
+| slug | `Slide!` |
+| leaf | `Crackle!` |
+| sowbug | `Curl!` |
+| crown | `Shine!` |
+| king | `Hello!` |
+| dragon | `Whoosh!` |
 | bird | `Chirp chirp!` |
 
 ## What stays synthesised
