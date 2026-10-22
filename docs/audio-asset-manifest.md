@@ -52,6 +52,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/safari-bio-snail.mp3` | `voice.safari.bio.snail` |
 | `public/audio/voice/safari-bio-ant.mp3` | `voice.safari.bio.ant` |
 | `public/audio/voice/safari-bio-worm.mp3` | `voice.safari.bio.worm` |
+| `public/audio/voice/safari-bio-pond-frog.mp3` | `voice.safari.bio.pond-frog` |
+| `public/audio/voice/safari-bio-pond-duck.mp3` | `voice.safari.bio.pond-duck` |
+| `public/audio/voice/safari-bio-fish.mp3` | `voice.safari.bio.fish` |
+| `public/audio/voice/safari-bio-turtle.mp3` | `voice.safari.bio.turtle` |
+| `public/audio/voice/safari-bio-dragonfly.mp3` | `voice.safari.bio.dragonfly` |
+| `public/audio/voice/safari-bio-pond-snail.mp3` | `voice.safari.bio.pond-snail` |
+| `public/audio/voice/safari-bio-lily.mp3` | `voice.safari.bio.lily` |
+| `public/audio/voice/safari-bio-reed.mp3` | `voice.safari.bio.reed` |
+| `public/audio/voice/safari-bio-bat.mp3` | `voice.safari.bio.bat` |
+| `public/audio/voice/safari-bio-moth.mp3` | `voice.safari.bio.moth` |
 | `public/audio/sfx/animal-lion.mp3` | `sfx.animal.lion` |
 | `public/audio/sfx/animal-elephant.mp3` | `sfx.animal.elephant` |
 | `public/audio/sfx/animal-monkey.mp3` | `sfx.animal.monkey` |
