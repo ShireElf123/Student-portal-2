@@ -94,7 +94,7 @@ describe("toddlerAudio missing files", () => {
 
   it("leaves unknown safari friends on the synth/speech path", () => {
     installFactory();
-    expect(toddlerAudio.playSafariAnimalSfx("dragonfly")).toBe(false);
+    expect(toddlerAudio.playSafariAnimalSfx("dog")).toBe(false);
     expect(created).toHaveLength(0);
   });
 });
