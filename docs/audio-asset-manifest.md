@@ -390,6 +390,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/shapes-clue-circle.mp3` | `voice.shapes.clue.circle` |
 | `public/audio/voice/shapes-balloons-welcome.mp3` | `voice.shapes.balloons-welcome` |
 | `public/audio/voice/shapes-cups-welcome.mp3` | `voice.shapes.cups-welcome` |
+| `public/audio/voice/shapes-cups-line.mp3` | `voice.shapes.cups-line` |
+| `public/audio/voice/shapes-cups-done.mp3` | `voice.shapes.cups-done` |
+| `public/audio/voice/feelings-area-welcome.mp3` | `voice.feelings.area-welcome` |
+| `public/audio/voice/feelings-happy-welcome.mp3` | `voice.feelings.happy-welcome` |
+| `public/audio/voice/feelings-fb-happy.mp3` | `voice.feelings.fb.happy` |
+| `public/audio/voice/feelings-fb-sleepy.mp3` | `voice.feelings.fb.sleepy` |
+| `public/audio/voice/feelings-fb-sad.mp3` | `voice.feelings.fb.sad` |
+| `public/audio/voice/feelings-cue-yay.mp3` | `voice.feelings.cue.yay` |
+| `public/audio/voice/feelings-clue-happy.mp3` | `voice.feelings.clue.happy` |
+| `public/audio/voice/feelings-memory-welcome.mp3` | `voice.feelings.memory-welcome` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -788,7 +798,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Counting Grove** unique spoken lines are complete on voice-01.
 
-**Shapes & Patterns** is the next closed island: area welcome, circle riddle, shape balloons, and stack-cups station. Remaining cup land line and done still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Shapes & Patterns** unique spoken lines are complete on voice-01.
+
+**Feelings & Emotions** is the next closed island: area welcome, happy-smile, and feeling faces. Remaining make-a-feeling land lines still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

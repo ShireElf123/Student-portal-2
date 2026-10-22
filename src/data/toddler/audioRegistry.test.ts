@@ -392,6 +392,16 @@ describe("audio registry", () => {
       "/audio/voice/shapes-clue-circle.mp3",
       "/audio/voice/shapes-balloons-welcome.mp3",
       "/audio/voice/shapes-cups-welcome.mp3",
+      "/audio/voice/shapes-cups-line.mp3",
+      "/audio/voice/shapes-cups-done.mp3",
+      "/audio/voice/feelings-area-welcome.mp3",
+      "/audio/voice/feelings-happy-welcome.mp3",
+      "/audio/voice/feelings-fb-happy.mp3",
+      "/audio/voice/feelings-fb-sleepy.mp3",
+      "/audio/voice/feelings-fb-sad.mp3",
+      "/audio/voice/feelings-cue-yay.mp3",
+      "/audio/voice/feelings-clue-happy.mp3",
+      "/audio/voice/feelings-memory-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -995,6 +1005,23 @@ describe("audio registry", () => {
       )?.id,
     ).toBe("voice.shapes.circle-welcome");
     expect(narrationClipForText("Tap the shape-sky balloons!")?.id).toBe("voice.shapes.balloons-welcome");
+    expect(narrationClipForText("A wobbly tower!")?.id).toBe("voice.shapes.cups-done");
+  });
+
+  it("maps Feelings & Emotions closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Feelings & Emotions! Big Smiles, Gentle Breaths & Kind Hearts. Let's explore together!",
+      )?.id,
+    ).toBe("voice.feelings.area-welcome");
+    expect(
+      narrationClipForText(
+        "Can you tap the friend who is feeling super happy and wearing a big bright smile?",
+      )?.id,
+    ).toBe("voice.feelings.happy-welcome");
+    expect(narrationClipForText("Flip the feeling faces and find the match!")?.id).toBe(
+      "voice.feelings.memory-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
