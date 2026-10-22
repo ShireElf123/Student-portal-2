@@ -1,6 +1,6 @@
-# Toddler audio asset manifest (Safari Savanna kit)
+# Toddler audio asset manifest (Safari kits)
 
-Savanna Animal Detective uses **one owner-selected Arena voice** (`voice-01`): explore welcome, detective stem, and mouth-performed calls for the eight default friends. Chat still cannot play or receive MP3s — hear them in the app after a Vercel push. If a file 404s, duck/cow/bird fall back to short Web Audio cartoon calls; other friends stay quiet (no device narrator inside Safari).
+**Animal Safari** (the in-app Safari section — Games tab plus each world’s Safari station) uses **one owner-selected Arena voice** (`voice-01`): explore welcome, detective stem, and mouth-performed calls. Chat still cannot play or receive MP3s — hear them in the app after a Vercel push. If a file 404s, duck/cow/bird fall back to short Web Audio cartoon calls; other friends stay quiet (no device narrator inside Safari).
 
 Do **not** claim phone playback is verified until the owner listens on a device.
 
@@ -20,6 +20,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/sfx/animal-cow.mp3` | `sfx.animal.cow` |
 | `public/audio/sfx/animal-giraffe.mp3` | `sfx.animal.giraffe` |
 | `public/audio/sfx/animal-zebra.mp3` | `sfx.animal.zebra` |
+| `public/audio/sfx/animal-pig.mp3` | `sfx.animal.pig` |
+| `public/audio/sfx/animal-horse.mp3` | `sfx.animal.horse` |
+| `public/audio/sfx/animal-hen.mp3` | `sfx.animal.hen` |
+| `public/audio/sfx/animal-sheep.mp3` | `sfx.animal.sheep` |
+| `public/audio/sfx/animal-goat.mp3` | `sfx.animal.goat` |
+| `public/audio/sfx/animal-chick.mp3` | `sfx.animal.chick` |
+| `public/audio/sfx/animal-parrot.mp3` | `sfx.animal.parrot` |
+| `public/audio/sfx/animal-tiger.mp3` | `sfx.animal.tiger` |
+| `public/audio/sfx/animal-snake.mp3` | `sfx.animal.snake` |
+| `public/audio/sfx/animal-gorilla.mp3` | `sfx.animal.gorilla` |
 | `public/audio/sfx/animal-bird.mp3` | `sfx.animal.bird` (park roster; previous voice-00 until a park batch) |
 
 ## Spoken lines
@@ -36,6 +46,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | cow | `Mooo mooo!` |
 | giraffe | `Hmmm!` |
 | zebra | `Whinny!` |
+| pig | `Oink oink!` |
+| horse | `Neigh neigh!` |
+| hen | `Cluck cluck!` |
+| sheep | `Baaa baaa!` |
+| goat | `Maaa!` |
+| chick | `Cheep cheep!` |
+| parrot | `Squawk squawk!` |
+| tiger | `Grrr!` |
+| snake | `Hisss!` |
+| gorilla | `Hoot hoot!` |
 | bird | `Chirp chirp!` |
 
 ## What stays synthesised
