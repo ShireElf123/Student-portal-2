@@ -30,7 +30,7 @@ export interface AudioAsset {
 }
 
 /** Child-safe default for file playback. Synth peaks stay as they are. */
-export const AUDIO_MASTER_GAIN = 0.65;
+export const AUDIO_MASTER_GAIN = 0.85;
 
 export const SAFARI_EXPLORE_WELCOME_PROMPT =
   "Tap any animal friend to hear their call and fun secrets!";
@@ -55,7 +55,7 @@ function voiceClip(
     id,
     src,
     channel: "voice",
-    volume: 0.7,
+    volume: 0.9,
     title,
     promptText,
     fileStatus: "present",
@@ -81,7 +81,7 @@ function animalClip(
     id: `sfx.animal.${animalId}`,
     src: `/audio/sfx/animal-${animalId}.mp3`,
     channel: "sfx",
-    volume: 0.8,
+    volume: 0.55,
     title,
     animalId,
     fileStatus: "present",

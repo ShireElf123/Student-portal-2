@@ -30,13 +30,6 @@ interface ToddlerAnimalSafariProps {
   missionSurface?: "games" | "off";
 }
 
-/**
- * How long the solved mystery stays on screen (with its confetti and the
- * highlighted animal) after the praise has been spoken, before the next
- * mystery animal appears on its own.
- */
-const CELEBRATION_PAUSE_MS = 900;
-
 const STATION_HIT_GOAL = 3;
 
 export function ToddlerAnimalSafari({
@@ -48,7 +41,10 @@ export function ToddlerAnimalSafari({
   missionSurface = "games",
 }: ToddlerAnimalSafariProps) {
   const roster = animals && animals.length >= 3 ? animals : DEFAULT_SAFARI_FRIENDS;
-  const [activeMode, setActiveMode] = useState<"explore" | "detective">("detective");
+  // Worlds stations (Pasture Safari, etc.) are a walk. Games hub stays detective.
+  const [activeMode, setActiveMode] = useState<"explore" | "detective">(
+    exploreWelcome ? "explore" : "detective",
+  );
   // Opening mystery is drawn at random so the game does not always start on
   // the same animal (it used to be the lion every single time).
   const [targetAnimal, setTargetAnimal] = useState<Animal>(
@@ -58,26 +54,12 @@ export function ToddlerAnimalSafari({
   const [score, setScore] = useState(0);
   const [showCelebration, setShowCelebration] = useState(false);
 
-  // A solved mystery moves on by itself: praise is spoken, the child gets a
-  // moment with the celebration, then the next mystery animal appears without
-  // needing another tap. Timers live in a ref (not state) so every transition
-  // stays cancellable — pressing "Next", switching mode or leaving the screen
-  // must never leave a stray timer behind.
-  const celebrationTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const advancePendingRef = useRef(false);
-  const activeModeRef = useRef(activeMode);
-  activeModeRef.current = activeMode;
   const stationHits = useRef(0);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
   const noteStationHit = () => {
     stationHits.current += 1;
     if (stationHits.current === STATION_HIT_GOAL) onCompleteRef.current?.();
-  };
-
-  const clearCelebrationTimers = () => {
-    celebrationTimersRef.current.forEach((timer) => clearTimeout(timer));
-    celebrationTimersRef.current = [];
   };
 
   // Closed Safari kit: narrator MP3s only. Missing clips stay quiet — no Web Speech.
@@ -94,12 +76,7 @@ export function ToddlerAnimalSafari({
     return () => clearTimeout(timer);
   }, [activeMode, exploreWelcome]);
 
-  // Never leave a scheduled round running after the game is closed.
-  useEffect(() => clearCelebrationTimers, []);
-
   const startNewDetectiveRound = () => {
-    advancePendingRef.current = false;
-    clearCelebrationTimers();
     const choices = roster.filter((animal) => animal.id !== targetAnimal.id);
     const nextTarget = choices[Math.floor(Math.random() * choices.length)] ?? roster[0];
     setTargetAnimal(nextTarget);
@@ -109,35 +86,10 @@ export function ToddlerAnimalSafari({
     playSafariDetectiveMystery(nextTarget.id);
   };
 
-  /**
-   * Praise the correct animal, then advance to the next mystery on our own.
-   *
-   * The speech engine is treated as best-effort: the round is released on a
-   * timer as well, because a muted voice or a stalled utterance never reports
-   * an end — the child must never be left on a screen that no longer responds.
-   */
-  const celebrateAndAdvance = (animal: Animal) => {
-    advancePendingRef.current = true;
-    clearCelebrationTimers();
-
-    const scheduleAdvance = (delayMs: number) => {
-      celebrationTimersRef.current.push(
-        setTimeout(() => {
-          if (!advancePendingRef.current) return;
-          advancePendingRef.current = false;
-          clearCelebrationTimers();
-          // The child may have switched to free play while the praise played.
-          if (activeModeRef.current !== "detective") return;
-          startNewDetectiveRound();
-        }, delayMs)
-      );
-    };
-
+  /** Praise the correct animal and wait. Next Mystery Animal starts the next round. */
+  const celebrateCorrectAnimal = (animal: Animal) => {
     stopSpeaking();
     playSafariAnimalSfx(animal.id);
-    // Visual celebration + her call; do not mix in the device narrator.
-    scheduleAdvance(CELEBRATION_PAUSE_MS);
-    scheduleAdvance(CELEBRATION_PAUSE_MS + 4000);
   };
 
 
@@ -159,8 +111,8 @@ export function ToddlerAnimalSafari({
       return;
     }
 
-    // Detective quiz mode: each mystery pays once — solve it, then the next
-    // mystery is scheduled automatically (the "Next" button skips the wait).
+    // Detective quiz mode: each mystery pays once. Stay on the celebration
+    // until Next Mystery Animal — do not auto-loop the next call.
     if (showCelebration) return;
     if (animal.id === targetAnimal.id) {
       setSelectedAnimal(animal);
@@ -207,7 +159,7 @@ export function ToddlerAnimalSafari({
         console.error("Failed to record safari response:", error);
       }
 
-      celebrateAndAdvance(animal);
+      celebrateCorrectAnimal(animal);
     } else {
       soundEffects.playGentleBoing();
       try {
@@ -275,9 +227,6 @@ export function ToddlerAnimalSafari({
             onClick={() => {
               setActiveMode("explore");
               soundEffects.playPop();
-              // Free play takes over: stop any scheduled mystery round.
-              advancePendingRef.current = false;
-              clearCelebrationTimers();
             }}
             className={`px-4 py-2 rounded-2xl font-black text-xs transition-all cursor-pointer ${
               activeMode === "explore"

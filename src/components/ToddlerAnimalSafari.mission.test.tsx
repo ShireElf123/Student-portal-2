@@ -94,7 +94,13 @@ describe("Animal Safari mission surface", () => {
     await settle(300);
     for (let i = 0; i < 3; i += 1) {
       await solveCurrentMystery(container);
-      await settle(1200);
+      if (i < 2) {
+        const next = Array.from(container.querySelectorAll("button")).find((button) =>
+          button.textContent?.includes("Next Mystery"),
+        ) as HTMLButtonElement;
+        fireEvent.click(next);
+        await flush();
+      }
     }
     expect(pay).not.toHaveBeenCalled();
   });
@@ -104,7 +110,13 @@ describe("Animal Safari mission surface", () => {
     await settle(300);
     for (let i = 0; i < 3; i += 1) {
       await solveCurrentMystery(container);
-      await settle(1200);
+      if (i < 2) {
+        const next = Array.from(container.querySelectorAll("button")).find((button) =>
+          button.textContent?.includes("Next Mystery"),
+        ) as HTMLButtonElement;
+        fireEvent.click(next);
+        await flush();
+      }
     }
     expect(pay).toHaveBeenCalledWith("games", "animal-safari");
   });
