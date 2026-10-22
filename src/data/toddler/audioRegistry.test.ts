@@ -492,6 +492,16 @@ describe("audio registry", () => {
       "/audio/voice/street-fb-watch.mp3",
       "/audio/voice/street-clue-light.mp3",
       "/audio/voice/street-fire-welcome.mp3",
+      "/audio/voice/street-clue-fire.mp3",
+      "/audio/voice/street-fb-fire.mp3",
+      "/audio/voice/street-cue-neenaw.mp3",
+      "/audio/voice/street-fb-baker.mp3",
+      "/audio/voice/street-fb-duck.mp3",
+      "/audio/voice/street-clue-sky.mp3",
+      "/audio/voice/street-sky-welcome.mp3",
+      "/audio/voice/street-fb-plane.mp3",
+      "/audio/voice/street-fb-bus.mp3",
+      "/audio/voice/street-fb-boat.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1182,6 +1192,8 @@ describe("audio registry", () => {
     ).toBe("voice.street.area-welcome");
     expect(narrationClipForText("The light is red. What do we do?")?.id).toBe("voice.street.light-welcome");
     expect(narrationClipForText("Who rides the long red truck?")?.id).toBe("voice.street.fire-welcome");
+    expect(narrationClipForText("Firefighters ride the red truck.")?.id).toBe("voice.street.fb.fire");
+    expect(narrationClipForText("Which belongs in the sky?")?.id).toBe("voice.street.sky-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
