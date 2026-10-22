@@ -142,6 +142,12 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/safari-bio-rain.mp3` | `voice.safari.bio.rain` |
 | `public/audio/voice/safari-bio-bedroom-bed.mp3` | `voice.safari.bio.bedroom-bed` |
 | `public/audio/voice/safari-bio-lamp.mp3` | `voice.safari.bio.lamp` |
+| `public/audio/voice/safari-bio-teddy.mp3` | `voice.safari.bio.teddy` |
+| `public/audio/voice/safari-bio-bedroom-cat.mp3` | `voice.safari.bio.bedroom-cat` |
+| `public/audio/voice/safari-bio-bedroom-book.mp3` | `voice.safari.bio.bedroom-book` |
+| `public/audio/voice/safari-bio-bedroom-moon.mp3` | `voice.safari.bio.bedroom-moon` |
+| `public/audio/voice/safari-bio-sock.mp3` | `voice.safari.bio.sock` |
+| `public/audio/voice/safari-bio-bedroom-mouse.mp3` | `voice.safari.bio.bedroom-mouse` |
 | `public/audio/sfx/animal-lion.mp3` | `sfx.animal.lion` |
 | `public/audio/sfx/animal-elephant.mp3` | `sfx.animal.elephant` |
 | `public/audio/sfx/animal-monkey.mp3` | `sfx.animal.monkey` |
@@ -368,7 +374,7 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 
 ## What stays synthesised
 
-Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are **unchanged**. Savanna and Farm explore bios (plus jungle parrot/tiger/snake/gorilla) play as voice-01 MP3s. Other worlds still show fun-facts on screen until their bio clips exist. Detective praise stays visual + mouth-call. Letter A explore/detective plays `animal-ay.mp3` (“A says a like apple!”).
+Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are **unchanged**. Every Safari explore call+fun-fact now has a voice-01 MP3. Detective praise stays visual + mouth-call. Letter A explore plays the A bio (“A says a like apple…”).
 
 ## Mute keys (unchanged)
 
