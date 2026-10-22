@@ -412,6 +412,16 @@ describe("audio registry", () => {
       "/audio/voice/habits-fb-crayon.mp3",
       "/audio/voice/habits-sfx-brush.mp3",
       "/audio/voice/habits-cue-brush.mp3",
+      "/audio/voice/habits-clue-brush.mp3",
+      "/audio/voice/habits-clue-ears.mp3",
+      "/audio/voice/habits-ears-welcome.mp3",
+      "/audio/voice/habits-fb-ears.mp3",
+      "/audio/voice/habits-cue-listen.mp3",
+      "/audio/voice/habits-fb-eyes.mp3",
+      "/audio/voice/habits-fb-nose.mp3",
+      "/audio/voice/habits-piano-welcome.mp3",
+      "/audio/voice/habits-brush-station.mp3",
+      "/audio/voice/habits-brush-line.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1047,6 +1057,12 @@ describe("audio registry", () => {
       )?.id,
     ).toBe("voice.habits.brush-welcome");
     expect(narrationClipForText("Brush brush!")?.id).toBe("voice.habits.cue.brush");
+    expect(
+      narrationClipForText("Which part of our body do we use to listen to music and singing birds?")?.id,
+    ).toBe("voice.habits.ears-welcome");
+    expect(narrationClipForText("Play a brush-time song on the piano!")?.id).toBe(
+      "voice.habits.piano-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

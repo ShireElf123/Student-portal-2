@@ -410,6 +410,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/habits-fb-crayon.mp3` | `voice.habits.fb.crayon` |
 | `public/audio/voice/habits-sfx-brush.mp3` | `voice.habits.sfx.brush` |
 | `public/audio/voice/habits-cue-brush.mp3` | `voice.habits.cue.brush` |
+| `public/audio/voice/habits-clue-brush.mp3` | `voice.habits.clue.brush` |
+| `public/audio/voice/habits-clue-ears.mp3` | `voice.habits.clue.ears` |
+| `public/audio/voice/habits-ears-welcome.mp3` | `voice.habits.ears-welcome` |
+| `public/audio/voice/habits-fb-ears.mp3` | `voice.habits.fb.ears` |
+| `public/audio/voice/habits-cue-listen.mp3` | `voice.habits.cue.listen` |
+| `public/audio/voice/habits-fb-eyes.mp3` | `voice.habits.fb.eyes` |
+| `public/audio/voice/habits-fb-nose.mp3` | `voice.habits.fb.nose` |
+| `public/audio/voice/habits-piano-welcome.mp3` | `voice.habits.piano-welcome` |
+| `public/audio/voice/habits-brush-station.mp3` | `voice.habits.brush-station` |
+| `public/audio/voice/habits-brush-line.mp3` | `voice.habits.brush-line` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -812,7 +822,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Feelings & Emotions** unique spoken lines are complete on voice-01.
 
-**Healthy Habits** is the next closed island: area welcome and toothbrush. Remaining brush clue, ears, piano, and brush-teeth land still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Healthy Habits** is a closed island: toothbrush, listening ears, brush-time piano, and brush-teeth line. Remaining land done (`Clean shiny teeth.`) still waits. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
