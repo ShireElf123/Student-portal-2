@@ -742,6 +742,16 @@ describe("audio registry", () => {
       "/audio/voice/night-fb-dim.mp3",
       "/audio/voice/night-fb-crash-pattern.mp3",
       "/audio/voice/night-fb-glow.mp3",
+      "/audio/voice/compost-area-welcome.mp3",
+      "/audio/voice/compost-digs-welcome.mp3",
+      "/audio/voice/compost-clue-digs.mp3",
+      "/audio/voice/compost-fb-worm.mp3",
+      "/audio/voice/compost-fb-dolphin.mp3",
+      "/audio/voice/compost-fb-plane.mp3",
+      "/audio/voice/compost-water-station.mp3",
+      "/audio/voice/compost-water-line.mp3",
+      "/audio/voice/compost-water-done.mp3",
+      "/audio/voice/compost-memory-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1624,6 +1634,30 @@ describe("audio registry", () => {
     ).toBe("voice.night.clue.who");
     expect(narrationClipForText("Glow, dim, glow, dim, glow. Next?")?.id).toBe(
       "voice.night.blink-welcome",
+    );
+  });
+
+  it("maps Warm Compost closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Warm Compost! Worms, millipedes and leaf piles. Let's explore together!",
+      )?.id,
+    ).toBe("voice.compost.area-welcome");
+    expect(narrationClipForText("Who digs in the dark soil?")?.id).toBe(
+      "voice.compost.digs-welcome",
+    );
+    expect(narrationClipForText("Long, pink, and quiet in the soil. Who?")?.id).toBe(
+      "voice.compost.clue.digs",
+    );
+    expect(narrationClipForText("Water every thirsty plant!")?.id).toBe(
+      "voice.compost.water-station",
+    );
+    expect(narrationClipForText("Drag the can onto every thirsty plant.")?.id).toBe(
+      "voice.compost.water-line",
+    );
+    expect(narrationClipForText("The garden drinks!")?.id).toBe("voice.compost.water-done");
+    expect(narrationClipForText("Flip the compost leaves and find the matching bugs!")?.id).toBe(
+      "voice.compost.memory-welcome",
     );
   });
 
