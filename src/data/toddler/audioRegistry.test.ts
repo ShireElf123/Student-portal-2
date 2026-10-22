@@ -432,6 +432,16 @@ describe("audio registry", () => {
       "/audio/voice/family-fb-puppy.mp3",
       "/audio/voice/family-rhyme-welcome.mp3",
       "/audio/voice/family-table-welcome.mp3",
+      "/audio/voice/family-wash-welcome.mp3",
+      "/audio/voice/family-trace-welcome.mp3",
+      "/audio/voice/family-pour-welcome.mp3",
+      "/audio/voice/family-socks-welcome.mp3",
+      "/audio/voice/family-comb-welcome.mp3",
+      "/audio/voice/family-table-line.mp3",
+      "/audio/voice/family-table-done.mp3",
+      "/audio/voice/family-wash-line.mp3",
+      "/audio/voice/family-wash-done.mp3",
+      "/audio/voice/garage-area-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1090,6 +1100,13 @@ describe("audio registry", () => {
     expect(narrationClipForText("Find the rhyming friends at home!")?.id).toBe(
       "voice.family.rhyme-welcome",
     );
+    expect(narrationClipForText("Pegged. The wind can work.")?.id).toBe("voice.family.wash-done");
+  });
+
+  it("maps Sunny Garage closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText("Sunny Garage! Tools, tyres and a sleepy bus. Let's explore together!")?.id,
+    ).toBe("voice.garage.area-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

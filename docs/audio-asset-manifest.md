@@ -430,6 +430,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/family-fb-puppy.mp3` | `voice.family.fb.puppy` |
 | `public/audio/voice/family-rhyme-welcome.mp3` | `voice.family.rhyme-welcome` |
 | `public/audio/voice/family-table-welcome.mp3` | `voice.family.table-welcome` |
+| `public/audio/voice/family-wash-welcome.mp3` | `voice.family.wash-welcome` |
+| `public/audio/voice/family-trace-welcome.mp3` | `voice.family.trace-welcome` |
+| `public/audio/voice/family-pour-welcome.mp3` | `voice.family.pour-welcome` |
+| `public/audio/voice/family-socks-welcome.mp3` | `voice.family.socks-welcome` |
+| `public/audio/voice/family-comb-welcome.mp3` | `voice.family.comb-welcome` |
+| `public/audio/voice/family-table-line.mp3` | `voice.family.table-line` |
+| `public/audio/voice/family-table-done.mp3` | `voice.family.table-done` |
+| `public/audio/voice/family-wash-line.mp3` | `voice.family.wash-line` |
+| `public/audio/voice/family-wash-done.mp3` | `voice.family.wash-done` |
+| `public/audio/voice/garage-area-welcome.mp3` | `voice.garage.area-welcome` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -834,7 +844,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Healthy Habits** unique spoken lines are complete on voice-01.
 
-**Family & Cozy Home** is the next closed island: area welcome, sweet baby, home rhyme, and set-the-table station. Remaining table land, hang-wash, letter-trace, pour, socks, and comb still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Family & Cozy Home** unique spoken lines are complete on voice-01.
+
+**Sunny Garage** (Busy Roads) is the next closed island: area welcome only so far. Garage activity lines still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
