@@ -642,6 +642,16 @@ describe("audio registry", () => {
       "/audio/voice/flower-clue-petal.mp3",
       "/audio/voice/flower-fb-petal-bee.mp3",
       "/audio/voice/flower-fb-shark.mp3",
+      "/audio/voice/flower-fb-crane.mp3",
+      "/audio/voice/flower-letter-welcome.mp3",
+      "/audio/voice/flower-clue-letter.mp3",
+      "/audio/voice/flower-fb-b-bee.mp3",
+      "/audio/voice/flower-fb-d.mp3",
+      "/audio/voice/flower-fb-s.mp3",
+      "/audio/voice/flower-row-welcome.mp3",
+      "/audio/voice/flower-fb-pink.mp3",
+      "/audio/voice/flower-fb-blue.mp3",
+      "/audio/voice/flower-fb-yellow.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1421,6 +1431,11 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Who belongs on the flower?")?.id).toBe(
       "voice.flower.petal-welcome",
+    );
+    expect(narrationClipForText("Cranes lift harbour crates.")?.id).toBe("voice.flower.fb.crane");
+    expect(narrationClipForText("Which letter starts bee?")?.id).toBe("voice.flower.letter-welcome");
+    expect(narrationClipForText("Yellow, pink, yellow, pink, yellow. Next?")?.id).toBe(
+      "voice.flower.row-welcome",
     );
   });
 
