@@ -177,7 +177,8 @@ function Stage({
             playId === "nest-eggs" ||
             playId === "campfire" ||
             playId === "puddle-jump" ||
-            playId === "scoop-moon",
+            playId === "scoop-moon" ||
+            playId === "stamp-mural",
         }),
       180,
     );
@@ -197,7 +198,8 @@ function Stage({
           playId === "nest-eggs" ||
           playId === "campfire" ||
           playId === "puddle-jump" ||
-          playId === "scoop-moon",
+          playId === "scoop-moon" ||
+          playId === "stamp-mural",
       });
     }
   }, [done, copy.done]);

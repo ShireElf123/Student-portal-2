@@ -212,6 +212,16 @@ describe("audio registry", () => {
       "/audio/voice/treasure-bubbles-welcome.mp3",
       "/audio/voice/treasure-quiz-key.mp3",
       "/audio/voice/treasure-fb-key.mp3",
+      "/audio/voice/treasure-fb-spoon.mp3",
+      "/audio/voice/treasure-fb-pencil.mp3",
+      "/audio/voice/color-area-welcome.mp3",
+      "/audio/voice/color-balloons-welcome.mp3",
+      "/audio/voice/color-stamp-station.mp3",
+      "/audio/voice/color-stamp-line.mp3",
+      "/audio/voice/color-stamp-done.mp3",
+      "/audio/voice/color-letter-trace.mp3",
+      "/audio/voice/color-quiz-orange.mp3",
+      "/audio/voice/color-quiz-green.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -634,6 +644,19 @@ describe("audio registry", () => {
     expect(narrationClipForText("Click clack! The golden key fits right into the lock!")?.id).toBe(
       "voice.treasure.fb.key",
     );
+    expect(narrationClipForText("Spoons are for delicious soup, not locks!")?.id).toBe("voice.treasure.fb.spoon");
+  });
+
+  it("maps Color Magic Studio closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Color Magic Studio! Red, Yellow & Blue Droplets Creating New Wonders. Let's explore together!",
+      )?.id,
+    ).toBe("voice.color.area-welcome");
+    expect(
+      narrationClipForText("When we mix ruby Red with sunny Yellow paint, what magical color appears?")?.id,
+    ).toBe("voice.color.quiz-orange");
+    expect(narrationClipForText("Drag a stamp onto the wall. Six prints.")?.id).toBe("voice.color.stamp-line");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

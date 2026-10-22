@@ -203,12 +203,14 @@ export function ToddlerColorLab({
   mixFlavor,
   targetColor,
   spokenPrompt,
+  closedKit = false,
   missionSurface = "games",
 }: {
   onAddStar?: (amt?: number) => void;
   mixFlavor?: MixFlavor;
   targetColor?: string;
   spokenPrompt?: string;
+  closedKit?: boolean;
   /** Worlds play already pays a worlds mission — do not also pay Games. */
   missionSurface?: "games" | "off";
 }) {
@@ -238,12 +240,12 @@ export function ToddlerColorLab({
           (targetColor
             ? `Mix two colours until you make ${targetColor}!`
             : "Welcome to Color Magic! Tap two primary color droplets to blend a magical new color!"),
-        { pitch: 1.25 },
+        { pitch: 1.25, closedKit },
       );
     }, 150);
 
     return () => clearTimeout(timer);
-  }, [spokenPrompt, targetColor]);
+  }, [spokenPrompt, targetColor, closedKit]);
 
   useEffect(() => () => {
     if (resolutionTimer.current) clearTimeout(resolutionTimer.current);
@@ -255,7 +257,7 @@ export function ToddlerColorLab({
 
     const next = [...selectedDrops, drop];
     setSelectedDrops(next);
-    speakText(drop.name, { pitch: 1.3 });
+    speakText(drop.name, { pitch: 1.3, closedKit });
 
     if (next.length === 2) {
       const key = `${next[0].id}+${next[1].id}`;
@@ -268,12 +270,12 @@ export function ToddlerColorLab({
           const matchesTarget = !targetColor || result.colorName.toLowerCase() === targetColor.toLowerCase();
           if (!matchesTarget) {
             soundEffects.playGentleBoing();
-            speakText(`That made ${result.colorName}. We need ${targetColor}. Mix again!`, { pitch: 1.2 });
+            speakText(`That made ${result.colorName}. We need ${targetColor}. Mix again!`, { pitch: 1.2, closedKit });
             return;
           }
           soundEffects.playSuccessChime();
           triggerCelebrationConfetti();
-          speakText(result.phrase, { pitch: 1.3 });
+          speakText(result.phrase, { pitch: 1.3, closedKit });
           if (!rewardPaid.current) {
             rewardPaid.current = true;
             onAddStar?.(1);
@@ -306,7 +308,7 @@ export function ToddlerColorLab({
         }, 500);
       } else {
         // Same color mixed
-        speakText(`Two ${next[0].name}s! Pick a different color to mix magic!`, { pitch: 1.2 });
+        speakText(`Two ${next[0].name}s! Pick a different color to mix magic!`, { pitch: 1.2, closedKit });
         resolutionTimer.current = setTimeout(() => {
           resolutionTimer.current = null;
           setSelectedDrops([]);

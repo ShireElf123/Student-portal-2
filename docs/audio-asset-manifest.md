@@ -210,6 +210,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/treasure-bubbles-welcome.mp3` | `voice.treasure.bubbles-welcome` |
 | `public/audio/voice/treasure-quiz-key.mp3` | `voice.treasure.quiz-key` |
 | `public/audio/voice/treasure-fb-key.mp3` | `voice.treasure.fb.key` |
+| `public/audio/voice/treasure-fb-spoon.mp3` | `voice.treasure.fb.spoon` |
+| `public/audio/voice/treasure-fb-pencil.mp3` | `voice.treasure.fb.pencil` |
+| `public/audio/voice/color-area-welcome.mp3` | `voice.color.area-welcome` |
+| `public/audio/voice/color-balloons-welcome.mp3` | `voice.color.balloons-welcome` |
+| `public/audio/voice/color-stamp-station.mp3` | `voice.color.stamp-station` |
+| `public/audio/voice/color-stamp-line.mp3` | `voice.color.stamp-line` |
+| `public/audio/voice/color-stamp-done.mp3` | `voice.color.stamp-done` |
+| `public/audio/voice/color-letter-trace.mp3` | `voice.color.letter-trace` |
+| `public/audio/voice/color-quiz-orange.mp3` | `voice.color.quiz-orange` |
+| `public/audio/voice/color-quiz-green.mp3` | `voice.color.quiz-green` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -588,7 +598,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Space Blast-Off** unique spoken lines are complete on voice-01.
 
-**Treasure Quest** is the next closed island: area welcome, letter bubbles, key quiz prompt, and key yes. Spoon and pencil option feedbacks still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Treasure Quest** unique spoken lines are complete on voice-01.
+
+**Color Magic Studio** is the next closed island: area welcome, paint balloons, stamp mural hold/done, letter-trace, and orange/green mix prompts. Mix option feedbacks and Color Lab tap phrases still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

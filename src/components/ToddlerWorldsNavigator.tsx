@@ -81,7 +81,8 @@ function isClosedVoiceIsland(areaId?: string | null) {
     areaId === "forest-trail" ||
     areaId === "weather-adventure" ||
     areaId === "space-blastoff" ||
-    areaId === "treasure-quest"
+    areaId === "treasure-quest" ||
+    areaId === "color-studio"
   );
 }
 
@@ -857,6 +858,7 @@ export function ToddlerWorldsNavigator({
               mixFlavor={playTheme.mix}
               targetColor={mixTargetFromActivity(activeActivity)}
               spokenPrompt={activeActivity.spokenPrompt}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
               missionSurface="off"
               onAddStar={() => completeWorldToy(activeActivity)}
             />
