@@ -540,6 +540,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/runway-clue-planes.mp3` | `voice.runway.clue.planes` |
 | `public/audio/voice/runway-fb-five.mp3` | `voice.runway.fb.five` |
 | `public/audio/voice/runway-fb-apron.mp3` | `voice.runway.fb.apron` |
+| `public/audio/voice/runway-fb-eight.mp3` | `voice.runway.fb.eight` |
+| `public/audio/voice/runway-clue-belt.mp3` | `voice.runway.clue.belt` |
+| `public/audio/voice/runway-belt-welcome.mp3` | `voice.runway.belt-welcome` |
+| `public/audio/voice/runway-fb-bags.mp3` | `voice.runway.fb.bags` |
+| `public/audio/voice/runway-fb-penguin.mp3` | `voice.runway.fb.penguin` |
+| `public/audio/voice/runway-fb-tree.mp3` | `voice.runway.fb.tree` |
+| `public/audio/voice/runway-clue-pilot.mp3` | `voice.runway.clue.pilot` |
+| `public/audio/voice/runway-pilot-welcome.mp3` | `voice.runway.pilot-welcome` |
+| `public/audio/voice/runway-fb-cockpit.mp3` | `voice.runway.fb.cockpit` |
+| `public/audio/voice/runway-fb-hold.mp3` | `voice.runway.fb.hold` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -948,7 +958,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Sunny Garage** unique spoken lines are complete on voice-01.
 
-**Windy Runway** is a closed island: whoosh takeoff and five planes. Remaining bag belt, cockpit, pack-bag, and hangar still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Windy Runway** is a closed island: whoosh, five planes, bag belt, and cockpit. Remaining letter P, seats, pack-bag, and hangar still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

@@ -542,6 +542,16 @@ describe("audio registry", () => {
       "/audio/voice/runway-clue-planes.mp3",
       "/audio/voice/runway-fb-five.mp3",
       "/audio/voice/runway-fb-apron.mp3",
+      "/audio/voice/runway-fb-eight.mp3",
+      "/audio/voice/runway-clue-belt.mp3",
+      "/audio/voice/runway-belt-welcome.mp3",
+      "/audio/voice/runway-fb-bags.mp3",
+      "/audio/voice/runway-fb-penguin.mp3",
+      "/audio/voice/runway-fb-tree.mp3",
+      "/audio/voice/runway-clue-pilot.mp3",
+      "/audio/voice/runway-pilot-welcome.mp3",
+      "/audio/voice/runway-fb-cockpit.mp3",
+      "/audio/voice/runway-fb-hold.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1259,6 +1269,8 @@ describe("audio registry", () => {
       "voice.runway.whoosh-welcome",
     );
     expect(narrationClipForText("How many planes?")?.id).toBe("voice.runway.planes-welcome");
+    expect(narrationClipForText("Which belongs on the bag belt?")?.id).toBe("voice.runway.belt-welcome");
+    expect(narrationClipForText("Where does the pilot sit?")?.id).toBe("voice.runway.pilot-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
