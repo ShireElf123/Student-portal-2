@@ -420,6 +420,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/habits-piano-welcome.mp3` | `voice.habits.piano-welcome` |
 | `public/audio/voice/habits-brush-station.mp3` | `voice.habits.brush-station` |
 | `public/audio/voice/habits-brush-line.mp3` | `voice.habits.brush-line` |
+| `public/audio/voice/habits-brush-done.mp3` | `voice.habits.brush-done` |
+| `public/audio/voice/family-area-welcome.mp3` | `voice.family.area-welcome` |
+| `public/audio/voice/family-baby-welcome.mp3` | `voice.family.baby-welcome` |
+| `public/audio/voice/family-clue-baby.mp3` | `voice.family.clue.baby` |
+| `public/audio/voice/family-fb-baby.mp3` | `voice.family.fb.baby` |
+| `public/audio/voice/family-cue-giggle.mp3` | `voice.family.cue.giggle` |
+| `public/audio/voice/family-fb-grandpa.mp3` | `voice.family.fb.grandpa` |
+| `public/audio/voice/family-fb-puppy.mp3` | `voice.family.fb.puppy` |
+| `public/audio/voice/family-rhyme-welcome.mp3` | `voice.family.rhyme-welcome` |
+| `public/audio/voice/family-table-welcome.mp3` | `voice.family.table-welcome` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -822,7 +832,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Feelings & Emotions** unique spoken lines are complete on voice-01.
 
-**Healthy Habits** is a closed island: toothbrush, listening ears, brush-time piano, and brush-teeth line. Remaining land done (`Clean shiny teeth.`) still waits. Missing lines stay quiet. Do not register generic `Yes!`.
+**Healthy Habits** unique spoken lines are complete on voice-01.
+
+**Family & Cozy Home** is the next closed island: area welcome, sweet baby, home rhyme, and set-the-table station. Remaining table land, hang-wash, letter-trace, pour, socks, and comb still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

@@ -186,7 +186,9 @@ function Stage({
             playId === "ten-dots" ||
             playId === "stack-cups" ||
             playId === "feeling-face" ||
-            playId === "brush-teeth",
+            playId === "brush-teeth" ||
+            playId === "set-table" ||
+            playId === "hang-wash",
         }),
       180,
     );
@@ -215,7 +217,9 @@ function Stage({
           playId === "ten-dots" ||
           playId === "stack-cups" ||
           playId === "feeling-face" ||
-          playId === "brush-teeth",
+          playId === "brush-teeth" ||
+          playId === "set-table" ||
+          playId === "hang-wash",
       });
     }
   }, [done, copy.done]);

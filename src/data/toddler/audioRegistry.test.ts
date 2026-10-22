@@ -422,6 +422,16 @@ describe("audio registry", () => {
       "/audio/voice/habits-piano-welcome.mp3",
       "/audio/voice/habits-brush-station.mp3",
       "/audio/voice/habits-brush-line.mp3",
+      "/audio/voice/habits-brush-done.mp3",
+      "/audio/voice/family-area-welcome.mp3",
+      "/audio/voice/family-baby-welcome.mp3",
+      "/audio/voice/family-clue-baby.mp3",
+      "/audio/voice/family-fb-baby.mp3",
+      "/audio/voice/family-cue-giggle.mp3",
+      "/audio/voice/family-fb-grandpa.mp3",
+      "/audio/voice/family-fb-puppy.mp3",
+      "/audio/voice/family-rhyme-welcome.mp3",
+      "/audio/voice/family-table-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1062,6 +1072,23 @@ describe("audio registry", () => {
     ).toBe("voice.habits.ears-welcome");
     expect(narrationClipForText("Play a brush-time song on the piano!")?.id).toBe(
       "voice.habits.piano-welcome",
+    );
+    expect(narrationClipForText("Clean shiny teeth.")?.id).toBe("voice.habits.brush-done");
+  });
+
+  it("maps Family & Cozy Home closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Family & Cozy Home! Baby Siblings, Kind Grandparents & Cozy Bedtime. Let's explore together!",
+      )?.id,
+    ).toBe("voice.family.area-welcome");
+    expect(
+      narrationClipForText(
+        "Can you spot the little baby brother or sister who loves warm gentle cuddles?",
+      )?.id,
+    ).toBe("voice.family.baby-welcome");
+    expect(narrationClipForText("Find the rhyming friends at home!")?.id).toBe(
+      "voice.family.rhyme-welcome",
     );
   });
 
