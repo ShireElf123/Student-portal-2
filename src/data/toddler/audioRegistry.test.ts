@@ -462,6 +462,16 @@ describe("audio registry", () => {
       "/audio/voice/garage-fb-yellow.mp3",
       "/audio/voice/garage-fb-notbus.mp3",
       "/audio/voice/garage-clue-letter.mp3",
+      "/audio/voice/garage-letter-welcome.mp3",
+      "/audio/voice/garage-fb-letter-b.mp3",
+      "/audio/voice/garage-fb-letter-s.mp3",
+      "/audio/voice/garage-fb-letter-m.mp3",
+      "/audio/voice/garage-clue-lights.mp3",
+      "/audio/voice/garage-lights-welcome.mp3",
+      "/audio/voice/garage-fb-blue.mp3",
+      "/audio/voice/garage-fb-green.mp3",
+      "/audio/voice/garage-fb-red.mp3",
+      "/audio/voice/garage-clue-bolts.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1135,6 +1145,8 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Which belongs in the toolbox?")?.id).toBe("voice.garage.tools-welcome");
     expect(narrationClipForText("What colour is the school bus?")?.id).toBe("voice.garage.colour-welcome");
+    expect(narrationClipForText("Which letter starts bus?")?.id).toBe("voice.garage.letter-welcome");
+    expect(narrationClipForText("Red, blue, red, blue, red. Next?")?.id).toBe("voice.garage.lights-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
