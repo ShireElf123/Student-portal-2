@@ -48,7 +48,7 @@ import {
   DynamicSortingChallenge,
 } from "../data/toddler/toddlerReplayEngine";
 import { soundEffects } from "../utils/soundEffects";
-import { speakText, stopSpeaking } from "../utils/speechUtils";
+import { speakText as speakDevice, stopSpeaking, type SpeakOptions } from "../utils/speechUtils";
 import { awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { resolveSkillForActivity } from "../data/activitySkillRegistry";
@@ -269,6 +269,12 @@ export function ToddlerWorldsNavigator({
   const selectedWorld = ALL_TODDLER_WORLDS.find((w) => w.id === selectedWorldId) || null;
   const selectedArea = selectedWorld?.areas.find((a) => a.id === selectedAreaId) || null;
 
+  const speakText = (text: string, options?: SpeakOptions) =>
+    speakDevice(text, {
+      ...options,
+      closedKit: Boolean(options?.closedKit || activeActivity?.areaId === "farm-valley"),
+    });
+
   // Speak activity prompt automatically after view renders
   useEffect(() => {
     if (!activeActivity) return;
@@ -298,6 +304,19 @@ export function ToddlerWorldsNavigator({
 
       // Safari owns its closed voice kit (station welcome + bios + mouth-calls).
       if (activeActivity.type === "animal-safari") {
+        return;
+      }
+
+      // Land rooms speak their own hold/done lines.
+      if (activeActivity.type === "land-play") {
+        return;
+      }
+
+      // Farm Valley letter-trace and pen-count play the station clip inside the toy.
+      if (
+        activeActivity.areaId === "farm-valley" &&
+        (activeActivity.type === "letter-trace" || activeActivity.type === "k1-studio")
+      ) {
         return;
       }
 
@@ -354,7 +373,10 @@ export function ToddlerWorldsNavigator({
     setSortedItems({});
     setCountingAnswered(false);
 
-    speakText(`${area.title}! ${area.tagline}. Let's explore together!`, { pitch: 1.15 });
+    speakText(`${area.title}! ${area.tagline}. Let's explore together!`, {
+      pitch: 1.15,
+      closedKit: area.id === "farm-valley",
+    });
   };
 
   const handleBackToWorldsMap = () => {
@@ -502,7 +524,10 @@ export function ToddlerWorldsNavigator({
         setUnlockedNotice(newlyUnlockedAreas);
       }
 
-      const victoryFeedback = `Hooray! ${chosen.label}! ${chosen.feedback}`;
+      const victoryFeedback =
+        activeActivity.areaId === "farm-valley"
+          ? chosen.feedback
+          : `Hooray! ${chosen.label}! ${chosen.feedback}`;
       speakThenRun(victoryFeedback, 600, () => {
         setShowCelebration(true);
         soundEffects.playFanfare();
@@ -535,7 +560,12 @@ export function ToddlerWorldsNavigator({
           console.error("Failed to record toddler-world response:", error);
         }
       }
-      speakText(`That is ${chosen.label}! ${chosen.feedback} Let's try again!`, { pitch: 1.15 });
+      speakText(
+        activeActivity.areaId === "farm-valley"
+          ? chosen.feedback
+          : `That is ${chosen.label}! ${chosen.feedback} Let's try again!`,
+        { pitch: 1.15 },
+      );
       setTimeout(() => setSelectedOptionId(null), 1200);
     }
   };
@@ -898,6 +928,8 @@ export function ToddlerWorldsNavigator({
               key={activeActivity.id}
               catalog={playTheme.bubbles}
               prompt={`${activeActivity.title}. ${activeActivity.cluePrompt}`}
+              closedKit={activeActivity.areaId === "farm-valley"}
+              welcomeLine={activeActivity.spokenPrompt}
               onAddStar={() => completeWorldToy(activeActivity)}
             />
           </div>
@@ -923,6 +955,8 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerK1Studio
               gameId={activeActivity.studioGameId as K1StudioGameId}
+              closedKit={activeActivity.areaId === "farm-valley"}
+              welcomeLine={activeActivity.spokenPrompt}
               onComplete={() => completeWorldToy(activeActivity)}
             />
           </div>

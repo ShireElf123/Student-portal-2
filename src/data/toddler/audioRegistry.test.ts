@@ -22,6 +22,16 @@ describe("audio registry", () => {
       "/audio/voice/safari-welcome-park.mp3",
       "/audio/voice/safari-welcome-ice-floe.mp3",
       "/audio/voice/safari-welcome-owl-wood.mp3",
+      "/audio/voice/farm-area-welcome.mp3",
+      "/audio/voice/farm-milk-station.mp3",
+      "/audio/voice/farm-milk-line.mp3",
+      "/audio/voice/farm-milk-done.mp3",
+      "/audio/voice/farm-letter-trace.mp3",
+      "/audio/voice/farm-pen-count.mp3",
+      "/audio/voice/farm-quiz-cow.mp3",
+      "/audio/voice/farm-quiz-kitten.mp3",
+      "/audio/voice/farm-quiz-chicks.mp3",
+      "/audio/voice/farm-quiz-horse.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -301,6 +311,16 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Let's walk the pasture safari and listen for animal friends!")?.id,
     ).toBe("voice.safari.welcome.pasture");
+  });
+
+  it("maps Farm Valley closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText("Farm Valley! Sunny Barn, Fluffy Chicks & Grassy Pastures. Let's explore together!")?.id,
+    ).toBe("voice.farm.area-welcome");
+    expect(
+      narrationClipForText("Listen with your ears! Who is chewing sweet clover in the meadow and says Moooo?")?.id,
+    ).toBe("voice.farm.quiz-cow");
+    expect(narrationClipForText("Hold the pail. Fill it to the top.")?.id).toBe("voice.farm.milk-line");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

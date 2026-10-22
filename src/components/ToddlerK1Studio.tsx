@@ -10,9 +10,11 @@ interface ToddlerK1StudioProps {
   onAddStar?: (amount?: number) => void;
   /** Worlds trail: fire once when every round is done — not on the first tap. */
   onComplete?: () => void;
+  closedKit?: boolean;
+  welcomeLine?: string;
 }
 
-export function ToddlerK1Studio({ gameId, onAddStar, onComplete }: ToddlerK1StudioProps) {
+export function ToddlerK1Studio({ gameId, onAddStar, onComplete, closedKit = false, welcomeLine }: ToddlerK1StudioProps) {
   const game = getK1StudioGame(gameId);
   const [roundIndex, setRoundIndex] = useState(0);
   const [locked, setLocked] = useState(false);
@@ -33,16 +35,25 @@ export function ToddlerK1Studio({ gameId, onAddStar, onComplete }: ToddlerK1Stud
   useEffect(() => {
     if (!game || !round || done) return;
     const timer = window.setTimeout(() => {
-      speakText(roundIndex === 0 ? `Welcome to ${game.title}. ${round.spoken}` : round.spoken, {
+      const line =
+        closedKit && roundIndex === 0 && welcomeLine
+          ? welcomeLine
+          : closedKit
+            ? round.spoken
+            : roundIndex === 0
+              ? `Welcome to ${game.title}. ${round.spoken}`
+              : round.spoken;
+      speakText(line, {
         pitch: 1.18,
         rate: 0.94,
+        closedKit,
       });
     }, 220);
     return () => {
       window.clearTimeout(timer);
       stopSpeaking();
     };
-  }, [gameId, roundIndex, done, game, round]);
+  }, [gameId, roundIndex, done, game, round, closedKit, welcomeLine]);
 
   if (!game) {
     return (
@@ -82,7 +93,7 @@ export function ToddlerK1Studio({ gameId, onAddStar, onComplete }: ToddlerK1Stud
     if (!choice.correct) {
       soundEffects.playPop();
       setShakeId(choice.id);
-      speakText("Try another one.", { pitch: 1.1 });
+      speakText("Try another one.", { pitch: 1.1, closedKit });
       window.setTimeout(() => setShakeId(null), 450);
       return;
     }
@@ -91,14 +102,14 @@ export function ToddlerK1Studio({ gameId, onAddStar, onComplete }: ToddlerK1Stud
     soundEffects.playSuccessChime();
     const nextCorrect = correctCount + 1;
     setCorrectCount(nextCorrect);
-    speakText("Yes!", { pitch: 1.28 });
+    speakText("Yes!", { pitch: 1.28, closedKit });
 
     window.setTimeout(() => {
       const nextIndex = roundIndex + 1;
       if (nextIndex >= game.rounds.length) {
         setDone(true);
         soundEffects.playFanfare();
-        speakText(`You finished ${game.title}.`, { pitch: 1.2 });
+        speakText(`You finished ${game.title}.`, { pitch: 1.2, closedKit });
         onAddStar?.(1);
         onComplete?.();
         return;

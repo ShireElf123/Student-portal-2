@@ -165,14 +165,17 @@ function Stage({
 }) {
   const copy = COPY[playId] ?? { title: "This land's room", line: "Pick another Play on the trail.", done: "All done." };
   useEffect(() => {
-    const t = setTimeout(() => speakText(copy.line, { pitch: 1.2, rate: 0.92 }), 180);
+    const t = setTimeout(
+      () => speakText(copy.line, { pitch: 1.2, rate: 0.92, closedKit: playId === "milk-cow" }),
+      180,
+    );
     return () => {
       clearTimeout(t);
       stopSpeaking();
     };
   }, [copy.line]);
   useEffect(() => {
-    if (done) speakText(copy.done, { pitch: 1.22 });
+    if (done) speakText(copy.done, { pitch: 1.22, closedKit: playId === "milk-cow" });
   }, [done, copy.done]);
 
   return (

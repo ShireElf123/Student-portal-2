@@ -20,6 +20,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/safari-welcome-park.mp3` | `voice.safari.welcome.park` |
 | `public/audio/voice/safari-welcome-ice-floe.mp3` | `voice.safari.welcome.ice-floe` |
 | `public/audio/voice/safari-welcome-owl-wood.mp3` | `voice.safari.welcome.owl-wood` |
+| `public/audio/voice/farm-area-welcome.mp3` | `voice.farm.area-welcome` |
+| `public/audio/voice/farm-milk-station.mp3` | `voice.farm.milk-station` |
+| `public/audio/voice/farm-milk-line.mp3` | `voice.farm.milk-line` |
+| `public/audio/voice/farm-milk-done.mp3` | `voice.farm.milk-done` |
+| `public/audio/voice/farm-letter-trace.mp3` | `voice.farm.letter-trace` |
+| `public/audio/voice/farm-pen-count.mp3` | `voice.farm.pen-count` |
+| `public/audio/voice/farm-quiz-cow.mp3` | `voice.farm.quiz-cow` |
+| `public/audio/voice/farm-quiz-kitten.mp3` | `voice.farm.quiz-kitten` |
+| `public/audio/voice/farm-quiz-chicks.mp3` | `voice.farm.quiz-chicks` |
+| `public/audio/voice/farm-quiz-horse.mp3` | `voice.farm.quiz-horse` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -383,6 +393,8 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 ## What stays synthesised
 
 Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are **unchanged**. Every Safari explore call+fun-fact now has a voice-01 MP3. The eight Worlds Safari stations play their own welcome clip instead of the generic Games welcome. Detective praise stays visual + mouth-call. Letter A explore plays the A bio (“A says a like apple…”).
+
+**Farm Valley** (next island after Safari) is a closed kit on the same voice-01: area welcome, milk-cow hold/done, letter-trace and pen-count station prompts, and the four quiz spokenPrompts. Missing Farm lines stay quiet — no device narrator inside Farm Valley. Quiz option feedbacks, counting taps, and studio “Yes!” still wait for later clips.
 
 ## Mute keys (unchanged)
 

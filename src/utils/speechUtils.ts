@@ -173,6 +173,11 @@ export interface SpeakOptions {
   isRetry?: boolean;
   /** Skip the local narrator MP3 and use Web Speech (clip miss / fallback). */
   skipClip?: boolean;
+  /**
+   * Closed island kit (Safari, Farm Valley): play a matching narrator MP3 only.
+   * Missing files stay quiet — never fall through to the device narrator.
+   */
+  closedKit?: boolean;
 }
 
 /** Start indexes of each spoken word, for read-along highlight. */
@@ -470,12 +475,6 @@ class SpeechCoordinator {
   }
 
   public speak(text: string, options?: SpeakOptions): boolean {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      // Headless test or SSR environments - finish silently
-      options?.onEnd?.();
-      return false;
-    }
-
     if (this.isVoiceMuted) {
       options?.onEnd?.();
       return false;
@@ -488,6 +487,51 @@ class SpeechCoordinator {
     }
 
     if (toddlerAudio.isParentPlaying()) {
+      options?.onEnd?.();
+      return false;
+    }
+
+    if (options?.closedKit) {
+      this.stop();
+      const token = ++this.activeToken;
+      if (!options.skipClip) {
+        const clipStarted = toddlerAudio.tryNarrationClip(cleanText, {
+          onStart: () => {
+            if (token !== this.activeToken) return;
+            this.notify(true);
+            try {
+              options?.onStart?.();
+            } catch {
+              // ignore
+            }
+          },
+          onEnd: () => {
+            if (token !== this.activeToken) return;
+            this.notify(false);
+            try {
+              options?.onEnd?.();
+            } catch {
+              // ignore
+            }
+          },
+          onFail: () => {
+            if (token !== this.activeToken) return;
+            this.notify(false);
+            try {
+              options?.onEnd?.();
+            } catch {
+              // ignore
+            }
+          },
+        });
+        if (clipStarted) return true;
+      }
+      options?.onEnd?.();
+      return false;
+    }
+
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      // Headless test or SSR environments - finish silently
       options?.onEnd?.();
       return false;
     }

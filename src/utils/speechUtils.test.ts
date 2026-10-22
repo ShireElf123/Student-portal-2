@@ -261,6 +261,28 @@ describe("narrator clip and parent priority", () => {
     expect(engineLog.some((line) => line.includes("Tap any animal friend to hear their call"))).toBe(true);
   });
 
+  it("closedKit plays a matching clip and never starts Web Speech on a miss", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => Promise.resolve(),
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    const { speakText } = await import("./speechUtils");
+    speakText("Hold the pail. Fill it to the top.", { closedKit: true });
+    await wait(80);
+    expect(engineLog.some((line) => line.startsWith("speak:"))).toBe(false);
+
+    speakText("a farm line with no clip yet", { closedKit: true });
+    await wait(80);
+    expect(engineLog.some((line) => line.includes("a farm line with no clip yet"))).toBe(false);
+  });
+
   it("does not start Web Speech or a narrator clip while parent audio is playing", async () => {
     installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
     vi.resetModules();
