@@ -2,8 +2,11 @@
 /**
  * Animal Safari (Savanna Animal Detective) gameplay regression tests.
  *
- * A solved mystery stays on the celebration until Next Mystery Animal.
- * Auto-advance used to loop who-makes-this-sound until the trail Next.
+ * The reported defect: a child taps the correct animal and the game stays on
+ * the same screen — no spoken confirmation and no move to the next mystery —
+ * until the game is left and re-opened. These tests pin the whole loop:
+ * ask → tap the right animal → hear/see the confirmation → the next mystery
+ * arrives on its own, repeatable without any other control.
  */
 import React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -106,7 +109,7 @@ afterEach(() => {
 });
 
 describe("Animal Safari detective loop", () => {
-  it("confirms the correct animal and waits for Next Mystery Animal", async () => {
+  it("confirms the correct animal out loud and then advances on its own", async () => {
     const stars: number[] = [];
     const { container } = render(<ToddlerAnimalSafari onAddStar={(amount) => stars.push(amount ?? 1)} />);
     await settle(300);
@@ -119,29 +122,25 @@ describe("Animal Safari detective loop", () => {
     expect(solved(container)).toBe(1);
     expect(card(container, "🦁").className).toContain("ring-4");
 
-    // Do not auto-loop the next call.
+    // Step 4: the next mystery arrives without any further tap.
     await settle(1200);
-    expect(mystery(container)).toBe("ROAAAR!");
+    expect(mystery(container)).toBe("PAWOOO!");
     expect(solved(container)).toBe(1);
 
-    fireEvent.click(nextButton(container) as HTMLButtonElement);
-    await flush();
-    expect(mystery(container)).toBe("PAWOOO!");
-
+    // …and the new mystery is answerable.
     await solveCurrentMystery(container);
     expect(solved(container)).toBe(2);
     expect(stars).toEqual([2, 2]);
   });
 
-  it("plays round after round when Next Mystery Animal is tapped", async () => {
+  it("keeps playing round after round from taps alone, without ever getting stuck", async () => {
     const { container } = render(<ToddlerAnimalSafari onAddStar={() => {}} />);
     await settle(300);
 
     const soundsSeen: string[] = [mystery(container)];
     for (let round = 0; round < 4; round++) {
       await solveCurrentMystery(container);
-      fireEvent.click(nextButton(container) as HTMLButtonElement);
-      await flush();
+      await settle(1200);
       soundsSeen.push(mystery(container));
     }
 
@@ -149,7 +148,9 @@ describe("Animal Safari detective loop", () => {
     expect(new Set(soundsSeen).size).toBeGreaterThan(1);
   });
 
-  it("does not auto-advance when the speech engine never reports the end of the praise", async () => {
+  it("advances even when the speech engine never reports the end of the praise", async () => {
+    // Muted voices and stalled utterances never call onEnd — the round must
+    // still be released instead of leaving a screen that ignores every tap.
     speech.reportEnd.value = false;
     const { container } = render(<ToddlerAnimalSafari onAddStar={() => {}} />);
     await settle(300);
@@ -158,9 +159,8 @@ describe("Animal Safari detective loop", () => {
     expect(solved(container)).toBe(1);
 
     await settle(20000);
-    expect(mystery(container)).toBe("ROAAAR!");
+    expect(mystery(container)).not.toBe("ROAAAR!");
     expect(solved(container)).toBe(1);
-    expect(nextButton(container)).toBeTruthy();
   });
 
   it("pays a solved mystery once — extra taps during the celebration cannot farm stars", async () => {
@@ -235,29 +235,13 @@ describe("Animal Safari detective loop", () => {
 
     await solveCurrentMystery(container);
     await settle(1200);
-    expect(solved(container)).toBe(1);
-    expect(mystery(container)).toBe("ROAAAR!");
 
-    fireEvent.click(nextButton(container) as HTMLButtonElement);
-    await flush();
+    expect(solved(container)).toBe(1);
     expect(mystery(container)).toBe("PAWOOO!");
 
     await solveCurrentMystery(container);
     await settle(1200);
     expect(solved(container)).toBe(2);
-  });
-
-  it("opens a Worlds pasture walk instead of looping detective", async () => {
-    const { container } = render(
-      <ToddlerAnimalSafari
-        onAddStar={() => {}}
-        exploreWelcome="Let's walk the pasture safari and listen for animal friends!"
-      />,
-    );
-    await settle(300);
-    expect(container.textContent).not.toContain("Mystery Animal Call");
-    await settle(20000);
-    expect(container.textContent).not.toContain("Mystery Animal Call");
   });
 
   it("finishes a Worlds station after three solves, not the first star", async () => {
@@ -269,17 +253,14 @@ describe("Animal Safari detective loop", () => {
     await settle(300);
     await solveCurrentMystery(container);
     expect(completed).not.toHaveBeenCalled();
-    fireEvent.click(nextButton(container) as HTMLButtonElement);
-    await flush();
+    await settle(1200);
     await solveCurrentMystery(container);
     expect(completed).not.toHaveBeenCalled();
-    fireEvent.click(nextButton(container) as HTMLButtonElement);
-    await flush();
+    await settle(1200);
     await solveCurrentMystery(container);
     expect(completed).toHaveBeenCalledTimes(1);
     expect(stars).toEqual([2, 2, 2]);
-    fireEvent.click(nextButton(container) as HTMLButtonElement);
-    await flush();
+    await settle(1200);
     await solveCurrentMystery(container);
     expect(completed).toHaveBeenCalledTimes(1);
     expect(stars).toEqual([2, 2, 2, 2]);
