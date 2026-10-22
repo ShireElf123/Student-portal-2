@@ -262,6 +262,16 @@ describe("audio registry", () => {
       "/audio/voice/music-rhyme-clip.mp3",
       "/audio/voice/music-rhyme-fold.mp3",
       "/audio/voice/pattern-area-welcome.mp3",
+      "/audio/voice/pattern-beads-welcome.mp3",
+      "/audio/voice/pattern-quiz-fruit.mp3",
+      "/audio/voice/pattern-fb-apple.mp3",
+      "/audio/voice/pattern-fb-donut.mp3",
+      "/audio/voice/pattern-fb-grape.mp3",
+      "/audio/voice/sticker-area-welcome.mp3",
+      "/audio/voice/sticker-match-welcome.mp3",
+      "/audio/voice/sticker-quiz-crown.mp3",
+      "/audio/voice/sticker-fb-crown.mp3",
+      "/audio/voice/sticker-fb-bucket.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -727,6 +737,24 @@ describe("audio registry", () => {
         "Pattern Workshop! AB Patterns, Rhythm Chains & Matching Shapes. Let's explore together!",
       )?.id,
     ).toBe("voice.pattern.area-welcome");
+    expect(narrationClipForText("Flip the workshop beads and find the match!")?.id).toBe(
+      "voice.pattern.beads-welcome",
+    );
+    expect(narrationClipForText("Hooray! Apple comes next! A-B-A-B pattern complete!")?.id).toBe(
+      "voice.pattern.fb.apple",
+    );
+  });
+
+  it("maps Sticker Atelier closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Sticker Atelier! Personal Collections, Badges & Album Glitters. Let's explore together!",
+      )?.id,
+    ).toBe("voice.sticker.area-welcome");
+    expect(
+      narrationClipForText("Buddy worked so hard! Which shiny golden crown marks learning royalty?")?.id,
+    ).toBe("voice.sticker.quiz-crown");
+    expect(narrationClipForText("Flip the stickers and find the twin!")?.id).toBe("voice.sticker.match-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

@@ -260,6 +260,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/music-rhyme-clip.mp3` | `voice.music.rhyme-clip` |
 | `public/audio/voice/music-rhyme-fold.mp3` | `voice.music.rhyme-fold` |
 | `public/audio/voice/pattern-area-welcome.mp3` | `voice.pattern.area-welcome` |
+| `public/audio/voice/pattern-beads-welcome.mp3` | `voice.pattern.beads-welcome` |
+| `public/audio/voice/pattern-quiz-fruit.mp3` | `voice.pattern.quiz-fruit` |
+| `public/audio/voice/pattern-fb-apple.mp3` | `voice.pattern.fb.apple` |
+| `public/audio/voice/pattern-fb-donut.mp3` | `voice.pattern.fb.donut` |
+| `public/audio/voice/pattern-fb-grape.mp3` | `voice.pattern.fb.grape` |
+| `public/audio/voice/sticker-area-welcome.mp3` | `voice.sticker.area-welcome` |
+| `public/audio/voice/sticker-match-welcome.mp3` | `voice.sticker.match-welcome` |
+| `public/audio/voice/sticker-quiz-crown.mp3` | `voice.sticker.quiz-crown` |
+| `public/audio/voice/sticker-fb-crown.mp3` | `voice.sticker.fb.crown` |
+| `public/audio/voice/sticker-fb-bucket.mp3` | `voice.sticker.fb.bucket` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -644,7 +654,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Music Garden** unique spoken lines are complete on voice-01.
 
-**Pattern Workshop** is the next closed island: area welcome only so far. Bead memory station, fruit pattern quiz, and option feedbacks still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Pattern Workshop** unique spoken lines are complete on voice-01.
+
+**Sticker Atelier** is the next closed island: area welcome, sticker match, and crown quiz plus both option feedbacks. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

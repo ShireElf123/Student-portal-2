@@ -84,7 +84,8 @@ function isClosedVoiceIsland(areaId?: string | null) {
     areaId === "treasure-quest" ||
     areaId === "color-studio" ||
     areaId === "music-garden" ||
-    areaId === "pattern-workshop"
+    areaId === "pattern-workshop" ||
+    areaId === "sticker-atelier"
   );
 }
 
