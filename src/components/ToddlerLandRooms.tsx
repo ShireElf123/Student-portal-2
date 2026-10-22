@@ -368,6 +368,62 @@ function PenguinSlide({ onAddStar }: { onAddStar?: () => void }) {
 }
 
 
+function pointerHits(el: HTMLElement | null, clientX: number, clientY: number, pad = 36) {
+  if (!el) return false;
+  const rect = el.getBoundingClientRect();
+  return clientX >= rect.left - pad && clientX <= rect.right + pad && clientY >= rect.top - pad && clientY <= rect.bottom + pad;
+}
+
+function DragFollowGhost({ ghost }: { ghost: { emoji: string; x: number; y: number } | null }) {
+  if (!ghost) return null;
+  return (
+    <span
+      data-testid="drag-ghost"
+      aria-hidden
+      className="pointer-events-none fixed z-[90] select-none text-6xl drop-shadow-[0_8px_12px_rgba(0,0,0,0.35)]"
+      style={{ left: ghost.x, top: ghost.y, transform: "translate(-50%, -50%)" }}
+    >
+      {ghost.emoji}
+    </span>
+  );
+}
+
+type DragToken = string | number;
+
+function bindFollowDrag(
+  dragging: React.MutableRefObject<DragToken | null>,
+  id: DragToken,
+  emoji: string,
+  setGhost: React.Dispatch<React.SetStateAction<{ emoji: string; x: number; y: number } | null>>,
+  drop: (id: DragToken, x: number, y: number) => boolean,
+  alreadyHeld: () => boolean,
+) {
+  return {
+    onPointerDown: (event: React.PointerEvent) => {
+      dragging.current = id;
+      setGhost({ emoji, x: event.clientX, y: event.clientY });
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+    },
+    onPointerMove: (event: React.PointerEvent) => {
+      if (dragging.current !== id) return;
+      setGhost({ emoji, x: event.clientX, y: event.clientY });
+      drop(id, event.clientX, event.clientY);
+    },
+    onPointerUp: (event: React.PointerEvent) => {
+      if (dragging.current !== id) return;
+      const ok = drop(id, event.clientX, event.clientY);
+      dragging.current = null;
+      setGhost(null);
+      if (!ok && !alreadyHeld()) soundEffects.playGentleBoing();
+    },
+    onPointerCancel: () => {
+      if (dragging.current !== id) return;
+      dragging.current = null;
+      setGhost(null);
+    },
+  };
+}
+
 function DragBits({
   playId,
   className,
@@ -387,19 +443,23 @@ function DragBits({
   const [held, setHeld] = useState<string[]>([]);
   const heldRef = useRef<string[]>([]);
   const targetRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef<string | null>(null);
+  const dragging = useRef<DragToken | null>(null);
+  const [ghost, setGhost] = useState<{ emoji: string; x: number; y: number } | null>(null);
 
-  const drop = (id: string, clientX: number, clientY: number) => {
-    if (heldRef.current.includes(id)) return;
-    if (!pointerHits(targetRef.current, clientX, clientY, 48)) return;
-    heldRef.current = [...heldRef.current, id];
+  const drop = (id: DragToken, clientX: number, clientY: number) => {
+    const bitId = String(id);
+    if (heldRef.current.includes(bitId)) return true;
+    if (!pointerHits(targetRef.current, clientX, clientY, 48)) return false;
+    heldRef.current = [...heldRef.current, bitId];
     setHeld(heldRef.current);
     soundEffects.playPop();
     if (heldRef.current.length >= bits.length) finish();
+    return true;
   };
 
   return (
     <Stage playId={playId} done={done} className={className}>
+      <DragFollowGhost ghost={ghost} />
       <div className="flex flex-col items-center gap-6">
         <div ref={targetRef} data-testid={targetTestId} className="min-h-24 min-w-32 text-center text-7xl">
           {targetIdle}
@@ -417,18 +477,7 @@ function DragBits({
                 type="button"
                 data-testid={`bit-${bit.id}`}
                 className="min-h-16 min-w-16 text-5xl touch-none"
-                onPointerDown={(event) => {
-                  dragging.current = bit.id;
-                  event.currentTarget.setPointerCapture?.(event.pointerId);
-                }}
-                onPointerMove={(event) => {
-                  if (dragging.current !== bit.id) return;
-                  drop(bit.id, event.clientX, event.clientY);
-                }}
-                onPointerUp={(event) => {
-                  if (dragging.current === bit.id) drop(bit.id, event.clientX, event.clientY);
-                  dragging.current = null;
-                }}
+                {...bindFollowDrag(dragging, bit.id, bit.emoji, setGhost, drop, () => heldRef.current.includes(bit.id))}
               >
                 {bit.emoji}
               </button>
@@ -460,6 +509,7 @@ function DragToolSpots({
   const hitRef = useRef<string[]>([]);
   const spraying = useRef(false);
   const stageRef = useRef<HTMLDivElement>(null);
+  const [ghost, setGhost] = useState<{ emoji: string; x: number; y: number } | null>(null);
 
   const spray = (clientX: number, clientY: number) => {
     if (!spraying.current || !stageRef.current) return;
@@ -476,6 +526,7 @@ function DragToolSpots({
 
   return (
     <Stage playId={playId} done={done} className={className}>
+      <DragFollowGhost ghost={ghost} />
       <div ref={stageRef} className="space-y-4">
         <button
           type="button"
@@ -483,12 +534,22 @@ function DragToolSpots({
           className="mx-auto mb-4 block min-h-16 rounded-full bg-white/20 px-8 py-4 text-5xl touch-none"
           onPointerDown={(event) => {
             spraying.current = true;
+            setGhost({ emoji: tool, x: event.clientX, y: event.clientY });
             event.currentTarget.setPointerCapture?.(event.pointerId);
             spray(event.clientX, event.clientY);
           }}
-          onPointerMove={(event) => spray(event.clientX, event.clientY)}
+          onPointerMove={(event) => {
+            if (!spraying.current) return;
+            setGhost({ emoji: tool, x: event.clientX, y: event.clientY });
+            spray(event.clientX, event.clientY);
+          }}
           onPointerUp={() => {
             spraying.current = false;
+            setGhost(null);
+          }}
+          onPointerCancel={() => {
+            spraying.current = false;
+            setGhost(null);
           }}
         >
           {tool}
@@ -505,31 +566,29 @@ function DragToolSpots({
   );
 }
 
-function pointerHits(el: HTMLElement | null, clientX: number, clientY: number, pad = 36) {
-  if (!el) return false;
-  const rect = el.getBoundingClientRect();
-  return clientX >= rect.left - pad && clientX <= rect.right + pad && clientY >= rect.top - pad && clientY <= rect.bottom + pad;
-}
-
 function LoadTruck({ onAddStar }: { onAddStar?: () => void }) {
   const { done, finish } = useCredit(onAddStar);
   const [loaded, setLoaded] = useState<number[]>([]);
   const loadedRef = useRef<number[]>([]);
   const bedRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef<number | null>(null);
+  const dragging = useRef<DragToken | null>(null);
+  const [ghost, setGhost] = useState<{ emoji: string; x: number; y: number } | null>(null);
   const crates = [0, 1, 2, 3];
 
-  const drop = (crate: number, clientX: number, clientY: number) => {
-    if (loadedRef.current.includes(crate)) return;
-    if (!pointerHits(bedRef.current, clientX, clientY)) return;
-    loadedRef.current = [...loadedRef.current, crate];
+  const drop = (crate: DragToken, clientX: number, clientY: number) => {
+    const n = Number(crate);
+    if (loadedRef.current.includes(n)) return true;
+    if (!pointerHits(bedRef.current, clientX, clientY)) return false;
+    loadedRef.current = [...loadedRef.current, n];
     setLoaded(loadedRef.current);
     soundEffects.playPop();
     if (loadedRef.current.length >= 4) finish();
+    return true;
   };
 
   return (
     <Stage playId="load-truck" done={done} className="bg-gradient-to-b from-amber-200 via-orange-400 to-stone-800">
+      <DragFollowGhost ghost={ghost} />
       <div className="flex flex-col items-center gap-6">
         <div ref={bedRef} className="text-7xl min-h-24 min-w-40 text-center" data-testid="truck-bed">
           🚚
@@ -547,18 +606,7 @@ function LoadTruck({ onAddStar }: { onAddStar?: () => void }) {
                 type="button"
                 data-testid={`crate-${crate}`}
                 className="min-h-16 min-w-16 text-5xl touch-none"
-                onPointerDown={(event) => {
-                  dragging.current = crate;
-                  event.currentTarget.setPointerCapture?.(event.pointerId);
-                }}
-                onPointerMove={(event) => {
-                  if (dragging.current !== crate) return;
-                  drop(crate, event.clientX, event.clientY);
-                }}
-                onPointerUp={(event) => {
-                  if (dragging.current === crate) drop(crate, event.clientX, event.clientY);
-                  dragging.current = null;
-                }}
+                {...bindFollowDrag(dragging, crate, "📦", setGhost, drop, () => loadedRef.current.includes(crate))}
               >
                 📦
               </button>
@@ -576,6 +624,7 @@ function FireHose({ onAddStar }: { onAddStar?: () => void }) {
   const outRef = useRef<number[]>([]);
   const spraying = useRef(false);
   const stageRef = useRef<HTMLDivElement>(null);
+  const [ghost, setGhost] = useState<{ emoji: string; x: number; y: number } | null>(null);
 
   const spray = (clientX: number, clientY: number) => {
     if (!spraying.current || !stageRef.current) return;
@@ -592,6 +641,7 @@ function FireHose({ onAddStar }: { onAddStar?: () => void }) {
 
   return (
     <Stage playId="fire-hose" done={done} className="bg-gradient-to-b from-rose-400 via-red-700 to-slate-900">
+      <DragFollowGhost ghost={ghost} />
       <div ref={stageRef} className="space-y-4">
         <button
           type="button"
@@ -599,13 +649,23 @@ function FireHose({ onAddStar }: { onAddStar?: () => void }) {
           className="mx-auto mb-4 block min-h-16 rounded-full px-8 py-4 text-xl font-black bg-sky-200 text-sky-950 touch-none"
           onPointerDown={(event) => {
             spraying.current = true;
+            setGhost({ emoji: "💧", x: event.clientX, y: event.clientY });
             event.currentTarget.setPointerCapture?.(event.pointerId);
             soundEffects.playPop();
             spray(event.clientX, event.clientY);
           }}
-          onPointerMove={(event) => spray(event.clientX, event.clientY)}
+          onPointerMove={(event) => {
+            if (!spraying.current) return;
+            setGhost({ emoji: "💧", x: event.clientX, y: event.clientY });
+            spray(event.clientX, event.clientY);
+          }}
           onPointerUp={() => {
             spraying.current = false;
+            setGhost(null);
+          }}
+          onPointerCancel={() => {
+            spraying.current = false;
+            setGhost(null);
           }}
         >
           Hold the hose
@@ -630,19 +690,23 @@ function FruitStack({ onAddStar }: { onAddStar?: () => void }) {
   const [stack, setStack] = useState<string[]>([]);
   const stackRef = useRef<string[]>([]);
   const plateRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef<string | null>(null);
+  const dragging = useRef<DragToken | null>(null);
+  const [ghost, setGhost] = useState<{ emoji: string; x: number; y: number } | null>(null);
 
-  const drop = (fruit: string, clientX: number, clientY: number) => {
-    if (stackRef.current.includes(fruit) || stackRef.current.length >= 5) return;
-    if (!pointerHits(plateRef.current, clientX, clientY)) return;
-    stackRef.current = [...stackRef.current, fruit];
+  const drop = (fruit: DragToken, clientX: number, clientY: number) => {
+    const token = String(fruit);
+    if (stackRef.current.includes(token) || stackRef.current.length >= 5) return true;
+    if (!pointerHits(plateRef.current, clientX, clientY)) return false;
+    stackRef.current = [...stackRef.current, token];
     setStack(stackRef.current);
     soundEffects.playPop();
     if (stackRef.current.length >= 5) finish();
+    return true;
   };
 
   return (
     <Stage playId="fruit-stack" done={done} className="bg-gradient-to-b from-yellow-200 via-lime-400 to-green-800">
+      <DragFollowGhost ghost={ghost} />
       <div className="flex flex-col items-center gap-5">
         <div ref={plateRef} className="min-h-[7rem] min-w-[10rem] flex flex-col-reverse items-center" data-testid="fruit-plate">
           <div className="text-4xl">🍽️</div>
@@ -664,18 +728,7 @@ function FruitStack({ onAddStar }: { onAddStar?: () => void }) {
                 type="button"
                 data-testid={`fruit-${fruit}`}
                 className="min-h-16 min-w-16 text-5xl touch-none"
-                onPointerDown={(event) => {
-                  dragging.current = fruit;
-                  event.currentTarget.setPointerCapture?.(event.pointerId);
-                }}
-                onPointerMove={(event) => {
-                  if (dragging.current !== fruit) return;
-                  drop(fruit, event.clientX, event.clientY);
-                }}
-                onPointerUp={(event) => {
-                  if (dragging.current === fruit) drop(fruit, event.clientX, event.clientY);
-                  dragging.current = null;
-                }}
+                {...bindFollowDrag(dragging, fruit, fruit, setGhost, drop, () => stackRef.current.includes(fruit))}
               >
                 {fruit}
               </button>
@@ -699,23 +752,26 @@ function StampMural({ onAddStar }: { onAddStar?: () => void }) {
   const [marks, setMarks] = useState<{ mark: string; x: number; y: number }[]>([]);
   const marksRef = useRef<{ mark: string; x: number; y: number }[]>([]);
   const wallRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef<string | null>(null);
+  const dragging = useRef<DragToken | null>(null);
+  const [ghost, setGhost] = useState<{ emoji: string; x: number; y: number } | null>(null);
 
-  const drop = (mark: string, clientX: number, clientY: number) => {
-    if (marksRef.current.length >= 6) return;
-    if (!pointerHits(wallRef.current, clientX, clientY, 48)) return;
+  const drop = (mark: DragToken, clientX: number, clientY: number) => {
+    const token = String(mark);
+    if (marksRef.current.length >= 6) return true;
+    if (!pointerHits(wallRef.current, clientX, clientY, 48)) return false;
     const rect = wallRef.current?.getBoundingClientRect();
     const x = rect ? ((clientX - rect.left) / Math.max(1, rect.width)) * 100 : 12 + marksRef.current.length * 12;
     const y = rect ? ((clientY - rect.top) / Math.max(1, rect.height)) * 100 : 20;
-    marksRef.current = [...marksRef.current, { mark, x: Math.min(88, Math.max(6, x)), y: Math.min(78, Math.max(8, y)) }];
+    marksRef.current = [...marksRef.current, { mark: token, x: Math.min(88, Math.max(6, x)), y: Math.min(78, Math.max(8, y)) }];
     setMarks(marksRef.current);
-    dragging.current = null;
     soundEffects.playPop();
     if (marksRef.current.length >= 6) finish();
+    return true;
   };
 
   return (
     <Stage playId="stamp-mural" done={done} className="bg-gradient-to-b from-fuchsia-300 via-purple-600 to-indigo-950">
+      <DragFollowGhost ghost={ghost} />
       <div
         ref={wallRef}
         data-testid="mural-wall"
@@ -735,18 +791,7 @@ function StampMural({ onAddStar }: { onAddStar?: () => void }) {
             type="button"
             data-testid={`stamp-${stamp.id}`}
             className="min-h-16 min-w-16 text-4xl rounded-2xl px-4 py-3 bg-white/20 touch-none"
-            onPointerDown={(event) => {
-              dragging.current = stamp.mark;
-              event.currentTarget.setPointerCapture?.(event.pointerId);
-            }}
-            onPointerMove={(event) => {
-              if (dragging.current !== stamp.mark) return;
-              drop(stamp.mark, event.clientX, event.clientY);
-            }}
-            onPointerUp={(event) => {
-              if (dragging.current === stamp.mark) drop(stamp.mark, event.clientX, event.clientY);
-              dragging.current = null;
-            }}
+            {...bindFollowDrag(dragging, stamp.mark, stamp.mark, setGhost, drop, () => marksRef.current.length >= 6)}
           >
             {stamp.mark}
           </button>
@@ -838,19 +883,23 @@ function Campfire({ onAddStar }: { onAddStar?: () => void }) {
   const [logs, setLogs] = useState<number[]>([]);
   const logsRef = useRef<number[]>([]);
   const pitRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef<number | null>(null);
+  const dragging = useRef<DragToken | null>(null);
+  const [ghost, setGhost] = useState<{ emoji: string; x: number; y: number } | null>(null);
   const [lit, setLit] = useState(false);
 
-  const drop = (log: number, clientX: number, clientY: number) => {
-    if (logsRef.current.includes(log) || logsRef.current.length >= 4) return;
-    if (!pointerHits(pitRef.current, clientX, clientY, 48)) return;
-    logsRef.current = [...logsRef.current, log];
+  const drop = (log: DragToken, clientX: number, clientY: number) => {
+    const n = Number(log);
+    if (logsRef.current.includes(n) || logsRef.current.length >= 4) return true;
+    if (!pointerHits(pitRef.current, clientX, clientY, 48)) return false;
+    logsRef.current = [...logsRef.current, n];
     setLogs(logsRef.current);
     soundEffects.playPop();
+    return true;
   };
 
   return (
     <Stage playId="campfire" done={done} className="bg-gradient-to-b from-sky-900 via-indigo-950 to-black">
+      <DragFollowGhost ghost={ghost} />
       <div className="flex flex-col items-center gap-5 mt-6">
         <div ref={pitRef} className="text-7xl min-h-24 min-w-32 text-center" data-testid="fire-pit">
           {lit ? "🔥" : logs.length ? "🌳".repeat(logs.length) : "⛰️"}
@@ -867,18 +916,7 @@ function Campfire({ onAddStar }: { onAddStar?: () => void }) {
                 type="button"
                 data-testid={`log-${log}`}
                 className="min-h-16 min-w-16 text-5xl touch-none"
-                onPointerDown={(event) => {
-                  dragging.current = log;
-                  event.currentTarget.setPointerCapture?.(event.pointerId);
-                }}
-                onPointerMove={(event) => {
-                  if (dragging.current !== log) return;
-                  drop(log, event.clientX, event.clientY);
-                }}
-                onPointerUp={(event) => {
-                  if (dragging.current === log) drop(log, event.clientX, event.clientY);
-                  dragging.current = null;
-                }}
+                {...bindFollowDrag(dragging, log, "🌳", setGhost, drop, () => logsRef.current.includes(log))}
               >
                 🌳
               </button>
@@ -1231,17 +1269,20 @@ function RocketStars({ onAddStar }: { onAddStar?: () => void }) {
   const [stars, setStars] = useState<number[]>([]);
   const starsRef = useRef<number[]>([]);
   const rocketRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef<number | null>(null);
+  const dragging = useRef<DragToken | null>(null);
+  const [ghost, setGhost] = useState<{ emoji: string; x: number; y: number } | null>(null);
   const holding = useRef(false);
   const fillRef = useRef(6);
   const [fill, setFill] = useState(6);
 
-  const drop = (id: number, clientX: number, clientY: number) => {
-    if (starsRef.current.includes(id)) return;
-    if (!pointerHits(rocketRef.current, clientX, clientY, 48)) return;
-    starsRef.current = [...starsRef.current, id];
+  const drop = (id: DragToken, clientX: number, clientY: number) => {
+    const n = Number(id);
+    if (starsRef.current.includes(n)) return true;
+    if (!pointerHits(rocketRef.current, clientX, clientY, 48)) return false;
+    starsRef.current = [...starsRef.current, n];
     setStars(starsRef.current);
     soundEffects.playPop();
+    return true;
   };
 
   useEffect(() => {
@@ -1260,6 +1301,7 @@ function RocketStars({ onAddStar }: { onAddStar?: () => void }) {
 
   return (
     <Stage playId="rocket-stars" done={done} className="bg-gradient-to-b from-indigo-900 via-violet-800 to-black">
+      <DragFollowGhost ghost={ghost} />
       <div className="flex flex-col items-center gap-5 mt-4">
         <div ref={rocketRef} className="text-7xl min-h-24 min-w-24 text-center" data-testid="rocket">
           {stars.length >= 5 ? "🚀" : "🛰️"}
@@ -1275,18 +1317,7 @@ function RocketStars({ onAddStar }: { onAddStar?: () => void }) {
                 type="button"
                 data-testid={`star-${id}`}
                 className="min-h-14 min-w-14 text-4xl touch-none"
-                onPointerDown={(event) => {
-                  dragging.current = id;
-                  event.currentTarget.setPointerCapture?.(event.pointerId);
-                }}
-                onPointerMove={(event) => {
-                  if (dragging.current !== id) return;
-                  drop(id, event.clientX, event.clientY);
-                }}
-                onPointerUp={(event) => {
-                  if (dragging.current === id) drop(id, event.clientX, event.clientY);
-                  dragging.current = null;
-                }}
+                {...bindFollowDrag(dragging, id, "⭐", setGhost, drop, () => starsRef.current.includes(id))}
               >
                 ⭐
               </button>
@@ -1323,19 +1354,23 @@ function TenDots({ onAddStar }: { onAddStar?: () => void }) {
   const [filled, setFilled] = useState<number[]>([]);
   const filledRef = useRef<number[]>([]);
   const frameRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef<number | null>(null);
+  const dragging = useRef<DragToken | null>(null);
+  const [ghost, setGhost] = useState<{ emoji: string; x: number; y: number } | null>(null);
 
-  const drop = (counter: number, clientX: number, clientY: number) => {
-    if (filledRef.current.includes(counter) || filledRef.current.length >= 10) return;
-    if (!pointerHits(frameRef.current, clientX, clientY, 48)) return;
-    filledRef.current = [...filledRef.current, counter];
+  const drop = (counter: DragToken, clientX: number, clientY: number) => {
+    const n = Number(counter);
+    if (filledRef.current.includes(n) || filledRef.current.length >= 10) return true;
+    if (!pointerHits(frameRef.current, clientX, clientY, 48)) return false;
+    filledRef.current = [...filledRef.current, n];
     setFilled(filledRef.current);
     soundEffects.playPop();
     if (filledRef.current.length >= 10) finish();
+    return true;
   };
 
   return (
     <Stage playId="ten-dots" done={done} className="bg-gradient-to-b from-lime-200 via-emerald-400 to-teal-800">
+      <DragFollowGhost ghost={ghost} />
       <div className="flex flex-col items-center gap-6 mt-4">
         <div ref={frameRef} data-testid="ten-frame" className="grid grid-cols-5 gap-2 rounded-3xl bg-white/20 p-3">
           {Array.from({ length: 10 }, (_, i) => (
@@ -1356,18 +1391,7 @@ function TenDots({ onAddStar }: { onAddStar?: () => void }) {
                 type="button"
                 data-testid={`counter-${i}`}
                 className="h-12 w-12 rounded-full bg-amber-300 border-4 border-white touch-none"
-                onPointerDown={(event) => {
-                  dragging.current = i;
-                  event.currentTarget.setPointerCapture?.(event.pointerId);
-                }}
-                onPointerMove={(event) => {
-                  if (dragging.current !== i) return;
-                  drop(i, event.clientX, event.clientY);
-                }}
-                onPointerUp={(event) => {
-                  if (dragging.current === i) drop(i, event.clientX, event.clientY);
-                  dragging.current = null;
-                }}
+                {...bindFollowDrag(dragging, i, "🟡", setGhost, drop, () => filledRef.current.includes(i))}
               />
             )
           )}
@@ -1502,19 +1526,23 @@ function HangWash({ onAddStar }: { onAddStar?: () => void }) {
   const [hung, setHung] = useState<string[]>([]);
   const hungRef = useRef<string[]>([]);
   const lineRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef<string | null>(null);
+  const dragging = useRef<DragToken | null>(null);
+  const [ghost, setGhost] = useState<{ emoji: string; x: number; y: number } | null>(null);
 
-  const drop = (id: string, clientX: number, clientY: number) => {
-    if (hungRef.current.includes(id)) return;
-    if (!pointerHits(lineRef.current, clientX, clientY, 56)) return;
-    hungRef.current = [...hungRef.current, id];
+  const drop = (id: DragToken, clientX: number, clientY: number) => {
+    const bitId = String(id);
+    if (hungRef.current.includes(bitId)) return true;
+    if (!pointerHits(lineRef.current, clientX, clientY, 56)) return false;
+    hungRef.current = [...hungRef.current, bitId];
     setHung(hungRef.current);
     soundEffects.playPop();
     if (hungRef.current.length >= bits.length) finish();
+    return true;
   };
 
   return (
     <Stage playId="hang-wash" done={done} className="bg-gradient-to-b from-sky-300 via-lime-300 to-amber-700">
+      <DragFollowGhost ghost={ghost} />
       <div className="flex flex-col items-center gap-6">
         <div
           ref={lineRef}
@@ -1539,18 +1567,7 @@ function HangWash({ onAddStar }: { onAddStar?: () => void }) {
                 type="button"
                 data-testid={`wash-${bit.id}`}
                 className="min-h-16 min-w-16 text-5xl touch-none"
-                onPointerDown={(event) => {
-                  dragging.current = bit.id;
-                  event.currentTarget.setPointerCapture?.(event.pointerId);
-                }}
-                onPointerMove={(event) => {
-                  if (dragging.current !== bit.id) return;
-                  drop(bit.id, event.clientX, event.clientY);
-                }}
-                onPointerUp={(event) => {
-                  if (dragging.current === bit.id) drop(bit.id, event.clientX, event.clientY);
-                  dragging.current = null;
-                }}
+                {...bindFollowDrag(dragging, bit.id, bit.emoji, setGhost, drop, () => hungRef.current.includes(bit.id))}
               >
                 {bit.emoji}
               </button>

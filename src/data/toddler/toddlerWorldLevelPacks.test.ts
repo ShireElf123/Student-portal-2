@@ -19,6 +19,18 @@ describe("toddler world level trails", () => {
     expect(total).toBeGreaterThanOrEqual(300);
   });
 
+  it("does not ship quiz-shaped story-adventure rows without a story id", () => {
+    const orphanQuizzes = ALL_TODDLER_WORLDS.flatMap((world) =>
+      world.areas.flatMap((area) =>
+        area.activities
+          .filter((activity) => activity.type === "story-adventure" && !activity.storyAdventureId)
+          .map((activity) => activity.id),
+      ),
+    );
+    expect(orphanQuizzes).toEqual([]);
+    expect(ALL_TODDLER_WORLDS.flatMap((world) => world.areas.flatMap((area) => area.activities)).some((activity) => activity.id === "act-story-farm-who-gate" && activity.type === "clue-detective")).toBe(true);
+  });
+
   it("keeps every packed level id unique and skill-mapped or honestly unmapped", () => {
     const ids = ALL_TODDLER_WORLDS.flatMap((world) => world.areas.flatMap((area) => area.activities.map((activity) => activity.id)));
     expect(new Set(ids).size).toBe(ids.length);

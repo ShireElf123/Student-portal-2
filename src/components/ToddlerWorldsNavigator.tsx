@@ -805,6 +805,7 @@ export function ToddlerWorldsNavigator({
               mixFlavor={playTheme.mix}
               targetColor={mixTargetFromActivity(activeActivity)}
               spokenPrompt={activeActivity.spokenPrompt}
+              missionSurface="off"
               onAddStar={() => completeWorldToy(activeActivity)}
             />
           </div>
@@ -822,6 +823,7 @@ export function ToddlerWorldsNavigator({
             </div>
             <ToddlerMusicPiano
               songIds={playTheme.songIds}
+              missionSurface="off"
               onAddStar={() => {
                 completeWorldToy(activeActivity);
               }}
@@ -860,6 +862,7 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerRhymeGame
               questions={playTheme.rhymes}
+              missionSurface="off"
               onAddStar={(amount) => onAddStar(amount ?? 1)}
               onComplete={() => completeWorldToy(activeActivity)}
             />
@@ -1181,7 +1184,7 @@ export function ToddlerWorldsNavigator({
                       </span>
                     ))}
                   {Object.values(sortedItems).filter((v) => v === "A").length === 0 && (
-                    <span className="text-xs opacity-50 italic">Put matching friends here</span>
+                    <span className="text-xs opacity-50 italic">Tap a home for this friend</span>
                   )}
                 </div>
               </div>
@@ -1213,7 +1216,7 @@ export function ToddlerWorldsNavigator({
                       </span>
                     ))}
                   {Object.values(sortedItems).filter((v) => v === "B").length === 0 && (
-                    <span className="text-xs opacity-50 italic">Put matching friends here</span>
+                    <span className="text-xs opacity-50 italic">Tap a home for this friend</span>
                   )}
                 </div>
               </div>

@@ -1554,7 +1554,7 @@ const PACKS: Record<string, PackedActivity[]> = {
   {
       id: "act-story-farm-who-gate",
       title: "Who Opened the Gate",
-      type: "story-adventure",
+      type: "clue-detective",
       learningObjective: "Who in the farm story",
       difficulty: 1,
       clueType: "riddle",
@@ -1574,7 +1574,7 @@ const PACKS: Record<string, PackedActivity[]> = {
   {
       id: "act-story-farm-where-egg",
       title: "Where the Egg Went",
-      type: "story-adventure",
+      type: "clue-detective",
       learningObjective: "Where in the farm story",
       difficulty: 1,
       clueType: "riddle",
@@ -1614,7 +1614,7 @@ const PACKS: Record<string, PackedActivity[]> = {
   {
       id: "act-story-farm-next-beat",
       title: "What Happened Next",
-      type: "story-adventure",
+      type: "clue-detective",
       learningObjective: "Sequence",
       difficulty: 2,
       clueType: "riddle",
@@ -1674,7 +1674,7 @@ const PACKS: Record<string, PackedActivity[]> = {
   {
       id: "act-story-farm-why-gate",
       title: "Why the Gate",
-      type: "story-adventure",
+      type: "clue-detective",
       learningObjective: "Why in the farm tale",
       difficulty: 2,
       clueType: "riddle",
@@ -1696,7 +1696,7 @@ const PACKS: Record<string, PackedActivity[]> = {
   {
       id: "act-story-space-who-waved",
       title: "Who Waved",
-      type: "story-adventure",
+      type: "clue-detective",
       learningObjective: "Who first",
       difficulty: 1,
       clueType: "riddle",
@@ -1716,7 +1716,7 @@ const PACKS: Record<string, PackedActivity[]> = {
   {
       id: "act-story-space-where-sock",
       title: "Lost Sock",
-      type: "story-adventure",
+      type: "clue-detective",
       learningObjective: "Where",
       difficulty: 1,
       clueType: "riddle",
@@ -1756,7 +1756,7 @@ const PACKS: Record<string, PackedActivity[]> = {
   {
       id: "act-story-space-colour",
       title: "Helmet Colour",
-      type: "story-adventure",
+      type: "clue-detective",
       learningObjective: "Detail colour",
       difficulty: 2,
       clueType: "riddle",
@@ -1796,7 +1796,7 @@ const PACKS: Record<string, PackedActivity[]> = {
   {
       id: "act-story-space-home",
       title: "Where They Sleep",
-      type: "story-adventure",
+      type: "clue-detective",
       learningObjective: "Ending place",
       difficulty: 1,
       clueType: "riddle",
@@ -1816,7 +1816,7 @@ const PACKS: Record<string, PackedActivity[]> = {
   {
       id: "act-story-space-why-cabin",
       title: "Why the Cabin",
-      type: "story-adventure",
+      type: "clue-detective",
       learningObjective: "Why in the space tale",
       difficulty: 2,
       clueType: "riddle",
@@ -1838,7 +1838,7 @@ const PACKS: Record<string, PackedActivity[]> = {
   {
       id: "act-story-ocean-who-lamp",
       title: "Who Held the Lamp",
-      type: "story-adventure",
+      type: "clue-detective",
       learningObjective: "Who",
       difficulty: 1,
       clueType: "riddle",
@@ -1858,7 +1858,7 @@ const PACKS: Record<string, PackedActivity[]> = {
   {
       id: "act-story-ocean-where-pearl",
       title: "Pearl Place",
-      type: "story-adventure",
+      type: "clue-detective",
       learningObjective: "Where",
       difficulty: 1,
       clueType: "riddle",
@@ -1918,7 +1918,7 @@ const PACKS: Record<string, PackedActivity[]> = {
   {
       id: "act-story-ocean-dark",
       title: "Why the Lamp",
-      type: "story-adventure",
+      type: "clue-detective",
       learningObjective: "Why",
       difficulty: 2,
       clueType: "riddle",
@@ -1958,7 +1958,7 @@ const PACKS: Record<string, PackedActivity[]> = {
   {
       id: "act-story-ocean-why-shell",
       title: "Why the Shell",
-      type: "story-adventure",
+      type: "clue-detective",
       learningObjective: "Why in the sea tale",
       difficulty: 2,
       clueType: "riddle",

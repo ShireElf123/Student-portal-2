@@ -87,9 +87,10 @@ const SONGS: Song[] = [
 interface ToddlerMusicPianoProps {
   onAddStar?: (amount?: number) => void;
   songIds?: string[];
+  missionSurface?: "games" | "off";
 }
 
-export function ToddlerMusicPiano({ onAddStar, songIds }: ToddlerMusicPianoProps) {
+export function ToddlerMusicPiano({ onAddStar, songIds, missionSurface = "games" }: ToddlerMusicPianoProps) {
   const songCatalog = songIds && songIds.length > 0
     ? SONGS.filter((song) => songIds.includes(song.id))
     : SONGS;
@@ -171,7 +172,7 @@ export function ToddlerMusicPiano({ onAddStar, songIds }: ToddlerMusicPianoProps
           awardXP(35, `Played ${selectedSong.title}`);
           if (onAddStar) onAddStar(2);
           try {
-            payDailyMissionIfMatches("games", "rainbow-piano");
+            if (missionSurface === "games") payDailyMissionIfMatches("games", "rainbow-piano");
           } catch {
             // ignore
           }

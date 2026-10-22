@@ -36,9 +36,11 @@ const MODES: { id: Mode; label: string; emoji: string }[] = [
   { id: "quiet", label: "Quiet", emoji: "⏳" },
 ];
 
-function TimerBar({ seconds, running, onDone }: { seconds: number; running: boolean; onDone: () => void }) {
+export function TimerBar({ seconds, running, onDone }: { seconds: number; running: boolean; onDone: () => void }) {
   const [left, setLeft] = useState(seconds);
   const fired = React.useRef(false);
+  const onDoneRef = React.useRef(onDone);
+  onDoneRef.current = onDone;
 
   useEffect(() => {
     fired.current = false;
@@ -49,12 +51,12 @@ function TimerBar({ seconds, running, onDone }: { seconds: number; running: bool
     if (!running || fired.current) return;
     if (left <= 0) {
       fired.current = true;
-      onDone();
+      onDoneRef.current();
       return;
     }
     const id = window.setTimeout(() => setLeft((n) => n - 1), 1000);
     return () => window.clearTimeout(id);
-  }, [running, left, onDone]);
+  }, [running, left]);
 
   const pct = Math.max(0, Math.min(100, (left / seconds) * 100));
   return (

@@ -303,7 +303,7 @@ export function recordPhonicsLetterTapped(letter: string): void {
 export function recordCountingCardTapped(num: number): void {
   const result = recordDailySetMember("counting-cards", String(num));
   if (result.count >= 3) {
-    completeActiveMissionIfMatches("counting");
+    payDailyMissionIfMatches("counting");
   }
 }
 

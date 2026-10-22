@@ -382,6 +382,8 @@ export interface AssessmentResult {
   masteredCount: number;
   developingCount: number;
   needsPracticeCount: number;
+  /** Items left blank or explicitly skipped — never counted as developing. */
+  unansweredCount?: number;
   starsAwarded: number;
   feedbackSummary: string;
   nextLearningStep: string;

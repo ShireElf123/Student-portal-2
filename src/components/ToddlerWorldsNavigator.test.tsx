@@ -224,6 +224,35 @@ describe("world level trail stations", () => {
     expect(container.textContent).toContain("Farm Valley");
   });
 
+  it("opens a farm story clue as a tap quiz, not an unwired adventure", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator
+        onAddStar={() => {}}
+        starsCount={0}
+        initialWorldId="world:story-world:barnyard-tales:act-story-farm-who-gate"
+      />,
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Who Opened the Gate");
+    expect(container.textContent).not.toContain("Step 1 of");
+    fireEvent.click(optionButton(container, "Pip"));
+    await flush(2000);
+    expect(container.textContent).toContain("You did it!");
+  });
+
+  it("asks the child to tap a sorting home, not put items by dragging", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator
+        onAddStar={() => {}}
+        starsCount={0}
+        initialWorldId="world:animal-world:farm-valley:act-farm-sort-feed"
+      />,
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Tap a home for this friend");
+    expect(container.textContent).not.toContain("Put matching friends here");
+  });
+
   it("plays a planted toy without the quiz overlay", async () => {
     const { container } = render(
       <ToddlerWorldsNavigator

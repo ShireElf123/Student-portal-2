@@ -194,9 +194,13 @@ describe("discovery helpers that games pay through", () => {
     // Counting uses the same distinct-member rule.
     const before = getCompletedDailyMissionIds().length;
     // Same threshold as phonics: three distinct members. Repeats (the extra 1) do not count.
+    const starsBefore = getGamificationState().starsCount;
     [1, 1, 2, 3].forEach(recordCountingCardTapped);
     expect(getCompletedDailyMissionIds().length).toBe(
       before + (hasCountingMission ? 1 : 0)
     );
+    if (hasCountingMission) {
+      expect(getGamificationState().starsCount).toBeGreaterThan(starsBefore);
+    }
   });
 });

@@ -203,11 +203,14 @@ export function ToddlerColorLab({
   mixFlavor,
   targetColor,
   spokenPrompt,
+  missionSurface = "games",
 }: {
   onAddStar?: (amt?: number) => void;
   mixFlavor?: MixFlavor;
   targetColor?: string;
   spokenPrompt?: string;
+  /** Worlds play already pays a worlds mission — do not also pay Games. */
+  missionSurface?: "games" | "off";
 }) {
   const recipes: Record<string, MixResult> = {
     "red+yellow": { ...RECIPES["red+yellow"], ...(mixFlavor?.orange ?? {}) },
@@ -275,7 +278,7 @@ export function ToddlerColorLab({
             rewardPaid.current = true;
             onAddStar?.(1);
             try {
-              payDailyMissionIfMatches("games", "color-magic");
+              if (missionSurface === "games") payDailyMissionIfMatches("games", "color-magic");
             } catch {
               // ignore
             }

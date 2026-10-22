@@ -219,10 +219,12 @@ export function ToddlerRhymeGame({
   onAddStar,
   onComplete,
   questions,
+  missionSurface = "games",
 }: {
   onAddStar?: (amt?: number) => void;
   onComplete?: () => void;
   questions?: RhymeQuestion[];
+  missionSurface?: "games" | "off";
 }) {
   const deck = questions && questions.length >= 3 ? questions : RHYME_QUESTIONS;
   const [index, setIndex] = useState(0);
@@ -305,7 +307,7 @@ export function ToddlerRhymeGame({
           else awardStars(3);
           onComplete?.();
           try {
-            payDailyMissionIfMatches("games", "rhyme-time");
+            if (missionSurface === "games") payDailyMissionIfMatches("games", "rhyme-time");
           } catch {
             // ignore
           }
