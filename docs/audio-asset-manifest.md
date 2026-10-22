@@ -610,6 +610,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/harbour-anchor-welcome.mp3` | `voice.harbour.anchor-welcome` |
 | `public/audio/voice/harbour-fb-bed.mp3` | `voice.harbour.fb.bed` |
 | `public/audio/voice/harbour-fb-bakery.mp3` | `voice.harbour.fb.bakery` |
+| `public/audio/voice/harbour-fb-attic.mp3` | `voice.harbour.fb.attic` |
+| `public/audio/voice/harbour-bubble-welcome.mp3` | `voice.harbour.bubble-welcome` |
+| `public/audio/voice/harbour-coil-welcome.mp3` | `voice.harbour.coil-welcome` |
+| `public/audio/voice/harbour-coil-line.mp3` | `voice.harbour.coil-line` |
+| `public/audio/voice/harbour-coil-done.mp3` | `voice.harbour.coil-done` |
+| `public/audio/voice/harbour-scoop-welcome.mp3` | `voice.harbour.scoop-welcome` |
+| `public/audio/voice/flower-area-welcome.mp3` | `voice.flower.area-welcome` |
+| `public/audio/voice/flower-spots-welcome.mp3` | `voice.flower.spots-welcome` |
+| `public/audio/voice/flower-clue-spots.mp3` | `voice.flower.clue.spots` |
+| `public/audio/voice/flower-fb-ladybird.mp3` | `voice.flower.fb.ladybird` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -1020,7 +1030,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Windy Runway** unique spoken lines are complete on voice-01.
 
-**Busy Harbour** is a closed island: ferry horn through crate stacks and harbour-bed. Remaining attic, coil-rope, bubbles, and scoop still wait. The ship-letter draft clue stays silent. Do not register generic `Yes!`.
+**Busy Harbour** unique spoken lines are complete on voice-01. The ship-letter draft clue stays silent.
+
+**Sunny Flower Bed** is a closed island: area welcome and spotty ladybird. Remaining whale/bus, bee buzz, and firefly jar still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 

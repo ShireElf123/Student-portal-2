@@ -612,6 +612,16 @@ describe("audio registry", () => {
       "/audio/voice/harbour-anchor-welcome.mp3",
       "/audio/voice/harbour-fb-bed.mp3",
       "/audio/voice/harbour-fb-bakery.mp3",
+      "/audio/voice/harbour-fb-attic.mp3",
+      "/audio/voice/harbour-bubble-welcome.mp3",
+      "/audio/voice/harbour-coil-welcome.mp3",
+      "/audio/voice/harbour-coil-line.mp3",
+      "/audio/voice/harbour-coil-done.mp3",
+      "/audio/voice/harbour-scoop-welcome.mp3",
+      "/audio/voice/flower-area-welcome.mp3",
+      "/audio/voice/flower-spots-welcome.mp3",
+      "/audio/voice/flower-clue-spots.mp3",
+      "/audio/voice/flower-fb-ladybird.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1357,6 +1367,18 @@ describe("audio registry", () => {
     expect(narrationClipForText("What rhymes with boat?")?.id).toBe("voice.harbour.rhyme-welcome");
     expect(narrationClipForText("Two and five crates. How many?")?.id).toBe("voice.harbour.crates-welcome");
     expect(narrationClipForText("Where does the anchor rest?")?.id).toBe("voice.harbour.anchor-welcome");
+    expect(narrationClipForText("The dock is tidy.")?.id).toBe("voice.harbour.coil-done");
+  });
+
+  it("maps Sunny Flower Bed closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Sunny Flower Bed! Bees, ladybirds and petal paths. Let's explore together!",
+      )?.id,
+    ).toBe("voice.flower.area-welcome");
+    expect(narrationClipForText("Who has black spots on a red back?")?.id).toBe(
+      "voice.flower.spots-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
