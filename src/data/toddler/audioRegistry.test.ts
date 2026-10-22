@@ -282,6 +282,16 @@ describe("audio registry", () => {
       "/audio/voice/barn-letter-trace.mp3",
       "/audio/voice/barn-pancake-welcome.mp3",
       "/audio/voice/barn-safari-welcome.mp3",
+      "/audio/voice/barn-story-chicks.mp3",
+      "/audio/voice/barn-story-horse.mp3",
+      "/audio/voice/barn-story-tractor.mp3",
+      "/audio/voice/barn-story-fb-cow.mp3",
+      "/audio/voice/barn-story-fb-rooster.mp3",
+      "/audio/voice/barn-story-fb-pig.mp3",
+      "/audio/voice/barn-story-fb-one.mp3",
+      "/audio/voice/barn-story-fb-three.mp3",
+      "/audio/voice/barn-story-fb-five.mp3",
+      "/audio/voice/barn-story-fb-apple.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -779,6 +789,12 @@ describe("audio registry", () => {
       )?.id,
     ).toBe("voice.barn.story-open");
     expect(narrationClipForText("Tell the tale. Tap each stone in order.")?.id).toBe("voice.barn.stones-line");
+    expect(
+      narrationClipForText("Peep peep peep! Can you help Mother Hen count her sweet baby chicks?")?.id,
+    ).toBe("voice.barn.story-chicks");
+    expect(narrationClipForText("Yes! 1, 2, 3 fluffy yellow chicks! Good counting!")?.id).toBe(
+      "voice.barn.story-fb.three",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

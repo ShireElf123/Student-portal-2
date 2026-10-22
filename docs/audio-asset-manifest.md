@@ -280,6 +280,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/barn-letter-trace.mp3` | `voice.barn.letter-trace` |
 | `public/audio/voice/barn-pancake-welcome.mp3` | `voice.barn.pancake-welcome` |
 | `public/audio/voice/barn-safari-welcome.mp3` | `voice.barn.safari-welcome` |
+| `public/audio/voice/barn-story-chicks.mp3` | `voice.barn.story-chicks` |
+| `public/audio/voice/barn-story-horse.mp3` | `voice.barn.story-horse` |
+| `public/audio/voice/barn-story-tractor.mp3` | `voice.barn.story-tractor` |
+| `public/audio/voice/barn-story-fb-cow.mp3` | `voice.barn.story-fb.cow` |
+| `public/audio/voice/barn-story-fb-rooster.mp3` | `voice.barn.story-fb.rooster` |
+| `public/audio/voice/barn-story-fb-pig.mp3` | `voice.barn.story-fb.pig` |
+| `public/audio/voice/barn-story-fb-one.mp3` | `voice.barn.story-fb.one` |
+| `public/audio/voice/barn-story-fb-three.mp3` | `voice.barn.story-fb.three` |
+| `public/audio/voice/barn-story-fb-five.mp3` | `voice.barn.story-fb.five` |
+| `public/audio/voice/barn-story-fb-apple.mp3` | `voice.barn.story-fb.apple` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -668,7 +678,7 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Sticker Atelier** unique spoken lines are complete on voice-01.
 
-**Barnyard Tales** is the next closed island: area welcome, Buddy farm story open, story stones, letter-trace, pancake station, and tale safari prompt. Farm/pancake step lines still wait. Missing lines stay quiet. Do not register generic `Yes!`.
+**Barnyard Tales** is a closed island: area welcome, Buddy farm story open, chicks/horse/tractor steps, cow through apple feedbacks, story stones, letter-trace, pancake station, and tale safari. Remaining horse/tractor option lines and Pancake Saturday steps still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
