@@ -662,6 +662,16 @@ describe("audio registry", () => {
       "/audio/voice/flower-fb-five.mp3",
       "/audio/voice/flower-fb-groups.mp3",
       "/audio/voice/flower-fb-both-blooms.mp3",
+      "/audio/voice/pond-area-welcome.mp3",
+      "/audio/voice/pond-skims-welcome.mp3",
+      "/audio/voice/pond-clue-skims.mp3",
+      "/audio/voice/pond-fb-dragonfly.mp3",
+      "/audio/voice/pond-fb-hen.mp3",
+      "/audio/voice/pond-fb-truck.mp3",
+      "/audio/voice/pond-dew-station.mp3",
+      "/audio/voice/pond-dew-line.mp3",
+      "/audio/voice/pond-dew-done.mp3",
+      "/audio/voice/pond-plant-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1454,6 +1464,26 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("3 bees on this bloom, 2 on that bloom. How many?")?.id).toBe(
       "voice.flower.clue.blooms",
+    );
+  });
+
+  it("maps Garden Pond closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Garden Pond! Skaters, dragonflies and lily pads. Let's explore together!",
+      )?.id,
+    ).toBe("voice.pond.area-welcome");
+    expect(narrationClipForText("Who skims the pond with four wings?")?.id).toBe(
+      "voice.pond.skims-welcome",
+    );
+    expect(narrationClipForText("Long body, four bright wings skimming the pond. Who?")?.id).toBe(
+      "voice.pond.clue.skims",
+    );
+    expect(narrationClipForText("Tap the dew on the web!")?.id).toBe("voice.pond.dew-station");
+    expect(narrationClipForText("Drag the drops along the web.")?.id).toBe("voice.pond.dew-line");
+    expect(narrationClipForText("The web sparkles.")?.id).toBe("voice.pond.dew-done");
+    expect(narrationClipForText("Water the plant. There is no wrong way!")?.id).toBe(
+      "voice.pond.plant-welcome",
     );
   });
 
