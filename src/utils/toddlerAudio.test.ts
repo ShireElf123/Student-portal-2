@@ -74,11 +74,11 @@ describe("toddlerAudio mute", () => {
 });
 
 describe("toddlerAudio missing files", () => {
-  it("returns false and does not throw when there is no Audio factory node", () => {
+  it("does not throw when the animal mp3 cannot start (synth fallback)", () => {
     setAudioFactoryForTests(() => {
       throw new Error("no element");
     });
-    expect(toddlerAudio.playSafariAnimalSfx("duck")).toBe(false);
+    expect(() => toddlerAudio.playSafariAnimalSfx("duck")).not.toThrow();
     expect(toddlerAudio.tryNarrationClip(SAFARI_EXPLORE_WELCOME_PROMPT)).toBe(false);
   });
 

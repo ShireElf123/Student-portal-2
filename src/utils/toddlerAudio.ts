@@ -145,8 +145,15 @@ class ToddlerAudioManager {
 
   playSafariAnimalSfx(animalId: string): boolean {
     const asset = animalClipForFriendId(animalId);
-    if (!asset) return false;
-    return this.playSfxAsset(asset);
+    if (!asset) return soundEffects.playAnimalCall(animalId);
+    if (soundEffects.isMuted()) return false;
+    const started = this.playSfxAsset(asset, {
+      onFail: () => {
+        soundEffects.playAnimalCall(animalId);
+      },
+    });
+    if (started) return true;
+    return soundEffects.playAnimalCall(animalId);
   }
 
   private playVoiceAsset(asset: AudioAsset, options?: ClipPlayOptions): boolean {

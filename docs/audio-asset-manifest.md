@@ -1,6 +1,6 @@
 # Toddler audio asset manifest (Phase 1 sample pack)
 
-The Safari explore welcome MP3 is in the repo (Arena spoken clip). Duck / cow / bird still need Pixabay downloads. Missing files fail closed and fall back to Web Speech / Web Audio synth.
+The Safari explore welcome MP3 is in the repo (Arena spoken clip). Chat cannot accept MP3 uploads. Duck / cow / bird play a short Web Audio cartoon call until Pixabay files are added via GitHub (`public/audio/sfx/`). Missing files fail closed for voice clips and fall back to synth for those three animals.
 
 Do **not** claim animal-SFX phone playback is verified until those three files are supplied and tested on a device.
 

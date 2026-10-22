@@ -346,6 +346,104 @@ class SoundEffectManager {
       // ignore
     }
   }
+
+  /**
+   * Short cartoon animal calls when an MP3 is missing. Not a recording —
+   * chat cannot take MP3s, so Safari still has a duck/cow/bird sound.
+   * Returns false for unknown animals or when muted / AudioContext is blocked.
+   */
+  playAnimalCall(animalId: string): boolean {
+    if (this.muted) return false;
+    if (animalId === "duck") return this.playDuckQuack();
+    if (animalId === "cow") return this.playCowMoo();
+    if (animalId === "bird") return this.playBirdChirp();
+    return false;
+  }
+
+  private playDuckQuack(): boolean {
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return false;
+      const now = ctx.currentTime;
+      [0, 0.16].forEach((offset) => {
+        const t = now + offset;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "square";
+        osc.frequency.setValueAtTime(380, t);
+        osc.frequency.exponentialRampToValueAtTime(220, t + 0.11);
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.linearRampToValueAtTime(0.12, t + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.12);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.13);
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  private playCowMoo(): boolean {
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return false;
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sawtooth";
+      osc2.type = "triangle";
+      osc.frequency.setValueAtTime(174, now);
+      osc.frequency.linearRampToValueAtTime(130, now + 0.42);
+      osc2.frequency.setValueAtTime(87, now);
+      osc2.frequency.linearRampToValueAtTime(65, now + 0.42);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(0.1, now + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.48);
+      osc.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc2.start(now);
+      osc.stop(now + 0.5);
+      osc2.stop(now + 0.5);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  private playBirdChirp(): boolean {
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return false;
+      const now = ctx.currentTime;
+      [
+        { start: 0, from: 1800, to: 2400 },
+        { start: 0.1, from: 1600, to: 2100 },
+      ].forEach(({ start, from, to }) => {
+        const t = now + start;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(from, t);
+        osc.frequency.exponentialRampToValueAtTime(to, t + 0.07);
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.linearRampToValueAtTime(0.14, t + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.08);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.09);
+      });
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }
 
 export const soundEffects = new SoundEffectManager();
