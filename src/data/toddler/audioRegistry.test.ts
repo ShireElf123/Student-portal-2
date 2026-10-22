@@ -572,6 +572,16 @@ describe("audio registry", () => {
       "/audio/voice/runway-fb-blink.mp3",
       "/audio/voice/runway-balloon-welcome.mp3",
       "/audio/voice/runway-pack-welcome.mp3",
+      "/audio/voice/runway-pack-line.mp3",
+      "/audio/voice/runway-pack-done.mp3",
+      "/audio/voice/harbour-area-welcome.mp3",
+      "/audio/voice/harbour-horn-welcome.mp3",
+      "/audio/voice/harbour-clue-horn.mp3",
+      "/audio/voice/harbour-fb-ferry.mp3",
+      "/audio/voice/harbour-cue-horn.mp3",
+      "/audio/voice/harbour-fb-bike.mp3",
+      "/audio/voice/harbour-fb-hen.mp3",
+      "/audio/voice/harbour-water-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1300,6 +1310,17 @@ describe("audio registry", () => {
       "voice.runway.blink-welcome",
     );
     expect(narrationClipForText("Pack the bag for the trip!")?.id).toBe("voice.runway.pack-welcome");
+    expect(narrationClipForText("Packed. Ready to go!")?.id).toBe("voice.runway.pack-done");
+  });
+
+  it("maps Busy Harbour closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Busy Harbour! Boats, cranes and a ferry horn. Let's explore together!",
+      )?.id,
+    ).toBe("voice.harbour.area-welcome");
+    expect(narrationClipForText("Who sounds the low horn?")?.id).toBe("voice.harbour.horn-welcome");
+    expect(narrationClipForText("Which belongs on the water?")?.id).toBe("voice.harbour.water-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {

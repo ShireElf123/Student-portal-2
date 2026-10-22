@@ -570,6 +570,16 @@ No runtime ElevenLabs (or other TTS) calls. No API keys in the client or this re
 | `public/audio/voice/runway-fb-blink.mp3` | `voice.runway.fb.blink` |
 | `public/audio/voice/runway-balloon-welcome.mp3` | `voice.runway.balloon-welcome` |
 | `public/audio/voice/runway-pack-welcome.mp3` | `voice.runway.pack-welcome` |
+| `public/audio/voice/runway-pack-line.mp3` | `voice.runway.pack-line` |
+| `public/audio/voice/runway-pack-done.mp3` | `voice.runway.pack-done` |
+| `public/audio/voice/harbour-area-welcome.mp3` | `voice.harbour.area-welcome` |
+| `public/audio/voice/harbour-horn-welcome.mp3` | `voice.harbour.horn-welcome` |
+| `public/audio/voice/harbour-clue-horn.mp3` | `voice.harbour.clue.horn` |
+| `public/audio/voice/harbour-fb-ferry.mp3` | `voice.harbour.fb.ferry` |
+| `public/audio/voice/harbour-cue-horn.mp3` | `voice.harbour.cue.horn` |
+| `public/audio/voice/harbour-fb-bike.mp3` | `voice.harbour.fb.bike` |
+| `public/audio/voice/harbour-fb-hen.mp3` | `voice.harbour.fb.hen` |
+| `public/audio/voice/harbour-water-welcome.mp3` | `voice.harbour.water-welcome` |
 | `public/audio/voice/safari-bio-lion.mp3` | `voice.safari.bio.lion` |
 | `public/audio/voice/safari-bio-elephant.mp3` | `voice.safari.bio.elephant` |
 | `public/audio/voice/safari-bio-monkey.mp3` | `voice.safari.bio.monkey` |
@@ -978,7 +988,9 @@ Existing `soundEffects.ts` pops, chimes, boing, fanfare, xylophone, and buzz are
 
 **Sunny Garage** unique spoken lines are complete on voice-01.
 
-**Windy Runway** is a closed island: whoosh through blink pattern and pack-bag station. Remaining pack-bag land line and done still wait. Next closed island is **Busy Harbour**. Do not register generic `Yes!`.
+**Windy Runway** unique spoken lines are complete on voice-01.
+
+**Busy Harbour** is a closed island: ferry horn and water lane. Remaining water feedback, buoys, crane, and coil-rope still wait. Missing lines stay quiet. Do not register generic `Yes!`.
 
 ## Mute keys (unchanged)
 
