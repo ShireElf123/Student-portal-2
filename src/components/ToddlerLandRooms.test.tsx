@@ -152,9 +152,25 @@ describe("land rooms", () => {
     const stars: number[] = [];
     const mural = render(<ToddlerLandRooms playId="stamp-mural" onAddStar={() => stars.push(1)} />);
     const wall = mural.getByTestId("mural-wall");
+    wall.getBoundingClientRect = () =>
+      ({ top: 0, left: 0, bottom: 100, right: 200, width: 200, height: 100, x: 0, y: 0, toJSON: () => {} }) as DOMRect;
     const stamp = mural.getByTestId("stamp-sun");
-    for (let i = 0; i < 6; i += 1) dragOnto(stamp, wall);
+    const spots = [
+      [20, 20],
+      [160, 20],
+      [40, 80],
+      [180, 70],
+      [100, 50],
+      [12, 12],
+    ];
+    for (const [x, y] of spots) {
+      fireEvent.pointerDown(stamp, { clientX: x, clientY: y, pointerId: 1 });
+      fireEvent.pointerMove(stamp, { clientX: x, clientY: y, pointerId: 1, buttons: 1 });
+      fireEvent.pointerUp(stamp, { clientX: x, clientY: y, pointerId: 1 });
+    }
     await flush();
+    expect(stars).toEqual([1]);
+    expect(mural.getByTestId("stamp-print-5").getAttribute("style")).toContain("left: 6%");
     mural.unmount();
 
     const stones = render(<ToddlerLandRooms playId="story-stones" onAddStar={() => stars.push(1)} />);
@@ -284,6 +300,34 @@ describe("land rooms", () => {
     await flush();
     expect(stars).toEqual([1]);
     expect(container.textContent).toContain("wind can work");
+  });
+
+  it("follows the stamp across the wall and prints at the release point, not a preset path", async () => {
+    const stars: number[] = [];
+    const { getByTestId, queryByTestId } = render(
+      <ToddlerLandRooms playId="stamp-mural" onAddStar={() => stars.push(1)} />,
+    );
+    const wall = getByTestId("mural-wall");
+    wall.getBoundingClientRect = () =>
+      ({ top: 10, left: 10, bottom: 110, right: 210, width: 200, height: 100, x: 10, y: 10, toJSON: () => {} }) as DOMRect;
+
+    fireEvent.pointerDown(wall, { clientX: 30, clientY: 30, pointerId: 1 });
+    fireEvent.pointerMove(wall, { clientX: 90, clientY: 40, pointerId: 1, buttons: 1 });
+    expect(getByTestId("stamp-preview").getAttribute("style")).toContain("left: 40%");
+    expect(getByTestId("stamp-preview").getAttribute("style")).toContain("top: 30%");
+    fireEvent.pointerMove(wall, { clientX: 50, clientY: 95, pointerId: 1, buttons: 1 });
+    expect(getByTestId("stamp-preview").getAttribute("style")).toContain("left: 20%");
+    expect(getByTestId("stamp-preview").getAttribute("style")).toContain("top: 85%");
+    fireEvent.pointerUp(wall, { clientX: 50, clientY: 95, pointerId: 1 });
+    expect(queryByTestId("stamp-preview")).toBeNull();
+    const print = getByTestId("stamp-print-0");
+    expect(print.getAttribute("style")).toContain("left: 20%");
+    expect(print.getAttribute("style")).toContain("top: 85%");
+    expect(stars).toEqual([]);
+
+    fireEvent.pointerDown(wall, { clientX: 400, clientY: 400, pointerId: 2 });
+    fireEvent.pointerUp(wall, { clientX: 400, clientY: 400, pointerId: 2 });
+    expect(queryByTestId("stamp-print-1")).toBeNull();
   });
 
   it("does not drop a crate until the pointer is released", async () => {

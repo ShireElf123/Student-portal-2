@@ -746,42 +746,94 @@ const STAMPS = [
   { id: "heart", mark: "💗" },
 ];
 
+function wallLocalPoint(el: HTMLElement | null, clientX: number, clientY: number) {
+  if (!el) return null;
+  const rect = el.getBoundingClientRect();
+  if (rect.width < 1 || rect.height < 1) return null;
+  const x = ((clientX - rect.left) / rect.width) * 100;
+  const y = ((clientY - rect.top) / rect.height) * 100;
+  if (x < 0 || x > 100 || y < 0 || y > 100) return null;
+  return { x, y };
+}
+
 function StampMural({ onAddStar }: { onAddStar?: () => void }) {
   const { done, finish } = useCredit(onAddStar);
   const [marks, setMarks] = useState<{ mark: string; x: number; y: number }[]>([]);
   const marksRef = useRef<{ mark: string; x: number; y: number }[]>([]);
   const wallRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef<DragToken | null>(null);
-  const [ghost, setGhost] = useState<{ emoji: string; x: number; y: number } | null>(null);
+  const [toolId, setToolId] = useState(STAMPS[0].id);
+  const dragMark = useRef<string | null>(null);
+  const [preview, setPreview] = useState<{ mark: string; x: number; y: number } | null>(null);
 
-  const drop = (mark: DragToken, clientX: number, clientY: number) => {
-    const token = String(mark);
-    if (marksRef.current.length >= 6) return true;
-    if (!pointerHits(wallRef.current, clientX, clientY, 48)) return false;
-    const rect = wallRef.current?.getBoundingClientRect();
-    const x = rect ? ((clientX - rect.left) / Math.max(1, rect.width)) * 100 : 12 + marksRef.current.length * 12;
-    const y = rect ? ((clientY - rect.top) / Math.max(1, rect.height)) * 100 : 20;
-    marksRef.current = [...marksRef.current, { mark: token, x: Math.min(88, Math.max(6, x)), y: Math.min(78, Math.max(8, y)) }];
+  const tool = STAMPS.find((stamp) => stamp.id === toolId) ?? STAMPS[0];
+
+  const track = (clientX: number, clientY: number) => {
+    const mark = dragMark.current;
+    if (!mark) return;
+    const point = wallLocalPoint(wallRef.current, clientX, clientY);
+    setPreview(point ? { mark, ...point } : null);
+  };
+
+  const release = (clientX: number, clientY: number) => {
+    const mark = dragMark.current;
+    dragMark.current = null;
+    setPreview(null);
+    if (!mark || marksRef.current.length >= 6) return;
+    const point = wallLocalPoint(wallRef.current, clientX, clientY);
+    if (!point) {
+      soundEffects.playGentleBoing();
+      return;
+    }
+    marksRef.current = [...marksRef.current, { mark, x: point.x, y: point.y }];
     setMarks(marksRef.current);
     soundEffects.playPop();
     if (marksRef.current.length >= 6) finish();
-    return true;
+  };
+
+  const begin = (mark: string, event: React.PointerEvent) => {
+    if (done || marksRef.current.length >= 6) return;
+    dragMark.current = mark;
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    track(event.clientX, event.clientY);
   };
 
   return (
     <Stage playId="stamp-mural" done={done} className="bg-gradient-to-b from-fuchsia-300 via-purple-600 to-indigo-950">
-      <DragFollowGhost ghost={ghost} />
       <div
         ref={wallRef}
         data-testid="mural-wall"
-        className="mx-auto mb-4 h-48 w-full max-w-md rounded-3xl bg-amber-50/90 relative overflow-hidden"
+        className="mx-auto mb-4 h-48 w-full max-w-md rounded-3xl bg-amber-50/90 relative overflow-hidden touch-none"
+        onPointerDown={(event) => begin(tool.mark, event)}
+        onPointerMove={(event) => {
+          if (!dragMark.current) return;
+          track(event.clientX, event.clientY);
+        }}
+        onPointerUp={(event) => release(event.clientX, event.clientY)}
+        onPointerCancel={() => {
+          dragMark.current = null;
+          setPreview(null);
+        }}
       >
         <span className="sr-only">Stamp the wall</span>
         {marks.map((item, i) => (
-          <span key={i} className="absolute text-3xl" style={{ top: `${item.y}%`, left: `${item.x}%` }}>
+          <span
+            key={i}
+            data-testid={`stamp-print-${i}`}
+            className="absolute text-3xl pointer-events-none"
+            style={{ top: `${item.y}%`, left: `${item.x}%`, transform: "translate(-50%, -50%)" }}
+          >
             {item.mark}
           </span>
         ))}
+        {preview && (
+          <span
+            data-testid="stamp-preview"
+            className="absolute text-3xl pointer-events-none opacity-80"
+            style={{ top: `${preview.y}%`, left: `${preview.x}%`, transform: "translate(-50%, -50%)" }}
+          >
+            {preview.mark}
+          </span>
+        )}
       </div>
       <div className="flex gap-2 justify-center">
         {STAMPS.map((stamp) => (
@@ -789,8 +841,22 @@ function StampMural({ onAddStar }: { onAddStar?: () => void }) {
             key={stamp.id}
             type="button"
             data-testid={`stamp-${stamp.id}`}
-            className="min-h-16 min-w-16 text-4xl rounded-2xl px-4 py-3 bg-white/20 touch-none"
-            {...bindFollowDrag(dragging, stamp.mark, stamp.mark, setGhost, drop, () => marksRef.current.length >= 6)}
+            className={`min-h-16 min-w-16 text-4xl rounded-2xl px-4 py-3 touch-none ${
+              toolId === stamp.id ? "bg-white/50 ring-2 ring-white" : "bg-white/20"
+            }`}
+            onPointerDown={(event) => {
+              setToolId(stamp.id);
+              begin(stamp.mark, event);
+            }}
+            onPointerMove={(event) => {
+              if (dragMark.current !== stamp.mark) return;
+              track(event.clientX, event.clientY);
+            }}
+            onPointerUp={(event) => release(event.clientX, event.clientY)}
+            onPointerCancel={() => {
+              dragMark.current = null;
+              setPreview(null);
+            }}
           >
             {stamp.mark}
           </button>
