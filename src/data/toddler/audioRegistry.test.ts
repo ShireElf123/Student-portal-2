@@ -512,6 +512,16 @@ describe("audio registry", () => {
       "/audio/voice/street-fb-look.mp3",
       "/audio/voice/street-fb-looking.mp3",
       "/audio/voice/street-fb-rule.mp3",
+      "/audio/voice/street-clue-truck.mp3",
+      "/audio/voice/street-letter-welcome.mp3",
+      "/audio/voice/street-fb-t.mp3",
+      "/audio/voice/street-fb-b.mp3",
+      "/audio/voice/street-fb-p.mp3",
+      "/audio/voice/street-sign-welcome.mp3",
+      "/audio/voice/street-fb-sign.mp3",
+      "/audio/voice/street-fb-heart.mp3",
+      "/audio/voice/street-fb-moon.mp3",
+      "/audio/voice/street-lights-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1207,6 +1217,11 @@ describe("audio registry", () => {
     expect(narrationClipForText("How many cones?")?.id).toBe("voice.street.cones-welcome");
     expect(narrationClipForText("Look both ways, then cross. What first?")?.id).toBe(
       "voice.street.cross-welcome",
+    );
+    expect(narrationClipForText("Which letter starts truck?")?.id).toBe("voice.street.letter-welcome");
+    expect(narrationClipForText("Which sign says stop?")?.id).toBe("voice.street.sign-welcome");
+    expect(narrationClipForText("Red, wait, green, red, wait. Next?")?.id).toBe(
+      "voice.street.lights-welcome",
     );
   });
 
