@@ -51,7 +51,7 @@ import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { resolveSkillForActivity } from "../data/activitySkillRegistry";
-import { ToddlerColorLab } from "./ToddlerColorLab";
+import { mixTargetFromActivity, ToddlerColorLab } from "./ToddlerColorLab";
 import { ToddlerMusicPiano } from "./ToddlerMusicPiano";
 import { ToddlerMemoryGame } from "./ToddlerMemoryGame";
 import { ToddlerBalloonSky } from "./ToddlerBalloonSky";
@@ -129,22 +129,25 @@ export function ToddlerWorldsNavigator({
     toyCreditedRef.current = activity.id;
     recordActivityCompletion(activity.worldId, activity.areaId, activity.id, activity.rewardStars);
     onAddStar(activity.rewardStars);
-    if (activity.type === "color-lab" || activity.type === "letter-trace") {
+    if (
+      activity.type === "color-lab" ||
+      activity.type === "letter-trace" ||
+      activity.type === "balloon-sky" ||
+      activity.type === "animal-safari" ||
+      activity.type === "bubble-pop"
+    ) {
       setStayPlayDone(true);
       return;
     }
     setShowCelebration(true);
   };
 
-  /** Toys auto-roll after a beat. Quizzes wait for a tap. Both go to the next stop. */
+  /** Finite toys auto-roll after a beat. Endless / mix labs stay. Quizzes wait for a tap. */
   const AUTO_TRAIL_TYPES = new Set([
     "land-play",
     "open-play",
     "memory-match",
-    "balloon-sky",
-    "animal-safari",
     "rhyme-garden",
-    "bubble-pop",
     "k1-studio",
     "piano-melody",
   ]);
@@ -283,7 +286,6 @@ export function ToddlerWorldsNavigator({
       }
 
       if (activeActivity.type === "color-lab") {
-        speakText("Welcome to the Color Lab! Blend primary color droplets into the bubbling cauldron to make magical new colors!", { pitch: 1.15 });
         return;
       }
 
@@ -795,6 +797,8 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl sm:text-2xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerColorLab
               mixFlavor={playTheme.mix}
+              targetColor={mixTargetFromActivity(activeActivity)}
+              spokenPrompt={activeActivity.spokenPrompt}
               onAddStar={() => completeWorldToy(activeActivity)}
             />
           </div>
@@ -822,7 +826,11 @@ export function ToddlerWorldsNavigator({
         {activeActivity.type === "memory-match" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-emerald-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerMemoryGame pairs={playTheme.memory} onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerMemoryGame
+              pairs={playTheme.memory}
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
+            />
           </div>
         )}
         {activeActivity.type === "balloon-sky" && (
@@ -844,7 +852,11 @@ export function ToddlerWorldsNavigator({
         {activeActivity.type === "rhyme-garden" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-fuchsia-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerRhymeGame questions={playTheme.rhymes} onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerRhymeGame
+              questions={playTheme.rhymes}
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
+            />
           </div>
         )}
         {activeActivity.type === "bubble-pop" && (
@@ -885,7 +897,7 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerK1Studio
               gameId={activeActivity.studioGameId as K1StudioGameId}
-              onAddStar={() => completeWorldToy(activeActivity)}
+              onComplete={() => completeWorldToy(activeActivity)}
             />
           </div>
         )}

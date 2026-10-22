@@ -1716,5 +1716,13 @@ export function ToddlerLandRooms({
   onAddStar?: () => void;
 }) {
   const Room = ROOMS[playId];
+  if (!Room) {
+    return (
+      <div className="rounded-[2rem] border-4 border-amber-300/50 bg-slate-950/70 p-6 text-center">
+        <p className="text-xl font-black text-white">This room is being painted.</p>
+        <p className="mt-2 text-sm font-semibold text-white/80">Pick another Play on the trail.</p>
+      </div>
+    );
+  }
   return <Room onAddStar={onAddStar} />;
 }

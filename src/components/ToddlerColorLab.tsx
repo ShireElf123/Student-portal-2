@@ -183,7 +183,31 @@ function PaintCanvas() {
   );
 }
 
-export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: number) => void; mixFlavor?: MixFlavor }) {
+/** Worlds Color Magic missions name a colour. Free-play labs omit this. */
+export function mixTargetFromActivity(activity: {
+  id?: string;
+  title?: string;
+  learningObjective?: string;
+  cluePrompt?: string;
+}): string | undefined {
+  const blob = `${activity.id ?? ""} ${activity.title ?? ""} ${activity.learningObjective ?? ""} ${activity.cluePrompt ?? ""}`.toLowerCase();
+  if (blob.includes("orange") || blob.includes("red and yellow") || blob.includes("red into sunny yellow")) return "Orange";
+  if (blob.includes("purple") || blob.includes("red and blue") || blob.includes("red jam plus blue")) return "Purple";
+  if (blob.includes("green") || blob.includes("blue and yellow") || blob.includes("yellow and blue") || blob.includes("the leaf")) return "Green";
+  return undefined;
+}
+
+export function ToddlerColorLab({
+  onAddStar,
+  mixFlavor,
+  targetColor,
+  spokenPrompt,
+}: {
+  onAddStar?: (amt?: number) => void;
+  mixFlavor?: MixFlavor;
+  targetColor?: string;
+  spokenPrompt?: string;
+}) {
   const recipes: Record<string, MixResult> = {
     "red+yellow": { ...RECIPES["red+yellow"], ...(mixFlavor?.orange ?? {}) },
     "yellow+red": { ...RECIPES["yellow+red"], ...(mixFlavor?.orange ?? {}) },
@@ -205,13 +229,17 @@ export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: n
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      speakText("Welcome to Color Magic! Tap two primary color droplets to blend a magical new color!", {
-        pitch: 1.25,
-      });
+      speakText(
+        spokenPrompt ||
+          (targetColor
+            ? `Mix two colours until you make ${targetColor}!`
+            : "Welcome to Color Magic! Tap two primary color droplets to blend a magical new color!"),
+        { pitch: 1.25 },
+      );
     }, 150);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [spokenPrompt, targetColor]);
 
   useEffect(() => () => {
     if (resolutionTimer.current) clearTimeout(resolutionTimer.current);
@@ -233,6 +261,12 @@ export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: n
         resolutionTimer.current = setTimeout(() => {
           resolutionTimer.current = null;
           setCurrentResult(result);
+          const matchesTarget = !targetColor || result.colorName.toLowerCase() === targetColor.toLowerCase();
+          if (!matchesTarget) {
+            soundEffects.playGentleBoing();
+            speakText(`That made ${result.colorName}. We need ${targetColor}. Mix again!`, { pitch: 1.2 });
+            return;
+          }
           soundEffects.playSuccessChime();
           triggerCelebrationConfetti();
           speakText(result.phrase, { pitch: 1.3 });
@@ -292,7 +326,9 @@ export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: n
           </div>
           <div>
             <h3 className="text-lg sm:text-xl font-black text-white">Color Magic Mixing Lab</h3>
-            <p className="text-sm text-white/70">Tap two colours. Watch a new colour appear.</p>
+            <p className="text-sm text-white/70">
+              {targetColor ? `Mix until you make ${targetColor}.` : "Tap two colours. Watch a new colour appear."}
+            </p>
           </div>
         </div>
 
@@ -355,7 +391,7 @@ export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: n
       </div>
 
       {/* Primary Color Palette Buttons */}
-      <div className="grid grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         {PRIMARY_COLORS.map((color) => {
           const isSelected = selectedDrops.some((d) => d.id === color.id);
           return (

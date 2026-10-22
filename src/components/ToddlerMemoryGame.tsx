@@ -48,9 +48,11 @@ function generateCards(pairCount: number, pairs: MemoryPair[] = MEMORY_PAIRS): C
 
 export function ToddlerMemoryGame({
   onAddStar,
+  onComplete,
   pairs,
 }: {
   onAddStar?: (amt?: number) => void;
+  onComplete?: () => void;
   pairs?: MemoryPair[];
 }) {
   const deckPairs = pairs && pairs.length >= 4 ? pairs : MEMORY_PAIRS;
@@ -143,6 +145,7 @@ export function ToddlerMemoryGame({
               awardXP(50);
               if (onAddStar) onAddStar(3);
               else awardStars(3);
+              onComplete?.();
 
               try {
                 recordLearningEvent({

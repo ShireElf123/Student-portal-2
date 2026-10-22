@@ -216,9 +216,11 @@ const RHYME_QUESTIONS: RhymeQuestion[] = [
 
 export function ToddlerRhymeGame({
   onAddStar,
+  onComplete,
   questions,
 }: {
   onAddStar?: (amt?: number) => void;
+  onComplete?: () => void;
   questions?: RhymeQuestion[];
 }) {
   const deck = questions && questions.length >= 3 ? questions : RHYME_QUESTIONS;
@@ -300,6 +302,7 @@ export function ToddlerRhymeGame({
           awardXP(50);
           if (onAddStar) onAddStar(3);
           else awardStars(3);
+          onComplete?.();
         }
       }, 1500);
     } else {

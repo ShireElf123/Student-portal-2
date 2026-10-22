@@ -8,9 +8,11 @@ import { getK1StudioGame, type K1StudioGameId, type K1StudioChoice } from "../da
 interface ToddlerK1StudioProps {
   gameId: K1StudioGameId;
   onAddStar?: (amount?: number) => void;
+  /** Worlds trail: fire once when every round is done — not on the first tap. */
+  onComplete?: () => void;
 }
 
-export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
+export function ToddlerK1Studio({ gameId, onAddStar, onComplete }: ToddlerK1StudioProps) {
   const game = getK1StudioGame(gameId);
   const [roundIndex, setRoundIndex] = useState(0);
   const [locked, setLocked] = useState(false);
@@ -42,7 +44,15 @@ export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
     };
   }, [gameId, roundIndex, done, game, round]);
 
-  if (!game || !round) return null;
+  if (!game) {
+    return (
+      <section className="rounded-[2rem] border-4 border-amber-400/40 bg-slate-950/70 p-6 text-center">
+        <p className="text-xl font-black text-white">This studio game is packing up.</p>
+        <p className="mt-2 text-sm font-semibold text-white/80">Pick another Play tile on the trail.</p>
+      </section>
+    );
+  }
+  if (!round) return null;
 
   const handleChoice = (choice: K1StudioChoice) => {
     if (locked || done) return;
@@ -79,7 +89,6 @@ export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
 
     setLocked(true);
     soundEffects.playSuccessChime();
-    onAddStar?.(1);
     const nextCorrect = correctCount + 1;
     setCorrectCount(nextCorrect);
     speakText("Yes!", { pitch: 1.28 });
@@ -90,6 +99,8 @@ export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
         setDone(true);
         soundEffects.playFanfare();
         speakText(`You finished ${game.title}.`, { pitch: 1.2 });
+        onAddStar?.(1);
+        onComplete?.();
         return;
       }
       setRoundIndex(nextIndex);
