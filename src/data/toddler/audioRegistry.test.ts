@@ -1132,6 +1132,16 @@ describe("audio registry", () => {
       "/audio/voice/market-clue-rhyme.mp3",
       "/audio/voice/ice-area-welcome.mp3",
       "/audio/voice/ice-hop-welcome.mp3",
+      "/audio/voice/ice-clue-hop.mp3",
+      "/audio/voice/ice-fb-penguin.mp3",
+      "/audio/voice/ice-fb-camel.mp3",
+      "/audio/voice/ice-fish-welcome.mp3",
+      "/audio/voice/ice-clue-fish.mp3",
+      "/audio/voice/ice-fb-six.mp3",
+      "/audio/voice/ice-fb-gift.mp3",
+      "/audio/voice/ice-fb-nine.mp3",
+      "/audio/voice/ice-home-welcome.mp3",
+      "/audio/voice/ice-clue-home.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2504,6 +2514,17 @@ describe("audio registry", () => {
       )?.id,
     ).toBe("voice.ice.area-welcome");
     expect(narrationClipForText("Who hops the ice floe?")?.id).toBe("voice.ice.hop-welcome");
+    expect(narrationClipForText("Black and white, hopping the floe. Who?")?.id).toBe(
+      "voice.ice.clue.hop",
+    );
+    expect(narrationClipForText("How many fish?")?.id).toBe("voice.ice.fish-welcome");
+    expect(narrationClipForText("Six silver fish by the hole. How many?")?.id).toBe(
+      "voice.ice.clue.fish",
+    );
+    expect(narrationClipForText("Where does the penguin belong?")?.id).toBe("voice.ice.home-welcome");
+    expect(narrationClipForText("Penguins belong on cold ice, not the bakery. Where?")?.id).toBe(
+      "voice.ice.clue.home",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
