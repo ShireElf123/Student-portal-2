@@ -992,6 +992,16 @@ describe("audio registry", () => {
       "/audio/voice/fire-fb-circle.mp3",
       "/audio/voice/fire-fb-square.mp3",
       "/audio/voice/fire-fb-star.mp3",
+      "/audio/voice/fire-boots-welcome.mp3",
+      "/audio/voice/fire-clue-boots.mp3",
+      "/audio/voice/fire-fb-four.mp3",
+      "/audio/voice/fire-fb-lockers.mp3",
+      "/audio/voice/fire-dog-welcome.mp3",
+      "/audio/voice/fire-clue-dog.mp3",
+      "/audio/voice/fire-fb-dal.mp3",
+      "/audio/voice/fire-fb-owl.mp3",
+      "/audio/voice/fire-balloons-welcome.mp3",
+      "/audio/voice/fire-clue-balloons.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2193,6 +2203,22 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What shape is the badge?")?.id).toBe("voice.fire.badge-welcome");
     expect(narrationClipForText("The badge is round. What shape?")?.id).toBe("voice.fire.clue.badge");
+    expect(narrationClipForText("Two and two boots. How many?")?.id).toBe("voice.fire.boots-welcome");
+    expect(narrationClipForText("2 boots by this locker, 2 by that locker. How many?")?.id).toBe(
+      "voice.fire.clue.boots",
+    );
+    expect(narrationClipForText("Who waits on the fire-house step?")?.id).toBe(
+      "voice.fire.dog-welcome",
+    );
+    expect(narrationClipForText("A spotted dog waits on the step. Who?")?.id).toBe(
+      "voice.fire.clue.dog",
+    );
+    expect(narrationClipForText("Tap the fire-house balloons!")?.id).toBe(
+      "voice.fire.balloons-welcome",
+    );
+    expect(narrationClipForText("Tap the balloons drifting past the engines.")?.id).toBe(
+      "voice.fire.clue.balloons",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
