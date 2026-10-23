@@ -1032,6 +1032,16 @@ describe("audio registry", () => {
       "/audio/voice/park-fb-circle.mp3",
       "/audio/voice/park-fb-square.mp3",
       "/audio/voice/park-fb-triangle.mp3",
+      "/audio/voice/park-balls-welcome.mp3",
+      "/audio/voice/park-clue-balls.mp3",
+      "/audio/voice/park-swing-welcome.mp3",
+      "/audio/voice/park-fb-nana.mp3",
+      "/audio/voice/park-fb-dog.mp3",
+      "/audio/voice/park-fb-pip.mp3",
+      "/audio/voice/park-where-welcome.mp3",
+      "/audio/voice/park-clue-where.mp3",
+      "/audio/voice/park-fb-bench.mp3",
+      "/audio/voice/park-fb-not-pond.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2283,6 +2293,17 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What shape is the pond?")?.id).toBe("voice.park.pond-welcome");
     expect(narrationClipForText("The pond is round. What shape?")?.id).toBe("voice.park.clue.pond");
+    expect(narrationClipForText("Two and three balls. How many?")?.id).toBe("voice.park.balls-welcome");
+    expect(narrationClipForText("2 balls out, 3 still in the bag. How many?")?.id).toBe(
+      "voice.park.clue.balls",
+    );
+    expect(narrationClipForText("Pip, Nana, Pip, Nana, Pip. Next?")?.id).toBe(
+      "voice.park.swing-welcome",
+    );
+    expect(narrationClipForText("Where is the ball?")?.id).toBe("voice.park.where-welcome");
+    expect(
+      narrationClipForText("The ball rolled under the bench, not the pond. Where?")?.id,
+    ).toBe("voice.park.clue.where");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
