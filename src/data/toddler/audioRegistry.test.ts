@@ -1860,6 +1860,16 @@ describe("audio registry", () => {
       "/audio/voice/grove-fb-toomany.mp3",
       "/audio/voice/shapes-square-welcome.mp3",
       "/audio/voice/shapes-clue-square.mp3",
+      "/audio/voice/shapes-fb-squarewindow.mp3",
+      "/audio/voice/shapes-fb-nocorners.mp3",
+      "/audio/voice/shapes-roof-welcome.mp3",
+      "/audio/voice/shapes-clue-roof.mp3",
+      "/audio/voice/shapes-fb-triangleroof.mp3",
+      "/audio/voice/shapes-fb-foursides.mp3",
+      "/audio/voice/shapes-fb-circlesround.mp3",
+      "/audio/voice/shapes-well-welcome.mp3",
+      "/audio/voice/shapes-clue-well.mp3",
+      "/audio/voice/shapes-fb-acircle.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3769,6 +3779,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Four equal sides. What shape is the window?")?.id).toBe(
       "voice.shapes.square-welcome",
+    );
+    expect(narrationClipForText("Three sides on the roof. What shape?")?.id).toBe(
+      "voice.shapes.roof-welcome",
+    );
+    expect(narrationClipForText("A perfectly round cover. What shape?")?.id).toBe(
+      "voice.shapes.well-welcome",
     );
   });
 
