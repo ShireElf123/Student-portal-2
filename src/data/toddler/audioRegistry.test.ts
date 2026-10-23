@@ -1662,6 +1662,16 @@ describe("audio registry", () => {
       "/audio/voice/pattern-odd-welcome.mp3",
       "/audio/voice/pattern-clue-odd.mp3",
       "/audio/voice/pattern-fb-bluebreaks.mp3",
+      "/audio/voice/pattern-fb-redsmatch.mp3",
+      "/audio/voice/pattern-fb-aboutbeads.mp3",
+      "/audio/voice/pattern-stamp-welcome.mp3",
+      "/audio/voice/pattern-clue-stamp.mp3",
+      "/audio/voice/pattern-fb-moonab.mp3",
+      "/audio/voice/pattern-fb-sunstamp.mp3",
+      "/audio/voice/pattern-fb-starjust.mp3",
+      "/audio/voice/pattern-pegtwo-welcome.mp3",
+      "/audio/voice/pattern-clue-pegtwo.mp3",
+      "/audio/voice/pattern-fb-addgroups.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3477,6 +3487,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Red, red, red, blue. Which does not belong?")?.id).toBe(
       "voice.pattern.odd-welcome",
+    );
+    expect(narrationClipForText("Star, moon, star, moon, star. Next?")?.id).toBe(
+      "voice.pattern.stamp-welcome",
+    );
+    expect(narrationClipForText("Four pegs and three pegs. How many in all?")?.id).toBe(
+      "voice.pattern.pegtwo-welcome",
     );
   });
 
