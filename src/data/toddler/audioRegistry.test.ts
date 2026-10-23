@@ -1960,6 +1960,16 @@ describe("audio registry", () => {
       "/audio/voice/family-fb-forks.mp3",
       "/audio/voice/family-fb-soapbath.mp3",
       "/audio/voice/family-cushions-welcome.mp3",
+      "/audio/voice/family-clue-cushions.mp3",
+      "/audio/voice/family-fb-fourcushions.mp3",
+      "/audio/voice/family-fb-wholesofa.mp3",
+      "/audio/voice/family-kind-welcome.mp3",
+      "/audio/voice/family-clue-kind.mp3",
+      "/audio/voice/family-fb-quiet.mp3",
+      "/audio/voice/family-fb-banging.mp3",
+      "/audio/voice/family-fb-shouting.mp3",
+      "/audio/voice/family-chore-welcome.mp3",
+      "/audio/voice/family-fb-abrinse.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3922,6 +3932,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Where does Pip’s cup live?")?.id).toBe("voice.family.cup-welcome");
     expect(narrationClipForText("How many cushions?")?.id).toBe("voice.family.cushions-welcome");
+    expect(narrationClipForText("Baby is sleeping. What do kind hands do?")?.id).toBe(
+      "voice.family.kind-welcome",
+    );
+    expect(narrationClipForText("Sweep, rinse, sweep, rinse, sweep. Next?")?.id).toBe(
+      "voice.family.chore-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
