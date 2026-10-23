@@ -1482,6 +1482,16 @@ describe("audio registry", () => {
       "/audio/voice/weather-clue-porch.mp3",
       "/audio/voice/weather-clue-puddle.mp3",
       "/audio/voice/weather-chimes-welcome.mp3",
+      "/audio/voice/weather-clue-chimes.mp3",
+      "/audio/voice/weather-fb-wind.mp3",
+      "/audio/voice/weather-fb-snow.mp3",
+      "/audio/voice/weather-fb-night.mp3",
+      "/audio/voice/weather-puddles-welcome.mp3",
+      "/audio/voice/weather-clue-count.mp3",
+      "/audio/voice/weather-fb-five.mp3",
+      "/audio/voice/weather-fb-one.mp3",
+      "/audio/voice/weather-fb-eight.mp3",
+      "/audio/voice/weather-frost-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3184,6 +3194,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What is making the chimes crash?")?.id).toBe(
       "voice.weather.chimes-welcome",
+    );
+    expect(narrationClipForText("How many puddles on the path?")?.id).toBe(
+      "voice.weather.puddles-welcome",
+    );
+    expect(narrationClipForText("Why is the grass silver and crunchy?")?.id).toBe(
+      "voice.weather.frost-welcome",
     );
   });
 
