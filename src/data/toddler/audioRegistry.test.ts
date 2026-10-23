@@ -1672,6 +1672,16 @@ describe("audio registry", () => {
       "/audio/voice/pattern-pegtwo-welcome.mp3",
       "/audio/voice/pattern-clue-pegtwo.mp3",
       "/audio/voice/pattern-fb-addgroups.mp3",
+      "/audio/voice/sticker-stars-welcome.mp3",
+      "/audio/voice/sticker-clue-stars.mp3",
+      "/audio/voice/sticker-fb-tenstars.mp3",
+      "/audio/voice/sticker-fb-wholepage.mp3",
+      "/audio/voice/sticker-fb-toten.mp3",
+      "/audio/voice/sticker-sky-welcome.mp3",
+      "/audio/voice/sticker-clue-sky.mp3",
+      "/audio/voice/sticker-fb-moon.mp3",
+      "/audio/voice/sticker-fb-boots.mp3",
+      "/audio/voice/sticker-fb-soup.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3493,6 +3503,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Four pegs and three pegs. How many in all?")?.id).toBe(
       "voice.pattern.pegtwo-welcome",
+    );
+    expect(narrationClipForText("How many star stickers?")?.id).toBe(
+      "voice.sticker.stars-welcome",
+    );
+    expect(narrationClipForText("Which sticker belongs on the sky page?")?.id).toBe(
+      "voice.sticker.sky-welcome",
     );
   });
 
