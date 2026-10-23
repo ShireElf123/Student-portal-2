@@ -1770,6 +1770,16 @@ describe("audio registry", () => {
       "/audio/voice/ocean-lamp-welcome.mp3",
       "/audio/voice/ocean-clue-lamp.mp3",
       "/audio/voice/ocean-fb-angler.mp3",
+      "/audio/voice/ocean-fb-crabclapped.mp3",
+      "/audio/voice/ocean-fb-nohen.mp3",
+      "/audio/voice/ocean-pearl-welcome.mp3",
+      "/audio/voice/ocean-clue-pearl.mp3",
+      "/audio/voice/ocean-fb-pinkshell.mp3",
+      "/audio/voice/ocean-fb-notseale.mp3",
+      "/audio/voice/ocean-sixbubbles-welcome.mp3",
+      "/audio/voice/ocean-clue-sixbubbles.mp3",
+      "/audio/voice/ocean-fb-sixbubbles.mp3",
+      "/audio/voice/ocean-fb-saidsix.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3642,6 +3652,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("Blink blink rest. Next?")?.id).toBe("voice.space.blink-welcome");
     expect(narrationClipForText("Where do they sleep?")?.id).toBe("voice.space.sleep-welcome");
     expect(narrationClipForText("Who held the lamp?")?.id).toBe("voice.ocean.lamp-welcome");
+    expect(narrationClipForText("Where is the pearl?")?.id).toBe("voice.ocean.pearl-welcome");
+    expect(narrationClipForText("How many bubbles?")?.id).toBe("voice.ocean.sixbubbles-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
