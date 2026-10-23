@@ -832,6 +832,16 @@ describe("audio registry", () => {
       "/audio/voice/fruit-stack-done.mp3",
       "/audio/voice/fruit-mix-welcome.mp3",
       "/audio/voice/fruit-clue-mix.mp3",
+      "/audio/voice/bakery-area-welcome.mp3",
+      "/audio/voice/bakery-bakes-welcome.mp3",
+      "/audio/voice/bakery-clue-bakes.mp3",
+      "/audio/voice/bakery-fb-baker.mp3",
+      "/audio/voice/bakery-fb-pilot.mp3",
+      "/audio/voice/bakery-fb-frog.mp3",
+      "/audio/voice/bakery-knead-station.mp3",
+      "/audio/voice/bakery-knead-line.mp3",
+      "/audio/voice/bakery-knead-done.mp3",
+      "/audio/voice/bakery-letter-trace.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1826,6 +1836,24 @@ describe("audio registry", () => {
     expect(narrationClipForText("A market tower!")?.id).toBe("voice.fruit.stack-done");
     expect(narrationClipForText("Mix colours at the fruit stall!")?.id).toBe(
       "voice.fruit.mix-welcome",
+    );
+  });
+
+  it("maps Warm Bakery closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Warm Bakery! Trays, buns and a flour cloud. Let's explore together!",
+      )?.id,
+    ).toBe("voice.bakery.area-welcome");
+    expect(narrationClipForText("Who is baking the loaves?")?.id).toBe("voice.bakery.bakes-welcome");
+    expect(narrationClipForText("A tall hat and a tray of loaves. Who is working?")?.id).toBe(
+      "voice.bakery.clue.bakes",
+    );
+    expect(narrationClipForText("Knead the bakery dough!")?.id).toBe("voice.bakery.knead-station");
+    expect(narrationClipForText("Hold to press the dough.")?.id).toBe("voice.bakery.knead-line");
+    expect(narrationClipForText("Soft bread ready.")?.id).toBe("voice.bakery.knead-done");
+    expect(narrationClipForText("Trace the bakery letter in the flour!")?.id).toBe(
+      "voice.bakery.letter-trace",
     );
   });
 
