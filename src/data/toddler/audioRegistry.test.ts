@@ -1950,6 +1950,16 @@ describe("audio registry", () => {
       "/audio/voice/family-fb-grandpareads.mp3",
       "/audio/voice/family-fb-kettles.mp3",
       "/audio/voice/family-fb-boots.mp3",
+      "/audio/voice/family-cup-welcome.mp3",
+      "/audio/voice/family-clue-cup.mp3",
+      "/audio/voice/family-fb-lowshelf.mp3",
+      "/audio/voice/family-fb-notroof.mp3",
+      "/audio/voice/family-toys-welcome.mp3",
+      "/audio/voice/family-clue-toys.mp3",
+      "/audio/voice/family-fb-blocks.mp3",
+      "/audio/voice/family-fb-forks.mp3",
+      "/audio/voice/family-fb-soapbath.mp3",
+      "/audio/voice/family-cushions-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3910,6 +3920,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("Who reads the bedtime page?")?.id).toBe(
       "voice.family.reads-welcome",
     );
+    expect(narrationClipForText("Where does Pip’s cup live?")?.id).toBe("voice.family.cup-welcome");
+    expect(narrationClipForText("How many cushions?")?.id).toBe("voice.family.cushions-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
