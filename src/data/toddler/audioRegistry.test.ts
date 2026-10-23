@@ -1702,6 +1702,16 @@ describe("audio registry", () => {
       "/audio/voice/sticker-fb-bothsheets.mp3",
       "/audio/voice/sticker-clue-sss.mp3",
       "/audio/voice/sticker-fb-treet.mp3",
+      "/audio/voice/sticker-fb-balloon.mp3",
+      "/audio/voice/barn-gate-welcome.mp3",
+      "/audio/voice/barn-clue-gate.mp3",
+      "/audio/voice/barn-fb-pipopened.mp3",
+      "/audio/voice/barn-fb-lambtrot.mp3",
+      "/audio/voice/barn-fb-noowl.mp3",
+      "/audio/voice/barn-egg-welcome.mp3",
+      "/audio/voice/barn-clue-egg.mp3",
+      "/audio/voice/barn-fb-basket.mp3",
+      "/audio/voice/barn-fb-notboot.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3541,6 +3551,14 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Five and two stickers. How many in all?")?.id).toBe(
       "voice.sticker.sheets-welcome",
+    );
+    expect(
+      narrationClipForText(
+        "Pip opened the gate, then the lamb trotted out. Who opened the gate?",
+      )?.id,
+    ).toBe("voice.barn.gate-welcome");
+    expect(narrationClipForText("Nana tucked the egg in the basket. Where is it?")?.id).toBe(
+      "voice.barn.egg-welcome",
     );
   });
 
