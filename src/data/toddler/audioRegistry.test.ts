@@ -62,6 +62,12 @@ describe("audio registry", () => {
       "/audio/voice/farm-count-lambs.mp3",
       "/audio/voice/farm-count-bees.mp3",
       "/audio/voice/farm-count-turkeys.mp3",
+      "/audio/voice/farm-rooster-welcome.mp3",
+      "/audio/voice/farm-nest-welcome.mp3",
+      "/audio/voice/farm-mud-welcome.mp3",
+      "/audio/voice/farm-wool-welcome.mp3",
+      "/audio/voice/farm-loft-welcome.mp3",
+      "/audio/voice/farm-trough-welcome.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -85,6 +91,10 @@ describe("audio registry", () => {
       "/audio/voice/jungle-fb-bananas-low.mp3",
       "/audio/voice/jungle-fb-bananas-yes.mp3",
       "/audio/voice/jungle-fb-bananas-together.mp3",
+      "/audio/voice/jungle-hiss-welcome.mp3",
+      "/audio/voice/jungle-frogs-welcome.mp3",
+      "/audio/voice/jungle-tracks-welcome.mp3",
+      "/audio/voice/jungle-toucan-welcome.mp3",
       "/audio/voice/ocean-area-welcome.mp3",
       "/audio/voice/ocean-bubbles-welcome.mp3",
       "/audio/voice/ocean-feed-station.mp3",
@@ -2269,6 +2279,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("Count the chicks. How many?")?.id).toBe("voice.farm.count.chicks");
     expect(narrationClipForText("A baker's dozen in the nest. How many eggs?")?.id).toBe("voice.farm.count.eggs");
     expect(narrationClipForText("Nine turkeys. Four go in. How many still in the yard?")?.id).toBe("voice.farm.count.turkeys");
+    expect(narrationClipForText("Who is shouting from the fence at sunrise?")?.id).toBe("voice.farm.rooster-welcome");
+    expect(narrationClipForText("How many eggs are in the nest?")?.id).toBe("voice.farm.nest-welcome");
   });
 
   it("maps Jungle Canopy closed-kit lines to voice-01", () => {
@@ -2282,6 +2294,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("Yes! Giant padded paws belong to the majestic lion!")?.id).toBe("voice.jungle.fb.lion-yes");
     expect(narrationClipForText("The ocean is home to fish and dolphins, not parrots!")?.id).toBe("voice.jungle.fb.ocean");
     expect(narrationClipForText("Look closer! There are more bananas up there.")?.id).toBe("voice.jungle.fb.bananas-low");
+    expect(narrationClipForText("Who is hissing in the vines?")?.id).toBe("voice.jungle.hiss-welcome");
+    expect(narrationClipForText("What does the toucan eat in the canopy?")?.id).toBe("voice.jungle.toucan-welcome");
   });
 
   it("maps Ocean Reef closed-kit lines to voice-01", () => {
