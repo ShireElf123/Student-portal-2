@@ -1212,6 +1212,16 @@ describe("audio registry", () => {
       "/audio/voice/den-clue-memory.mp3",
       "/audio/voice/den-clap-welcome.mp3",
       "/audio/voice/den-clue-clap.mp3",
+      "/audio/voice/den-pet-welcome.mp3",
+      "/audio/voice/den-clue-pet.mp3",
+      "/audio/voice/light-area-welcome.mp3",
+      "/audio/voice/light-ribbon-welcome.mp3",
+      "/audio/voice/light-clue-ribbon.mp3",
+      "/audio/voice/light-fb-green.mp3",
+      "/audio/voice/light-fb-brown.mp3",
+      "/audio/voice/light-fb-grey.mp3",
+      "/audio/voice/light-mix-welcome.mp3",
+      "/audio/voice/light-clue-mix.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2672,6 +2682,27 @@ describe("audio registry", () => {
       "voice.den.memory-welcome",
     );
     expect(narrationClipForText("Clap with the seal!")?.id).toBe("voice.den.clap-welcome");
+    expect(narrationClipForText("Pet the cub. Kind and slow!")?.id).toBe("voice.den.pet-welcome");
+  });
+
+  it("maps Light Sky closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Light Sky! Green ribbons over the ice. Let's explore together!",
+      )?.id,
+    ).toBe("voice.light.area-welcome");
+    expect(narrationClipForText("What colour is the sky ribbon?")?.id).toBe(
+      "voice.light.ribbon-welcome",
+    );
+    expect(
+      narrationClipForText("The sky ribbon is garden green, not bakery brown. Which?")?.id,
+    ).toBe("voice.light.clue.ribbon");
+    expect(narrationClipForText("Blue and yellow. What colour blooms?")?.id).toBe(
+      "voice.light.mix-welcome",
+    );
+    expect(
+      narrationClipForText("Mix ice blue into leaf yellow. What sky colour blooms?")?.id,
+    ).toBe("voice.light.clue.mix");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
