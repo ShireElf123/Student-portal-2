@@ -1202,6 +1202,16 @@ describe("audio registry", () => {
       "/audio/voice/den-fb-ferry.mp3",
       "/audio/voice/den-prints-welcome.mp3",
       "/audio/voice/den-clue-prints.mp3",
+      "/audio/voice/den-fb-trails.mp3",
+      "/audio/voice/den-door-welcome.mp3",
+      "/audio/voice/den-clue-door.mp3",
+      "/audio/voice/den-fb-circle.mp3",
+      "/audio/voice/den-fb-star.mp3",
+      "/audio/voice/den-fb-triangle.mp3",
+      "/audio/voice/den-memory-welcome.mp3",
+      "/audio/voice/den-clue-memory.mp3",
+      "/audio/voice/den-clap-welcome.mp3",
+      "/audio/voice/den-clue-clap.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2654,6 +2664,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("Three and three prints. How many?")?.id).toBe(
       "voice.den.prints-welcome",
     );
+    expect(narrationClipForText("What shape is the den door?")?.id).toBe("voice.den.door-welcome");
+    expect(narrationClipForText("The den door is a round hole. What shape?")?.id).toBe(
+      "voice.den.clue.door",
+    );
+    expect(narrationClipForText("Flip the snowflakes and find the match!")?.id).toBe(
+      "voice.den.memory-welcome",
+    );
+    expect(narrationClipForText("Clap with the seal!")?.id).toBe("voice.den.clap-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
