@@ -1720,6 +1720,16 @@ describe("audio registry", () => {
       "/audio/voice/barn-fb-firstcrow.mp3",
       "/audio/voice/barn-fb-notstory.mp3",
       "/audio/voice/barn-true-welcome.mp3",
+      "/audio/voice/barn-next-welcome.mp3",
+      "/audio/voice/barn-clue-next.mp3",
+      "/audio/voice/barn-clue-true.mp3",
+      "/audio/voice/barn-fb-trueintale.mp3",
+      "/audio/voice/barn-fb-notintale.mp3",
+      "/audio/voice/barn-fb-notthisfarm.mp3",
+      "/audio/voice/barn-hen-welcome.mp3",
+      "/audio/voice/barn-clue-hen.mp3",
+      "/audio/voice/barn-fb-henpen.mp3",
+      "/audio/voice/barn-fb-cowrhyme.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3574,6 +3584,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("Which is true in this farm tale?")?.id).toBe(
       "voice.barn.true-welcome",
     );
+    expect(
+      narrationClipForText(
+        "The rooster crowed, then Pip stretched. What happened first?",
+      )?.id,
+    ).toBe("voice.barn.next-welcome");
+    expect(narrationClipForText("What rhymes with hen?")?.id).toBe("voice.barn.hen-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
