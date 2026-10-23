@@ -1442,6 +1442,16 @@ describe("audio registry", () => {
       "/audio/voice/porch-fb-porch.mp3",
       "/audio/voice/porch-balloon-welcome.mp3",
       "/audio/voice/porch-clue-balloon.mp3",
+      "/audio/voice/forest-clue-bird.mp3",
+      "/audio/voice/forest-clue-pinecones.mp3",
+      "/audio/voice/forest-clue-balloons.mp3",
+      "/audio/voice/forest-clue-campfire.mp3",
+      "/audio/voice/forest-clue-trace.mp3",
+      "/audio/voice/forest-hoot-welcome.mp3",
+      "/audio/voice/forest-clue-hoot.mp3",
+      "/audio/voice/forest-fb-hoot.mp3",
+      "/audio/voice/forest-fb-fox.mp3",
+      "/audio/voice/forest-fb-bee.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3124,6 +3134,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("What rhymes with light?")?.id).toBe("voice.porch.rhyme-welcome");
     expect(narrationClipForText("Tap the porch-light balloons!")?.id).toBe(
       "voice.porch.balloon-welcome",
+    );
+    expect(narrationClipForText("Who hoots from the oak at dusk?")?.id).toBe(
+      "voice.forest.hoot-welcome",
+    );
+    expect(narrationClipForText("Hoo from the oak hollow at dusk. Who?")?.id).toBe(
+      "voice.forest.clue.hoot",
     );
   });
 
