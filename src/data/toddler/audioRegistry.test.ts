@@ -1342,6 +1342,16 @@ describe("audio registry", () => {
       "/audio/voice/owl-home-welcome.mp3",
       "/audio/voice/owl-clue-home.mp3",
       "/audio/voice/owl-fb-tree.mp3",
+      "/audio/voice/owl-fb-fridge.mp3",
+      "/audio/voice/owl-eyes-welcome.mp3",
+      "/audio/voice/owl-clue-eyes.mp3",
+      "/audio/voice/owl-fb-two.mp3",
+      "/audio/voice/owl-fb-one.mp3",
+      "/audio/voice/owl-fb-five.mp3",
+      "/audio/voice/owl-night-welcome.mp3",
+      "/audio/voice/owl-clue-night.mp3",
+      "/audio/voice/owl-fb-hunt.mp3",
+      "/audio/voice/owl-fb-bee.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2961,6 +2971,13 @@ describe("audio registry", () => {
     expect(narrationClipForText("Who is calling hoo?")?.id).toBe("voice.owl.who-welcome");
     expect(narrationClipForText("Hoo from a tree hole. Who?")?.id).toBe("voice.owl.clue.who");
     expect(narrationClipForText("Where does the owl belong?")?.id).toBe("voice.owl.home-welcome");
+    expect(narrationClipForText("How many gold eyes?")?.id).toBe("voice.owl.eyes-welcome");
+    expect(narrationClipForText("Two gold eyes in the hole. How many?")?.id).toBe(
+      "voice.owl.clue.eyes",
+    );
+    expect(narrationClipForText("Who belongs in the night wood?")?.id).toBe(
+      "voice.owl.night-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
