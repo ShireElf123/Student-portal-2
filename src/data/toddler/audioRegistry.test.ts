@@ -1002,6 +1002,16 @@ describe("audio registry", () => {
       "/audio/voice/fire-fb-owl.mp3",
       "/audio/voice/fire-balloons-welcome.mp3",
       "/audio/voice/fire-clue-balloons.mp3",
+      "/audio/voice/fire-hose-welcome.mp3",
+      "/audio/voice/fire-clue-hose.mp3",
+      "/audio/voice/fire-hose-line.mp3",
+      "/audio/voice/fire-hose-done.mp3",
+      "/audio/voice/park-area-welcome.mp3",
+      "/audio/voice/park-ducks-welcome.mp3",
+      "/audio/voice/park-clue-ducks.mp3",
+      "/audio/voice/park-fb-five.mp3",
+      "/audio/voice/park-fb-pond.mp3",
+      "/audio/voice/park-play-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2219,6 +2229,29 @@ describe("audio registry", () => {
     expect(narrationClipForText("Tap the balloons drifting past the engines.")?.id).toBe(
       "voice.fire.clue.balloons",
     );
+    expect(narrationClipForText("Help the fire house put the water on!")?.id).toBe(
+      "voice.fire.hose-welcome",
+    );
+    expect(narrationClipForText("Tap each flame to put the water on it.")?.id).toBe(
+      "voice.fire.clue.hose",
+    );
+    expect(narrationClipForText("Hold the hose. Drag water onto each flame.")?.id).toBe(
+      "voice.fire.hose-line",
+    );
+    expect(narrationClipForText("The fire house is calm.")?.id).toBe("voice.fire.hose-done");
+  });
+
+  it("maps Town Park closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Town Park! Ducks, swings and a round pond. Let's explore together!",
+      )?.id,
+    ).toBe("voice.park.area-welcome");
+    expect(narrationClipForText("How many ducks?")?.id).toBe("voice.park.ducks-welcome");
+    expect(narrationClipForText("Five ducks on the round pond. How many?")?.id).toBe(
+      "voice.park.clue.ducks",
+    );
+    expect(narrationClipForText("Which belongs in the park?")?.id).toBe("voice.park.play-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
