@@ -1622,6 +1622,16 @@ describe("audio registry", () => {
       "/audio/voice/music-clue-clap.mp3",
       "/audio/voice/music-fb-clapnext.mp3",
       "/audio/voice/music-fb-notstomps.mp3",
+      "/audio/voice/music-fb-claprest.mp3",
+      "/audio/voice/music-high-welcome.mp3",
+      "/audio/voice/music-clue-high.mp3",
+      "/audio/voice/music-fb-highbranch.mp3",
+      "/audio/voice/music-fb-frogpond.mp3",
+      "/audio/voice/music-fb-notdrum.mp3",
+      "/audio/voice/music-keep-welcome.mp3",
+      "/audio/voice/music-clue-keep.mp3",
+      "/audio/voice/music-fb-keeptime.mp3",
+      "/audio/voice/music-fb-nothrow.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3410,6 +3420,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Clap clap rest. What comes next?")?.id).toBe(
       "voice.music.clap-welcome",
+    );
+    expect(narrationClipForText("Which bar plays the high bird note?")?.id).toBe(
+      "voice.music.high-welcome",
+    );
+    expect(narrationClipForText("While the song plays, what do we do?")?.id).toBe(
+      "voice.music.keep-welcome",
     );
   });
 
