@@ -1582,6 +1582,16 @@ describe("audio registry", () => {
       "/audio/voice/treasure-fb-redjust.mp3",
       "/audio/voice/color-berry-welcome.mp3",
       "/audio/voice/color-clue-berry.mp3",
+      "/audio/voice/color-fb-purple.mp3",
+      "/audio/voice/color-fb-yellowpaints.mp3",
+      "/audio/voice/color-fb-toast.mp3",
+      "/audio/voice/color-leaf-welcome.mp3",
+      "/audio/voice/color-clue-leaf.mp3",
+      "/audio/voice/color-fb-leafgreen.mp3",
+      "/audio/voice/color-fb-redmix.mp3",
+      "/audio/voice/color-fb-white.mp3",
+      "/audio/voice/color-warm-welcome.mp3",
+      "/audio/voice/color-clue-warm.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3346,6 +3356,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Red and blue jam. What colour?")?.id).toBe(
       "voice.color.berry-welcome",
+    );
+    expect(narrationClipForText("Yellow plus blue. What colour?")?.id).toBe(
+      "voice.color.leaf-welcome",
+    );
+    expect(narrationClipForText("Which colour is warm like fire?")?.id).toBe(
+      "voice.color.warm-welcome",
     );
   });
 
