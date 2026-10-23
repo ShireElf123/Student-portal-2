@@ -1082,6 +1082,16 @@ describe("audio registry", () => {
       "/audio/voice/nook-fb-page.mp3",
       "/audio/voice/nook-fb-gold.mp3",
       "/audio/voice/nook-stacks-welcome.mp3",
+      "/audio/voice/nook-clue-stacks.mp3",
+      "/audio/voice/nook-fb-six.mp3",
+      "/audio/voice/nook-story-welcome.mp3",
+      "/audio/voice/nook-clue-story.mp3",
+      "/audio/voice/nook-land-welcome.mp3",
+      "/audio/voice/nook-clue-land.mp3",
+      "/audio/voice/market-area-welcome.mp3",
+      "/audio/voice/market-bell-welcome.mp3",
+      "/audio/voice/market-clue-bell.mp3",
+      "/audio/voice/market-fb-seller.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2383,6 +2393,25 @@ describe("audio registry", () => {
     expect(narrationClipForText("Book. What rhymes with book?")?.id).toBe("voice.nook.clue.rhyme");
     expect(narrationClipForText("Four and two books. How many?")?.id).toBe(
       "voice.nook.stacks-welcome",
+    );
+    expect(
+      narrationClipForText("4 books in this stack, 2 in that stack. How many?")?.id,
+    ).toBe("voice.nook.clue.stacks");
+    expect(narrationClipForText("Listen to the story on the library porch!")?.id).toBe(
+      "voice.nook.story-welcome",
+    );
+    expect(narrationClipForText("Put the books on the shelf!")?.id).toBe("voice.nook.land-welcome");
+  });
+
+  it("maps Saturday Market closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Saturday Market! Stalls, bells and painted signs. Let's explore together!",
+      )?.id,
+    ).toBe("voice.market.area-welcome");
+    expect(narrationClipForText("Who rings the stall bell?")?.id).toBe("voice.market.bell-welcome");
+    expect(narrationClipForText("A stall bell dings. Who is calling a customer?")?.id).toBe(
+      "voice.market.clue.bell",
     );
   });
 
