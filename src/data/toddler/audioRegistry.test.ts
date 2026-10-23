@@ -95,6 +95,8 @@ describe("audio registry", () => {
       "/audio/voice/jungle-frogs-welcome.mp3",
       "/audio/voice/jungle-tracks-welcome.mp3",
       "/audio/voice/jungle-toucan-welcome.mp3",
+      "/audio/voice/jungle-eyes-welcome.mp3",
+      "/audio/voice/jungle-river-welcome.mp3",
       "/audio/voice/ocean-area-welcome.mp3",
       "/audio/voice/ocean-bubbles-welcome.mp3",
       "/audio/voice/ocean-feed-station.mp3",
@@ -125,6 +127,14 @@ describe("audio registry", () => {
       "/audio/voice/ocean-reef-sort-starfish.mp3",
       "/audio/voice/ocean-reef-sort-octopus.mp3",
       "/audio/voice/ocean-reef-sort-plane.mp3",
+      "/audio/voice/ocean-shells-welcome.mp3",
+      "/audio/voice/ocean-crab-welcome.mp3",
+      "/audio/voice/ocean-turtle-welcome.mp3",
+      "/audio/voice/ocean-whale-welcome.mp3",
+      "/audio/voice/ocean-livingreef-welcome.mp3",
+      "/audio/voice/ocean-schools-welcome.mp3",
+      "/audio/voice/dino-prints-welcome.mp3",
+      "/audio/voice/dino-plates-welcome.mp3",
       "/audio/voice/dino-area-welcome.mp3",
       "/audio/voice/dino-memory-welcome.mp3",
       "/audio/voice/dino-nest-station.mp3",
@@ -2296,6 +2306,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("Look closer! There are more bananas up there.")?.id).toBe("voice.jungle.fb.bananas-low");
     expect(narrationClipForText("Who is hissing in the vines?")?.id).toBe("voice.jungle.hiss-welcome");
     expect(narrationClipForText("What does the toucan eat in the canopy?")?.id).toBe("voice.jungle.toucan-welcome");
+    expect(narrationClipForText("Who has gold eyes in the dark jungle?")?.id).toBe("voice.jungle.eyes-welcome");
+    expect(narrationClipForText("Who belongs in the jungle river?")?.id).toBe("voice.jungle.river-welcome");
   });
 
   it("maps Ocean Reef closed-kit lines to voice-01", () => {
@@ -2311,6 +2323,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("Where does this reef friend live?")?.id).toBe("voice.ocean.reef-sort.welcome");
     expect(narrationClipForText("A fish by the coral. Where does it live?")?.id).toBe("voice.ocean.reef-sort.fish");
     expect(narrationClipForText("A plane over the reef. Is it a reef animal?")?.id).toBe("voice.ocean.reef-sort.plane");
+    expect(narrationClipForText("How many shells did the tide leave?")?.id).toBe("voice.ocean.shells-welcome");
+    expect(narrationClipForText("Three yellow and two blue. How many fish in all?")?.id).toBe(
+      "voice.ocean.schools-welcome",
+    );
   });
 
   it("maps Dino Valley closed-kit lines to voice-01", () => {
@@ -2332,6 +2348,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("A stone bone in the cliff. Is the dinosaur here now?")?.id).toBe(
       "voice.dino.tracks.bone",
     );
+    expect(narrationClipForText("How many giant prints?")?.id).toBe("voice.dino.prints-welcome");
+    expect(narrationClipForText("Who has plates along the back?")?.id).toBe("voice.dino.plates-welcome");
   });
 
   it("maps Forest Trail closed-kit welcome to voice-01", () => {
