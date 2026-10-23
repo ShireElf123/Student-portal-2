@@ -1142,6 +1142,16 @@ describe("audio registry", () => {
       "/audio/voice/ice-fb-nine.mp3",
       "/audio/voice/ice-home-welcome.mp3",
       "/audio/voice/ice-clue-home.mp3",
+      "/audio/voice/ice-fb-ice.mp3",
+      "/audio/voice/ice-fb-warm.mp3",
+      "/audio/voice/ice-fb-desert.mp3",
+      "/audio/voice/ice-sort-welcome.mp3",
+      "/audio/voice/ice-clue-sort.mp3",
+      "/audio/voice/ice-fb-hop.mp3",
+      "/audio/voice/ice-fb-horse.mp3",
+      "/audio/voice/ice-letter-welcome.mp3",
+      "/audio/voice/ice-clue-letter.mp3",
+      "/audio/voice/ice-fb-p.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2524,6 +2534,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("Where does the penguin belong?")?.id).toBe("voice.ice.home-welcome");
     expect(narrationClipForText("Penguins belong on cold ice, not the bakery. Where?")?.id).toBe(
       "voice.ice.clue.home",
+    );
+    expect(narrationClipForText("Who belongs on the floe?")?.id).toBe("voice.ice.sort-welcome");
+    expect(narrationClipForText("The floe is for ice walkers. Who belongs?")?.id).toBe(
+      "voice.ice.clue.sort",
+    );
+    expect(narrationClipForText("Which letter starts penguin?")?.id).toBe("voice.ice.letter-welcome");
+    expect(narrationClipForText("Penguin starts with puh. Which letter?")?.id).toBe(
+      "voice.ice.clue.letter",
     );
   });
 
