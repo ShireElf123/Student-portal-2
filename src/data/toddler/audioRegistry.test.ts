@@ -102,6 +102,12 @@ describe("audio registry", () => {
       "/audio/voice/story-library-lamp.mp3",
       "/audio/voice/story-wagon-open.mp3",
       "/audio/voice/story-wagon-empty.mp3",
+      "/audio/voice/story-farm-sunrise.mp3",
+      "/audio/voice/story-wagon-pears.mp3",
+      "/audio/voice/story-wagon-firstpear.mp3",
+      "/audio/voice/story-wagon-pup.mp3",
+      "/audio/voice/story-wagon-note.mp3",
+      "/audio/voice/story-wagon-naps.mp3",
       "/audio/voice/farm-area-welcome.mp3",
       "/audio/voice/farm-milk-station.mp3",
       "/audio/voice/farm-milk-line.mp3",
@@ -2419,6 +2425,14 @@ describe("audio registry", () => {
     ).toBe("voice.story.library-open");
     expect(narrationClipForText("The wagon is empty. What shall we load first?")?.id).toBe(
       "voice.story.wagon-empty",
+    );
+    expect(
+      narrationClipForText(
+        "Cock a doodle doo! The bright sun is rising over the farm. Who is waking up in the barn?",
+      )?.id,
+    ).toBe("voice.story.farm-sunrise");
+    expect(narrationClipForText("The wagon naps. You were the kindness today.")?.id).toBe(
+      "voice.story.wagon-naps",
     );
   });
 
