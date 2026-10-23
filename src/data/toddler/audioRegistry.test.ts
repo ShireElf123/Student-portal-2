@@ -982,6 +982,16 @@ describe("audio registry", () => {
       "/audio/voice/fire-clue-letter.mp3",
       "/audio/voice/fire-fb-f.mp3",
       "/audio/voice/fire-fb-s.mp3",
+      "/audio/voice/fire-who-welcome.mp3",
+      "/audio/voice/fire-clue-who.mp3",
+      "/audio/voice/fire-fb-bell.mp3",
+      "/audio/voice/fire-fb-ran.mp3",
+      "/audio/voice/fire-fb-nap.mp3",
+      "/audio/voice/fire-badge-welcome.mp3",
+      "/audio/voice/fire-clue-badge.mp3",
+      "/audio/voice/fire-fb-circle.mp3",
+      "/audio/voice/fire-fb-square.mp3",
+      "/audio/voice/fire-fb-star.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2175,6 +2185,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("Fire starts with fff. Which letter?")?.id).toBe(
       "voice.fire.clue.letter",
     );
+    expect(narrationClipForText("The bell rang, then the crew ran. What first?")?.id).toBe(
+      "voice.fire.who-welcome",
+    );
+    expect(narrationClipForText("The bell rang, then the crew ran. What happened first?")?.id).toBe(
+      "voice.fire.clue.who",
+    );
+    expect(narrationClipForText("What shape is the badge?")?.id).toBe("voice.fire.badge-welcome");
+    expect(narrationClipForText("The badge is round. What shape?")?.id).toBe("voice.fire.clue.badge");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
