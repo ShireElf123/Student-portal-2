@@ -1552,6 +1552,16 @@ describe("audio registry", () => {
       "/audio/voice/treasure-fb-nine.mp3",
       "/audio/voice/treasure-fb-four.mp3",
       "/audio/voice/treasure-fb-twelve.mp3",
+      "/audio/voice/treasure-x-welcome.mp3",
+      "/audio/voice/treasure-clue-x.mp3",
+      "/audio/voice/treasure-fb-palm.mp3",
+      "/audio/voice/treasure-fb-kitchen.mp3",
+      "/audio/voice/treasure-fb-moonx.mp3",
+      "/audio/voice/treasure-chest-welcome.mp3",
+      "/audio/voice/treasure-clue-chest.mp3",
+      "/audio/voice/treasure-fb-mapdry.mp3",
+      "/audio/voice/treasure-fb-waves.mp3",
+      "/audio/voice/treasure-fb-crabs.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3295,6 +3305,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("How many coins in the sand?")?.id).toBe(
       "voice.treasure.coins-welcome",
+    );
+    expect(narrationClipForText("Where does the map tell us to dig?")?.id).toBe(
+      "voice.treasure.x-welcome",
+    );
+    expect(narrationClipForText("What belongs in the dry chest?")?.id).toBe(
+      "voice.treasure.chest-welcome",
     );
   });
 
