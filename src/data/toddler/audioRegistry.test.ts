@@ -1750,6 +1750,16 @@ describe("audio registry", () => {
       "/audio/voice/space-fb-saidfour.mp3",
       "/audio/voice/space-fb-notnine.mp3",
       "/audio/voice/space-helmet-welcome.mp3",
+      "/audio/voice/space-clue-helmet.mp3",
+      "/audio/voice/space-fb-silver.mp3",
+      "/audio/voice/space-fb-notgreen.mp3",
+      "/audio/voice/space-fb-notpink.mp3",
+      "/audio/voice/space-blink-welcome.mp3",
+      "/audio/voice/space-clue-blink.mp3",
+      "/audio/voice/space-fb-blink.mp3",
+      "/audio/voice/space-fb-blinks.mp3",
+      "/audio/voice/space-fb-staycode.mp3",
+      "/audio/voice/space-sleep-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3616,6 +3626,10 @@ describe("audio registry", () => {
     ).toBe("voice.space.waved-welcome");
     expect(narrationClipForText("Where is the red sock?")?.id).toBe("voice.space.sock-welcome");
     expect(narrationClipForText("How many beeps?")?.id).toBe("voice.space.fourbeeps-welcome");
+    expect(narrationClipForText("What colour was the helmet?")?.id).toBe(
+      "voice.space.helmet-welcome",
+    );
+    expect(narrationClipForText("Blink blink rest. Next?")?.id).toBe("voice.space.blink-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
