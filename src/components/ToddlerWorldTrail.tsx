@@ -43,7 +43,7 @@ export function ToddlerWorldTrail({
 
   return (
     <section className="space-y-2">
-      <p className="px-1 text-sm font-black text-white/80">{label}</p>
+      <p className="px-1 text-sm font-black text-white/80 whitespace-nowrap">{label}</p>
       <div
         ref={scrollerRef}
         className="overflow-x-auto rounded-[2rem] border border-white/20 shadow-xl"

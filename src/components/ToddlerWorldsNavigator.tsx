@@ -1592,8 +1592,8 @@ export function ToddlerWorldsNavigator({
           </button>
 
           <div className="flex items-center gap-2">
-            <span className="px-3.5 py-1.5 rounded-2xl bg-white/10 text-white font-bold text-sm border border-white/10">
-              {areaStats.completedCount}/{areaStats.totalCount} Discoveries Made
+            <span className="px-3.5 py-1.5 rounded-2xl bg-white/10 text-white font-bold text-sm border border-white/10 tabular-nums whitespace-nowrap">
+              {areaStats.completedCount} of {areaStats.totalCount} Discoveries
             </span>
           </div>
         </div>

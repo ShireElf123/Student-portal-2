@@ -5,6 +5,8 @@ export interface SafariFriend {
   id: string;
   name: string;
   emoji: string;
+  /** Painted portrait when the emoji card is not enough (Tale Safari). */
+  artSrc?: string;
   soundText: string;
   call: string;
   funFact: string;
@@ -234,14 +236,14 @@ const compost: SafariFriend[] = [
 ];
 
 const tales: SafariFriend[] = [
-  { id: "hen", name: "Story Hen", emoji: "🐔", soundText: "CLUCK!", call: "Cluck! Once upon a barnyard…", funFact: "Hens star in many first tales.", habitat: "Barnyard Tale", bgGradient: "from-orange-400 to-amber-500" },
-  { id: "book", name: "Story Book", emoji: "📖", soundText: "FLIP!", call: "Flip — every page is a new door!", funFact: "Stories have a start, a middle, and an end.", habitat: "Story Nook", bgGradient: "from-violet-400 to-purple-500" },
-  { id: "crown", name: "Tale Crown", emoji: "👑", soundText: "SHINE!", call: "Shine for the kind king!", funFact: "Crowns in tales mean a job: be fair.", habitat: "Castle Page", bgGradient: "from-yellow-400 to-amber-500" },
-  { id: "king", name: "Kind King", emoji: "🤴", soundText: "HELLO!", call: "Hello, little reader!", funFact: "Kind kings share, they do not shout.", habitat: "Castle Page", bgGradient: "from-violet-400 to-amber-400" },
-  { id: "dragon", name: "Gentle Dragon", emoji: "🐉", soundText: "WHOOSH!", call: "Whoosh — I puff warm air, not trouble!", funFact: "Story dragons can be friends.", habitat: "Cave Chapter", bgGradient: "from-emerald-500 to-lime-600" },
-  { id: "boat", name: "Tale Boat", emoji: "⛵", soundText: "SAIL!", call: "Sail across the page!", funFact: "Boats in stories go farther than real harbours.", habitat: "Sea Chapter", bgGradient: "from-sky-400 to-cyan-500" },
-  { id: "star", name: "Wish Star", emoji: "⭐", soundText: "TWINKLE!", call: "Twinkle a wish on the last page!", funFact: "Many tales end under a star.", habitat: "Night Chapter", bgGradient: "from-amber-300 to-yellow-400" },
-  { id: "castle", name: "Page Castle", emoji: "🏰", soundText: "ECHO!", call: "Echo in the tall stone hall!", funFact: "Castles keep the story people together.", habitat: "Castle Page", bgGradient: "from-slate-400 to-violet-500" },
+  { id: "hen", name: "Story Hen", emoji: "🐔", artSrc: "/safari/hen.jpg", soundText: "CLUCK!", call: "Cluck! Once upon a barnyard…", funFact: "Hens star in many first tales.", habitat: "Barnyard Tale", bgGradient: "from-orange-400 to-amber-500" },
+  { id: "book", name: "Story Book", emoji: "📖", artSrc: "/safari/book.jpg", soundText: "FLIP!", call: "Flip — every page is a new door!", funFact: "Stories have a start, a middle, and an end.", habitat: "Story Nook", bgGradient: "from-violet-400 to-purple-500" },
+  { id: "crown", name: "Tale Crown", emoji: "👑", artSrc: "/safari/crown.jpg", soundText: "SHINE!", call: "Shine for the kind king!", funFact: "Crowns in tales mean a job: be fair.", habitat: "Castle Page", bgGradient: "from-yellow-400 to-amber-500" },
+  { id: "king", name: "Kind King", emoji: "🦁", artSrc: "/safari/king.jpg", soundText: "HELLO!", call: "Hello, little reader!", funFact: "Kind kings share, they do not shout.", habitat: "Castle Page", bgGradient: "from-violet-400 to-amber-400" },
+  { id: "dragon", name: "Gentle Dragon", emoji: "🐉", artSrc: "/safari/dragon.jpg", soundText: "WHOOSH!", call: "Whoosh — I puff warm air, not trouble!", funFact: "Story dragons can be friends.", habitat: "Cave Chapter", bgGradient: "from-emerald-500 to-lime-600" },
+  { id: "boat", name: "Tale Boat", emoji: "⛵", artSrc: "/safari/boat.jpg", soundText: "SAIL!", call: "Sail across the page!", funFact: "Boats in stories go farther than real harbours.", habitat: "Sea Chapter", bgGradient: "from-sky-400 to-cyan-500" },
+  { id: "star", name: "Wish Star", emoji: "⭐", artSrc: "/safari/star.jpg", soundText: "TWINKLE!", call: "Twinkle a wish on the last page!", funFact: "Many tales end under a star.", habitat: "Night Chapter", bgGradient: "from-amber-300 to-yellow-400" },
+  { id: "castle", name: "Page Castle", emoji: "🏰", artSrc: "/safari/castle.jpg", soundText: "ECHO!", call: "Echo in the tall stone hall!", funFact: "Castles keep the story people together.", habitat: "Castle Page", bgGradient: "from-slate-400 to-violet-500" },
 ];
 
 const trail: SafariFriend[] = [

@@ -2242,6 +2242,8 @@ describe("audio registry", () => {
       "/audio/voice/safari-bio-bedroom-moon.mp3",
       "/audio/voice/safari-bio-sock.mp3",
       "/audio/voice/safari-bio-bedroom-mouse.mp3",
+      "/audio/voice/sort-sky-street.mp3",
+      "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -2363,6 +2365,15 @@ describe("audio registry", () => {
     const clip = narrationClipForText(SAFARI_EXPLORE_WELCOME_PROMPT);
     expect(clip?.id).toBe("voice.narrator.safari-explore-welcome");
     expect(narrationClipForText("some other prompt")).toBeUndefined();
+  });
+
+  it("maps Sky vs Street and Train Cars hear-again lines", () => {
+    expect(narrationClipForText("Does it fly in the sky, or roll on the street?")?.id).toBe(
+      "voice.sort.sky-street",
+    );
+    expect(narrationClipForText("Look! Count the Train Cars. How many do you see?")?.id).toBe(
+      "voice.count.train-cars",
+    );
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {

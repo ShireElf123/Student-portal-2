@@ -237,7 +237,7 @@ export function ToddlerAnimalSafari({
 
   const handlePlayTargetSound = () => {
     soundEffects.playPop();
-    playSafariAnimalSfx(targetAnimal.id);
+    playSafariDetectiveMystery(targetAnimal.id);
   };
 
   return (
@@ -347,9 +347,17 @@ export function ToddlerAnimalSafari({
                 {animal.habitat}
               </div>
 
-              {/* Big Animated Emoji Mascot */}
-              <div className="text-5xl sm:text-6xl py-2 filter drop-shadow-lg transition-transform hover:scale-110">
-                {animal.emoji}
+              {/* Painted portrait when we have one; emoji otherwise */}
+              <div className="py-2 filter drop-shadow-lg transition-transform hover:scale-110">
+                {animal.artSrc ? (
+                  <img
+                    src={animal.artSrc}
+                    alt={animal.name}
+                    className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-2xl mx-auto border-2 border-white/30"
+                  />
+                ) : (
+                  <div className="text-5xl sm:text-6xl">{animal.emoji}</div>
+                )}
               </div>
 
               {/* Name & Sound */}
@@ -375,7 +383,15 @@ export function ToddlerAnimalSafari({
           animate={{ opacity: 1, y: 0 }}
           className="p-5 rounded-3xl bg-white/[0.06] border border-white/20 flex items-center gap-4"
         >
-          <div className="text-5xl">{selectedAnimal.emoji}</div>
+          {selectedAnimal.artSrc ? (
+            <img
+              src={selectedAnimal.artSrc}
+              alt={selectedAnimal.name}
+              className="w-16 h-16 object-cover rounded-2xl border border-white/30"
+            />
+          ) : (
+            <div className="text-5xl">{selectedAnimal.emoji}</div>
+          )}
           <div className="space-y-1">
             <h4 className="text-lg font-black text-white flex items-center gap-2">
               <span>{selectedAnimal.name}</span>

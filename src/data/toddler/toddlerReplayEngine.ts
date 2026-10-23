@@ -59,9 +59,10 @@ export function countingBand(level: number): { min: number; max: number; label: 
   return { min: 11, max: 20, label: "11 to 20" };
 }
 
-/** First area stays 1–5. Next road 6–10. Deeper land 11–20. Never weaker than authored difficulty. */
+/** First area stays 1–5 even if the station was authored harder. Next road 6–10. Deeper land 11–20. */
 export function countingLevelForPlace(areaIndex: number, authoredDifficulty: number = 1): number {
-  const fromRoad = areaIndex <= 0 ? 1 : areaIndex === 1 ? 2 : 3;
+  if (areaIndex <= 0) return 1;
+  const fromRoad = areaIndex === 1 ? 2 : 3;
   return Math.max(authoredDifficulty || 1, fromRoad);
 }
 
