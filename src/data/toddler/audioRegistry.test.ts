@@ -1880,6 +1880,16 @@ describe("audio registry", () => {
       "/audio/voice/shapes-sides-welcome.mp3",
       "/audio/voice/shapes-clue-sides.mp3",
       "/audio/voice/shapes-fb-threesides.mp3",
+      "/audio/voice/shapes-fb-thatissquare.mp3",
+      "/audio/voice/shapes-fb-trianglehasthree.mp3",
+      "/audio/voice/shapes-door-welcome.mp3",
+      "/audio/voice/shapes-clue-door.mp3",
+      "/audio/voice/shapes-fb-rectdoor.mp3",
+      "/audio/voice/shapes-fb-notround.mp3",
+      "/audio/voice/shapes-fb-notthreesided.mp3",
+      "/audio/voice/feelings-sad-welcome.mp3",
+      "/audio/voice/feelings-clue-sad.mp3",
+      "/audio/voice/feelings-fb-hug.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3801,6 +3811,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("How many sides on a triangle?")?.id).toBe(
       "voice.shapes.sides-welcome",
+    );
+    expect(narrationClipForText("Long, four corners. What shape is the door?")?.id).toBe(
+      "voice.shapes.door-welcome",
+    );
+    expect(narrationClipForText("Pip looks sad. What helps?")?.id).toBe(
+      "voice.feelings.sad-welcome",
     );
   });
 
