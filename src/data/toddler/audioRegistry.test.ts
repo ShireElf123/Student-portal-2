@@ -1602,6 +1602,16 @@ describe("audio registry", () => {
       "/audio/voice/color-shadow-welcome.mp3",
       "/audio/voice/color-clue-shadow.mp3",
       "/audio/voice/color-fb-darker.mp3",
+      "/audio/voice/color-fb-notblue.mp3",
+      "/audio/voice/color-fb-stillthere.mp3",
+      "/audio/voice/color-dots-welcome.mp3",
+      "/audio/voice/color-clue-dots.mp3",
+      "/audio/voice/color-fb-yellowdot.mp3",
+      "/audio/voice/color-fb-bluedot.mp3",
+      "/audio/voice/music-bells-welcome.mp3",
+      "/audio/voice/music-clue-bells.mp3",
+      "/audio/voice/music-fb-fivebells.mp3",
+      "/audio/voice/music-fb-wholerow.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3378,6 +3388,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Is shady red a new colour, or darker red?")?.id).toBe(
       "voice.color.shadow-welcome",
+    );
+    expect(narrationClipForText("Red, yellow, red, yellow, red. What comes next?")?.id).toBe(
+      "voice.color.dots-welcome",
+    );
+    expect(narrationClipForText("How many garden bells?")?.id).toBe(
+      "voice.music.bells-welcome",
     );
   });
 
