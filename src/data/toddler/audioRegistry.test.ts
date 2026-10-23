@@ -1632,6 +1632,16 @@ describe("audio registry", () => {
       "/audio/voice/music-clue-keep.mp3",
       "/audio/voice/music-fb-keeptime.mp3",
       "/audio/voice/music-fb-nothrow.mp3",
+      "/audio/voice/music-fb-stayplay.mp3",
+      "/audio/voice/music-who-welcome.mp3",
+      "/audio/voice/music-fb-nanalast.mp3",
+      "/audio/voice/music-fb-pipfirst.mp3",
+      "/audio/voice/music-fb-nodog.mp3",
+      "/audio/voice/music-pond-welcome.mp3",
+      "/audio/voice/music-clue-pond.mp3",
+      "/audio/voice/music-fb-lowboom.mp3",
+      "/audio/voice/music-fb-bellstinkle.mp3",
+      "/audio/voice/music-fb-whistles.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3426,6 +3436,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("While the song plays, what do we do?")?.id).toBe(
       "voice.music.keep-welcome",
+    );
+    expect(narrationClipForText("Pip hummed, then Nana hummed lower. Who sang last?")?.id).toBe(
+      "voice.music.who-welcome",
+    );
+    expect(narrationClipForText("The frog pond wants a low boom. Which instrument?")?.id).toBe(
+      "voice.music.pond-welcome",
     );
   });
 
