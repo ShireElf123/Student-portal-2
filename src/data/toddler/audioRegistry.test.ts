@@ -1172,6 +1172,16 @@ describe("audio registry", () => {
       "/audio/voice/ice-clue-trace.mp3",
       "/audio/voice/ice-slide-welcome.mp3",
       "/audio/voice/ice-clue-slide.mp3",
+      "/audio/voice/ice-pack-welcome.mp3",
+      "/audio/voice/ice-clue-pack.mp3",
+      "/audio/voice/den-area-welcome.mp3",
+      "/audio/voice/den-coat-welcome.mp3",
+      "/audio/voice/den-clue-coat.mp3",
+      "/audio/voice/den-fb-bear.mp3",
+      "/audio/voice/den-fb-parrot.mp3",
+      "/audio/voice/den-home-welcome.mp3",
+      "/audio/voice/den-clue-home.mp3",
+      "/audio/voice/den-fb-den.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2584,6 +2594,27 @@ describe("audio registry", () => {
     expect(narrationClipForText("Slide the penguin down the ice!")?.id).toBe(
       "voice.ice.slide-welcome",
     );
+    expect(narrationClipForText("The ice is sharp. What does Pip need?")?.id).toBe(
+      "voice.ice.pack-welcome",
+    );
+  });
+
+  it("maps Snow Den closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Snow Den! Soft snow walls and a quiet cub. Let's explore together!",
+      )?.id,
+    ).toBe("voice.den.area-welcome");
+    expect(narrationClipForText("Who has a huge white coat on the snow?")?.id).toBe(
+      "voice.den.coat-welcome",
+    );
+    expect(narrationClipForText("Huge, white, and padded for snow. Who?")?.id).toBe(
+      "voice.den.clue.coat",
+    );
+    expect(narrationClipForText("Where does the cub belong?")?.id).toBe("voice.den.home-welcome");
+    expect(
+      narrationClipForText("The cub belongs in the snow den, not the harbour. Where?")?.id,
+    ).toBe("voice.den.clue.home");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
