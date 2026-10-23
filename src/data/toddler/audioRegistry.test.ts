@@ -1262,6 +1262,16 @@ describe("audio registry", () => {
       "/audio/voice/seal-bark-welcome.mp3",
       "/audio/voice/seal-clue-bark.mp3",
       "/audio/voice/seal-fb-bark.mp3",
+      "/audio/voice/seal-fb-dog.mp3",
+      "/audio/voice/seal-fb-owl.mp3",
+      "/audio/voice/seal-sort-welcome.mp3",
+      "/audio/voice/seal-clue-sort.mp3",
+      "/audio/voice/seal-fb-rest.mp3",
+      "/audio/voice/seal-shells-welcome.mp3",
+      "/audio/voice/seal-clue-shells.mp3",
+      "/audio/voice/seal-fb-five.mp3",
+      "/audio/voice/seal-fb-eight.mp3",
+      "/audio/voice/seal-letter-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2797,6 +2807,17 @@ describe("audio registry", () => {
     expect(narrationClipForText("A short bark from the wet rock. Who?")?.id).toBe(
       "voice.seal.clue.bark",
     );
+    expect(narrationClipForText("Who belongs on the seal shore?")?.id).toBe(
+      "voice.seal.sort-welcome",
+    );
+    expect(narrationClipForText("The shore is for sea resters. Who belongs?")?.id).toBe(
+      "voice.seal.clue.sort",
+    );
+    expect(narrationClipForText("How many shells?")?.id).toBe("voice.seal.shells-welcome");
+    expect(narrationClipForText("Five shells in the tide line. How many?")?.id).toBe(
+      "voice.seal.clue.shells",
+    );
+    expect(narrationClipForText("Which letter starts seal?")?.id).toBe("voice.seal.letter-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
