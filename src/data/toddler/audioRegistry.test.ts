@@ -862,6 +862,16 @@ describe("audio registry", () => {
       "/audio/voice/bakery-fb-br.mp3",
       "/audio/voice/bakery-fb-st.mp3",
       "/audio/voice/bakery-fb-fl.mp3",
+      "/audio/voice/bakery-pattern-welcome.mp3",
+      "/audio/voice/bakery-fb-ab-loaf.mp3",
+      "/audio/voice/bakery-fb-fish.mp3",
+      "/audio/voice/bakery-fb-happened.mp3",
+      "/audio/voice/bakery-where-welcome.mp3",
+      "/audio/voice/bakery-clue-where.mp3",
+      "/audio/voice/bakery-fb-window.mp3",
+      "/audio/voice/bakery-fb-not-oven.mp3",
+      "/audio/voice/bakery-fb-kitchen.mp3",
+      "/audio/voice/bakery-tin-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1893,6 +1903,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("Bread starts with br. Which blend?")?.id).toBe(
       "voice.bakery.clue.blend",
     );
+    expect(narrationClipForText("Bun, loaf, bun, loaf, bun. Next?")?.id).toBe(
+      "voice.bakery.pattern-welcome",
+    );
+    expect(narrationClipForText("Where does the pie cool?")?.id).toBe("voice.bakery.where-welcome");
+    expect(
+      narrationClipForText("Nana said the pie cools on the window, not the oven. Where?")?.id,
+    ).toBe("voice.bakery.clue.where");
+    expect(narrationClipForText("What shape is the pie tin?")?.id).toBe("voice.bakery.tin-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
