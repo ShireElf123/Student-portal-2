@@ -118,6 +118,9 @@ describe("audio registry", () => {
       "/audio/voice/toy-clue-puddles.mp3",
       "/audio/voice/toy-clue-can.mp3",
       "/audio/voice/toy-clue-whisper.mp3",
+      "/audio/voice/toy-clue-wagon.mp3",
+      "/audio/voice/toy-clue-rosie.mp3",
+      "/audio/voice/toy-clue-rainhold.mp3",
       "/audio/voice/farm-area-welcome.mp3",
       "/audio/voice/farm-milk-station.mp3",
       "/audio/voice/farm-milk-line.mp3",
@@ -2448,6 +2451,13 @@ describe("audio registry", () => {
     expect(narrationClipForText("Whisper, stamp a card, and ride home with a book.")?.id).toBe(
       "voice.toy.clue.whisper",
     );
+    expect(narrationClipForText("Load the wagon with notes, pears, and care.")?.id).toBe(
+      "voice.toy.clue.wagon",
+    );
+    expect(narrationClipForText("Ride with Rosie and help Pepper the cat.")?.id).toBe(
+      "voice.toy.clue.rosie",
+    );
+    expect(narrationClipForText("Hold to rain. The leaves drink.")?.id).toBe("voice.toy.clue.rainhold");
   });
 
   it("maps Farm Valley closed-kit lines to voice-01", () => {

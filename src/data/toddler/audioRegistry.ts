@@ -837,6 +837,27 @@ export const AUDIO_ASSETS: AudioAsset[] = [
     "Open toy room cluePrompt. Replaces device TTS.",
   ),
   voiceClip(
+    "voice.toy.clue.wagon",
+    "/audio/voice/toy-clue-wagon.mp3",
+    "Kindness wagon land clue",
+    "Load the wagon with notes, pears, and care.",
+    "Open toy room cluePrompt. Replaces device TTS.",
+  ),
+  voiceClip(
+    "voice.toy.clue.rosie",
+    "/audio/voice/toy-clue-rosie.mp3",
+    "Firehouse Rosie land clue",
+    "Ride with Rosie and help Pepper the cat.",
+    "Open toy room cluePrompt. Replaces device TTS.",
+  ),
+  voiceClip(
+    "voice.toy.clue.rainhold",
+    "/audio/voice/toy-clue-rainhold.mp3",
+    "Pond rain-hold clue",
+    "Hold to rain. The leaves drink.",
+    "Open toy room cluePrompt. Replaces device TTS.",
+  ),
+  voiceClip(
     "voice.farm.area-welcome",
     "/audio/voice/farm-area-welcome.mp3",
     "Farm Valley area welcome",
