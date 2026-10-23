@@ -1112,6 +1112,16 @@ describe("audio registry", () => {
       "/audio/voice/market-clue-letter.mp3",
       "/audio/voice/market-fb-m.mp3",
       "/audio/voice/market-fb-n.mp3",
+      "/audio/voice/market-fb-k.mp3",
+      "/audio/voice/market-coins-welcome.mp3",
+      "/audio/voice/market-clue-coins.mp3",
+      "/audio/voice/market-fb-purses.mp3",
+      "/audio/voice/market-nana-welcome.mp3",
+      "/audio/voice/market-clue-nana.mp3",
+      "/audio/voice/market-fb-redcap.mp3",
+      "/audio/voice/market-fb-kite.mp3",
+      "/audio/voice/market-fb-stall.mp3",
+      "/audio/voice/market-awning-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2454,6 +2464,19 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Market starts with mmm. Which letter?")?.id).toBe(
       "voice.market.clue.letter",
+    );
+    expect(narrationClipForText("Three and two coins. How many?")?.id).toBe(
+      "voice.market.coins-welcome",
+    );
+    expect(narrationClipForText("3 coins here, 2 coins there. How many?")?.id).toBe(
+      "voice.market.clue.coins",
+    );
+    expect(narrationClipForText("What did Nana ask for?")?.id).toBe("voice.market.nana-welcome");
+    expect(narrationClipForText("Nana asked for a red cap, not a blue kite. What?")?.id).toBe(
+      "voice.market.clue.nana",
+    );
+    expect(narrationClipForText("Red, white, red, white, red. Next?")?.id).toBe(
+      "voice.market.awning-welcome",
     );
   });
 
