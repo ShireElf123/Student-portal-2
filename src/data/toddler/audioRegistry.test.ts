@@ -1242,6 +1242,16 @@ describe("audio registry", () => {
       "/audio/voice/light-fb-seal.mp3",
       "/audio/voice/light-sparks-welcome.mp3",
       "/audio/voice/light-clue-sparks.mp3",
+      "/audio/voice/light-fb-seven.mp3",
+      "/audio/voice/light-fb-bands.mp3",
+      "/audio/voice/light-watch-welcome.mp3",
+      "/audio/voice/light-clue-watch.mp3",
+      "/audio/voice/light-fb-hill.mp3",
+      "/audio/voice/light-fb-thin.mp3",
+      "/audio/voice/light-fb-oven.mp3",
+      "/audio/voice/light-balloon-welcome.mp3",
+      "/audio/voice/light-clue-balloon.mp3",
+      "/audio/voice/light-rhyme-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2743,6 +2753,16 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("3 sparks here, 4 sparks there. How many?")?.id).toBe(
       "voice.light.clue.sparks",
+    );
+    expect(narrationClipForText("Where do we watch?")?.id).toBe("voice.light.watch-welcome");
+    expect(
+      narrationClipForText("Nana said watch from the hill, not the thin ice. Where?")?.id,
+    ).toBe("voice.light.clue.watch");
+    expect(narrationClipForText("Tap the northern-light balloons!")?.id).toBe(
+      "voice.light.balloon-welcome",
+    );
+    expect(narrationClipForText("Find the rhyming friends under the lights!")?.id).toBe(
+      "voice.light.rhyme-welcome",
     );
   });
 
