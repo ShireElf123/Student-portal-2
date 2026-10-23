@@ -902,6 +902,16 @@ describe("audio registry", () => {
       "/audio/voice/soup-clue-sort.mp3",
       "/audio/voice/soup-fb-onion.mp3",
       "/audio/voice/soup-fb-sock.mp3",
+      "/audio/voice/soup-fb-crayon.mp3",
+      "/audio/voice/soup-letter-welcome.mp3",
+      "/audio/voice/soup-clue-letter.mp3",
+      "/audio/voice/soup-fb-s.mp3",
+      "/audio/voice/soup-fb-z.mp3",
+      "/audio/voice/soup-fb-c.mp3",
+      "/audio/voice/soup-spoons-welcome.mp3",
+      "/audio/voice/soup-clue-spoons.mp3",
+      "/audio/voice/soup-fb-five.mp3",
+      "/audio/voice/soup-fb-lots.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1983,6 +1993,16 @@ describe("audio registry", () => {
     expect(narrationClipForText("Which belongs in the soup pot?")?.id).toBe("voice.soup.sort-welcome");
     expect(narrationClipForText("The pot is for soup things. Which belongs?")?.id).toBe(
       "voice.soup.clue.sort",
+    );
+    expect(narrationClipForText("Which letter starts soup?")?.id).toBe("voice.soup.letter-welcome");
+    expect(narrationClipForText("Soup starts with sss. Which letter?")?.id).toBe(
+      "voice.soup.clue.letter",
+    );
+    expect(narrationClipForText("Two and three spoons. How many?")?.id).toBe(
+      "voice.soup.spoons-welcome",
+    );
+    expect(narrationClipForText("2 spoons out, 3 more from the drawer. How many?")?.id).toBe(
+      "voice.soup.clue.spoons",
     );
   });
 
