@@ -1092,6 +1092,16 @@ describe("audio registry", () => {
       "/audio/voice/market-bell-welcome.mp3",
       "/audio/voice/market-clue-bell.mp3",
       "/audio/voice/market-fb-seller.mp3",
+      "/audio/voice/market-fb-owl.mp3",
+      "/audio/voice/market-kites-welcome.mp3",
+      "/audio/voice/market-clue-kites.mp3",
+      "/audio/voice/market-fb-four.mp3",
+      "/audio/voice/market-fb-every.mp3",
+      "/audio/voice/market-fb-seven.mp3",
+      "/audio/voice/market-sign-welcome.mp3",
+      "/audio/voice/market-clue-sign.mp3",
+      "/audio/voice/market-fb-square.mp3",
+      "/audio/voice/market-fb-corners.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2412,6 +2422,16 @@ describe("audio registry", () => {
     expect(narrationClipForText("Who rings the stall bell?")?.id).toBe("voice.market.bell-welcome");
     expect(narrationClipForText("A stall bell dings. Who is calling a customer?")?.id).toBe(
       "voice.market.clue.bell",
+    );
+    expect(narrationClipForText("How many kites?")?.id).toBe("voice.market.kites-welcome");
+    expect(narrationClipForText("Four kites tied to a stall. How many?")?.id).toBe(
+      "voice.market.clue.kites",
+    );
+    expect(narrationClipForText("What shape is the stall sign?")?.id).toBe(
+      "voice.market.sign-welcome",
+    );
+    expect(narrationClipForText("The stall sign is a square. What shape?")?.id).toBe(
+      "voice.market.clue.sign",
     );
   });
 
