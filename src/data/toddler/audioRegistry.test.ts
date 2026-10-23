@@ -1312,6 +1312,16 @@ describe("audio registry", () => {
       "/audio/voice/bed-clue-letter.mp3",
       "/audio/voice/bed-fb-b.mp3",
       "/audio/voice/bed-fb-d.mp3",
+      "/audio/voice/bed-fb-p.mp3",
+      "/audio/voice/bed-lullaby-welcome.mp3",
+      "/audio/voice/bed-clue-lullaby.mp3",
+      "/audio/voice/bed-fb-soft.mp3",
+      "/audio/voice/bed-fb-crash.mp3",
+      "/audio/voice/bed-who-welcome.mp3",
+      "/audio/voice/bed-clue-who.mp3",
+      "/audio/voice/bed-fb-nana.mp3",
+      "/audio/voice/bed-fb-pip.mp3",
+      "/audio/voice/bed-fb-owl.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2905,6 +2915,16 @@ describe("audio registry", () => {
     expect(narrationClipForText("Bed starts with buh. Which letter?")?.id).toBe(
       "voice.bed.clue.letter",
     );
+    expect(narrationClipForText("Play a soft lullaby for the quilt.")?.id).toBe(
+      "voice.bed.lullaby-welcome",
+    );
+    expect(
+      narrationClipForText("The quilt wants a soft low tune. Play the quiet night piano.")?.id,
+    ).toBe("voice.bed.clue.lullaby");
+    expect(narrationClipForText("Who said night-night last?")?.id).toBe("voice.bed.who-welcome");
+    expect(
+      narrationClipForText("Pip said night-night, then Nana said night-night. Who last?")?.id,
+    ).toBe("voice.bed.clue.who");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
