@@ -62,6 +62,16 @@ describe("audio registry", () => {
       "/audio/voice/games-duck-welcome.mp3",
       "/audio/voice/games-monkey-welcome.mp3",
       "/audio/voice/games-elephant-welcome.mp3",
+      "/audio/voice/games-sheep-welcome.mp3",
+      "/audio/voice/games-owl-welcome.mp3",
+      "/audio/voice/games-horse-welcome.mp3",
+      "/audio/voice/games-pig-welcome.mp3",
+      "/audio/voice/games-star-welcome.mp3",
+      "/audio/voice/games-heart-welcome.mp3",
+      "/audio/voice/games-circle-welcome.mp3",
+      "/audio/voice/games-sunwarm-welcome.mp3",
+      "/audio/voice/games-square-welcome.mp3",
+      "/audio/voice/games-orange-welcome.mp3",
       "/audio/voice/farm-area-welcome.mp3",
       "/audio/voice/farm-milk-station.mp3",
       "/audio/voice/farm-milk-line.mp3",
@@ -2355,6 +2365,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Who is the giant friendly friend with big floppy ears and a water-spraying trunk?")?.id,
     ).toBe("voice.games.elephant-welcome");
+    expect(
+      narrationClipForText("Who gives us soft warm wool for cozy sweaters and says baa baa?")?.id,
+    ).toBe("voice.games.sheep-welcome");
+    expect(
+      narrationClipForText("Where is the orange triangle with three pointy corners?")?.id,
+    ).toBe("voice.games.orange-welcome");
   });
 
   it("maps Farm Valley closed-kit lines to voice-01", () => {
