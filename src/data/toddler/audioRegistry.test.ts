@@ -1800,6 +1800,16 @@ describe("audio registry", () => {
       "/audio/voice/ocean-fb-notsunbath.mp3",
       "/audio/voice/phonics-m-welcome.mp3",
       "/audio/voice/phonics-clue-m.mp3",
+      "/audio/voice/phonics-fb-moonm.mp3",
+      "/audio/voice/phonics-fb-ssun.mp3",
+      "/audio/voice/phonics-p-welcome.mp3",
+      "/audio/voice/phonics-clue-p.mp3",
+      "/audio/voice/phonics-fb-pipp.mp3",
+      "/audio/voice/phonics-fb-bcousin.mp3",
+      "/audio/voice/phonics-st-welcome.mp3",
+      "/audio/voice/phonics-clue-st.mp3",
+      "/audio/voice/phonics-fb-stemst.mp3",
+      "/audio/voice/phonics-fb-brbread.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3682,6 +3692,8 @@ describe("audio registry", () => {
       "voice.ocean.whyshell-welcome",
     );
     expect(narrationClipForText("Which letter starts moon?")?.id).toBe("voice.phonics.m-welcome");
+    expect(narrationClipForText("Which letter starts Pip?")?.id).toBe("voice.phonics.p-welcome");
+    expect(narrationClipForText("Which blend starts stem?")?.id).toBe("voice.phonics.st-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
