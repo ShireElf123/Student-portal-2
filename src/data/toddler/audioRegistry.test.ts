@@ -1820,6 +1820,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-clue-sun.mp3",
       "/audio/voice/phonics-fb-sunsss.mp3",
       "/audio/voice/phonics-fb-nlast.mp3",
+      "/audio/voice/phonics-fb-umiddle.mp3",
+      "/audio/voice/phonics-sunletters-welcome.mp3",
+      "/audio/voice/phonics-clue-sunletters.mp3",
+      "/audio/voice/phonics-fb-sunspell.mp3",
+      "/audio/voice/phonics-fb-therearethree.mp3",
+      "/audio/voice/grove-eight-welcome.mp3",
+      "/audio/voice/grove-clue-eight.mp3",
+      "/audio/voice/grove-fb-eightpebbles.mp3",
+      "/audio/voice/grove-fb-countdish.mp3",
+      "/audio/voice/grove-fullten-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3708,6 +3718,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("What is the first sound in sun?")?.id).toBe(
       "voice.phonics.sun-welcome",
     );
+    expect(narrationClipForText("How many letters in sun?")?.id).toBe(
+      "voice.phonics.sunletters-welcome",
+    );
+    expect(narrationClipForText("How many pebbles?")?.id).toBe("voice.grove.eight-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
