@@ -1692,6 +1692,16 @@ describe("audio registry", () => {
       "/audio/voice/sticker-fb-tree.mp3",
       "/audio/voice/sticker-fb-heartjust.mp3",
       "/audio/voice/sticker-place-welcome.mp3",
+      "/audio/voice/sticker-clue-place.mp3",
+      "/audio/voice/sticker-fb-fishpond.mp3",
+      "/audio/voice/sticker-fb-notsky.mp3",
+      "/audio/voice/sticker-fb-inthebook.mp3",
+      "/audio/voice/sticker-sheets-welcome.mp3",
+      "/audio/voice/sticker-clue-sheets.mp3",
+      "/audio/voice/sticker-fb-seven.mp3",
+      "/audio/voice/sticker-fb-bothsheets.mp3",
+      "/audio/voice/sticker-clue-sss.mp3",
+      "/audio/voice/sticker-fb-treet.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3528,6 +3538,9 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Nana said the fish goes on the pond page. Where?")?.id).toBe(
       "voice.sticker.place-welcome",
+    );
+    expect(narrationClipForText("Five and two stickers. How many in all?")?.id).toBe(
+      "voice.sticker.sheets-welcome",
     );
   });
 
