@@ -1562,6 +1562,16 @@ describe("audio registry", () => {
       "/audio/voice/treasure-fb-mapdry.mp3",
       "/audio/voice/treasure-fb-waves.mp3",
       "/audio/voice/treasure-fb-crabs.mp3",
+      "/audio/voice/treasure-keyhole-welcome.mp3",
+      "/audio/voice/treasure-clue-keyhole.mp3",
+      "/audio/voice/treasure-fb-roundkey.mp3",
+      "/audio/voice/treasure-fb-starkey.mp3",
+      "/audio/voice/treasure-fb-jam.mp3",
+      "/audio/voice/treasure-gems-welcome.mp3",
+      "/audio/voice/treasure-clue-gems.mp3",
+      "/audio/voice/treasure-fb-pouches.mp3",
+      "/audio/voice/treasure-parrot-welcome.mp3",
+      "/audio/voice/treasure-clue-parrot.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3311,6 +3321,15 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What belongs in the dry chest?")?.id).toBe(
       "voice.treasure.chest-welcome",
+    );
+    expect(narrationClipForText("Which key fits the round hole?")?.id).toBe(
+      "voice.treasure.keyhole-welcome",
+    );
+    expect(narrationClipForText("Four blue and three green. How many gems?")?.id).toBe(
+      "voice.treasure.gems-welcome",
+    );
+    expect(narrationClipForText("Where is the parrot shouting from?")?.id).toBe(
+      "voice.treasure.parrot-welcome",
     );
   });
 
