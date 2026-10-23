@@ -1870,6 +1870,16 @@ describe("audio registry", () => {
       "/audio/voice/shapes-well-welcome.mp3",
       "/audio/voice/shapes-clue-well.mp3",
       "/audio/voice/shapes-fb-acircle.mp3",
+      "/audio/voice/shapes-fb-rectlong.mp3",
+      "/audio/voice/shapes-corners-welcome.mp3",
+      "/audio/voice/shapes-fb-fourcorners.mp3",
+      "/audio/voice/shapes-fb-ringround.mp3",
+      "/audio/voice/shapes-train-welcome.mp3",
+      "/audio/voice/shapes-fb-absquare.mp3",
+      "/audio/voice/shapes-fb-notriangle.mp3",
+      "/audio/voice/shapes-sides-welcome.mp3",
+      "/audio/voice/shapes-clue-sides.mp3",
+      "/audio/voice/shapes-fb-threesides.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3785,6 +3795,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("A perfectly round cover. What shape?")?.id).toBe(
       "voice.shapes.well-welcome",
+    );
+    expect(narrationClipForText("Which shape has corners?")?.id).toBe(
+      "voice.shapes.corners-welcome",
+    );
+    expect(narrationClipForText("How many sides on a triangle?")?.id).toBe(
+      "voice.shapes.sides-welcome",
     );
   });
 
