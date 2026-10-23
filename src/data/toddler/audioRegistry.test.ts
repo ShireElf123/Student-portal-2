@@ -1612,6 +1612,16 @@ describe("audio registry", () => {
       "/audio/voice/music-clue-bells.mp3",
       "/audio/voice/music-fb-fivebells.mp3",
       "/audio/voice/music-fb-wholerow.mp3",
+      "/audio/voice/music-fb-noteight.mp3",
+      "/audio/voice/music-quiet-welcome.mp3",
+      "/audio/voice/music-clue-quiet.mp3",
+      "/audio/voice/music-fb-matchquiet.mp3",
+      "/audio/voice/music-fb-hidebird.mp3",
+      "/audio/voice/music-fb-shouting.mp3",
+      "/audio/voice/music-clap-welcome.mp3",
+      "/audio/voice/music-clue-clap.mp3",
+      "/audio/voice/music-fb-clapnext.mp3",
+      "/audio/voice/music-fb-notstomps.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3394,6 +3404,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("How many garden bells?")?.id).toBe(
       "voice.music.bells-welcome",
+    );
+    expect(narrationClipForText("The bird is quiet. Loud drum or soft tap?")?.id).toBe(
+      "voice.music.quiet-welcome",
+    );
+    expect(narrationClipForText("Clap clap rest. What comes next?")?.id).toBe(
+      "voice.music.clap-welcome",
     );
   });
 
