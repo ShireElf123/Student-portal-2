@@ -932,6 +932,16 @@ describe("audio registry", () => {
       "/audio/voice/picnic-fb-sandwich.mp3",
       "/audio/voice/picnic-fb-hammer.mp3",
       "/audio/voice/picnic-fb-tyre.mp3",
+      "/audio/voice/picnic-cups-welcome.mp3",
+      "/audio/voice/picnic-clue-cups.mp3",
+      "/audio/voice/picnic-fb-four.mp3",
+      "/audio/voice/picnic-fb-every.mp3",
+      "/audio/voice/picnic-fb-seven.mp3",
+      "/audio/voice/picnic-sarnies-welcome.mp3",
+      "/audio/voice/picnic-clue-sarnies.mp3",
+      "/audio/voice/picnic-fb-packs.mp3",
+      "/audio/voice/picnic-who-welcome.mp3",
+      "/audio/voice/picnic-clue-who.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2057,6 +2067,20 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Soft bread with a filling. What goes in the basket?")?.id).toBe(
       "voice.picnic.clue.pack",
+    );
+    expect(narrationClipForText("How many cups?")?.id).toBe("voice.picnic.cups-welcome");
+    expect(narrationClipForText("Four juice cups on the cloth. How many?")?.id).toBe(
+      "voice.picnic.clue.cups",
+    );
+    expect(narrationClipForText("Three and two sandwiches. How many?")?.id).toBe(
+      "voice.picnic.sarnies-welcome",
+    );
+    expect(narrationClipForText("3 sandwiches here, 2 there. How many?")?.id).toBe(
+      "voice.picnic.clue.sarnies",
+    );
+    expect(narrationClipForText("Who is marching to the crumb?")?.id).toBe("voice.picnic.who-welcome");
+    expect(narrationClipForText("Tiny marchers toward a crumb. Who?")?.id).toBe(
+      "voice.picnic.clue.who",
     );
   });
 
