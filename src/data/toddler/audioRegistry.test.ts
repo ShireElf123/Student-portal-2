@@ -1412,6 +1412,16 @@ describe("audio registry", () => {
       "/audio/voice/star-clue-shadow.mp3",
       "/audio/voice/porch-who-welcome.mp3",
       "/audio/voice/porch-clue-who.mp3",
+      "/audio/voice/porch-fb-moth.mp3",
+      "/audio/voice/porch-clue-count.mp3",
+      "/audio/voice/porch-fb-five.mp3",
+      "/audio/voice/porch-fb-eight.mp3",
+      "/audio/voice/porch-sort-welcome.mp3",
+      "/audio/voice/porch-clue-sort.mp3",
+      "/audio/voice/porch-fb-sortmoth.mp3",
+      "/audio/voice/porch-fb-penguin.mp3",
+      "/audio/voice/porch-fb-loaf.mp3",
+      "/audio/voice/porch-fb-n.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3078,6 +3088,12 @@ describe("audio registry", () => {
       "voice.star.hang-welcome",
     );
     expect(narrationClipForText("Who circles the porch bulb?")?.id).toBe("voice.porch.who-welcome");
+    expect(narrationClipForText("Five moths on the glass. How many?")?.id).toBe(
+      "voice.porch.clue.count",
+    );
+    expect(narrationClipForText("Who belongs at the porch bulb?")?.id).toBe(
+      "voice.porch.sort-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
