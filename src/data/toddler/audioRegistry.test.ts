@@ -32,6 +32,16 @@ describe("audio registry", () => {
       "/audio/voice/toy-clap-welcome.mp3",
       "/audio/voice/toy-boots-welcome.mp3",
       "/audio/voice/toy-library-welcome.mp3",
+      "/audio/voice/toy-wagon-welcome.mp3",
+      "/audio/voice/toy-rosie-welcome.mp3",
+      "/audio/voice/games-turtle-welcome.mp3",
+      "/audio/voice/games-bee-welcome.mp3",
+      "/audio/voice/games-penguin-welcome.mp3",
+      "/audio/voice/games-sun-welcome.mp3",
+      "/audio/voice/games-triangle-welcome.mp3",
+      "/audio/voice/games-three-welcome.mp3",
+      "/audio/voice/games-banana-welcome.mp3",
+      "/audio/voice/games-stop-welcome.mp3",
       "/audio/voice/farm-area-welcome.mp3",
       "/audio/voice/farm-milk-station.mp3",
       "/audio/voice/farm-milk-line.mp3",
@@ -2304,6 +2314,18 @@ describe("audio registry", () => {
     expect(narrationClipForText("Whisper in the library with Dot the mouse!")?.id).toBe(
       "voice.toy.library-welcome",
     );
+    expect(narrationClipForText("Load the kindness wagon and visit the block!")?.id).toBe(
+      "voice.toy.wagon-welcome",
+    );
+    expect(narrationClipForText("Clang clang! Ride with Rosie the fire truck!")?.id).toBe(
+      "voice.toy.rosie-welcome",
+    );
+    expect(
+      narrationClipForText("Can you find the slow little friend who carries a shell on its back?")?.id,
+    ).toBe("voice.games.turtle-welcome");
+    expect(
+      narrationClipForText("We keep safe near roads. Before crossing with a grown-up, what should we do?")?.id,
+    ).toBe("voice.games.stop-welcome");
   });
 
   it("maps Farm Valley closed-kit lines to voice-01", () => {
