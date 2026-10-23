@@ -1780,6 +1780,16 @@ describe("audio registry", () => {
       "/audio/voice/ocean-clue-sixbubbles.mp3",
       "/audio/voice/ocean-fb-sixbubbles.mp3",
       "/audio/voice/ocean-fb-saidsix.mp3",
+      "/audio/voice/ocean-fishleave-welcome.mp3",
+      "/audio/voice/ocean-clue-fishleave.mp3",
+      "/audio/voice/ocean-fb-fiveonefour.mp3",
+      "/audio/voice/ocean-fb-oneleft.mp3",
+      "/audio/voice/ocean-fb-wholeft.mp3",
+      "/audio/voice/ocean-why-welcome.mp3",
+      "/audio/voice/ocean-clue-why.mp3",
+      "/audio/voice/ocean-fb-lampdark.mp3",
+      "/audio/voice/ocean-fb-notreason.mp3",
+      "/audio/voice/ocean-shell-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3654,6 +3664,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("Who held the lamp?")?.id).toBe("voice.ocean.lamp-welcome");
     expect(narrationClipForText("Where is the pearl?")?.id).toBe("voice.ocean.pearl-welcome");
     expect(narrationClipForText("How many bubbles?")?.id).toBe("voice.ocean.sixbubbles-welcome");
+    expect(narrationClipForText("Five fish, one swims out. How many stay?")?.id).toBe(
+      "voice.ocean.fishleave-welcome",
+    );
+    expect(narrationClipForText("What rhymes with shell?")?.id).toBe("voice.ocean.shell-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
