@@ -1492,6 +1492,16 @@ describe("audio registry", () => {
       "/audio/voice/weather-fb-one.mp3",
       "/audio/voice/weather-fb-eight.mp3",
       "/audio/voice/weather-frost-welcome.mp3",
+      "/audio/voice/weather-clue-frost.mp3",
+      "/audio/voice/weather-fb-frost.mp3",
+      "/audio/voice/weather-fb-jam.mp3",
+      "/audio/voice/weather-fb-sand.mp3",
+      "/audio/voice/weather-shade-welcome.mp3",
+      "/audio/voice/weather-clue-shade.mp3",
+      "/audio/voice/weather-fb-shade.mp3",
+      "/audio/voice/weather-fb-lamp.mp3",
+      "/audio/voice/weather-fb-fish.mp3",
+      "/audio/voice/weather-nests-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3200,6 +3210,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Why is the grass silver and crunchy?")?.id).toBe(
       "voice.weather.frost-welcome",
+    );
+    expect(narrationClipForText("What made the moving shade?")?.id).toBe(
+      "voice.weather.shade-welcome",
+    );
+    expect(narrationClipForText("Which season is nest time?")?.id).toBe(
+      "voice.weather.nests-welcome",
     );
   });
 
