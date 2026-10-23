@@ -1830,6 +1830,16 @@ describe("audio registry", () => {
       "/audio/voice/grove-fb-eightpebbles.mp3",
       "/audio/voice/grove-fb-countdish.mp3",
       "/audio/voice/grove-fullten-welcome.mp3",
+      "/audio/voice/grove-clue-fullten.mp3",
+      "/audio/voice/grove-fb-fullten.mp3",
+      "/audio/voice/grove-fb-wholeframe.mp3",
+      "/audio/voice/grove-fb-fivehalf.mp3",
+      "/audio/voice/grove-leftover-welcome.mp3",
+      "/audio/voice/grove-clue-leftover.mp3",
+      "/audio/voice/grove-fb-onetenfour.mp3",
+      "/audio/voice/grove-fb-fourteenwhole.mp3",
+      "/audio/voice/grove-fb-afterten.mp3",
+      "/audio/voice/grove-twodishes-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3722,6 +3732,12 @@ describe("audio registry", () => {
       "voice.phonics.sunletters-welcome",
     );
     expect(narrationClipForText("How many pebbles?")?.id).toBe("voice.grove.eight-welcome");
+    expect(narrationClipForText("A full ten-frame. How many?")?.id).toBe(
+      "voice.grove.fullten-welcome",
+    );
+    expect(narrationClipForText("Six and one. How many berries?")?.id).toBe(
+      "voice.grove.twodishes-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
