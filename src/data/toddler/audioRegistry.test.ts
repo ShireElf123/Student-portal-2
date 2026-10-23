@@ -1740,6 +1740,16 @@ describe("audio registry", () => {
       "/audio/voice/space-fb-pipback.mp3",
       "/audio/voice/space-fb-nocow.mp3",
       "/audio/voice/space-sock-welcome.mp3",
+      "/audio/voice/space-clue-sock.mp3",
+      "/audio/voice/space-fb-antenna.mp3",
+      "/audio/voice/space-fb-notcrater.mp3",
+      "/audio/voice/space-fb-notthistale.mp3",
+      "/audio/voice/space-fourbeeps-welcome.mp3",
+      "/audio/voice/space-clue-fourbeeps.mp3",
+      "/audio/voice/space-fb-fourbeeps.mp3",
+      "/audio/voice/space-fb-saidfour.mp3",
+      "/audio/voice/space-fb-notnine.mp3",
+      "/audio/voice/space-helmet-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3604,6 +3614,8 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("The moon waved, then Pip waved back. Who waved first?")?.id,
     ).toBe("voice.space.waved-welcome");
+    expect(narrationClipForText("Where is the red sock?")?.id).toBe("voice.space.sock-welcome");
+    expect(narrationClipForText("How many beeps?")?.id).toBe("voice.space.fourbeeps-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
