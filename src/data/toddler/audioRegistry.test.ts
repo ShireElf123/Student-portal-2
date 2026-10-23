@@ -882,6 +882,16 @@ describe("audio registry", () => {
       "/audio/voice/bakery-clue-shape.mp3",
       "/audio/voice/bakery-clue-letter-trace.mp3",
       "/audio/voice/bakery-clue-knead.mp3",
+      "/audio/voice/soup-area-welcome.mp3",
+      "/audio/voice/soup-stirs-welcome.mp3",
+      "/audio/voice/soup-clue-stirs.mp3",
+      "/audio/voice/soup-fb-spoon.mp3",
+      "/audio/voice/soup-fb-key.mp3",
+      "/audio/voice/soup-fb-shoe.mp3",
+      "/audio/voice/soup-carrots-welcome.mp3",
+      "/audio/voice/soup-clue-carrots.mp3",
+      "/audio/voice/soup-fb-four.mp3",
+      "/audio/voice/soup-fb-count.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1938,6 +1948,22 @@ describe("audio registry", () => {
       "voice.bakery.clue.letter-trace",
     );
     expect(narrationClipForText("Press the dough eight times.")?.id).toBe("voice.bakery.clue.knead");
+  });
+
+  it("maps Nana's Soup Pot closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Nana\u2019s Soup Pot! Steam, spoons and a bubbling lid. Let's explore together!",
+      )?.id,
+    ).toBe("voice.soup.area-welcome");
+    expect(narrationClipForText("What stirs the soup?")?.id).toBe("voice.soup.stirs-welcome");
+    expect(narrationClipForText("Long handle, round bowl. What stirs the soup?")?.id).toBe(
+      "voice.soup.clue.stirs",
+    );
+    expect(narrationClipForText("How many carrots?")?.id).toBe("voice.soup.carrots-welcome");
+    expect(narrationClipForText("Four carrots waiting for the pot. How many?")?.id).toBe(
+      "voice.soup.clue.carrots",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
