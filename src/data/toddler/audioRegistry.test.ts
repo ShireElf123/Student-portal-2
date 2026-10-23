@@ -1402,6 +1402,16 @@ describe("audio registry", () => {
       "/audio/voice/star-fb-shoe.mp3",
       "/audio/voice/star-sky-welcome.mp3",
       "/audio/voice/star-clue-sky.mp3",
+      "/audio/voice/star-fb-star.mp3",
+      "/audio/voice/star-fb-spoon.mp3",
+      "/audio/voice/star-memory-welcome.mp3",
+      "/audio/voice/star-clue-memory.mp3",
+      "/audio/voice/star-hang-welcome.mp3",
+      "/audio/voice/star-clue-hang.mp3",
+      "/audio/voice/star-shadow-welcome.mp3",
+      "/audio/voice/star-clue-shadow.mp3",
+      "/audio/voice/porch-who-welcome.mp3",
+      "/audio/voice/porch-clue-who.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3061,6 +3071,13 @@ describe("audio registry", () => {
     expect(narrationClipForText("What belongs in the balcony sky?")?.id).toBe(
       "voice.star.sky-welcome",
     );
+    expect(narrationClipForText("Flip the balcony stars and find the match!")?.id).toBe(
+      "voice.star.memory-welcome",
+    );
+    expect(narrationClipForText("Hang the stars on the balcony!")?.id).toBe(
+      "voice.star.hang-welcome",
+    );
+    expect(narrationClipForText("Who circles the porch bulb?")?.id).toBe("voice.porch.who-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
