@@ -65,14 +65,59 @@ export function countingLevelForPlace(areaIndex: number, authoredDifficulty: num
   return Math.max(authoredDifficulty || 1, fromRoad);
 }
 
+export interface CountingHint {
+  title?: string;
+  spokenPrompt?: string;
+  targetCount?: number;
+}
+
+function stemWord(value: string): string {
+  return value.toLowerCase().replace(/ies$/, "y").replace(/s$/, "");
+}
+
+export function pickCountingTemplate<T extends { name: string }>(pool: T[], title?: string): T {
+  const source = pool.length > 0 ? pool : (COUNTING_OBJECT_TEMPLATES as unknown as T[]);
+  if (title) {
+    const hay = title.toLowerCase();
+    const match = source.find((item) => {
+      const last = stemWord(item.name.split(" ").pop() || item.name);
+      return last.length >= 3 && hay.includes(last);
+    });
+    if (match) return match;
+  }
+  return source[Math.floor(Math.random() * source.length)];
+}
+
+export function countingHintFromActivity(activity: {
+  title: string;
+  spokenPrompt?: string;
+  options?: { id: string; label: string; isCorrect: boolean }[];
+}): CountingHint {
+  const correct = activity.options?.find((option) => option.isCorrect);
+  let targetCount: number | undefined;
+  if (correct) {
+    const fromId = Number.parseInt(correct.id, 10);
+    if (Number.isFinite(fromId)) targetCount = fromId;
+    else {
+      const digits = correct.label.match(/\d+/);
+      if (digits) targetCount = Number.parseInt(digits[0], 10);
+    }
+  }
+  return { title: activity.title, spokenPrompt: activity.spokenPrompt, targetCount };
+}
+
 export function generateCountingScenario(
   level: number = 1,
   pool: { name: string; emoji: string; sound: string; bg: string; text: string }[] = COUNTING_OBJECT_TEMPLATES,
+  hint?: CountingHint,
 ): DynamicCountingScenario {
   const { min, max, label } = countingBand(level);
-  const count = min + Math.floor(Math.random() * (max - min + 1));
+  let count = min + Math.floor(Math.random() * (max - min + 1));
+  if (hint?.targetCount != null && hint.targetCount >= min && hint.targetCount <= max) {
+    count = hint.targetCount;
+  }
   const source = pool.length > 0 ? pool : COUNTING_OBJECT_TEMPLATES;
-  const template = source[Math.floor(Math.random() * source.length)];
+  const template = pickCountingTemplate(source, hint?.title);
 
   const distractors: number[] = [];
   while (distractors.length < 2) {
@@ -94,9 +139,11 @@ export function generateCountingScenario(
     textColor: template.text,
     question: `How many ${template.name} can you count?`,
     spokenPrompt:
-      level <= 1
-        ? `Look! Count the ${template.name}. How many do you see?`
-        : `This group is bigger. Count the ${template.name} from ${label}. How many do you see?`,
+      hint?.spokenPrompt && hint.targetCount === count
+        ? hint.spokenPrompt
+        : level <= 1
+          ? `Look! Count the ${template.name}. How many do you see?`
+          : `This group is bigger. Count the ${template.name} from ${label}. How many do you see?`,
     distractorCounts: options,
   };
 }

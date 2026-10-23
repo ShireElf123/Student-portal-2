@@ -41,6 +41,7 @@ import {
 } from "../data/toddler/toddlerProgressManager";
 import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
 import {
+  countingHintFromActivity,
   countingLevelForPlace,
   generateCountingScenario,
   generateSortingChallenge,
@@ -101,6 +102,29 @@ function isClosedVoiceIsland(areaId?: string | null) {
     areaId === "harbour-dock" ||
     areaId === "flower-bed"
   );
+}
+
+function firstOpenActivity(area: ToddlerArea, progress: ToddlerWorldProgressState) {
+  return area.activities.find((activity) => !progress.completedActivities[activity.id]) ?? area.activities[0] ?? null;
+}
+
+function nextAtlasPlay(progress: ToddlerWorldProgressState) {
+  const world =
+    ALL_TODDLER_WORLDS.find((item) => item.id === progress.lastVisitedWorldId) ||
+    ALL_TODDLER_WORLDS.find((item) => item.id === "animal-world") ||
+    ALL_TODDLER_WORLDS[0];
+  const unlocked = world.areas.filter((area) => isAreaUnlocked(area, progress));
+  const unfinished = unlocked.find((area) => {
+    const stats = getAreaProgressStats(area, progress);
+    return stats.completedCount < stats.totalCount;
+  });
+  const lastHere = unlocked.find((area) => area.id === progress.lastVisitedAreaId);
+  const lastStillOpen =
+    lastHere && getAreaProgressStats(lastHere, progress).completedCount < getAreaProgressStats(lastHere, progress).totalCount
+      ? lastHere
+      : null;
+  const area = lastStillOpen || unfinished || lastHere || unlocked[0] || world.areas[0];
+  return { world, area, activity: firstOpenActivity(area, progress) };
 }
 
 interface ToddlerWorldsNavigatorProps {
@@ -410,10 +434,26 @@ export function ToddlerWorldsNavigator({
     setSortedItems({});
     setCountingAnswered(false);
 
+    const firstOpen = firstOpenActivity(area, progress);
+    if (firstOpen) {
+      handleStartActivity(firstOpen);
+      return;
+    }
+
     speakText(`${area.title}! ${area.tagline}. Let's explore together!`, {
       pitch: 1.15,
       closedKit: isClosedVoiceIsland(area.id),
     });
+  };
+
+  const handleContinueAtlas = () => {
+    const next = nextAtlasPlay(progress);
+    if (!next.activity) return;
+    soundEffects.playPop();
+    stopSpeaking();
+    setSelectedWorldId(next.world.id);
+    setSelectedAreaId(next.area.id);
+    handleStartActivity(next.activity);
   };
 
   const handleBackToWorldsMap = () => {
@@ -496,7 +536,11 @@ export function ToddlerWorldsNavigator({
     const playTheme = getWorldPlayTheme(activity.worldId, activity.areaId);
 
     if (activity.type === "counting") {
-      const countScenario = generateCountingScenario(countingLevelForActivity(activity), playTheme.counting);
+      const countScenario = generateCountingScenario(
+        countingLevelForActivity(activity),
+        playTheme.counting,
+        countingHintFromActivity(activity),
+      );
       setDynamicCounting(countScenario);
     } else {
       setDynamicCounting(null);
@@ -655,6 +699,7 @@ export function ToddlerWorldsNavigator({
     const countScenario = generateCountingScenario(
       countingLevelForActivity(activeActivity),
       getWorldPlayTheme(activeActivity.worldId, activeActivity.areaId).counting,
+      countingHintFromActivity(activeActivity),
     );
     setDynamicCounting(countScenario);
     setCountingAnswered(false);
@@ -1783,6 +1828,8 @@ export function ToddlerWorldsNavigator({
     );
   }
 
+  const atlasNext = nextAtlasPlay(progress);
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -1832,6 +1879,16 @@ export function ToddlerWorldsNavigator({
           )}
         </div>
       </div>
+
+      {atlasNext.activity && (
+        <button
+          type="button"
+          onClick={handleContinueAtlas}
+          className="w-full min-h-16 px-6 rounded-3xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xl sm:text-2xl cursor-pointer shadow-md"
+        >
+          🧸 {progress.lastVisitedWorldId ? `Keep going · ${atlasNext.area.title}` : `Play ${atlasNext.area.title}`}
+        </button>
+      )}
 
       <div className="grid grid-cols-1 gap-6">
         {ATLAS_CONTINENTS.map((continent) => {
