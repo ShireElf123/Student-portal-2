@@ -1850,6 +1850,16 @@ describe("audio registry", () => {
       "/audio/voice/grove-fb-whattaken.mp3",
       "/audio/voice/grove-more-welcome.mp3",
       "/audio/voice/grove-clue-more.mp3",
+      "/audio/voice/grove-fb-sevenmore.mp3",
+      "/audio/voice/grove-fb-threefewer.mp3",
+      "/audio/voice/grove-fb-notsame.mp3",
+      "/audio/voice/grove-pairs-welcome.mp3",
+      "/audio/voice/grove-clue-pairs.mp3",
+      "/audio/voice/grove-fb-twopairs.mp3",
+      "/audio/voice/grove-fb-foursocks.mp3",
+      "/audio/voice/grove-fb-toomany.mp3",
+      "/audio/voice/shapes-square-welcome.mp3",
+      "/audio/voice/shapes-clue-square.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3753,6 +3763,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Three versus seven. Which has more?")?.id).toBe(
       "voice.grove.more-welcome",
+    );
+    expect(narrationClipForText("Four socks in pairs of two. How many pairs?")?.id).toBe(
+      "voice.grove.pairs-welcome",
+    );
+    expect(narrationClipForText("Four equal sides. What shape is the window?")?.id).toBe(
+      "voice.shapes.square-welcome",
     );
   });
 
