@@ -1730,6 +1730,16 @@ describe("audio registry", () => {
       "/audio/voice/barn-clue-hen.mp3",
       "/audio/voice/barn-fb-henpen.mp3",
       "/audio/voice/barn-fb-cowrhyme.mp3",
+      "/audio/voice/barn-fb-barnrhyme.mp3",
+      "/audio/voice/barn-why-welcome.mp3",
+      "/audio/voice/barn-clue-why.mp3",
+      "/audio/voice/barn-fb-clover.mp3",
+      "/audio/voice/barn-fb-nothiding.mp3",
+      "/audio/voice/space-waved-welcome.mp3",
+      "/audio/voice/space-fb-moonfirst.mp3",
+      "/audio/voice/space-fb-pipback.mp3",
+      "/audio/voice/space-fb-nocow.mp3",
+      "/audio/voice/space-sock-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3590,6 +3600,10 @@ describe("audio registry", () => {
       )?.id,
     ).toBe("voice.barn.next-welcome");
     expect(narrationClipForText("What rhymes with hen?")?.id).toBe("voice.barn.hen-welcome");
+    expect(narrationClipForText("Why did Pip open the gate?")?.id).toBe("voice.barn.why-welcome");
+    expect(
+      narrationClipForText("The moon waved, then Pip waved back. Who waved first?")?.id,
+    ).toBe("voice.space.waved-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
