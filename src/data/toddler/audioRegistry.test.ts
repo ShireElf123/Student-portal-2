@@ -108,6 +108,16 @@ describe("audio registry", () => {
       "/audio/voice/story-wagon-pup.mp3",
       "/audio/voice/story-wagon-note.mp3",
       "/audio/voice/story-wagon-naps.mp3",
+      "/audio/voice/toy-clue-pond.mp3",
+      "/audio/voice/toy-clue-nightjar.mp3",
+      "/audio/voice/toy-clue-bugs.mp3",
+      "/audio/voice/toy-clue-fruit.mp3",
+      "/audio/voice/toy-clue-drops.mp3",
+      "/audio/voice/toy-clue-bow.mp3",
+      "/audio/voice/toy-clue-clap.mp3",
+      "/audio/voice/toy-clue-puddles.mp3",
+      "/audio/voice/toy-clue-can.mp3",
+      "/audio/voice/toy-clue-whisper.mp3",
       "/audio/voice/farm-area-welcome.mp3",
       "/audio/voice/farm-milk-station.mp3",
       "/audio/voice/farm-milk-line.mp3",
@@ -2433,6 +2443,10 @@ describe("audio registry", () => {
     ).toBe("voice.story.farm-sunrise");
     expect(narrationClipForText("The wagon naps. You were the kindness today.")?.id).toBe(
       "voice.story.wagon-naps",
+    );
+    expect(narrationClipForText("Who is visiting the garden pond?")?.id).toBe("voice.toy.clue.pond");
+    expect(narrationClipForText("Whisper, stamp a card, and ride home with a book.")?.id).toBe(
+      "voice.toy.clue.whisper",
     );
   });
 
