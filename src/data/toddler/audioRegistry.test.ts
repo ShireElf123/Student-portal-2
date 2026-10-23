@@ -1512,6 +1512,16 @@ describe("audio registry", () => {
       "/audio/voice/weather-fb-sledge.mp3",
       "/audio/voice/weather-fb-fan.mp3",
       "/audio/voice/space-clue-launch.mp3",
+      "/audio/voice/space-clue-stars.mp3",
+      "/audio/voice/space-clue-story.mp3",
+      "/audio/voice/space-clue-picnic.mp3",
+      "/audio/voice/space-ports-welcome.mp3",
+      "/audio/voice/space-clue-ports.mp3",
+      "/audio/voice/space-fb-eight.mp3",
+      "/audio/voice/space-fb-three.mp3",
+      "/audio/voice/space-fb-twelve.mp3",
+      "/audio/voice/space-cabin-welcome.mp3",
+      "/audio/voice/space-clue-cabin.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3235,6 +3245,12 @@ describe("audio registry", () => {
         "Pip is buckled into the silver rocket! The countdown is 3... 2... 1... What initiates blast-off?",
       )?.id,
     ).toBe("voice.space.clue.launch");
+    expect(narrationClipForText("How many portholes on the rocket?")?.id).toBe(
+      "voice.space.ports-welcome",
+    );
+    expect(narrationClipForText("What belongs in the rocket cabin?")?.id).toBe(
+      "voice.space.cabin-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
