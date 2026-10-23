@@ -1522,6 +1522,16 @@ describe("audio registry", () => {
       "/audio/voice/space-fb-twelve.mp3",
       "/audio/voice/space-cabin-welcome.mp3",
       "/audio/voice/space-clue-cabin.mp3",
+      "/audio/voice/space-fb-helmet.mp3",
+      "/audio/voice/space-fb-tree.mp3",
+      "/audio/voice/space-fb-cow.mp3",
+      "/audio/voice/space-beep-welcome.mp3",
+      "/audio/voice/space-clue-beep.mp3",
+      "/audio/voice/space-fb-beep.mp3",
+      "/audio/voice/space-fb-moo.mp3",
+      "/audio/voice/space-fb-splash.mp3",
+      "/audio/voice/space-dust-welcome.mp3",
+      "/audio/voice/space-clue-dust.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3250,6 +3260,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What belongs in the rocket cabin?")?.id).toBe(
       "voice.space.cabin-welcome",
+    );
+    expect(narrationClipForText("Beep beep pause. What comes next?")?.id).toBe(
+      "voice.space.beep-welcome",
+    );
+    expect(narrationClipForText("Who leaves prints in moon dust?")?.id).toBe(
+      "voice.space.dust-welcome",
     );
   });
 
