@@ -952,6 +952,16 @@ describe("audio registry", () => {
       "/audio/voice/picnic-cloth-welcome.mp3",
       "/audio/voice/picnic-clue-cloth.mp3",
       "/audio/voice/picnic-fb-square.mp3",
+      "/audio/voice/picnic-fb-corners.mp3",
+      "/audio/voice/picnic-fb-sides.mp3",
+      "/audio/voice/picnic-where-welcome.mp3",
+      "/audio/voice/picnic-clue-where.mp3",
+      "/audio/voice/picnic-fb-cloth.mp3",
+      "/audio/voice/picnic-fb-trail.mp3",
+      "/audio/voice/picnic-fb-road.mp3",
+      "/audio/voice/picnic-clue-row.mp3",
+      "/audio/voice/picnic-sort-welcome.mp3",
+      "/audio/voice/picnic-clue-sort.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2101,6 +2111,17 @@ describe("audio registry", () => {
     expect(narrationClipForText("What shape is the cloth?")?.id).toBe("voice.picnic.cloth-welcome");
     expect(narrationClipForText("The picnic cloth has four equal sides. What shape?")?.id).toBe(
       "voice.picnic.clue.cloth",
+    );
+    expect(narrationClipForText("Where do we sit?")?.id).toBe("voice.picnic.where-welcome");
+    expect(
+      narrationClipForText("Nana said sit on the cloth, not the ant trail. Where?")?.id,
+    ).toBe("voice.picnic.clue.where");
+    expect(narrationClipForText("Red cup, blue cup, red cup, blue cup, red. Next?")?.id).toBe(
+      "voice.picnic.clue.row",
+    );
+    expect(narrationClipForText("Sort the picnic cloths!")?.id).toBe("voice.picnic.sort-welcome");
+    expect(narrationClipForText("Sort the picnic cloths onto the right piles.")?.id).toBe(
+      "voice.picnic.clue.sort",
     );
   });
 
