@@ -972,6 +972,16 @@ describe("audio registry", () => {
       "/audio/voice/fire-helmets-welcome.mp3",
       "/audio/voice/fire-clue-helmets.mp3",
       "/audio/voice/fire-fb-three.mp3",
+      "/audio/voice/fire-fb-peg.mp3",
+      "/audio/voice/fire-fb-six.mp3",
+      "/audio/voice/fire-rack-welcome.mp3",
+      "/audio/voice/fire-clue-rack.mp3",
+      "/audio/voice/fire-fb-hose.mp3",
+      "/audio/voice/fire-fb-book.mp3",
+      "/audio/voice/fire-letter-welcome.mp3",
+      "/audio/voice/fire-clue-letter.mp3",
+      "/audio/voice/fire-fb-f.mp3",
+      "/audio/voice/fire-fb-s.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2154,6 +2164,16 @@ describe("audio registry", () => {
     expect(narrationClipForText("How many helmets?")?.id).toBe("voice.fire.helmets-welcome");
     expect(narrationClipForText("Three helmets on the pegs. How many?")?.id).toBe(
       "voice.fire.clue.helmets",
+    );
+    expect(narrationClipForText("Which belongs on the hose rack?")?.id).toBe(
+      "voice.fire.rack-welcome",
+    );
+    expect(narrationClipForText("The rack is for fire kit. Which belongs?")?.id).toBe(
+      "voice.fire.clue.rack",
+    );
+    expect(narrationClipForText("Which letter starts fire?")?.id).toBe("voice.fire.letter-welcome");
+    expect(narrationClipForText("Fire starts with fff. Which letter?")?.id).toBe(
+      "voice.fire.clue.letter",
     );
   });
 
