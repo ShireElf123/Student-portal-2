@@ -42,6 +42,16 @@ describe("audio registry", () => {
       "/audio/voice/games-three-welcome.mp3",
       "/audio/voice/games-banana-welcome.mp3",
       "/audio/voice/games-stop-welcome.mp3",
+      "/audio/voice/games-giraffe-welcome.mp3",
+      "/audio/voice/games-rain-welcome.mp3",
+      "/audio/voice/games-dolphin-welcome.mp3",
+      "/audio/voice/games-redblue-welcome.mp3",
+      "/audio/voice/games-six-welcome.mp3",
+      "/audio/voice/games-eight-welcome.mp3",
+      "/audio/voice/games-ten-welcome.mp3",
+      "/audio/voice/games-abcd-welcome.mp3",
+      "/audio/voice/games-lmno-welcome.mp3",
+      "/audio/voice/games-fox-welcome.mp3",
       "/audio/voice/farm-area-welcome.mp3",
       "/audio/voice/farm-milk-station.mp3",
       "/audio/voice/farm-milk-line.mp3",
@@ -2326,6 +2336,10 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("We keep safe near roads. Before crossing with a grown-up, what should we do?")?.id,
     ).toBe("voice.games.stop-welcome");
+    expect(narrationClipForText("Who reaches the highest leaves with a long spotted neck?")?.id).toBe(
+      "voice.games.giraffe-welcome",
+    );
+    expect(narrationClipForText("Fox. Fff. Which letter starts fox?")?.id).toBe("voice.games.fox-welcome");
   });
 
   it("maps Farm Valley closed-kit lines to voice-01", () => {
