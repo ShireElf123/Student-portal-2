@@ -1272,6 +1272,16 @@ describe("audio registry", () => {
       "/audio/voice/seal-fb-five.mp3",
       "/audio/voice/seal-fb-eight.mp3",
       "/audio/voice/seal-letter-welcome.mp3",
+      "/audio/voice/seal-clue-letter.mp3",
+      "/audio/voice/seal-fb-s.mp3",
+      "/audio/voice/seal-fb-c.mp3",
+      "/audio/voice/seal-fb-t.mp3",
+      "/audio/voice/seal-rocks-welcome.mp3",
+      "/audio/voice/seal-clue-rocks.mp3",
+      "/audio/voice/seal-fb-rocks.mp3",
+      "/audio/voice/seal-home-welcome.mp3",
+      "/audio/voice/seal-clue-home.mp3",
+      "/audio/voice/seal-fb-sea.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2818,6 +2828,19 @@ describe("audio registry", () => {
       "voice.seal.clue.shells",
     );
     expect(narrationClipForText("Which letter starts seal?")?.id).toBe("voice.seal.letter-welcome");
+    expect(narrationClipForText("Seal starts with sss. Which letter?")?.id).toBe(
+      "voice.seal.clue.letter",
+    );
+    expect(narrationClipForText("Two and three seals. How many?")?.id).toBe(
+      "voice.seal.rocks-welcome",
+    );
+    expect(narrationClipForText("2 seals on this rock, 3 on that rock. How many?")?.id).toBe(
+      "voice.seal.clue.rocks",
+    );
+    expect(narrationClipForText("Where does the seal belong?")?.id).toBe("voice.seal.home-welcome");
+    expect(
+      narrationClipForText("Seals belong in cold sea and on wet rocks, not the attic. Where?")?.id,
+    ).toBe("voice.seal.clue.home");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
