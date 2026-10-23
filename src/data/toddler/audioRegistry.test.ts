@@ -942,6 +942,16 @@ describe("audio registry", () => {
       "/audio/voice/picnic-fb-packs.mp3",
       "/audio/voice/picnic-who-welcome.mp3",
       "/audio/voice/picnic-clue-who.mp3",
+      "/audio/voice/picnic-fb-ant.mp3",
+      "/audio/voice/picnic-fb-whale.mp3",
+      "/audio/voice/picnic-letter-welcome.mp3",
+      "/audio/voice/picnic-clue-letter.mp3",
+      "/audio/voice/picnic-fb-p.mp3",
+      "/audio/voice/picnic-fb-b.mp3",
+      "/audio/voice/picnic-fb-n.mp3",
+      "/audio/voice/picnic-cloth-welcome.mp3",
+      "/audio/voice/picnic-clue-cloth.mp3",
+      "/audio/voice/picnic-fb-square.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2081,6 +2091,16 @@ describe("audio registry", () => {
     expect(narrationClipForText("Who is marching to the crumb?")?.id).toBe("voice.picnic.who-welcome");
     expect(narrationClipForText("Tiny marchers toward a crumb. Who?")?.id).toBe(
       "voice.picnic.clue.who",
+    );
+    expect(narrationClipForText("Which letter starts picnic?")?.id).toBe(
+      "voice.picnic.letter-welcome",
+    );
+    expect(narrationClipForText("Picnic starts with puh. Which letter?")?.id).toBe(
+      "voice.picnic.clue.letter",
+    );
+    expect(narrationClipForText("What shape is the cloth?")?.id).toBe("voice.picnic.cloth-welcome");
+    expect(narrationClipForText("The picnic cloth has four equal sides. What shape?")?.id).toBe(
+      "voice.picnic.clue.cloth",
     );
   });
 
