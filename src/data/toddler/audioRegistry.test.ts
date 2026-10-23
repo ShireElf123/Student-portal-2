@@ -1502,6 +1502,16 @@ describe("audio registry", () => {
       "/audio/voice/weather-fb-lamp.mp3",
       "/audio/voice/weather-fb-fish.mp3",
       "/audio/voice/weather-nests-welcome.mp3",
+      "/audio/voice/weather-clue-nests.mp3",
+      "/audio/voice/weather-fb-spring.mp3",
+      "/audio/voice/weather-fb-winter.mp3",
+      "/audio/voice/weather-fb-drawer.mp3",
+      "/audio/voice/weather-storm-welcome.mp3",
+      "/audio/voice/weather-clue-storm.mp3",
+      "/audio/voice/weather-fb-kit.mp3",
+      "/audio/voice/weather-fb-sledge.mp3",
+      "/audio/voice/weather-fb-fan.mp3",
+      "/audio/voice/space-clue-launch.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3217,6 +3227,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("Which season is nest time?")?.id).toBe(
       "voice.weather.nests-welcome",
     );
+    expect(narrationClipForText("What belongs in the storm kit?")?.id).toBe(
+      "voice.weather.storm-welcome",
+    );
+    expect(
+      narrationClipForText(
+        "Pip is buckled into the silver rocket! The countdown is 3... 2... 1... What initiates blast-off?",
+      )?.id,
+    ).toBe("voice.space.clue.launch");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
