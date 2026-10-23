@@ -1462,6 +1462,16 @@ describe("audio registry", () => {
       "/audio/voice/forest-fb-deer.mp3",
       "/audio/voice/forest-fb-paws.mp3",
       "/audio/voice/forest-fb-web.mp3",
+      "/audio/voice/forest-oak-welcome.mp3",
+      "/audio/voice/forest-clue-oak.mp3",
+      "/audio/voice/forest-fb-squirrel.mp3",
+      "/audio/voice/forest-fb-whale.mp3",
+      "/audio/voice/forest-fb-hen.mp3",
+      "/audio/voice/forest-path-welcome.mp3",
+      "/audio/voice/forest-clue-path.mp3",
+      "/audio/voice/forest-fb-boot.mp3",
+      "/audio/voice/forest-fb-trout.mp3",
+      "/audio/voice/forest-fb-kite.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3154,6 +3164,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("How many mushroom caps?")?.id).toBe("voice.forest.caps-welcome");
     expect(narrationClipForText("Who left the two-toed prints?")?.id).toBe(
       "voice.forest.hooves-welcome",
+    );
+    expect(narrationClipForText("Who hides acorns in the oak?")?.id).toBe("voice.forest.oak-welcome");
+    expect(narrationClipForText("What belongs on the walking path?")?.id).toBe(
+      "voice.forest.path-welcome",
     );
   });
 
