@@ -1052,6 +1052,16 @@ describe("audio registry", () => {
       "/audio/voice/park-clue-trace.mp3",
       "/audio/voice/nook-area-welcome.mp3",
       "/audio/voice/nook-books-welcome.mp3",
+      "/audio/voice/nook-clue-books.mp3",
+      "/audio/voice/nook-fb-shelf.mp3",
+      "/audio/voice/nook-fb-fridge.mp3",
+      "/audio/voice/nook-letter-welcome.mp3",
+      "/audio/voice/nook-clue-letter.mp3",
+      "/audio/voice/nook-fb-l.mp3",
+      "/audio/voice/nook-fb-r.mp3",
+      "/audio/voice/nook-fb-b.mp3",
+      "/audio/voice/nook-count-welcome.mp3",
+      "/audio/voice/nook-clue-count.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2328,6 +2338,17 @@ describe("audio registry", () => {
       )?.id,
     ).toBe("voice.nook.area-welcome");
     expect(narrationClipForText("Where do the books live?")?.id).toBe("voice.nook.books-welcome");
+    expect(narrationClipForText("Books live on the shelf, not the fridge. Where?")?.id).toBe(
+      "voice.nook.clue.books",
+    );
+    expect(narrationClipForText("Which letter starts library?")?.id).toBe("voice.nook.letter-welcome");
+    expect(narrationClipForText("Library starts with lll. Which letter?")?.id).toBe(
+      "voice.nook.clue.letter",
+    );
+    expect(narrationClipForText("How many books?")?.id).toBe("voice.nook.count-welcome");
+    expect(narrationClipForText("Seven picture books in the return box. How many?")?.id).toBe(
+      "voice.nook.clue.count",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
