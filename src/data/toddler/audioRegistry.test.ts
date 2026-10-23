@@ -962,6 +962,16 @@ describe("audio registry", () => {
       "/audio/voice/picnic-clue-row.mp3",
       "/audio/voice/picnic-sort-welcome.mp3",
       "/audio/voice/picnic-clue-sort.mp3",
+      "/audio/voice/picnic-pancake-welcome.mp3",
+      "/audio/voice/picnic-clue-pancake.mp3",
+      "/audio/voice/picnic-pancake-done.mp3",
+      "/audio/voice/fire-area-welcome.mp3",
+      "/audio/voice/fire-clue-truck.mp3",
+      "/audio/voice/fire-fb-crew.mp3",
+      "/audio/voice/fire-fb-penguin.mp3",
+      "/audio/voice/fire-helmets-welcome.mp3",
+      "/audio/voice/fire-clue-helmets.mp3",
+      "/audio/voice/fire-fb-three.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2122,6 +2132,28 @@ describe("audio registry", () => {
     expect(narrationClipForText("Sort the picnic cloths!")?.id).toBe("voice.picnic.sort-welcome");
     expect(narrationClipForText("Sort the picnic cloths onto the right piles.")?.id).toBe(
       "voice.picnic.clue.sort",
+    );
+    expect(narrationClipForText("Flip the Saturday pancakes!")?.id).toBe(
+      "voice.picnic.pancake-welcome",
+    );
+    expect(narrationClipForText("Pour. Wait until gold. Flip four onto the plate.")?.id).toBe(
+      "voice.picnic.clue.pancake",
+    );
+    expect(narrationClipForText("A Saturday stack!")?.id).toBe("voice.picnic.pancake-done");
+  });
+
+  it("maps Fire House closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Fire House! Hoses, helmets and a spotted dog. Let's explore together!",
+      )?.id,
+    ).toBe("voice.fire.area-welcome");
+    expect(narrationClipForText("Long, red, and loud with a ladder. Who rides it?")?.id).toBe(
+      "voice.fire.clue.truck",
+    );
+    expect(narrationClipForText("How many helmets?")?.id).toBe("voice.fire.helmets-welcome");
+    expect(narrationClipForText("Three helmets on the pegs. How many?")?.id).toBe(
+      "voice.fire.clue.helmets",
     );
   });
 
