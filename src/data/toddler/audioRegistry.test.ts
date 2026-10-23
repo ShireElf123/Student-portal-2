@@ -1900,6 +1900,16 @@ describe("audio registry", () => {
       "/audio/voice/feelings-scared-welcome.mp3",
       "/audio/voice/feelings-clue-scared.mp3",
       "/audio/voice/feelings-fb-light.mp3",
+      "/audio/voice/feelings-fb-stayinside.mp3",
+      "/audio/voice/feelings-fb-findgrownup.mp3",
+      "/audio/voice/feelings-proud-welcome.mp3",
+      "/audio/voice/feelings-clue-proud.mp3",
+      "/audio/voice/feelings-fb-proudpuzzle.mp3",
+      "/audio/voice/feelings-fb-maybelater.mp3",
+      "/audio/voice/feelings-fb-notlost.mp3",
+      "/audio/voice/feelings-share-welcome.mp3",
+      "/audio/voice/feelings-fb-turns.mp3",
+      "/audio/voice/feelings-fb-grabbing.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3833,6 +3843,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("A bump in the dark. What helps?")?.id).toBe(
       "voice.feelings.scared-welcome",
+    );
+    expect(narrationClipForText("Pip finished the puzzle. Which feeling?")?.id).toBe(
+      "voice.feelings.proud-welcome",
+    );
+    expect(narrationClipForText("One truck, two friends. What is kind?")?.id).toBe(
+      "voice.feelings.share-welcome",
     );
   });
 
