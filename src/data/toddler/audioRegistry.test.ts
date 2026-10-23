@@ -1542,6 +1542,16 @@ describe("audio registry", () => {
       "/audio/voice/space-fb-used.mp3",
       "/audio/voice/space-dots-welcome.mp3",
       "/audio/voice/space-clue-dots.mp3",
+      "/audio/voice/space-fb-starsline.mp3",
+      "/audio/voice/space-fb-bees.mp3",
+      "/audio/voice/space-fb-buttons.mp3",
+      "/audio/voice/treasure-clue-key.mp3",
+      "/audio/voice/treasure-clue-bubbles.mp3",
+      "/audio/voice/treasure-coins-welcome.mp3",
+      "/audio/voice/treasure-clue-coins.mp3",
+      "/audio/voice/treasure-fb-nine.mp3",
+      "/audio/voice/treasure-fb-four.mp3",
+      "/audio/voice/treasure-fb-twelve.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3282,6 +3292,9 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What are the three bright dots?")?.id).toBe(
       "voice.space.dots-welcome",
+    );
+    expect(narrationClipForText("How many coins in the sand?")?.id).toBe(
+      "voice.treasure.coins-welcome",
     );
   });
 
