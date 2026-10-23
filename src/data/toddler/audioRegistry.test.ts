@@ -1292,6 +1292,16 @@ describe("audio registry", () => {
       "/audio/voice/seal-bubble-welcome.mp3",
       "/audio/voice/seal-clue-bubble.mp3",
       "/audio/voice/seal-toss-welcome.mp3",
+      "/audio/voice/seal-clue-toss.mp3",
+      "/audio/voice/bed-area-welcome.mp3",
+      "/audio/voice/bed-sleep-welcome.mp3",
+      "/audio/voice/bed-clue-sleep.mp3",
+      "/audio/voice/bed-fb-sleep.mp3",
+      "/audio/voice/bed-fb-run.mp3",
+      "/audio/voice/bed-fb-drums.mp3",
+      "/audio/voice/bed-teddies-welcome.mp3",
+      "/audio/voice/bed-clue-teddies.mp3",
+      "/audio/voice/bed-fb-three.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2857,6 +2867,24 @@ describe("audio registry", () => {
       "voice.seal.bubble-welcome",
     );
     expect(narrationClipForText("Toss the fish to the seal!")?.id).toBe("voice.seal.toss-welcome");
+  });
+
+  it("maps Bed Lamp closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Bed Lamp! A small lamp and a slow body. Let's explore together!",
+      )?.id,
+    ).toBe("voice.bed.area-welcome");
+    expect(narrationClipForText("Dark sky, slow body. What is next?")?.id).toBe(
+      "voice.bed.sleep-welcome",
+    );
+    expect(narrationClipForText("The sky is dark and the body is slow. What is next?")?.id).toBe(
+      "voice.bed.clue.sleep",
+    );
+    expect(narrationClipForText("How many teddies?")?.id).toBe("voice.bed.teddies-welcome");
+    expect(narrationClipForText("Three teddies on the quilt. How many?")?.id).toBe(
+      "voice.bed.clue.teddies",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
