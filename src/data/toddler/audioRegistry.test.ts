@@ -1532,6 +1532,16 @@ describe("audio registry", () => {
       "/audio/voice/space-fb-splash.mp3",
       "/audio/voice/space-dust-welcome.mp3",
       "/audio/voice/space-clue-dust.mp3",
+      "/audio/voice/space-fb-astronaut.mp3",
+      "/audio/voice/space-fb-duck.mp3",
+      "/audio/voice/space-fb-crab.mp3",
+      "/audio/voice/space-fuel-welcome.mp3",
+      "/audio/voice/space-clue-fuel.mp3",
+      "/audio/voice/space-fb-seven.mp3",
+      "/audio/voice/space-fb-thirteen.mp3",
+      "/audio/voice/space-fb-used.mp3",
+      "/audio/voice/space-dots-welcome.mp3",
+      "/audio/voice/space-clue-dots.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3266,6 +3276,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Who leaves prints in moon dust?")?.id).toBe(
       "voice.space.dust-welcome",
+    );
+    expect(narrationClipForText("Ten cells, burn uses three. How many left?")?.id).toBe(
+      "voice.space.fuel-welcome",
+    );
+    expect(narrationClipForText("What are the three bright dots?")?.id).toBe(
+      "voice.space.dots-welcome",
     );
   });
 
