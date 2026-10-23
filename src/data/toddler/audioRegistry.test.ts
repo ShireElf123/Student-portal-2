@@ -1970,6 +1970,10 @@ describe("audio registry", () => {
       "/audio/voice/family-fb-shouting.mp3",
       "/audio/voice/family-chore-welcome.mp3",
       "/audio/voice/family-fb-abrinse.mp3",
+      "/audio/voice/family-fb-notchore.mp3",
+      "/audio/voice/family-fb-sweepjust.mp3",
+      "/audio/voice/family-plates-welcome.mp3",
+      "/audio/voice/family-clue-plates.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3937,6 +3941,9 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Sweep, rinse, sweep, rinse, sweep. Next?")?.id).toBe(
       "voice.family.chore-welcome",
+    );
+    expect(narrationClipForText("Three plates and three more. How many?")?.id).toBe(
+      "voice.family.plates-welcome",
     );
   });
 
