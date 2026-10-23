@@ -1232,6 +1232,16 @@ describe("audio registry", () => {
       "/audio/voice/light-pulse-welcome.mp3",
       "/audio/voice/light-fb-fade.mp3",
       "/audio/voice/light-letter-welcome.mp3",
+      "/audio/voice/light-clue-letter.mp3",
+      "/audio/voice/light-fb-s.mp3",
+      "/audio/voice/light-fb-t.mp3",
+      "/audio/voice/light-fb-r.mp3",
+      "/audio/voice/light-sky-welcome.mp3",
+      "/audio/voice/light-clue-sky.mp3",
+      "/audio/voice/light-fb-ribbon.mp3",
+      "/audio/voice/light-fb-seal.mp3",
+      "/audio/voice/light-sparks-welcome.mp3",
+      "/audio/voice/light-clue-sparks.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2721,6 +2731,19 @@ describe("audio registry", () => {
       "voice.light.pulse-welcome",
     );
     expect(narrationClipForText("Which letter starts star?")?.id).toBe("voice.light.letter-welcome");
+    expect(narrationClipForText("Star starts with sss. Which letter?")?.id).toBe(
+      "voice.light.clue.letter",
+    );
+    expect(narrationClipForText("What belongs in the sky?")?.id).toBe("voice.light.sky-welcome");
+    expect(narrationClipForText("The light show is in the sky. What belongs in the sky?")?.id).toBe(
+      "voice.light.clue.sky",
+    );
+    expect(narrationClipForText("Three and four sparks. How many?")?.id).toBe(
+      "voice.light.sparks-welcome",
+    );
+    expect(narrationClipForText("3 sparks here, 4 sparks there. How many?")?.id).toBe(
+      "voice.light.clue.sparks",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
