@@ -27,7 +27,7 @@ export function ToddlerWorldTrail({
   label,
   nodes,
   onSelect,
-  buddyEmoji = "👧",
+  buddyEmoji = "🧸",
   buddySrc,
   coverSrc,
   sceneryEmojis = [],

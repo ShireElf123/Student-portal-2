@@ -803,6 +803,14 @@ export function ToddlerWorldsNavigator({
     if (!option) return;
 
     setStorySelectedOption(optionId);
+
+    if (option.isCorrect === false) {
+      soundEffects.playGentleBoing();
+      speakText(option.feedback, { pitch: 1.15 });
+      setTimeout(() => setStorySelectedOption(null), 1200);
+      return;
+    }
+
     soundEffects.playSuccessChime();
     soundEffects.playStarSparkle();
     onAddStar(1);
@@ -1076,7 +1084,9 @@ export function ToddlerWorldsNavigator({
                         onClick={() => handleSelectStoryOption(activeStory.steps[storyStepIndex], opt.id)}
                         className={`min-h-14 p-4 rounded-2xl border-2 flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer transition-all shadow-md active:scale-95 ${
                           storySelectedOption === opt.id
-                            ? "bg-emerald-500 border-emerald-300 text-white scale-105 shadow-emerald-500/40"
+                            ? opt.isCorrect === false
+                              ? "bg-rose-400 border-rose-200 text-white"
+                              : "bg-emerald-500 border-emerald-300 text-white scale-105 shadow-emerald-500/40"
                             : "bg-white/90 hover:bg-white text-slate-800 border-white/60 hover:border-amber-400"
                         }`}
                       >
@@ -1578,7 +1588,7 @@ export function ToddlerWorldsNavigator({
             return (
               <ToddlerWorldTrail
                 label={`${selectedArea.title} · ${selectedArea.activities.length} stations`}
-                buddyEmoji="👧"
+                buddyEmoji="🧸"
                 coverSrc={WORLD_COVER[selectedWorld.id]}
                 sceneryEmojis={selectedArea.environment.sceneryEmojis}
                 onSelect={(id) => {
