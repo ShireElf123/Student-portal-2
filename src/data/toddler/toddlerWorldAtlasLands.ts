@@ -358,7 +358,7 @@ export const VEHICLE_WORLD: ToddlerWorld = {
           difficulty: 1,
           clueType: "sight",
           clueIcon: "🛑",
-          cluePrompt: "The stop sign is not a circle. It has eight sides. Wait — toddler: it looks like a red octagon. Simpler: it is not a circle. Which is the stop sign?",
+          cluePrompt: "The stop sign is not a circle. Which is the stop sign?",
           spokenPrompt: "Which sign says stop?",
           options: [
           { id: "stop", label: "Red stop sign", emoji: "🛑", feedback: "The red stop sign.", isCorrect: true },
@@ -690,7 +690,7 @@ export const VEHICLE_WORLD: ToddlerWorld = {
           difficulty: 1,
           clueType: "riddle",
           clueIcon: "S",
-          cluePrompt: "Ship starts with shh. Wait — ssship. Which letter?",
+          cluePrompt: "Ship starts with sss. Which letter?",
           spokenPrompt: "Which letter starts ship?",
           options: [
           { id: "s", label: "S", emoji: "S", feedback: "Ship starts with S.", isCorrect: true },

@@ -1463,6 +1463,9 @@ describe("audio registry", () => {
       "/audio/voice/bed-clue-memory.mp3",
       "/audio/voice/bed-tuck-welcome.mp3",
       "/audio/voice/bed-clue-tuck.mp3",
+      "/audio/voice/owl-area-welcome.mp3",
+      "/audio/voice/star-area-welcome.mp3",
+      "/audio/voice/porch-area-welcome.mp3",
       "/audio/voice/owl-who-welcome.mp3",
       "/audio/voice/owl-clue-who.mp3",
       "/audio/voice/owl-fb-owl.mp3",
@@ -3275,6 +3278,19 @@ describe("audio registry", () => {
         "Nana\u2019s Soup Pot! Steam, spoons and a bubbling lid. Let's explore together!",
       )?.id,
     ).toBe("voice.soup.area-welcome");
+    expect(
+      narrationClipForText("Owl Wood! Quiet trees and gold eyes. Let's explore together!")?.id,
+    ).toBe("voice.owl.area-welcome");
+    expect(
+      narrationClipForText(
+        "Star Balcony! A rail, a moon and a counting sky. Let's explore together!",
+      )?.id,
+    ).toBe("voice.star.area-welcome");
+    expect(
+      narrationClipForText(
+        "Porch Moths! A warm bulb and circling wings. Let's explore together!",
+      )?.id,
+    ).toBe("voice.porch.area-welcome");
     expect(narrationClipForText("What stirs the soup?")?.id).toBe("voice.soup.stirs-welcome");
     expect(narrationClipForText("Long handle, round bowl. What stirs the soup?")?.id).toBe(
       "voice.soup.clue.stirs",
@@ -4190,6 +4206,18 @@ describe("audio registry", () => {
       funFact: "A is the first letter of the alphabet.",
     });
     expect(narrationClipForText(bio)?.id).toBe("voice.safari.bio.ay");
+  });
+
+  it("maps Nana soup area tap using a real apostrophe, not a unicode escape", () => {
+    expect(
+      narrationClipForText(
+        "Nana’s Soup Pot! Steam, spoons and a bubbling lid. Let's explore together!",
+      )?.id,
+    ).toBe("voice.soup.area-welcome");
+    for (const asset of AUDIO_ASSETS) {
+      if (asset.channel !== "voice" || !asset.promptText) continue;
+      expect(asset.promptText.includes("\\u")).toBe(false);
+    }
   });
 
   it("maps safari friend ids including the park bird clip", () => {

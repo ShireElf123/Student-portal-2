@@ -7091,7 +7091,7 @@ export const AUDIO_ASSETS: AudioAsset[] = [
     "voice.soup.area-welcome",
     "/audio/voice/soup-area-welcome.mp3",
     "Nana's Soup Pot area welcome",
-    "Nana\u2019s Soup Pot! Steam, spoons and a bubbling lid. Let's explore together!",
+    "Nana’s Soup Pot! Steam, spoons and a bubbling lid. Let's explore together!",
     "Closed Nana's Soup Pot kit. Worlds area tap.",
   ),
   voiceClip(
@@ -10250,6 +10250,27 @@ export const AUDIO_ASSETS: AudioAsset[] = [
     "Tuck in for Night clue prompt",
     "Close three shutters, then hug teddy.",
     "Closed Bed Lamp kit. Activity cluePrompt fallback.",
+  ),
+  voiceClip(
+    "voice.owl.area-welcome",
+    "/audio/voice/owl-area-welcome.mp3",
+    "Owl Wood area welcome",
+    "Owl Wood! Quiet trees and gold eyes. Let's explore together!",
+    "Night Neighbourhood area tap. Replaces device TTS.",
+  ),
+  voiceClip(
+    "voice.star.area-welcome",
+    "/audio/voice/star-area-welcome.mp3",
+    "Star Balcony area welcome",
+    "Star Balcony! A rail, a moon and a counting sky. Let's explore together!",
+    "Night Neighbourhood area tap. Replaces device TTS.",
+  ),
+  voiceClip(
+    "voice.porch.area-welcome",
+    "/audio/voice/porch-area-welcome.mp3",
+    "Porch Moths area welcome",
+    "Porch Moths! A warm bulb and circling wings. Let's explore together!",
+    "Night Neighbourhood area tap. Replaces device TTS.",
   ),
   voiceClip(
     "voice.owl.who-welcome",
