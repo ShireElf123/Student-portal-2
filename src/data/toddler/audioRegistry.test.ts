@@ -1392,6 +1392,16 @@ describe("audio registry", () => {
       "/audio/voice/star-fb-plus.mp3",
       "/audio/voice/star-fb-five.mp3",
       "/audio/voice/star-twinkle-welcome.mp3",
+      "/audio/voice/star-clue-twinkle.mp3",
+      "/audio/voice/star-fb-drum.mp3",
+      "/audio/voice/star-fb-twinkle.mp3",
+      "/audio/voice/star-sit-welcome.mp3",
+      "/audio/voice/star-clue-sit.mp3",
+      "/audio/voice/star-fb-rail.mp3",
+      "/audio/voice/star-fb-kettle.mp3",
+      "/audio/voice/star-fb-shoe.mp3",
+      "/audio/voice/star-sky-welcome.mp3",
+      "/audio/voice/star-clue-sky.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3046,6 +3056,10 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Twinkle, rest, twinkle, rest, twinkle. Next?")?.id).toBe(
       "voice.star.twinkle-welcome",
+    );
+    expect(narrationClipForText("Where does the moon sit?")?.id).toBe("voice.star.sit-welcome");
+    expect(narrationClipForText("What belongs in the balcony sky?")?.id).toBe(
+      "voice.star.sky-welcome",
     );
   });
 
