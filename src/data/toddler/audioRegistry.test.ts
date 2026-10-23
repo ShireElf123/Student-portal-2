@@ -1652,6 +1652,16 @@ describe("audio registry", () => {
       "/audio/voice/pattern-fb-tiny.mp3",
       "/audio/voice/pattern-fb-smallago.mp3",
       "/audio/voice/pattern-pegs-welcome.mp3",
+      "/audio/voice/pattern-clue-pegs.mp3",
+      "/audio/voice/pattern-fb-eightpegs.mp3",
+      "/audio/voice/pattern-circles-welcome.mp3",
+      "/audio/voice/pattern-clue-circles.mp3",
+      "/audio/voice/pattern-fb-circle.mp3",
+      "/audio/voice/pattern-fb-squares.mp3",
+      "/audio/voice/pattern-fb-triangles.mp3",
+      "/audio/voice/pattern-odd-welcome.mp3",
+      "/audio/voice/pattern-clue-odd.mp3",
+      "/audio/voice/pattern-fb-bluebreaks.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3461,6 +3471,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("How many pegs on the board?")?.id).toBe(
       "voice.pattern.pegs-welcome",
+    );
+    expect(narrationClipForText("Which belongs on the circles tray?")?.id).toBe(
+      "voice.pattern.circles-welcome",
+    );
+    expect(narrationClipForText("Red, red, red, blue. Which does not belong?")?.id).toBe(
+      "voice.pattern.odd-welcome",
     );
   });
 
