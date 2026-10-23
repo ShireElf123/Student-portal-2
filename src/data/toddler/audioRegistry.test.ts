@@ -1102,6 +1102,16 @@ describe("audio registry", () => {
       "/audio/voice/market-clue-sign.mp3",
       "/audio/voice/market-fb-square.mp3",
       "/audio/voice/market-fb-corners.mp3",
+      "/audio/voice/market-fb-heart.mp3",
+      "/audio/voice/market-hat-welcome.mp3",
+      "/audio/voice/market-clue-hat.mp3",
+      "/audio/voice/market-fb-cap.mp3",
+      "/audio/voice/market-fb-fish.mp3",
+      "/audio/voice/market-fb-hose.mp3",
+      "/audio/voice/market-letter-welcome.mp3",
+      "/audio/voice/market-clue-letter.mp3",
+      "/audio/voice/market-fb-m.mp3",
+      "/audio/voice/market-fb-n.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2432,6 +2442,18 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("The stall sign is a square. What shape?")?.id).toBe(
       "voice.market.clue.sign",
+    );
+    expect(narrationClipForText("Which belongs on the hat stall?")?.id).toBe(
+      "voice.market.hat-welcome",
+    );
+    expect(narrationClipForText("This stall sells hats. Which belongs?")?.id).toBe(
+      "voice.market.clue.hat",
+    );
+    expect(narrationClipForText("Which letter starts market?")?.id).toBe(
+      "voice.market.letter-welcome",
+    );
+    expect(narrationClipForText("Market starts with mmm. Which letter?")?.id).toBe(
+      "voice.market.clue.letter",
     );
   });
 
