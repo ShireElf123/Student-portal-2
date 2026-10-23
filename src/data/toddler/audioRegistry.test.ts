@@ -1332,6 +1332,16 @@ describe("audio registry", () => {
       "/audio/voice/bed-fb-star.mp3",
       "/audio/voice/bed-memory-welcome.mp3",
       "/audio/voice/bed-clue-memory.mp3",
+      "/audio/voice/bed-tuck-welcome.mp3",
+      "/audio/voice/bed-clue-tuck.mp3",
+      "/audio/voice/owl-who-welcome.mp3",
+      "/audio/voice/owl-clue-who.mp3",
+      "/audio/voice/owl-fb-owl.mp3",
+      "/audio/voice/owl-fb-duck.mp3",
+      "/audio/voice/owl-fb-bus.mp3",
+      "/audio/voice/owl-home-welcome.mp3",
+      "/audio/voice/owl-clue-home.mp3",
+      "/audio/voice/owl-fb-tree.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2945,6 +2955,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("Flip the bed lamps and find the match!")?.id).toBe(
       "voice.bed.memory-welcome",
     );
+    expect(narrationClipForText("Close the shutters and tuck teddy in!")?.id).toBe(
+      "voice.bed.tuck-welcome",
+    );
+    expect(narrationClipForText("Who is calling hoo?")?.id).toBe("voice.owl.who-welcome");
+    expect(narrationClipForText("Hoo from a tree hole. Who?")?.id).toBe("voice.owl.clue.who");
+    expect(narrationClipForText("Where does the owl belong?")?.id).toBe("voice.owl.home-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
