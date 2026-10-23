@@ -872,6 +872,16 @@ describe("audio registry", () => {
       "/audio/voice/bakery-fb-not-oven.mp3",
       "/audio/voice/bakery-fb-kitchen.mp3",
       "/audio/voice/bakery-tin-welcome.mp3",
+      "/audio/voice/bakery-clue-tin.mp3",
+      "/audio/voice/bakery-fb-round.mp3",
+      "/audio/voice/bakery-fb-square.mp3",
+      "/audio/voice/bakery-fb-star.mp3",
+      "/audio/voice/bakery-memory-welcome.mp3",
+      "/audio/voice/bakery-clue-memory.mp3",
+      "/audio/voice/bakery-shape-welcome.mp3",
+      "/audio/voice/bakery-clue-shape.mp3",
+      "/audio/voice/bakery-clue-letter-trace.mp3",
+      "/audio/voice/bakery-clue-knead.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1911,6 +1921,23 @@ describe("audio registry", () => {
       narrationClipForText("Nana said the pie cools on the window, not the oven. Where?")?.id,
     ).toBe("voice.bakery.clue.where");
     expect(narrationClipForText("What shape is the pie tin?")?.id).toBe("voice.bakery.tin-welcome");
+    expect(narrationClipForText("The pie tin is round. What shape?")?.id).toBe("voice.bakery.clue.tin");
+    expect(narrationClipForText("Flip the bakery buns and find the match!")?.id).toBe(
+      "voice.bakery.memory-welcome",
+    );
+    expect(narrationClipForText("Flip two buns. Find the matching treats.")?.id).toBe(
+      "voice.bakery.clue.memory",
+    );
+    expect(narrationClipForText("Name the shape on the bakery tray!")?.id).toBe(
+      "voice.bakery.shape-welcome",
+    );
+    expect(narrationClipForText("Name the shape on the bakery tray.")?.id).toBe(
+      "voice.bakery.clue.shape",
+    );
+    expect(narrationClipForText("Trace A for Apple in the flour.")?.id).toBe(
+      "voice.bakery.clue.letter-trace",
+    );
+    expect(narrationClipForText("Press the dough eight times.")?.id).toBe("voice.bakery.clue.knead");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
