@@ -922,6 +922,16 @@ describe("audio registry", () => {
       "/audio/voice/soup-fb-chop.mp3",
       "/audio/voice/soup-fb-nap.mp3",
       "/audio/voice/soup-fb-rest.mp3",
+      "/audio/voice/soup-mix-welcome.mp3",
+      "/audio/voice/soup-clue-mix.mp3",
+      "/audio/voice/soup-stir-welcome.mp3",
+      "/audio/voice/soup-clue-stir.mp3",
+      "/audio/voice/picnic-area-welcome.mp3",
+      "/audio/voice/picnic-pack-welcome.mp3",
+      "/audio/voice/picnic-clue-pack.mp3",
+      "/audio/voice/picnic-fb-sandwich.mp3",
+      "/audio/voice/picnic-fb-hammer.mp3",
+      "/audio/voice/picnic-fb-tyre.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2023,6 +2033,30 @@ describe("audio registry", () => {
     expect(narrationClipForText("Chop chop rest. Next?")?.id).toBe("voice.soup.chop-welcome");
     expect(narrationClipForText("Chop chop rest, chop chop rest, chop. Next?")?.id).toBe(
       "voice.soup.clue.chop",
+    );
+    expect(narrationClipForText("Mix colours in Nana's soup pot!")?.id).toBe("voice.soup.mix-welcome");
+    expect(narrationClipForText("Blend droplets into the bubbling soup.")?.id).toBe(
+      "voice.soup.clue.mix",
+    );
+    expect(narrationClipForText("Stir Nana's soup. Round and round!")?.id).toBe(
+      "voice.soup.stir-welcome",
+    );
+    expect(narrationClipForText("Drag round and round. There is no wrong way.")?.id).toBe(
+      "voice.soup.clue.stir",
+    );
+  });
+
+  it("maps Picnic Basket closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Picnic Basket! Cloth, cups and a shady tree. Let's explore together!",
+      )?.id,
+    ).toBe("voice.picnic.area-welcome");
+    expect(narrationClipForText("What belongs in the picnic basket?")?.id).toBe(
+      "voice.picnic.pack-welcome",
+    );
+    expect(narrationClipForText("Soft bread with a filling. What goes in the basket?")?.id).toBe(
+      "voice.picnic.clue.pack",
     );
   });
 
