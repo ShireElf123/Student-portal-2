@@ -912,6 +912,16 @@ describe("audio registry", () => {
       "/audio/voice/soup-clue-spoons.mp3",
       "/audio/voice/soup-fb-five.mp3",
       "/audio/voice/soup-fb-lots.mp3",
+      "/audio/voice/soup-who-welcome.mp3",
+      "/audio/voice/soup-clue-who.mp3",
+      "/audio/voice/soup-fb-nana.mp3",
+      "/audio/voice/soup-fb-pip.mp3",
+      "/audio/voice/soup-fb-cat.mp3",
+      "/audio/voice/soup-chop-welcome.mp3",
+      "/audio/voice/soup-clue-chop.mp3",
+      "/audio/voice/soup-fb-chop.mp3",
+      "/audio/voice/soup-fb-nap.mp3",
+      "/audio/voice/soup-fb-rest.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2003,6 +2013,16 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("2 spoons out, 3 more from the drawer. How many?")?.id).toBe(
       "voice.soup.clue.spoons",
+    );
+    expect(narrationClipForText("Pip tasted, then Nana. Who last?")?.id).toBe(
+      "voice.soup.who-welcome",
+    );
+    expect(narrationClipForText("Pip tasted, then Nana tasted. Who tasted last?")?.id).toBe(
+      "voice.soup.clue.who",
+    );
+    expect(narrationClipForText("Chop chop rest. Next?")?.id).toBe("voice.soup.chop-welcome");
+    expect(narrationClipForText("Chop chop rest, chop chop rest, chop. Next?")?.id).toBe(
+      "voice.soup.clue.chop",
     );
   });
 
