@@ -1252,6 +1252,16 @@ describe("audio registry", () => {
       "/audio/voice/light-balloon-welcome.mp3",
       "/audio/voice/light-clue-balloon.mp3",
       "/audio/voice/light-rhyme-welcome.mp3",
+      "/audio/voice/light-clue-rhyme.mp3",
+      "/audio/voice/seal-area-welcome.mp3",
+      "/audio/voice/seal-clap-welcome.mp3",
+      "/audio/voice/seal-clue-clap.mp3",
+      "/audio/voice/seal-fb-seal.mp3",
+      "/audio/voice/seal-fb-hen.mp3",
+      "/audio/voice/seal-fb-crane.mp3",
+      "/audio/voice/seal-bark-welcome.mp3",
+      "/audio/voice/seal-clue-bark.mp3",
+      "/audio/voice/seal-fb-bark.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2763,6 +2773,29 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Find the rhyming friends under the lights!")?.id).toBe(
       "voice.light.rhyme-welcome",
+    );
+    expect(narrationClipForText("Find the word that rhymes in the lights.")?.id).toBe(
+      "voice.light.clue.rhyme",
+    );
+  });
+
+  it("maps Seal Shore closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Seal Shore! Wet rocks, whiskers and a tide pool. Let's explore together!",
+      )?.id,
+    ).toBe("voice.seal.area-welcome");
+    expect(narrationClipForText("Who claps flippers on the rock?")?.id).toBe(
+      "voice.seal.clap-welcome",
+    );
+    expect(narrationClipForText("Whiskers and flippers on a wet rock. Who?")?.id).toBe(
+      "voice.seal.clue.clap",
+    );
+    expect(narrationClipForText("Who is barking on the wet rock?")?.id).toBe(
+      "voice.seal.bark-welcome",
+    );
+    expect(narrationClipForText("A short bark from the wet rock. Who?")?.id).toBe(
+      "voice.seal.clue.bark",
     );
   });
 
