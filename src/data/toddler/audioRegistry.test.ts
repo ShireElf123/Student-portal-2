@@ -1362,6 +1362,16 @@ describe("audio registry", () => {
       "/audio/voice/owl-fb-deep.mp3",
       "/audio/voice/owl-fb-small.mp3",
       "/audio/voice/owl-fb-ferry.mp3",
+      "/audio/voice/owl-pines-welcome.mp3",
+      "/audio/voice/owl-clue-pines.mp3",
+      "/audio/voice/owl-rhyme-welcome.mp3",
+      "/audio/voice/owl-clue-rhyme.mp3",
+      "/audio/voice/owl-fb-rhyme.mp3",
+      "/audio/voice/owl-fb-owl-rhyme.mp3",
+      "/audio/voice/owl-fb-wood.mp3",
+      "/audio/voice/owl-clue-safari.mp3",
+      "/audio/voice/owl-hoot-welcome.mp3",
+      "/audio/voice/owl-clue-hoot.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2996,6 +3006,11 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("A small owl called, then a deep owl called. Who last?")?.id,
     ).toBe("voice.owl.clue.last");
+    expect(narrationClipForText("Three and three pines. How many?")?.id).toBe(
+      "voice.owl.pines-welcome",
+    );
+    expect(narrationClipForText("What rhymes with tree?")?.id).toBe("voice.owl.rhyme-welcome");
+    expect(narrationClipForText("Hoot with the owl!")?.id).toBe("voice.owl.hoot-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
