@@ -1432,6 +1432,16 @@ describe("audio registry", () => {
       "/audio/voice/porch-fb-catch.mp3",
       "/audio/voice/porch-fb-shout.mp3",
       "/audio/voice/porch-circle-welcome.mp3",
+      "/audio/voice/porch-clue-circle.mp3",
+      "/audio/voice/porch-fb-drum.mp3",
+      "/audio/voice/porch-fb-circle.mp3",
+      "/audio/voice/porch-rhyme-welcome.mp3",
+      "/audio/voice/porch-clue-rhyme.mp3",
+      "/audio/voice/porch-fb-night.mp3",
+      "/audio/voice/porch-fb-moth-rhyme.mp3",
+      "/audio/voice/porch-fb-porch.mp3",
+      "/audio/voice/porch-balloon-welcome.mp3",
+      "/audio/voice/porch-clue-balloon.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3110,6 +3120,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("What did Nana say?")?.id).toBe("voice.porch.nana-welcome");
     expect(narrationClipForText("Circle, rest, circle, rest, circle. Next?")?.id).toBe(
       "voice.porch.circle-welcome",
+    );
+    expect(narrationClipForText("What rhymes with light?")?.id).toBe("voice.porch.rhyme-welcome");
+    expect(narrationClipForText("Tap the porch-light balloons!")?.id).toBe(
+      "voice.porch.balloon-welcome",
     );
   });
 
