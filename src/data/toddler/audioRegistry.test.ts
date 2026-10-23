@@ -1840,6 +1840,16 @@ describe("audio registry", () => {
       "/audio/voice/grove-fb-fourteenwhole.mp3",
       "/audio/voice/grove-fb-afterten.mp3",
       "/audio/voice/grove-twodishes-welcome.mp3",
+      "/audio/voice/grove-clue-twodishes.mp3",
+      "/audio/voice/grove-fb-sixone.mp3",
+      "/audio/voice/grove-fb-addedone.mp3",
+      "/audio/voice/grove-squirrel-welcome.mp3",
+      "/audio/voice/grove-clue-squirrel.mp3",
+      "/audio/voice/grove-fb-ninetake4.mp3",
+      "/audio/voice/grove-fb-taken.mp3",
+      "/audio/voice/grove-fb-whattaken.mp3",
+      "/audio/voice/grove-more-welcome.mp3",
+      "/audio/voice/grove-clue-more.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3737,6 +3747,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Six and one. How many berries?")?.id).toBe(
       "voice.grove.twodishes-welcome",
+    );
+    expect(narrationClipForText("Nine nuts, squirrel takes four. Left?")?.id).toBe(
+      "voice.grove.squirrel-welcome",
+    );
+    expect(narrationClipForText("Three versus seven. Which has more?")?.id).toBe(
+      "voice.grove.more-welcome",
     );
   });
 
