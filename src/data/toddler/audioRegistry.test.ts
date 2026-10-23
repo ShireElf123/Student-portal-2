@@ -82,6 +82,16 @@ describe("audio registry", () => {
       "/audio/voice/games-pizza-welcome.mp3",
       "/audio/voice/games-window-welcome.mp3",
       "/audio/voice/games-clock-welcome.mp3",
+      "/audio/voice/story-space-helmet.mp3",
+      "/audio/voice/story-ocean-open.mp3",
+      "/audio/voice/story-pancake-bowl.mp3",
+      "/audio/voice/story-fire-open.mp3",
+      "/audio/voice/story-fire-wake.mp3",
+      "/audio/voice/story-fire-ride.mp3",
+      "/audio/voice/story-fire-oak.mp3",
+      "/audio/voice/story-fire-steps.mp3",
+      "/audio/voice/story-fire-cat.mp3",
+      "/audio/voice/story-fire-park.mp3",
       "/audio/voice/farm-area-welcome.mp3",
       "/audio/voice/farm-milk-station.mp3",
       "/audio/voice/farm-milk-line.mp3",
@@ -2387,6 +2397,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("Find the round town clock. A circle has no corners!")?.id).toBe(
       "voice.games.clock-welcome",
     );
+    expect(
+      narrationClipForText(
+        "Firehouse Friday. Rosie is napping. What wakes a fire truck?",
+      )?.id,
+    ).toBe("voice.story.fire-open");
+    expect(narrationClipForText("Home to the garage. Park Rosie.")?.id).toBe("voice.story.fire-park");
   });
 
   it("maps Farm Valley closed-kit lines to voice-01", () => {
