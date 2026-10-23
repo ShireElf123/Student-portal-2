@@ -1122,6 +1122,16 @@ describe("audio registry", () => {
       "/audio/voice/market-fb-kite.mp3",
       "/audio/voice/market-fb-stall.mp3",
       "/audio/voice/market-awning-welcome.mp3",
+      "/audio/voice/market-fb-white.mp3",
+      "/audio/voice/market-fb-green.mp3",
+      "/audio/voice/market-color-welcome.mp3",
+      "/audio/voice/market-clue-color.mp3",
+      "/audio/voice/market-bag-welcome.mp3",
+      "/audio/voice/market-clue-bag.mp3",
+      "/audio/voice/market-rhyme-welcome.mp3",
+      "/audio/voice/market-clue-rhyme.mp3",
+      "/audio/voice/ice-area-welcome.mp3",
+      "/audio/voice/ice-hop-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2478,6 +2488,22 @@ describe("audio registry", () => {
     expect(narrationClipForText("Red, white, red, white, red. Next?")?.id).toBe(
       "voice.market.awning-welcome",
     );
+    expect(narrationClipForText("Mix colours at the Saturday market!")?.id).toBe(
+      "voice.market.color-welcome",
+    );
+    expect(narrationClipForText("Fill the market bag!")?.id).toBe("voice.market.bag-welcome");
+    expect(narrationClipForText("Find the rhyming friends at the market stall!")?.id).toBe(
+      "voice.market.rhyme-welcome",
+    );
+  });
+
+  it("maps Penguin Floe closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Penguin Floe! Hops, huddles and fish gifts. Let's explore together!",
+      )?.id,
+    ).toBe("voice.ice.area-welcome");
+    expect(narrationClipForText("Who hops the ice floe?")?.id).toBe("voice.ice.hop-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
