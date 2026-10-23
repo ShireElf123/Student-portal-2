@@ -72,6 +72,16 @@ describe("audio registry", () => {
       "/audio/voice/games-sunwarm-welcome.mp3",
       "/audio/voice/games-square-welcome.mp3",
       "/audio/voice/games-orange-welcome.mp3",
+      "/audio/voice/games-rooster-welcome.mp3",
+      "/audio/voice/games-diamond-welcome.mp3",
+      "/audio/voice/games-moon-welcome.mp3",
+      "/audio/voice/games-rainbow-welcome.mp3",
+      "/audio/voice/games-cloud-welcome.mp3",
+      "/audio/voice/games-bell-welcome.mp3",
+      "/audio/voice/games-berry-welcome.mp3",
+      "/audio/voice/games-pizza-welcome.mp3",
+      "/audio/voice/games-window-welcome.mp3",
+      "/audio/voice/games-clock-welcome.mp3",
       "/audio/voice/farm-area-welcome.mp3",
       "/audio/voice/farm-milk-station.mp3",
       "/audio/voice/farm-milk-line.mp3",
@@ -2371,6 +2381,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Where is the orange triangle with three pointy corners?")?.id,
     ).toBe("voice.games.orange-welcome");
+    expect(
+      narrationClipForText("Who perches on the fence and crows like a rooster when morning arrives?")?.id,
+    ).toBe("voice.games.rooster-welcome");
+    expect(narrationClipForText("Find the round town clock. A circle has no corners!")?.id).toBe(
+      "voice.games.clock-welcome",
+    );
   });
 
   it("maps Farm Valley closed-kit lines to voice-01", () => {

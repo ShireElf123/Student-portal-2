@@ -239,7 +239,7 @@ const ANIMAL_QUIZ_QUESTIONS: QuizQuestion[] = [
   {
     id: "q11",
     prompt: "Who wakes up the sunny farm with 'Cock-a-doodle-doo'?",
-    spokenPrompt: "Who perches on the fence and crows cock-a-doodle-doo when morning arrives?",
+    spokenPrompt: "Who perches on the fence and crows like a rooster when morning arrives?",
     soundCue: "Cock a doodle doo!",
     correctId: "rooster",
     options: [
