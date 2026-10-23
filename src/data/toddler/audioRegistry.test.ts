@@ -892,6 +892,16 @@ describe("audio registry", () => {
       "/audio/voice/soup-clue-carrots.mp3",
       "/audio/voice/soup-fb-four.mp3",
       "/audio/voice/soup-fb-count.mp3",
+      "/audio/voice/soup-fb-seven.mp3",
+      "/audio/voice/soup-hot-welcome.mp3",
+      "/audio/voice/soup-clue-hot.mp3",
+      "/audio/voice/soup-fb-wait.mp3",
+      "/audio/voice/soup-fb-touch.mp3",
+      "/audio/voice/soup-fb-floor.mp3",
+      "/audio/voice/soup-sort-welcome.mp3",
+      "/audio/voice/soup-clue-sort.mp3",
+      "/audio/voice/soup-fb-onion.mp3",
+      "/audio/voice/soup-fb-sock.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1963,6 +1973,16 @@ describe("audio registry", () => {
     expect(narrationClipForText("How many carrots?")?.id).toBe("voice.soup.carrots-welcome");
     expect(narrationClipForText("Four carrots waiting for the pot. How many?")?.id).toBe(
       "voice.soup.clue.carrots",
+    );
+    expect(narrationClipForText("The pot is steaming. What do we do?")?.id).toBe(
+      "voice.soup.hot-welcome",
+    );
+    expect(narrationClipForText("Steam means the pot is hot. What do we do?")?.id).toBe(
+      "voice.soup.clue.hot",
+    );
+    expect(narrationClipForText("Which belongs in the soup pot?")?.id).toBe("voice.soup.sort-welcome");
+    expect(narrationClipForText("The pot is for soup things. Which belongs?")?.id).toBe(
+      "voice.soup.clue.sort",
     );
   });
 
