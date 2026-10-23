@@ -1642,6 +1642,16 @@ describe("audio registry", () => {
       "/audio/voice/music-fb-lowboom.mp3",
       "/audio/voice/music-fb-bellstinkle.mp3",
       "/audio/voice/music-fb-whistles.mp3",
+      "/audio/voice/pattern-abc-welcome.mp3",
+      "/audio/voice/pattern-clue-abc.mp3",
+      "/audio/voice/pattern-fb-abcgreen.mp3",
+      "/audio/voice/pattern-fb-yellowchain.mp3",
+      "/audio/voice/pattern-fb-redset.mp3",
+      "/audio/voice/pattern-grow-welcome.mp3",
+      "/audio/voice/pattern-fb-growbig.mp3",
+      "/audio/voice/pattern-fb-tiny.mp3",
+      "/audio/voice/pattern-fb-smallago.mp3",
+      "/audio/voice/pattern-pegs-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3442,6 +3452,15 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("The frog pond wants a low boom. Which instrument?")?.id).toBe(
       "voice.music.pond-welcome",
+    );
+    expect(narrationClipForText("Red, blue, green, red, blue. What comes next?")?.id).toBe(
+      "voice.pattern.abc-welcome",
+    );
+    expect(narrationClipForText("Small, medium, big, small, medium. Next?")?.id).toBe(
+      "voice.pattern.grow-welcome",
+    );
+    expect(narrationClipForText("How many pegs on the board?")?.id).toBe(
+      "voice.pattern.pegs-welcome",
     );
   });
 
