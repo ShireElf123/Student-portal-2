@@ -22,6 +22,16 @@ describe("audio registry", () => {
       "/audio/voice/safari-welcome-park.mp3",
       "/audio/voice/safari-welcome-ice-floe.mp3",
       "/audio/voice/safari-welcome-owl-wood.mp3",
+      "/audio/voice/world-welcome-my.mp3",
+      "/audio/voice/world-welcome-animal.mp3",
+      "/audio/voice/world-welcome-adventure.mp3",
+      "/audio/voice/world-welcome-creative.mp3",
+      "/audio/voice/world-welcome-story.mp3",
+      "/audio/voice/world-welcome-learning.mp3",
+      "/audio/voice/toy-bow-welcome.mp3",
+      "/audio/voice/toy-clap-welcome.mp3",
+      "/audio/voice/toy-boots-welcome.mp3",
+      "/audio/voice/toy-library-welcome.mp3",
       "/audio/voice/farm-area-welcome.mp3",
       "/audio/voice/farm-milk-station.mp3",
       "/audio/voice/farm-milk-line.mp3",
@@ -2277,6 +2287,23 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Let's walk the pasture safari and listen for animal friends!")?.id,
     ).toBe("voice.safari.welcome.pasture");
+  });
+
+  it("maps world-map and open-toy spoken to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Welcome to My World! Explore familiar people, my home, happy feelings, yummy snacks, and helping hands!",
+      )?.id,
+    ).toBe("voice.world.welcome.my");
+    expect(
+      narrationClipForText(
+        "Welcome to Animal World! Listen to real animal calls, match babies to moms, feed animals, and explore habitats!",
+      )?.id,
+    ).toBe("voice.world.welcome.animal");
+    expect(narrationClipForText("Let the puppets take a bow!")?.id).toBe("voice.toy.bow-welcome");
+    expect(narrationClipForText("Whisper in the library with Dot the mouse!")?.id).toBe(
+      "voice.toy.library-welcome",
+    );
   });
 
   it("maps Farm Valley closed-kit lines to voice-01", () => {
