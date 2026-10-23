@@ -92,6 +92,16 @@ describe("audio registry", () => {
       "/audio/voice/story-fire-steps.mp3",
       "/audio/voice/story-fire-cat.mp3",
       "/audio/voice/story-fire-park.mp3",
+      "/audio/voice/story-snow-first.mp3",
+      "/audio/voice/story-library-open.mp3",
+      "/audio/voice/story-library-card.mp3",
+      "/audio/voice/story-library-books.mp3",
+      "/audio/voice/story-library-rug.mp3",
+      "/audio/voice/story-library-stamp.mp3",
+      "/audio/voice/story-library-bus.mp3",
+      "/audio/voice/story-library-lamp.mp3",
+      "/audio/voice/story-wagon-open.mp3",
+      "/audio/voice/story-wagon-empty.mp3",
       "/audio/voice/farm-area-welcome.mp3",
       "/audio/voice/farm-milk-station.mp3",
       "/audio/voice/farm-milk-line.mp3",
@@ -2403,6 +2413,13 @@ describe("audio registry", () => {
       )?.id,
     ).toBe("voice.story.fire-open");
     expect(narrationClipForText("Home to the garage. Park Rosie.")?.id).toBe("voice.story.fire-park");
+    expect(narrationClipForText("Snow day! What do we put on first?")?.id).toBe("voice.story.snow-first");
+    expect(
+      narrationClipForText("Dot and the Quiet Lion. Show your library card. What kind of voice do we use inside?")?.id,
+    ).toBe("voice.story.library-open");
+    expect(narrationClipForText("The wagon is empty. What shall we load first?")?.id).toBe(
+      "voice.story.wagon-empty",
+    );
   });
 
   it("maps Farm Valley closed-kit lines to voice-01", () => {
