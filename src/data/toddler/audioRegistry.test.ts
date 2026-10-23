@@ -1382,6 +1382,16 @@ describe("audio registry", () => {
       "/audio/voice/star-moon-welcome.mp3",
       "/audio/voice/star-clue-moon.mp3",
       "/audio/voice/star-fb-moon.mp3",
+      "/audio/voice/star-fb-orange.mp3",
+      "/audio/voice/star-shape-welcome.mp3",
+      "/audio/voice/star-clue-shape.mp3",
+      "/audio/voice/star-fb-circle.mp3",
+      "/audio/voice/star-fb-square.mp3",
+      "/audio/voice/star-plus-welcome.mp3",
+      "/audio/voice/star-clue-plus.mp3",
+      "/audio/voice/star-fb-plus.mp3",
+      "/audio/voice/star-fb-five.mp3",
+      "/audio/voice/star-twinkle-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3028,6 +3038,15 @@ describe("audio registry", () => {
       "voice.owl.rhyme-hoot",
     );
     expect(narrationClipForText("What is the round pale lamp?")?.id).toBe("voice.star.moon-welcome");
+    expect(narrationClipForText("What shape is the moon tonight?")?.id).toBe(
+      "voice.star.shape-welcome",
+    );
+    expect(narrationClipForText("Four and five stars. How many?")?.id).toBe(
+      "voice.star.plus-welcome",
+    );
+    expect(narrationClipForText("Twinkle, rest, twinkle, rest, twinkle. Next?")?.id).toBe(
+      "voice.star.twinkle-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
