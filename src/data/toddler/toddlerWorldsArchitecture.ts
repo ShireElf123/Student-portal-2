@@ -179,7 +179,7 @@ export const ANIMAL_WORLD: ToddlerWorld = {
     "Discover natural habitats & footprints",
     "Count creatures in their native environments",
   ],
-  description: "Step into lively habitats to listen for animal calls, follow mysterious footprints, and help Buddy on real safari expeditions!",
+  description: "Listen to real animal calls, match babies to moms, feed animals, and explore habitats!",
   collectionRewards: [
     { id: "col-safari-hat", title: "Jungle Explorer Hat", emoji: "🤠", description: "Awarded for completing all Farm & Jungle discoveries!", requiredStars: 4 },
     { id: "col-dino-fossil", title: "Golden Dino Tooth", emoji: "🦖", description: "Found by digging deep in Dino Discovery!", requiredStars: 8 },
@@ -644,7 +644,7 @@ export const ADVENTURE_WORLD: ToddlerWorld = {
     "Solve forest trails through observation",
     "Discover treasures using navigational maps",
   ],
-  description: "Put on your astronaut helmet or rainboots! Journey from enchanted woodland trails all the way into outer space with Rocket Pip!",
+  description: "Launch starry rockets, dive underwater with friendly dolphins, and dig for dinosaur fossils!",
   collectionRewards: [
     { id: "col-space-helmet", title: "Astronaut Bubble Helmet", emoji: "🚀", description: "Earned by touching down on the silver moon!", requiredStars: 5 },
     { id: "col-treasure-gem", title: "Sparkling Sea Emerald", emoji: "💎", description: "Discovered inside the coral reef chest!", requiredStars: 9 },
@@ -939,7 +939,7 @@ export const CREATIVE_WORLD: ToddlerWorld = {
     "Complete rhythmic patterns and symmetric art",
     "Express personal creativity through sticker collages",
   ],
-  description: "A magical studio where puddles of paint sparkle, piano keys play rainbow notes, and children become budding artists!",
+  description: "Play rainbow piano melodies, mix bright colors, and design your personal Learning Buddy!",
   collectionRewards: [
     { id: "col-rainbow-paintbrush", title: "Magical Paintbrush", emoji: "🖌️", description: "Earned by blending every primary paint recipe!", requiredStars: 4 },
     { id: "col-music-note", title: "Golden Treble Clef", emoji: "🎵", description: "Played a flawless rainbow piano melody!", requiredStars: 8 },
@@ -1168,7 +1168,7 @@ export const STORY_WORLD: ToddlerWorld = {
     "Build early vocabulary through contextual cues",
     "Foster a lifelong love of books and storytelling",
   ],
-  description: "Turn illustrated pages with spoken narration, make choices for character heroes, and explore interactive branching tales!",
+  description: "Turn pages with spoken narration, solve mini story challenges, and make choices for Buddy!",
   collectionRewards: [
     { id: "col-story-scroll", title: "Golden Storybook Quill", emoji: "🐔", description: "Earned by completing three full story adventures!", requiredStars: 6 },
   ],
@@ -1309,7 +1309,7 @@ export const LEARNING_WORLD: ToddlerWorld = {
     "Identify geometric shapes in everyday environments",
     "Sharpen early reasoning & memory recall",
   ],
-  description: "A sunny orchard where alphabet flowers blossom with letter sounds, crunchy carrots teach counting, and shapes form colorful bridges!",
+  description: "Hear phonics letter sounds, count crunchy carrots, spot shapes, and complete colorful patterns!",
   collectionRewards: [
     { id: "col-alphabet-trophy", title: "Golden ABC Medal", emoji: "🏅", description: "Mastered all phonics sound challenges!", requiredStars: 5 },
   ],
@@ -1497,7 +1497,7 @@ export const MY_WORLD: ToddlerWorld = {
     "Practice healthy habits (brushing teeth, washing hands)",
     "Celebrate family helpers and beloved pets",
   ],
-  description: "Explore the comfort of home, happy family feelings, healthy snacks, bedtime routines, and growing up with your personal Buddy!",
+  description: "Explore familiar people, my home, happy feelings, yummy snacks, and helping hands!",
   collectionRewards: [
     { id: "col-buddy-hug", title: "Golden Heart Hug Badge", emoji: "💖", description: "Awarded for exploring all feelings and healthy habits!", requiredStars: 4 },
   ],

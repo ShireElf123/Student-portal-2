@@ -28,6 +28,12 @@ describe("audio registry", () => {
       "/audio/voice/world-welcome-creative.mp3",
       "/audio/voice/world-welcome-story.mp3",
       "/audio/voice/world-welcome-learning.mp3",
+      "/audio/voice/world-welcome-roads.mp3",
+      "/audio/voice/world-welcome-bugs.mp3",
+      "/audio/voice/world-welcome-square.mp3",
+      "/audio/voice/world-welcome-kitchen.mp3",
+      "/audio/voice/world-welcome-night.mp3",
+      "/audio/voice/world-welcome-ice.mp3",
       "/audio/voice/toy-bow-welcome.mp3",
       "/audio/voice/toy-clap-welcome.mp3",
       "/audio/voice/toy-boots-welcome.mp3",
@@ -2389,6 +2395,16 @@ describe("audio registry", () => {
         "Welcome to Animal World! Listen to real animal calls, match babies to moms, feed animals, and explore habitats!",
       )?.id,
     ).toBe("voice.world.welcome.animal");
+    expect(
+      narrationClipForText(
+        "Welcome to Bug Garden! A walled garden where ladybirds nap on leaves and crickets sing after dusk.",
+      )?.id,
+    ).toBe("voice.world.welcome.bugs");
+    expect(
+      narrationClipForText(
+        "Welcome to Ice Neighbours! A bright cold bay where penguins hop floes and the sky sometimes paints itself.",
+      )?.id,
+    ).toBe("voice.world.welcome.ice");
     expect(narrationClipForText("Let the puppets take a bow!")?.id).toBe("voice.toy.bow-welcome");
     expect(narrationClipForText("Whisper in the library with Dot the mouse!")?.id).toBe(
       "voice.toy.library-welcome",
