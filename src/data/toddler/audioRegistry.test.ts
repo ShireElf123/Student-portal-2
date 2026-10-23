@@ -1472,6 +1472,16 @@ describe("audio registry", () => {
       "/audio/voice/forest-fb-boot.mp3",
       "/audio/voice/forest-fb-trout.mp3",
       "/audio/voice/forest-fb-kite.mp3",
+      "/audio/voice/forest-jay-welcome.mp3",
+      "/audio/voice/forest-clue-jay.mp3",
+      "/audio/voice/forest-fb-six.mp3",
+      "/audio/voice/forest-fb-away.mp3",
+      "/audio/voice/forest-fb-jaytwo.mp3",
+      "/audio/voice/weather-clue-rain.mp3",
+      "/audio/voice/weather-clue-sun.mp3",
+      "/audio/voice/weather-clue-porch.mp3",
+      "/audio/voice/weather-clue-puddle.mp3",
+      "/audio/voice/weather-chimes-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3168,6 +3178,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("Who hides acorns in the oak?")?.id).toBe("voice.forest.oak-welcome");
     expect(narrationClipForText("What belongs on the walking path?")?.id).toBe(
       "voice.forest.path-welcome",
+    );
+    expect(narrationClipForText("Eight acorns, jay takes two. How many left?")?.id).toBe(
+      "voice.forest.jay-welcome",
+    );
+    expect(narrationClipForText("What is making the chimes crash?")?.id).toBe(
+      "voice.weather.chimes-welcome",
     );
   });
 
