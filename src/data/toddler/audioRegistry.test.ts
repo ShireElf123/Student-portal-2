@@ -52,6 +52,16 @@ describe("audio registry", () => {
       "/audio/voice/games-abcd-welcome.mp3",
       "/audio/voice/games-lmno-welcome.mp3",
       "/audio/voice/games-fox-welcome.mp3",
+      "/audio/voice/games-nine-welcome.mp3",
+      "/audio/voice/games-moo-welcome.mp3",
+      "/audio/voice/games-lion-welcome.mp3",
+      "/audio/voice/games-apple-welcome.mp3",
+      "/audio/voice/games-splash-welcome.mp3",
+      "/audio/voice/games-rabbit-welcome.mp3",
+      "/audio/voice/games-dog-welcome.mp3",
+      "/audio/voice/games-duck-welcome.mp3",
+      "/audio/voice/games-monkey-welcome.mp3",
+      "/audio/voice/games-elephant-welcome.mp3",
       "/audio/voice/farm-area-welcome.mp3",
       "/audio/voice/farm-milk-station.mp3",
       "/audio/voice/farm-milk-line.mp3",
@@ -2340,6 +2350,11 @@ describe("audio registry", () => {
       "voice.games.giraffe-welcome",
     );
     expect(narrationClipForText("Fox. Fff. Which letter starts fox?")?.id).toBe("voice.games.fox-welcome");
+    expect(narrationClipForText("Nine. What number comes next?")?.id).toBe("voice.games.nine-welcome");
+    expect(narrationClipForText("Who says 'Moo'? Can you tap the animal?")?.id).toBe("voice.games.moo-welcome");
+    expect(
+      narrationClipForText("Who is the giant friendly friend with big floppy ears and a water-spraying trunk?")?.id,
+    ).toBe("voice.games.elephant-welcome");
   });
 
   it("maps Farm Valley closed-kit lines to voice-01", () => {
