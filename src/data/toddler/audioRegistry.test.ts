@@ -1022,6 +1022,16 @@ describe("audio registry", () => {
       "/audio/voice/park-cue-quack.mp3",
       "/audio/voice/park-fb-lion.mp3",
       "/audio/voice/park-fb-truck.mp3",
+      "/audio/voice/park-letter-welcome.mp3",
+      "/audio/voice/park-clue-letter.mp3",
+      "/audio/voice/park-fb-d.mp3",
+      "/audio/voice/park-fb-b.mp3",
+      "/audio/voice/park-fb-g.mp3",
+      "/audio/voice/park-pond-welcome.mp3",
+      "/audio/voice/park-clue-pond.mp3",
+      "/audio/voice/park-fb-circle.mp3",
+      "/audio/voice/park-fb-square.mp3",
+      "/audio/voice/park-fb-triangle.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2267,6 +2277,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Who is quacking?")?.id).toBe("voice.park.quack-welcome");
     expect(narrationClipForText("Quack from the round pond. Who?")?.id).toBe("voice.park.clue.quack");
+    expect(narrationClipForText("Which letter starts duck?")?.id).toBe("voice.park.letter-welcome");
+    expect(narrationClipForText("Duck starts with duh. Which letter?")?.id).toBe(
+      "voice.park.clue.letter",
+    );
+    expect(narrationClipForText("What shape is the pond?")?.id).toBe("voice.park.pond-welcome");
+    expect(narrationClipForText("The pond is round. What shape?")?.id).toBe("voice.park.clue.pond");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
