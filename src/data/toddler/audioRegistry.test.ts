@@ -1890,6 +1890,16 @@ describe("audio registry", () => {
       "/audio/voice/feelings-sad-welcome.mp3",
       "/audio/voice/feelings-clue-sad.mp3",
       "/audio/voice/feelings-fb-hug.mp3",
+      "/audio/voice/feelings-fb-noshout.mp3",
+      "/audio/voice/feelings-fb-sittogether.mp3",
+      "/audio/voice/feelings-mad-welcome.mp3",
+      "/audio/voice/feelings-clue-mad.mp3",
+      "/audio/voice/feelings-fb-breathe.mp3",
+      "/audio/voice/feelings-fb-nothrow.mp3",
+      "/audio/voice/feelings-fb-nobite.mp3",
+      "/audio/voice/feelings-scared-welcome.mp3",
+      "/audio/voice/feelings-clue-scared.mp3",
+      "/audio/voice/feelings-fb-light.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3817,6 +3827,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Pip looks sad. What helps?")?.id).toBe(
       "voice.feelings.sad-welcome",
+    );
+    expect(narrationClipForText("Pip looks mad. What first?")?.id).toBe(
+      "voice.feelings.mad-welcome",
+    );
+    expect(narrationClipForText("A bump in the dark. What helps?")?.id).toBe(
+      "voice.feelings.scared-welcome",
     );
   });
 
