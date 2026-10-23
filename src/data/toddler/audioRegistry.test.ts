@@ -1592,6 +1592,16 @@ describe("audio registry", () => {
       "/audio/voice/color-fb-white.mp3",
       "/audio/voice/color-warm-welcome.mp3",
       "/audio/voice/color-clue-warm.mp3",
+      "/audio/voice/color-fb-orangewarm.mp3",
+      "/audio/voice/color-fb-iceblue.mp3",
+      "/audio/voice/color-fb-leafshade.mp3",
+      "/audio/voice/color-pots-welcome.mp3",
+      "/audio/voice/color-clue-pots.mp3",
+      "/audio/voice/color-fb-sixpots.mp3",
+      "/audio/voice/color-fb-bench.mp3",
+      "/audio/voice/color-shadow-welcome.mp3",
+      "/audio/voice/color-clue-shadow.mp3",
+      "/audio/voice/color-fb-darker.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3362,6 +3372,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Which colour is warm like fire?")?.id).toBe(
       "voice.color.warm-welcome",
+    );
+    expect(narrationClipForText("How many paint pots?")?.id).toBe(
+      "voice.color.pots-welcome",
+    );
+    expect(narrationClipForText("Is shady red a new colour, or darker red?")?.id).toBe(
+      "voice.color.shadow-welcome",
     );
   });
 
