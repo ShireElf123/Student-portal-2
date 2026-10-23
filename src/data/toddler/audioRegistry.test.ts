@@ -822,6 +822,16 @@ describe("audio registry", () => {
       "/audio/voice/fruit-clue-bags.mp3",
       "/audio/voice/fruit-fb-six-pears.mp3",
       "/audio/voice/fruit-fb-both-bags.mp3",
+      "/audio/voice/fruit-rhyme-welcome.mp3",
+      "/audio/voice/fruit-clue-rhyme.mp3",
+      "/audio/voice/fruit-fb-bear.mp3",
+      "/audio/voice/fruit-fb-apple-rhyme.mp3",
+      "/audio/voice/fruit-fb-plum.mp3",
+      "/audio/voice/fruit-stack-station.mp3",
+      "/audio/voice/fruit-stack-line.mp3",
+      "/audio/voice/fruit-stack-done.mp3",
+      "/audio/voice/fruit-mix-welcome.mp3",
+      "/audio/voice/fruit-clue-mix.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1809,6 +1819,13 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Three and three pears. How many?")?.id).toBe(
       "voice.fruit.bags-welcome",
+    );
+    expect(narrationClipForText("What rhymes with pear?")?.id).toBe("voice.fruit.rhyme-welcome");
+    expect(narrationClipForText("Pear. What rhymes with pear?")?.id).toBe("voice.fruit.clue.rhyme");
+    expect(narrationClipForText("Stack fruit at the stall!")?.id).toBe("voice.fruit.stack-station");
+    expect(narrationClipForText("A market tower!")?.id).toBe("voice.fruit.stack-done");
+    expect(narrationClipForText("Mix colours at the fruit stall!")?.id).toBe(
+      "voice.fruit.mix-welcome",
     );
   });
 
