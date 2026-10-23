@@ -1072,6 +1072,16 @@ describe("audio registry", () => {
       "/audio/voice/nook-fb-siren.mp3",
       "/audio/voice/nook-who-welcome.mp3",
       "/audio/voice/nook-clue-who.mp3",
+      "/audio/voice/nook-fb-nana.mp3",
+      "/audio/voice/nook-fb-pip.mp3",
+      "/audio/voice/nook-fb-duck.mp3",
+      "/audio/voice/nook-rhyme-welcome.mp3",
+      "/audio/voice/nook-clue-rhyme.mp3",
+      "/audio/voice/nook-fb-hook.mp3",
+      "/audio/voice/nook-fb-rhyme-shelf.mp3",
+      "/audio/voice/nook-fb-page.mp3",
+      "/audio/voice/nook-fb-gold.mp3",
+      "/audio/voice/nook-stacks-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2368,6 +2378,11 @@ describe("audio registry", () => {
     expect(narrationClipForText("Who read last?")?.id).toBe("voice.nook.who-welcome");
     expect(narrationClipForText("Pip read, then Nana read the last page. Who read last?")?.id).toBe(
       "voice.nook.clue.who",
+    );
+    expect(narrationClipForText("What rhymes with book?")?.id).toBe("voice.nook.rhyme-welcome");
+    expect(narrationClipForText("Book. What rhymes with book?")?.id).toBe("voice.nook.clue.rhyme");
+    expect(narrationClipForText("Four and two books. How many?")?.id).toBe(
+      "voice.nook.stacks-welcome",
     );
   });
 
