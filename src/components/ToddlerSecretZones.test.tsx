@@ -11,8 +11,10 @@ vi.mock("../utils/speechUtils", () => ({
   speechCoordinator: { subscribe: () => () => {} },
 }));
 vi.mock("canvas-confetti", () => ({ default: () => {} }));
+const learner = vi.hoisted(() => ({ id: "test-learner" }));
+
 vi.mock("../utils/learnerBrain", () => ({
-  getActiveLearnerId: () => "test-learner",
+  getActiveLearnerId: () => learner.id,
   recordLearningEvent: () => {},
 }));
 vi.mock("../utils/gamification", () => ({
@@ -51,6 +53,7 @@ function brushCanvas(canvas: HTMLCanvasElement) {
 
 beforeEach(() => {
   cleanup();
+  learner.id = "test-learner";
   localStorage.clear();
   vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
 });
@@ -142,5 +145,44 @@ describe("secret rooms", () => {
     await flush();
     expect(container.textContent).toContain("Royal Pearl");
     expect(stars).toEqual([3]);
+  });
+
+  it("does not mix secret-zone finds between learners", async () => {
+    const zone = SECRET_ZONES[2];
+    learner.id = "learner-a";
+    const first = render(
+      <ToddlerSecretZonePlay zone={zone} onAddStar={() => {}} onLeave={() => {}} />,
+    );
+    const clams = Array.from(first.container.querySelectorAll("button")).filter(
+      (button) => button.getAttribute("aria-label") === "Closed clam",
+    );
+    for (const clam of clams) fireEvent.click(clam);
+    await flush();
+    expect(secretZoneIsFound(zone.id)).toBe(true);
+    cleanup();
+
+    learner.id = "learner-b";
+    expect(secretZoneIsFound(zone.id)).toBe(false);
+    const second = render(
+      <ToddlerSecretZonePlay zone={zone} onAddStar={() => {}} onLeave={() => {}} />,
+    );
+    expect(second.container.textContent).toContain("Pearl pouch");
+    expect(second.container.textContent).not.toContain("Royal Pearl");
+  });
+
+  it("migrates legacy device-wide finds once, then ignores malformed storage", () => {
+    localStorage.setItem("toddler-secret-zone-finds", JSON.stringify(["zone-dino-cave"]));
+    learner.id = "learner-a";
+    expect(secretZoneIsFound("zone-dino-cave")).toBe(true);
+    expect(localStorage.getItem("toddler-secret-zone-finds")).toBeNull();
+    expect(localStorage.getItem("toddler-secret-zone-finds:learner-a")).toContain("zone-dino-cave");
+
+    learner.id = "learner-b";
+    expect(secretZoneIsFound("zone-dino-cave")).toBe(false);
+
+    localStorage.setItem("toddler-secret-zone-finds:learner-b", "{not-json");
+    expect(secretZoneIsFound("zone-coral-cavern")).toBe(false);
+    localStorage.setItem("toddler-secret-zone-finds:learner-b", JSON.stringify({ found: true }));
+    expect(secretZoneIsFound("zone-coral-cavern")).toBe(false);
   });
 });

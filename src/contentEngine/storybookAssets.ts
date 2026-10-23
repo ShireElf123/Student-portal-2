@@ -2,11 +2,11 @@ import type { ContentTheme } from "./types";
 
 /** Renderer-owned visual palette. AI content selects a theme, never arbitrary assets or URLs. */
 export const STORYBOOK_ILLUSTRATIONS: Readonly<Record<ContentTheme, readonly string[]>> = {
-  space: ["🚀", "🌙", "🪐", "⭐", "🛸"],
+  space: ["🚀", "🌙", "🌍", "⭐", "🛸"],
   garden: ["🌱", "🐞", "🌻", "🦋", "🍓"],
   ocean: ["🐬", "🐠", "🐚", "🐢", "🌊"],
   animals: ["🐻", "🦊", "🐿️", "🦉", "🦒"],
-  everyday: ["🧸", "🚌", "🏠", "📚", "🪁"],
+  everyday: ["🧸", "🚌", "🏠", "📚", "🎈"],
 };
 
 export function getStorybookIllustration(theme: ContentTheme, pageIndex: number): string {

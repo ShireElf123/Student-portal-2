@@ -48,10 +48,16 @@ function generateCards(pairCount: number, pairs: MemoryPair[] = MEMORY_PAIRS): C
 
 export function ToddlerMemoryGame({
   onAddStar,
+  onComplete,
   pairs,
+  closedKit = false,
+  welcomeLine,
 }: {
   onAddStar?: (amt?: number) => void;
+  onComplete?: () => void;
   pairs?: MemoryPair[];
+  closedKit?: boolean;
+  welcomeLine?: string;
 }) {
   const deckPairs = pairs && pairs.length >= 4 ? pairs : MEMORY_PAIRS;
   const [pairCount, setPairCount] = useState(6);
@@ -61,6 +67,13 @@ export function ToddlerMemoryGame({
   const [isWon, setIsWon] = useState<boolean>(false);
   const [moves, setMoves] = useState<number>(0);
   const gameTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const boardPaid = useRef(false);
+
+  const payStars = (amount: number) => {
+    if (boardPaid.current) return;
+    if (onAddStar) onAddStar(amount);
+    else awardStars(amount);
+  };
 
   const scheduleGameTimer = (callback: () => void, delay: number) => {
     const timer = setTimeout(() => {
@@ -84,18 +97,27 @@ export function ToddlerMemoryGame({
     setIsWon(false);
     setMoves(0);
     soundEffects.playPop();
-    speakText("Find the matching friends! Tap two cards to turn them over!", { pitch: 1.2 });
+    speakText(closedKit ? welcomeLine || "" : "Find the matching friends! Tap two cards to turn them over!", {
+      pitch: 1.2,
+      closedKit,
+    });
   };
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      speakText("Welcome to Memory Match! Can you find the matching friends? Tap two cards to turn them over!", {
-        pitch: 1.2,
-        rate: 0.92,
-      });
+      speakText(
+        closedKit
+          ? welcomeLine || ""
+          : "Welcome to Memory Match! Can you find the matching friends? Tap two cards to turn them over!",
+        {
+          pitch: 1.2,
+          rate: 0.92,
+          closedKit,
+        },
+      );
     }, 240);
     return () => clearTimeout(timer);
-  }, []);
+  }, [closedKit, welcomeLine]);
 
   useEffect(() => () => clearGameTimers(), []);
 
@@ -118,10 +140,9 @@ export function ToddlerMemoryGame({
       if (firstCard.pairId === secondCard.pairId) {
         // MATCH!
         soundEffects.playSuccessChime();
-        speakText(`Match! You found the ${secondCard.name}!`, { pitch: 1.3 });
+        speakText(`Match! You found the ${secondCard.name}!`, { pitch: 1.3, closedKit });
         awardXP(20);
-        if (onAddStar) onAddStar(1);
-        else awardStars(1);
+        payStars(1);
 
         const nextMatchCount = matchesCount + 1;
         scheduleGameTimer(() => {
@@ -139,10 +160,12 @@ export function ToddlerMemoryGame({
               setIsWon(true);
               soundEffects.playFanfare();
               triggerCelebrationConfetti();
-              speakText("Hooray! You matched all the friends! You are a superstar!", { pitch: 1.2 });
+              speakText("Hooray! You matched all the friends! You are a superstar!", { pitch: 1.2, closedKit });
               awardXP(50);
-              if (onAddStar) onAddStar(3);
-              else awardStars(3);
+              const firstClear = !boardPaid.current;
+              payStars(3);
+              boardPaid.current = true;
+              if (firstClear) onComplete?.();
 
               try {
                 recordLearningEvent({
@@ -189,7 +212,7 @@ export function ToddlerMemoryGame({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-xl shadow-md">
-            🧩
+            🎲
           </div>
           <div>
             <h3 className="text-base sm:text-lg font-black text-white">Memory Card Match</h3>
@@ -235,6 +258,7 @@ export function ToddlerMemoryGame({
             return (
               <motion.button
                 key={card.id}
+                data-testid={`memory-card-${card.pairId}-${card.id}`}
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleCardClick(card)}

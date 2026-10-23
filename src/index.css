@@ -214,16 +214,17 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
+    font-variant-emoji: emoji;
   }
 
   body {
-    font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Nunito', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     color: var(--ink-primary, #0f172a);
     background-color: var(--surface-canvas, #f0f4f8);
   }
 
   h1, h2, h3, h4, h5, h6, .font-display {
-    font-family: 'Fredoka', 'Nunito', system-ui, sans-serif;
+    font-family: 'Fredoka', 'Nunito', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', system-ui, sans-serif;
     letter-spacing: -0.015em;
   }
 

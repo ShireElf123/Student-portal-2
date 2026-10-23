@@ -48,7 +48,7 @@ export const SECRET_ZONES: SecretZoneDef[] = [
     activityId: "act-secret-coral",
     title: "Coral Reef Secret Cavern",
     subtitle: "Open the clams on the reef. Three pearls hide among shy sea friends.",
-    emoji: "🪸",
+    emoji: "🌊",
     starsRequired: 30,
     bgGradient: "from-cyan-800 via-teal-900 to-emerald-950",
     rewardXP: 100,
@@ -57,25 +57,47 @@ export const SECRET_ZONES: SecretZoneDef[] = [
   },
 ];
 
-const FINDS_KEY = "toddler-secret-zone-finds";
+const LEGACY_FINDS_KEY = "toddler-secret-zone-finds";
 const BRUSH_STROKES_TO_REVEAL = 10;
 
-export function secretZoneIsFound(zoneId: string): boolean {
+export function secretZoneFindsStorageKey(learnerId = getActiveLearnerId()): string {
+  return `toddler-secret-zone-finds:${learnerId}`;
+}
+
+function parseFoundIds(raw: string | null): string[] | null {
+  if (raw == null) return null;
   try {
-    const raw = localStorage.getItem(FINDS_KEY);
-    const found = raw ? (JSON.parse(raw) as string[]) : [];
-    return found.includes(zoneId);
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((id): id is string => typeof id === "string");
   } catch {
-    return false;
+    return [];
   }
 }
 
-function markFound(zoneId: string) {
+function readFoundIds(learnerId = getActiveLearnerId()): string[] {
+  const namespaced = parseFoundIds(localStorage.getItem(secretZoneFindsStorageKey(learnerId)));
+  if (namespaced) return namespaced;
+  const legacy = parseFoundIds(localStorage.getItem(LEGACY_FINDS_KEY));
+  if (!legacy) return [];
   try {
-    const raw = localStorage.getItem(FINDS_KEY);
-    const found = raw ? (JSON.parse(raw) as string[]) : [];
+    localStorage.setItem(secretZoneFindsStorageKey(learnerId), JSON.stringify(legacy));
+    localStorage.removeItem(LEGACY_FINDS_KEY);
+  } catch {
+    /* ignore quota */
+  }
+  return legacy;
+}
+
+export function secretZoneIsFound(zoneId: string, learnerId = getActiveLearnerId()): boolean {
+  return readFoundIds(learnerId).includes(zoneId);
+}
+
+function markFound(zoneId: string, learnerId = getActiveLearnerId()) {
+  try {
+    const found = readFoundIds(learnerId);
     if (!found.includes(zoneId)) {
-      localStorage.setItem(FINDS_KEY, JSON.stringify([...found, zoneId]));
+      localStorage.setItem(secretZoneFindsStorageKey(learnerId), JSON.stringify([...found, zoneId]));
     }
   } catch {
     /* ignore quota */
@@ -465,11 +487,11 @@ const CLAMS: {
   inside: { kind: "pearl" | "friend"; name: string; speak: string; royal?: boolean; glyph: string };
 }[] = [
   { id: "c1", x: "8%", y: "58%", rotate: "-8deg", inside: { kind: "friend", name: "Pink shell", speak: "Only a pink shell. Keep looking!", glyph: "🐚" } },
-  { id: "c2", x: "38%", y: "62%", rotate: "6deg", inside: { kind: "pearl", name: "Moon pearl", speak: "A moon-white pearl!", glyph: "🤍" } },
+  { id: "c2", x: "38%", y: "62%", rotate: "6deg", inside: { kind: "pearl", name: "Moon pearl", speak: "A moon-white pearl!", glyph: "⚪" } },
   { id: "c3", x: "68%", y: "52%", rotate: "-4deg", inside: { kind: "friend", name: "Shy crab", speak: "A shy crab says hello!", glyph: "🦀" } },
   { id: "c4", x: "18%", y: "78%", rotate: "10deg", inside: { kind: "pearl", name: "Rose pearl", speak: "A rose pearl from the reef!", glyph: "💗" } },
   { id: "c5", x: "52%", y: "78%", rotate: "-12deg", inside: { kind: "pearl", name: "Royal pearl", speak: "The royal rainbow pearl!", glyph: "🌈", royal: true } },
-  { id: "c6", x: "78%", y: "72%", rotate: "8deg", inside: { kind: "friend", name: "Coral sprig", speak: "A tiny coral sprig.", glyph: "🪸" } },
+  { id: "c6", x: "78%", y: "72%", rotate: "8deg", inside: { kind: "friend", name: "Coral sprig", speak: "A tiny coral sprig.", glyph: "🌊" } },
 ];
 
 function ClamShell({
@@ -598,7 +620,7 @@ export function ToddlerSecretZonePlay({
   return (
     <div className={`overflow-hidden rounded-[2rem] border-2 border-white/20 bg-gradient-to-br ${zone.bgGradient} shadow-2xl`}>
       {SECRET_COVER[zone.id] && (
-        <img src={SECRET_COVER[zone.id]} alt="" className="h-36 sm:h-48 w-full object-cover" />
+        <img src={SECRET_COVER[zone.id]} alt="" width={800} height={447} decoding="async" className="h-36 sm:h-48 w-full object-cover" />
       )}
       <div className="p-4 sm:p-6 space-y-4">
       <div className="text-center space-y-1">

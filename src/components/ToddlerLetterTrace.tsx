@@ -163,10 +163,14 @@ function polyline(points: TracePoint[]): string {
 export function ToddlerLetterTrace({
   catalog,
   prompt,
+  closedKit = false,
+  welcomeLine,
   onAddStar,
 }: {
   catalog?: BubbleWord[];
   prompt?: string;
+  closedKit?: boolean;
+  welcomeLine?: string;
   onAddStar?: () => void;
 }) {
   const deck = pickTraceDeck(catalog, { prompt });
@@ -287,6 +291,12 @@ export function ToddlerLetterTrace({
     const line = strokeIndex + 1;
     const total = strokes.length;
     const timer = setTimeout(() => {
+      if (closedKit) {
+        if (strokeIndex === 0 && index === 0 && welcomeLine) {
+          speakText(welcomeLine, { pitch: 1.2, rate: 0.92, closedKit: true });
+        }
+        return;
+      }
       if (strokeIndex === 0) {
         speakText(`Trace the letter ${current.letter}. Start on the blue dot. One line. ${current.sound}`, {
           pitch: 1.2,
@@ -300,7 +310,7 @@ export function ToddlerLetterTrace({
       clearTimeout(timer);
       stopSpeaking();
     };
-  }, [current.letter, current.sound, strokeIndex, strokes.length]);
+  }, [current.letter, current.sound, strokeIndex, strokes.length, closedKit, welcomeLine, index]);
 
   const paint = (from: { x: number; y: number }, to: { x: number; y: number }, rect: DOMRect) => {
     const canvas = inkRef.current;
@@ -336,7 +346,7 @@ export function ToddlerLetterTrace({
     if (finishedRound.current || done) return;
     finishedRound.current = true;
     soundEffects.playSuccessChime();
-    speakText(`Yes! ${current.sound}`, { pitch: 1.25, rate: 0.92 });
+    speakText(`Yes! ${current.sound}`, { pitch: 1.25, rate: 0.92, closedKit });
     try {
       recordLearningEvent({
         learnerId: getActiveLearnerId(),
@@ -364,7 +374,7 @@ export function ToddlerLetterTrace({
       triggerCelebrationConfetti();
       soundEffects.playFanfare();
       onAddStar?.();
-      speakText("Beautiful letters! You traced them all!", { pitch: 1.2 });
+      speakText("Beautiful letters! You traced them all!", { pitch: 1.2, closedKit });
     } else {
       setStars((value) => value + 1);
       window.setTimeout(() => setIndex((value) => value + 1), 900);

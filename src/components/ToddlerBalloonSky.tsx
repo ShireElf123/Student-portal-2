@@ -30,12 +30,16 @@ const NUMBERS = ["1", "2", "3", "4", "5"];
 
 interface ToddlerBalloonSkyProps {
   onAddStar?: (amount?: number) => void;
+  onComplete?: () => void;
   letters?: string[];
+  closedKit?: boolean;
+  welcomeLine?: string;
 }
 
 const DAILY_TARGET_STAR_GOAL = 10;
+const STATION_HIT_GOAL = 3;
 
-export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps) {
+export function ToddlerBalloonSky({ onAddStar, onComplete, letters, closedKit = false, welcomeLine }: ToddlerBalloonSkyProps) {
   const letterSet = letters && letters.length >= 4 ? letters : LETTERS;
   const [balloons, setBalloons] = useState<Balloon[]>([]);
   const [targetLabel, setTargetLabel] = useState<string>("A");
@@ -44,6 +48,9 @@ export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps
   // Ref mirror so the every-10-pops celebration fires exactly on time even
   // when taps land faster than React re-renders.
   const poppedRef = useRef(0);
+  const stationHits = useRef(0);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   // Initialize and spawn balloons
   const spawnBalloon = (forcedLabel?: string) => {
@@ -79,10 +86,16 @@ export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps
     const interval = setInterval(() => spawnBalloon(), 2200);
 
     const speechTimer = setTimeout(() => {
-      speakText(`Welcome to Balloon Sky! Can you find and pop balloon ${targetLabel}?`, {
-        pitch: 1.3,
-        rate: 0.95,
-      });
+      speakText(
+        closedKit
+          ? welcomeLine || ""
+          : `Welcome to Balloon Sky! Can you find and pop balloon ${targetLabel}?`,
+        {
+          pitch: 1.3,
+          rate: 0.95,
+          closedKit,
+        },
+      );
     }, 150);
 
     return () => {
@@ -100,7 +113,7 @@ export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps
     setPoppedCount(poppedRef.current);
 
     // Speak letter or number
-    speakText(balloon.label, { pitch: 1.3, rate: 1.0 });
+    speakText(balloon.label, { pitch: 1.3, rate: 1.0, closedKit });
 
     const targetIsNumber = !isNaN(Number(targetLabel));
     const targetSkillId = targetIsNumber ? "math-k1-counting" : "read-k1-alphabet-letters";
@@ -138,6 +151,8 @@ export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps
         if (onAddStar) onAddStar(1);
         else awardStars(1);
       }
+      stationHits.current += 1;
+      if (stationHits.current === STATION_HIT_GOAL) onCompleteRef.current?.();
 
       // pick new target and release a balloon carrying it, so the new
       // request is always answerable instead of hoping random spawns help.
@@ -145,7 +160,7 @@ export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps
       const nextTarget = nextLetters[Math.floor(Math.random() * nextLetters.length)];
       setTargetLabel(nextTarget);
       spawnBalloon(nextTarget);
-      speakText(`Great job! Now can you pop ${nextTarget}?`, { pitch: 1.3, rate: 0.95 });
+      speakText(`Great job! Now can you pop ${nextTarget}?`, { pitch: 1.3, rate: 0.95, closedKit });
     }
 
     if (poppedRef.current > 0 && poppedRef.current % 10 === 0) {

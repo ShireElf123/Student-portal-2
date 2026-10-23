@@ -5,6 +5,7 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { awardXP, awardStars, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
 
 interface RhymeQuestion {
   id: string;
@@ -76,7 +77,7 @@ const RHYME_QUESTIONS: RhymeQuestion[] = [
     correctWord: "Tree",
     options: [
       { word: "Tree", emoji: "🌳", isCorrect: true },
-      { word: "Rock", emoji: "🪨", isCorrect: false },
+      { word: "Rock", emoji: "⛰️", isCorrect: false },
       { word: "Car", emoji: "🚗", isCorrect: false },
     ],
   },
@@ -208,7 +209,7 @@ const RHYME_QUESTIONS: RhymeQuestion[] = [
     correctWord: "Wig",
     options: [
       { word: "Wig", emoji: "🦱", isCorrect: true },
-      { word: "Mud", emoji: "🪵", isCorrect: false },
+      { word: "Mud", emoji: "🌳", isCorrect: false },
       { word: "Farm", emoji: "🌾", isCorrect: false },
     ],
   },
@@ -216,10 +217,18 @@ const RHYME_QUESTIONS: RhymeQuestion[] = [
 
 export function ToddlerRhymeGame({
   onAddStar,
+  onComplete,
   questions,
+  closedKit = false,
+  welcomeLine,
+  missionSurface = "games",
 }: {
   onAddStar?: (amt?: number) => void;
+  onComplete?: () => void;
   questions?: RhymeQuestion[];
+  closedKit?: boolean;
+  welcomeLine?: string;
+  missionSurface?: "games" | "off";
 }) {
   const deck = questions && questions.length >= 3 ? questions : RHYME_QUESTIONS;
   const [index, setIndex] = useState(0);
@@ -235,15 +244,19 @@ export function ToddlerRhymeGame({
   useEffect(() => {
     const timer = setTimeout(() => {
       speakText(
-        index === 0
-          ? `Welcome to Rhyme Time! ${current.spokenPrompt}`
-          : current.spokenPrompt,
-        { pitch: 1.25, rate: 0.92 }
+        closedKit && index === 0 && welcomeLine
+          ? welcomeLine
+          : closedKit
+            ? current.spokenPrompt
+            : index === 0
+              ? `Welcome to Rhyme Time! ${current.spokenPrompt}`
+              : current.spokenPrompt,
+        { pitch: 1.25, rate: 0.92, closedKit },
       );
     }, 240);
 
     return () => clearTimeout(timer);
-  }, [index]);
+  }, [index, closedKit, welcomeLine, current.spokenPrompt]);
 
   useEffect(() => () => {
     if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
@@ -281,7 +294,10 @@ export function ToddlerRhymeGame({
     if (option.isCorrect) {
       setIsAnswered(true);
       soundEffects.playSuccessChime();
-      speakText(`Yes! ${current.targetWord} rhymes with ${option.word}! They sound like music!`, { pitch: 1.3 });
+      speakText(`Yes! ${current.targetWord} rhymes with ${option.word}! They sound like music!`, {
+        pitch: 1.3,
+        closedKit,
+      });
       awardXP(25);
       if (onAddStar) onAddStar(1);
       else awardStars(1);
@@ -296,15 +312,24 @@ export function ToddlerRhymeGame({
           setIsCompleted(true);
           soundEffects.playFanfare();
           triggerCelebrationConfetti();
-          speakText("Hooray! You are a master rhymer! Fantastic job!", { pitch: 1.25 });
+          speakText("Hooray! You are a master rhymer! Fantastic job!", { pitch: 1.25, closedKit });
           awardXP(50);
           if (onAddStar) onAddStar(3);
           else awardStars(3);
+          onComplete?.();
+          try {
+            if (missionSurface === "games") payDailyMissionIfMatches("games", "rhyme-time");
+          } catch {
+            // ignore
+          }
         }
       }, 1500);
     } else {
       soundEffects.playGentleBoing();
-      speakText(`Oops! Try again! Listen: ${current.targetWord}... what sounds like ${current.targetWord}?`, { pitch: 1.2 });
+      speakText(`Oops! Try again! Listen: ${current.targetWord}... what sounds like ${current.targetWord}?`, {
+        pitch: 1.2,
+        closedKit,
+      });
       setWrongShake(option.word);
       advanceTimerRef.current = setTimeout(() => {
         advanceTimerRef.current = null;
@@ -340,7 +365,7 @@ export function ToddlerRhymeGame({
         </div>
 
         <button
-          onClick={() => speakText(current.spokenPrompt, { pitch: 1.25 })}
+          onClick={() => speakText(current.spokenPrompt, { pitch: 1.25, closedKit })}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-pink-500/20 hover:bg-pink-500/30 text-pink-300 text-xs font-bold border border-pink-400/30 transition-all cursor-pointer"
         >
           <Volume2 size={14} /> Listen

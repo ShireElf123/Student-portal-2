@@ -248,7 +248,7 @@ export function PrimaryLearningLab({
                 : "bg-white hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-slate-900"
             }`}
           >
-            <span>🪐</span>
+            <span>🌍</span>
             <span>Solar System</span>
           </button>
 
@@ -914,12 +914,12 @@ function TactileFractionLab() {
 // -------------------------------------------------------------
 function WordForgeGame() {
   const WORDS = [
-    { word: "PLANET", hint: "A large celestial body like Earth or Jupiter orbiting the Sun", emoji: "🪐" },
+    { word: "PLANET", hint: "A large celestial body like Earth or Jupiter orbiting the Sun", emoji: "🌍" },
     { word: "ENERGY", hint: "The power to do work or cause physical changes", emoji: "⚡" },
     { word: "GALAXY", hint: "A massive system of billions of stars, gas, and dust", emoji: "🌌" },
     { word: "OXYGEN", hint: "The invisible life-supporting gas that we breathe", emoji: "🌬️" },
     { word: "GRAVITY", hint: "The invisible pulling force that keeps our feet on the ground", emoji: "🍎" },
-    { word: "MAGNET", hint: "An object that produces a magnetic field attracting metals", emoji: "🧲" },
+    { word: "MAGNET", hint: "An object that produces a magnetic field attracting metals", emoji: "🔗" },
     { word: "FOSSIL", hint: "The preserved remains or traces of ancient prehistoric life", emoji: "🦕" },
     { word: "COMET", hint: "An icy cosmic wanderer that releases gas forming a glowing tail", emoji: "☄️" },
     { word: "PRISM", hint: "A transparent optical glass that refracts white light into a rainbow", emoji: "🌈" },
@@ -932,7 +932,7 @@ function WordForgeGame() {
     { word: "NEBULA", hint: "A vast interstellar cloud of dust and gas where new stars are born", emoji: "✨" },
     { word: "ROBOT", hint: "An automated mechanical machine programmed to perform tasks", emoji: "🤖" },
     { word: "SPECIES", hint: "A group of living organisms consisting of similar individuals", emoji: "🐾" },
-    { word: "GLACIER", hint: "A slowly moving mass or river of ice formed by snow accumulation", emoji: "🧊" },
+    { word: "GLACIER", hint: "A slowly moving mass or river of ice formed by snow accumulation", emoji: "❄️" },
     { word: "VELOCITY", hint: "The speed of something moving in a given direction", emoji: "🚀" },
     { word: "AURORA", hint: "Natural shimmering light display in the sky near polar regions", emoji: "🎆" },
     { word: "CRYSTAL", hint: "A solid material whose atoms are arranged in a repeating pattern", emoji: "💎" },

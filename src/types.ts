@@ -33,8 +33,8 @@ export type NavigationTab =
 export type BuddyArchetype = "monster" | "alien" | "robot" | "forest-bunny";
 export type BuddyColor = "pink" | "blue" | "lime" | "amber" | "purple" | "coral";
 export type BuddyEyeStyle = "happy" | "cyclops" | "starry" | "wink" | "goggles";
-export type BuddyHat = "none" | "explorer" | "party" | "wizard" | "astronaut" | "crown";
-export type BuddyAccessory = "none" | "bowtie" | "cape" | "medal" | "balloon";
+export type BuddyHat = "none" | "explorer" | "party" | "wizard" | "astronaut" | "crown" | "baker" | "rain" | "sailor";
+export type BuddyAccessory = "none" | "bowtie" | "cape" | "medal" | "balloon" | "letter" | "lantern";
 
 export interface BuddyCompanionConfig {
   id: string;
@@ -315,6 +315,8 @@ export interface PictureBookPage {
   title: string;
   text: string;
   illustration: string; // Emoji, SVG representation or visual scene
+  /** Painted interior spread — Vooks-style page art when present. */
+  illustrationImage?: string;
   bgGradient: string;
   narration: string;
   letterHighlight?: string;
@@ -333,6 +335,8 @@ export interface PictureBook {
   coverEmoji: string;
   coverImage?: string;
   coverGradient: string;
+  /** Library row — Epic-style series, not a dump of every title. */
+  series?: "teddy-nana" | "street" | "first-words" | "look-learn";
   pages: PictureBookPage[];
   author: string;
   readTimeMinutes: number;
@@ -378,6 +382,8 @@ export interface AssessmentResult {
   masteredCount: number;
   developingCount: number;
   needsPracticeCount: number;
+  /** Items left blank or explicitly skipped — never counted as developing. */
+  unansweredCount?: number;
   starsAwarded: number;
   feedbackSummary: string;
   nextLearningStep: string;

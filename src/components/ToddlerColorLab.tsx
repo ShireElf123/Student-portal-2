@@ -5,6 +5,7 @@ import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
 import { triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
 import type { MixFlavor } from "../data/toddler/toddlerWorldPlayThemes";
 
 interface ColorDrop {
@@ -17,7 +18,7 @@ interface ColorDrop {
 
 const PRIMARY_COLORS: ColorDrop[] = [
   { id: "red", name: "Ruby Red", emoji: "🔴", colorClass: "from-red-500 to-rose-600", glowColor: "shadow-red-500/50" },
-  { id: "yellow", name: "Sunny Yellow", emoji: "🟡", colorClass: "from-yellow-400 to-amber-400", glowColor: "shadow-yellow-500/50" },
+  { id: "yellow", name: "Sunny Yellow", emoji: "💛", colorClass: "from-yellow-400 to-amber-400", glowColor: "shadow-yellow-500/50" },
   { id: "blue", name: "Ocean Blue", emoji: "🔵", colorClass: "from-blue-500 to-indigo-600", glowColor: "shadow-blue-500/50" },
   { id: "white", name: "Cloud White", emoji: "⚪", colorClass: "from-white to-slate-200", glowColor: "shadow-white/50" },
 ];
@@ -183,7 +184,36 @@ function PaintCanvas() {
   );
 }
 
-export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: number) => void; mixFlavor?: MixFlavor }) {
+/** Worlds Color Magic missions name a colour. Free-play labs omit this. */
+export function mixTargetFromActivity(activity: {
+  id?: string;
+  title?: string;
+  learningObjective?: string;
+  cluePrompt?: string;
+}): string | undefined {
+  const blob = `${activity.id ?? ""} ${activity.title ?? ""} ${activity.learningObjective ?? ""} ${activity.cluePrompt ?? ""}`.toLowerCase();
+  if (blob.includes("orange") || blob.includes("red and yellow") || blob.includes("red into sunny yellow")) return "Orange";
+  if (blob.includes("purple") || blob.includes("red and blue") || blob.includes("red jam plus blue")) return "Purple";
+  if (blob.includes("green") || blob.includes("blue and yellow") || blob.includes("yellow and blue") || blob.includes("the leaf")) return "Green";
+  return undefined;
+}
+
+export function ToddlerColorLab({
+  onAddStar,
+  mixFlavor,
+  targetColor,
+  spokenPrompt,
+  closedKit = false,
+  missionSurface = "games",
+}: {
+  onAddStar?: (amt?: number) => void;
+  mixFlavor?: MixFlavor;
+  targetColor?: string;
+  spokenPrompt?: string;
+  closedKit?: boolean;
+  /** Worlds play already pays a worlds mission — do not also pay Games. */
+  missionSurface?: "games" | "off";
+}) {
   const recipes: Record<string, MixResult> = {
     "red+yellow": { ...RECIPES["red+yellow"], ...(mixFlavor?.orange ?? {}) },
     "yellow+red": { ...RECIPES["yellow+red"], ...(mixFlavor?.orange ?? {}) },
@@ -205,13 +235,17 @@ export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: n
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      speakText("Welcome to Color Magic! Tap two primary color droplets to blend a magical new color!", {
-        pitch: 1.25,
-      });
+      speakText(
+        spokenPrompt ||
+          (targetColor
+            ? `Mix two colours until you make ${targetColor}!`
+            : "Welcome to Color Magic! Tap two primary color droplets to blend a magical new color!"),
+        { pitch: 1.25, closedKit },
+      );
     }, 150);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [spokenPrompt, targetColor, closedKit]);
 
   useEffect(() => () => {
     if (resolutionTimer.current) clearTimeout(resolutionTimer.current);
@@ -223,7 +257,7 @@ export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: n
 
     const next = [...selectedDrops, drop];
     setSelectedDrops(next);
-    speakText(drop.name, { pitch: 1.3 });
+    speakText(drop.name, { pitch: 1.3, closedKit });
 
     if (next.length === 2) {
       const key = `${next[0].id}+${next[1].id}`;
@@ -233,12 +267,23 @@ export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: n
         resolutionTimer.current = setTimeout(() => {
           resolutionTimer.current = null;
           setCurrentResult(result);
+          const matchesTarget = !targetColor || result.colorName.toLowerCase() === targetColor.toLowerCase();
+          if (!matchesTarget) {
+            soundEffects.playGentleBoing();
+            speakText(`That made ${result.colorName}. We need ${targetColor}. Mix again!`, { pitch: 1.2, closedKit });
+            return;
+          }
           soundEffects.playSuccessChime();
           triggerCelebrationConfetti();
-          speakText(result.phrase, { pitch: 1.3 });
+          speakText(result.phrase, { pitch: 1.3, closedKit });
           if (!rewardPaid.current) {
             rewardPaid.current = true;
             onAddStar?.(1);
+            try {
+              if (missionSurface === "games") payDailyMissionIfMatches("games", "color-magic");
+            } catch {
+              // ignore
+            }
           }
 
           try {
@@ -263,7 +308,7 @@ export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: n
         }, 500);
       } else {
         // Same color mixed
-        speakText(`Two ${next[0].name}s! Pick a different color to mix magic!`, { pitch: 1.2 });
+        speakText(`Two ${next[0].name}s! Pick a different color to mix magic!`, { pitch: 1.2, closedKit });
         resolutionTimer.current = setTimeout(() => {
           resolutionTimer.current = null;
           setSelectedDrops([]);
@@ -292,7 +337,9 @@ export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: n
           </div>
           <div>
             <h3 className="text-lg sm:text-xl font-black text-white">Color Magic Mixing Lab</h3>
-            <p className="text-sm text-white/70">Tap two colours. Watch a new colour appear.</p>
+            <p className="text-sm text-white/70">
+              {targetColor ? `Mix until you make ${targetColor}.` : "Tap two colours. Watch a new colour appear."}
+            </p>
           </div>
         </div>
 
@@ -322,13 +369,13 @@ export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: n
               onClick={handleReset}
               className="mt-3 px-5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-sm border border-white/20 transition-all cursor-pointer"
             >
-              Mix Another Color 🪄
+              Mix Another Color ✨
             </button>
           </motion.div>
         ) : (
           <div className="flex flex-col items-center space-y-4">
             <div className="w-24 h-24 rounded-3xl bg-white/5 border-2 border-dashed border-white/20 flex items-center justify-center text-4xl">
-              {selectedDrops.length === 0 && <span className="opacity-40 animate-pulse">🧪</span>}
+              {selectedDrops.length === 0 && <span className="opacity-40 animate-pulse">⚗️</span>}
               {selectedDrops.length === 1 && (
                 <span className="text-5xl animate-bounce">{selectedDrops[0].emoji}</span>
               )}
@@ -355,7 +402,7 @@ export function ToddlerColorLab({ onAddStar, mixFlavor }: { onAddStar?: (amt?: n
       </div>
 
       {/* Primary Color Palette Buttons */}
-      <div className="grid grid-cols-3 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         {PRIMARY_COLORS.map((color) => {
           const isSelected = selectedDrops.some((d) => d.id === color.id);
           return (

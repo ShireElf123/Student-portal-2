@@ -284,18 +284,22 @@ describe("activity-ID integrity", () => {
       visit(source);
     }
 
+    const fingerprint = (site: string) => {
+      const match = site.match(/^(src\/[^:]+):\d+ \((.+)\)$/);
+      return match ? `${match[1]} (${match[2]})` : site;
+    };
     const expectedDynamic = [
-      "src/components/ToddlerK1Studio.tsx:51 (game.activityId)",
-      "src/components/ToddlerSecretZones.tsx:91 (zone.activityId)",
-      "src/components/ToddlerWorldsNavigator.tsx:500 (activeActivity.id)",
-      "src/contentEngine/gameAdapters.ts:79 (engine.activityId)",
-      "src/contentEngine/gameAdapters.ts:126 (engine.activityId)",
-      "src/contentEngine/gameAdapters.ts:173 (engine.activityId)",
-      "src/contentEngine/gameAdapters.ts:228 (engine.activityId)",
-      "src/contentEngine/gameAdapters.ts:272 (engine.activityId)",
-      "src/data/toddler/toddlerProgressManager.ts:203 (activityId)",
+      "src/components/ToddlerK1Studio.tsx (game.activityId)",
+      "src/components/ToddlerSecretZones.tsx (zone.activityId)",
+      "src/components/ToddlerWorldsNavigator.tsx (activeActivity.id)",
+      "src/contentEngine/gameAdapters.ts (engine.activityId)",
+      "src/contentEngine/gameAdapters.ts (engine.activityId)",
+      "src/contentEngine/gameAdapters.ts (engine.activityId)",
+      "src/contentEngine/gameAdapters.ts (engine.activityId)",
+      "src/contentEngine/gameAdapters.ts (engine.activityId)",
+      "src/data/toddler/toddlerProgressManager.ts (activityId)",
     ];
-    expect(dynamicSites.sort()).toEqual(expectedDynamic.sort());
+    expect(dynamicSites.map(fingerprint).sort()).toEqual(expectedDynamic.sort());
     // Every production recordLearningEvent call — literal or dynamic — must be
     // inside try/catch so a registry miss cannot freeze a game.
     expect(unguardedLiteralSites).toEqual([]);
