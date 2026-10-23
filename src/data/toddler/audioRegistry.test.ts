@@ -1222,6 +1222,16 @@ describe("audio registry", () => {
       "/audio/voice/light-fb-grey.mp3",
       "/audio/voice/light-mix-welcome.mp3",
       "/audio/voice/light-clue-mix.mp3",
+      "/audio/voice/light-fb-mixgreen.mp3",
+      "/audio/voice/light-fb-red.mp3",
+      "/audio/voice/light-fb-black.mp3",
+      "/audio/voice/light-stars-welcome.mp3",
+      "/audio/voice/light-clue-stars.mp3",
+      "/audio/voice/light-fb-eight.mp3",
+      "/audio/voice/light-fb-band.mp3",
+      "/audio/voice/light-pulse-welcome.mp3",
+      "/audio/voice/light-fb-fade.mp3",
+      "/audio/voice/light-letter-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2703,6 +2713,14 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Mix ice blue into leaf yellow. What sky colour blooms?")?.id,
     ).toBe("voice.light.clue.mix");
+    expect(narrationClipForText("How many stars?")?.id).toBe("voice.light.stars-welcome");
+    expect(narrationClipForText("Eight hard stars beside the ribbon. How many?")?.id).toBe(
+      "voice.light.clue.stars",
+    );
+    expect(narrationClipForText("Glow, fade, glow, fade, glow. Next?")?.id).toBe(
+      "voice.light.pulse-welcome",
+    );
+    expect(narrationClipForText("Which letter starts star?")?.id).toBe("voice.light.letter-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
