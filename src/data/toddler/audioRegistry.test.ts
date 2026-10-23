@@ -1302,6 +1302,16 @@ describe("audio registry", () => {
       "/audio/voice/bed-teddies-welcome.mp3",
       "/audio/voice/bed-clue-teddies.mp3",
       "/audio/voice/bed-fb-three.mp3",
+      "/audio/voice/bed-fb-quilt.mp3",
+      "/audio/voice/bed-fb-six.mp3",
+      "/audio/voice/bed-shelf-welcome.mp3",
+      "/audio/voice/bed-clue-shelf.mp3",
+      "/audio/voice/bed-fb-book.mp3",
+      "/audio/voice/bed-fb-trumpet.mp3",
+      "/audio/voice/bed-letter-welcome.mp3",
+      "/audio/voice/bed-clue-letter.mp3",
+      "/audio/voice/bed-fb-b.mp3",
+      "/audio/voice/bed-fb-d.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2884,6 +2894,16 @@ describe("audio registry", () => {
     expect(narrationClipForText("How many teddies?")?.id).toBe("voice.bed.teddies-welcome");
     expect(narrationClipForText("Three teddies on the quilt. How many?")?.id).toBe(
       "voice.bed.clue.teddies",
+    );
+    expect(narrationClipForText("Which belongs on the bedtime shelf?")?.id).toBe(
+      "voice.bed.shelf-welcome",
+    );
+    expect(narrationClipForText("The shelf is for bedtime. Which belongs?")?.id).toBe(
+      "voice.bed.clue.shelf",
+    );
+    expect(narrationClipForText("Which letter starts bed?")?.id).toBe("voice.bed.letter-welcome");
+    expect(narrationClipForText("Bed starts with buh. Which letter?")?.id).toBe(
+      "voice.bed.clue.letter",
     );
   });
 
