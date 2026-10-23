@@ -1712,6 +1712,14 @@ describe("audio registry", () => {
       "/audio/voice/barn-clue-egg.mp3",
       "/audio/voice/barn-fb-basket.mp3",
       "/audio/voice/barn-fb-notboot.mp3",
+      "/audio/voice/barn-piglets-welcome.mp3",
+      "/audio/voice/barn-clue-piglets.mp3",
+      "/audio/voice/barn-fb-threepiglets.mp3",
+      "/audio/voice/barn-fb-namedthree.mp3",
+      "/audio/voice/barn-fb-notsix.mp3",
+      "/audio/voice/barn-fb-firstcrow.mp3",
+      "/audio/voice/barn-fb-notstory.mp3",
+      "/audio/voice/barn-true-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3559,6 +3567,12 @@ describe("audio registry", () => {
     ).toBe("voice.barn.gate-welcome");
     expect(narrationClipForText("Nana tucked the egg in the basket. Where is it?")?.id).toBe(
       "voice.barn.egg-welcome",
+    );
+    expect(narrationClipForText("How many piglets in the stall?")?.id).toBe(
+      "voice.barn.piglets-welcome",
+    );
+    expect(narrationClipForText("Which is true in this farm tale?")?.id).toBe(
+      "voice.barn.true-welcome",
     );
   });
 

@@ -1619,10 +1619,10 @@ const PACKS: Record<string, PackedActivity[]> = {
       difficulty: 2,
       clueType: "riddle",
       clueIcon: "📖",
-      cluePrompt: "First the cock crowed. Then Pip stretched. What happened first?",
-      spokenPrompt: "The cock crowed, then Pip stretched. What happened first?",
+      cluePrompt: "First the rooster crowed. Then Pip stretched. What happened first?",
+      spokenPrompt: "The rooster crowed, then Pip stretched. What happened first?",
       options: [
-        { id: "crow", label: "The cock crowed", emoji: "🐓", feedback: "First the crow.", isCorrect: true },
+        { id: "crow", label: "The rooster crowed", emoji: "🐓", feedback: "First the crow.", isCorrect: true },
         { id: "stretch", label: "Pip stretched", emoji: "👧", feedback: "That was second.", isCorrect: false },
         { id: "moon", label: "The moon fell", emoji: "🌙", feedback: "Not in this story.", isCorrect: false },
       ],
