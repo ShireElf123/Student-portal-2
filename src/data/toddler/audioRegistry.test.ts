@@ -1372,6 +1372,16 @@ describe("audio registry", () => {
       "/audio/voice/owl-clue-safari.mp3",
       "/audio/voice/owl-hoot-welcome.mp3",
       "/audio/voice/owl-clue-hoot.mp3",
+      "/audio/voice/owl-trace-welcome.mp3",
+      "/audio/voice/owl-clue-trace.mp3",
+      "/audio/voice/owl-rhyme-hoot.mp3",
+      "/audio/voice/star-clue-nine.mp3",
+      "/audio/voice/star-fb-nine.mp3",
+      "/audio/voice/star-fb-four.mp3",
+      "/audio/voice/star-fb-twelve.mp3",
+      "/audio/voice/star-moon-welcome.mp3",
+      "/audio/voice/star-clue-moon.mp3",
+      "/audio/voice/star-fb-moon.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3011,6 +3021,13 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What rhymes with tree?")?.id).toBe("voice.owl.rhyme-welcome");
     expect(narrationClipForText("Hoot with the owl!")?.id).toBe("voice.owl.hoot-welcome");
+    expect(narrationClipForText("Trace the night letter with your finger!")?.id).toBe(
+      "voice.owl.trace-welcome",
+    );
+    expect(narrationClipForText("What rhymes with Hoot in the owl wood?")?.id).toBe(
+      "voice.owl.rhyme-hoot",
+    );
+    expect(narrationClipForText("What is the round pale lamp?")?.id).toBe("voice.star.moon-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
