@@ -1012,6 +1012,16 @@ describe("audio registry", () => {
       "/audio/voice/park-fb-five.mp3",
       "/audio/voice/park-fb-pond.mp3",
       "/audio/voice/park-play-welcome.mp3",
+      "/audio/voice/park-clue-play.mp3",
+      "/audio/voice/park-fb-swing.mp3",
+      "/audio/voice/park-fb-lorry.mp3",
+      "/audio/voice/park-fb-oven.mp3",
+      "/audio/voice/park-quack-welcome.mp3",
+      "/audio/voice/park-clue-quack.mp3",
+      "/audio/voice/park-fb-duck.mp3",
+      "/audio/voice/park-cue-quack.mp3",
+      "/audio/voice/park-fb-lion.mp3",
+      "/audio/voice/park-fb-truck.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2252,6 +2262,11 @@ describe("audio registry", () => {
       "voice.park.clue.ducks",
     );
     expect(narrationClipForText("Which belongs in the park?")?.id).toBe("voice.park.play-welcome");
+    expect(narrationClipForText("The park is for play. Which belongs here?")?.id).toBe(
+      "voice.park.clue.play",
+    );
+    expect(narrationClipForText("Who is quacking?")?.id).toBe("voice.park.quack-welcome");
+    expect(narrationClipForText("Quack from the round pond. Who?")?.id).toBe("voice.park.clue.quack");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
