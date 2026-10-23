@@ -1192,6 +1192,16 @@ describe("audio registry", () => {
       "/audio/voice/den-clue-sort.mp3",
       "/audio/voice/den-fb-snowcoat.mp3",
       "/audio/voice/den-fb-monkey.mp3",
+      "/audio/voice/den-letter-welcome.mp3",
+      "/audio/voice/den-clue-letter.mp3",
+      "/audio/voice/den-fb-c.mp3",
+      "/audio/voice/den-who-welcome.mp3",
+      "/audio/voice/den-clue-who.mp3",
+      "/audio/voice/den-fb-grown.mp3",
+      "/audio/voice/den-fb-cub.mp3",
+      "/audio/voice/den-fb-ferry.mp3",
+      "/audio/voice/den-prints-welcome.mp3",
+      "/audio/voice/den-clue-prints.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2632,6 +2642,17 @@ describe("audio registry", () => {
     expect(narrationClipForText("Who belongs in the snow den?")?.id).toBe("voice.den.sort-welcome");
     expect(narrationClipForText("The den is for snow coats. Who belongs?")?.id).toBe(
       "voice.den.clue.sort",
+    );
+    expect(narrationClipForText("Which letter starts cub?")?.id).toBe("voice.den.letter-welcome");
+    expect(narrationClipForText("Cub starts with cuh. Which letter?")?.id).toBe(
+      "voice.den.clue.letter",
+    );
+    expect(narrationClipForText("Who slept last?")?.id).toBe("voice.den.who-welcome");
+    expect(
+      narrationClipForText("The cub napped, then the grown bear napped. Who slept last?")?.id,
+    ).toBe("voice.den.clue.who");
+    expect(narrationClipForText("Three and three prints. How many?")?.id).toBe(
+      "voice.den.prints-welcome",
     );
   });
 
