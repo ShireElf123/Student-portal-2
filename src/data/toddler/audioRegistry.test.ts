@@ -1042,6 +1042,16 @@ describe("audio registry", () => {
       "/audio/voice/park-clue-where.mp3",
       "/audio/voice/park-fb-bench.mp3",
       "/audio/voice/park-fb-not-pond.mp3",
+      "/audio/voice/park-fb-not-park.mp3",
+      "/audio/voice/park-clue-safari.mp3",
+      "/audio/voice/park-pigeon-welcome.mp3",
+      "/audio/voice/park-clue-pigeon.mp3",
+      "/audio/voice/park-pigeon-line.mp3",
+      "/audio/voice/park-pigeon-done.mp3",
+      "/audio/voice/park-trace-welcome.mp3",
+      "/audio/voice/park-clue-trace.mp3",
+      "/audio/voice/nook-area-welcome.mp3",
+      "/audio/voice/nook-books-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2304,6 +2314,20 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("The ball rolled under the bench, not the pond. Where?")?.id,
     ).toBe("voice.park.clue.where");
+    expect(narrationClipForText("Who is visiting the town park?")?.id).toBe("voice.park.clue.safari");
+    expect(narrationClipForText("Feed the park pigeons!")?.id).toBe("voice.park.pigeon-welcome");
+    expect(narrationClipForText("Trace the park letter with your finger!")?.id).toBe(
+      "voice.park.trace-welcome",
+    );
+  });
+
+  it("maps Quiet Nook closed-kit lines to voice-01", () => {
+    expect(
+      narrationClipForText(
+        "Quiet Nook! Shelves, whispers and a story chair. Let's explore together!",
+      )?.id,
+    ).toBe("voice.nook.area-welcome");
+    expect(narrationClipForText("Where do the books live?")?.id).toBe("voice.nook.books-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
