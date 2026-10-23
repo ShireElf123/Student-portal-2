@@ -135,6 +135,10 @@ describe("audio registry", () => {
       "/audio/voice/ocean-schools-welcome.mp3",
       "/audio/voice/dino-prints-welcome.mp3",
       "/audio/voice/dino-plates-welcome.mp3",
+      "/audio/voice/dino-glider-welcome.mp3",
+      "/audio/voice/dino-mound-welcome.mp3",
+      "/audio/voice/dino-hunter-welcome.mp3",
+      "/audio/voice/dino-stomp-welcome.mp3",
       "/audio/voice/dino-area-welcome.mp3",
       "/audio/voice/dino-memory-welcome.mp3",
       "/audio/voice/dino-nest-station.mp3",
@@ -2350,6 +2354,10 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("How many giant prints?")?.id).toBe("voice.dino.prints-welcome");
     expect(narrationClipForText("Who has plates along the back?")?.id).toBe("voice.dino.plates-welcome");
+    expect(narrationClipForText("Who glides on leathery wings?")?.id).toBe("voice.dino.glider-welcome");
+    expect(narrationClipForText("What belongs in the nest mound?")?.id).toBe("voice.dino.mound-welcome");
+    expect(narrationClipForText("Who is the tiny fast hunter?")?.id).toBe("voice.dino.hunter-welcome");
+    expect(narrationClipForText("Stomp stomp pause. What comes next?")?.id).toBe("voice.dino.stomp-welcome");
   });
 
   it("maps Forest Trail closed-kit welcome to voice-01", () => {
