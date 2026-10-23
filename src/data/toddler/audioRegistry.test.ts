@@ -1930,6 +1930,16 @@ describe("audio registry", () => {
       "/audio/voice/habits-fb-drink.mp3",
       "/audio/voice/habits-fb-dust.mp3",
       "/audio/voice/habits-fb-needswater.mp3",
+      "/audio/voice/habits-sneeze-welcome.mp3",
+      "/audio/voice/habits-clue-sneeze.mp3",
+      "/audio/voice/habits-fb-elbow.mp3",
+      "/audio/voice/habits-fb-notfriend.mp3",
+      "/audio/voice/habits-fb-notfood.mp3",
+      "/audio/voice/habits-brushes-welcome.mp3",
+      "/audio/voice/habits-clue-brushes.mp3",
+      "/audio/voice/habits-fb-tenslow.mp3",
+      "/audio/voice/habits-fb-toten.mp3",
+      "/audio/voice/habits-fb-roundten.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3882,6 +3892,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("Dry mouth after running. What helps?")?.id).toBe(
       "voice.habits.water-welcome",
     );
+    expect(narrationClipForText("A sneeze is coming. Where?")?.id).toBe(
+      "voice.habits.sneeze-welcome",
+    );
+    expect(narrationClipForText("How many slow brushes?")?.id).toBe("voice.habits.brushes-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
