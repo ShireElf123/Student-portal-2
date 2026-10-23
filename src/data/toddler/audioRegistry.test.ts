@@ -1572,6 +1572,16 @@ describe("audio registry", () => {
       "/audio/voice/treasure-fb-pouches.mp3",
       "/audio/voice/treasure-parrot-welcome.mp3",
       "/audio/voice/treasure-clue-parrot.mp3",
+      "/audio/voice/treasure-fb-mast.mp3",
+      "/audio/voice/treasure-fb-ovens.mp3",
+      "/audio/voice/treasure-fb-shipshout.mp3",
+      "/audio/voice/treasure-flag-welcome.mp3",
+      "/audio/voice/treasure-clue-flag.mp3",
+      "/audio/voice/treasure-fb-black.mp3",
+      "/audio/voice/treasure-fb-green.mp3",
+      "/audio/voice/treasure-fb-redjust.mp3",
+      "/audio/voice/color-berry-welcome.mp3",
+      "/audio/voice/color-clue-berry.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3330,6 +3340,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Where is the parrot shouting from?")?.id).toBe(
       "voice.treasure.parrot-welcome",
+    );
+    expect(narrationClipForText("Red, black, red, black, red. What comes next?")?.id).toBe(
+      "voice.treasure.flag-welcome",
+    );
+    expect(narrationClipForText("Red and blue jam. What colour?")?.id).toBe(
+      "voice.color.berry-welcome",
     );
   });
 
