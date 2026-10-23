@@ -852,6 +852,16 @@ describe("audio registry", () => {
       "/audio/voice/bakery-fb-loaf.mp3",
       "/audio/voice/bakery-fb-milk.mp3",
       "/audio/voice/bakery-fb-ice.mp3",
+      "/audio/voice/bakery-letter-welcome.mp3",
+      "/audio/voice/bakery-clue-letter.mp3",
+      "/audio/voice/bakery-fb-b.mp3",
+      "/audio/voice/bakery-fb-d.mp3",
+      "/audio/voice/bakery-fb-p.mp3",
+      "/audio/voice/bakery-blend-welcome.mp3",
+      "/audio/voice/bakery-clue-blend.mp3",
+      "/audio/voice/bakery-fb-br.mp3",
+      "/audio/voice/bakery-fb-st.mp3",
+      "/audio/voice/bakery-fb-fl.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1872,6 +1882,16 @@ describe("audio registry", () => {
     expect(narrationClipForText("What belongs in the oven?")?.id).toBe("voice.bakery.oven-welcome");
     expect(narrationClipForText("The oven is for baking. What belongs in the oven?")?.id).toBe(
       "voice.bakery.clue.oven",
+    );
+    expect(narrationClipForText("Which letter starts bread?")?.id).toBe(
+      "voice.bakery.letter-welcome",
+    );
+    expect(narrationClipForText("Bread starts with br. Which letter starts bread?")?.id).toBe(
+      "voice.bakery.clue.letter",
+    );
+    expect(narrationClipForText("Which blend starts bread?")?.id).toBe("voice.bakery.blend-welcome");
+    expect(narrationClipForText("Bread starts with br. Which blend?")?.id).toBe(
+      "voice.bakery.clue.blend",
     );
   });
 
