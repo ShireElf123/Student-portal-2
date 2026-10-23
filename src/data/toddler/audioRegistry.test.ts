@@ -1760,6 +1760,16 @@ describe("audio registry", () => {
       "/audio/voice/space-fb-blinks.mp3",
       "/audio/voice/space-fb-staycode.mp3",
       "/audio/voice/space-sleep-welcome.mp3",
+      "/audio/voice/space-clue-sleep.mp3",
+      "/audio/voice/space-fb-incabin.mp3",
+      "/audio/voice/space-why-welcome.mp3",
+      "/audio/voice/space-clue-why.mp3",
+      "/audio/voice/space-fb-warm.mp3",
+      "/audio/voice/space-fb-notspacetale.mp3",
+      "/audio/voice/space-fb-nofish.mp3",
+      "/audio/voice/ocean-lamp-welcome.mp3",
+      "/audio/voice/ocean-clue-lamp.mp3",
+      "/audio/voice/ocean-fb-angler.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3630,6 +3640,8 @@ describe("audio registry", () => {
       "voice.space.helmet-welcome",
     );
     expect(narrationClipForText("Blink blink rest. Next?")?.id).toBe("voice.space.blink-welcome");
+    expect(narrationClipForText("Where do they sleep?")?.id).toBe("voice.space.sleep-welcome");
+    expect(narrationClipForText("Who held the lamp?")?.id).toBe("voice.ocean.lamp-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
