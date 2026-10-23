@@ -1152,6 +1152,16 @@ describe("audio registry", () => {
       "/audio/voice/ice-letter-welcome.mp3",
       "/audio/voice/ice-clue-letter.mp3",
       "/audio/voice/ice-fb-p.mp3",
+      "/audio/voice/ice-fb-b.mp3",
+      "/audio/voice/ice-fb-g.mp3",
+      "/audio/voice/ice-huddle-welcome.mp3",
+      "/audio/voice/ice-clue-huddle.mp3",
+      "/audio/voice/ice-fb-huddles.mp3",
+      "/audio/voice/ice-rhyme-welcome.mp3",
+      "/audio/voice/ice-clue-rhyme.mp3",
+      "/audio/voice/ice-fb-go.mp3",
+      "/audio/voice/ice-fb-norhyme-ice.mp3",
+      "/audio/voice/ice-fb-norhyme-fish.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2543,6 +2553,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("Penguin starts with puh. Which letter?")?.id).toBe(
       "voice.ice.clue.letter",
     );
+    expect(narrationClipForText("Four and two penguins. How many?")?.id).toBe(
+      "voice.ice.huddle-welcome",
+    );
+    expect(narrationClipForText("4 penguins here, 2 there. How many?")?.id).toBe(
+      "voice.ice.clue.huddle",
+    );
+    expect(narrationClipForText("What rhymes with snow?")?.id).toBe("voice.ice.rhyme-welcome");
+    expect(narrationClipForText("Snow. What rhymes with snow?")?.id).toBe("voice.ice.clue.rhyme");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
