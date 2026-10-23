@@ -1422,6 +1422,16 @@ describe("audio registry", () => {
       "/audio/voice/porch-fb-penguin.mp3",
       "/audio/voice/porch-fb-loaf.mp3",
       "/audio/voice/porch-fb-n.mp3",
+      "/audio/voice/porch-fb-p.mp3",
+      "/audio/voice/porch-plus-welcome.mp3",
+      "/audio/voice/porch-clue-plus.mp3",
+      "/audio/voice/porch-fb-two.mp3",
+      "/audio/voice/porch-nana-welcome.mp3",
+      "/audio/voice/porch-clue-nana.mp3",
+      "/audio/voice/porch-fb-watch.mp3",
+      "/audio/voice/porch-fb-catch.mp3",
+      "/audio/voice/porch-fb-shout.mp3",
+      "/audio/voice/porch-circle-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3093,6 +3103,13 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Who belongs at the porch bulb?")?.id).toBe(
       "voice.porch.sort-welcome",
+    );
+    expect(narrationClipForText("Three and two moths. How many?")?.id).toBe(
+      "voice.porch.plus-welcome",
+    );
+    expect(narrationClipForText("What did Nana say?")?.id).toBe("voice.porch.nana-welcome");
+    expect(narrationClipForText("Circle, rest, circle, rest, circle. Next?")?.id).toBe(
+      "voice.porch.circle-welcome",
     );
   });
 
