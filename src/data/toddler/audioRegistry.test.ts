@@ -1352,6 +1352,16 @@ describe("audio registry", () => {
       "/audio/voice/owl-clue-night.mp3",
       "/audio/voice/owl-fb-hunt.mp3",
       "/audio/voice/owl-fb-bee.mp3",
+      "/audio/voice/owl-letter-welcome.mp3",
+      "/audio/voice/owl-clue-letter.mp3",
+      "/audio/voice/owl-fb-o.mp3",
+      "/audio/voice/owl-fb-a.mp3",
+      "/audio/voice/owl-fb-u.mp3",
+      "/audio/voice/owl-last-welcome.mp3",
+      "/audio/voice/owl-clue-last.mp3",
+      "/audio/voice/owl-fb-deep.mp3",
+      "/audio/voice/owl-fb-small.mp3",
+      "/audio/voice/owl-fb-ferry.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2978,6 +2988,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("Who belongs in the night wood?")?.id).toBe(
       "voice.owl.night-welcome",
     );
+    expect(narrationClipForText("Which letter starts owl?")?.id).toBe("voice.owl.letter-welcome");
+    expect(narrationClipForText("Owl starts with ow. Which letter?")?.id).toBe(
+      "voice.owl.clue.letter",
+    );
+    expect(narrationClipForText("Who called last?")?.id).toBe("voice.owl.last-welcome");
+    expect(
+      narrationClipForText("A small owl called, then a deep owl called. Who last?")?.id,
+    ).toBe("voice.owl.clue.last");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
