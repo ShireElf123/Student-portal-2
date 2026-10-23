@@ -1920,6 +1920,16 @@ describe("audio registry", () => {
       "/audio/voice/feelings-fb-thathappy.mp3",
       "/audio/voice/feelings-fb-madtight.mp3",
       "/audio/voice/feelings-fb-sleepyslow.mp3",
+      "/audio/voice/habits-soap-welcome.mp3",
+      "/audio/voice/habits-clue-soap.mp3",
+      "/audio/voice/habits-fb-soapwater.mp3",
+      "/audio/voice/habits-fb-mud.mp3",
+      "/audio/voice/habits-fb-paint.mp3",
+      "/audio/voice/habits-water-welcome.mp3",
+      "/audio/voice/habits-clue-water.mp3",
+      "/audio/voice/habits-fb-drink.mp3",
+      "/audio/voice/habits-fb-dust.mp3",
+      "/audio/voice/habits-fb-needswater.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3865,6 +3875,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Bright eyes and a wide mouth. Which feeling?")?.id).toBe(
       "voice.feelings.happyface-welcome",
+    );
+    expect(narrationClipForText("Before fruit, what do we use on our hands?")?.id).toBe(
+      "voice.habits.soap-welcome",
+    );
+    expect(narrationClipForText("Dry mouth after running. What helps?")?.id).toBe(
+      "voice.habits.water-welcome",
     );
   });
 
