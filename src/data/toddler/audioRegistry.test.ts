@@ -1062,6 +1062,16 @@ describe("audio registry", () => {
       "/audio/voice/nook-fb-b.mp3",
       "/audio/voice/nook-count-welcome.mp3",
       "/audio/voice/nook-clue-count.mp3",
+      "/audio/voice/nook-fb-seven.mp3",
+      "/audio/voice/nook-fb-box.mp3",
+      "/audio/voice/nook-fb-ten.mp3",
+      "/audio/voice/nook-quiet-welcome.mp3",
+      "/audio/voice/nook-clue-quiet.mp3",
+      "/audio/voice/nook-fb-whisper.mp3",
+      "/audio/voice/nook-fb-drum.mp3",
+      "/audio/voice/nook-fb-siren.mp3",
+      "/audio/voice/nook-who-welcome.mp3",
+      "/audio/voice/nook-clue-who.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2348,6 +2358,16 @@ describe("audio registry", () => {
     expect(narrationClipForText("How many books?")?.id).toBe("voice.nook.count-welcome");
     expect(narrationClipForText("Seven picture books in the return box. How many?")?.id).toBe(
       "voice.nook.clue.count",
+    );
+    expect(narrationClipForText("Which belongs in the quiet nook?")?.id).toBe(
+      "voice.nook.quiet-welcome",
+    );
+    expect(narrationClipForText("The nook is for quiet. Which belongs here?")?.id).toBe(
+      "voice.nook.clue.quiet",
+    );
+    expect(narrationClipForText("Who read last?")?.id).toBe("voice.nook.who-welcome");
+    expect(narrationClipForText("Pip read, then Nana read the last page. Who read last?")?.id).toBe(
+      "voice.nook.clue.who",
     );
   });
 
