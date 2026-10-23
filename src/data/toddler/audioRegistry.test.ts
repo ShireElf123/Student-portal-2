@@ -1282,6 +1282,16 @@ describe("audio registry", () => {
       "/audio/voice/seal-home-welcome.mp3",
       "/audio/voice/seal-clue-home.mp3",
       "/audio/voice/seal-fb-sea.mp3",
+      "/audio/voice/seal-fb-attic.mp3",
+      "/audio/voice/seal-fb-desert.mp3",
+      "/audio/voice/seal-rhyme-welcome.mp3",
+      "/audio/voice/seal-clue-rhyme.mp3",
+      "/audio/voice/seal-fb-sock.mp3",
+      "/audio/voice/seal-fb-norhyme-seal.mp3",
+      "/audio/voice/seal-fb-norhyme-fish.mp3",
+      "/audio/voice/seal-bubble-welcome.mp3",
+      "/audio/voice/seal-clue-bubble.mp3",
+      "/audio/voice/seal-toss-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2841,6 +2851,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Seals belong in cold sea and on wet rocks, not the attic. Where?")?.id,
     ).toBe("voice.seal.clue.home");
+    expect(narrationClipForText("What rhymes with rock?")?.id).toBe("voice.seal.rhyme-welcome");
+    expect(narrationClipForText("Rock. What rhymes with rock?")?.id).toBe("voice.seal.clue.rhyme");
+    expect(narrationClipForText("Pop the seal-shore bubbles!")?.id).toBe(
+      "voice.seal.bubble-welcome",
+    );
+    expect(narrationClipForText("Toss the fish to the seal!")?.id).toBe("voice.seal.toss-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
