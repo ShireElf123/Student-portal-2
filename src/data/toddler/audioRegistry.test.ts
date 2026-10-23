@@ -1452,6 +1452,16 @@ describe("audio registry", () => {
       "/audio/voice/forest-fb-hoot.mp3",
       "/audio/voice/forest-fb-fox.mp3",
       "/audio/voice/forest-fb-bee.mp3",
+      "/audio/voice/forest-caps-welcome.mp3",
+      "/audio/voice/forest-clue-caps.mp3",
+      "/audio/voice/forest-fb-seven.mp3",
+      "/audio/voice/forest-fb-three.mp3",
+      "/audio/voice/forest-fb-ten.mp3",
+      "/audio/voice/forest-hooves-welcome.mp3",
+      "/audio/voice/forest-clue-hooves.mp3",
+      "/audio/voice/forest-fb-deer.mp3",
+      "/audio/voice/forest-fb-paws.mp3",
+      "/audio/voice/forest-fb-web.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3140,6 +3150,10 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Hoo from the oak hollow at dusk. Who?")?.id).toBe(
       "voice.forest.clue.hoot",
+    );
+    expect(narrationClipForText("How many mushroom caps?")?.id).toBe("voice.forest.caps-welcome");
+    expect(narrationClipForText("Who left the two-toed prints?")?.id).toBe(
+      "voice.forest.hooves-welcome",
     );
   });
 
