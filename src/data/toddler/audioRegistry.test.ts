@@ -1810,6 +1810,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-clue-st.mp3",
       "/audio/voice/phonics-fb-stemst.mp3",
       "/audio/voice/phonics-fb-brbread.mp3",
+      "/audio/voice/phonics-fb-flflag.mp3",
+      "/audio/voice/phonics-bug-welcome.mp3",
+      "/audio/voice/phonics-clue-bug.mp3",
+      "/audio/voice/phonics-fb-bugrug.mp3",
+      "/audio/voice/phonics-fb-beerhyme.mp3",
+      "/audio/voice/phonics-fb-leafrhyme.mp3",
+      "/audio/voice/phonics-sun-welcome.mp3",
+      "/audio/voice/phonics-clue-sun.mp3",
+      "/audio/voice/phonics-fb-sunsss.mp3",
+      "/audio/voice/phonics-fb-nlast.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3694,6 +3704,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("Which letter starts moon?")?.id).toBe("voice.phonics.m-welcome");
     expect(narrationClipForText("Which letter starts Pip?")?.id).toBe("voice.phonics.p-welcome");
     expect(narrationClipForText("Which blend starts stem?")?.id).toBe("voice.phonics.st-welcome");
+    expect(narrationClipForText("What rhymes with bug?")?.id).toBe("voice.phonics.bug-welcome");
+    expect(narrationClipForText("What is the first sound in sun?")?.id).toBe(
+      "voice.phonics.sun-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
