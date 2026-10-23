@@ -1182,6 +1182,16 @@ describe("audio registry", () => {
       "/audio/voice/den-home-welcome.mp3",
       "/audio/voice/den-clue-home.mp3",
       "/audio/voice/den-fb-den.mp3",
+      "/audio/voice/den-fb-harbour.mp3",
+      "/audio/voice/den-paws-welcome.mp3",
+      "/audio/voice/den-clue-paws.mp3",
+      "/audio/voice/den-fb-four.mp3",
+      "/audio/voice/den-fb-print.mp3",
+      "/audio/voice/den-fb-six.mp3",
+      "/audio/voice/den-sort-welcome.mp3",
+      "/audio/voice/den-clue-sort.mp3",
+      "/audio/voice/den-fb-snowcoat.mp3",
+      "/audio/voice/den-fb-monkey.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2615,6 +2625,14 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("The cub belongs in the snow den, not the harbour. Where?")?.id,
     ).toBe("voice.den.clue.home");
+    expect(narrationClipForText("How many paws?")?.id).toBe("voice.den.paws-welcome");
+    expect(narrationClipForText("Four giant paws in the snow. How many?")?.id).toBe(
+      "voice.den.clue.paws",
+    );
+    expect(narrationClipForText("Who belongs in the snow den?")?.id).toBe("voice.den.sort-welcome");
+    expect(narrationClipForText("The den is for snow coats. Who belongs?")?.id).toBe(
+      "voice.den.clue.sort",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
