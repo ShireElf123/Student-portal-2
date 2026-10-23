@@ -842,6 +842,16 @@ describe("audio registry", () => {
       "/audio/voice/bakery-knead-line.mp3",
       "/audio/voice/bakery-knead-done.mp3",
       "/audio/voice/bakery-letter-trace.mp3",
+      "/audio/voice/bakery-buns-welcome.mp3",
+      "/audio/voice/bakery-clue-buns.mp3",
+      "/audio/voice/bakery-fb-six.mp3",
+      "/audio/voice/bakery-fb-tray.mp3",
+      "/audio/voice/bakery-fb-nine.mp3",
+      "/audio/voice/bakery-oven-welcome.mp3",
+      "/audio/voice/bakery-clue-oven.mp3",
+      "/audio/voice/bakery-fb-loaf.mp3",
+      "/audio/voice/bakery-fb-milk.mp3",
+      "/audio/voice/bakery-fb-ice.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -1854,6 +1864,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("Soft bread ready.")?.id).toBe("voice.bakery.knead-done");
     expect(narrationClipForText("Trace the bakery letter in the flour!")?.id).toBe(
       "voice.bakery.letter-trace",
+    );
+    expect(narrationClipForText("How many buns?")?.id).toBe("voice.bakery.buns-welcome");
+    expect(narrationClipForText("Six buns on the tray. How many?")?.id).toBe(
+      "voice.bakery.clue.buns",
+    );
+    expect(narrationClipForText("What belongs in the oven?")?.id).toBe("voice.bakery.oven-welcome");
+    expect(narrationClipForText("The oven is for baking. What belongs in the oven?")?.id).toBe(
+      "voice.bakery.clue.oven",
     );
   });
 
