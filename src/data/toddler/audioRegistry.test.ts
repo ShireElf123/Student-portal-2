@@ -1790,6 +1790,16 @@ describe("audio registry", () => {
       "/audio/voice/ocean-fb-lampdark.mp3",
       "/audio/voice/ocean-fb-notreason.mp3",
       "/audio/voice/ocean-shell-welcome.mp3",
+      "/audio/voice/ocean-clue-shell.mp3",
+      "/audio/voice/ocean-fb-shellwell.mp3",
+      "/audio/voice/ocean-fb-fishrhyme.mp3",
+      "/audio/voice/ocean-fb-waverhyme.mp3",
+      "/audio/voice/ocean-whyshell-welcome.mp3",
+      "/audio/voice/ocean-clue-whyshell.mp3",
+      "/audio/voice/ocean-fb-shellsafe.mp3",
+      "/audio/voice/ocean-fb-notsunbath.mp3",
+      "/audio/voice/phonics-m-welcome.mp3",
+      "/audio/voice/phonics-clue-m.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3668,6 +3678,10 @@ describe("audio registry", () => {
       "voice.ocean.fishleave-welcome",
     );
     expect(narrationClipForText("What rhymes with shell?")?.id).toBe("voice.ocean.shell-welcome");
+    expect(narrationClipForText("Why did the pearl hide under the shell?")?.id).toBe(
+      "voice.ocean.whyshell-welcome",
+    );
+    expect(narrationClipForText("Which letter starts moon?")?.id).toBe("voice.phonics.m-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
