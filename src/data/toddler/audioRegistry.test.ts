@@ -1682,6 +1682,16 @@ describe("audio registry", () => {
       "/audio/voice/sticker-fb-moon.mp3",
       "/audio/voice/sticker-fb-boots.mp3",
       "/audio/voice/sticker-fb-soup.mp3",
+      "/audio/voice/sticker-points-welcome.mp3",
+      "/audio/voice/sticker-clue-points.mp3",
+      "/audio/voice/sticker-fb-triangles.mp3",
+      "/audio/voice/sticker-fb-round.mp3",
+      "/audio/voice/sticker-fb-flattops.mp3",
+      "/audio/voice/sticker-row-welcome.mp3",
+      "/audio/voice/sticker-fb-abstar.mp3",
+      "/audio/voice/sticker-fb-tree.mp3",
+      "/audio/voice/sticker-fb-heartjust.mp3",
+      "/audio/voice/sticker-place-welcome.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -3509,6 +3519,15 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Which sticker belongs on the sky page?")?.id).toBe(
       "voice.sticker.sky-welcome",
+    );
+    expect(narrationClipForText("What shape are the crown points?")?.id).toBe(
+      "voice.sticker.points-welcome",
+    );
+    expect(narrationClipForText("Heart, star, heart, star, heart. Next?")?.id).toBe(
+      "voice.sticker.row-welcome",
+    );
+    expect(narrationClipForText("Nana said the fish goes on the pond page. Where?")?.id).toBe(
+      "voice.sticker.place-welcome",
     );
   });
 
