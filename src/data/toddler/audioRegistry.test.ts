@@ -1162,6 +1162,16 @@ describe("audio registry", () => {
       "/audio/voice/ice-fb-go.mp3",
       "/audio/voice/ice-fb-norhyme-ice.mp3",
       "/audio/voice/ice-fb-norhyme-fish.mp3",
+      "/audio/voice/ice-hoprest-welcome.mp3",
+      "/audio/voice/ice-clue-hoprest.mp3",
+      "/audio/voice/ice-fb-pattern-hop.mp3",
+      "/audio/voice/ice-fb-swim.mp3",
+      "/audio/voice/ice-fb-rest.mp3",
+      "/audio/voice/ice-clue-safari.mp3",
+      "/audio/voice/ice-trace-welcome.mp3",
+      "/audio/voice/ice-clue-trace.mp3",
+      "/audio/voice/ice-slide-welcome.mp3",
+      "/audio/voice/ice-clue-slide.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2561,6 +2571,19 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What rhymes with snow?")?.id).toBe("voice.ice.rhyme-welcome");
     expect(narrationClipForText("Snow. What rhymes with snow?")?.id).toBe("voice.ice.clue.rhyme");
+    expect(narrationClipForText("Hop hop rest. Next?")?.id).toBe("voice.ice.hoprest-welcome");
+    expect(narrationClipForText("Hop hop rest, hop hop rest, hop. Next?")?.id).toBe(
+      "voice.ice.clue.hoprest",
+    );
+    expect(narrationClipForText("Who is calling on the penguin floe?")?.id).toBe(
+      "voice.ice.clue.safari",
+    );
+    expect(narrationClipForText("Trace the ice letter in the snow!")?.id).toBe(
+      "voice.ice.trace-welcome",
+    );
+    expect(narrationClipForText("Slide the penguin down the ice!")?.id).toBe(
+      "voice.ice.slide-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
