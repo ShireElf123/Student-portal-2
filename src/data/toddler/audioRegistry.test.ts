@@ -1322,6 +1322,16 @@ describe("audio registry", () => {
       "/audio/voice/bed-fb-nana.mp3",
       "/audio/voice/bed-fb-pip.mp3",
       "/audio/voice/bed-fb-owl.mp3",
+      "/audio/voice/bed-dim-welcome.mp3",
+      "/audio/voice/bed-fb-flash.mp3",
+      "/audio/voice/bed-fb-bright.mp3",
+      "/audio/voice/bed-window-welcome.mp3",
+      "/audio/voice/bed-clue-window.mp3",
+      "/audio/voice/bed-fb-rect.mp3",
+      "/audio/voice/bed-fb-circle.mp3",
+      "/audio/voice/bed-fb-star.mp3",
+      "/audio/voice/bed-memory-welcome.mp3",
+      "/audio/voice/bed-clue-memory.mp3",
       "/audio/voice/safari-bio-lion.mp3",
       "/audio/voice/safari-bio-elephant.mp3",
       "/audio/voice/safari-bio-monkey.mp3",
@@ -2925,6 +2935,16 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Pip said night-night, then Nana said night-night. Who last?")?.id,
     ).toBe("voice.bed.clue.who");
+    expect(narrationClipForText("Bright, dim, bright, dim, bright. Next?")?.id).toBe(
+      "voice.bed.dim-welcome",
+    );
+    expect(narrationClipForText("What shape is the window?")?.id).toBe("voice.bed.window-welcome");
+    expect(narrationClipForText("The bedroom window is a rectangle. What shape?")?.id).toBe(
+      "voice.bed.clue.window",
+    );
+    expect(narrationClipForText("Flip the bed lamps and find the match!")?.id).toBe(
+      "voice.bed.memory-welcome",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
