@@ -12,7 +12,10 @@
     "test": "vitest run",
     "dev:buildai": "node buildai/dev-server.mjs",
     "dev:student-portal": "tsx server.ts",
-    "test:firestore-rules": "vitest run server/__tests__/firestoreRules.test.ts"
+    "test:firestore-rules": "vitest run server/__tests__/firestoreRules.test.ts",
+    "dev:mall-go": "npm --prefix angelo-mall-go run dev",
+    "build:mall-go": "npm --prefix angelo-mall-go run build",
+    "test:mall-go": "npm --prefix angelo-mall-go test"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
