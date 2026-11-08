@@ -183,6 +183,16 @@ describe("audio registry", () => {
       "/audio/voice/farm-x-eggs-fb-nine.mp3",
       "/audio/voice/farm-x-mud-clue.mp3",
       "/audio/voice/farm-x-mud-fb-yes.mp3",
+      "/audio/voice/farm-x-mud-fb-cat.mp3",
+      "/audio/voice/farm-x-mud-fb-goose.mp3",
+      "/audio/voice/farm-x-wool-clue.mp3",
+      "/audio/voice/farm-x-wool-fb-yes.mp3",
+      "/audio/voice/farm-x-wool-fb-duck.mp3",
+      "/audio/voice/farm-x-wool-fb-goat.mp3",
+      "/audio/voice/farm-x-loft-clue.mp3",
+      "/audio/voice/farm-x-loft-fb-yes.mp3",
+      "/audio/voice/farm-x-loft-fb-lamb.mp3",
+      "/audio/voice/farm-x-trough-clue.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2395,6 +2405,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Oink! Pigs use mud like sunscreen.")?.id).toBe(
       "voice.farm.x.mud-fb-yes",
+    );
+    expect(narrationClipForText("Who grows a thick wool coat we can spin?")?.id).toBe(
+      "voice.farm.x.wool-clue",
+    );
+    expect(narrationClipForText("The trough is for drinking. What belongs there?")?.id).toBe(
+      "voice.farm.x.trough-clue",
     );
   });
 
