@@ -343,6 +343,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-gc-3-captaincat.mp3",
       "/audio/voice/playhouse-gc-3-gully.mp3",
       "/audio/voice/playhouse-gc-4-lighthouse.mp3",
+      "/audio/voice/playhouse-gc-4-gully.mp3",
+      "/audio/voice/playhouse-gc-5-captaincat.mp3",
+      "/audio/voice/playhouse-gc-5-gully.mp3",
+      "/audio/voice/playhouse-gc-6-tug.mp3",
+      "/audio/voice/playhouse-gc-6-gully.mp3",
+      "/audio/voice/playhouse-kw-1-wagon.mp3",
+      "/audio/voice/playhouse-kw-1-benny.mp3",
+      "/audio/voice/playhouse-kw-2-benny.mp3",
+      "/audio/voice/playhouse-kw-2-wagon.mp3",
+      "/audio/voice/playhouse-kw-3-benny.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2660,6 +2670,13 @@ describe("audio registry", () => {
         "Gully says: The harbor wore a fog hat. I am a comma on a piling.",
       )?.id,
     ).toBe("voice.playhouse.gc-1-gully");
+    expect(narrationClipForText("Gully says: I land. I fold. Fog hat thinner.")?.id).toBe(
+      "voice.playhouse.gc-6-gully",
+    );
+    expect(
+      narrationClipForText("Wagon says: I am a red rectangle with kind wheels. I would like a job.")
+        ?.id,
+    ).toBe("voice.playhouse.kw-1-wagon");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
