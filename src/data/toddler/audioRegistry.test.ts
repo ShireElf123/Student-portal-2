@@ -413,6 +413,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-tt-2-dot.mp3",
       "/audio/voice/playhouse-tt-2-teddy.mp3",
       "/audio/voice/playhouse-tt-3-toaster.mp3",
+      "/audio/voice/playhouse-tt-3-teddy.mp3",
+      "/audio/voice/playhouse-tt-4-nana.mp3",
+      "/audio/voice/playhouse-tt-4-dot.mp3",
+      "/audio/voice/playhouse-tt-5-teddy.mp3",
+      "/audio/voice/playhouse-tt-5-dot.mp3",
+      "/audio/voice/playhouse-tt-6-nana.mp3",
+      "/audio/voice/playhouse-tt-6-teddy.mp3",
+      "/audio/voice/playhouse-el-1-teddy.mp3",
+      "/audio/voice/playhouse-el-1-nana.mp3",
+      "/audio/voice/playhouse-el-2-dot.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2775,6 +2785,12 @@ describe("audio registry", () => {
       narrationClipForText("Teddy says: The toaster has two mouths. I respect mouths that wait.")
         ?.id,
     ).toBe("voice.playhouse.tt-1-teddy");
+    expect(
+      narrationClipForText("Teddy says: Thank you, loud machine. Breakfast still happened.")?.id,
+    ).toBe("voice.playhouse.tt-6-teddy");
+    expect(
+      narrationClipForText("Teddy says: The button is a circle that calls a room.")?.id,
+    ).toBe("voice.playhouse.el-1-teddy");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
