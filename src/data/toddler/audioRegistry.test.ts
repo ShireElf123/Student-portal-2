@@ -303,6 +303,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-ms-1-momo.mp3",
       "/audio/voice/playhouse-ms-1-mitten.mp3",
       "/audio/voice/playhouse-ms-2-momo.mp3",
+      "/audio/voice/playhouse-ms-2-mailbox.mp3",
+      "/audio/voice/playhouse-ms-3-momo.mp3",
+      "/audio/voice/playhouse-ms-3-snowpal.mp3",
+      "/audio/voice/playhouse-ms-4-plow.mp3",
+      "/audio/voice/playhouse-ms-4-momo.mp3",
+      "/audio/voice/playhouse-ms-5-momo.mp3",
+      "/audio/voice/playhouse-ms-5-mitten.mp3",
+      "/audio/voice/playhouse-ms-6-snowpal.mp3",
+      "/audio/voice/playhouse-ms-6-momo.mp3",
+      "/audio/voice/playhouse-bl-1-beep.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2592,6 +2602,14 @@ describe("audio registry", () => {
         "Momo says: The street put on a white coat. I will call the plow on my mitten.",
       )?.id,
     ).toBe("voice.playhouse.ms-1-momo");
+    expect(narrationClipForText("Momo says: Goodnight, route. Goodnight, thumbs.")?.id).toBe(
+      "voice.playhouse.ms-6-momo",
+    );
+    expect(
+      narrationClipForText(
+        "Beep says: Doors like arms. Come in. The city is a standing picture book.",
+      )?.id,
+    ).toBe("voice.playhouse.bl-1-beep");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
