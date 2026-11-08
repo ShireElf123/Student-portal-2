@@ -353,6 +353,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-kw-2-benny.mp3",
       "/audio/voice/playhouse-kw-2-wagon.mp3",
       "/audio/voice/playhouse-kw-3-benny.mp3",
+      "/audio/voice/playhouse-kw-3-wagon.mp3",
+      "/audio/voice/playhouse-kw-4-stamp.mp3",
+      "/audio/voice/playhouse-kw-4-benny.mp3",
+      "/audio/voice/playhouse-kw-5-benny.mp3",
+      "/audio/voice/playhouse-kw-5-snail.mp3",
+      "/audio/voice/playhouse-kw-6-wagon.mp3",
+      "/audio/voice/playhouse-kw-6-benny.mp3",
+      "/audio/voice/playhouse-mb-1-teddy.mp3",
+      "/audio/voice/playhouse-mb-1-dot.mp3",
+      "/audio/voice/playhouse-mb-2-nana.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2677,6 +2687,14 @@ describe("audio registry", () => {
       narrationClipForText("Wagon says: I am a red rectangle with kind wheels. I would like a job.")
         ?.id,
     ).toBe("voice.playhouse.kw-1-wagon");
+    expect(narrationClipForText("Benny says: You were the kindness today. Wheels, rest.")?.id).toBe(
+      "voice.playhouse.kw-6-benny",
+    );
+    expect(
+      narrationClipForText(
+        "Teddy says: Dot, the paper is a square that wants to become a letter.",
+      )?.id,
+    ).toBe("voice.playhouse.mb-1-teddy");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
