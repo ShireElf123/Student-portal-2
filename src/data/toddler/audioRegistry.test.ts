@@ -213,6 +213,16 @@ describe("audio registry", () => {
       "/audio/voice/jungle-x-toucan-fb-fish.mp3",
       "/audio/voice/jungle-x-toucan-fb-hay.mp3",
       "/audio/voice/jungle-x-jaguar-clue.mp3",
+      "/audio/voice/jungle-x-jaguar-fb-yes.mp3",
+      "/audio/voice/jungle-x-jaguar-fb-camel.mp3",
+      "/audio/voice/jungle-x-river-clue.mp3",
+      "/audio/voice/jungle-x-river-fb-yes.mp3",
+      "/audio/voice/jungle-x-river-fb-monkey.mp3",
+      "/audio/voice/jungle-x-river-fb-macaw.mp3",
+      "/audio/voice/ocean-x-shells-clue.mp3",
+      "/audio/voice/ocean-x-shells-fb-yes.mp3",
+      "/audio/voice/ocean-x-shells-fb-tide.mp3",
+      "/audio/voice/ocean-x-crab-clue.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2444,6 +2454,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Two gold eyes in the dark understory. Who is watching?")?.id,
     ).toBe("voice.jungle.x.jaguar-clue");
+    expect(narrationClipForText("The river is for swimmers. Who belongs in the river?")?.id).toBe(
+      "voice.jungle.x.river-clue",
+    );
+    expect(narrationClipForText("Who walks sideways across the wet sand?")?.id).toBe(
+      "voice.ocean.x.crab-clue",
+    );
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
