@@ -293,6 +293,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-df-2-dot.mp3",
       "/audio/voice/playhouse-df-2-owl.mp3",
       "/audio/voice/playhouse-df-3-dot.mp3",
+      "/audio/voice/playhouse-df-3-lion.mp3",
+      "/audio/voice/playhouse-df-4-owl.mp3",
+      "/audio/voice/playhouse-df-4-dot.mp3",
+      "/audio/voice/playhouse-df-5-beep.mp3",
+      "/audio/voice/playhouse-df-5-dot.mp3",
+      "/audio/voice/playhouse-df-6-dot.mp3",
+      "/audio/voice/playhouse-df-6-lion.mp3",
+      "/audio/voice/playhouse-ms-1-momo.mp3",
+      "/audio/voice/playhouse-ms-1-mitten.mp3",
+      "/audio/voice/playhouse-ms-2-momo.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2574,6 +2584,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("Dot says: HELLO LIBRARY I HAVE A CARD—")?.id).toBe(
       "voice.playhouse.df-1-dot",
     );
+    expect(narrationClipForText("Lion says: Click. Even paper moons get to rest.")?.id).toBe(
+      "voice.playhouse.df-6-lion",
+    );
+    expect(
+      narrationClipForText(
+        "Momo says: The street put on a white coat. I will call the plow on my mitten.",
+      )?.id,
+    ).toBe("voice.playhouse.ms-1-momo");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
