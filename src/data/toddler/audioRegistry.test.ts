@@ -233,6 +233,16 @@ describe("audio registry", () => {
       "/audio/voice/ocean-x-whale-clue.mp3",
       "/audio/voice/ocean-x-whale-fb-yes.mp3",
       "/audio/voice/ocean-x-whale-fb-shark.mp3",
+      "/audio/voice/ocean-x-whale-fb-seal.mp3",
+      "/audio/voice/ocean-x-reef-clue.mp3",
+      "/audio/voice/ocean-x-reef-fb-yes.mp3",
+      "/audio/voice/ocean-x-reef-fb-towel.mp3",
+      "/audio/voice/ocean-x-reef-fb-tractor.mp3",
+      "/audio/voice/ocean-x-fish-clue.mp3",
+      "/audio/voice/ocean-x-fish-fb-yes.mp3",
+      "/audio/voice/dino-x-prints-clue.mp3",
+      "/audio/voice/dino-x-prints-fb-yes.mp3",
+      "/audio/voice/dino-x-prints-fb-trail.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2475,6 +2485,12 @@ describe("audio registry", () => {
     ).toBe("voice.ocean.x.turtle-clue");
     expect(narrationClipForText("A fountain of mist far out. Who is breathing?")?.id).toBe(
       "voice.ocean.x.whale-clue",
+    );
+    expect(
+      narrationClipForText("The living reef is underwater. What belongs on the reef?")?.id,
+    ).toBe("voice.ocean.x.reef-clue");
+    expect(narrationClipForText("Four giant prints in the clay. How many?")?.id).toBe(
+      "voice.dino.x.prints-clue",
     );
   });
 
