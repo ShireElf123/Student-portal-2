@@ -433,6 +433,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-el-6-elevator.mp3",
       "/audio/voice/playhouse-el-6-teddy.mp3",
       "/audio/voice/playhouse-ll-1-teddy.mp3",
+      "/audio/voice/playhouse-ll-1-dot.mp3",
+      "/audio/voice/playhouse-ll-2-nana.mp3",
+      "/audio/voice/playhouse-ll-2-teddy.mp3",
+      "/audio/voice/playhouse-ll-3-dot.mp3",
+      "/audio/voice/playhouse-ll-3-teddy.mp3",
+      "/audio/voice/playhouse-ll-4-stamp.mp3",
+      "/audio/voice/playhouse-ll-4-nana.mp3",
+      "/audio/voice/playhouse-ll-5-teddy.mp3",
+      "/audio/voice/playhouse-ll-5-dot.mp3",
+      "/audio/voice/playhouse-ll-6-lion.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2808,6 +2818,9 @@ describe("audio registry", () => {
       narrationClipForText("Teddy says: The lion is a statue. Statues nap with their eyes open.")
         ?.id,
     ).toBe("voice.playhouse.ll-1-teddy");
+    expect(narrationClipForText("Lion says: I nap. You borrowed. Both jobs are good.")?.id).toBe(
+      "voice.playhouse.ll-6-lion",
+    );
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
