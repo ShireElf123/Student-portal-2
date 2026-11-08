@@ -393,6 +393,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-lm-4-rosie.mp3",
       "/audio/voice/playhouse-lm-4-teddy.mp3",
       "/audio/voice/playhouse-lm-5-nana.mp3",
+      "/audio/voice/playhouse-lm-5-teddy.mp3",
+      "/audio/voice/playhouse-lm-6-dot.mp3",
+      "/audio/voice/playhouse-lm-6-teddy.mp3",
+      "/audio/voice/playhouse-ft-1-teddy.mp3",
+      "/audio/voice/playhouse-ft-1-booth.mp3",
+      "/audio/voice/playhouse-ft-2-gully.mp3",
+      "/audio/voice/playhouse-ft-2-dot.mp3",
+      "/audio/voice/playhouse-ft-3-horn.mp3",
+      "/audio/voice/playhouse-ft-3-teddy.mp3",
+      "/audio/voice/playhouse-ft-4-nana.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2742,6 +2752,12 @@ describe("audio registry", () => {
         "Teddy says: The snow is writing with no pencil. I like that kind of writing.",
       )?.id,
     ).toBe("voice.playhouse.lm-1-teddy");
+    expect(
+      narrationClipForText("Teddy says: We can go. The bench is empty on purpose now.")?.id,
+    ).toBe("voice.playhouse.lm-6-teddy");
+    expect(
+      narrationClipForText("Teddy says: Please. Two tickets. One for a bear. One for a Nana.")?.id,
+    ).toBe("voice.playhouse.ft-1-teddy");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
