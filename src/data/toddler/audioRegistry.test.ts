@@ -373,6 +373,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-mb-6-mailbox.mp3",
       "/audio/voice/playhouse-mb-6-teddy.mp3",
       "/audio/voice/playhouse-ss-1-teddy.mp3",
+      "/audio/voice/playhouse-ss-1-nana.mp3",
+      "/audio/voice/playhouse-ss-2-nana.mp3",
+      "/audio/voice/playhouse-ss-2-teddy.mp3",
+      "/audio/voice/playhouse-ss-3-dot.mp3",
+      "/audio/voice/playhouse-ss-3-nana.mp3",
+      "/audio/voice/playhouse-ss-4-nana.mp3",
+      "/audio/voice/playhouse-ss-4-teddy.mp3",
+      "/audio/voice/playhouse-ss-5-teddy.mp3",
+      "/audio/voice/playhouse-ss-5-dot.mp3",
+      "/audio/voice/playhouse-ss-6-nana.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2711,6 +2721,9 @@ describe("audio registry", () => {
     expect(narrationClipForText("Teddy says: The pot is wearing a hat. I respect hats.")?.id).toBe(
       "voice.playhouse.ss-1-teddy",
     );
+    expect(
+      narrationClipForText("Nana says: Empty bowls are hats that finished their job.")?.id,
+    ).toBe("voice.playhouse.ss-6-nana");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
