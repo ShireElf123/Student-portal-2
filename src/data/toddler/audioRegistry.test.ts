@@ -253,6 +253,16 @@ describe("audio registry", () => {
       "/audio/voice/dino-x-flyer-fb-hens.mp3",
       "/audio/voice/dino-x-flyer-fb-penguins.mp3",
       "/audio/voice/dino-x-eggs-clue.mp3",
+      "/audio/voice/dino-x-eggs-fb-yes.mp3",
+      "/audio/voice/dino-x-eggs-fb-fish.mp3",
+      "/audio/voice/dino-x-eggs-fb-truck.mp3",
+      "/audio/voice/dino-x-hunter-clue.mp3",
+      "/audio/voice/dino-x-hunter-fb-yes.mp3",
+      "/audio/voice/dino-x-hunter-fb-trex.mp3",
+      "/audio/voice/dino-x-hunter-fb-whale.mp3",
+      "/audio/voice/dino-x-stomp-clue.mp3",
+      "/audio/voice/dino-x-stomp-fb-yes.mp3",
+      "/audio/voice/dino-x-stomp-fb-roar.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2508,6 +2518,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Dino eggs stay in the nest mound. What belongs there?")?.id,
     ).toBe("voice.dino.x.eggs-clue");
+    expect(
+      narrationClipForText("A tiny fast hunter at your ankle, not a giant roarer. Who?")?.id,
+    ).toBe("voice.dino.x.hunter-clue");
+    expect(
+      narrationClipForText("Stomp stomp pause, stomp stomp pause, stomp. What comes next?")?.id,
+    ).toBe("voice.dino.x.stomp-clue");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
