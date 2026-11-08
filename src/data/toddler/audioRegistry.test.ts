@@ -333,6 +333,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-sr-4-stamp.mp3",
       "/audio/voice/playhouse-sr-4-letter.mp3",
       "/audio/voice/playhouse-sr-5-stamp.mp3",
+      "/audio/voice/playhouse-sr-5-truck.mp3",
+      "/audio/voice/playhouse-sr-6-truck.mp3",
+      "/audio/voice/playhouse-sr-6-stamp.mp3",
+      "/audio/voice/playhouse-gc-1-gully.mp3",
+      "/audio/voice/playhouse-gc-1-water.mp3",
+      "/audio/voice/playhouse-gc-2-tug.mp3",
+      "/audio/voice/playhouse-gc-2-gully.mp3",
+      "/audio/voice/playhouse-gc-3-captaincat.mp3",
+      "/audio/voice/playhouse-gc-3-gully.mp3",
+      "/audio/voice/playhouse-gc-4-lighthouse.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2641,6 +2651,15 @@ describe("audio registry", () => {
         "Stamp says: Letters smell like far-away kitchens. I will sniff. I will not chew.",
       )?.id,
     ).toBe("voice.playhouse.sr-1-stamp");
+    expect(
+      narrationClipForText("Stamp says: Tomorrow the paper weather returns. I will still not chew.")
+        ?.id,
+    ).toBe("voice.playhouse.sr-6-stamp");
+    expect(
+      narrationClipForText(
+        "Gully says: The harbor wore a fog hat. I am a comma on a piling.",
+      )?.id,
+    ).toBe("voice.playhouse.gc-1-gully");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
