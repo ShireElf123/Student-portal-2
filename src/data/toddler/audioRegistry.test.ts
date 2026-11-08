@@ -363,6 +363,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-mb-1-teddy.mp3",
       "/audio/voice/playhouse-mb-1-dot.mp3",
       "/audio/voice/playhouse-mb-2-nana.mp3",
+      "/audio/voice/playhouse-mb-2-teddy.mp3",
+      "/audio/voice/playhouse-mb-3-dot.mp3",
+      "/audio/voice/playhouse-mb-3-mailbox.mp3",
+      "/audio/voice/playhouse-mb-4-nana.mp3",
+      "/audio/voice/playhouse-mb-4-teddy.mp3",
+      "/audio/voice/playhouse-mb-5-rosie.mp3",
+      "/audio/voice/playhouse-mb-5-dot.mp3",
+      "/audio/voice/playhouse-mb-6-mailbox.mp3",
+      "/audio/voice/playhouse-mb-6-teddy.mp3",
+      "/audio/voice/playhouse-ss-1-teddy.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2695,6 +2705,12 @@ describe("audio registry", () => {
         "Teddy says: Dot, the paper is a square that wants to become a letter.",
       )?.id,
     ).toBe("voice.playhouse.mb-1-teddy");
+    expect(
+      narrationClipForText("Teddy says: Good. Paper can be brave without us watching.")?.id,
+    ).toBe("voice.playhouse.mb-6-teddy");
+    expect(narrationClipForText("Teddy says: The pot is wearing a hat. I respect hats.")?.id).toBe(
+      "voice.playhouse.ss-1-teddy",
+    );
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
