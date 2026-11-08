@@ -283,6 +283,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-rq-3-rosie.mp3",
       "/audio/voice/playhouse-rq-3-mailbox.mp3",
       "/audio/voice/playhouse-rq-4-rosie.mp3",
+      "/audio/voice/playhouse-rq-4-pepper.mp3",
+      "/audio/voice/playhouse-rq-5-rosie.mp3",
+      "/audio/voice/playhouse-rq-5-pepper.mp3",
+      "/audio/voice/playhouse-rq-6-bell.mp3",
+      "/audio/voice/playhouse-rq-6-rosie.mp3",
+      "/audio/voice/playhouse-df-1-dot.mp3",
+      "/audio/voice/playhouse-df-1-owl.mp3",
+      "/audio/voice/playhouse-df-2-dot.mp3",
+      "/audio/voice/playhouse-df-2-owl.mp3",
+      "/audio/voice/playhouse-df-3-dot.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2558,6 +2568,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Pepper says: I am not stuck. I am practicing horizontal.")?.id,
     ).toBe("voice.playhouse.rq-1-pepper");
+    expect(narrationClipForText("Rosie says: Good. Rest is a kind of ready.")?.id).toBe(
+      "voice.playhouse.rq-6-rosie",
+    );
+    expect(narrationClipForText("Dot says: HELLO LIBRARY I HAVE A CARD—")?.id).toBe(
+      "voice.playhouse.df-1-dot",
+    );
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
