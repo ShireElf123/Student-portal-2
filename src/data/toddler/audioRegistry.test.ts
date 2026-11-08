@@ -423,6 +423,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-el-1-teddy.mp3",
       "/audio/voice/playhouse-el-1-nana.mp3",
       "/audio/voice/playhouse-el-2-dot.mp3",
+      "/audio/voice/playhouse-el-2-teddy.mp3",
+      "/audio/voice/playhouse-el-3-elevator.mp3",
+      "/audio/voice/playhouse-el-3-rosie.mp3",
+      "/audio/voice/playhouse-el-4-teddy.mp3",
+      "/audio/voice/playhouse-el-4-nana.mp3",
+      "/audio/voice/playhouse-el-5-dot.mp3",
+      "/audio/voice/playhouse-el-5-teddy.mp3",
+      "/audio/voice/playhouse-el-6-elevator.mp3",
+      "/audio/voice/playhouse-el-6-teddy.mp3",
+      "/audio/voice/playhouse-ll-1-teddy.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2791,6 +2801,13 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Teddy says: The button is a circle that calls a room.")?.id,
     ).toBe("voice.playhouse.el-1-teddy");
+    expect(
+      narrationClipForText("Teddy says: Thank you, traveling closet. We had this ride.")?.id,
+    ).toBe("voice.playhouse.el-6-teddy");
+    expect(
+      narrationClipForText("Teddy says: The lion is a statue. Statues nap with their eyes open.")
+        ?.id,
+    ).toBe("voice.playhouse.ll-1-teddy");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
