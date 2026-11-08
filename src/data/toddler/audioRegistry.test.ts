@@ -313,6 +313,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-ms-6-snowpal.mp3",
       "/audio/voice/playhouse-ms-6-momo.mp3",
       "/audio/voice/playhouse-bl-1-beep.mp3",
+      "/audio/voice/playhouse-bl-1-backpack.mp3",
+      "/audio/voice/playhouse-bl-2-beep.mp3",
+      "/audio/voice/playhouse-bl-2-backpack.mp3",
+      "/audio/voice/playhouse-bl-3-beep.mp3",
+      "/audio/voice/playhouse-bl-3-backpack.mp3",
+      "/audio/voice/playhouse-bl-4-beep.mp3",
+      "/audio/voice/playhouse-bl-4-backpack.mp3",
+      "/audio/voice/playhouse-bl-5-beep.mp3",
+      "/audio/voice/playhouse-bl-5-backpack.mp3",
+      "/audio/voice/playhouse-bl-6-beep.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2610,6 +2620,9 @@ describe("audio registry", () => {
         "Beep says: Doors like arms. Come in. The city is a standing picture book.",
       )?.id,
     ).toBe("voice.playhouse.bl-1-beep");
+    expect(
+      narrationClipForText("Beep says: Sleep is the last stop. I keep the route for the moon.")?.id,
+    ).toBe("voice.playhouse.bl-6-beep");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
