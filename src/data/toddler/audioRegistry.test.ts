@@ -323,6 +323,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-bl-5-beep.mp3",
       "/audio/voice/playhouse-bl-5-backpack.mp3",
       "/audio/voice/playhouse-bl-6-beep.mp3",
+      "/audio/voice/playhouse-bl-6-moon.mp3",
+      "/audio/voice/playhouse-sr-1-stamp.mp3",
+      "/audio/voice/playhouse-sr-1-truck.mp3",
+      "/audio/voice/playhouse-sr-2-truck.mp3",
+      "/audio/voice/playhouse-sr-2-stamp.mp3",
+      "/audio/voice/playhouse-sr-3-stamp.mp3",
+      "/audio/voice/playhouse-sr-3-truck.mp3",
+      "/audio/voice/playhouse-sr-4-stamp.mp3",
+      "/audio/voice/playhouse-sr-4-letter.mp3",
+      "/audio/voice/playhouse-sr-5-stamp.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2623,6 +2633,14 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Beep says: Sleep is the last stop. I keep the route for the moon.")?.id,
     ).toBe("voice.playhouse.bl-6-beep");
+    expect(narrationClipForText("Moon says: I keep the route for you.")?.id).toBe(
+      "voice.playhouse.bl-6-moon",
+    );
+    expect(
+      narrationClipForText(
+        "Stamp says: Letters smell like far-away kitchens. I will sniff. I will not chew.",
+      )?.id,
+    ).toBe("voice.playhouse.sr-1-stamp");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
