@@ -193,6 +193,16 @@ describe("audio registry", () => {
       "/audio/voice/farm-x-loft-fb-yes.mp3",
       "/audio/voice/farm-x-loft-fb-lamb.mp3",
       "/audio/voice/farm-x-trough-clue.mp3",
+      "/audio/voice/farm-x-trough-fb-yes.mp3",
+      "/audio/voice/farm-x-trough-fb-hay.mp3",
+      "/audio/voice/farm-x-trough-fb-boot.mp3",
+      "/audio/voice/jungle-x-snake-clue.mp3",
+      "/audio/voice/jungle-x-snake-fb-yes.mp3",
+      "/audio/voice/jungle-x-snake-fb-parrot.mp3",
+      "/audio/voice/jungle-x-snake-fb-sloth.mp3",
+      "/audio/voice/jungle-x-frogs-clue.mp3",
+      "/audio/voice/jungle-x-frogs-fb-yes.mp3",
+      "/audio/voice/jungle-x-frogs-fb-leaf.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2412,6 +2422,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("The trough is for drinking. What belongs there?")?.id).toBe(
       "voice.farm.x.trough-clue",
     );
+    expect(narrationClipForText("Yes — animals drink clean water.")?.id).toBe(
+      "voice.farm.x.trough-fb-yes",
+    );
+    expect(
+      narrationClipForText("Sss from the thick vines. Who is tasting the air?")?.id,
+    ).toBe("voice.jungle.x.snake-clue");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
