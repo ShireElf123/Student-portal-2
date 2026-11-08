@@ -263,6 +263,16 @@ describe("audio registry", () => {
       "/audio/voice/dino-x-stomp-clue.mp3",
       "/audio/voice/dino-x-stomp-fb-yes.mp3",
       "/audio/voice/dino-x-stomp-fb-roar.mp3",
+      "/audio/voice/dino-x-stomp-fb-splash.mp3",
+      "/audio/voice/playhouse-tb-1-teddy.mp3",
+      "/audio/voice/playhouse-tb-1-nana.mp3",
+      "/audio/voice/playhouse-tb-2-nana.mp3",
+      "/audio/voice/playhouse-tb-2-teddy.mp3",
+      "/audio/voice/playhouse-tb-3-nana.mp3",
+      "/audio/voice/playhouse-tb-3-teddy.mp3",
+      "/audio/voice/playhouse-tb-4-nana.mp3",
+      "/audio/voice/playhouse-tb-4-teddy.mp3",
+      "/audio/voice/playhouse-tb-5-teddy.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2524,6 +2534,14 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Stomp stomp pause, stomp stomp pause, stomp. What comes next?")?.id,
     ).toBe("voice.dino.x.stomp-clue");
+    expect(narrationClipForText("No water in this pattern.")?.id).toBe(
+      "voice.dino.x.stomp-fb-splash",
+    );
+    expect(
+      narrationClipForText(
+        "Teddy says: Nana, my belly button of the coat is doing a little dance.",
+      )?.id,
+    ).toBe("voice.playhouse.tb-1-teddy");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
