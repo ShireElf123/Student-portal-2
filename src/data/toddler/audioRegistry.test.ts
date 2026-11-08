@@ -243,6 +243,16 @@ describe("audio registry", () => {
       "/audio/voice/dino-x-prints-clue.mp3",
       "/audio/voice/dino-x-prints-fb-yes.mp3",
       "/audio/voice/dino-x-prints-fb-trail.mp3",
+      "/audio/voice/dino-x-prints-fb-clay.mp3",
+      "/audio/voice/dino-x-plates-clue.mp3",
+      "/audio/voice/dino-x-plates-fb-yes.mp3",
+      "/audio/voice/dino-x-plates-fb-fish.mp3",
+      "/audio/voice/dino-x-plates-fb-bats.mp3",
+      "/audio/voice/dino-x-flyer-clue.mp3",
+      "/audio/voice/dino-x-flyer-fb-yes.mp3",
+      "/audio/voice/dino-x-flyer-fb-hens.mp3",
+      "/audio/voice/dino-x-flyer-fb-penguins.mp3",
+      "/audio/voice/dino-x-eggs-clue.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2492,6 +2502,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("Four giant prints in the clay. How many?")?.id).toBe(
       "voice.dino.x.prints-clue",
     );
+    expect(narrationClipForText("Who has tall bony plates along the back?")?.id).toBe(
+      "voice.dino.x.plates-clue",
+    );
+    expect(
+      narrationClipForText("Dino eggs stay in the nest mound. What belongs there?")?.id,
+    ).toBe("voice.dino.x.eggs-clue");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
