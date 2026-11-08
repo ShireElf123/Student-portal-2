@@ -173,6 +173,16 @@ describe("audio registry", () => {
       "/audio/voice/farm-wool-welcome.mp3",
       "/audio/voice/farm-loft-welcome.mp3",
       "/audio/voice/farm-trough-welcome.mp3",
+      "/audio/voice/farm-x-rooster-clue.mp3",
+      "/audio/voice/farm-x-rooster-fb-yes.mp3",
+      "/audio/voice/farm-x-rooster-fb-owl.mp3",
+      "/audio/voice/farm-x-rooster-fb-frog.mp3",
+      "/audio/voice/farm-x-eggs-clue.mp3",
+      "/audio/voice/farm-x-eggs-fb-yes.mp3",
+      "/audio/voice/farm-x-eggs-fb-two.mp3",
+      "/audio/voice/farm-x-eggs-fb-nine.mp3",
+      "/audio/voice/farm-x-mud-clue.mp3",
+      "/audio/voice/farm-x-mud-fb-yes.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2373,6 +2383,18 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Look! Count the Train Cars. How many do you see?")?.id).toBe(
       "voice.count.train-cars",
+    );
+  });
+
+  it("maps extra farm clue and quiz-feedback lines", () => {
+    expect(
+      narrationClipForText("A tall bird shouts from the fence at sunrise. Who woke the valley?")?.id,
+    ).toBe("voice.farm.x.rooster-clue");
+    expect(narrationClipForText("The rooster starts the farm day.")?.id).toBe(
+      "voice.farm.x.rooster-fb-yes",
+    );
+    expect(narrationClipForText("Oink! Pigs use mud like sunscreen.")?.id).toBe(
+      "voice.farm.x.mud-fb-yes",
     );
   });
 

@@ -18,7 +18,7 @@ const PACKS: Record<string, PackedActivity[]> = {
       cluePrompt: "A tall bird shouts from the fence at sunrise. Who woke the valley?",
       spokenPrompt: "Who is shouting from the fence at sunrise?",
       options: [
-        { id: "rooster", label: "Rooster", emoji: "🐓", feedback: "Cock-a-doodle-doo! The rooster starts the farm day.", isCorrect: true, soundCue: "Cock-a-doodle-doo!" },
+        { id: "rooster", label: "Rooster", emoji: "🐓", feedback: "The rooster starts the farm day.", isCorrect: true, soundCue: "Cock-a-doodle-doo!" },
         { id: "owl", label: "Night Owl", emoji: "🦉", feedback: "Owls call at night, not at sunrise.", isCorrect: false },
         { id: "frog", label: "Pond Frog", emoji: "🐸", feedback: "Frogs croak down by the water.", isCorrect: false },
       ],
