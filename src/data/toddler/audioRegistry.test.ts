@@ -203,6 +203,16 @@ describe("audio registry", () => {
       "/audio/voice/jungle-x-frogs-clue.mp3",
       "/audio/voice/jungle-x-frogs-fb-yes.mp3",
       "/audio/voice/jungle-x-frogs-fb-leaf.mp3",
+      "/audio/voice/jungle-x-frogs-fb-nine.mp3",
+      "/audio/voice/jungle-x-tiger-clue.mp3",
+      "/audio/voice/jungle-x-tiger-fb-yes.mp3",
+      "/audio/voice/jungle-x-tiger-fb-rabbit.mp3",
+      "/audio/voice/jungle-x-tiger-fb-deer.mp3",
+      "/audio/voice/jungle-x-toucan-clue.mp3",
+      "/audio/voice/jungle-x-toucan-fb-yes.mp3",
+      "/audio/voice/jungle-x-toucan-fb-fish.mp3",
+      "/audio/voice/jungle-x-toucan-fb-hay.mp3",
+      "/audio/voice/jungle-x-jaguar-clue.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2428,6 +2438,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Sss from the thick vines. Who is tasting the air?")?.id,
     ).toBe("voice.jungle.x.snake-clue");
+    expect(narrationClipForText("Huge padded prints in the ferns. Who passed?")?.id).toBe(
+      "voice.jungle.x.tiger-clue",
+    );
+    expect(
+      narrationClipForText("Two gold eyes in the dark understory. Who is watching?")?.id,
+    ).toBe("voice.jungle.x.jaguar-clue");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
