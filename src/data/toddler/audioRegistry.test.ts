@@ -273,6 +273,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-tb-4-nana.mp3",
       "/audio/voice/playhouse-tb-4-teddy.mp3",
       "/audio/voice/playhouse-tb-5-teddy.mp3",
+      "/audio/voice/playhouse-tb-5-nana.mp3",
+      "/audio/voice/playhouse-tb-6-teddy.mp3",
+      "/audio/voice/playhouse-tb-6-nana.mp3",
+      "/audio/voice/playhouse-rq-1-pepper.mp3",
+      "/audio/voice/playhouse-rq-1-rosie.mp3",
+      "/audio/voice/playhouse-rq-2-bell.mp3",
+      "/audio/voice/playhouse-rq-2-rosie.mp3",
+      "/audio/voice/playhouse-rq-3-rosie.mp3",
+      "/audio/voice/playhouse-rq-3-mailbox.mp3",
+      "/audio/voice/playhouse-rq-4-rosie.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2542,6 +2552,12 @@ describe("audio registry", () => {
         "Teddy says: Nana, my belly button of the coat is doing a little dance.",
       )?.id,
     ).toBe("voice.playhouse.tb-1-teddy");
+    expect(
+      narrationClipForText("Nana says: And Nana takes the sewing tin back to sleep.")?.id,
+    ).toBe("voice.playhouse.tb-6-nana");
+    expect(
+      narrationClipForText("Pepper says: I am not stuck. I am practicing horizontal.")?.id,
+    ).toBe("voice.playhouse.rq-1-pepper");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
