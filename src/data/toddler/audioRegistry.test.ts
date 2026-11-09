@@ -1073,6 +1073,16 @@ describe("audio registry", () => {
       "/audio/voice/book-high-street-bus-4.mp3",
       "/audio/voice/book-nana-soup-pot-1.mp3",
       "/audio/voice/book-nana-soup-pot-2.mp3",
+      "/audio/voice/book-nana-soup-pot-3.mp3",
+      "/audio/voice/book-nana-soup-pot-4.mp3",
+      "/audio/voice/book-pond-edge-bugs-1.mp3",
+      "/audio/voice/book-pond-edge-bugs-2.mp3",
+      "/audio/voice/book-pond-edge-bugs-3.mp3",
+      "/audio/voice/book-pond-edge-bugs-4.mp3",
+      "/audio/voice/book-park-green-picnic-1.mp3",
+      "/audio/voice/book-park-green-picnic-2.mp3",
+      "/audio/voice/book-park-green-picnic-3.mp3",
+      "/audio/voice/book-park-green-picnic-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -4017,6 +4027,16 @@ describe("audio registry", () => {
         "The bakery smells like buns. Pip waits. Steam curls up.",
       )?.id,
     ).toBe("voice.book.nana-soup-pot-2");
+    expect(
+      narrationClipForText(
+        "The bugs rest. The pond is quiet. We will visit again.",
+      )?.id,
+    ).toBe("voice.book.pond-edge-bugs-4");
+    expect(
+      narrationClipForText(
+        "The bag is light. The path leads home. Wave to the tree.",
+      )?.id,
+    ).toBe("voice.book.park-green-picnic-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
