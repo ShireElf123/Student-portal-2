@@ -1023,6 +1023,16 @@ describe("audio registry", () => {
       "/audio/voice/book-the-noisy-farm-chorus-2.mp3",
       "/audio/voice/book-the-noisy-farm-chorus-3.mp3",
       "/audio/voice/book-the-noisy-farm-chorus-4.mp3",
+      "/audio/voice/book-dino-footprint-detective-1.mp3",
+      "/audio/voice/book-dino-footprint-detective-2.mp3",
+      "/audio/voice/book-dino-footprint-detective-3.mp3",
+      "/audio/voice/book-dino-footprint-detective-4.mp3",
+      "/audio/voice/book-rainy-day-rainbow-builder-1.mp3",
+      "/audio/voice/book-rainy-day-rainbow-builder-2.mp3",
+      "/audio/voice/book-rainy-day-rainbow-builder-3.mp3",
+      "/audio/voice/book-rainy-day-rainbow-builder-4.mp3",
+      "/audio/voice/book-the-brave-little-firefly-1.mp3",
+      "/audio/voice/book-the-brave-little-firefly-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3917,6 +3927,16 @@ describe("audio registry", () => {
         "Roosters, cows, sheep, pigs, and ducks quack together in harmony! Good morning happy farm!",
       )?.id,
     ).toBe("voice.book.the-noisy-farm-chorus-4");
+    expect(
+      narrationClipForText(
+        "Rex the green Tyrannosaurus leaps out! He doesn't bite—he gives a friendly dinosaur high-five!",
+      )?.id,
+    ).toBe("voice.book.dino-footprint-detective-4");
+    expect(
+      narrationClipForText(
+        "Mama Firefly gives Pip a tender hug. 'Close your eyes, Pip. Breathe in. Your courage is inside you!'",
+      )?.id,
+    ).toBe("voice.book.the-brave-little-firefly-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
