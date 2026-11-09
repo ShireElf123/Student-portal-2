@@ -673,6 +673,16 @@ describe("audio registry", () => {
       "/audio/voice/book-hop-on-top-6.mp3",
       "/audio/voice/book-hop-on-top-7.mp3",
       "/audio/voice/book-hop-on-top-8.mp3",
+      "/audio/voice/book-pancake-saturday-1.mp3",
+      "/audio/voice/book-pancake-saturday-2.mp3",
+      "/audio/voice/book-pancake-saturday-3.mp3",
+      "/audio/voice/book-pancake-saturday-4.mp3",
+      "/audio/voice/book-pancake-saturday-5.mp3",
+      "/audio/voice/book-pancake-saturday-6.mp3",
+      "/audio/voice/book-pancake-saturday-7.mp3",
+      "/audio/voice/book-pancake-saturday-8.mp3",
+      "/audio/voice/book-little-red-fire-truck-1.mp3",
+      "/audio/voice/book-little-red-fire-truck-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3197,6 +3207,16 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Hop. Stop. The top did its job.")?.id,
     ).toBe("voice.book.hop-on-top-8");
+    expect(
+      narrationClipForText(
+        "Syrup dots on noses. Giggle. The kitchen smells like a hug. Saturday is done, and full.",
+      )?.id,
+    ).toBe("voice.book.pancake-saturday-8");
+    expect(
+      narrationClipForText(
+        "CLANG CLANG! The bell is a bright shout. Rosie’s lights blink. The big door lifts like a yawn.",
+      )?.id,
+    ).toBe("voice.book.little-red-fire-truck-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
