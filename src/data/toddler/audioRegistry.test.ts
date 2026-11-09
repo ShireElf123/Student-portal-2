@@ -693,6 +693,16 @@ describe("audio registry", () => {
       "/audio/voice/book-snow-maple-street-2.mp3",
       "/audio/voice/book-snow-maple-street-3.mp3",
       "/audio/voice/book-snow-maple-street-4.mp3",
+      "/audio/voice/book-snow-maple-street-5.mp3",
+      "/audio/voice/book-snow-maple-street-6.mp3",
+      "/audio/voice/book-snow-maple-street-7.mp3",
+      "/audio/voice/book-snow-maple-street-8.mp3",
+      "/audio/voice/book-dot-library-mouse-1.mp3",
+      "/audio/voice/book-dot-library-mouse-2.mp3",
+      "/audio/voice/book-dot-library-mouse-3.mp3",
+      "/audio/voice/book-dot-library-mouse-4.mp3",
+      "/audio/voice/book-dot-library-mouse-5.mp3",
+      "/audio/voice/book-dot-library-mouse-6.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3237,6 +3247,16 @@ describe("audio registry", () => {
         "A small ball. A middle ball. A big ball. Stack. The snow pal has a carrot nose and pebble eyes.",
       )?.id,
     ).toBe("voice.book.snow-maple-street-4");
+    expect(
+      narrationClipForText(
+        "Lamps blink on. The snow pal keeps watch. Maple Street is a quiet story under a blanket.",
+      )?.id,
+    ).toBe("voice.book.snow-maple-street-8");
+    expect(
+      narrationClipForText(
+        "At the desk, a stamp kisses the card. Due in two weeks. Dot’s ticket is magic again.",
+      )?.id,
+    ).toBe("voice.book.dot-library-mouse-6");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
