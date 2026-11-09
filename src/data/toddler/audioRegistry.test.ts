@@ -1063,6 +1063,16 @@ describe("audio registry", () => {
       "/audio/voice/book-penguin-floe-night-2.mp3",
       "/audio/voice/book-penguin-floe-night-3.mp3",
       "/audio/voice/book-penguin-floe-night-4.mp3",
+      "/audio/voice/book-owl-wood-lullaby-1.mp3",
+      "/audio/voice/book-owl-wood-lullaby-2.mp3",
+      "/audio/voice/book-owl-wood-lullaby-3.mp3",
+      "/audio/voice/book-owl-wood-lullaby-4.mp3",
+      "/audio/voice/book-high-street-bus-1.mp3",
+      "/audio/voice/book-high-street-bus-2.mp3",
+      "/audio/voice/book-high-street-bus-3.mp3",
+      "/audio/voice/book-high-street-bus-4.mp3",
+      "/audio/voice/book-nana-soup-pot-1.mp3",
+      "/audio/voice/book-nana-soup-pot-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3997,6 +4007,16 @@ describe("audio registry", () => {
         "The penguin tucks its beak. Pip waves. Tomorrow they will waddle again.",
       )?.id,
     ).toBe("voice.book.penguin-floe-night-4");
+    expect(
+      narrationClipForText(
+        "Owl, moth, and Pip close their eyes. The wood keeps the lullaby.",
+      )?.id,
+    ).toBe("voice.book.owl-wood-lullaby-4");
+    expect(
+      narrationClipForText(
+        "The bakery smells like buns. Pip waits. Steam curls up.",
+      )?.id,
+    ).toBe("voice.book.nana-soup-pot-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
