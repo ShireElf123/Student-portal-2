@@ -943,6 +943,16 @@ describe("audio registry", () => {
       "/audio/voice/book-icebox-lemonade-4.mp3",
       "/audio/voice/book-icebox-lemonade-5.mp3",
       "/audio/voice/book-icebox-lemonade-6.mp3",
+      "/audio/voice/book-icebox-lemonade-7.mp3",
+      "/audio/voice/book-icebox-lemonade-8.mp3",
+      "/audio/voice/book-safari-alphabet-1.mp3",
+      "/audio/voice/book-safari-alphabet-2.mp3",
+      "/audio/voice/book-safari-alphabet-3.mp3",
+      "/audio/voice/book-safari-alphabet-4.mp3",
+      "/audio/voice/book-safari-alphabet-5.mp3",
+      "/audio/voice/book-safari-alphabet-6.mp3",
+      "/audio/voice/book-safari-alphabet-7.mp3",
+      "/audio/voice/book-safari-alphabet-8.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3757,6 +3767,16 @@ describe("audio registry", () => {
         "Sour is a hello that pinches. Then sweet comes. Two feelings in one cup.",
       )?.id,
     ).toBe("voice.book.icebox-lemonade-6");
+    expect(
+      narrationClipForText(
+        "The pitcher is an empty lake. The ice is gone and also still cold in the story.",
+      )?.id,
+    ).toBe("voice.book.icebox-lemonade-8");
+    expect(
+      narrationClipForText(
+        "H says huh! A happy Hippo peeks from the river.",
+      )?.id,
+    ).toBe("voice.book.safari-alphabet-8");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
