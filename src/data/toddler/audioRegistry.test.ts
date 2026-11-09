@@ -603,6 +603,16 @@ describe("audio registry", () => {
       "/audio/voice/book-cat-on-mat-8.mp3",
       "/audio/voice/book-red-bus-run-1.mp3",
       "/audio/voice/book-red-bus-run-2.mp3",
+      "/audio/voice/book-red-bus-run-3.mp3",
+      "/audio/voice/book-red-bus-run-4.mp3",
+      "/audio/voice/book-red-bus-run-5.mp3",
+      "/audio/voice/book-red-bus-run-6.mp3",
+      "/audio/voice/book-red-bus-run-7.mp3",
+      "/audio/voice/book-red-bus-run-8.mp3",
+      "/audio/voice/book-hot-pot-sip-1.mp3",
+      "/audio/voice/book-hot-pot-sip-2.mp3",
+      "/audio/voice/book-hot-pot-sip-3.mp3",
+      "/audio/voice/book-hot-pot-sip-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3099,6 +3109,10 @@ describe("audio registry", () => {
       narrationClipForText("The cat sat. The cat napped. The mat did its job.")?.id,
     ).toBe("voice.book.cat-on-mat-8");
     expect(narrationClipForText("The bus is red.")?.id).toBe("voice.book.red-bus-run-2");
+    expect(
+      narrationClipForText("The red bus ran. It had a nap at the stop.")?.id,
+    ).toBe("voice.book.red-bus-run-8");
+    expect(narrationClipForText("Sip. Sip. Not a big sip.")?.id).toBe("voice.book.hot-pot-sip-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
