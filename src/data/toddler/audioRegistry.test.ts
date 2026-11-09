@@ -623,6 +623,16 @@ describe("audio registry", () => {
       "/audio/voice/book-big-hug-bed-4.mp3",
       "/audio/voice/book-big-hug-bed-5.mp3",
       "/audio/voice/book-big-hug-bed-6.mp3",
+      "/audio/voice/book-big-hug-bed-7.mp3",
+      "/audio/voice/book-big-hug-bed-8.mp3",
+      "/audio/voice/book-pig-in-mud-1.mp3",
+      "/audio/voice/book-pig-in-mud-2.mp3",
+      "/audio/voice/book-pig-in-mud-3.mp3",
+      "/audio/voice/book-pig-in-mud-4.mp3",
+      "/audio/voice/book-pig-in-mud-5.mp3",
+      "/audio/voice/book-pig-in-mud-6.mp3",
+      "/audio/voice/book-pig-in-mud-7.mp3",
+      "/audio/voice/book-pig-in-mud-8.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3125,6 +3135,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("Sip. Sip. Not a big sip.")?.id).toBe("voice.book.hot-pot-sip-4");
     expect(narrationClipForText("Hot pot. Sip. Nap. The end.")?.id).toBe("voice.book.hot-pot-sip-8");
     expect(narrationClipForText("Teddy in bed. Nana in bed.")?.id).toBe("voice.book.big-hug-bed-5");
+    expect(narrationClipForText("Sun up. Hug. Bed. The end.")?.id).toBe("voice.book.big-hug-bed-8");
+    expect(
+      narrationClipForText("The pig sat. The pig dug. The mud did its job.")?.id,
+    ).toBe("voice.book.pig-in-mud-8");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
