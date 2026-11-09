@@ -893,6 +893,16 @@ describe("audio registry", () => {
       "/audio/voice/book-corner-shop-ding-2.mp3",
       "/audio/voice/book-corner-shop-ding-3.mp3",
       "/audio/voice/book-corner-shop-ding-4.mp3",
+      "/audio/voice/book-corner-shop-ding-5.mp3",
+      "/audio/voice/book-corner-shop-ding-6.mp3",
+      "/audio/voice/book-corner-shop-ding-7.mp3",
+      "/audio/voice/book-corner-shop-ding-8.mp3",
+      "/audio/voice/book-fountain-three-coins-1.mp3",
+      "/audio/voice/book-fountain-three-coins-2.mp3",
+      "/audio/voice/book-fountain-three-coins-3.mp3",
+      "/audio/voice/book-fountain-three-coins-4.mp3",
+      "/audio/voice/book-fountain-three-coins-5.mp3",
+      "/audio/voice/book-fountain-three-coins-6.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3647,6 +3657,16 @@ describe("audio registry", () => {
         "Please is a coin that does not jingle. The counter still hears it.",
       )?.id,
     ).toBe("voice.book.corner-shop-ding-4");
+    expect(
+      narrationClipForText(
+        "The bell behind us is for the next hello. We had this one.",
+      )?.id,
+    ).toBe("voice.book.corner-shop-ding-8");
+    expect(
+      narrationClipForText(
+        "Two pigeons drink. They have a union about fountains. We do not argue.",
+      )?.id,
+    ).toBe("voice.book.fountain-three-coins-6");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
