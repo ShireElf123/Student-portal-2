@@ -1013,6 +1013,16 @@ describe("audio registry", () => {
       "/audio/voice/book-tiny-seed-grows-4.mp3",
       "/audio/voice/book-bedtime-starlight-lullaby-1.mp3",
       "/audio/voice/book-bedtime-starlight-lullaby-2.mp3",
+      "/audio/voice/book-bedtime-starlight-lullaby-3.mp3",
+      "/audio/voice/book-bedtime-starlight-lullaby-4.mp3",
+      "/audio/voice/book-magic-manners-tea-party-1.mp3",
+      "/audio/voice/book-magic-manners-tea-party-2.mp3",
+      "/audio/voice/book-magic-manners-tea-party-3.mp3",
+      "/audio/voice/book-magic-manners-tea-party-4.mp3",
+      "/audio/voice/book-the-noisy-farm-chorus-1.mp3",
+      "/audio/voice/book-the-noisy-farm-chorus-2.mp3",
+      "/audio/voice/book-the-noisy-farm-chorus-3.mp3",
+      "/audio/voice/book-the-noisy-farm-chorus-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3897,6 +3907,16 @@ describe("audio registry", () => {
         "Mother Deer tucks her fawn into soft moss. Little Robin tucks his beak beneath his warm feather wing.",
       )?.id,
     ).toBe("voice.book.bedtime-starlight-lullaby-2");
+    expect(
+      narrationClipForText(
+        "Bunny hands Fox the biggest strawberry. 'Thank you, Bunny!' Fox says with two thumbs up!",
+      )?.id,
+    ).toBe("voice.book.magic-manners-tea-party-3");
+    expect(
+      narrationClipForText(
+        "Roosters, cows, sheep, pigs, and ducks quack together in harmony! Good morning happy farm!",
+      )?.id,
+    ).toBe("voice.book.the-noisy-farm-chorus-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
