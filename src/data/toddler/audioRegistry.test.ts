@@ -913,6 +913,16 @@ describe("audio registry", () => {
       "/audio/voice/book-yellow-taxi-puddle-6.mp3",
       "/audio/voice/book-yellow-taxi-puddle-7.mp3",
       "/audio/voice/book-yellow-taxi-puddle-8.mp3",
+      "/audio/voice/book-lost-key-mat-1.mp3",
+      "/audio/voice/book-lost-key-mat-2.mp3",
+      "/audio/voice/book-lost-key-mat-3.mp3",
+      "/audio/voice/book-lost-key-mat-4.mp3",
+      "/audio/voice/book-lost-key-mat-5.mp3",
+      "/audio/voice/book-lost-key-mat-6.mp3",
+      "/audio/voice/book-lost-key-mat-7.mp3",
+      "/audio/voice/book-lost-key-mat-8.mp3",
+      "/audio/voice/book-quilt-square-moon-1.mp3",
+      "/audio/voice/book-quilt-square-moon-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3687,6 +3697,21 @@ describe("audio registry", () => {
         "The taxi leaves. Yellow stays in the story like a coin you already spent.",
       )?.id,
     ).toBe("voice.book.yellow-taxi-puddle-8");
+    expect(
+      narrationClipForText(
+        "Nana’s pocket has no jingle. The key went walking without us.",
+      )?.id,
+    ).toBe("voice.book.lost-key-mat-2");
+    expect(
+      narrationClipForText(
+        "The key sits in a little dish like a sleeping fish. Tomorrow it can walk again.",
+      )?.id,
+    ).toBe("voice.book.lost-key-mat-8");
+    expect(
+      narrationClipForText(
+        "The quilt is squares that agreed to be a blanket. Four in a row by Teddy’s chin.",
+      )?.id,
+    ).toBe("voice.book.quilt-square-moon-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
