@@ -803,6 +803,16 @@ describe("audio registry", () => {
       "/audio/voice/book-red-wagon-hill-8.mp3",
       "/audio/voice/book-market-saturday-berries-1.mp3",
       "/audio/voice/book-market-saturday-berries-2.mp3",
+      "/audio/voice/book-market-saturday-berries-3.mp3",
+      "/audio/voice/book-market-saturday-berries-4.mp3",
+      "/audio/voice/book-market-saturday-berries-5.mp3",
+      "/audio/voice/book-market-saturday-berries-6.mp3",
+      "/audio/voice/book-market-saturday-berries-7.mp3",
+      "/audio/voice/book-market-saturday-berries-8.mp3",
+      "/audio/voice/book-elevator-buttons-1.mp3",
+      "/audio/voice/book-elevator-buttons-2.mp3",
+      "/audio/voice/book-elevator-buttons-3.mp3",
+      "/audio/voice/book-elevator-buttons-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3457,6 +3467,16 @@ describe("audio registry", () => {
         "A scale is a seesaw for fruit. Nana adds berries. The needle nods.",
       )?.id,
     ).toBe("voice.book.market-saturday-berries-2");
+    expect(
+      narrationClipForText(
+        "Red fingers after. Proof of Saturday. Nana laughs. Teddy laughs. The canopy is still at the market, working.",
+      )?.id,
+    ).toBe("voice.book.market-saturday-berries-8");
+    expect(
+      narrationClipForText(
+        "Sometimes ears pop like tiny bubbles. That is the building stretching. Teddy holds Nana’s coat button — the sewn one.",
+      )?.id,
+    ).toBe("voice.book.elevator-buttons-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
