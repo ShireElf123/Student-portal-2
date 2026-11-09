@@ -493,6 +493,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-tp-6-nana.mp3",
       "/audio/voice/playhouse-tp-6-teddy.mp3",
       "/audio/voice/playhouse-tw-1-teddy.mp3",
+      "/audio/voice/playhouse-tw-1-nana.mp3",
+      "/audio/voice/playhouse-tw-2-dot.mp3",
+      "/audio/voice/playhouse-tw-2-nana.mp3",
+      "/audio/voice/playhouse-tw-3-teddy.mp3",
+      "/audio/voice/playhouse-tw-3-nana.mp3",
+      "/audio/voice/playhouse-tw-4-teddy.mp3",
+      "/audio/voice/playhouse-tw-4-potatoes.mp3",
+      "/audio/voice/playhouse-tw-5-rosie.mp3",
+      "/audio/voice/playhouse-tw-5-nana.mp3",
+      "/audio/voice/playhouse-tw-6-teddy.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2906,6 +2916,12 @@ describe("audio registry", () => {
         "Teddy says: The table was a suitcase. Now it is a meadow. I am impressed.",
       )?.id,
     ).toBe("voice.playhouse.tw-1-teddy");
+    expect(narrationClipForText("Potatoes says: We do not speak. We still heard you.")?.id).toBe(
+      "voice.playhouse.tw-4-potatoes",
+    );
+    expect(
+      narrationClipForText("Teddy says: Meadow, be a suitcase. My belly is already a drum.")?.id,
+    ).toBe("voice.playhouse.tw-6-teddy");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
