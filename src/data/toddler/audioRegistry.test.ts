@@ -983,6 +983,16 @@ describe("audio registry", () => {
       "/audio/voice/book-little-bear-bedtime-2.mp3",
       "/audio/voice/book-little-bear-bedtime-3.mp3",
       "/audio/voice/book-little-bear-bedtime-4.mp3",
+      "/audio/voice/book-little-bear-bedtime-5.mp3",
+      "/audio/voice/book-little-bear-bedtime-6.mp3",
+      "/audio/voice/book-little-bear-bedtime-7.mp3",
+      "/audio/voice/book-little-bear-bedtime-8.mp3",
+      "/audio/voice/book-buddy-farm-tale-1.mp3",
+      "/audio/voice/book-buddy-farm-tale-2.mp3",
+      "/audio/voice/book-buddy-farm-tale-3.mp3",
+      "/audio/voice/book-rocket-space-trip-1.mp3",
+      "/audio/voice/book-rocket-space-trip-2.mp3",
+      "/audio/voice/book-rocket-space-trip-3.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3837,6 +3847,16 @@ describe("audio registry", () => {
         "Little Bear brushes his fluffy teeth, puts on starry pajamas, and tucks under a warm blanket.",
       )?.id,
     ).toBe("voice.book.little-bear-bedtime-4");
+    expect(
+      narrationClipForText(
+        "Mama’s voice is a slow river. No drums. Just the names of things that stayed: hill, moon, bear.",
+      )?.id,
+    ).toBe("voice.book.little-bear-bedtime-6");
+    expect(
+      narrationClipForText(
+        "Pip steps out onto the soft grey moon. Zero gravity! He bounces high into the air like a balloon!",
+      )?.id,
+    ).toBe("voice.book.rocket-space-trip-3");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
