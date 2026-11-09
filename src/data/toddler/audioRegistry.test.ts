@@ -993,6 +993,16 @@ describe("audio registry", () => {
       "/audio/voice/book-rocket-space-trip-1.mp3",
       "/audio/voice/book-rocket-space-trip-2.mp3",
       "/audio/voice/book-rocket-space-trip-3.mp3",
+      "/audio/voice/book-ocean-friends-dive-1.mp3",
+      "/audio/voice/book-ocean-friends-dive-2.mp3",
+      "/audio/voice/book-ocean-friends-dive-3.mp3",
+      "/audio/voice/book-feelings-with-leo-1.mp3",
+      "/audio/voice/book-feelings-with-leo-2.mp3",
+      "/audio/voice/book-feelings-with-leo-3.mp3",
+      "/audio/voice/book-cosmic-rocket-journey-1.mp3",
+      "/audio/voice/book-cosmic-rocket-journey-2.mp3",
+      "/audio/voice/book-cosmic-rocket-journey-3.mp3",
+      "/audio/voice/book-cosmic-rocket-journey-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3857,6 +3867,16 @@ describe("audio registry", () => {
         "Pip steps out onto the soft grey moon. Zero gravity! He bounces high into the air like a balloon!",
       )?.id,
     ).toBe("voice.book.rocket-space-trip-3");
+    expect(
+      narrationClipForText(
+        "With a hug from family and a gentle roar, Leo is ready to try new things and explore the world!",
+      )?.id,
+    ).toBe("voice.book.feelings-with-leo-3");
+    expect(
+      narrationClipForText(
+        "Through the spaceship window, Earth sparkles like a blue and green marble wrapped in clouds.",
+      )?.id,
+    ).toBe("voice.book.cosmic-rocket-journey-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
