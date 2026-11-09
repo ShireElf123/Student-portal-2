@@ -573,6 +573,16 @@ describe("audio registry", () => {
       "/audio/voice/book-how-bread-rises-8.mp3",
       "/audio/voice/book-how-bread-rises-9.mp3",
       "/audio/voice/book-how-bread-rises-10.mp3",
+      "/audio/voice/book-what-rain-does-1.mp3",
+      "/audio/voice/book-what-rain-does-2.mp3",
+      "/audio/voice/book-what-rain-does-3.mp3",
+      "/audio/voice/book-what-rain-does-4.mp3",
+      "/audio/voice/book-what-rain-does-5.mp3",
+      "/audio/voice/book-what-rain-does-6.mp3",
+      "/audio/voice/book-what-rain-does-7.mp3",
+      "/audio/voice/book-what-rain-does-8.mp3",
+      "/audio/voice/book-what-rain-does-9.mp3",
+      "/audio/voice/book-what-rain-does-10.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3050,6 +3060,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Steam writes a letter in the air and disappears. Bread does not mind.")?.id,
     ).toBe("voice.book.how-bread-rises-10");
+    expect(
+      narrationClipForText("Wet brick smells like the city washing its face.")?.id,
+    ).toBe("voice.book.what-rain-does-9");
+    expect(
+      narrationClipForText("Rain will come again. Clouds keep libraries. We keep boots.")?.id,
+    ).toBe("voice.book.what-rain-does-10");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
