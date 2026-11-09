@@ -933,6 +933,16 @@ describe("audio registry", () => {
       "/audio/voice/book-snow-plow-dawn-2.mp3",
       "/audio/voice/book-snow-plow-dawn-3.mp3",
       "/audio/voice/book-snow-plow-dawn-4.mp3",
+      "/audio/voice/book-snow-plow-dawn-5.mp3",
+      "/audio/voice/book-snow-plow-dawn-6.mp3",
+      "/audio/voice/book-snow-plow-dawn-7.mp3",
+      "/audio/voice/book-snow-plow-dawn-8.mp3",
+      "/audio/voice/book-icebox-lemonade-1.mp3",
+      "/audio/voice/book-icebox-lemonade-2.mp3",
+      "/audio/voice/book-icebox-lemonade-3.mp3",
+      "/audio/voice/book-icebox-lemonade-4.mp3",
+      "/audio/voice/book-icebox-lemonade-5.mp3",
+      "/audio/voice/book-icebox-lemonade-6.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3732,6 +3742,21 @@ describe("audio registry", () => {
         "The bench wears a white hat. No lost mitten today. The bench is off duty.",
       )?.id,
     ).toBe("voice.book.snow-plow-dawn-4");
+    expect(
+      narrationClipForText(
+        "The plow horn is low, like the ferry’s cousin. Ready, not angry.",
+      )?.id,
+    ).toBe("voice.book.snow-plow-dawn-5");
+    expect(
+      narrationClipForText(
+        "Boots drip a little map on the mat. The square mat does not mind. It is used to weather.",
+      )?.id,
+    ).toBe("voice.book.snow-plow-dawn-8");
+    expect(
+      narrationClipForText(
+        "Sour is a hello that pinches. Then sweet comes. Two feelings in one cup.",
+      )?.id,
+    ).toBe("voice.book.icebox-lemonade-6");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
