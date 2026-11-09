@@ -633,6 +633,16 @@ describe("audio registry", () => {
       "/audio/voice/book-pig-in-mud-6.mp3",
       "/audio/voice/book-pig-in-mud-7.mp3",
       "/audio/voice/book-pig-in-mud-8.mp3",
+      "/audio/voice/book-fox-in-box-1.mp3",
+      "/audio/voice/book-fox-in-box-2.mp3",
+      "/audio/voice/book-fox-in-box-3.mp3",
+      "/audio/voice/book-fox-in-box-4.mp3",
+      "/audio/voice/book-fox-in-box-5.mp3",
+      "/audio/voice/book-fox-in-box-6.mp3",
+      "/audio/voice/book-fox-in-box-7.mp3",
+      "/audio/voice/book-fox-in-box-8.mp3",
+      "/audio/voice/book-dog-on-log-1.mp3",
+      "/audio/voice/book-dog-on-log-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3139,6 +3149,8 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("The pig sat. The pig dug. The mud did its job.")?.id,
     ).toBe("voice.book.pig-in-mud-8");
+    expect(narrationClipForText("In. Out. The box did its job.")?.id).toBe("voice.book.fox-in-box-8");
+    expect(narrationClipForText("A log. A big log.")?.id).toBe("voice.book.dog-on-log-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
