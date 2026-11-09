@@ -753,6 +753,16 @@ describe("audio registry", () => {
       "/audio/voice/book-gully-harbor-morning-6.mp3",
       "/audio/voice/book-gully-harbor-morning-7.mp3",
       "/audio/voice/book-gully-harbor-morning-8.mp3",
+      "/audio/voice/book-diner-booth-two-1.mp3",
+      "/audio/voice/book-diner-booth-two-2.mp3",
+      "/audio/voice/book-diner-booth-two-3.mp3",
+      "/audio/voice/book-diner-booth-two-4.mp3",
+      "/audio/voice/book-diner-booth-two-5.mp3",
+      "/audio/voice/book-diner-booth-two-6.mp3",
+      "/audio/voice/book-diner-booth-two-7.mp3",
+      "/audio/voice/book-diner-booth-two-8.mp3",
+      "/audio/voice/book-first-day-yellow-bus-1.mp3",
+      "/audio/voice/book-first-day-yellow-bus-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3357,6 +3367,16 @@ describe("audio registry", () => {
         "Back to the piling. Fog hat thinner. The tug is a red period at the end of morning.",
       )?.id,
     ).toBe("voice.book.gully-harbor-morning-8");
+    expect(
+      narrationClipForText(
+        "A tiny paper ribbon. Nana tucks it. Teddy’s paws are syrup maps. Home is one block of sidewalk.",
+      )?.id,
+    ).toBe("voice.book.diner-booth-two-8");
+    expect(
+      narrationClipForText(
+        "The bus is a yellow hill with windows. Doors fold like a book. Beep is not here — this is Day Bus.",
+      )?.id,
+    ).toBe("voice.book.first-day-yellow-bus-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
