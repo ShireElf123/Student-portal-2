@@ -563,6 +563,16 @@ describe("audio registry", () => {
       "/audio/voice/book-how-mail-travels-8.mp3",
       "/audio/voice/book-how-mail-travels-9.mp3",
       "/audio/voice/book-how-mail-travels-10.mp3",
+      "/audio/voice/book-how-bread-rises-1.mp3",
+      "/audio/voice/book-how-bread-rises-2.mp3",
+      "/audio/voice/book-how-bread-rises-3.mp3",
+      "/audio/voice/book-how-bread-rises-4.mp3",
+      "/audio/voice/book-how-bread-rises-5.mp3",
+      "/audio/voice/book-how-bread-rises-6.mp3",
+      "/audio/voice/book-how-bread-rises-7.mp3",
+      "/audio/voice/book-how-bread-rises-8.mp3",
+      "/audio/voice/book-how-bread-rises-9.mp3",
+      "/audio/voice/book-how-bread-rises-10.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3034,6 +3044,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Teddy draws a stoop. The hello can travel the other way too.")?.id,
     ).toBe("voice.book.how-mail-travels-10");
+    expect(
+      narrationClipForText("The kitchen smells like a hug you can eat later.")?.id,
+    ).toBe("voice.book.how-bread-rises-7");
+    expect(
+      narrationClipForText("Steam writes a letter in the air and disappears. Bread does not mind.")?.id,
+    ).toBe("voice.book.how-bread-rises-10");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
