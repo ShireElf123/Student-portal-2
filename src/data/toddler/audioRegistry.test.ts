@@ -583,6 +583,16 @@ describe("audio registry", () => {
       "/audio/voice/book-what-rain-does-8.mp3",
       "/audio/voice/book-what-rain-does-9.mp3",
       "/audio/voice/book-what-rain-does-10.mp3",
+      "/audio/voice/book-how-a-ferry-floats-1.mp3",
+      "/audio/voice/book-how-a-ferry-floats-2.mp3",
+      "/audio/voice/book-how-a-ferry-floats-3.mp3",
+      "/audio/voice/book-how-a-ferry-floats-4.mp3",
+      "/audio/voice/book-how-a-ferry-floats-5.mp3",
+      "/audio/voice/book-how-a-ferry-floats-6.mp3",
+      "/audio/voice/book-how-a-ferry-floats-7.mp3",
+      "/audio/voice/book-how-a-ferry-floats-8.mp3",
+      "/audio/voice/book-how-a-ferry-floats-9.mp3",
+      "/audio/voice/book-how-a-ferry-floats-10.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3066,6 +3076,14 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Rain will come again. Clouds keep libraries. We keep boots.")?.id,
     ).toBe("voice.book.what-rain-does-10");
+    expect(
+      narrationClipForText("Gulls ride the wind for free. They already know the route.")?.id,
+    ).toBe("voice.book.how-a-ferry-floats-6");
+    expect(
+      narrationClipForText(
+        "Teddy looks back. The water kept us. That is the whole trick, and it is not a small one.",
+      )?.id,
+    ).toBe("voice.book.how-a-ferry-floats-10");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
