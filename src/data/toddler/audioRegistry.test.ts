@@ -723,6 +723,16 @@ describe("audio registry", () => {
       "/audio/voice/book-night-bus-home-8.mp3",
       "/audio/voice/book-lost-red-mitten-1.mp3",
       "/audio/voice/book-lost-red-mitten-2.mp3",
+      "/audio/voice/book-lost-red-mitten-3.mp3",
+      "/audio/voice/book-lost-red-mitten-4.mp3",
+      "/audio/voice/book-lost-red-mitten-5.mp3",
+      "/audio/voice/book-lost-red-mitten-6.mp3",
+      "/audio/voice/book-lost-red-mitten-7.mp3",
+      "/audio/voice/book-lost-red-mitten-8.mp3",
+      "/audio/voice/book-nana-porch-swing-1.mp3",
+      "/audio/voice/book-nana-porch-swing-2.mp3",
+      "/audio/voice/book-nana-porch-swing-3.mp3",
+      "/audio/voice/book-nana-porch-swing-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3297,6 +3307,16 @@ describe("audio registry", () => {
         "A blue jay points with a wing. Red flashed by the stump. Fox thanks the jay. Manners are a map.",
       )?.id,
     ).toBe("voice.book.lost-red-mitten-2");
+    expect(
+      narrationClipForText(
+        "Den light. Soup steam. Fox hangs both mittens to dry. Tomorrow they will go out as a team.",
+      )?.id,
+    ).toBe("voice.book.lost-red-mitten-8");
+    expect(
+      narrationClipForText(
+        "Soon there are five. They do not make a straight line. They make a wandering sentence.",
+      )?.id,
+    ).toBe("voice.book.nana-porch-swing-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
