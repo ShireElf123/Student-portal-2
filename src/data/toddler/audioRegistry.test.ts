@@ -453,6 +453,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-ln-4-shirt.mp3",
       "/audio/voice/playhouse-ln-4-teddy.mp3",
       "/audio/voice/playhouse-ln-5-dot.mp3",
+      "/audio/voice/playhouse-ln-5-nana.mp3",
+      "/audio/voice/playhouse-ln-6-wind.mp3",
+      "/audio/voice/playhouse-ln-6-teddy.mp3",
+      "/audio/voice/playhouse-wm-1-teddy.mp3",
+      "/audio/voice/playhouse-wm-1-nana.mp3",
+      "/audio/voice/playhouse-wm-2-dot.mp3",
+      "/audio/voice/playhouse-wm-2-teddy.mp3",
+      "/audio/voice/playhouse-wm-3-nana.mp3",
+      "/audio/voice/playhouse-wm-3-teddy.mp3",
+      "/audio/voice/playhouse-wm-4-pigeon.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2837,6 +2847,12 @@ describe("audio registry", () => {
     ).toBe("voice.playhouse.ll-6-teddy");
     expect(narrationClipForText("Dot says: Two socks. They should stay cousins.")?.id).toBe(
       "voice.playhouse.ln-5-dot",
+    );
+    expect(
+      narrationClipForText("Teddy says: Thank you, working weather. We hung. You dry.")?.id,
+    ).toBe("voice.playhouse.ln-6-teddy");
+    expect(narrationClipForText("Pigeon says: We have a union about seeds.")?.id).toBe(
+      "voice.playhouse.wm-4-pigeon",
     );
   });
 
