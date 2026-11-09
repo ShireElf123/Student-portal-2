@@ -703,6 +703,16 @@ describe("audio registry", () => {
       "/audio/voice/book-dot-library-mouse-4.mp3",
       "/audio/voice/book-dot-library-mouse-5.mp3",
       "/audio/voice/book-dot-library-mouse-6.mp3",
+      "/audio/voice/book-dot-library-mouse-7.mp3",
+      "/audio/voice/book-dot-library-mouse-8.mp3",
+      "/audio/voice/book-lemonade-stoop-1.mp3",
+      "/audio/voice/book-lemonade-stoop-2.mp3",
+      "/audio/voice/book-lemonade-stoop-3.mp3",
+      "/audio/voice/book-lemonade-stoop-4.mp3",
+      "/audio/voice/book-lemonade-stoop-5.mp3",
+      "/audio/voice/book-lemonade-stoop-6.mp3",
+      "/audio/voice/book-lemonade-stoop-7.mp3",
+      "/audio/voice/book-lemonade-stoop-8.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3257,6 +3267,16 @@ describe("audio registry", () => {
         "At the desk, a stamp kisses the card. Due in two weeks. Dot’s ticket is magic again.",
       )?.id,
     ).toBe("voice.book.dot-library-mouse-6");
+    expect(
+      narrationClipForText(
+        "At home the lamp is a small moon. One more page. Then the lion sleeps, and Dot does too.",
+      )?.id,
+    ).toBe("voice.book.dot-library-mouse-8");
+    expect(
+      narrationClipForText(
+        "Two coins in a jar. Not a fortune. A jingle of we-did-it. Benny rinses the pitcher. The stoop glows.",
+      )?.id,
+    ).toBe("voice.book.lemonade-stoop-8");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
