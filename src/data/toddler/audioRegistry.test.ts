@@ -793,6 +793,16 @@ describe("audio registry", () => {
       "/audio/voice/book-backyard-sprinkler-6.mp3",
       "/audio/voice/book-backyard-sprinkler-7.mp3",
       "/audio/voice/book-backyard-sprinkler-8.mp3",
+      "/audio/voice/book-red-wagon-hill-1.mp3",
+      "/audio/voice/book-red-wagon-hill-2.mp3",
+      "/audio/voice/book-red-wagon-hill-3.mp3",
+      "/audio/voice/book-red-wagon-hill-4.mp3",
+      "/audio/voice/book-red-wagon-hill-5.mp3",
+      "/audio/voice/book-red-wagon-hill-6.mp3",
+      "/audio/voice/book-red-wagon-hill-7.mp3",
+      "/audio/voice/book-red-wagon-hill-8.mp3",
+      "/audio/voice/book-market-saturday-berries-1.mp3",
+      "/audio/voice/book-market-saturday-berries-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3437,6 +3447,16 @@ describe("audio registry", () => {
         "Lemon ice on the porch. Drips allowed. The sprinkler already told the whole story.",
       )?.id,
     ).toBe("voice.book.backyard-sprinkler-8");
+    expect(
+      narrationClipForText(
+        "Teddy looks at the hill. The hill looks back. Maybe one more slow up. Maybe lemonade. Both are brave.",
+      )?.id,
+    ).toBe("voice.book.red-wagon-hill-8");
+    expect(
+      narrationClipForText(
+        "A scale is a seesaw for fruit. Nana adds berries. The needle nods.",
+      )?.id,
+    ).toBe("voice.book.market-saturday-berries-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
