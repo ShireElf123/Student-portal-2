@@ -683,6 +683,16 @@ describe("audio registry", () => {
       "/audio/voice/book-pancake-saturday-8.mp3",
       "/audio/voice/book-little-red-fire-truck-1.mp3",
       "/audio/voice/book-little-red-fire-truck-2.mp3",
+      "/audio/voice/book-little-red-fire-truck-3.mp3",
+      "/audio/voice/book-little-red-fire-truck-4.mp3",
+      "/audio/voice/book-little-red-fire-truck-5.mp3",
+      "/audio/voice/book-little-red-fire-truck-6.mp3",
+      "/audio/voice/book-little-red-fire-truck-7.mp3",
+      "/audio/voice/book-little-red-fire-truck-8.mp3",
+      "/audio/voice/book-snow-maple-street-1.mp3",
+      "/audio/voice/book-snow-maple-street-2.mp3",
+      "/audio/voice/book-snow-maple-street-3.mp3",
+      "/audio/voice/book-snow-maple-street-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3217,6 +3227,16 @@ describe("audio registry", () => {
         "CLANG CLANG! The bell is a bright shout. Rosie’s lights blink. The big door lifts like a yawn.",
       )?.id,
     ).toBe("voice.book.little-red-fire-truck-2");
+    expect(
+      narrationClipForText(
+        "Rosie rolls home. The garage door is a blanket. The bell sleeps. Helpers rest, ready again.",
+      )?.id,
+    ).toBe("voice.book.little-red-fire-truck-8");
+    expect(
+      narrationClipForText(
+        "A small ball. A middle ball. A big ball. Stack. The snow pal has a carrot nose and pebble eyes.",
+      )?.id,
+    ).toBe("voice.book.snow-maple-street-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
