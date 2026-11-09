@@ -743,6 +743,16 @@ describe("audio registry", () => {
       "/audio/voice/book-kind-mail-truck-4.mp3",
       "/audio/voice/book-kind-mail-truck-5.mp3",
       "/audio/voice/book-kind-mail-truck-6.mp3",
+      "/audio/voice/book-kind-mail-truck-7.mp3",
+      "/audio/voice/book-kind-mail-truck-8.mp3",
+      "/audio/voice/book-gully-harbor-morning-1.mp3",
+      "/audio/voice/book-gully-harbor-morning-2.mp3",
+      "/audio/voice/book-gully-harbor-morning-3.mp3",
+      "/audio/voice/book-gully-harbor-morning-4.mp3",
+      "/audio/voice/book-gully-harbor-morning-5.mp3",
+      "/audio/voice/book-gully-harbor-morning-6.mp3",
+      "/audio/voice/book-gully-harbor-morning-7.mp3",
+      "/audio/voice/book-gully-harbor-morning-8.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3337,6 +3347,16 @@ describe("audio registry", () => {
         "A neighbor leaves a bowl of water. Stamp drinks. Kindness is a rest stop.",
       )?.id,
     ).toBe("voice.book.kind-mail-truck-6");
+    expect(
+      narrationClipForText(
+        "The tray is empty as a finished book. The truck hums home. Tomorrow the paper weather returns.",
+      )?.id,
+    ).toBe("voice.book.kind-mail-truck-8");
+    expect(
+      narrationClipForText(
+        "Back to the piling. Fog hat thinner. The tug is a red period at the end of morning.",
+      )?.id,
+    ).toBe("voice.book.gully-harbor-morning-8");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
