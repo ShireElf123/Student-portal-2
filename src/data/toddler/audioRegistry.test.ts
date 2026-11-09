@@ -473,6 +473,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-gb-2-teddy.mp3",
       "/audio/voice/playhouse-gb-2-dot.mp3",
       "/audio/voice/playhouse-gb-3-teddy.mp3",
+      "/audio/voice/playhouse-gb-3-nana.mp3",
+      "/audio/voice/playhouse-gb-4-nana.mp3",
+      "/audio/voice/playhouse-gb-4-teddy.mp3",
+      "/audio/voice/playhouse-gb-5-dot.mp3",
+      "/audio/voice/playhouse-gb-5-teddy.mp3",
+      "/audio/voice/playhouse-gb-6-nana.mp3",
+      "/audio/voice/playhouse-gb-6-teddy.mp3",
+      "/audio/voice/playhouse-tp-1-teddy.mp3",
+      "/audio/voice/playhouse-tp-1-nana.mp3",
+      "/audio/voice/playhouse-tp-2-dot.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2870,6 +2880,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("Teddy says: Nana the river is late for something!")?.id).toBe(
       "voice.playhouse.gb-3-teddy",
     );
+    expect(
+      narrationClipForText("Teddy says: Good night, boat. Do not sail without me.")?.id,
+    ).toBe("voice.playhouse.gb-6-teddy");
+    expect(
+      narrationClipForText("Dot says: I have watched for one whole minute. Nothing. I resign.")?.id,
+    ).toBe("voice.playhouse.tp-2-dot");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
