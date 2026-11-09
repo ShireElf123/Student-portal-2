@@ -873,6 +873,16 @@ describe("audio registry", () => {
       "/audio/voice/book-subway-token-mouse-6.mp3",
       "/audio/voice/book-subway-token-mouse-7.mp3",
       "/audio/voice/book-subway-token-mouse-8.mp3",
+      "/audio/voice/book-porch-dusk-jar-1.mp3",
+      "/audio/voice/book-porch-dusk-jar-2.mp3",
+      "/audio/voice/book-porch-dusk-jar-3.mp3",
+      "/audio/voice/book-porch-dusk-jar-4.mp3",
+      "/audio/voice/book-porch-dusk-jar-5.mp3",
+      "/audio/voice/book-porch-dusk-jar-6.mp3",
+      "/audio/voice/book-porch-dusk-jar-7.mp3",
+      "/audio/voice/book-porch-dusk-jar-8.mp3",
+      "/audio/voice/book-lighthouse-blink-1.mp3",
+      "/audio/voice/book-lighthouse-blink-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3597,6 +3607,21 @@ describe("audio registry", () => {
         "The token is gone and also still round in the story. That is how paying for a ride works.",
       )?.id,
     ).toBe("voice.book.subway-token-mouse-8");
+    expect(
+      narrationClipForText(
+        "The porch swing creaks the floorboard song. Dusk is a purple blanket being pulled across the yard.",
+      )?.id,
+    ).toBe("voice.book.porch-dusk-jar-1");
+    expect(
+      narrationClipForText(
+        "Inside now. The swing slows. The yard keeps the wandering lights without us.",
+      )?.id,
+    ).toBe("voice.book.porch-dusk-jar-8");
+    expect(
+      narrationClipForText(
+        "The lamp is a giant jar of light. It does not hurry. Night is its job.",
+      )?.id,
+    ).toBe("voice.book.lighthouse-blink-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
