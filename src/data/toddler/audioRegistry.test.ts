@@ -1033,6 +1033,16 @@ describe("audio registry", () => {
       "/audio/voice/book-rainy-day-rainbow-builder-4.mp3",
       "/audio/voice/book-the-brave-little-firefly-1.mp3",
       "/audio/voice/book-the-brave-little-firefly-2.mp3",
+      "/audio/voice/book-the-brave-little-firefly-3.mp3",
+      "/audio/voice/book-the-brave-little-firefly-4.mp3",
+      "/audio/voice/book-busy-beehive-architects-1.mp3",
+      "/audio/voice/book-busy-beehive-architects-2.mp3",
+      "/audio/voice/book-busy-beehive-architects-3.mp3",
+      "/audio/voice/book-busy-beehive-architects-4.mp3",
+      "/audio/voice/book-the-curious-caterpillar-1.mp3",
+      "/audio/voice/book-the-curious-caterpillar-2.mp3",
+      "/audio/voice/book-the-curious-caterpillar-3.mp3",
+      "/audio/voice/book-the-curious-caterpillar-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3937,6 +3947,16 @@ describe("audio registry", () => {
         "Mama Firefly gives Pip a tender hug. 'Close your eyes, Pip. Breathe in. Your courage is inside you!'",
       )?.id,
     ).toBe("voice.book.the-brave-little-firefly-2");
+    expect(
+      narrationClipForText(
+        "Look at the wax walls—each cell has 6 equal straight sides! Hexagons make the strongest rooms.",
+      )?.id,
+    ).toBe("voice.book.busy-beehive-architects-3");
+    expect(
+      narrationClipForText(
+        "The chrysalis splits open! Out steps a magnificent orange and black Monarch butterfly drying her wings!",
+      )?.id,
+    ).toBe("voice.book.the-curious-caterpillar-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
