@@ -1093,6 +1093,12 @@ describe("audio registry", () => {
       "/audio/voice/book-letter-meadow-abc-4.mp3",
       "/audio/voice/book-pine-trail-map-1.mp3",
       "/audio/voice/book-pine-trail-map-2.mp3",
+      "/audio/voice/book-pine-trail-map-3.mp3",
+      "/audio/voice/book-pine-trail-map-4.mp3",
+      "/audio/voice/book-home-kind-morning-1.mp3",
+      "/audio/voice/book-home-kind-morning-2.mp3",
+      "/audio/voice/book-home-kind-morning-3.mp3",
+      "/audio/voice/book-home-kind-morning-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -4057,6 +4063,16 @@ describe("audio registry", () => {
         "Rain taps the pines. Pip puts up a hood. Drip drop.",
       )?.id,
     ).toBe("voice.book.pine-trail-map-2");
+    expect(
+      narrationClipForText(
+        "Home is downhill. The map still shows the way. The pines wave.",
+      )?.id,
+    ).toBe("voice.book.pine-trail-map-4");
+    expect(
+      narrationClipForText(
+        "Shoes on. Smile. The house waves. We can come home later.",
+      )?.id,
+    ).toBe("voice.book.home-kind-morning-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
