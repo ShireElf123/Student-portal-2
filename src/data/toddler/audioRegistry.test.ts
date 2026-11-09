@@ -463,6 +463,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-wm-3-nana.mp3",
       "/audio/voice/playhouse-wm-3-teddy.mp3",
       "/audio/voice/playhouse-wm-4-pigeon.mp3",
+      "/audio/voice/playhouse-wm-4-nana.mp3",
+      "/audio/voice/playhouse-wm-5-teddy.mp3",
+      "/audio/voice/playhouse-wm-5-nana.mp3",
+      "/audio/voice/playhouse-wm-6-teddy.mp3",
+      "/audio/voice/playhouse-wm-6-nana.mp3",
+      "/audio/voice/playhouse-gb-1-nana.mp3",
+      "/audio/voice/playhouse-gb-1-teddy.mp3",
+      "/audio/voice/playhouse-gb-2-teddy.mp3",
+      "/audio/voice/playhouse-gb-2-dot.mp3",
+      "/audio/voice/playhouse-gb-3-teddy.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2853,6 +2863,12 @@ describe("audio registry", () => {
     ).toBe("voice.playhouse.ln-6-teddy");
     expect(narrationClipForText("Pigeon says: We have a union about seeds.")?.id).toBe(
       "voice.playhouse.wm-4-pigeon",
+    );
+    expect(
+      narrationClipForText("Nana says: Then the drum can rest. The stoop will remember pink.")?.id,
+    ).toBe("voice.playhouse.wm-6-nana");
+    expect(narrationClipForText("Teddy says: Nana the river is late for something!")?.id).toBe(
+      "voice.playhouse.gb-3-teddy",
     );
   });
 
