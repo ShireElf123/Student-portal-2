@@ -653,6 +653,16 @@ describe("audio registry", () => {
       "/audio/voice/book-hen-in-pen-2.mp3",
       "/audio/voice/book-hen-in-pen-3.mp3",
       "/audio/voice/book-hen-in-pen-4.mp3",
+      "/audio/voice/book-hen-in-pen-5.mp3",
+      "/audio/voice/book-hen-in-pen-6.mp3",
+      "/audio/voice/book-hen-in-pen-7.mp3",
+      "/audio/voice/book-hen-in-pen-8.mp3",
+      "/audio/voice/book-bug-in-mug-1.mp3",
+      "/audio/voice/book-bug-in-mug-2.mp3",
+      "/audio/voice/book-bug-in-mug-3.mp3",
+      "/audio/voice/book-bug-in-mug-4.mp3",
+      "/audio/voice/book-bug-in-mug-5.mp3",
+      "/audio/voice/book-bug-in-mug-6.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3165,6 +3175,12 @@ describe("audio registry", () => {
       narrationClipForText("The dog sat. The log did its job.")?.id,
     ).toBe("voice.book.dog-on-log-8");
     expect(narrationClipForText("An egg. A tan egg.")?.id).toBe("voice.book.hen-in-pen-4");
+    expect(
+      narrationClipForText("The hen sat. The pen did its job.")?.id,
+    ).toBe("voice.book.hen-in-pen-8");
+    expect(narrationClipForText("No hug for a bug. A wave.")?.id).toBe(
+      "voice.book.bug-in-mug-6",
+    );
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
