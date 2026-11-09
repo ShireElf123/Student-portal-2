@@ -503,6 +503,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-tw-5-rosie.mp3",
       "/audio/voice/playhouse-tw-5-nana.mp3",
       "/audio/voice/playhouse-tw-6-teddy.mp3",
+      "/audio/voice/playhouse-tw-6-nana.mp3",
+      "/audio/voice/playhouse-curtain.mp3",
+      "/audio/voice/book-stoop-watermelon-1.mp3",
+      "/audio/voice/book-stoop-watermelon-2.mp3",
+      "/audio/voice/book-stoop-watermelon-3.mp3",
+      "/audio/voice/book-stoop-watermelon-4.mp3",
+      "/audio/voice/book-stoop-watermelon-5.mp3",
+      "/audio/voice/book-stoop-watermelon-6.mp3",
+      "/audio/voice/book-stoop-watermelon-7.mp3",
+      "/audio/voice/book-stoop-watermelon-8.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2922,6 +2932,21 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Teddy says: Meadow, be a suitcase. My belly is already a drum.")?.id,
     ).toBe("voice.playhouse.tw-6-teddy");
+    expect(
+      narrationClipForText("Nana says: Fold. The sidewalk will remember the legs.")?.id,
+    ).toBe("voice.playhouse.tw-6-nana");
+    expect(narrationClipForText("The curtain closes. You watched the whole play!")?.id).toBe(
+      "voice.playhouse.curtain",
+    );
+    expect(
+      narrationClipForText(
+        "The stoop is a warm lap. Brick holds the sun and does not complain.",
+      )?.id,
+    ).toBe("voice.book.stoop-watermelon-1");
+    expect(
+      narrationClipForText("Two plates. One for Nana. One for Teddy. Sharing is a kind of math.")
+        ?.id,
+    ).toBe("voice.book.stoop-watermelon-8");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
