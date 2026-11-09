@@ -1053,6 +1053,16 @@ describe("audio registry", () => {
       "/audio/voice/book-superhero-phonics-squad-4.mp3",
       "/audio/voice/book-the-clock-tower-chimes-1.mp3",
       "/audio/voice/book-the-clock-tower-chimes-2.mp3",
+      "/audio/voice/book-the-clock-tower-chimes-3.mp3",
+      "/audio/voice/book-the-clock-tower-chimes-4.mp3",
+      "/audio/voice/book-little-bear-lost-button-1.mp3",
+      "/audio/voice/book-little-bear-lost-button-2.mp3",
+      "/audio/voice/book-little-bear-lost-button-3.mp3",
+      "/audio/voice/book-little-bear-lost-button-4.mp3",
+      "/audio/voice/book-penguin-floe-night-1.mp3",
+      "/audio/voice/book-penguin-floe-night-2.mp3",
+      "/audio/voice/book-penguin-floe-night-3.mp3",
+      "/audio/voice/book-penguin-floe-night-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3977,6 +3987,16 @@ describe("audio registry", () => {
         "BONG BONG! The little hand and big hand both point straight up to 12. Delicious apple slices and story time!",
       )?.id,
     ).toBe("voice.book.the-clock-tower-chimes-2");
+    expect(
+      narrationClipForText(
+        "Barnaby checks under the sofa—no button. He checks the garden path—no button. He checks the sandbox...",
+      )?.id,
+    ).toBe("voice.book.little-bear-lost-button-3");
+    expect(
+      narrationClipForText(
+        "The penguin tucks its beak. Pip waves. Tomorrow they will waddle again.",
+      )?.id,
+    ).toBe("voice.book.penguin-floe-night-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
