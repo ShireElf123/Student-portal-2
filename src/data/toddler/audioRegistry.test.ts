@@ -783,6 +783,16 @@ describe("audio registry", () => {
       "/audio/voice/book-laundromat-rain-4.mp3",
       "/audio/voice/book-laundromat-rain-5.mp3",
       "/audio/voice/book-laundromat-rain-6.mp3",
+      "/audio/voice/book-laundromat-rain-7.mp3",
+      "/audio/voice/book-laundromat-rain-8.mp3",
+      "/audio/voice/book-backyard-sprinkler-1.mp3",
+      "/audio/voice/book-backyard-sprinkler-2.mp3",
+      "/audio/voice/book-backyard-sprinkler-3.mp3",
+      "/audio/voice/book-backyard-sprinkler-4.mp3",
+      "/audio/voice/book-backyard-sprinkler-5.mp3",
+      "/audio/voice/book-backyard-sprinkler-6.mp3",
+      "/audio/voice/book-backyard-sprinkler-7.mp3",
+      "/audio/voice/book-backyard-sprinkler-8.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3417,6 +3427,16 @@ describe("audio registry", () => {
         "Rain keeps writing. Other families hum. The room is a quiet party of warm.",
       )?.id,
     ).toBe("voice.book.laundromat-rain-6");
+    expect(
+      narrationClipForText(
+        "The bag is lighter because dry things are fluffy. Rain still writes. We are done writing with clothes.",
+      )?.id,
+    ).toBe("voice.book.laundromat-rain-8");
+    expect(
+      narrationClipForText(
+        "Lemon ice on the porch. Drips allowed. The sprinkler already told the whole story.",
+      )?.id,
+    ).toBe("voice.book.backyard-sprinkler-8");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
