@@ -593,6 +593,16 @@ describe("audio registry", () => {
       "/audio/voice/book-how-a-ferry-floats-8.mp3",
       "/audio/voice/book-how-a-ferry-floats-9.mp3",
       "/audio/voice/book-how-a-ferry-floats-10.mp3",
+      "/audio/voice/book-cat-on-mat-1.mp3",
+      "/audio/voice/book-cat-on-mat-2.mp3",
+      "/audio/voice/book-cat-on-mat-3.mp3",
+      "/audio/voice/book-cat-on-mat-4.mp3",
+      "/audio/voice/book-cat-on-mat-5.mp3",
+      "/audio/voice/book-cat-on-mat-6.mp3",
+      "/audio/voice/book-cat-on-mat-7.mp3",
+      "/audio/voice/book-cat-on-mat-8.mp3",
+      "/audio/voice/book-red-bus-run-1.mp3",
+      "/audio/voice/book-red-bus-run-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3084,6 +3094,11 @@ describe("audio registry", () => {
         "Teddy looks back. The water kept us. That is the whole trick, and it is not a small one.",
       )?.id,
     ).toBe("voice.book.how-a-ferry-floats-10");
+    expect(narrationClipForText("A cat. A fat cat.")?.id).toBe("voice.book.cat-on-mat-1");
+    expect(
+      narrationClipForText("The cat sat. The cat napped. The mat did its job.")?.id,
+    ).toBe("voice.book.cat-on-mat-8");
+    expect(narrationClipForText("The bus is red.")?.id).toBe("voice.book.red-bus-run-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
