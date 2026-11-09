@@ -543,6 +543,16 @@ describe("audio registry", () => {
       "/audio/voice/book-window-box-tomatoes-12.mp3",
       "/audio/voice/book-block-table-feast-1.mp3",
       "/audio/voice/book-block-table-feast-2.mp3",
+      "/audio/voice/book-block-table-feast-3.mp3",
+      "/audio/voice/book-block-table-feast-4.mp3",
+      "/audio/voice/book-block-table-feast-5.mp3",
+      "/audio/voice/book-block-table-feast-6.mp3",
+      "/audio/voice/book-block-table-feast-7.mp3",
+      "/audio/voice/book-block-table-feast-8.mp3",
+      "/audio/voice/book-block-table-feast-9.mp3",
+      "/audio/voice/book-block-table-feast-10.mp3",
+      "/audio/voice/book-block-table-feast-11.mp3",
+      "/audio/voice/book-block-table-feast-12.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2997,6 +3007,15 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("One leg is a dancer. Nana folds a napkin under it. The dancer sits.")?.id,
     ).toBe("voice.book.block-table-feast-2");
+    expect(
+      narrationClipForText(
+        "Pizza is a circle that becomes triangles. Sharing is cutting with a plan.",
+      )?.id,
+    ).toBe("voice.book.block-table-feast-8");
+    expect(
+      narrationClipForText("Teddy’s belly is a drum. The stoop is quiet and used. That is a good party.")
+        ?.id,
+    ).toBe("voice.book.block-table-feast-12");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
