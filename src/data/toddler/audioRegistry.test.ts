@@ -833,6 +833,16 @@ describe("audio registry", () => {
       "/audio/voice/book-ferry-horn-morning-6.mp3",
       "/audio/voice/book-ferry-horn-morning-7.mp3",
       "/audio/voice/book-ferry-horn-morning-8.mp3",
+      "/audio/voice/book-sidewalk-chalk-sun-1.mp3",
+      "/audio/voice/book-sidewalk-chalk-sun-2.mp3",
+      "/audio/voice/book-sidewalk-chalk-sun-3.mp3",
+      "/audio/voice/book-sidewalk-chalk-sun-4.mp3",
+      "/audio/voice/book-sidewalk-chalk-sun-5.mp3",
+      "/audio/voice/book-sidewalk-chalk-sun-6.mp3",
+      "/audio/voice/book-sidewalk-chalk-sun-7.mp3",
+      "/audio/voice/book-sidewalk-chalk-sun-8.mp3",
+      "/audio/voice/book-bakery-window-fog-1.mp3",
+      "/audio/voice/book-bakery-window-fog-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3517,6 +3527,16 @@ describe("audio registry", () => {
         "The horn behind us is for the next morning. We had this one.",
       )?.id,
     ).toBe("voice.book.ferry-horn-morning-8");
+    expect(
+      narrationClipForText(
+        "We leave the sun for the block. Tomorrow it may be paler. Today it is loud and kind.",
+      )?.id,
+    ).toBe("voice.book.sidewalk-chalk-sun-8");
+    expect(
+      narrationClipForText(
+        "The bakery bell is cousin to the diner bell. Shorter. Flour in the air like quiet snow.",
+      )?.id,
+    ).toBe("voice.book.bakery-window-fog-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
