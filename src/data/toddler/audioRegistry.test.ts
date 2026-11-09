@@ -813,6 +813,16 @@ describe("audio registry", () => {
       "/audio/voice/book-elevator-buttons-2.mp3",
       "/audio/voice/book-elevator-buttons-3.mp3",
       "/audio/voice/book-elevator-buttons-4.mp3",
+      "/audio/voice/book-elevator-buttons-5.mp3",
+      "/audio/voice/book-elevator-buttons-6.mp3",
+      "/audio/voice/book-elevator-buttons-7.mp3",
+      "/audio/voice/book-elevator-buttons-8.mp3",
+      "/audio/voice/book-attic-rain-trunk-1.mp3",
+      "/audio/voice/book-attic-rain-trunk-2.mp3",
+      "/audio/voice/book-attic-rain-trunk-3.mp3",
+      "/audio/voice/book-attic-rain-trunk-4.mp3",
+      "/audio/voice/book-attic-rain-trunk-5.mp3",
+      "/audio/voice/book-attic-rain-trunk-6.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3477,6 +3487,16 @@ describe("audio registry", () => {
         "Sometimes ears pop like tiny bubbles. That is the building stretching. Teddy holds Nana’s coat button — the sewn one.",
       )?.id,
     ).toBe("voice.book.elevator-buttons-4");
+    expect(
+      narrationClipForText(
+        "Later we will press lobby. For now lemon ice. The traveling room can wait. It is good at waiting.",
+      )?.id,
+    ).toBe("voice.book.elevator-buttons-8");
+    expect(
+      narrationClipForText(
+        "A quilt of squares. Circle of a moon patch in one corner. Teddy finds it with a paw.",
+      )?.id,
+    ).toBe("voice.book.attic-rain-trunk-6");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
