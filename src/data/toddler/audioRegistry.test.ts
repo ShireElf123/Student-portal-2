@@ -853,6 +853,16 @@ describe("audio registry", () => {
       "/audio/voice/book-hardware-drawer-knobs-2.mp3",
       "/audio/voice/book-hardware-drawer-knobs-3.mp3",
       "/audio/voice/book-hardware-drawer-knobs-4.mp3",
+      "/audio/voice/book-hardware-drawer-knobs-5.mp3",
+      "/audio/voice/book-hardware-drawer-knobs-6.mp3",
+      "/audio/voice/book-hardware-drawer-knobs-7.mp3",
+      "/audio/voice/book-hardware-drawer-knobs-8.mp3",
+      "/audio/voice/book-park-bandstand-pigeons-1.mp3",
+      "/audio/voice/book-park-bandstand-pigeons-2.mp3",
+      "/audio/voice/book-park-bandstand-pigeons-3.mp3",
+      "/audio/voice/book-park-bandstand-pigeons-4.mp3",
+      "/audio/voice/book-park-bandstand-pigeons-5.mp3",
+      "/audio/voice/book-park-bandstand-pigeons-6.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3557,6 +3567,16 @@ describe("audio registry", () => {
         "This bell is tougher. It still means hello. A dog under the counter thumps a hello back.",
       )?.id,
     ).toBe("voice.book.hardware-drawer-knobs-4");
+    expect(
+      narrationClipForText(
+        "Nana crosses three lines. The paper looks proud. Teddy is proud of the washer window.",
+      )?.id,
+    ).toBe("voice.book.hardware-drawer-knobs-8");
+    expect(
+      narrationClipForText(
+        "The roof is a hat for the whole bandstand. We sit in the brim. Pigeons take the crown.",
+      )?.id,
+    ).toBe("voice.book.park-bandstand-pigeons-6");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
