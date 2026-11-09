@@ -823,6 +823,16 @@ describe("audio registry", () => {
       "/audio/voice/book-attic-rain-trunk-4.mp3",
       "/audio/voice/book-attic-rain-trunk-5.mp3",
       "/audio/voice/book-attic-rain-trunk-6.mp3",
+      "/audio/voice/book-attic-rain-trunk-7.mp3",
+      "/audio/voice/book-attic-rain-trunk-8.mp3",
+      "/audio/voice/book-ferry-horn-morning-1.mp3",
+      "/audio/voice/book-ferry-horn-morning-2.mp3",
+      "/audio/voice/book-ferry-horn-morning-3.mp3",
+      "/audio/voice/book-ferry-horn-morning-4.mp3",
+      "/audio/voice/book-ferry-horn-morning-5.mp3",
+      "/audio/voice/book-ferry-horn-morning-6.mp3",
+      "/audio/voice/book-ferry-horn-morning-7.mp3",
+      "/audio/voice/book-ferry-horn-morning-8.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3497,6 +3507,16 @@ describe("audio registry", () => {
         "A quilt of squares. Circle of a moon patch in one corner. Teddy finds it with a paw.",
       )?.id,
     ).toBe("voice.book.attic-rain-trunk-6");
+    expect(
+      narrationClipForText(
+        "Hats back to sleep. Trunk closed. Stairs down. Rain still writing. The house keeps us.",
+      )?.id,
+    ).toBe("voice.book.attic-rain-trunk-8");
+    expect(
+      narrationClipForText(
+        "The horn behind us is for the next morning. We had this one.",
+      )?.id,
+    ).toBe("voice.book.ferry-horn-morning-8");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
