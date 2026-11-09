@@ -843,6 +843,16 @@ describe("audio registry", () => {
       "/audio/voice/book-sidewalk-chalk-sun-8.mp3",
       "/audio/voice/book-bakery-window-fog-1.mp3",
       "/audio/voice/book-bakery-window-fog-2.mp3",
+      "/audio/voice/book-bakery-window-fog-3.mp3",
+      "/audio/voice/book-bakery-window-fog-4.mp3",
+      "/audio/voice/book-bakery-window-fog-5.mp3",
+      "/audio/voice/book-bakery-window-fog-6.mp3",
+      "/audio/voice/book-bakery-window-fog-7.mp3",
+      "/audio/voice/book-bakery-window-fog-8.mp3",
+      "/audio/voice/book-hardware-drawer-knobs-1.mp3",
+      "/audio/voice/book-hardware-drawer-knobs-2.mp3",
+      "/audio/voice/book-hardware-drawer-knobs-3.mp3",
+      "/audio/voice/book-hardware-drawer-knobs-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3537,6 +3547,16 @@ describe("audio registry", () => {
         "The bakery bell is cousin to the diner bell. Shorter. Flour in the air like quiet snow.",
       )?.id,
     ).toBe("voice.book.bakery-window-fog-2");
+    expect(
+      narrationClipForText(
+        "Crumbs are not a mess yet. They are a map of breakfast. The window fog is already gone.",
+      )?.id,
+    ).toBe("voice.book.bakery-window-fog-8");
+    expect(
+      narrationClipForText(
+        "This bell is tougher. It still means hello. A dog under the counter thumps a hello back.",
+      )?.id,
+    ).toBe("voice.book.hardware-drawer-knobs-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
