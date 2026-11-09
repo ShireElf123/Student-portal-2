@@ -883,6 +883,16 @@ describe("audio registry", () => {
       "/audio/voice/book-porch-dusk-jar-8.mp3",
       "/audio/voice/book-lighthouse-blink-1.mp3",
       "/audio/voice/book-lighthouse-blink-2.mp3",
+      "/audio/voice/book-lighthouse-blink-3.mp3",
+      "/audio/voice/book-lighthouse-blink-4.mp3",
+      "/audio/voice/book-lighthouse-blink-5.mp3",
+      "/audio/voice/book-lighthouse-blink-6.mp3",
+      "/audio/voice/book-lighthouse-blink-7.mp3",
+      "/audio/voice/book-lighthouse-blink-8.mp3",
+      "/audio/voice/book-corner-shop-ding-1.mp3",
+      "/audio/voice/book-corner-shop-ding-2.mp3",
+      "/audio/voice/book-corner-shop-ding-3.mp3",
+      "/audio/voice/book-corner-shop-ding-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3622,6 +3632,21 @@ describe("audio registry", () => {
         "The lamp is a giant jar of light. It does not hurry. Night is its job.",
       )?.id,
     ).toBe("voice.book.lighthouse-blink-2");
+    expect(
+      narrationClipForText(
+        "Dawn takes the job. The lamp rests. Boats are already home.",
+      )?.id,
+    ).toBe("voice.book.lighthouse-blink-8");
+    expect(
+      narrationClipForText(
+        "The bell is shorter than the bakery’s. It still means hello. Teddy practices a quiet ding.",
+      )?.id,
+    ).toBe("voice.book.corner-shop-ding-1");
+    expect(
+      narrationClipForText(
+        "Please is a coin that does not jingle. The counter still hears it.",
+      )?.id,
+    ).toBe("voice.book.corner-shop-ding-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
