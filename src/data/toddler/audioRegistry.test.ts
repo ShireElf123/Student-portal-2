@@ -923,6 +923,16 @@ describe("audio registry", () => {
       "/audio/voice/book-lost-key-mat-8.mp3",
       "/audio/voice/book-quilt-square-moon-1.mp3",
       "/audio/voice/book-quilt-square-moon-2.mp3",
+      "/audio/voice/book-quilt-square-moon-3.mp3",
+      "/audio/voice/book-quilt-square-moon-4.mp3",
+      "/audio/voice/book-quilt-square-moon-5.mp3",
+      "/audio/voice/book-quilt-square-moon-6.mp3",
+      "/audio/voice/book-quilt-square-moon-7.mp3",
+      "/audio/voice/book-quilt-square-moon-8.mp3",
+      "/audio/voice/book-snow-plow-dawn-1.mp3",
+      "/audio/voice/book-snow-plow-dawn-2.mp3",
+      "/audio/voice/book-snow-plow-dawn-3.mp3",
+      "/audio/voice/book-snow-plow-dawn-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3712,6 +3722,16 @@ describe("audio registry", () => {
         "The quilt is squares that agreed to be a blanket. Four in a row by Teddy’s chin.",
       )?.id,
     ).toBe("voice.book.quilt-square-moon-2");
+    expect(
+      narrationClipForText(
+        "Teddy is docked. The house keeps the weather. Goodnight squares. Goodnight circle.",
+      )?.id,
+    ).toBe("voice.book.quilt-square-moon-8");
+    expect(
+      narrationClipForText(
+        "The bench wears a white hat. No lost mitten today. The bench is off duty.",
+      )?.id,
+    ).toBe("voice.book.snow-plow-dawn-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
