@@ -1003,6 +1003,16 @@ describe("audio registry", () => {
       "/audio/voice/book-cosmic-rocket-journey-2.mp3",
       "/audio/voice/book-cosmic-rocket-journey-3.mp3",
       "/audio/voice/book-cosmic-rocket-journey-4.mp3",
+      "/audio/voice/book-deep-ocean-wonders-1.mp3",
+      "/audio/voice/book-deep-ocean-wonders-2.mp3",
+      "/audio/voice/book-deep-ocean-wonders-3.mp3",
+      "/audio/voice/book-deep-ocean-wonders-4.mp3",
+      "/audio/voice/book-tiny-seed-grows-1.mp3",
+      "/audio/voice/book-tiny-seed-grows-2.mp3",
+      "/audio/voice/book-tiny-seed-grows-3.mp3",
+      "/audio/voice/book-tiny-seed-grows-4.mp3",
+      "/audio/voice/book-bedtime-starlight-lullaby-1.mp3",
+      "/audio/voice/book-bedtime-starlight-lullaby-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3877,6 +3887,16 @@ describe("audio registry", () => {
         "Through the spaceship window, Earth sparkles like a blue and green marble wrapped in clouds.",
       )?.id,
     ).toBe("voice.book.cosmic-rocket-journey-4");
+    expect(
+      narrationClipForText(
+        "POW! Big golden petals burst open! Bees buzz with joy, sipping nectar from the giant sunflower.",
+      )?.id,
+    ).toBe("voice.book.tiny-seed-grows-4");
+    expect(
+      narrationClipForText(
+        "Mother Deer tucks her fawn into soft moss. Little Robin tucks his beak beneath his warm feather wing.",
+      )?.id,
+    ).toBe("voice.book.bedtime-starlight-lullaby-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
