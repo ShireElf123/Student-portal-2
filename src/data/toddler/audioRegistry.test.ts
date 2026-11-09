@@ -513,6 +513,16 @@ describe("audio registry", () => {
       "/audio/voice/book-stoop-watermelon-6.mp3",
       "/audio/voice/book-stoop-watermelon-7.mp3",
       "/audio/voice/book-stoop-watermelon-8.mp3",
+      "/audio/voice/book-stoop-watermelon-9.mp3",
+      "/audio/voice/book-stoop-watermelon-10.mp3",
+      "/audio/voice/book-stoop-watermelon-11.mp3",
+      "/audio/voice/book-stoop-watermelon-12.mp3",
+      "/audio/voice/book-paper-gutter-boat-1.mp3",
+      "/audio/voice/book-paper-gutter-boat-2.mp3",
+      "/audio/voice/book-paper-gutter-boat-3.mp3",
+      "/audio/voice/book-paper-gutter-boat-4.mp3",
+      "/audio/voice/book-paper-gutter-boat-5.mp3",
+      "/audio/voice/book-paper-gutter-boat-6.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2947,6 +2957,12 @@ describe("audio registry", () => {
       narrationClipForText("Two plates. One for Nana. One for Teddy. Sharing is a kind of math.")
         ?.id,
     ).toBe("voice.book.stoop-watermelon-8");
+    expect(
+      narrationClipForText("Evening. The stoop remembers pink. Teddy remembers being full.")?.id,
+    ).toBe("voice.book.stoop-watermelon-12");
+    expect(
+      narrationClipForText("Teddy sets the boat down. It wobbles. Boats are allowed.")?.id,
+    ).toBe("voice.book.paper-gutter-boat-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
