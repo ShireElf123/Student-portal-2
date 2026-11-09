@@ -483,6 +483,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-tp-1-teddy.mp3",
       "/audio/voice/playhouse-tp-1-nana.mp3",
       "/audio/voice/playhouse-tp-2-dot.mp3",
+      "/audio/voice/playhouse-tp-2-nana.mp3",
+      "/audio/voice/playhouse-tp-3-teddy.mp3",
+      "/audio/voice/playhouse-tp-3-nana.mp3",
+      "/audio/voice/playhouse-tp-4-teddy.mp3",
+      "/audio/voice/playhouse-tp-4-nana.mp3",
+      "/audio/voice/playhouse-tp-5-dot.mp3",
+      "/audio/voice/playhouse-tp-5-teddy.mp3",
+      "/audio/voice/playhouse-tp-6-nana.mp3",
+      "/audio/voice/playhouse-tp-6-teddy.mp3",
+      "/audio/voice/playhouse-tw-1-teddy.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2886,6 +2896,16 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Dot says: I have watched for one whole minute. Nothing. I resign.")?.id,
     ).toBe("voice.playhouse.tp-2-dot");
+    expect(
+      narrationClipForText(
+        "Teddy says: Thank you, Tiny. Thank you, Also Tiny. Thank you, Show-off.",
+      )?.id,
+    ).toBe("voice.playhouse.tp-6-teddy");
+    expect(
+      narrationClipForText(
+        "Teddy says: The table was a suitcase. Now it is a meadow. I am impressed.",
+      )?.id,
+    ).toBe("voice.playhouse.tw-1-teddy");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
