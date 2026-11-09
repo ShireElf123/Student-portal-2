@@ -443,6 +443,16 @@ describe("audio registry", () => {
       "/audio/voice/playhouse-ll-5-teddy.mp3",
       "/audio/voice/playhouse-ll-5-dot.mp3",
       "/audio/voice/playhouse-ll-6-lion.mp3",
+      "/audio/voice/playhouse-ll-6-teddy.mp3",
+      "/audio/voice/playhouse-ln-1-teddy.mp3",
+      "/audio/voice/playhouse-ln-1-nana.mp3",
+      "/audio/voice/playhouse-ln-2-line.mp3",
+      "/audio/voice/playhouse-ln-2-dot.mp3",
+      "/audio/voice/playhouse-ln-3-nana.mp3",
+      "/audio/voice/playhouse-ln-3-teddy.mp3",
+      "/audio/voice/playhouse-ln-4-shirt.mp3",
+      "/audio/voice/playhouse-ln-4-teddy.mp3",
+      "/audio/voice/playhouse-ln-5-dot.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2820,6 +2830,13 @@ describe("audio registry", () => {
     ).toBe("voice.playhouse.ll-1-teddy");
     expect(narrationClipForText("Lion says: I nap. You borrowed. Both jobs are good.")?.id).toBe(
       "voice.playhouse.ll-6-lion",
+    );
+    expect(
+      narrationClipForText("Teddy says: Thank you, stone nap. We will bring the paper lion back.")
+        ?.id,
+    ).toBe("voice.playhouse.ll-6-teddy");
+    expect(narrationClipForText("Dot says: Two socks. They should stay cousins.")?.id).toBe(
+      "voice.playhouse.ln-5-dot",
     );
   });
 
