@@ -963,6 +963,16 @@ describe("audio registry", () => {
       "/audio/voice/book-safari-alphabet-16.mp3",
       "/audio/voice/book-safari-alphabet-17.mp3",
       "/audio/voice/book-safari-alphabet-18.mp3",
+      "/audio/voice/book-safari-alphabet-19.mp3",
+      "/audio/voice/book-safari-alphabet-20.mp3",
+      "/audio/voice/book-safari-alphabet-21.mp3",
+      "/audio/voice/book-safari-alphabet-22.mp3",
+      "/audio/voice/book-safari-alphabet-23.mp3",
+      "/audio/voice/book-safari-alphabet-24.mp3",
+      "/audio/voice/book-safari-alphabet-25.mp3",
+      "/audio/voice/book-safari-alphabet-26.mp3",
+      "/audio/voice/book-garden-counting-1.mp3",
+      "/audio/voice/book-garden-counting-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3797,6 +3807,16 @@ describe("audio registry", () => {
         "R says rrr! A Rhino stands by the water.",
       )?.id,
     ).toBe("voice.book.safari-alphabet-18");
+    expect(
+      narrationClipForText(
+        "Z says zzz! A Zebra stands in the sunny grass with Teddy.",
+      )?.id,
+    ).toBe("voice.book.safari-alphabet-26");
+    expect(
+      narrationClipForText(
+        "Chirp chirp! Here are 2 singing bluebirds building a cozy nest together.",
+      )?.id,
+    ).toBe("voice.book.garden-counting-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
