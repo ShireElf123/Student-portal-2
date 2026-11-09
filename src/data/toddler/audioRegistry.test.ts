@@ -773,6 +773,16 @@ describe("audio registry", () => {
       "/audio/voice/book-corner-store-bell-2.mp3",
       "/audio/voice/book-corner-store-bell-3.mp3",
       "/audio/voice/book-corner-store-bell-4.mp3",
+      "/audio/voice/book-corner-store-bell-5.mp3",
+      "/audio/voice/book-corner-store-bell-6.mp3",
+      "/audio/voice/book-corner-store-bell-7.mp3",
+      "/audio/voice/book-corner-store-bell-8.mp3",
+      "/audio/voice/book-laundromat-rain-1.mp3",
+      "/audio/voice/book-laundromat-rain-2.mp3",
+      "/audio/voice/book-laundromat-rain-3.mp3",
+      "/audio/voice/book-laundromat-rain-4.mp3",
+      "/audio/voice/book-laundromat-rain-5.mp3",
+      "/audio/voice/book-laundromat-rain-6.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3397,6 +3407,16 @@ describe("audio registry", () => {
         "The fridge door is winter for a second. Teddy’s nose gets a surprise. Close it kind.",
       )?.id,
     ).toBe("voice.book.corner-store-bell-4");
+    expect(
+      narrationClipForText(
+        "Milk in. Bananas in a bowl like a small sun pile. The bell is still at the store, doing its job.",
+      )?.id,
+    ).toBe("voice.book.corner-store-bell-8");
+    expect(
+      narrationClipForText(
+        "Rain keeps writing. Other families hum. The room is a quiet party of warm.",
+      )?.id,
+    ).toBe("voice.book.laundromat-rain-6");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
