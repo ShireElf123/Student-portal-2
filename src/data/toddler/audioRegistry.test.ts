@@ -953,6 +953,16 @@ describe("audio registry", () => {
       "/audio/voice/book-safari-alphabet-6.mp3",
       "/audio/voice/book-safari-alphabet-7.mp3",
       "/audio/voice/book-safari-alphabet-8.mp3",
+      "/audio/voice/book-safari-alphabet-9.mp3",
+      "/audio/voice/book-safari-alphabet-10.mp3",
+      "/audio/voice/book-safari-alphabet-11.mp3",
+      "/audio/voice/book-safari-alphabet-12.mp3",
+      "/audio/voice/book-safari-alphabet-13.mp3",
+      "/audio/voice/book-safari-alphabet-14.mp3",
+      "/audio/voice/book-safari-alphabet-15.mp3",
+      "/audio/voice/book-safari-alphabet-16.mp3",
+      "/audio/voice/book-safari-alphabet-17.mp3",
+      "/audio/voice/book-safari-alphabet-18.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3777,6 +3787,16 @@ describe("audio registry", () => {
         "H says huh! A happy Hippo peeks from the river.",
       )?.id,
     ).toBe("voice.book.safari-alphabet-8");
+    expect(
+      narrationClipForText(
+        "I says ih! An Impala leaps across the grass.",
+      )?.id,
+    ).toBe("voice.book.safari-alphabet-9");
+    expect(
+      narrationClipForText(
+        "R says rrr! A Rhino stands by the water.",
+      )?.id,
+    ).toBe("voice.book.safari-alphabet-18");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
