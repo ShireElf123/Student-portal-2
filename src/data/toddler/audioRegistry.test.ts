@@ -523,6 +523,16 @@ describe("audio registry", () => {
       "/audio/voice/book-paper-gutter-boat-4.mp3",
       "/audio/voice/book-paper-gutter-boat-5.mp3",
       "/audio/voice/book-paper-gutter-boat-6.mp3",
+      "/audio/voice/book-paper-gutter-boat-7.mp3",
+      "/audio/voice/book-paper-gutter-boat-8.mp3",
+      "/audio/voice/book-paper-gutter-boat-9.mp3",
+      "/audio/voice/book-paper-gutter-boat-10.mp3",
+      "/audio/voice/book-paper-gutter-boat-11.mp3",
+      "/audio/voice/book-paper-gutter-boat-12.mp3",
+      "/audio/voice/book-window-box-tomatoes-1.mp3",
+      "/audio/voice/book-window-box-tomatoes-2.mp3",
+      "/audio/voice/book-window-box-tomatoes-3.mp3",
+      "/audio/voice/book-window-box-tomatoes-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -2963,6 +2973,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Teddy sets the boat down. It wobbles. Boats are allowed.")?.id,
     ).toBe("voice.book.paper-gutter-boat-4");
+    expect(
+      narrationClipForText("A stick is a crane. The boat comes home wet and proud.")?.id,
+    ).toBe("voice.book.paper-gutter-boat-9");
+    expect(
+      narrationClipForText("Nothing happens. That is something. Roots are busy being shy.")?.id,
+    ).toBe("voice.book.window-box-tomatoes-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
