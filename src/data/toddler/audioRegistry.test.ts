@@ -763,6 +763,16 @@ describe("audio registry", () => {
       "/audio/voice/book-diner-booth-two-8.mp3",
       "/audio/voice/book-first-day-yellow-bus-1.mp3",
       "/audio/voice/book-first-day-yellow-bus-2.mp3",
+      "/audio/voice/book-first-day-yellow-bus-3.mp3",
+      "/audio/voice/book-first-day-yellow-bus-4.mp3",
+      "/audio/voice/book-first-day-yellow-bus-5.mp3",
+      "/audio/voice/book-first-day-yellow-bus-6.mp3",
+      "/audio/voice/book-first-day-yellow-bus-7.mp3",
+      "/audio/voice/book-first-day-yellow-bus-8.mp3",
+      "/audio/voice/book-corner-store-bell-1.mp3",
+      "/audio/voice/book-corner-store-bell-2.mp3",
+      "/audio/voice/book-corner-store-bell-3.mp3",
+      "/audio/voice/book-corner-store-bell-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3377,6 +3387,16 @@ describe("audio registry", () => {
         "The bus is a yellow hill with windows. Doors fold like a book. Beep is not here — this is Day Bus.",
       )?.id,
     ).toBe("voice.book.first-day-yellow-bus-2");
+    expect(
+      narrationClipForText(
+        "The bus again. Nana is a postage stamp that grows. The stoop is still the stoop. Brave work is done.",
+      )?.id,
+    ).toBe("voice.book.first-day-yellow-bus-8");
+    expect(
+      narrationClipForText(
+        "The fridge door is winter for a second. Teddy’s nose gets a surprise. Close it kind.",
+      )?.id,
+    ).toBe("voice.book.corner-store-bell-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
