@@ -553,6 +553,16 @@ describe("audio registry", () => {
       "/audio/voice/book-block-table-feast-10.mp3",
       "/audio/voice/book-block-table-feast-11.mp3",
       "/audio/voice/book-block-table-feast-12.mp3",
+      "/audio/voice/book-how-mail-travels-1.mp3",
+      "/audio/voice/book-how-mail-travels-2.mp3",
+      "/audio/voice/book-how-mail-travels-3.mp3",
+      "/audio/voice/book-how-mail-travels-4.mp3",
+      "/audio/voice/book-how-mail-travels-5.mp3",
+      "/audio/voice/book-how-mail-travels-6.mp3",
+      "/audio/voice/book-how-mail-travels-7.mp3",
+      "/audio/voice/book-how-mail-travels-8.mp3",
+      "/audio/voice/book-how-mail-travels-9.mp3",
+      "/audio/voice/book-how-mail-travels-10.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3016,6 +3026,14 @@ describe("audio registry", () => {
       narrationClipForText("Teddy’s belly is a drum. The stoop is quiet and used. That is a good party.")
         ?.id,
     ).toBe("voice.book.block-table-feast-12");
+    expect(
+      narrationClipForText(
+        "The mailbox is a blue mouth on the corner. It swallows kindly.",
+      )?.id,
+    ).toBe("voice.book.how-mail-travels-4");
+    expect(
+      narrationClipForText("Teddy draws a stoop. The hello can travel the other way too.")?.id,
+    ).toBe("voice.book.how-mail-travels-10");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
