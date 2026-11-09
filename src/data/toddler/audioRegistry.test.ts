@@ -973,6 +973,16 @@ describe("audio registry", () => {
       "/audio/voice/book-safari-alphabet-26.mp3",
       "/audio/voice/book-garden-counting-1.mp3",
       "/audio/voice/book-garden-counting-2.mp3",
+      "/audio/voice/book-garden-counting-3.mp3",
+      "/audio/voice/book-garden-counting-4.mp3",
+      "/audio/voice/book-garden-counting-5.mp3",
+      "/audio/voice/book-colors-shapes-circus-1.mp3",
+      "/audio/voice/book-colors-shapes-circus-2.mp3",
+      "/audio/voice/book-colors-shapes-circus-3.mp3",
+      "/audio/voice/book-little-bear-bedtime-1.mp3",
+      "/audio/voice/book-little-bear-bedtime-2.mp3",
+      "/audio/voice/book-little-bear-bedtime-3.mp3",
+      "/audio/voice/book-little-bear-bedtime-4.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3817,6 +3827,16 @@ describe("audio registry", () => {
         "Chirp chirp! Here are 2 singing bluebirds building a cozy nest together.",
       )?.id,
     ).toBe("voice.book.garden-counting-2");
+    expect(
+      narrationClipForText(
+        "Twinkle twinkle! The five-pointed Yellow Star shines like a trophy for super learners!",
+      )?.id,
+    ).toBe("voice.book.colors-shapes-circus-3");
+    expect(
+      narrationClipForText(
+        "Little Bear brushes his fluffy teeth, puts on starry pajamas, and tucks under a warm blanket.",
+      )?.id,
+    ).toBe("voice.book.little-bear-bedtime-4");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
