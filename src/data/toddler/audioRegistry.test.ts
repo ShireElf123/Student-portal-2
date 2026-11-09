@@ -1043,6 +1043,16 @@ describe("audio registry", () => {
       "/audio/voice/book-the-curious-caterpillar-2.mp3",
       "/audio/voice/book-the-curious-caterpillar-3.mp3",
       "/audio/voice/book-the-curious-caterpillar-4.mp3",
+      "/audio/voice/book-the-helpful-little-tugboat-1.mp3",
+      "/audio/voice/book-the-helpful-little-tugboat-2.mp3",
+      "/audio/voice/book-the-helpful-little-tugboat-3.mp3",
+      "/audio/voice/book-the-helpful-little-tugboat-4.mp3",
+      "/audio/voice/book-superhero-phonics-squad-1.mp3",
+      "/audio/voice/book-superhero-phonics-squad-2.mp3",
+      "/audio/voice/book-superhero-phonics-squad-3.mp3",
+      "/audio/voice/book-superhero-phonics-squad-4.mp3",
+      "/audio/voice/book-the-clock-tower-chimes-1.mp3",
+      "/audio/voice/book-the-clock-tower-chimes-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3957,6 +3967,16 @@ describe("audio registry", () => {
         "The chrysalis splits open! Out steps a magnificent orange and black Monarch butterfly drying her wings!",
       )?.id,
     ).toBe("voice.book.the-curious-caterpillar-4");
+    expect(
+      narrationClipForText(
+        "Blow air like a breeze: wuh! A giant white whale whistles through ocean waves.",
+      )?.id,
+    ).toBe("voice.book.superhero-phonics-squad-4");
+    expect(
+      narrationClipForText(
+        "BONG BONG! The little hand and big hand both point straight up to 12. Delicious apple slices and story time!",
+      )?.id,
+    ).toBe("voice.book.the-clock-tower-chimes-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
