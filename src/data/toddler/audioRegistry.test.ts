@@ -733,6 +733,16 @@ describe("audio registry", () => {
       "/audio/voice/book-nana-porch-swing-2.mp3",
       "/audio/voice/book-nana-porch-swing-3.mp3",
       "/audio/voice/book-nana-porch-swing-4.mp3",
+      "/audio/voice/book-nana-porch-swing-5.mp3",
+      "/audio/voice/book-nana-porch-swing-6.mp3",
+      "/audio/voice/book-nana-porch-swing-7.mp3",
+      "/audio/voice/book-nana-porch-swing-8.mp3",
+      "/audio/voice/book-kind-mail-truck-1.mp3",
+      "/audio/voice/book-kind-mail-truck-2.mp3",
+      "/audio/voice/book-kind-mail-truck-3.mp3",
+      "/audio/voice/book-kind-mail-truck-4.mp3",
+      "/audio/voice/book-kind-mail-truck-5.mp3",
+      "/audio/voice/book-kind-mail-truck-6.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3317,6 +3327,16 @@ describe("audio registry", () => {
         "Soon there are five. They do not make a straight line. They make a wandering sentence.",
       )?.id,
     ).toBe("voice.book.nana-porch-swing-4");
+    expect(
+      narrationClipForText(
+        "From the window the empty swing still sways a little. Goodnight, porch. Goodnight, wandering lights.",
+      )?.id,
+    ).toBe("voice.book.nana-porch-swing-8");
+    expect(
+      narrationClipForText(
+        "A neighbor leaves a bowl of water. Stamp drinks. Kindness is a rest stop.",
+      )?.id,
+    ).toBe("voice.book.kind-mail-truck-6");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
