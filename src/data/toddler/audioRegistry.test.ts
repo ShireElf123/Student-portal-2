@@ -713,6 +713,16 @@ describe("audio registry", () => {
       "/audio/voice/book-lemonade-stoop-6.mp3",
       "/audio/voice/book-lemonade-stoop-7.mp3",
       "/audio/voice/book-lemonade-stoop-8.mp3",
+      "/audio/voice/book-night-bus-home-1.mp3",
+      "/audio/voice/book-night-bus-home-2.mp3",
+      "/audio/voice/book-night-bus-home-3.mp3",
+      "/audio/voice/book-night-bus-home-4.mp3",
+      "/audio/voice/book-night-bus-home-5.mp3",
+      "/audio/voice/book-night-bus-home-6.mp3",
+      "/audio/voice/book-night-bus-home-7.mp3",
+      "/audio/voice/book-night-bus-home-8.mp3",
+      "/audio/voice/book-lost-red-mitten-1.mp3",
+      "/audio/voice/book-lost-red-mitten-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3277,6 +3287,16 @@ describe("audio registry", () => {
         "Two coins in a jar. Not a fortune. A jingle of we-did-it. Benny rinses the pitcher. The stoop glows.",
       )?.id,
     ).toBe("voice.book.lemonade-stoop-8");
+    expect(
+      narrationClipForText(
+        "Beep’s lamps shrink down the block. The moon keeps the route. Sleep is the last stop.",
+      )?.id,
+    ).toBe("voice.book.night-bus-home-8");
+    expect(
+      narrationClipForText(
+        "A blue jay points with a wing. Red flashed by the stump. Fox thanks the jay. Manners are a map.",
+      )?.id,
+    ).toBe("voice.book.lost-red-mitten-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
