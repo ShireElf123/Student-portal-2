@@ -903,6 +903,16 @@ describe("audio registry", () => {
       "/audio/voice/book-fountain-three-coins-4.mp3",
       "/audio/voice/book-fountain-three-coins-5.mp3",
       "/audio/voice/book-fountain-three-coins-6.mp3",
+      "/audio/voice/book-fountain-three-coins-7.mp3",
+      "/audio/voice/book-fountain-three-coins-8.mp3",
+      "/audio/voice/book-yellow-taxi-puddle-1.mp3",
+      "/audio/voice/book-yellow-taxi-puddle-2.mp3",
+      "/audio/voice/book-yellow-taxi-puddle-3.mp3",
+      "/audio/voice/book-yellow-taxi-puddle-4.mp3",
+      "/audio/voice/book-yellow-taxi-puddle-5.mp3",
+      "/audio/voice/book-yellow-taxi-puddle-6.mp3",
+      "/audio/voice/book-yellow-taxi-puddle-7.mp3",
+      "/audio/voice/book-yellow-taxi-puddle-8.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3667,6 +3677,16 @@ describe("audio registry", () => {
         "Two pigeons drink. They have a union about fountains. We do not argue.",
       )?.id,
     ).toBe("voice.book.fountain-three-coins-6");
+    expect(
+      narrationClipForText(
+        "The coins stay in Nana’s pocket. The wish still happened. Looking counts.",
+      )?.id,
+    ).toBe("voice.book.fountain-three-coins-7");
+    expect(
+      narrationClipForText(
+        "The taxi leaves. Yellow stays in the story like a coin you already spent.",
+      )?.id,
+    ).toBe("voice.book.yellow-taxi-puddle-8");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
