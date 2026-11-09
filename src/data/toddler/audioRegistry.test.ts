@@ -863,6 +863,16 @@ describe("audio registry", () => {
       "/audio/voice/book-park-bandstand-pigeons-4.mp3",
       "/audio/voice/book-park-bandstand-pigeons-5.mp3",
       "/audio/voice/book-park-bandstand-pigeons-6.mp3",
+      "/audio/voice/book-park-bandstand-pigeons-7.mp3",
+      "/audio/voice/book-park-bandstand-pigeons-8.mp3",
+      "/audio/voice/book-subway-token-mouse-1.mp3",
+      "/audio/voice/book-subway-token-mouse-2.mp3",
+      "/audio/voice/book-subway-token-mouse-3.mp3",
+      "/audio/voice/book-subway-token-mouse-4.mp3",
+      "/audio/voice/book-subway-token-mouse-5.mp3",
+      "/audio/voice/book-subway-token-mouse-6.mp3",
+      "/audio/voice/book-subway-token-mouse-7.mp3",
+      "/audio/voice/book-subway-token-mouse-8.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3577,6 +3587,16 @@ describe("audio registry", () => {
         "The roof is a hat for the whole bandstand. We sit in the brim. Pigeons take the crown.",
       )?.id,
     ).toBe("voice.book.park-bandstand-pigeons-6");
+    expect(
+      narrationClipForText(
+        "The path home is chalk-pale. The sun we drew is still yelling kindly from the stoop.",
+      )?.id,
+    ).toBe("voice.book.park-bandstand-pigeons-8");
+    expect(
+      narrationClipForText(
+        "The token is gone and also still round in the story. That is how paying for a ride works.",
+      )?.id,
+    ).toBe("voice.book.subway-token-mouse-8");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
