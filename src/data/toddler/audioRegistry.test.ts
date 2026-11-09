@@ -663,6 +663,16 @@ describe("audio registry", () => {
       "/audio/voice/book-bug-in-mug-4.mp3",
       "/audio/voice/book-bug-in-mug-5.mp3",
       "/audio/voice/book-bug-in-mug-6.mp3",
+      "/audio/voice/book-bug-in-mug-7.mp3",
+      "/audio/voice/book-bug-in-mug-8.mp3",
+      "/audio/voice/book-hop-on-top-1.mp3",
+      "/audio/voice/book-hop-on-top-2.mp3",
+      "/audio/voice/book-hop-on-top-3.mp3",
+      "/audio/voice/book-hop-on-top-4.mp3",
+      "/audio/voice/book-hop-on-top-5.mp3",
+      "/audio/voice/book-hop-on-top-6.mp3",
+      "/audio/voice/book-hop-on-top-7.mp3",
+      "/audio/voice/book-hop-on-top-8.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -3181,6 +3191,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("No hug for a bug. A wave.")?.id).toBe(
       "voice.book.bug-in-mug-6",
     );
+    expect(
+      narrationClipForText("In. Out. The mug did its job.")?.id,
+    ).toBe("voice.book.bug-in-mug-8");
+    expect(
+      narrationClipForText("Hop. Stop. The top did its job.")?.id,
+    ).toBe("voice.book.hop-on-top-8");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
