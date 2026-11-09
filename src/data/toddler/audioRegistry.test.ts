@@ -1083,6 +1083,16 @@ describe("audio registry", () => {
       "/audio/voice/book-park-green-picnic-2.mp3",
       "/audio/voice/book-park-green-picnic-3.mp3",
       "/audio/voice/book-park-green-picnic-4.mp3",
+      "/audio/voice/book-atelier-paint-day-1.mp3",
+      "/audio/voice/book-atelier-paint-day-2.mp3",
+      "/audio/voice/book-atelier-paint-day-3.mp3",
+      "/audio/voice/book-atelier-paint-day-4.mp3",
+      "/audio/voice/book-letter-meadow-abc-1.mp3",
+      "/audio/voice/book-letter-meadow-abc-2.mp3",
+      "/audio/voice/book-letter-meadow-abc-3.mp3",
+      "/audio/voice/book-letter-meadow-abc-4.mp3",
+      "/audio/voice/book-pine-trail-map-1.mp3",
+      "/audio/voice/book-pine-trail-map-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -4037,6 +4047,16 @@ describe("audio registry", () => {
         "The bag is light. The path leads home. Wave to the tree.",
       )?.id,
     ).toBe("voice.book.park-green-picnic-4");
+    expect(
+      narrationClipForText(
+        "The paper rests. Colours stay. Tomorrow we paint again.",
+      )?.id,
+    ).toBe("voice.book.atelier-paint-day-4");
+    expect(
+      narrationClipForText(
+        "Rain taps the pines. Pip puts up a hood. Drip drop.",
+      )?.id,
+    ).toBe("voice.book.pine-trail-map-2");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {
