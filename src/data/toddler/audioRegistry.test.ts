@@ -1168,6 +1168,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-n-glow.mp3",
       "/audio/voice/world-rhyme-n-night2.mp3",
       "/audio/voice/world-rhyme-n-dream2.mp3",
+      "/audio/voice/world-rhyme-v-bus.mp3",
+      "/audio/voice/world-rhyme-v-car.mp3",
+      "/audio/voice/world-rhyme-v-van.mp3",
+      "/audio/voice/world-rhyme-v-train.mp3",
+      "/audio/voice/world-rhyme-v-bike.mp3",
+      "/audio/voice/world-rhyme-v-road.mp3",
+      "/audio/voice/world-rhyme-v-beep.mp3",
+      "/audio/voice/world-rhyme-v-dock.mp3",
+      "/audio/voice/world-rhyme-v-ship.mp3",
+      "/audio/voice/world-rhyme-v-wheel.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6034,6 +6044,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What rhymes with Beam from the lamp?")?.id).toBe(
       "voice.world.rhyme-n-dream2",
+    );
+    expect(narrationClipForText("What rhymes with Bus on the high street?")?.id).toBe(
+      "voice.world.rhyme-v-bus",
+    );
+    expect(narrationClipForText("What rhymes with Wheel in the garage?")?.id).toBe(
+      "voice.world.rhyme-v-wheel",
     );
   });
 
