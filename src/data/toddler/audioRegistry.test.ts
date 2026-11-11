@@ -1109,6 +1109,16 @@ describe("audio registry", () => {
       "/audio/voice/shared-memory-hooray.mp3",
       "/audio/voice/shared-balloon-next.mp3",
       "/audio/voice/shared-trace-done.mp3",
+      "/audio/voice/games-rhyme-r1.mp3",
+      "/audio/voice/games-rhyme-r2.mp3",
+      "/audio/voice/games-rhyme-r3.mp3",
+      "/audio/voice/games-rhyme-r4.mp3",
+      "/audio/voice/games-rhyme-r5.mp3",
+      "/audio/voice/games-rhyme-r6.mp3",
+      "/audio/voice/games-rhyme-r7.mp3",
+      "/audio/voice/games-rhyme-r8.mp3",
+      "/audio/voice/games-rhyme-r9.mp3",
+      "/audio/voice/games-rhyme-r10.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -5923,6 +5933,16 @@ describe("audio registry", () => {
     expect(narrationClipForText("Three plates and three more. How many?")?.id).toBe(
       "voice.family.plates-welcome",
     );
+    expect(
+      narrationClipForText(
+        "What rhymes with Cat? Listen for the at sound! Can you tap the word that rhymes with Cat?",
+      )?.id,
+    ).toBe("voice.games.rhyme-r1");
+    expect(
+      narrationClipForText(
+        "Tiny quiet Mouse! Squeak squeak! Listen for the ouse sound! What rhymes with Mouse?",
+      )?.id,
+    ).toBe("voice.games.rhyme-r10");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
