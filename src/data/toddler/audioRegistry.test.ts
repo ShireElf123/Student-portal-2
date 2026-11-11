@@ -1178,6 +1178,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-v-dock.mp3",
       "/audio/voice/world-rhyme-v-ship.mp3",
       "/audio/voice/world-rhyme-v-wheel.mp3",
+      "/audio/voice/world-rhyme-v-horn.mp3",
+      "/audio/voice/world-rhyme-v-go.mp3",
+      "/audio/voice/world-rhyme-v-park.mp3",
+      "/audio/voice/world-rhyme-v-track.mp3",
+      "/audio/voice/world-rhyme-v-plane.mp3",
+      "/audio/voice/world-rhyme-v-ferry.mp3",
+      "/audio/voice/world-rhyme-l-cat.mp3",
+      "/audio/voice/world-rhyme-l-ten.mp3",
+      "/audio/voice/world-rhyme-l-bee.mp3",
+      "/audio/voice/world-rhyme-l-fox.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6051,6 +6061,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("What rhymes with Wheel in the garage?")?.id).toBe(
       "voice.world.rhyme-v-wheel",
     );
+    expect(narrationClipForText("What rhymes with Horn on the bus?")?.id).toBe(
+      "voice.world.rhyme-v-horn",
+    );
+    expect(narrationClipForText("What rhymes with Fox?")?.id).toBe("voice.world.rhyme-l-fox");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
