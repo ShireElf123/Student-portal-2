@@ -1198,6 +1198,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-l-spell.mp3",
       "/audio/voice/world-rhyme-l-line.mp3",
       "/audio/voice/world-rhyme-l-dot.mp3",
+      "/audio/voice/world-rhyme-l-page.mp3",
+      "/audio/voice/world-rhyme-l-quiz.mp3",
+      "/audio/voice/world-rhyme-a-pig.mp3",
+      "/audio/voice/world-rhyme-a-hen.mp3",
+      "/audio/voice/world-rhyme-a-sheep.mp3",
+      "/audio/voice/world-rhyme-a-cat.mp3",
+      "/audio/voice/world-rhyme-a-cow.mp3",
+      "/audio/voice/world-rhyme-a-duck.mp3",
+      "/audio/voice/world-rhyme-a-dog.mp3",
+      "/audio/voice/world-rhyme-a-goat.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6080,6 +6090,10 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What rhymes with Dot in the ten-frame?")?.id).toBe(
       "voice.world.rhyme-l-dot",
+    );
+    expect(narrationClipForText("What rhymes with Page?")?.id).toBe("voice.world.rhyme-l-page");
+    expect(narrationClipForText("What rhymes with Goat on the hill?")?.id).toBe(
+      "voice.world.rhyme-a-goat",
     );
   });
 
