@@ -1208,6 +1208,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-a-duck.mp3",
       "/audio/voice/world-rhyme-a-dog.mp3",
       "/audio/voice/world-rhyme-a-goat.mp3",
+      "/audio/voice/world-rhyme-a-roar.mp3",
+      "/audio/voice/world-rhyme-a-tail.mp3",
+      "/audio/voice/world-rhyme-a-nest.mp3",
+      "/audio/voice/world-rhyme-a-moo.mp3",
+      "/audio/voice/world-rhyme-a-chirp.mp3",
+      "/audio/voice/world-rhyme-a-wool.mp3",
+      "/audio/voice/world-rhyme-a-snout.mp3",
+      "/audio/voice/world-rhyme-a-herd.mp3",
+      "/audio/voice/world-rhyme-b-bee.mp3",
+      "/audio/voice/world-rhyme-b-bug.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6095,6 +6105,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("What rhymes with Goat on the hill?")?.id).toBe(
       "voice.world.rhyme-a-goat",
     );
+    expect(narrationClipForText("What rhymes with Roar in the valley?")?.id).toBe(
+      "voice.world.rhyme-a-roar",
+    );
+    expect(narrationClipForText("What rhymes with Bug?")?.id).toBe("voice.world.rhyme-b-bug");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
