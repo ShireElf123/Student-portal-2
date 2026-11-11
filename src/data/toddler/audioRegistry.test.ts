@@ -1159,6 +1159,15 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-n-moon.mp3",
       "/audio/voice/world-rhyme-n-dark.mp3",
       "/audio/voice/world-rhyme-n-dream.mp3",
+      "/audio/voice/world-rhyme-n-sock.mp3",
+      "/audio/voice/world-rhyme-n-yawn.mp3",
+      "/audio/voice/world-rhyme-n-sleep.mp3",
+      "/audio/voice/world-rhyme-n-rest.mp3",
+      "/audio/voice/world-rhyme-n-shade.mp3",
+      "/audio/voice/world-rhyme-n-quiet.mp3",
+      "/audio/voice/world-rhyme-n-glow.mp3",
+      "/audio/voice/world-rhyme-n-night2.mp3",
+      "/audio/voice/world-rhyme-n-dream2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6019,6 +6028,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What rhymes with Dream at bedtime?")?.id).toBe(
       "voice.world.rhyme-n-dream",
+    );
+    expect(narrationClipForText("What rhymes with Sock under the bed?")?.id).toBe(
+      "voice.world.rhyme-n-sock",
+    );
+    expect(narrationClipForText("What rhymes with Beam from the lamp?")?.id).toBe(
+      "voice.world.rhyme-n-dream2",
     );
   });
 
