@@ -1139,6 +1139,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-r-bell.mp3",
       "/audio/voice/world-rhyme-k-pan.mp3",
       "/audio/voice/world-rhyme-k-pot.mp3",
+      "/audio/voice/world-rhyme-k-bun.mp3",
+      "/audio/voice/world-rhyme-k-cake.mp3",
+      "/audio/voice/world-rhyme-k-jam.mp3",
+      "/audio/voice/world-rhyme-k-pie.mp3",
+      "/audio/voice/world-rhyme-k-stew.mp3",
+      "/audio/voice/world-rhyme-k-mill.mp3",
+      "/audio/voice/world-rhyme-k-rice.mp3",
+      "/audio/voice/world-rhyme-k-bean.mp3",
+      "/audio/voice/world-rhyme-k-pear.mp3",
+      "/audio/voice/world-rhyme-k-mug.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -5988,6 +5998,12 @@ describe("audio registry", () => {
       "voice.world.rhyme-r-cat",
     );
     expect(narrationClipForText("What rhymes with Pot?")?.id).toBe("voice.world.rhyme-k-pot");
+    expect(narrationClipForText("What rhymes with Bun on the bakery shelf?")?.id).toBe(
+      "voice.world.rhyme-k-bun",
+    );
+    expect(narrationClipForText("What rhymes with Mug by the kettle?")?.id).toBe(
+      "voice.world.rhyme-k-mug",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
