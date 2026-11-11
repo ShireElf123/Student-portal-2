@@ -1188,6 +1188,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-l-ten.mp3",
       "/audio/voice/world-rhyme-l-bee.mp3",
       "/audio/voice/world-rhyme-l-fox.mp3",
+      "/audio/voice/world-rhyme-l-map.mp3",
+      "/audio/voice/world-rhyme-l-book.mp3",
+      "/audio/voice/world-rhyme-l-six.mp3",
+      "/audio/voice/world-rhyme-l-shape.mp3",
+      "/audio/voice/world-rhyme-l-pen.mp3",
+      "/audio/voice/world-rhyme-l-read.mp3",
+      "/audio/voice/world-rhyme-l-count.mp3",
+      "/audio/voice/world-rhyme-l-spell.mp3",
+      "/audio/voice/world-rhyme-l-line.mp3",
+      "/audio/voice/world-rhyme-l-dot.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6065,6 +6075,12 @@ describe("audio registry", () => {
       "voice.world.rhyme-v-horn",
     );
     expect(narrationClipForText("What rhymes with Fox?")?.id).toBe("voice.world.rhyme-l-fox");
+    expect(narrationClipForText("What rhymes with Map in the counting grove?")?.id).toBe(
+      "voice.world.rhyme-l-map",
+    );
+    expect(narrationClipForText("What rhymes with Dot in the ten-frame?")?.id).toBe(
+      "voice.world.rhyme-l-dot",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
