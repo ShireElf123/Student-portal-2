@@ -1248,6 +1248,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-ar-wind.mp3",
       "/audio/voice/world-rhyme-ar-huddle.mp3",
       "/audio/voice/world-rhyme-ar-light.mp3",
+      "/audio/voice/world-rhyme-c-park.mp3",
+      "/audio/voice/world-rhyme-c-bell.mp3",
+      "/audio/voice/world-rhyme-c-tree.mp3",
+      "/audio/voice/world-rhyme-c-shop.mp3",
+      "/audio/voice/world-rhyme-c-bag.mp3",
+      "/audio/voice/world-rhyme-c-clock.mp3",
+      "/audio/voice/world-rhyme-c-street.mp3",
+      "/audio/voice/world-rhyme-c-lamp.mp3",
+      "/audio/voice/world-rhyme-c-bus.mp3",
+      "/audio/voice/world-rhyme-c-stop.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6154,6 +6164,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What rhymes with Light in the sky curtains?")?.id).toBe(
       "voice.world.rhyme-ar-light",
+    );
+    expect(narrationClipForText("What rhymes with Park in town?")?.id).toBe(
+      "voice.world.rhyme-c-park",
+    );
+    expect(narrationClipForText("What rhymes with Stop at the corner?")?.id).toBe(
+      "voice.world.rhyme-c-stop",
     );
   });
 
