@@ -1268,6 +1268,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-s-tale.mp3",
       "/audio/voice/world-rhyme-s-king.mp3",
       "/audio/voice/world-rhyme-s-hen.mp3",
+      "/audio/voice/world-rhyme-s-page.mp3",
+      "/audio/voice/world-rhyme-s-boat.mp3",
+      "/audio/voice/world-rhyme-s-crown.mp3",
+      "/audio/voice/world-rhyme-s-star.mp3",
+      "/audio/voice/world-rhyme-s-once.mp3",
+      "/audio/voice/world-rhyme-s-end.mp3",
+      "/audio/voice/world-rhyme-s-fox.mp3",
+      "/audio/voice/world-rhyme-s-moon.mp3",
+      "/audio/voice/world-rhyme-s-wave.mp3",
+      "/audio/voice/world-rhyme-s-knight.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6186,6 +6196,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What rhymes with Hen in the barnyard tale?")?.id).toBe(
       "voice.world.rhyme-s-hen",
+    );
+    expect(narrationClipForText("What rhymes with Page in the story book?")?.id).toBe(
+      "voice.world.rhyme-s-page",
+    );
+    expect(narrationClipForText("What rhymes with Knight in the story?")?.id).toBe(
+      "voice.world.rhyme-s-knight",
     );
   });
 
