@@ -1119,6 +1119,16 @@ describe("audio registry", () => {
       "/audio/voice/games-rhyme-r8.mp3",
       "/audio/voice/games-rhyme-r9.mp3",
       "/audio/voice/games-rhyme-r10.mp3",
+      "/audio/voice/games-rhyme-r11.mp3",
+      "/audio/voice/games-rhyme-r12.mp3",
+      "/audio/voice/games-rhyme-r13.mp3",
+      "/audio/voice/games-rhyme-r14.mp3",
+      "/audio/voice/games-rhyme-r15.mp3",
+      "/audio/voice/games-rhyme-r16.mp3",
+      "/audio/voice/games-rhyme-welcome.mp3",
+      "/audio/voice/games-memory-welcome.mp3",
+      "/audio/voice/games-memory-find.mp3",
+      "/audio/voice/games-bubble-welcome.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -5943,6 +5953,27 @@ describe("audio registry", () => {
         "Tiny quiet Mouse! Squeak squeak! Listen for the ouse sound! What rhymes with Mouse?",
       )?.id,
     ).toBe("voice.games.rhyme-r10");
+    expect(
+      narrationClipForText("Oink oink goes little Pig! Listen for the ig sound! What rhymes with Pig?")?.id,
+    ).toBe("voice.games.rhyme-r16");
+    expect(
+      narrationClipForText(
+        "Welcome to Rhyme Time! What rhymes with Cat? Listen for the at sound! Can you tap the word that rhymes with Cat?",
+      )?.id,
+    ).toBe("voice.games.rhyme-welcome");
+    expect(
+      narrationClipForText(
+        "Welcome to Memory Match! Can you find the matching friends? Tap two cards to turn them over!",
+      )?.id,
+    ).toBe("voice.games.memory-welcome");
+    expect(
+      narrationClipForText("Find the matching friends! Tap two cards to turn them over!")?.id,
+    ).toBe("voice.games.memory-find");
+    expect(
+      narrationClipForText(
+        "Welcome to Bubble Pop Phonics! Tap the floating bubbles to hear their letter sounds!",
+      )?.id,
+    ).toBe("voice.games.bubble-welcome");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
