@@ -1258,6 +1258,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-c-lamp.mp3",
       "/audio/voice/world-rhyme-c-bus.mp3",
       "/audio/voice/world-rhyme-c-stop.mp3",
+      "/audio/voice/world-rhyme-c-van.mp3",
+      "/audio/voice/world-rhyme-c-crowd.mp3",
+      "/audio/voice/world-rhyme-c-gate.mp3",
+      "/audio/voice/world-rhyme-c-bench.mp3",
+      "/audio/voice/world-rhyme-c-sign.mp3",
+      "/audio/voice/world-rhyme-c-square.mp3",
+      "/audio/voice/world-rhyme-s-book.mp3",
+      "/audio/voice/world-rhyme-s-tale.mp3",
+      "/audio/voice/world-rhyme-s-king.mp3",
+      "/audio/voice/world-rhyme-s-hen.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6170,6 +6180,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What rhymes with Stop at the corner?")?.id).toBe(
       "voice.world.rhyme-c-stop",
+    );
+    expect(narrationClipForText("What rhymes with Van at the market?")?.id).toBe(
+      "voice.world.rhyme-c-van",
+    );
+    expect(narrationClipForText("What rhymes with Hen in the barnyard tale?")?.id).toBe(
+      "voice.world.rhyme-s-hen",
     );
   });
 
