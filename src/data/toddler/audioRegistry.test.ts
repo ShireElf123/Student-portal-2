@@ -1099,6 +1099,16 @@ describe("audio registry", () => {
       "/audio/voice/book-home-kind-morning-2.mp3",
       "/audio/voice/book-home-kind-morning-3.mp3",
       "/audio/voice/book-home-kind-morning-4.mp3",
+      "/audio/voice/shared-yes-rhyme.mp3",
+      "/audio/voice/shared-match-friend.mp3",
+      "/audio/voice/shared-finished-game.mp3",
+      "/audio/voice/shared-yes.mp3",
+      "/audio/voice/shared-try-another.mp3",
+      "/audio/voice/shared-look-again.mp3",
+      "/audio/voice/shared-rhyme-hooray.mp3",
+      "/audio/voice/shared-memory-hooray.mp3",
+      "/audio/voice/shared-balloon-next.mp3",
+      "/audio/voice/shared-trace-done.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -4073,6 +4083,11 @@ describe("audio registry", () => {
         "Shoes on. Smile. The house waves. We can come home later.",
       )?.id,
     ).toBe("voice.book.home-kind-morning-4");
+    expect(narrationClipForText("Yes! Those two rhyme!")?.id).toBe("voice.shared.yes-rhyme");
+    expect(narrationClipForText("Match! You found a friend!")?.id).toBe("voice.shared.match-friend");
+    expect(narrationClipForText("You finished this game.")?.id).toBe("voice.shared.finished-game");
+    expect(narrationClipForText("Try another one.")?.id).toBe("voice.shared.try-another");
+    expect(narrationClipForText("Look again.")?.id).toBe("voice.shared.look-again");
   });
 
   it("maps savanna lion explore bio to the voice clip", () => {

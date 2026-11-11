@@ -6,6 +6,7 @@ import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { awardXP, awardStars, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import type { MemoryPair } from "../data/toddler/toddlerWorldPlayThemes";
+import { SHARED_VOICE } from "../data/toddler/sharedVoiceLines";
 
 interface CardItem {
   id: number;
@@ -140,7 +141,7 @@ export function ToddlerMemoryGame({
       if (firstCard.pairId === secondCard.pairId) {
         // MATCH!
         soundEffects.playSuccessChime();
-        speakText(`Match! You found the ${secondCard.name}!`, { pitch: 1.3, closedKit });
+        speakText(SHARED_VOICE.matchFriend, { pitch: 1.3, closedKit });
         awardXP(20);
         payStars(1);
 
@@ -160,7 +161,7 @@ export function ToddlerMemoryGame({
               setIsWon(true);
               soundEffects.playFanfare();
               triggerCelebrationConfetti();
-              speakText("Hooray! You matched all the friends! You are a superstar!", { pitch: 1.2, closedKit });
+              speakText(SHARED_VOICE.memoryHooray, { pitch: 1.2, closedKit });
               awardXP(50);
               const firstClear = !boardPaid.current;
               payStars(3);

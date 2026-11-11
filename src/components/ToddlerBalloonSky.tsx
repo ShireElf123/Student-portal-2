@@ -6,6 +6,7 @@ import { speakText } from "../utils/speechUtils";
 import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { getDailyCount, recordDailyCount } from "../data/toddler/toddlerDailyAdventure";
+import { SHARED_VOICE } from "../data/toddler/sharedVoiceLines";
 
 interface Balloon {
   id: number;
@@ -160,7 +161,7 @@ export function ToddlerBalloonSky({ onAddStar, onComplete, letters, closedKit = 
       const nextTarget = nextLetters[Math.floor(Math.random() * nextLetters.length)];
       setTargetLabel(nextTarget);
       spawnBalloon(nextTarget);
-      speakText(`Great job! Now can you pop ${nextTarget}?`, { pitch: 1.3, rate: 0.95, closedKit });
+      speakText(SHARED_VOICE.balloonNext, { pitch: 1.3, rate: 0.95, closedKit });
     }
 
     if (poppedRef.current > 0 && poppedRef.current % 10 === 0) {

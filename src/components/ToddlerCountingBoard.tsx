@@ -11,6 +11,7 @@ import {
   type CountingCard,
 } from "../data/toddler/countingBoard";
 import { speakText } from "../utils/speechUtils";
+import { SHARED_VOICE } from "../data/toddler/sharedVoiceLines";
 import { soundEffects } from "../utils/soundEffects";
 import { recordCountingCardTapped } from "../data/toddler/toddlerDailyAdventure";
 import { CharacterAnchor } from "./landscape/LandscapeDecorations";
@@ -231,7 +232,7 @@ export function ToddlerCountingBoard({
                   className="min-h-36 rounded-3xl border-4 border-indigo-300 bg-indigo-50 p-4 text-3xl"
                   onClick={() => {
                     if (moreAnswer !== side) {
-                      speakText("Look again.", { pitch: 1.1 });
+                      speakText(SHARED_VOICE.lookAgain, { pitch: 1.1 });
                       return;
                     }
                     onAddStar?.();
@@ -315,7 +316,7 @@ export function ToddlerCountingBoard({
                 className="min-h-16 min-w-16 rounded-3xl bg-indigo-100 text-2xl font-black text-indigo-950 border-b-4 border-indigo-500"
                 onClick={() => {
                   if (n !== peek.n) {
-                    speakText("Look again.", { pitch: 1.1 });
+                    speakText(SHARED_VOICE.lookAgain, { pitch: 1.1 });
                     setPeekHidden(false);
                     window.setTimeout(() => setPeekHidden(true), 1400);
                     return;
@@ -346,7 +347,7 @@ export function ToddlerCountingBoard({
                 className="min-h-16 rounded-full bg-indigo-100 px-6 py-3 text-xl font-black text-indigo-950 border-b-4 border-indigo-500"
                 onClick={() => {
                   if (option !== shape.name) {
-                    speakText("Try another shape.", { pitch: 1.1 });
+                    speakText(SHARED_VOICE.tryAnother, { pitch: 1.1 });
                     return;
                   }
                   onAddStar?.();
@@ -384,7 +385,7 @@ export function ToddlerCountingBoard({
                 className="min-h-16 min-w-20 rounded-full bg-indigo-100 px-6 py-3 text-4xl border-b-4 border-indigo-500"
                 onClick={() => {
                   if (option !== pattern.answer) {
-                    speakText("Try the other one.", { pitch: 1.1 });
+                    speakText(SHARED_VOICE.tryAnother, { pitch: 1.1 });
                     return;
                   }
                   onAddStar?.();
@@ -413,7 +414,7 @@ export function ToddlerCountingBoard({
                 className="min-h-16 min-w-20 rounded-full bg-indigo-100 px-6 py-3 text-3xl font-black text-indigo-950 border-b-4 border-indigo-500"
                 onClick={() => {
                   if (option !== after.answer) {
-                    speakText("Try another number.", { pitch: 1.1 });
+                    speakText(SHARED_VOICE.tryAnother, { pitch: 1.1 });
                     return;
                   }
                   onAddStar?.();

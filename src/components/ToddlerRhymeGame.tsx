@@ -6,6 +6,7 @@ import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { awardXP, awardStars, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
+import { SHARED_VOICE } from "../data/toddler/sharedVoiceLines";
 
 interface RhymeQuestion {
   id: string;
@@ -294,7 +295,7 @@ export function ToddlerRhymeGame({
     if (option.isCorrect) {
       setIsAnswered(true);
       soundEffects.playSuccessChime();
-      speakText(`Yes! ${current.targetWord} rhymes with ${option.word}! They sound like music!`, {
+      speakText(SHARED_VOICE.yesRhyme, {
         pitch: 1.3,
         closedKit,
       });
@@ -312,7 +313,7 @@ export function ToddlerRhymeGame({
           setIsCompleted(true);
           soundEffects.playFanfare();
           triggerCelebrationConfetti();
-          speakText("Hooray! You are a master rhymer! Fantastic job!", { pitch: 1.25, closedKit });
+          speakText(SHARED_VOICE.rhymeHooray, { pitch: 1.25, closedKit });
           awardXP(50);
           if (onAddStar) onAddStar(3);
           else awardStars(3);
@@ -326,7 +327,7 @@ export function ToddlerRhymeGame({
       }, 1500);
     } else {
       soundEffects.playGentleBoing();
-      speakText(`Oops! Try again! Listen: ${current.targetWord}... what sounds like ${current.targetWord}?`, {
+      speakText(SHARED_VOICE.tryAnother, {
         pitch: 1.2,
         closedKit,
       });

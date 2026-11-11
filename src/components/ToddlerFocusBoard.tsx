@@ -18,6 +18,7 @@ import {
 } from "../data/toddler/focusBoard";
 import { STEADY_TRACKS, type SteadyTrack } from "../data/toddler/focusSteady";
 import { speakText } from "../utils/speechUtils";
+import { SHARED_VOICE } from "../data/toddler/sharedVoiceLines";
 import { soundEffects } from "../utils/soundEffects";
 import { recordFocusRoundDone } from "../data/toddler/toddlerDailyAdventure";
 import { CharacterAnchor } from "./landscape/LandscapeDecorations";
@@ -496,7 +497,7 @@ export function ToddlerFocusBoard({
                     if (on) return;
                     if (!cell.hit) {
                       soundEffects.playBuzz();
-                      speakText("Not that one.", { pitch: 1.05, rate: 0.9 });
+                      speakText(SHARED_VOICE.tryAnother, { pitch: 1.05, rate: 0.9 });
                       return;
                     }
                     const next = [...lookHits, index];

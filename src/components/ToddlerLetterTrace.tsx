@@ -6,6 +6,7 @@ import { triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import type { BubbleWord } from "../data/toddler/toddlerWorldPlayThemes";
 import { strokesForLetter, type TracePoint } from "../data/toddler/toddlerLetterStrokes";
+import { SHARED_VOICE } from "../data/toddler/sharedVoiceLines";
 
 const FALLBACK: BubbleWord[] = [
   { letter: "A", word: "Apple", emoji: "🍎", sound: "A says /æ/! Apple!" },
@@ -374,7 +375,7 @@ export function ToddlerLetterTrace({
       triggerCelebrationConfetti();
       soundEffects.playFanfare();
       onAddStar?.();
-      speakText("Beautiful letters! You traced them all!", { pitch: 1.2, closedKit });
+      speakText(SHARED_VOICE.traceDone, { pitch: 1.2, closedKit });
     } else {
       setStars((value) => value + 1);
       window.setTimeout(() => setIndex((value) => value + 1), 900);

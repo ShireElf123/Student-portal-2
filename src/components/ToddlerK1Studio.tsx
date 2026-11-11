@@ -4,6 +4,7 @@ import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { soundEffects } from "../utils/soundEffects";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { getK1StudioGame, type K1StudioGameId, type K1StudioChoice } from "../data/toddler/k1StudioGames";
+import { SHARED_VOICE } from "../data/toddler/sharedVoiceLines";
 
 interface ToddlerK1StudioProps {
   gameId: K1StudioGameId;
@@ -93,7 +94,7 @@ export function ToddlerK1Studio({ gameId, onAddStar, onComplete, closedKit = fal
     if (!choice.correct) {
       soundEffects.playPop();
       setShakeId(choice.id);
-      speakText("Try another one.", { pitch: 1.1, closedKit });
+      speakText(SHARED_VOICE.tryAnother, { pitch: 1.1, closedKit });
       window.setTimeout(() => setShakeId(null), 450);
       return;
     }
@@ -102,14 +103,14 @@ export function ToddlerK1Studio({ gameId, onAddStar, onComplete, closedKit = fal
     soundEffects.playSuccessChime();
     const nextCorrect = correctCount + 1;
     setCorrectCount(nextCorrect);
-    speakText("Yes!", { pitch: 1.28, closedKit });
+    speakText(SHARED_VOICE.yes, { pitch: 1.28, closedKit });
 
     window.setTimeout(() => {
       const nextIndex = roundIndex + 1;
       if (nextIndex >= game.rounds.length) {
         setDone(true);
         soundEffects.playFanfare();
-        speakText(`You finished ${game.title}.`, { pitch: 1.2, closedKit });
+        speakText(SHARED_VOICE.finishedGame, { pitch: 1.2, closedKit });
         onAddStar?.(1);
         onComplete?.();
         return;

@@ -12,6 +12,7 @@ import {
   type WordFamily,
 } from "../data/toddler/phonicsBoard";
 import { speakText } from "../utils/speechUtils";
+import { SHARED_VOICE } from "../data/toddler/sharedVoiceLines";
 import { soundEffects } from "../utils/soundEffects";
 import { recordPhonicsLetterTapped } from "../data/toddler/toddlerDailyAdventure";
 import { ToddlerLetterTrace } from "./ToddlerLetterTrace";
@@ -204,7 +205,7 @@ export function ToddlerPhonicsBoard({
                 className="min-h-20 min-w-20 rounded-3xl bg-pink-100 text-4xl font-black text-pink-950 border-b-4 border-pink-500"
                 onClick={() => {
                   if (letter !== hunt.letter) {
-                    speakText("Try another.", { pitch: 1.1 });
+                    speakText(SHARED_VOICE.tryAnother, { pitch: 1.1 });
                     return;
                   }
                   soundEffects.playPop();
@@ -323,7 +324,7 @@ export function ToddlerPhonicsBoard({
                 className="min-h-16 min-w-16 rounded-full bg-pink-100 px-6 py-3 text-3xl font-black text-pink-950 border-b-4 border-pink-500"
                 onClick={() => {
                   if (option !== order.answer) {
-                    speakText("Try another letter.", { pitch: 1.1 });
+                    speakText(SHARED_VOICE.tryAnother, { pitch: 1.1 });
                     return;
                   }
                   onAddStar?.();
