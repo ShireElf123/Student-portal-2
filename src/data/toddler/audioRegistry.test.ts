@@ -1288,6 +1288,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-m-brush.mp3",
       "/audio/voice/world-rhyme-m-door.mp3",
       "/audio/voice/world-rhyme-m-hand.mp3",
+      "/audio/voice/world-rhyme-m-wash.mp3",
+      "/audio/voice/world-rhyme-m-tooth.mp3",
+      "/audio/voice/world-rhyme-m-kind.mp3",
+      "/audio/voice/world-rhyme-m-share.mp3",
+      "/audio/voice/world-rhyme-m-rest.mp3",
+      "/audio/voice/world-rhyme-m-name.mp3",
+      "/audio/voice/world-rhyme-m-play.mp3",
+      "/audio/voice/world-rhyme-ad-map.mp3",
+      "/audio/voice/world-rhyme-ad-rain.mp3",
+      "/audio/voice/world-rhyme-ad-tree.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6218,6 +6228,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What rhymes with Hand for a hug?")?.id).toBe(
       "voice.world.rhyme-m-hand",
+    );
+    expect(narrationClipForText("What rhymes with Wash at the sink?")?.id).toBe(
+      "voice.world.rhyme-m-wash",
+    );
+    expect(narrationClipForText("What rhymes with Tree in the forest?")?.id).toBe(
+      "voice.world.rhyme-ad-tree",
     );
   });
 
