@@ -1149,6 +1149,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-k-bean.mp3",
       "/audio/voice/world-rhyme-k-pear.mp3",
       "/audio/voice/world-rhyme-k-mug.mp3",
+      "/audio/voice/world-rhyme-k-toast.mp3",
+      "/audio/voice/world-rhyme-k-spoon.mp3",
+      "/audio/voice/world-rhyme-k-grill.mp3",
+      "/audio/voice/world-rhyme-k-dough.mp3",
+      "/audio/voice/world-rhyme-n-star.mp3",
+      "/audio/voice/world-rhyme-n-light.mp3",
+      "/audio/voice/world-rhyme-n-bed.mp3",
+      "/audio/voice/world-rhyme-n-moon.mp3",
+      "/audio/voice/world-rhyme-n-dark.mp3",
+      "/audio/voice/world-rhyme-n-dream.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6003,6 +6013,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What rhymes with Mug by the kettle?")?.id).toBe(
       "voice.world.rhyme-k-mug",
+    );
+    expect(narrationClipForText("What rhymes with Toast from the grill?")?.id).toBe(
+      "voice.world.rhyme-k-toast",
+    );
+    expect(narrationClipForText("What rhymes with Dream at bedtime?")?.id).toBe(
+      "voice.world.rhyme-n-dream",
     );
   });
 
