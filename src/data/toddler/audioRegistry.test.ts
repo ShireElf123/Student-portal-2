@@ -1129,6 +1129,16 @@ describe("audio registry", () => {
       "/audio/voice/games-memory-welcome.mp3",
       "/audio/voice/games-memory-find.mp3",
       "/audio/voice/games-bubble-welcome.mp3",
+      "/audio/voice/world-rhyme-r-cat.mp3",
+      "/audio/voice/world-rhyme-r-star.mp3",
+      "/audio/voice/world-rhyme-r-frog.mp3",
+      "/audio/voice/world-rhyme-r-bee.mp3",
+      "/audio/voice/world-rhyme-r-sun.mp3",
+      "/audio/voice/world-rhyme-r-fox.mp3",
+      "/audio/voice/world-rhyme-r-cake.mp3",
+      "/audio/voice/world-rhyme-r-bell.mp3",
+      "/audio/voice/world-rhyme-k-pan.mp3",
+      "/audio/voice/world-rhyme-k-pot.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -5974,6 +5984,10 @@ describe("audio registry", () => {
         "Welcome to Bubble Pop Phonics! Tap the floating bubbles to hear their letter sounds!",
       )?.id,
     ).toBe("voice.games.bubble-welcome");
+    expect(narrationClipForText("What rhymes with Cat? Listen for the at sound!")?.id).toBe(
+      "voice.world.rhyme-r-cat",
+    );
+    expect(narrationClipForText("What rhymes with Pot?")?.id).toBe("voice.world.rhyme-k-pot");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
