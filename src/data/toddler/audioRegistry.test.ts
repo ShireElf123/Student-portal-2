@@ -1238,6 +1238,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-i-whale.mp3",
       "/audio/voice/world-rhyme-i-fox.mp3",
       "/audio/voice/world-rhyme-i-cold.mp3",
+      "/audio/voice/world-rhyme-i-den.mp3",
+      "/audio/voice/world-rhyme-i-flake.mp3",
+      "/audio/voice/world-rhyme-ar-floe.mp3",
+      "/audio/voice/world-rhyme-ar-puff.mp3",
+      "/audio/voice/world-rhyme-ar-slide.mp3",
+      "/audio/voice/world-rhyme-ar-fur.mp3",
+      "/audio/voice/world-rhyme-ar-bay.mp3",
+      "/audio/voice/world-rhyme-ar-wind.mp3",
+      "/audio/voice/world-rhyme-ar-huddle.mp3",
+      "/audio/voice/world-rhyme-ar-light.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6138,6 +6148,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What rhymes with Cold on the floe?")?.id).toBe(
       "voice.world.rhyme-i-cold",
+    );
+    expect(narrationClipForText("What rhymes with Den where the snow bear naps?")?.id).toBe(
+      "voice.world.rhyme-i-den",
+    );
+    expect(narrationClipForText("What rhymes with Light in the sky curtains?")?.id).toBe(
+      "voice.world.rhyme-ar-light",
     );
   });
 
