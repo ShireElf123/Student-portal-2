@@ -1228,6 +1228,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-b-crawl.mp3",
       "/audio/voice/world-rhyme-b-dew.mp3",
       "/audio/voice/world-rhyme-b-pond.mp3",
+      "/audio/voice/world-rhyme-b-spot.mp3",
+      "/audio/voice/world-rhyme-b-buzz.mp3",
+      "/audio/voice/world-rhyme-b-leaf.mp3",
+      "/audio/voice/world-rhyme-b-hive.mp3",
+      "/audio/voice/world-rhyme-i-ice.mp3",
+      "/audio/voice/world-rhyme-i-seal.mp3",
+      "/audio/voice/world-rhyme-i-snow.mp3",
+      "/audio/voice/world-rhyme-i-whale.mp3",
+      "/audio/voice/world-rhyme-i-fox.mp3",
+      "/audio/voice/world-rhyme-i-cold.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6122,6 +6132,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("What rhymes with Ant?")?.id).toBe("voice.world.rhyme-b-ant");
     expect(narrationClipForText("What rhymes with Pond at the edge?")?.id).toBe(
       "voice.world.rhyme-b-pond",
+    );
+    expect(narrationClipForText("What rhymes with Spot on the ladybird?")?.id).toBe(
+      "voice.world.rhyme-b-spot",
+    );
+    expect(narrationClipForText("What rhymes with Cold on the floe?")?.id).toBe(
+      "voice.world.rhyme-i-cold",
     );
   });
 
