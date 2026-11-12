@@ -1514,6 +1514,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-5-plus-5.mp3",
       "/audio/voice/k1-4-plus-2.mp3",
       "/audio/voice/k1-7-minus-2.mp3",
+      "/audio/voice/k1-3-plus-6.mp3",
+      "/audio/voice/k1-2-plus-6.mp3",
+      "/audio/voice/k1-6-plus-4.mp3",
+      "/audio/voice/k1-9-minus-2.mp3",
+      "/audio/voice/k1-laundry-sock.mp3",
+      "/audio/voice/k1-laundry-teddy.mp3",
+      "/audio/voice/k1-laundry-shirt.mp3",
+      "/audio/voice/k1-laundry-pair-socks.mp3",
+      "/audio/voice/k1-laundry-block.mp3",
+      "/audio/voice/k1-laundry-hat.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6510,6 +6520,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("Seven pears. A fox takes two. How many left?")?.id).toBe(
       "voice.k1.7-minus-2",
     );
+    expect(narrationClipForText("Three peaches and six peaches. How many?")?.id).toBe(
+      "voice.k1.3-plus-6",
+    );
+    expect(narrationClipForText("A sun hat. Which basket?")?.id).toBe("voice.k1.laundry-hat");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
