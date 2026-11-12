@@ -1464,6 +1464,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-taxi-18.mp3",
       "/audio/voice/k1-taxi-9.mp3",
       "/audio/voice/k1-taxi-13.mp3",
+      "/audio/voice/k1-taxi-12.mp3",
+      "/audio/voice/k1-taxi-17.mp3",
+      "/audio/voice/k1-taxi-19.mp3",
+      "/audio/voice/k1-taxi-8.mp3",
+      "/audio/voice/k1-taxi-6.mp3",
+      "/audio/voice/k1-taxi-22.mp3",
+      "/audio/voice/k1-st-strawberry.mp3",
+      "/audio/voice/k1-br-bread.mp3",
+      "/audio/voice/k1-gr-grapes.mp3",
+      "/audio/voice/k1-cl-cloves.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6444,6 +6454,8 @@ describe("audio registry", () => {
       narrationClipForText("Fourteen friends get in the taxi. One row of ten is full. How many leftover riders?")?.id,
     ).toBe("voice.k1.taxi-14");
     expect(narrationClipForText("Thirteen friends. How many leftover after one ten?")?.id).toBe("voice.k1.taxi-13");
+    expect(narrationClipForText("Twelve friends. One row of ten is full. How many leftover?")?.id).toBe("voice.k1.taxi-12");
+    expect(narrationClipForText("C and L. Cl. What starts with cl?")?.id).toBe("voice.k1.cl-cloves");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
