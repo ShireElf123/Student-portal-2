@@ -1504,6 +1504,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-abb-sheep.mp3",
       "/audio/voice/k1-3-plus-2.mp3",
       "/audio/voice/k1-4-plus-4.mp3",
+      "/audio/voice/k1-6-minus-2.mp3",
+      "/audio/voice/k1-5-minus-5.mp3",
+      "/audio/voice/k1-1-plus-6.mp3",
+      "/audio/voice/k1-2-plus-3.mp3",
+      "/audio/voice/k1-9-minus-1.mp3",
+      "/audio/voice/k1-3-plus-3.mp3",
+      "/audio/voice/k1-8-minus-3.mp3",
+      "/audio/voice/k1-5-plus-5.mp3",
+      "/audio/voice/k1-4-plus-2.mp3",
+      "/audio/voice/k1-7-minus-2.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6494,6 +6504,12 @@ describe("audio registry", () => {
       narrationClipForText("Egg, caterpillar, butterfly, egg, caterpillar. What comes next?")?.id,
     ).toBe("voice.k1.grow-bug");
     expect(narrationClipForText("Four pretzels and four pretzels. How many?")?.id).toBe("voice.k1.4-plus-4");
+    expect(
+      narrationClipForText("Six grapes. A bird takes two. How many left?")?.id,
+    ).toBe("voice.k1.6-minus-2");
+    expect(narrationClipForText("Seven pears. A fox takes two. How many left?")?.id).toBe(
+      "voice.k1.7-minus-2",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
