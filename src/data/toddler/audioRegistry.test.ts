@@ -1368,6 +1368,16 @@ describe("audio registry", () => {
       "/audio/voice/bubble-begins-y-yawn.mp3",
       "/audio/voice/bubble-begins-c-cow.mp3",
       "/audio/voice/bubble-begins-p-pig.mp3",
+      "/audio/voice/bubble-begins-h-horse.mp3",
+      "/audio/voice/bubble-begins-d-duck.mp3",
+      "/audio/voice/bubble-begins-l-lion.mp3",
+      "/audio/voice/bubble-begins-m-monkey.mp3",
+      "/audio/voice/bubble-begins-s-sheep.mp3",
+      "/audio/voice/bubble-begins-f-frog.mp3",
+      "/audio/voice/bubble-begins-g-goat.mp3",
+      "/audio/voice/bubble-begins-w-wool.mp3",
+      "/audio/voice/bubble-begins-b-barn.mp3",
+      "/audio/voice/bubble-begins-r-rooster.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6326,6 +6336,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("S begins Star.")?.id).toBe("voice.bubble.begins-s-star");
     expect(narrationClipForText("L begins Lamp.")?.id).toBe("voice.bubble.begins-l-lamp");
     expect(narrationClipForText("P begins Pig.")?.id).toBe("voice.bubble.begins-p-pig");
+    expect(narrationClipForText("H begins Horse.")?.id).toBe("voice.bubble.begins-h-horse");
+    expect(narrationClipForText("R begins Rooster.")?.id).toBe("voice.bubble.begins-r-rooster");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
