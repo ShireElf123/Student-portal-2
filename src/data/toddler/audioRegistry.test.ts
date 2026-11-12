@@ -1308,6 +1308,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-ad-star.mp3",
       "/audio/voice/world-rhyme-ad-moon.mp3",
       "/audio/voice/world-rhyme-ad-quest.mp3",
+      "/audio/voice/world-rhyme-ad-storm.mp3",
+      "/audio/voice/world-rhyme-ad-rope.mp3",
+      "/audio/voice/world-rhyme-ad-flag.mp3",
+      "/audio/voice/bubble-begins-a-apple.mp3",
+      "/audio/voice/bubble-begins-b-bear.mp3",
+      "/audio/voice/bubble-begins-c-cat.mp3",
+      "/audio/voice/bubble-begins-d-dolphin.mp3",
+      "/audio/voice/bubble-begins-m-moon.mp3",
+      "/audio/voice/bubble-begins-s-sun.mp3",
+      "/audio/voice/bubble-begins-t-tiger.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6251,6 +6261,11 @@ describe("audio registry", () => {
     expect(narrationClipForText("What rhymes with Quest for treasure?")?.id).toBe(
       "voice.world.rhyme-ad-quest",
     );
+    expect(narrationClipForText("What rhymes with Flag on the peak?")?.id).toBe(
+      "voice.world.rhyme-ad-flag",
+    );
+    expect(narrationClipForText("A begins Apple.")?.id).toBe("voice.bubble.begins-a-apple");
+    expect(narrationClipForText("T begins Tiger.")?.id).toBe("voice.bubble.begins-t-tiger");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
