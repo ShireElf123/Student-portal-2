@@ -1484,6 +1484,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-pr-pretzel.mp3",
       "/audio/voice/k1-sw-sweet.mp3",
       "/audio/voice/k1-gl-glaze.mp3",
+      "/audio/voice/k1-sn-snap.mp3",
+      "/audio/voice/k1-sk-skewer.mp3",
+      "/audio/voice/k1-abab-red-blue.mp3",
+      "/audio/voice/k1-aab-sun.mp3",
+      "/audio/voice/k1-abc-fruit.mp3",
+      "/audio/voice/k1-grow-size.mp3",
+      "/audio/voice/k1-clap-stomp.mp3",
+      "/audio/voice/k1-abab-green-yellow.mp3",
+      "/audio/voice/k1-abb-car.mp3",
+      "/audio/voice/k1-abc-weather.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6468,6 +6478,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("C and L. Cl. What starts with cl?")?.id).toBe("voice.k1.cl-cloves");
     expect(narrationClipForText("T and R. Tr. What starts with tr?")?.id).toBe("voice.k1.tr-tray");
     expect(narrationClipForText("G and L. Gl. What starts with gl?")?.id).toBe("voice.k1.gl-glaze");
+    expect(narrationClipForText("S and N. Sn. What starts with sn?")?.id).toBe("voice.k1.sn-snap");
+    expect(narrationClipForText("Sun, rain, snow, sun, rain. What comes next?")?.id).toBe("voice.k1.abc-weather");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
