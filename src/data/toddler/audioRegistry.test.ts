@@ -1474,6 +1474,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-br-bread.mp3",
       "/audio/voice/k1-gr-grapes.mp3",
       "/audio/voice/k1-cl-cloves.mp3",
+      "/audio/voice/k1-tr-tray.mp3",
+      "/audio/voice/k1-fl-flour.mp3",
+      "/audio/voice/k1-cr-cream.mp3",
+      "/audio/voice/k1-sm-smoothie.mp3",
+      "/audio/voice/k1-pl-plum.mp3",
+      "/audio/voice/k1-dr-drink.mp3",
+      "/audio/voice/k1-sl-slice.mp3",
+      "/audio/voice/k1-pr-pretzel.mp3",
+      "/audio/voice/k1-sw-sweet.mp3",
+      "/audio/voice/k1-gl-glaze.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6456,6 +6466,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("Thirteen friends. How many leftover after one ten?")?.id).toBe("voice.k1.taxi-13");
     expect(narrationClipForText("Twelve friends. One row of ten is full. How many leftover?")?.id).toBe("voice.k1.taxi-12");
     expect(narrationClipForText("C and L. Cl. What starts with cl?")?.id).toBe("voice.k1.cl-cloves");
+    expect(narrationClipForText("T and R. Tr. What starts with tr?")?.id).toBe("voice.k1.tr-tray");
+    expect(narrationClipForText("G and L. Gl. What starts with gl?")?.id).toBe("voice.k1.gl-glaze");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
