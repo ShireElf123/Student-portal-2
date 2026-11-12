@@ -1448,6 +1448,12 @@ describe("audio registry", () => {
       "/audio/voice/bubble-begins-c-count.mp3",
       "/audio/voice/bubble-begins-d-dot.mp3",
       "/audio/voice/bubble-begins-s-shape.mp3",
+      "/audio/voice/bubble-begins-t-trace.mp3",
+      "/audio/voice/bubble-begins-p-pen.mp3",
+      "/audio/voice/bubble-begins-n-nine.mp3",
+      "/audio/voice/bubble-begins-6-six.mp3",
+      "/audio/voice/bubble-begins-8-eight.mp3",
+      "/audio/voice/bubble-begins-10-ten.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6422,6 +6428,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("G begins Gem.")?.id).toBe("voice.bubble.begins-g-gem");
     expect(narrationClipForText("C begins Cave.")?.id).toBe("voice.bubble.begins-c-cave");
     expect(narrationClipForText("S begins Shape.")?.id).toBe("voice.bubble.begins-s-shape");
+    expect(narrationClipForText("T begins Trace.")?.id).toBe("voice.bubble.begins-t-trace");
+    expect(narrationClipForText("10 begins Ten.")?.id).toBe("voice.bubble.begins-10-ten");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
