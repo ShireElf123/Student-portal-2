@@ -1298,6 +1298,16 @@ describe("audio registry", () => {
       "/audio/voice/world-rhyme-ad-map.mp3",
       "/audio/voice/world-rhyme-ad-rain.mp3",
       "/audio/voice/world-rhyme-ad-tree.mp3",
+      "/audio/voice/world-rhyme-ad-cave.mp3",
+      "/audio/voice/world-rhyme-ad-boot.mp3",
+      "/audio/voice/world-rhyme-ad-gem.mp3",
+      "/audio/voice/world-rhyme-ad-path.mp3",
+      "/audio/voice/world-rhyme-ad-rock.mp3",
+      "/audio/voice/world-rhyme-ad-hill.mp3",
+      "/audio/voice/world-rhyme-ad-pack.mp3",
+      "/audio/voice/world-rhyme-ad-star.mp3",
+      "/audio/voice/world-rhyme-ad-moon.mp3",
+      "/audio/voice/world-rhyme-ad-quest.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6234,6 +6244,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("What rhymes with Tree in the forest?")?.id).toBe(
       "voice.world.rhyme-ad-tree",
+    );
+    expect(narrationClipForText("What rhymes with Cave?")?.id).toBe(
+      "voice.world.rhyme-ad-cave",
+    );
+    expect(narrationClipForText("What rhymes with Quest for treasure?")?.id).toBe(
+      "voice.world.rhyme-ad-quest",
     );
   });
 
