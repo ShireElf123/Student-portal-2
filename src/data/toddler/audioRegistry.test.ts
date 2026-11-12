@@ -1454,6 +1454,16 @@ describe("audio registry", () => {
       "/audio/voice/bubble-begins-6-six.mp3",
       "/audio/voice/bubble-begins-8-eight.mp3",
       "/audio/voice/bubble-begins-10-ten.mp3",
+      "/audio/voice/k1-taxi-14.mp3",
+      "/audio/voice/k1-taxi-10.mp3",
+      "/audio/voice/k1-taxi-7.mp3",
+      "/audio/voice/k1-taxi-15.mp3",
+      "/audio/voice/k1-taxi-20.mp3",
+      "/audio/voice/k1-taxi-11.mp3",
+      "/audio/voice/k1-taxi-16.mp3",
+      "/audio/voice/k1-taxi-18.mp3",
+      "/audio/voice/k1-taxi-9.mp3",
+      "/audio/voice/k1-taxi-13.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6430,6 +6440,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("S begins Shape.")?.id).toBe("voice.bubble.begins-s-shape");
     expect(narrationClipForText("T begins Trace.")?.id).toBe("voice.bubble.begins-t-trace");
     expect(narrationClipForText("10 begins Ten.")?.id).toBe("voice.bubble.begins-10-ten");
+    expect(
+      narrationClipForText("Fourteen friends get in the taxi. One row of ten is full. How many leftover riders?")?.id,
+    ).toBe("voice.k1.taxi-14");
+    expect(narrationClipForText("Thirteen friends. How many leftover after one ten?")?.id).toBe("voice.k1.taxi-13");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
