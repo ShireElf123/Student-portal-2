@@ -1524,6 +1524,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-laundry-pair-socks.mp3",
       "/audio/voice/k1-laundry-block.mp3",
       "/audio/voice/k1-laundry-hat.mp3",
+      "/audio/voice/k1-laundry-pants.mp3",
+      "/audio/voice/k1-laundry-crayon.mp3",
+      "/audio/voice/k1-laundry-towel.mp3",
+      "/audio/voice/k1-laundry-gloves.mp3",
+      "/audio/voice/k1-laundry-scarf.mp3",
+      "/audio/voice/k1-laundry-shorts.mp3",
+      "/audio/voice/k1-laundry-puzzle.mp3",
+      "/audio/voice/k1-laundry-pillow.mp3",
+      "/audio/voice/k1-laundry-boot.mp3",
+      "/audio/voice/k1-laundry-band.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6524,6 +6534,10 @@ describe("audio registry", () => {
       "voice.k1.3-plus-6",
     );
     expect(narrationClipForText("A sun hat. Which basket?")?.id).toBe("voice.k1.laundry-hat");
+    expect(narrationClipForText("Blue pants. Which basket?")?.id).toBe("voice.k1.laundry-pants");
+    expect(narrationClipForText("A hairband in the dryer. Keep with clothes?")?.id).toBe(
+      "voice.k1.laundry-band",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
