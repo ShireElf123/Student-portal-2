@@ -3950,6 +3950,16 @@ describe("audio registry", () => {
       "/audio/voice/toy-clue-act-sea-tale-bubbles.mp3",
       "/audio/voice/toy-clue-act-shapes-sky-balloons.mp3",
       "/audio/voice/toy-clue-act-feelings-face-memory.mp3",
+      "/audio/voice/toy-clue-act-habits-brush-piano.mp3",
+      "/audio/voice/toy-clue-act-home-rhyme-hug.mp3",
+      "/audio/voice/toy-clue-act-street-sky-balloons.mp3",
+      "/audio/voice/toy-clue-act-street-letter-trace.mp3",
+      "/audio/voice/toy-clue-act-runway-sky-balloons.mp3",
+      "/audio/voice/toy-clue-act-harbour-letter-bubbles.mp3",
+      "/audio/voice/toy-clue-act-land-load-truck.mp3",
+      "/audio/voice/toy-clue-act-land-stamp-mural.mp3",
+      "/audio/voice/toy-clue-act-land-story-stones.mp3",
+      "/audio/voice/toy-clue-act-land-number-pebbles.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7012,6 +7022,12 @@ describe("audio registry", () => {
     ).toBe("voice.toy.clue-act-dino-memory-bones");
     expect(narrationClipForText("Flip two faces. Find the matching feeling.")?.id).toBe(
       "voice.toy.clue-act-feelings-face-memory",
+    );
+    expect(narrationClipForText("Tap the keys. Make a brush-time song.")?.id).toBe(
+      "voice.toy.clue-act-habits-brush-piano",
+    );
+    expect(narrationClipForText("Tap the pebbles from 1 to 5.")?.id).toBe(
+      "voice.toy.clue-act-land-number-pebbles",
     );
   });
 
