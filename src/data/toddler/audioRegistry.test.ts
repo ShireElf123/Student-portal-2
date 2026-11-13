@@ -3940,6 +3940,16 @@ describe("audio registry", () => {
       "/audio/voice/toy-clue-act-meadow-letter-trace.mp3",
       "/audio/voice/toy-clue-act-grove-ten-frame.mp3",
       "/audio/voice/toy-clue-act-bed-bug-safari.mp3",
+      "/audio/voice/toy-clue-act-dino-memory-bones.mp3",
+      "/audio/voice/toy-clue-act-studio-sky-balloons.mp3",
+      "/audio/voice/toy-clue-act-garden-rhyme-duet.mp3",
+      "/audio/voice/toy-clue-act-workshop-memory-beads.mp3",
+      "/audio/voice/toy-clue-act-atelier-sticker-match.mp3",
+      "/audio/voice/toy-clue-act-barn-tale-safari.mp3",
+      "/audio/voice/toy-clue-act-starlight-sky-balloons.mp3",
+      "/audio/voice/toy-clue-act-sea-tale-bubbles.mp3",
+      "/audio/voice/toy-clue-act-shapes-sky-balloons.mp3",
+      "/audio/voice/toy-clue-act-feelings-face-memory.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -6996,6 +7006,12 @@ describe("audio registry", () => {
     ).toBe("voice.atlas.clue-act-road-shape-sign");
     expect(narrationClipForText("Who is visiting the flower bed?")?.id).toBe(
       "voice.toy.clue-act-bed-bug-safari",
+    );
+    expect(
+      narrationClipForText("Flip two bones. Find the matching fossil friends.")?.id,
+    ).toBe("voice.toy.clue-act-dino-memory-bones");
+    expect(narrationClipForText("Flip two faces. Find the matching feeling.")?.id).toBe(
+      "voice.toy.clue-act-feelings-face-memory",
     );
   });
 
