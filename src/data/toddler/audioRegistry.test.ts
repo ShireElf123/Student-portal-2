@@ -1715,6 +1715,10 @@ describe("audio registry", () => {
       "/audio/voice/phonics-blend-map.mp3",
       "/audio/voice/phonics-next-def.mp3",
       "/audio/voice/phonics-next-hij.mp3",
+      "/audio/voice/phonics-next-pqr.mp3",
+      "/audio/voice/phonics-next-stu.mp3",
+      "/audio/voice/phonics-next-vwx.mp3",
+      "/audio/voice/phonics-next-wxy.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6784,6 +6788,9 @@ describe("audio registry", () => {
     expect(narrationClipForText("P. O. T. Pot.")?.id).toBe("voice.phonics.blend-pot");
     expect(narrationClipForText("H, I, J. What letter comes next?")?.id).toBe(
       "voice.phonics.next-hij",
+    );
+    expect(narrationClipForText("W, X, Y. What letter comes next?")?.id).toBe(
+      "voice.phonics.next-wxy",
     );
   });
 
