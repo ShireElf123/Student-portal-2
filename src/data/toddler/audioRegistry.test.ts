@@ -3860,6 +3860,16 @@ describe("audio registry", () => {
       "/audio/voice/safari-bio-sock.mp3",
       "/audio/voice/safari-bio-bedroom-mouse.mp3",
       "/audio/voice/sort-sky-street.mp3",
+      "/audio/voice/sort-land-ocean.mp3",
+      "/audio/voice/sort-fruit-tool.mp3",
+      "/audio/voice/sort-ice-warm.mp3",
+      "/audio/voice/sort-day-night.mp3",
+      "/audio/voice/sort-bug-flower.mp3",
+      "/audio/voice/sort-farm-jungle.mp3",
+      "/audio/voice/sort-park-market.mp3",
+      "/audio/voice/sort-paint-music.mp3",
+      "/audio/voice/sort-tale-barn.mp3",
+      "/audio/voice/sort-wash-rest.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -3988,6 +3998,11 @@ describe("audio registry", () => {
     expect(narrationClipForText("Does it fly in the sky, or roll on the street?")?.id).toBe(
       "voice.sort.sky-street",
     );
+    expect(
+      narrationClipForText(
+        "Let's sort our animal friends! Who lives on grassy land, and who swims in the sea?",
+      )?.id,
+    ).toBe("voice.sort.land-ocean");
     expect(narrationClipForText("Look! Count the Train Cars. How many do you see?")?.id).toBe(
       "voice.count.train-cars",
     );
@@ -6882,6 +6897,9 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Five points. Pause at each tip.")?.id).toBe(
       "voice.focus.steady-star-path",
+    );
+    expect(narrationClipForText("Do we wash with it, or rest with it?")?.id).toBe(
+      "voice.sort.wash-rest",
     );
   });
 
