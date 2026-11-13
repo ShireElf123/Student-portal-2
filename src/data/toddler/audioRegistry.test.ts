@@ -1719,6 +1719,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-next-stu.mp3",
       "/audio/voice/phonics-next-vwx.mp3",
       "/audio/voice/phonics-next-wxy.mp3",
+      "/audio/voice/focus-body-zoomies.mp3",
+      "/audio/voice/focus-body-wiggles.mp3",
+      "/audio/voice/focus-body-loud.mp3",
+      "/audio/voice/focus-body-floppy.mp3",
+      "/audio/voice/focus-body-ready.mp3",
+      "/audio/voice/focus-mv-stomp.mp3",
+      "/audio/voice/focus-mv-jump.mp3",
+      "/audio/voice/focus-mv-march.mp3",
+      "/audio/voice/focus-mv-clap.mp3",
+      "/audio/voice/focus-mv-shake.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6791,6 +6801,9 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("W, X, Y. What letter comes next?")?.id).toBe(
       "voice.phonics.next-wxy",
+    );
+    expect(narrationClipForText("Shake six times. Tap each shake.")?.id).toBe(
+      "voice.focus.mv-shake",
     );
   });
 
