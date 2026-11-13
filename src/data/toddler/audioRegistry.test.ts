@@ -1574,6 +1574,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-shape-donut-hole.mp3",
       "/audio/voice/k1-shape-pizza-slice.mp3",
       "/audio/voice/k1-shape-cracker.mp3",
+      "/audio/voice/k1-shape-roll-not.mp3",
+      "/audio/voice/k1-shape-tray.mp3",
+      "/audio/voice/k1-shape-cookie-heart.mp3",
+      "/audio/voice/k1-shape-hex-honey.mp3",
+      "/audio/voice/k1-bus-six-stop.mp3",
+      "/audio/voice/k1-bus-eight-queue.mp3",
+      "/audio/voice/k1-bus-one-more.mp3",
+      "/audio/voice/k1-bus-one-off.mp3",
+      "/audio/voice/k1-bus-two-full.mp3",
+      "/audio/voice/k1-bus-empty.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6601,6 +6611,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("A square cracker. How many corners?")?.id).toBe(
       "voice.k1.shape-cracker",
+    );
+    expect(narrationClipForText("A long baguette. Is it a perfect circle?")?.id).toBe(
+      "voice.k1.shape-roll-not",
+    );
+    expect(narrationClipForText("The night bus is empty. How many riders?")?.id).toBe(
+      "voice.k1.bus-empty",
     );
   });
 
