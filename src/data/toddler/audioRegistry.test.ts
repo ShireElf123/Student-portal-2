@@ -1534,6 +1534,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-laundry-pillow.mp3",
       "/audio/voice/k1-laundry-boot.mp3",
       "/audio/voice/k1-laundry-band.mp3",
+      "/audio/voice/k1-story-who-hid.mp3",
+      "/audio/voice/k1-story-where-apple.mp3",
+      "/audio/voice/k1-story-color-apple.mp3",
+      "/audio/voice/k1-story-rain-bucket.mp3",
+      "/audio/voice/k1-story-who-hummed.mp3",
+      "/audio/voice/k1-story-who-baked.mp3",
+      "/audio/voice/k1-story-what-baked.mp3",
+      "/audio/voice/k1-story-where-waited.mp3",
+      "/audio/voice/k1-story-frog-who.mp3",
+      "/audio/voice/k1-story-frog-where.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6537,6 +6547,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("Blue pants. Which basket?")?.id).toBe("voice.k1.laundry-pants");
     expect(narrationClipForText("A hairband in the dryer. Keep with clothes?")?.id).toBe(
       "voice.k1.laundry-band",
+    );
+    expect(
+      narrationClipForText("Listen. Pip hid a red apple under the blue hat. Who hid it?")?.id,
+    ).toBe("voice.k1.story-who-hid");
+    expect(narrationClipForText("A frog hopped onto the rail and sang. Where did it hop?")?.id).toBe(
+      "voice.k1.story-frog-where",
     );
   });
 
