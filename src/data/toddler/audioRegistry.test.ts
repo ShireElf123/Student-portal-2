@@ -3910,6 +3910,16 @@ describe("audio registry", () => {
       "/audio/voice/district-act-rain-memory-drops.mp3",
       "/audio/voice/district-act-rain-sky-balloons.mp3",
       "/audio/voice/district-act-rain-rhyme-boot.mp3",
+      "/audio/voice/district-clue-act-puppet-who-talks.mp3",
+      "/audio/voice/district-clue-act-puppet-count-crowd.mp3",
+      "/audio/voice/district-clue-act-puppet-sort-stage.mp3",
+      "/audio/voice/district-clue-act-puppet-letter-p.mp3",
+      "/audio/voice/district-clue-act-puppet-memory-cast.mp3",
+      "/audio/voice/district-clue-act-puppet-sky-balloons.mp3",
+      "/audio/voice/district-clue-act-puppet-rhyme-bow.mp3",
+      "/audio/voice/district-clue-act-stream-who-mmm.mp3",
+      "/audio/voice/district-clue-act-stream-count-fish.mp3",
+      "/audio/voice/district-clue-act-stream-sort-sound.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -6954,6 +6964,9 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Which word rhymes with boot?")?.id).toBe(
       "voice.district.act-rain-rhyme-boot",
+    );
+    expect(narrationClipForText("Letter sounds here. Water sounds there.")?.id).toBe(
+      "voice.district.clue-act-stream-sort-sound",
     );
   });
 
