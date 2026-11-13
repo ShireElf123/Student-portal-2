@@ -3980,6 +3980,16 @@ describe("audio registry", () => {
       "/audio/voice/toy-clue-act-home-comb.mp3",
       "/audio/voice/toy-clue-act-street-drive.mp3",
       "/audio/voice/toy-clue-act-road-bus-stop.mp3",
+      "/audio/voice/toy-clue-act-dino-track-who.mp3",
+      "/audio/voice/toy-clue-act-dock-scoop.mp3",
+      "/audio/voice/toy-clue-act-sea-rhyme-tide.mp3",
+      "/audio/voice/arch-clue-act-farm-sound-cow.mp3",
+      "/audio/voice/arch-clue-act-farm-kitten-mom.mp3",
+      "/audio/voice/arch-clue-act-farm-count-chicks.mp3",
+      "/audio/voice/arch-clue-act-farm-horse-snack.mp3",
+      "/audio/voice/arch-clue-act-jungle-sound-monkey.mp3",
+      "/audio/voice/arch-clue-act-jungle-tracks-lion.mp3",
+      "/audio/voice/arch-clue-act-jungle-habitat-parrot.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7061,6 +7071,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("Count who climbs on at the stop.")?.id).toBe(
       "voice.toy.clue-act-road-bus-stop",
     );
+    expect(narrationClipForText("Who walked here?")?.id).toBe(
+      "voice.toy.clue-act-dino-track-who",
+    );
+    expect(
+      narrationClipForText(
+        "The rainbow parrot has colorful feathers and wings. Where is its natural home?",
+      )?.id,
+    ).toBe("voice.arch.clue-act-jungle-habitat-parrot");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
