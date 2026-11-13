@@ -1614,6 +1614,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-ice-penguin.mp3",
       "/audio/voice/k1-ice-thin-ice.mp3",
       "/audio/voice/k1-ice-home.mp3",
+      "/audio/voice/k1-bug-wings.mp3",
+      "/audio/voice/k1-bug-crawl.mp3",
+      "/audio/voice/k1-bug-pond.mp3",
+      "/audio/voice/k1-bug-ant.mp3",
+      "/audio/voice/k1-bug-moth-night.mp3",
+      "/audio/voice/k1-bug-not-leaf.mp3",
+      "/audio/voice/k1-bug-wings-count.mp3",
+      "/audio/voice/k1-bug-snail.mp3",
+      "/audio/voice/k1-bug-lady.mp3",
+      "/audio/voice/k1-bug-spider.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6661,6 +6671,7 @@ describe("audio registry", () => {
     expect(narrationClipForText("The hut stove glows. What does Pip do?")?.id).toBe(
       "voice.k1.ice-home",
     );
+    expect(narrationClipForText("A dew web at dawn. Who built it?")?.id).toBe("voice.k1.bug-spider");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
