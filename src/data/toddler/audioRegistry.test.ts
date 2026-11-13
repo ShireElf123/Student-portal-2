@@ -1656,6 +1656,15 @@ describe("audio registry", () => {
       "/audio/voice/count-next-six.mp3",
       "/audio/voice/count-next-ten.mp3",
       "/audio/voice/count-next-fourteen.mp3",
+      "/audio/voice/count-next-nineteen.mp3",
+      "/audio/voice/count-sh-sun.mp3",
+      "/audio/voice/count-sh-mat.mp3",
+      "/audio/voice/count-sh-sail.mp3",
+      "/audio/voice/count-sh-door.mp3",
+      "/audio/voice/count-sh-coin.mp3",
+      "/audio/voice/count-sh-window.mp3",
+      "/audio/voice/count-sh-knob.mp3",
+      "/audio/voice/count-sh-roof.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6716,6 +6725,7 @@ describe("audio registry", () => {
     expect(narrationClipForText("Fourteen. What number comes next?")?.id).toBe(
       "voice.count.next-fourteen",
     );
+    expect(narrationClipForText("The little roof. What shape?")?.id).toBe("voice.count.sh-roof");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
