@@ -3870,6 +3870,16 @@ describe("audio registry", () => {
       "/audio/voice/sort-paint-music.mp3",
       "/audio/voice/sort-tale-barn.mp3",
       "/audio/voice/sort-wash-rest.mp3",
+      "/audio/voice/sort-forest-treasure.mp3",
+      "/audio/voice/sort-letter-number.mp3",
+      "/audio/voice/activity-mw-food-1.mp3",
+      "/audio/voice/activity-mw-family-1.mp3",
+      "/audio/voice/activity-mw-routines-1.mp3",
+      "/audio/voice/activity-aw-habitat-1.mp3",
+      "/audio/voice/activity-aw-babies-1.mp3",
+      "/audio/voice/activity-aw-sounds-1.mp3",
+      "/audio/voice/activity-aw-footprints-1.mp3",
+      "/audio/voice/activity-adv-space-1.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -6901,6 +6911,11 @@ describe("audio registry", () => {
     expect(narrationClipForText("Do we wash with it, or rest with it?")?.id).toBe(
       "voice.sort.wash-rest",
     );
+    expect(
+      narrationClipForText(
+        "Which giant glowing ball of warmth in space shines down on us as the sun?",
+      )?.id,
+    ).toBe("voice.activity.adv-space-1");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
