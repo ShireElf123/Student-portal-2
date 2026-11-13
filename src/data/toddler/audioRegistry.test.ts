@@ -1544,6 +1544,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-story-where-waited.mp3",
       "/audio/voice/k1-story-frog-who.mp3",
       "/audio/voice/k1-story-frog-where.mp3",
+      "/audio/voice/k1-story-who-fox.mp3",
+      "/audio/voice/k1-story-what-stole.mp3",
+      "/audio/voice/k1-story-where-ran.mp3",
+      "/audio/voice/k1-story-who-woke.mp3",
+      "/audio/voice/k1-story-when-woke.mp3",
+      "/audio/voice/k1-story-what-heard.mp3",
+      "/audio/voice/k1-sock-match-red.mp3",
+      "/audio/voice/k1-sock-odd-spot.mp3",
+      "/audio/voice/k1-sock-tiny-big.mp3",
+      "/audio/voice/k1-sock-two-left.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6553,6 +6563,12 @@ describe("audio registry", () => {
     ).toBe("voice.k1.story-who-hid");
     expect(narrationClipForText("A frog hopped onto the rail and sang. Where did it hop?")?.id).toBe(
       "voice.k1.story-frog-where",
+    );
+    expect(
+      narrationClipForText("A fox stole a bun from the step and ran. Who stole it?")?.id,
+    ).toBe("voice.k1.story-who-fox");
+    expect(narrationClipForText("Two left-foot socks. Is that a pair you can wear?")?.id).toBe(
+      "voice.k1.sock-two-left",
     );
   });
 
