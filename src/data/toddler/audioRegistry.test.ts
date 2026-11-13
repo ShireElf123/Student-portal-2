@@ -3880,6 +3880,16 @@ describe("audio registry", () => {
       "/audio/voice/activity-aw-sounds-1.mp3",
       "/audio/voice/activity-aw-footprints-1.mp3",
       "/audio/voice/activity-adv-space-1.mp3",
+      "/audio/voice/activity-adv-weather-1.mp3",
+      "/audio/voice/activity-adv-construction-1.mp3",
+      "/audio/voice/activity-adv-dino-1.mp3",
+      "/audio/voice/activity-lw-patterns-1.mp3",
+      "/audio/voice/activity-lw-math-more.mp3",
+      "/audio/voice/sort-fruit-treat.mp3",
+      "/audio/voice/sort-summer-winter.mp3",
+      "/audio/voice/sort-sky-ground.mp3",
+      "/audio/voice/sort-daytime-nighttime.mp3",
+      "/audio/voice/district-act-puppet-who-talks.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -6916,6 +6926,9 @@ describe("audio registry", () => {
         "Which giant glowing ball of warmth in space shines down on us as the sun?",
       )?.id,
     ).toBe("voice.activity.adv-space-1");
+    expect(narrationClipForText("Who talks with hands on the tiny stage?")?.id).toBe(
+      "voice.district.act-puppet-who-talks",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
