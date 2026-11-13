@@ -3900,6 +3900,16 @@ describe("audio registry", () => {
       "/audio/voice/district-act-stream-count-fish.mp3",
       "/audio/voice/district-act-stream-sort-sound.mp3",
       "/audio/voice/district-act-stream-letter-m.mp3",
+      "/audio/voice/district-act-stream-bubbles.mp3",
+      "/audio/voice/district-act-stream-sky-balloons.mp3",
+      "/audio/voice/district-act-stream-rhyme-swim.mp3",
+      "/audio/voice/district-act-rain-who-boots.mp3",
+      "/audio/voice/district-act-rain-count-drops.mp3",
+      "/audio/voice/district-act-rain-sort-wet.mp3",
+      "/audio/voice/district-act-rain-letter-r.mp3",
+      "/audio/voice/district-act-rain-memory-drops.mp3",
+      "/audio/voice/district-act-rain-sky-balloons.mp3",
+      "/audio/voice/district-act-rain-rhyme-boot.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -6941,6 +6951,9 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Trace the letter M with your finger!")?.id).toBe(
       "voice.district.act-stream-letter-m",
+    );
+    expect(narrationClipForText("Which word rhymes with boot?")?.id).toBe(
+      "voice.district.act-rain-rhyme-boot",
     );
   });
 
