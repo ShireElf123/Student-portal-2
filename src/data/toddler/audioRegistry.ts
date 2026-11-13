@@ -11379,6 +11379,20 @@ export const AUDIO_ASSETS: AudioAsset[] = [
     "K1 studio unique round spoken. Replaces device TTS.",
   ),
   voiceClip(
+    "voice.k1.bug-both",
+    "/audio/voice/k1-bug-both.mp3",
+    "K1 Bug Sort both",
+    "A dragonfly starts in water, then flies. Both?",
+    "K1 studio unique round spoken. Replaces device TTS.",
+  ),
+  voiceClip(
+    "voice.k1.bug-sort",
+    "/audio/voice/k1-bug-sort.mp3",
+    "K1 Bug Sort pond dish",
+    "Bee, beetle, strider. Who goes in the pond dish?",
+    "K1 studio unique round spoken. Replaces device TTS.",
+  ),
+  voiceClip(
     "voice.jungle.area-welcome",
     "/audio/voice/jungle-area-welcome.mp3",
     "Jungle Canopy area welcome",

@@ -1624,6 +1624,8 @@ describe("audio registry", () => {
       "/audio/voice/k1-bug-snail.mp3",
       "/audio/voice/k1-bug-lady.mp3",
       "/audio/voice/k1-bug-spider.mp3",
+      "/audio/voice/k1-bug-both.mp3",
+      "/audio/voice/k1-bug-sort.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6672,6 +6674,9 @@ describe("audio registry", () => {
       "voice.k1.ice-home",
     );
     expect(narrationClipForText("A dew web at dawn. Who built it?")?.id).toBe("voice.k1.bug-spider");
+    expect(narrationClipForText("Bee, beetle, strider. Who goes in the pond dish?")?.id).toBe(
+      "voice.k1.bug-sort",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
