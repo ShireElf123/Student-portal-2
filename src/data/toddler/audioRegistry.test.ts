@@ -1646,6 +1646,16 @@ describe("audio registry", () => {
       "/audio/voice/count-pat-boot.mp3",
       "/audio/voice/count-pat-bus.mp3",
       "/audio/voice/count-pat-plate.mp3",
+      "/audio/voice/count-pat-seed.mp3",
+      "/audio/voice/count-pat-drop.mp3",
+      "/audio/voice/count-pat-peg.mp3",
+      "/audio/voice/count-pat-loaf.mp3",
+      "/audio/voice/count-next-one.mp3",
+      "/audio/voice/count-next-three.mp3",
+      "/audio/voice/count-next-four.mp3",
+      "/audio/voice/count-next-six.mp3",
+      "/audio/voice/count-next-ten.mp3",
+      "/audio/voice/count-next-fourteen.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6702,6 +6712,9 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Plate plate lemon. Plate plate…?")?.id).toBe(
       "voice.count.pat-plate",
+    );
+    expect(narrationClipForText("Fourteen. What number comes next?")?.id).toBe(
+      "voice.count.next-fourteen",
     );
   });
 
