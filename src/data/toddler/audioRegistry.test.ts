@@ -3990,6 +3990,16 @@ describe("audio registry", () => {
       "/audio/voice/arch-clue-act-jungle-sound-monkey.mp3",
       "/audio/voice/arch-clue-act-jungle-tracks-lion.mp3",
       "/audio/voice/arch-clue-act-jungle-habitat-parrot.mp3",
+      "/audio/voice/arch-clue-act-jungle-count-bananas.mp3",
+      "/audio/voice/arch-clue-act-ocean-sound-dolphin.mp3",
+      "/audio/voice/arch-clue-act-ocean-glowing-jellyfish.mp3",
+      "/audio/voice/arch-clue-act-ocean-sorting-land-water.mp3",
+      "/audio/voice/arch-clue-act-dino-long-neck.mp3",
+      "/audio/voice/arch-clue-act-dino-mighty-roar.mp3",
+      "/audio/voice/arch-clue-act-color-mix-orange.mp3",
+      "/audio/voice/arch-clue-act-color-mix-green.mp3",
+      "/audio/voice/arch-clue-act-music-high-low.mp3",
+      "/audio/voice/arch-clue-act-pattern-fruit-chain.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7079,6 +7089,16 @@ describe("audio registry", () => {
         "The rainbow parrot has colorful feathers and wings. Where is its natural home?",
       )?.id,
     ).toBe("voice.arch.clue-act-jungle-habitat-parrot");
+    expect(
+      narrationClipForText(
+        "Look at the palm tree! How many sweet yellow bananas are hanging in a bunch?",
+      )?.id,
+    ).toBe("voice.arch.clue-act-jungle-count-bananas");
+    expect(
+      narrationClipForText(
+        "Say the pattern out loud: Apple, Banana, Apple, Banana... What comes next?",
+      )?.id,
+    ).toBe("voice.arch.clue-act-pattern-fruit-chain");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
