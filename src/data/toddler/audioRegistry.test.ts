@@ -1636,6 +1636,16 @@ describe("audio registry", () => {
       "/audio/voice/count-ml-8.mp3",
       "/audio/voice/count-ten-seven.mp3",
       "/audio/voice/count-ten-three.mp3",
+      "/audio/voice/count-ten-nine.mp3",
+      "/audio/voice/count-ten-five.mp3",
+      "/audio/voice/count-ten-one.mp3",
+      "/audio/voice/count-ten-eight.mp3",
+      "/audio/voice/count-ten-four.mp3",
+      "/audio/voice/count-ten-six.mp3",
+      "/audio/voice/count-pat-sun-moon.mp3",
+      "/audio/voice/count-pat-boot.mp3",
+      "/audio/voice/count-pat-bus.mp3",
+      "/audio/voice/count-pat-plate.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6689,6 +6699,9 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Three eggs. Fill the rest of ten.")?.id).toBe(
       "voice.count.ten-three",
+    );
+    expect(narrationClipForText("Plate plate lemon. Plate plate…?")?.id).toBe(
+      "voice.count.pat-plate",
     );
   });
 
