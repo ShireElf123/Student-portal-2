@@ -3970,6 +3970,16 @@ describe("audio registry", () => {
       "/audio/voice/toy-clue-act-farm-letter-trace.mp3",
       "/audio/voice/toy-clue-act-farm-pen-count.mp3",
       "/audio/voice/toy-clue-act-bed-letter-trace.mp3",
+      "/audio/voice/toy-clue-act-studio-letter-trace.mp3",
+      "/audio/voice/toy-clue-act-barn-letter-trace.mp3",
+      "/audio/voice/toy-clue-act-story-pancake-full.mp3",
+      "/audio/voice/toy-clue-act-story-snow-full.mp3",
+      "/audio/voice/toy-clue-act-home-letter-trace.mp3",
+      "/audio/voice/toy-clue-act-home-pour.mp3",
+      "/audio/voice/toy-clue-act-home-sock-drawer.mp3",
+      "/audio/voice/toy-clue-act-home-comb.mp3",
+      "/audio/voice/toy-clue-act-street-drive.mp3",
+      "/audio/voice/toy-clue-act-road-bus-stop.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7044,6 +7054,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Trace B for Bee in the flower bed.")?.id).toBe(
       "voice.toy.clue-act-bed-letter-trace",
+    );
+    expect(narrationClipForText("Trace A for Art in the studio.")?.id).toBe(
+      "voice.toy.clue-act-studio-letter-trace",
+    );
+    expect(narrationClipForText("Count who climbs on at the stop.")?.id).toBe(
+      "voice.toy.clue-act-road-bus-stop",
     );
   });
 
