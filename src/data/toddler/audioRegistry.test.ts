@@ -1594,6 +1594,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-shadow-owl.mp3",
       "/audio/voice/k1-shadow-moth.mp3",
       "/audio/voice/k1-shadow-not-sun.mp3",
+      "/audio/voice/k1-shadow-long.mp3",
+      "/audio/voice/k1-shadow-still.mp3",
+      "/audio/voice/k1-shadow-two.mp3",
+      "/audio/voice/k1-shadow-bat.mp3",
+      "/audio/voice/k1-shadow-none.mp3",
+      "/audio/voice/k1-shadow-match.mp3",
+      "/audio/voice/k1-shadow-hand.mp3",
+      "/audio/voice/k1-shadow-behind.mp3",
+      "/audio/voice/k1-ice-coat.mp3",
+      "/audio/voice/k1-ice-boots.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6634,6 +6644,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("It is dark. Is the sun making this shadow?")?.id).toBe(
       "voice.k1.shadow-not-sun",
     );
+    expect(narrationClipForText("The lamp is low. Why is the shadow long?")?.id).toBe(
+      "voice.k1.shadow-long",
+    );
+    expect(narrationClipForText("The ice is slick. What helps feet?")?.id).toBe("voice.k1.ice-boots");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
