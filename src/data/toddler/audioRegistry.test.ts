@@ -1665,6 +1665,16 @@ describe("audio registry", () => {
       "/audio/voice/count-sh-window.mp3",
       "/audio/voice/count-sh-knob.mp3",
       "/audio/voice/count-sh-roof.mp3",
+      "/audio/voice/phonics-hunt-bus.mp3",
+      "/audio/voice/phonics-hunt-cat.mp3",
+      "/audio/voice/phonics-hunt-dock.mp3",
+      "/audio/voice/phonics-hunt-ferry.mp3",
+      "/audio/voice/phonics-hunt-hat.mp3",
+      "/audio/voice/phonics-hunt-jam.mp3",
+      "/audio/voice/phonics-hunt-key.mp3",
+      "/audio/voice/phonics-hunt-loaf.mp3",
+      "/audio/voice/phonics-hunt-mat.mp3",
+      "/audio/voice/phonics-hunt-nest.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6726,6 +6736,9 @@ describe("audio registry", () => {
       "voice.count.next-fourteen",
     );
     expect(narrationClipForText("The little roof. What shape?")?.id).toBe("voice.count.sh-roof");
+    expect(narrationClipForText("Nest. What letter starts nest?")?.id).toBe(
+      "voice.phonics.hunt-nest",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
