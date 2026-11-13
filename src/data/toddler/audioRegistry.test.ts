@@ -4000,6 +4000,16 @@ describe("audio registry", () => {
       "/audio/voice/arch-clue-act-color-mix-green.mp3",
       "/audio/voice/arch-clue-act-music-high-low.mp3",
       "/audio/voice/arch-clue-act-pattern-fruit-chain.mp3",
+      "/audio/voice/arch-clue-act-sticker-crown-pick.mp3",
+      "/audio/voice/arch-clue-act-story-farm-full.mp3",
+      "/audio/voice/arch-clue-act-story-space-full.mp3",
+      "/audio/voice/arch-clue-act-story-ocean-full.mp3",
+      "/audio/voice/arch-clue-act-phonics-letter-b.mp3",
+      "/audio/voice/arch-clue-act-phonics-letter-s.mp3",
+      "/audio/voice/nav-gated-door.mp3",
+      "/audio/voice/nav-rainbow-piano-welcome.mp3",
+      "/audio/voice/nav-sort-hooray.mp3",
+      "/audio/voice/nav-story-hooray.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7099,6 +7109,14 @@ describe("audio registry", () => {
         "Say the pattern out loud: Apple, Banana, Apple, Banana... What comes next?",
       )?.id,
     ).toBe("voice.arch.clue-act-pattern-fruit-chain");
+    expect(
+      narrationClipForText(
+        "Buddy has worked hard learning new things. Which golden headpiece marks true learning royalty?",
+      )?.id,
+    ).toBe("voice.arch.clue-act-sticker-crown-pick");
+    expect(
+      narrationClipForText("Play one game in the last place first, then this door opens!")?.id,
+    ).toBe("voice.nav.gated-door");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
