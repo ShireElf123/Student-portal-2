@@ -3930,6 +3930,16 @@ describe("audio registry", () => {
       "/audio/voice/district-clue-act-rain-letter-r.mp3",
       "/audio/voice/district-clue-act-rain-memory-drops.mp3",
       "/audio/voice/district-clue-act-rain-sky-balloons.mp3",
+      "/audio/voice/atlas-clue-act-road-shape-sign.mp3",
+      "/audio/voice/atlas-clue-act-dock-letter-s.mp3",
+      "/audio/voice/toy-clue-act-farm-safari-walk.mp3",
+      "/audio/voice/toy-clue-act-jungle-memory-leaves.mp3",
+      "/audio/voice/toy-clue-act-ocean-letter-bubbles.mp3",
+      "/audio/voice/toy-clue-act-meadow-rhyme-garden.mp3",
+      "/audio/voice/toy-clue-act-meadow-blend-kitchen.mp3",
+      "/audio/voice/toy-clue-act-meadow-letter-trace.mp3",
+      "/audio/voice/toy-clue-act-grove-ten-frame.mp3",
+      "/audio/voice/toy-clue-act-bed-bug-safari.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -6980,6 +6990,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Tap the balloons in the rain clouds.")?.id).toBe(
       "voice.district.clue-act-rain-sky-balloons",
+    );
+    expect(
+      narrationClipForText("The stop sign is not a circle. Which is the stop sign?")?.id,
+    ).toBe("voice.atlas.clue-act-road-shape-sign");
+    expect(narrationClipForText("Who is visiting the flower bed?")?.id).toBe(
+      "voice.toy.clue-act-bed-bug-safari",
     );
   });
 
