@@ -1675,6 +1675,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-hunt-loaf.mp3",
       "/audio/voice/phonics-hunt-mat.mp3",
       "/audio/voice/phonics-hunt-nest.mp3",
+      "/audio/voice/phonics-hunt-porch.mp3",
+      "/audio/voice/phonics-hunt-quilt.mp3",
+      "/audio/voice/phonics-hunt-rain.mp3",
+      "/audio/voice/phonics-hunt-stoop.mp3",
+      "/audio/voice/phonics-hunt-taxi.mp3",
+      "/audio/voice/phonics-hunt-wash.mp3",
+      "/audio/voice/phonics-sight-the.mp3",
+      "/audio/voice/phonics-sight-a.mp3",
+      "/audio/voice/phonics-sight-i.mp3",
+      "/audio/voice/phonics-sight-to.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6739,6 +6749,7 @@ describe("audio registry", () => {
     expect(narrationClipForText("Nest. What letter starts nest?")?.id).toBe(
       "voice.phonics.hunt-nest",
     );
+    expect(narrationClipForText("Find the word to.")?.id).toBe("voice.phonics.sight-to");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
