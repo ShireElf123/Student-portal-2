@@ -1729,6 +1729,16 @@ describe("audio registry", () => {
       "/audio/voice/focus-mv-march.mp3",
       "/audio/voice/focus-mv-clap.mp3",
       "/audio/voice/focus-mv-shake.mp3",
+      "/audio/voice/focus-mv-hop.mp3",
+      "/audio/voice/focus-mv-wiggle.mp3",
+      "/audio/voice/focus-mv-star.mp3",
+      "/audio/voice/focus-mv-reach.mp3",
+      "/audio/voice/focus-mv-roll.mp3",
+      "/audio/voice/focus-mv-twist.mp3",
+      "/audio/voice/focus-mv-toe.mp3",
+      "/audio/voice/focus-hv-wall.mp3",
+      "/audio/voice/focus-hv-squeeze.mp3",
+      "/audio/voice/focus-hv-palms.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6805,6 +6815,7 @@ describe("audio registry", () => {
     expect(narrationClipForText("Shake six times. Tap each shake.")?.id).toBe(
       "voice.focus.mv-shake",
     );
+    expect(narrationClipForText("Press palms. Hold this.")?.id).toBe("voice.focus.hv-palms");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
