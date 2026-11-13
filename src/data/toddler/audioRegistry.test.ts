@@ -1788,6 +1788,8 @@ describe("audio registry", () => {
       "/audio/voice/focus-steady-heart.mp3",
       "/audio/voice/focus-steady-loop.mp3",
       "/audio/voice/focus-steady-u-turns.mp3",
+      "/audio/voice/focus-steady-knot.mp3",
+      "/audio/voice/focus-steady-star-path.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6877,6 +6879,9 @@ describe("audio registry", () => {
     ).toBe("voice.focus.qt-ready");
     expect(narrationClipForText("Turn, wait, turn. Slow on the corners.")?.id).toBe(
       "voice.focus.steady-u-turns",
+    );
+    expect(narrationClipForText("Five points. Pause at each tip.")?.id).toBe(
+      "voice.focus.steady-star-path",
     );
   });
 

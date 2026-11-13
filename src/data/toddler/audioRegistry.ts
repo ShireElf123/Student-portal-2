@@ -12527,6 +12527,20 @@ export const AUDIO_ASSETS: AudioAsset[] = [
     "Focus steady unique spoken. Replaces device TTS.",
   ),
   voiceClip(
+    "voice.focus.steady-knot",
+    "/audio/voice/focus-steady-knot.mp3",
+    "Focus steady knot",
+    "Through the knot. Tiny and slow.",
+    "Focus steady unique spoken. Replaces device TTS.",
+  ),
+  voiceClip(
+    "voice.focus.steady-star-path",
+    "/audio/voice/focus-steady-star-path.mp3",
+    "Focus steady star path",
+    "Five points. Pause at each tip.",
+    "Focus steady unique spoken. Replaces device TTS.",
+  ),
+  voiceClip(
     "voice.jungle.area-welcome",
     "/audio/voice/jungle-area-welcome.mp3",
     "Jungle Canopy area welcome",
