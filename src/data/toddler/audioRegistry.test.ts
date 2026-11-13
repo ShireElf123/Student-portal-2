@@ -1564,6 +1564,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-sock-fold.mp3",
       "/audio/voice/k1-sock-wet-dry.mp3",
       "/audio/voice/k1-sock-stripe-spot.mp3",
+      "/audio/voice/k1-sock-one-missing.mp3",
+      "/audio/voice/k1-sock-both-right.mp3",
+      "/audio/voice/k1-shape-wheel-bun.mp3",
+      "/audio/voice/k1-shape-sandwich.mp3",
+      "/audio/voice/k1-shape-tin.mp3",
+      "/audio/voice/k1-shape-window.mp3",
+      "/audio/voice/k1-shape-cookie-star.mp3",
+      "/audio/voice/k1-shape-donut-hole.mp3",
+      "/audio/voice/k1-shape-pizza-slice.mp3",
+      "/audio/voice/k1-shape-cracker.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6585,6 +6595,12 @@ describe("audio registry", () => {
     ).toBe("voice.k1.sock-color-sort");
     expect(narrationClipForText("A stripe sock and a spot sock. Are they a pair?")?.id).toBe(
       "voice.k1.sock-stripe-spot",
+    );
+    expect(narrationClipForText("Five socks. How many complete pairs?")?.id).toBe(
+      "voice.k1.sock-one-missing",
+    );
+    expect(narrationClipForText("A square cracker. How many corners?")?.id).toBe(
+      "voice.k1.shape-cracker",
     );
   });
 
