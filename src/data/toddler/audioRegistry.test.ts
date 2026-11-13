@@ -1584,6 +1584,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-bus-one-off.mp3",
       "/audio/voice/k1-bus-two-full.mp3",
       "/audio/voice/k1-bus-empty.mp3",
+      "/audio/voice/k1-bus-fourteen.mp3",
+      "/audio/voice/k1-bus-seven-plus-seven.mp3",
+      "/audio/voice/k1-bus-three-off.mp3",
+      "/audio/voice/k1-bus-sixteen.mp3",
+      "/audio/voice/k1-bus-two-plus-nine.mp3",
+      "/audio/voice/k1-bus-twenty.mp3",
+      "/audio/voice/k1-shadow-cat.mp3",
+      "/audio/voice/k1-shadow-owl.mp3",
+      "/audio/voice/k1-shadow-moth.mp3",
+      "/audio/voice/k1-shadow-not-sun.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6617,6 +6627,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("The night bus is empty. How many riders?")?.id).toBe(
       "voice.k1.bus-empty",
+    );
+    expect(narrationClipForText("Fourteen school friends. How many?")?.id).toBe(
+      "voice.k1.bus-fourteen",
+    );
+    expect(narrationClipForText("It is dark. Is the sun making this shadow?")?.id).toBe(
+      "voice.k1.shadow-not-sun",
     );
   });
 
