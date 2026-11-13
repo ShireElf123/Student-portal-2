@@ -1705,6 +1705,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-blend-bun.mp3",
       "/audio/voice/phonics-blend-pan.mp3",
       "/audio/voice/phonics-blend-pot.mp3",
+      "/audio/voice/phonics-blend-dog.mp3",
+      "/audio/voice/phonics-blend-pig.mp3",
+      "/audio/voice/phonics-blend-hop.mp3",
+      "/audio/voice/phonics-blend-red.mp3",
+      "/audio/voice/phonics-blend-fox.mp3",
+      "/audio/voice/phonics-blend-log.mp3",
+      "/audio/voice/phonics-blend-ten.mp3",
+      "/audio/voice/phonics-blend-map.mp3",
+      "/audio/voice/phonics-next-def.mp3",
+      "/audio/voice/phonics-next-hij.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6772,6 +6782,9 @@ describe("audio registry", () => {
     expect(narrationClipForText("Find the word to.")?.id).toBe("voice.phonics.sight-to");
     expect(narrationClipForText("Find the word like.")?.id).toBe("voice.phonics.sight-like");
     expect(narrationClipForText("P. O. T. Pot.")?.id).toBe("voice.phonics.blend-pot");
+    expect(narrationClipForText("H, I, J. What letter comes next?")?.id).toBe(
+      "voice.phonics.next-hij",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
