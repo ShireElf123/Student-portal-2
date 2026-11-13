@@ -3890,6 +3890,16 @@ describe("audio registry", () => {
       "/audio/voice/sort-sky-ground.mp3",
       "/audio/voice/sort-daytime-nighttime.mp3",
       "/audio/voice/district-act-puppet-who-talks.mp3",
+      "/audio/voice/district-act-puppet-count-crowd.mp3",
+      "/audio/voice/district-act-puppet-sort-stage.mp3",
+      "/audio/voice/district-act-puppet-letter-p.mp3",
+      "/audio/voice/district-act-puppet-memory-cast.mp3",
+      "/audio/voice/district-act-puppet-sky-balloons.mp3",
+      "/audio/voice/district-act-puppet-rhyme-bow.mp3",
+      "/audio/voice/district-act-stream-who-mmm.mp3",
+      "/audio/voice/district-act-stream-count-fish.mp3",
+      "/audio/voice/district-act-stream-sort-sound.mp3",
+      "/audio/voice/district-act-stream-letter-m.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -6928,6 +6938,9 @@ describe("audio registry", () => {
     ).toBe("voice.activity.adv-space-1");
     expect(narrationClipForText("Who talks with hands on the tiny stage?")?.id).toBe(
       "voice.district.act-puppet-who-talks",
+    );
+    expect(narrationClipForText("Trace the letter M with your finger!")?.id).toBe(
+      "voice.district.act-stream-letter-m",
     );
   });
 
