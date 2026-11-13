@@ -1626,6 +1626,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-bug-spider.mp3",
       "/audio/voice/k1-bug-both.mp3",
       "/audio/voice/k1-bug-sort.mp3",
+      "/audio/voice/count-ml-1.mp3",
+      "/audio/voice/count-ml-2.mp3",
+      "/audio/voice/count-ml-3.mp3",
+      "/audio/voice/count-ml-4.mp3",
+      "/audio/voice/count-ml-5.mp3",
+      "/audio/voice/count-ml-6.mp3",
+      "/audio/voice/count-ml-7.mp3",
+      "/audio/voice/count-ml-8.mp3",
+      "/audio/voice/count-ten-seven.mp3",
+      "/audio/voice/count-ten-three.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6676,6 +6686,9 @@ describe("audio registry", () => {
     expect(narrationClipForText("A dew web at dawn. Who built it?")?.id).toBe("voice.k1.bug-spider");
     expect(narrationClipForText("Bee, beetle, strider. Who goes in the pond dish?")?.id).toBe(
       "voice.k1.bug-sort",
+    );
+    expect(narrationClipForText("Three eggs. Fill the rest of ten.")?.id).toBe(
+      "voice.count.ten-three",
     );
   });
 
