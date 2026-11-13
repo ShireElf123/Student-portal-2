@@ -1604,6 +1604,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-shadow-behind.mp3",
       "/audio/voice/k1-ice-coat.mp3",
       "/audio/voice/k1-ice-boots.mp3",
+      "/audio/voice/k1-ice-den.mp3",
+      "/audio/voice/k1-ice-not-swim-cap.mp3",
+      "/audio/voice/k1-ice-night-light.mp3",
+      "/audio/voice/k1-ice-season.mp3",
+      "/audio/voice/k1-ice-seal.mp3",
+      "/audio/voice/k1-ice-melt.mp3",
+      "/audio/voice/k1-ice-goggles.mp3",
+      "/audio/voice/k1-ice-penguin.mp3",
+      "/audio/voice/k1-ice-thin-ice.mp3",
+      "/audio/voice/k1-ice-home.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6648,6 +6658,9 @@ describe("audio registry", () => {
       "voice.k1.shadow-long",
     );
     expect(narrationClipForText("The ice is slick. What helps feet?")?.id).toBe("voice.k1.ice-boots");
+    expect(narrationClipForText("The hut stove glows. What does Pip do?")?.id).toBe(
+      "voice.k1.ice-home",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
