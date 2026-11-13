@@ -3960,6 +3960,16 @@ describe("audio registry", () => {
       "/audio/voice/toy-clue-act-land-stamp-mural.mp3",
       "/audio/voice/toy-clue-act-land-story-stones.mp3",
       "/audio/voice/toy-clue-act-land-number-pebbles.mp3",
+      "/audio/voice/toy-clue-act-land-vine-swing.mp3",
+      "/audio/voice/toy-clue-act-land-wash-bus.mp3",
+      "/audio/voice/toy-clue-act-land-drum-boom.mp3",
+      "/audio/voice/toy-clue-act-land-rocket-stars.mp3",
+      "/audio/voice/toy-clue-act-land-ten-dots.mp3",
+      "/audio/voice/toy-clue-act-land-brush-teeth.mp3",
+      "/audio/voice/toy-clue-act-land-pack-bag.mp3",
+      "/audio/voice/toy-clue-act-farm-letter-trace.mp3",
+      "/audio/voice/toy-clue-act-farm-pen-count.mp3",
+      "/audio/voice/toy-clue-act-bed-letter-trace.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7028,6 +7038,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Tap the pebbles from 1 to 5.")?.id).toBe(
       "voice.toy.clue-act-land-number-pebbles",
+    );
+    expect(narrationClipForText("Tap the vine. Swing five times.")?.id).toBe(
+      "voice.toy.clue-act-land-vine-swing",
+    );
+    expect(narrationClipForText("Trace B for Bee in the flower bed.")?.id).toBe(
+      "voice.toy.clue-act-bed-letter-trace",
     );
   });
 
