@@ -1778,6 +1778,16 @@ describe("audio registry", () => {
       "/audio/voice/focus-qt-breath.mp3",
       "/audio/voice/focus-qt-toes.mp3",
       "/audio/voice/focus-qt-ready.mp3",
+      "/audio/voice/focus-steady-hill.mp3",
+      "/audio/voice/focus-steady-river.mp3",
+      "/audio/voice/focus-steady-snail.mp3",
+      "/audio/voice/focus-steady-rainbow.mp3",
+      "/audio/voice/focus-steady-bridge.mp3",
+      "/audio/voice/focus-steady-zigzag.mp3",
+      "/audio/voice/focus-steady-vine.mp3",
+      "/audio/voice/focus-steady-heart.mp3",
+      "/audio/voice/focus-steady-loop.mp3",
+      "/audio/voice/focus-steady-u-turns.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6865,6 +6875,9 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("When the bar ends, we can go learn. Stay until then.")?.id,
     ).toBe("voice.focus.qt-ready");
+    expect(narrationClipForText("Turn, wait, turn. Slow on the corners.")?.id).toBe(
+      "voice.focus.steady-u-turns",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
