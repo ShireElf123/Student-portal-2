@@ -1554,6 +1554,16 @@ describe("audio registry", () => {
       "/audio/voice/k1-sock-odd-spot.mp3",
       "/audio/voice/k1-sock-tiny-big.mp3",
       "/audio/voice/k1-sock-two-left.mp3",
+      "/audio/voice/k1-sock-color-sort.mp3",
+      "/audio/voice/k1-sock-lost-mate.mp3",
+      "/audio/voice/k1-sock-long-short.mp3",
+      "/audio/voice/k1-sock-three-pairs.mp3",
+      "/audio/voice/k1-sock-match-dots.mp3",
+      "/audio/voice/k1-sock-odd-colour.mp3",
+      "/audio/voice/k1-sock-pair-count.mp3",
+      "/audio/voice/k1-sock-fold.mp3",
+      "/audio/voice/k1-sock-wet-dry.mp3",
+      "/audio/voice/k1-sock-stripe-spot.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6569,6 +6579,12 @@ describe("audio registry", () => {
     ).toBe("voice.k1.story-who-fox");
     expect(narrationClipForText("Two left-foot socks. Is that a pair you can wear?")?.id).toBe(
       "voice.k1.sock-two-left",
+    );
+    expect(
+      narrationClipForText("Yellow, yellow, green. What goes in the yellow pile?")?.id,
+    ).toBe("voice.k1.sock-color-sort");
+    expect(narrationClipForText("A stripe sock and a spot sock. Are they a pair?")?.id).toBe(
+      "voice.k1.sock-stripe-spot",
     );
   });
 
