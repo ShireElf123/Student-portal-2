@@ -3920,6 +3920,16 @@ describe("audio registry", () => {
       "/audio/voice/district-clue-act-stream-who-mmm.mp3",
       "/audio/voice/district-clue-act-stream-count-fish.mp3",
       "/audio/voice/district-clue-act-stream-sort-sound.mp3",
+      "/audio/voice/district-clue-act-stream-letter-m.mp3",
+      "/audio/voice/district-clue-act-stream-bubbles.mp3",
+      "/audio/voice/district-clue-act-stream-sky-balloons.mp3",
+      "/audio/voice/district-clue-act-stream-rhyme-swim.mp3",
+      "/audio/voice/district-clue-act-rain-who-boots.mp3",
+      "/audio/voice/district-clue-act-rain-count-drops.mp3",
+      "/audio/voice/district-clue-act-rain-sort-wet.mp3",
+      "/audio/voice/district-clue-act-rain-letter-r.mp3",
+      "/audio/voice/district-clue-act-rain-memory-drops.mp3",
+      "/audio/voice/district-clue-act-rain-sky-balloons.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -6967,6 +6977,9 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Letter sounds here. Water sounds there.")?.id).toBe(
       "voice.district.clue-act-stream-sort-sound",
+    );
+    expect(narrationClipForText("Tap the balloons in the rain clouds.")?.id).toBe(
+      "voice.district.clue-act-rain-sky-balloons",
     );
   });
 
