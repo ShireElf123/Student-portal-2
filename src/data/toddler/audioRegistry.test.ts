@@ -1685,6 +1685,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-sight-a.mp3",
       "/audio/voice/phonics-sight-i.mp3",
       "/audio/voice/phonics-sight-to.mp3",
+      "/audio/voice/phonics-sight-you.mp3",
+      "/audio/voice/phonics-sight-is.mp3",
+      "/audio/voice/phonics-sight-it.mp3",
+      "/audio/voice/phonics-sight-we.mp3",
+      "/audio/voice/phonics-sight-my.mp3",
+      "/audio/voice/phonics-sight-on.mp3",
+      "/audio/voice/phonics-sight-and.mp3",
+      "/audio/voice/phonics-sight-look.mp3",
+      "/audio/voice/phonics-sight-see.mp3",
+      "/audio/voice/phonics-sight-like.mp3",
       "/audio/voice/jungle-area-welcome.mp3",
       "/audio/voice/jungle-memory-welcome.mp3",
       "/audio/voice/jungle-vine-station.mp3",
@@ -6750,6 +6760,7 @@ describe("audio registry", () => {
       "voice.phonics.hunt-nest",
     );
     expect(narrationClipForText("Find the word to.")?.id).toBe("voice.phonics.sight-to");
+    expect(narrationClipForText("Find the word like.")?.id).toBe("voice.phonics.sight-like");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
