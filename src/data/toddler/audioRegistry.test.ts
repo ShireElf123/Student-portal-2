@@ -1757,6 +1757,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-next-yes-o.mp3",
       "/audio/voice/phonics-next-yes-s.mp3",
       "/audio/voice/phonics-next-yes-v.mp3",
+      "/audio/voice/phonics-next-yes-y.mp3",
+      "/audio/voice/phonics-next-yes-z.mp3",
+      "/audio/voice/phonics-in-a-attic.mp3",
+      "/audio/voice/phonics-in-a-apple.mp3",
+      "/audio/voice/phonics-in-a-ant.mp3",
+      "/audio/voice/phonics-in-b-bus.mp3",
+      "/audio/voice/phonics-in-b-bun.mp3",
+      "/audio/voice/phonics-in-b-bell.mp3",
+      "/audio/voice/phonics-in-c-cat.mp3",
+      "/audio/voice/phonics-in-c-cup.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7376,6 +7386,10 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Yes. V. V, W, X. What letter comes next?")?.id,
     ).toBe("voice.phonics.next-yes-v");
+    expect(
+      narrationClipForText("Yes. Z. A, B, C. What letter comes next?")?.id,
+    ).toBe("voice.phonics.next-yes-z");
+    expect(narrationClipForText("C in Cup.")?.id).toBe("voice.phonics.in-c-cup");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
