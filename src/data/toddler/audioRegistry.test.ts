@@ -4122,6 +4122,16 @@ describe("audio registry", () => {
       "/audio/voice/count-shape-square-sail.mp3",
       "/audio/voice/count-shape-triangle-door.mp3",
       "/audio/voice/count-shape-rectangle-coin.mp3",
+      "/audio/voice/count-shape-circle-window.mp3",
+      "/audio/voice/count-shape-square-knob.mp3",
+      "/audio/voice/count-shape-circle-roof.mp3",
+      "/audio/voice/count-shape-triangle-sun.mp3",
+      "/audio/voice/count-yes-after-2.mp3",
+      "/audio/voice/count-yes-after-4.mp3",
+      "/audio/voice/count-yes-after-5.mp3",
+      "/audio/voice/count-yes-after-7.mp3",
+      "/audio/voice/count-yes-after-10.mp3",
+      "/audio/voice/count-yes-after-11.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7299,6 +7309,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("Circle. The welcome mat. What shape?")?.id).toBe(
       "voice.count.shape-circle-mat",
     );
+    expect(
+      narrationClipForText("Triangle. The chalk sun. What shape?")?.id,
+    ).toBe("voice.count.shape-triangle-sun");
+    expect(
+      narrationClipForText("Yes. 11. Fourteen. What number comes next?")?.id,
+    ).toBe("voice.count.yes-after-11");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
