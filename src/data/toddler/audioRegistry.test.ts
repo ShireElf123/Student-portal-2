@@ -4112,6 +4112,16 @@ describe("audio registry", () => {
       "/audio/voice/count-yes-ml-8.mp3",
       "/audio/voice/count-yes-pat-sun-moon.mp3",
       "/audio/voice/count-yes-pat-boot.mp3",
+      "/audio/voice/count-yes-pat-bus.mp3",
+      "/audio/voice/count-yes-pat-plate.mp3",
+      "/audio/voice/count-yes-pat-seed.mp3",
+      "/audio/voice/count-yes-pat-drop.mp3",
+      "/audio/voice/count-yes-pat-peg.mp3",
+      "/audio/voice/count-yes-pat-loaf.mp3",
+      "/audio/voice/count-shape-circle-mat.mp3",
+      "/audio/voice/count-shape-square-sail.mp3",
+      "/audio/voice/count-shape-triangle-door.mp3",
+      "/audio/voice/count-shape-rectangle-coin.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7282,6 +7292,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Yes. Boot boot coin. Boot boot…?")?.id).toBe(
       "voice.count.yes-pat-boot",
+    );
+    expect(
+      narrationClipForText("Yes. Bowl, loaf, bowl, loaf. What comes next?")?.id,
+    ).toBe("voice.count.yes-pat-loaf");
+    expect(narrationClipForText("Circle. The welcome mat. What shape?")?.id).toBe(
+      "voice.count.shape-circle-mat",
     );
   });
 
