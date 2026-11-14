@@ -4062,6 +4062,16 @@ describe("audio registry", () => {
       "/audio/voice/count-tap-eighteen.mp3",
       "/audio/voice/count-tap-nineteen.mp3",
       "/audio/voice/count-tap-twenty.mp3",
+      "/audio/voice/count-bang-one.mp3",
+      "/audio/voice/count-bang-two.mp3",
+      "/audio/voice/count-bang-three.mp3",
+      "/audio/voice/count-bang-four.mp3",
+      "/audio/voice/count-bang-five.mp3",
+      "/audio/voice/count-bang-six.mp3",
+      "/audio/voice/count-bang-seven.mp3",
+      "/audio/voice/count-bang-eight.mp3",
+      "/audio/voice/count-bang-nine.mp3",
+      "/audio/voice/count-bang-ten.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7203,6 +7213,12 @@ describe("audio registry", () => {
         "Twenty. Two full ten-frames. Twenty. Tap the dots, one by one.",
       )?.id,
     ).toBe("voice.count.tap-twenty");
+    expect(narrationClipForText("One! One sun on the stoop.")?.id).toBe(
+      "voice.count.bang-one",
+    );
+    expect(narrationClipForText("Ten! Ten eggs. A full ten-frame.")?.id).toBe(
+      "voice.count.bang-ten",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
