@@ -4092,6 +4092,16 @@ describe("audio registry", () => {
       "/audio/voice/count-say-eight.mp3",
       "/audio/voice/count-say-nine.mp3",
       "/audio/voice/count-say-ten.mp3",
+      "/audio/voice/count-say-eleven.mp3",
+      "/audio/voice/count-say-twelve.mp3",
+      "/audio/voice/count-say-thirteen.mp3",
+      "/audio/voice/count-say-fourteen.mp3",
+      "/audio/voice/count-say-fifteen.mp3",
+      "/audio/voice/count-say-sixteen.mp3",
+      "/audio/voice/count-say-seventeen.mp3",
+      "/audio/voice/count-say-eighteen.mp3",
+      "/audio/voice/count-say-nineteen.mp3",
+      "/audio/voice/count-say-twenty.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7250,6 +7260,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Ten. Ten eggs. A full ten-frame.")?.id).toBe(
       "voice.count.say-ten",
+    );
+    expect(narrationClipForText("Eleven. Ten buttons and one spare.")?.id).toBe(
+      "voice.count.say-eleven",
+    );
+    expect(narrationClipForText("Twenty. Two full ten-frames. Twenty.")?.id).toBe(
+      "voice.count.say-twenty",
     );
   });
 
