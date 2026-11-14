@@ -4020,6 +4020,16 @@ describe("audio registry", () => {
       "/audio/voice/ui-focus-how-feel.mp3",
       "/audio/voice/ui-focus-freeze-knees.mp3",
       "/audio/voice/ui-focus-wait.mp3",
+      "/audio/voice/ui-focus-statue.mp3",
+      "/audio/voice/ui-focus-nice-slow.mp3",
+      "/audio/voice/ui-focus-found-them.mp3",
+      "/audio/voice/ui-focus-quieter.mp3",
+      "/audio/voice/ui-focus-go-learn.mp3",
+      "/audio/voice/ui-rooms-logs.mp3",
+      "/audio/voice/ui-rooms-shutters.mp3",
+      "/audio/voice/ui-rooms-stars.mp3",
+      "/audio/voice/ui-open-kind-play.mp3",
+      "/audio/voice/ui-phonics-tap-order.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7131,6 +7141,10 @@ describe("audio registry", () => {
       narrationClipForText("Letter Lane. Three letters. About five minutes. No streak.")?.id,
     ).toBe("voice.nav.letter-lane");
     expect(narrationClipForText("Freeze!")?.id).toBe("voice.ui.focus-freeze");
+    expect(narrationClipForText("Statue. Soft.")?.id).toBe("voice.ui.focus-statue");
+    expect(narrationClipForText("Tap the letters in order.")?.id).toBe(
+      "voice.ui.phonics-tap-order",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
