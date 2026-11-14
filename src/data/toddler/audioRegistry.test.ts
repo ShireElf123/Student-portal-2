@@ -1689,6 +1689,14 @@ describe("audio registry", () => {
       "/audio/voice/phonics-hunt-yes-jam.mp3",
       "/audio/voice/phonics-hunt-yes-key.mp3",
       "/audio/voice/phonics-hunt-yes-loaf.mp3",
+      "/audio/voice/phonics-hunt-yes-mat.mp3",
+      "/audio/voice/phonics-hunt-yes-nest.mp3",
+      "/audio/voice/phonics-hunt-yes-porch.mp3",
+      "/audio/voice/phonics-hunt-yes-quilt.mp3",
+      "/audio/voice/phonics-hunt-yes-rain.mp3",
+      "/audio/voice/phonics-hunt-yes-stoop.mp3",
+      "/audio/voice/phonics-hunt-yes-taxi.mp3",
+      "/audio/voice/phonics-hunt-yes-wash.mp3",
       "/audio/voice/phonics-sight-the.mp3",
       "/audio/voice/phonics-sight-a.mp3",
       "/audio/voice/phonics-sight-i.mp3",
@@ -1705,6 +1713,8 @@ describe("audio registry", () => {
       "/audio/voice/phonics-sight-like.mp3",
       "/audio/voice/phonics-sight-here.mp3",
       "/audio/voice/phonics-sight-come.mp3",
+      "/audio/voice/phonics-sight-the-a.mp3",
+      "/audio/voice/phonics-sight-a-i.mp3",
       "/audio/voice/phonics-blend-cat.mp3",
       "/audio/voice/phonics-blend-hat.mp3",
       "/audio/voice/phonics-blend-mat.mp3",
@@ -7331,6 +7341,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Yes. loaf starts with L. Mat. What letter starts mat?")?.id,
     ).toBe("voice.phonics.hunt-yes-loaf");
+    expect(
+      narrationClipForText("Yes. wash starts with W. Bus. What letter starts bus?")?.id,
+    ).toBe("voice.phonics.hunt-yes-wash");
+    expect(narrationClipForText("the. Find the word a.")?.id).toBe(
+      "voice.phonics.sight-the-a",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
