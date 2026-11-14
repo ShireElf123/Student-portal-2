@@ -1725,6 +1725,10 @@ describe("audio registry", () => {
       "/audio/voice/phonics-sight-on-and.mp3",
       "/audio/voice/phonics-sight-and-look.mp3",
       "/audio/voice/phonics-sight-look-see.mp3",
+      "/audio/voice/phonics-sight-see-like.mp3",
+      "/audio/voice/phonics-sight-like-here.mp3",
+      "/audio/voice/phonics-sight-here-come.mp3",
+      "/audio/voice/phonics-sight-come-the.mp3",
       "/audio/voice/phonics-blend-cat.mp3",
       "/audio/voice/phonics-blend-hat.mp3",
       "/audio/voice/phonics-blend-mat.mp3",
@@ -1747,6 +1751,12 @@ describe("audio registry", () => {
       "/audio/voice/phonics-next-stu.mp3",
       "/audio/voice/phonics-next-vwx.mp3",
       "/audio/voice/phonics-next-wxy.mp3",
+      "/audio/voice/phonics-next-yes-d.mp3",
+      "/audio/voice/phonics-next-yes-g.mp3",
+      "/audio/voice/phonics-next-yes-k.mp3",
+      "/audio/voice/phonics-next-yes-o.mp3",
+      "/audio/voice/phonics-next-yes-s.mp3",
+      "/audio/voice/phonics-next-yes-v.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7360,6 +7370,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("look. Find the word see.")?.id).toBe(
       "voice.phonics.sight-look-see",
     );
+    expect(narrationClipForText("come. Find the word the.")?.id).toBe(
+      "voice.phonics.sight-come-the",
+    );
+    expect(
+      narrationClipForText("Yes. V. V, W, X. What letter comes next?")?.id,
+    ).toBe("voice.phonics.next-yes-v");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
