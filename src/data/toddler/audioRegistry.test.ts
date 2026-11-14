@@ -4010,6 +4010,16 @@ describe("audio registry", () => {
       "/audio/voice/nav-rainbow-piano-welcome.mp3",
       "/audio/voice/nav-sort-hooray.mp3",
       "/audio/voice/nav-story-hooray.mp3",
+      "/audio/voice/nav-letter-lane.mp3",
+      "/audio/voice/nav-focus-body.mp3",
+      "/audio/voice/nav-wonderland.mp3",
+      "/audio/voice/ui-count-ten-frame.mp3",
+      "/audio/voice/ui-focus-let-go.mp3",
+      "/audio/voice/ui-focus-freeze.mp3",
+      "/audio/voice/ui-focus-path-gold.mp3",
+      "/audio/voice/ui-focus-how-feel.mp3",
+      "/audio/voice/ui-focus-freeze-knees.mp3",
+      "/audio/voice/ui-focus-wait.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7117,6 +7127,10 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Play one game in the last place first, then this door opens!")?.id,
     ).toBe("voice.nav.gated-door");
+    expect(
+      narrationClipForText("Letter Lane. Three letters. About five minutes. No streak.")?.id,
+    ).toBe("voice.nav.letter-lane");
+    expect(narrationClipForText("Freeze!")?.id).toBe("voice.ui.focus-freeze");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
