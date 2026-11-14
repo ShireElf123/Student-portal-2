@@ -1681,6 +1681,14 @@ describe("audio registry", () => {
       "/audio/voice/phonics-hunt-stoop.mp3",
       "/audio/voice/phonics-hunt-taxi.mp3",
       "/audio/voice/phonics-hunt-wash.mp3",
+      "/audio/voice/phonics-hunt-yes-bus.mp3",
+      "/audio/voice/phonics-hunt-yes-cat.mp3",
+      "/audio/voice/phonics-hunt-yes-dock.mp3",
+      "/audio/voice/phonics-hunt-yes-ferry.mp3",
+      "/audio/voice/phonics-hunt-yes-hat.mp3",
+      "/audio/voice/phonics-hunt-yes-jam.mp3",
+      "/audio/voice/phonics-hunt-yes-key.mp3",
+      "/audio/voice/phonics-hunt-yes-loaf.mp3",
       "/audio/voice/phonics-sight-the.mp3",
       "/audio/voice/phonics-sight-a.mp3",
       "/audio/voice/phonics-sight-i.mp3",
@@ -4132,6 +4140,8 @@ describe("audio registry", () => {
       "/audio/voice/count-yes-after-7.mp3",
       "/audio/voice/count-yes-after-10.mp3",
       "/audio/voice/count-yes-after-11.mp3",
+      "/audio/voice/count-yes-after-15.mp3",
+      "/audio/voice/count-yes-after-20.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7315,6 +7325,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Yes. 11. Fourteen. What number comes next?")?.id,
     ).toBe("voice.count.yes-after-11");
+    expect(
+      narrationClipForText("Yes. 20. One. What number comes next?")?.id,
+    ).toBe("voice.count.yes-after-20");
+    expect(
+      narrationClipForText("Yes. loaf starts with L. Mat. What letter starts mat?")?.id,
+    ).toBe("voice.phonics.hunt-yes-loaf");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
