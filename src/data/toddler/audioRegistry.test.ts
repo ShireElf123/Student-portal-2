@@ -1715,6 +1715,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-sight-come.mp3",
       "/audio/voice/phonics-sight-the-a.mp3",
       "/audio/voice/phonics-sight-a-i.mp3",
+      "/audio/voice/phonics-sight-i-to.mp3",
+      "/audio/voice/phonics-sight-to-you.mp3",
+      "/audio/voice/phonics-sight-you-is.mp3",
+      "/audio/voice/phonics-sight-is-it.mp3",
+      "/audio/voice/phonics-sight-it-we.mp3",
+      "/audio/voice/phonics-sight-we-my.mp3",
+      "/audio/voice/phonics-sight-my-on.mp3",
+      "/audio/voice/phonics-sight-on-and.mp3",
+      "/audio/voice/phonics-sight-and-look.mp3",
+      "/audio/voice/phonics-sight-look-see.mp3",
       "/audio/voice/phonics-blend-cat.mp3",
       "/audio/voice/phonics-blend-hat.mp3",
       "/audio/voice/phonics-blend-mat.mp3",
@@ -7346,6 +7356,9 @@ describe("audio registry", () => {
     ).toBe("voice.phonics.hunt-yes-wash");
     expect(narrationClipForText("the. Find the word a.")?.id).toBe(
       "voice.phonics.sight-the-a",
+    );
+    expect(narrationClipForText("look. Find the word see.")?.id).toBe(
+      "voice.phonics.sight-look-see",
     );
   });
 
