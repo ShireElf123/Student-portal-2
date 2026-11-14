@@ -28291,6 +28291,20 @@ export const AUDIO_ASSETS: AudioAsset[] = [
     "UI unique short. Replaces device TTS.",
   ),
   voiceClip(
+    "voice.ui.start-green-dot",
+    "/audio/voice/ui-start-green-dot.mp3",
+    "Start green-dot short",
+    "Start on the green dot.",
+    "UI unique short. Replaces device TTS.",
+  ),
+  voiceClip(
+    "voice.ui.again-green-dot",
+    "/audio/voice/ui-again-green-dot.mp3",
+    "Again green-dot short",
+    "Again. Green dot. Slow.",
+    "UI unique short. Replaces device TTS.",
+  ),
+  voiceClip(
     "voice.count.train-cars",
     "/audio/voice/count-train-cars.mp3",
     "Count the Train Cars",

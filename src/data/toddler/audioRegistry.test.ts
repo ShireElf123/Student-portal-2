@@ -4040,6 +4040,8 @@ describe("audio registry", () => {
       "/audio/voice/ui-little-bear-ladle.mp3",
       "/audio/voice/ui-spare-twinkle.mp3",
       "/audio/voice/ui-steady-yes.mp3",
+      "/audio/voice/ui-start-green-dot.mp3",
+      "/audio/voice/ui-again-green-dot.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7157,6 +7159,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Voice enabled!")?.id).toBe("voice.ui.voice-enabled");
     expect(narrationClipForText("Yes. Slow and steady.")?.id).toBe("voice.ui.steady-yes");
+    expect(narrationClipForText("Start on the green dot.")?.id).toBe(
+      "voice.ui.start-green-dot",
+    );
+    expect(narrationClipForText("Again. Green dot. Slow.")?.id).toBe(
+      "voice.ui.again-green-dot",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
