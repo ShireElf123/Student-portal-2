@@ -4030,6 +4030,16 @@ describe("audio registry", () => {
       "/audio/voice/ui-rooms-stars.mp3",
       "/audio/voice/ui-open-kind-play.mp3",
       "/audio/voice/ui-phonics-tap-order.mp3",
+      "/audio/voice/ui-voice-enabled.mp3",
+      "/audio/voice/ui-bubble-pop.mp3",
+      "/audio/voice/ui-benny-hungry.mp3",
+      "/audio/voice/ui-explorer-quiz.mp3",
+      "/audio/voice/ui-shapes-colors.mp3",
+      "/audio/voice/ui-benny-full.mp3",
+      "/audio/voice/ui-north-star.mp3",
+      "/audio/voice/ui-little-bear-ladle.mp3",
+      "/audio/voice/ui-spare-twinkle.mp3",
+      "/audio/voice/ui-steady-yes.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7145,6 +7155,8 @@ describe("audio registry", () => {
     expect(narrationClipForText("Tap the letters in order.")?.id).toBe(
       "voice.ui.phonics-tap-order",
     );
+    expect(narrationClipForText("Voice enabled!")?.id).toBe("voice.ui.voice-enabled");
+    expect(narrationClipForText("Yes. Slow and steady.")?.id).toBe("voice.ui.steady-yes");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
