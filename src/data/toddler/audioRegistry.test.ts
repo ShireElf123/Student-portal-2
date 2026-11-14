@@ -4042,6 +4042,16 @@ describe("audio registry", () => {
       "/audio/voice/ui-steady-yes.mp3",
       "/audio/voice/ui-start-green-dot.mp3",
       "/audio/voice/ui-again-green-dot.mp3",
+      "/audio/voice/count-tap-one.mp3",
+      "/audio/voice/count-tap-two.mp3",
+      "/audio/voice/count-tap-three.mp3",
+      "/audio/voice/count-tap-four.mp3",
+      "/audio/voice/count-tap-five.mp3",
+      "/audio/voice/count-tap-six.mp3",
+      "/audio/voice/count-tap-seven.mp3",
+      "/audio/voice/count-tap-eight.mp3",
+      "/audio/voice/count-tap-nine.mp3",
+      "/audio/voice/count-tap-ten.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7165,6 +7175,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("Again. Green dot. Slow.")?.id).toBe(
       "voice.ui.again-green-dot",
     );
+    expect(
+      narrationClipForText("One. One sun on the stoop. Tap the dots, one by one.")?.id,
+    ).toBe("voice.count.tap-one");
+    expect(
+      narrationClipForText(
+        "Ten. Ten eggs. A full ten-frame. Tap the dots, one by one.",
+      )?.id,
+    ).toBe("voice.count.tap-ten");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
