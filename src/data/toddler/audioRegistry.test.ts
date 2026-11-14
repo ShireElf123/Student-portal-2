@@ -4102,6 +4102,16 @@ describe("audio registry", () => {
       "/audio/voice/count-say-eighteen.mp3",
       "/audio/voice/count-say-nineteen.mp3",
       "/audio/voice/count-say-twenty.mp3",
+      "/audio/voice/count-yes-ml-1.mp3",
+      "/audio/voice/count-yes-ml-2.mp3",
+      "/audio/voice/count-yes-ml-3.mp3",
+      "/audio/voice/count-yes-ml-4.mp3",
+      "/audio/voice/count-yes-ml-5.mp3",
+      "/audio/voice/count-yes-ml-6.mp3",
+      "/audio/voice/count-yes-ml-7.mp3",
+      "/audio/voice/count-yes-ml-8.mp3",
+      "/audio/voice/count-yes-pat-sun-moon.mp3",
+      "/audio/voice/count-yes-pat-boot.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7266,6 +7276,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Twenty. Two full ten-frames. Twenty.")?.id).toBe(
       "voice.count.say-twenty",
+    );
+    expect(narrationClipForText("Yes. Which pile has more lemons?")?.id).toBe(
+      "voice.count.yes-ml-1",
+    );
+    expect(narrationClipForText("Yes. Boot boot coin. Boot boot…?")?.id).toBe(
+      "voice.count.yes-pat-boot",
     );
   });
 
