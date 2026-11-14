@@ -33,7 +33,7 @@ import {
 import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import {
-  completeActiveMissionIfMatches,
+  payDailyMissionIfMatches,
   getDailyCount,
   recordDailyCount,
 } from "../data/toddler/toddlerDailyAdventure";
@@ -64,23 +64,28 @@ const EYES: { id: BuddyEyeStyle; label: string; icon: string }[] = [
   { id: "happy", label: "Happy Sparkle", icon: "👀" },
   { id: "starry", label: "Starry Wonder", icon: "⭐" },
   { id: "wink", label: "Cheeky Wink", icon: "😉" },
-  { id: "goggles", label: "Explorer Goggles", icon: "🥽" },
+  { id: "goggles", label: "Explorer Goggles", icon: "👓" },
 ];
 
 const HATS: { id: BuddyHat; label: string; icon: string }[] = [
   { id: "explorer", label: "Camp Scout Hat", icon: "🏕️" },
   { id: "party", label: "Party Cone", icon: "🎉" },
-  { id: "wizard", label: "Wizard Star Hat", icon: "🧙" },
+  { id: "wizard", label: "Wizard Star Hat", icon: "🎩" },
   { id: "astronaut", label: "Space Visor", icon: "🚀" },
   { id: "crown", label: "Golden Crown", icon: "👑" },
+  { id: "baker", label: "Bakery Hat", icon: "🍞" },
+  { id: "rain", label: "Rain Hat", icon: "🌧️" },
+  { id: "sailor", label: "Ferry Cap", icon: "⛴️" },
   { id: "none", label: "No Hat", icon: "✨" },
 ];
 
 const ACCESSORIES: { id: BuddyAccessory; label: string; icon: string }[] = [
   { id: "bowtie", label: "Red Bowtie", icon: "🎀" },
-  { id: "cape", label: "Hero Cape", icon: "🦸" },
+  { id: "cape", label: "Hero Cape", icon: "⭐" },
   { id: "medal", label: "Star Medal", icon: "🏅" },
   { id: "balloon", label: "Joy Balloon", icon: "🎈" },
+  { id: "letter", label: "Mail Letter", icon: "✉️" },
+  { id: "lantern", label: "Porch Lantern", icon: "🏮" },
   { id: "none", label: "None", icon: "🌟" },
 ];
 
@@ -102,6 +107,7 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
   const [buddy, setBuddy] = useState<BuddyCompanionConfig>(currentSaved);
   const [speechBubble, setSpeechBubble] = useState<string>(buddy.catchphrase);
   const [isSavedRecently, setIsSavedRecently] = useState(false);
+  const [walkCounts, setWalkCounts] = useState<Record<string, number>>({});
 
   // Clean speech on unmount
   useEffect(() => {
@@ -113,9 +119,9 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
   const handleHearVoice = () => {
     soundEffects.playPop();
     const greetings = [
-      `Hi friend! I'm ${buddy.name}! Ready to learn together?`,
-      `Yay! You made me look so cool! Let's go earn some golden stars!`,
-      `Beep boop! High five! Today is going to be amazing!`,
+      `Hi. I'm ${buddy.name}. The porch knows us.`,
+      `I am ready. Waiting is a kind of hug.`,
+      `Let's walk. Not run. Doors have opinions about running.`,
     ];
     const phrase = greetings[Math.floor(Math.random() * greetings.length)];
     setSpeechBubble(phrase);
@@ -134,12 +140,12 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
     setIsSavedRecently(true);
     soundEffects.playFanfare();
     triggerCelebrationConfetti();
-    speakText(`Hooray! ${buddy.name} is now your learning buddy! Let's conquer the odyssey!`, {
+    speakText(`${buddy.name} is your buddy now. The house keeps us.`, {
       pitch: 1.3,
       rate: 0.95,
     });
     try {
-      completeActiveMissionIfMatches("avatar-studio");
+      payDailyMissionIfMatches("avatar-studio");
     } catch {
       // ignore
     }
@@ -278,6 +284,44 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
                 <RefreshCw size={14} className="text-amber-300" />
                 <span>Surprise Me!</span>
               </button>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-2">
+              {[
+                { id: "porch", emoji: "🏡", need: 3, verb: "Sway", line: `I'm ${buddy.name} on the porch. The swing creaks.` },
+                { id: "bakery", emoji: "🔔", need: 1, verb: "Ding", line: `Bakery bell. Flour like quiet snow.` },
+                { id: "ferry", emoji: "⛴️", need: 1, verb: "Horn", line: `A low horn. Ready, not angry.` },
+                { id: "line", emoji: "👕", need: 4, verb: "Peg", line: `Hang the wash. The wind can work.` },
+                { id: "fountain", emoji: "⛲", need: 3, verb: "Look", line: `Looking is the wish. We do not throw.` },
+                { id: "bed", emoji: "🌙", need: 1, verb: "Tuck", line: `The bed is a dock. Goodnight squares.` },
+              ].map((room) => {
+                const count = walkCounts[room.id] ?? 0;
+                const done = count >= room.need;
+                return (
+                  <button
+                    key={room.id}
+                    type="button"
+                    onClick={() => {
+                      const next = Math.min(room.need, count + 1);
+                      setWalkCounts((prev) => ({ ...prev, [room.id]: next }));
+                      setSpeechBubble(room.line);
+                      speakText(next >= room.need ? room.line : room.verb, {
+                        pitch: buddy.archetype === "robot" ? 1.0 : buddy.archetype === "forest-bunny" ? 1.4 : 1.25,
+                        rate: 0.92,
+                      });
+                      soundEffects.playPop();
+                    }}
+                    className={`min-h-20 rounded-2xl border px-3 py-3 text-left text-white font-bold text-xs ${
+                      done ? "bg-emerald-500/30 border-emerald-300" : "bg-white/10 border-white/15"
+                    }`}
+                  >
+                    <span className="text-2xl">{room.emoji}</span>
+                    <p className="mt-1">
+                      {room.verb} {count}/{room.need}
+                    </p>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

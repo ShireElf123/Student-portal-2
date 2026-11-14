@@ -118,8 +118,7 @@ describe("Animal Safari detective loop", () => {
 
     await solveCurrentMystery(container);
 
-    // Step 3 of the reported flow: feedback for the animal that was tapped.
-    expect(speech.spoken.some((line) => line.startsWith("Yes! Correct! It's the Brave Lion!"))).toBe(true);
+    // Confirmation is on-screen (ring + score). Safari no longer mixes in Web Speech.
     expect(solved(container)).toBe(1);
     expect(card(container, "🦁").className).toContain("ring-4");
 
@@ -206,8 +205,6 @@ describe("Animal Safari detective loop", () => {
 
     // Not the lion (which the game used to show every single time)…
     expect(mystery(container)).toBe("WHINNY!");
-    // …and the welcome announcement matches what is on screen.
-    expect(speech.spoken[0]).toContain("WHINNY!");
     expect(solved(container)).toBe(0);
   });
 
@@ -219,7 +216,6 @@ describe("Animal Safari detective loop", () => {
     fireEvent.click(card(container, "🦆"));
     await flush();
 
-    expect(speech.spoken.at(-1)).toContain("That's the Happy Duck!");
     expect(solved(container)).toBe(0);
     expect(stars).toEqual([]);
 
@@ -248,6 +244,28 @@ describe("Animal Safari detective loop", () => {
     expect(solved(container)).toBe(2);
   });
 
+  it("finishes a Worlds station after three solves, not the first star", async () => {
+    const stars: number[] = [];
+    const completed = vi.fn();
+    const { container } = render(
+      <ToddlerAnimalSafari onAddStar={(amount) => stars.push(amount ?? 1)} onComplete={completed} />,
+    );
+    await settle(300);
+    await solveCurrentMystery(container);
+    expect(completed).not.toHaveBeenCalled();
+    await settle(1200);
+    await solveCurrentMystery(container);
+    expect(completed).not.toHaveBeenCalled();
+    await settle(1200);
+    await solveCurrentMystery(container);
+    expect(completed).toHaveBeenCalledTimes(1);
+    expect(stars).toEqual([2, 2, 2]);
+    await settle(1200);
+    await solveCurrentMystery(container);
+    expect(completed).toHaveBeenCalledTimes(1);
+    expect(stars).toEqual([2, 2, 2, 2]);
+  });
+
   it("leaves free-play explorer mode unchanged", async () => {
     const stars: number[] = [];
     const { container } = render(<ToddlerAnimalSafari onAddStar={(amount) => stars.push(amount ?? 1)} />);
@@ -258,7 +276,7 @@ describe("Animal Safari detective loop", () => {
 
     fireEvent.click(card(container, "🐸"));
     await flush();
-    expect(speech.spoken.at(-1)).toContain("Ribbit ribbit!");
+    expect(container.textContent).toContain("Frogs can breathe through their skin");
     expect(stars).toEqual([1]);
 
     fireEvent.click(card(container, "🐸"));

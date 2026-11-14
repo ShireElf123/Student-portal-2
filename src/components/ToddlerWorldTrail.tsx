@@ -27,7 +27,7 @@ export function ToddlerWorldTrail({
   label,
   nodes,
   onSelect,
-  buddyEmoji = "🧒",
+  buddyEmoji = "🧸",
   buddySrc,
   coverSrc,
   sceneryEmojis = [],
@@ -43,7 +43,7 @@ export function ToddlerWorldTrail({
 
   return (
     <section className="space-y-2">
-      <p className="px-1 text-sm font-black text-white/80">{label}</p>
+      <p className="px-1 text-sm font-black text-white/80 whitespace-nowrap">{label}</p>
       <div
         ref={scrollerRef}
         className="overflow-x-auto rounded-[2rem] border border-white/20 shadow-xl"
@@ -53,6 +53,7 @@ export function ToddlerWorldTrail({
             <img
               src={coverSrc}
               alt=""
+              decoding="async"
               className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-55"
             />
           )}
@@ -81,6 +82,9 @@ export function ToddlerWorldTrail({
                       <img
                         src={buddySrc}
                         alt=""
+                        width={48}
+                        height={48}
+                        decoding="async"
                         className="h-12 w-12 rounded-full object-cover object-top ring-2 ring-white shadow-md"
                       />
                     ) : (

@@ -177,3 +177,134 @@ describe("speakText callback delivery", () => {
     setVoiceMuted(false);
   });
 });
+
+describe("prepareSpeechText and spokenPageText", () => {
+  it("turns IPA slashes into toddler-friendly sounds", async () => {
+    const { prepareSpeechText } = await loadCoordinator();
+    expect(prepareSpeechText("A says /æ/. Apple.")).toBe("A says a. Apple.");
+    expect(prepareSpeechText("B says /b/. Bus.")).toBe("B says buh. Bus.");
+    expect(prepareSpeechText("S plus H makes /ʃ/.")).toBe("S plus H makes shh.");
+    expect(prepareSpeechText("C plus H makes /tʃ/.")).toBe("C plus H makes ch.");
+  });
+
+  it("reads the printed page, not a hidden phonics overlay", async () => {
+    const { spokenPageText } = await loadCoordinator();
+    expect(
+      spokenPageText({
+        text: "Pip unfolds a map. The pine path is this way.",
+        narration: "M says /m/. Map for the pine trail.",
+      }),
+    ).toBe("Pip unfolds a map. The pine path is this way.");
+  });
+
+  it("maps a spoken character to the current word for read-along", async () => {
+    const { wordIndexFromCharIndex } = await loadCoordinator();
+    expect(wordIndexFromCharIndex("A says a. Apple.", 0)).toBe(0);
+    expect(wordIndexFromCharIndex("A says a. Apple.", 7)).toBe(2);
+  });
+
+  it("sends the cleaned line to the speech engine", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    const { speakText } = await loadCoordinator();
+    speakText("A says /æ/. Apple.");
+    await wait(150);
+    expect(engineLog).toContain("speak:A says a. Apple.");
+  });
+});
+
+describe("narrator clip and parent priority", () => {
+  it("plays the registered welcome clip instead of Web Speech when the file works", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const { SAFARI_EXPLORE_WELCOME_PROMPT } = await import("../data/toddler/audioRegistry");
+    const played: string[] = [];
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => {
+        played.push(src);
+        return Promise.resolve();
+      },
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    const { speakText } = await import("./speechUtils");
+    let ended = false;
+    speakText(SAFARI_EXPLORE_WELCOME_PROMPT, { onEnd: () => { ended = true; } });
+    await wait(50);
+    expect(played).toEqual(["/audio/voice/narrator-safari-explore-welcome.mp3"]);
+    expect(engineLog.some((line) => line.startsWith("speak:Tap any animal friend"))).toBe(false);
+
+    // Clip end should still release callers.
+    // Fake clip never fires onended here; not required for "used clip instead of speech".
+    expect(ended).toBe(false);
+  });
+
+  it("falls back to Web Speech when the narrator file cannot play", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const { SAFARI_EXPLORE_WELCOME_PROMPT } = await import("../data/toddler/audioRegistry");
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => Promise.reject(new Error("404")),
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    const { speakText } = await import("./speechUtils");
+    speakText(SAFARI_EXPLORE_WELCOME_PROMPT);
+    await wait(200);
+    expect(engineLog.some((line) => line.includes("Tap any animal friend to hear their call"))).toBe(true);
+  });
+
+  it("closedKit plays a matching clip and never starts Web Speech on a miss", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => Promise.resolve(),
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    const { speakText } = await import("./speechUtils");
+    speakText("Hold the pail. Fill it to the top.", { closedKit: true });
+    await wait(80);
+    expect(engineLog.some((line) => line.startsWith("speak:"))).toBe(false);
+
+    speakText("a farm line with no clip yet", { closedKit: true });
+    await wait(80);
+    expect(engineLog.some((line) => line.includes("a farm line with no clip yet"))).toBe(false);
+  });
+
+  it("does not start Web Speech or a narrator clip while parent audio is playing", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const { SAFARI_EXPLORE_WELCOME_PROMPT } = await import("../data/toddler/audioRegistry");
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => Promise.resolve(),
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    audio.toddlerAudio.beginParentPlayback();
+    const { speakText } = await import("./speechUtils");
+    let ended = false;
+    const spoken = speakText(SAFARI_EXPLORE_WELCOME_PROMPT, { onEnd: () => { ended = true; } });
+    await wait(150);
+    expect(spoken).toBe(false);
+    expect(ended).toBe(true);
+    expect(engineLog).toHaveLength(0);
+    audio.toddlerAudio.endParentPlayback();
+  });
+});
+

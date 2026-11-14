@@ -326,7 +326,7 @@ export function PrimarySolarSystemLab({ initialTab = "explorer" }: { initialTab?
                 : "bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300"
             }`}
           >
-            🪐 Orbit &amp; Planet Inspector
+            🌍 Orbit &amp; Planet Inspector
           </button>
           <button
             onClick={() => {

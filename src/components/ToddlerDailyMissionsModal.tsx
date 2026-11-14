@@ -12,18 +12,16 @@ import {
 import {
   getTodayAdventure,
   getCompletedDailyMissionIds,
-  markDailyMissionCompleted,
   DailyMission,
   DailySchedule,
 } from "../data/toddler/toddlerDailyAdventure";
 import { soundEffects } from "../utils/soundEffects";
 import { speakText } from "../utils/speechUtils";
-import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 
 interface ToddlerDailyMissionsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectMissionTab: (tab: "books" | "phonics" | "counting" | "games" | "worlds" | "avatar-studio", subactivity?: string) => void;
+  onSelectMissionTab: (tab: "books" | "phonics" | "counting" | "games" | "worlds" | "avatar-studio" | "focus", subactivity?: string) => void;
   onAddStar: (count: number) => void;
 }
 
@@ -31,7 +29,6 @@ export function ToddlerDailyMissionsModal({
   isOpen,
   onClose,
   onSelectMissionTab,
-  onAddStar,
 }: ToddlerDailyMissionsModalProps) {
   const [schedule, setSchedule] = useState<DailySchedule>(getTodayAdventure());
   const [completedIds, setCompletedIds] = useState<string[]>(getCompletedDailyMissionIds());
@@ -49,28 +46,7 @@ export function ToddlerDailyMissionsModal({
 
   const handleStartMission = (mission: DailyMission) => {
     soundEffects.playPop();
-    speakText(`Starting daily mission: ${mission.title}! ${mission.tagline}`, { pitch: 1.15 });
-
-    // Mark completed if not already
-    const res = markDailyMissionCompleted(mission.id);
-    if (res.isFirstComplete) {
-      soundEffects.playSuccessChime();
-      soundEffects.playStarSparkle();
-      onAddStar(mission.starsReward);
-      awardXP(mission.xpReward, `Completed daily mission: ${mission.title}`);
-      setCompletedIds(getCompletedDailyMissionIds());
-
-      if (res.allCompleted) {
-        soundEffects.playFanfare();
-        triggerCelebrationConfetti();
-        onAddStar(5);
-        awardXP(100, "Completed all daily missions bonus");
-        speakText("Hooray! You completed all 3 daily missions for today! You earned 5 extra golden stars!", {
-          pitch: 1.2,
-        });
-      }
-    }
-
+    speakText(`Let's play: ${mission.title}! ${mission.tagline}`, { pitch: 1.15 });
     onClose();
     onSelectMissionTab(mission.targetTab, mission.targetSubactivity);
   };

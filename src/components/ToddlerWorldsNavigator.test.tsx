@@ -64,7 +64,7 @@ const startActivity = async () => {
   );
   await flush(500);
   expect(utils.container.textContent).toContain("The Grassy Pasture Sound");
-  expect(utils.container.textContent).toContain("Tap who it is");
+  expect(utils.container.textContent).toContain("Tap who made the sound");
   expect(utils.container.textContent).not.toContain("Beginner");
   return utils;
 };
@@ -222,6 +222,35 @@ describe("world level trail stations", () => {
     fireEvent.click(container.querySelector("[data-testid=trail-next]") as HTMLButtonElement);
     await flush(200);
     expect(container.textContent).toContain("Farm Valley");
+  });
+
+  it("opens a farm story clue as a tap quiz, not an unwired adventure", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator
+        onAddStar={() => {}}
+        starsCount={0}
+        initialWorldId="world:story-world:barnyard-tales:act-story-farm-who-gate"
+      />,
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Who Opened the Gate");
+    expect(container.textContent).not.toContain("Step 1 of");
+    fireEvent.click(optionButton(container, "Pip"));
+    await flush(2000);
+    expect(container.textContent).toContain("You did it!");
+  });
+
+  it("asks the child to tap a sorting home, not put items by dragging", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator
+        onAddStar={() => {}}
+        starsCount={0}
+        initialWorldId="world:animal-world:farm-valley:act-farm-sort-feed"
+      />,
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Tap a home for this friend");
+    expect(container.textContent).not.toContain("Put matching friends here");
   });
 
   it("plays a planted toy without the quiz overlay", async () => {

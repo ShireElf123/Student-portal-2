@@ -33,7 +33,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         illustration: "💌 📫 🧸",
         bgGradient: "from-rose-100 to-sky-100 text-rose-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "A stamp is a tiny ticket. Press it like a kiss that paid." },
+          { speaker: "Nana", emoji: "🎀", line: "A stamp is a tiny ticket. Press it like a kiss that paid." },
           { speaker: "Teddy", emoji: "🧸", line: "I will not eat the stamp. I thought about it. I will not." },
         ],
       },
@@ -55,7 +55,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         illustration: "🚩 📫 ☀️",
         bgGradient: "from-amber-100 to-sky-200 text-amber-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "Flag up means we have news. Flag down means the news already left." },
+          { speaker: "Nana", emoji: "🎀", line: "Flag up means we have news. Flag down means the news already left." },
           { speaker: "Teddy", emoji: "🧸", line: "I like news that waits. Waiting is a kind of hug." },
         ],
       },
@@ -96,11 +96,11 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "ss-1",
         title: "Lid On",
         setting: "Kitchen",
-        illustration: "🍲 🪵 🧸",
+        illustration: "🍲 🌳 🧸",
         bgGradient: "from-orange-100 to-amber-200 text-orange-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "The pot is wearing a hat. I respect hats." },
-          { speaker: "Nana", emoji: "🧶", line: "The hat keeps the secret in. Secrets in soup are called steam." },
+          { speaker: "Nana", emoji: "🎀", line: "The hat keeps the secret in. Secrets in soup are called steam." },
         ],
       },
       {
@@ -110,7 +110,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         illustration: "🥄 🍲 🌀",
         bgGradient: "from-yellow-100 to-orange-100 text-yellow-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "Round is the only direction soup believes." },
+          { speaker: "Nana", emoji: "🎀", line: "Round is the only direction soup believes." },
           { speaker: "Teddy", emoji: "🧸", line: "I can do round. Watch my paw. Almost round." },
         ],
       },
@@ -118,11 +118,11 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "ss-3",
         title: "Carrot Coins",
         setting: "Cutting board",
-        illustration: "🥕 ⭕ 🪵",
+        illustration: "🥕 ⭕ 🌳",
         bgGradient: "from-orange-200 to-lime-100 text-orange-950",
         lines: [
           { speaker: "Dot", emoji: "🐭", line: "Carrots become coins if you are a knife. I am not a knife. I am a guest." },
-          { speaker: "Nana", emoji: "🧶", line: "Guests may sniff. Guests may not steal coins." },
+          { speaker: "Nana", emoji: "🎀", line: "Guests may sniff. Guests may not steal coins." },
         ],
       },
       {
@@ -132,7 +132,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         illustration: "🥄 😋 🍲",
         bgGradient: "from-rose-100 to-amber-100 text-rose-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "Blow. Then taste. Heat is not a race." },
+          { speaker: "Nana", emoji: "🎀", line: "Blow. Then taste. Heat is not a race." },
           { speaker: "Teddy", emoji: "🧸", line: "I blew. It still told my tongue a loud story. I will wait." },
         ],
       },
@@ -154,7 +154,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         illustration: "🥣 💧 💛",
         bgGradient: "from-sky-100 to-orange-100 text-sky-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "Empty bowls are hats that finished their job." },
+          { speaker: "Nana", emoji: "🎀", line: "Empty bowls are hats that finished their job." },
           { speaker: "Teddy", emoji: "🧸", line: "Thank you, soup. Thank you, time. Thank you, secret." },
         ],
       },
@@ -165,7 +165,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       id: "lost-mitten-bench",
       title: "The Mitten on the Bench",
       tagline: "Snow. A bench. One mitten waiting like a small red house.",
-      coverEmoji: "🧤",
+      coverEmoji: "👋",
       coverGradient: "from-rose-400 to-slate-700",
     },
     [
@@ -173,7 +173,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "lm-1",
         title: "Quiet Snow",
         setting: "Park path",
-        illustration: "❄️ 🧤 🪑",
+        illustration: "❄️ 👋 💺",
         bgGradient: "from-sky-100 to-slate-200 text-slate-900",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "The snow is writing with no pencil. I like that kind of writing." },
@@ -184,10 +184,10 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "lm-2",
         title: "Do Not Pocket",
         setting: "Bench",
-        illustration: "🧤 🧸 ✋",
+        illustration: "👋 🧸 ✋",
         bgGradient: "from-rose-100 to-sky-100 text-rose-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "We do not pocket lost things. We make them easy to find." },
+          { speaker: "Nana", emoji: "🎀", line: "We do not pocket lost things. We make them easy to find." },
           { speaker: "Teddy", emoji: "🧸", line: "I will sit beside it. Sitting is a kind of sign." },
         ],
       },
@@ -195,7 +195,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "lm-3",
         title: "A Bird Opinion",
         setting: "Branch",
-        illustration: "🐦 🧤 ❄️",
+        illustration: "🐦 👋 ❄️",
         bgGradient: "from-lime-100 to-sky-100 text-lime-950",
         lines: [
           { speaker: "Sparrow", emoji: "🐦", line: "I do not wear mittens. I wear weather." },
@@ -206,7 +206,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "lm-4",
         title: "The Other Hand",
         setting: "Path",
-        illustration: "🧤 👢 ❄️",
+        illustration: "👋 👢 ❄️",
         bgGradient: "from-amber-100 to-rose-100 text-amber-950",
         lines: [
           { speaker: "Rosie", emoji: "🚒", line: "I saw a small boot print going in circles. Circles mean looking." },
@@ -217,10 +217,10 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "lm-5",
         title: "Found",
         setting: "Bench",
-        illustration: "🧤 💛 🪑",
+        illustration: "👋 💛 💺",
         bgGradient: "from-yellow-100 to-sky-200 text-yellow-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "Here is a hand that matches. Hello, pair." },
+          { speaker: "Nana", emoji: "🎀", line: "Here is a hand that matches. Hello, pair." },
           { speaker: "Teddy", emoji: "🧸", line: "The bench did a good job. Benches do not get thanked enough." },
         ],
       },
@@ -228,7 +228,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "lm-6",
         title: "Two Warm",
         setting: "Home path",
-        illustration: "🧤🧤 🏡 ❄️",
+        illustration: "👋👋 🏡 ❄️",
         bgGradient: "from-orange-100 to-indigo-100 text-orange-950",
         lines: [
           { speaker: "Dot", emoji: "🐭", line: "Two mittens. One story. Snow keeps writing." },
@@ -250,11 +250,11 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "ft-1",
         title: "The Window",
         setting: "Ticket booth",
-        illustration: "🎫 🪟 🧸",
+        illustration: "🎫 🏠 🧸",
         bgGradient: "from-yellow-100 to-sky-100 text-yellow-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "Please. Two tickets. One for a bear. One for a Nana." },
-          { speaker: "Booth", emoji: "🪟", line: "Please is a good coin. Here are two moons of paper." },
+          { speaker: "Booth", emoji: "🏠", line: "Please is a good coin. Here are two moons of paper." },
         ],
       },
       {
@@ -286,7 +286,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         illustration: "🌊 ⛴️ ☀️",
         bgGradient: "from-blue-100 to-cyan-100 text-blue-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "In the middle there is only boat. That is enough plot for a morning." },
+          { speaker: "Nana", emoji: "🎀", line: "In the middle there is only boat. That is enough plot for a morning." },
           { speaker: "Teddy", emoji: "🧸", line: "I am a passenger. Passengers may sway." },
         ],
       },
