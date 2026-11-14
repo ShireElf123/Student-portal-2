@@ -4052,6 +4052,16 @@ describe("audio registry", () => {
       "/audio/voice/count-tap-eight.mp3",
       "/audio/voice/count-tap-nine.mp3",
       "/audio/voice/count-tap-ten.mp3",
+      "/audio/voice/count-tap-eleven.mp3",
+      "/audio/voice/count-tap-twelve.mp3",
+      "/audio/voice/count-tap-thirteen.mp3",
+      "/audio/voice/count-tap-fourteen.mp3",
+      "/audio/voice/count-tap-fifteen.mp3",
+      "/audio/voice/count-tap-sixteen.mp3",
+      "/audio/voice/count-tap-seventeen.mp3",
+      "/audio/voice/count-tap-eighteen.mp3",
+      "/audio/voice/count-tap-nineteen.mp3",
+      "/audio/voice/count-tap-twenty.mp3",
       "/audio/voice/count-train-cars.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
@@ -7183,6 +7193,16 @@ describe("audio registry", () => {
         "Ten. Ten eggs. A full ten-frame. Tap the dots, one by one.",
       )?.id,
     ).toBe("voice.count.tap-ten");
+    expect(
+      narrationClipForText(
+        "Eleven. Ten buttons and one spare. Tap the dots, one by one.",
+      )?.id,
+    ).toBe("voice.count.tap-eleven");
+    expect(
+      narrationClipForText(
+        "Twenty. Two full ten-frames. Twenty. Tap the dots, one by one.",
+      )?.id,
+    ).toBe("voice.count.tap-twenty");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
