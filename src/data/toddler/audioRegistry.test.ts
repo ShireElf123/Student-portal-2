@@ -1887,6 +1887,15 @@ describe("audio registry", () => {
       "/audio/voice/piano-play-wheels.mp3",
       "/audio/voice/piano-play-london.mp3",
       "/audio/voice/piano-play-baa.mp3",
+      "/audio/voice/piano-play-jingle.mp3",
+      "/audio/voice/piano-bravo-twinkle.mp3",
+      "/audio/voice/piano-bravo-mary.mp3",
+      "/audio/voice/piano-bravo-row.mp3",
+      "/audio/voice/piano-bravo-old-mac.mp3",
+      "/audio/voice/piano-bravo-wheels.mp3",
+      "/audio/voice/piano-bravo-london.mp3",
+      "/audio/voice/piano-bravo-baa.mp3",
+      "/audio/voice/piano-bravo-jingle.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7540,6 +7549,16 @@ describe("audio registry", () => {
         "Let's play Baa Baa Black Sheep! Tap the glowing rainbow keys!",
       )?.id,
     ).toBe("voice.piano.play-baa");
+    expect(
+      narrationClipForText(
+        "Let's play Jingle Bells Melody! Tap the glowing rainbow keys!",
+      )?.id,
+    ).toBe("voice.piano.play-jingle");
+    expect(
+      narrationClipForText(
+        "Bravo! You played Jingle Bells Melody! What a wonderful musician!",
+      )?.id,
+    ).toBe("voice.piano.bravo-jingle");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
