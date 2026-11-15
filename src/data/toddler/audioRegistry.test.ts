@@ -1877,6 +1877,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-family-ot.mp3",
       "/audio/voice/phonics-family-og.mp3",
       "/audio/voice/phonics-family-ug.mp3",
+      "/audio/voice/phonics-family-un.mp3",
+      "/audio/voice/phonics-family-ut.mp3",
+      "/audio/voice/piano-welcome.mp3",
+      "/audio/voice/piano-play-twinkle.mp3",
+      "/audio/voice/piano-play-mary.mp3",
+      "/audio/voice/piano-play-row.mp3",
+      "/audio/voice/piano-play-old-mac.mp3",
+      "/audio/voice/piano-play-wheels.mp3",
+      "/audio/voice/piano-play-london.mp3",
+      "/audio/voice/piano-play-baa.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7522,6 +7532,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("U-G says ug. bug, hug, mug.")?.id).toBe(
       "voice.phonics.family-ug",
     );
+    expect(narrationClipForText("U-T says ut. nut, cut, hut.")?.id).toBe(
+      "voice.phonics.family-ut",
+    );
+    expect(
+      narrationClipForText(
+        "Let's play Baa Baa Black Sheep! Tap the glowing rainbow keys!",
+      )?.id,
+    ).toBe("voice.piano.play-baa");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
