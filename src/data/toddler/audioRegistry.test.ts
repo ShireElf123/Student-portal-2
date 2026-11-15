@@ -1867,6 +1867,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-family-an.mp3",
       "/audio/voice/phonics-family-ap.mp3",
       "/audio/voice/phonics-family-ag.mp3",
+      "/audio/voice/phonics-family-en.mp3",
+      "/audio/voice/phonics-family-et.mp3",
+      "/audio/voice/phonics-family-ed.mp3",
+      "/audio/voice/phonics-family-in.mp3",
+      "/audio/voice/phonics-family-ig.mp3",
+      "/audio/voice/phonics-family-ip.mp3",
+      "/audio/voice/phonics-family-op.mp3",
+      "/audio/voice/phonics-family-ot.mp3",
+      "/audio/voice/phonics-family-og.mp3",
+      "/audio/voice/phonics-family-ug.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7508,6 +7518,9 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("A-G says ag. bag, tag, wag.")?.id).toBe(
       "voice.phonics.family-ag",
+    );
+    expect(narrationClipForText("U-G says ug. bug, hug, mug.")?.id).toBe(
+      "voice.phonics.family-ug",
     );
   });
 
