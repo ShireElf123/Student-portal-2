@@ -1847,6 +1847,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-says-h.mp3",
       "/audio/voice/phonics-says-i.mp3",
       "/audio/voice/phonics-says-j.mp3",
+      "/audio/voice/phonics-says-k.mp3",
+      "/audio/voice/phonics-says-l.mp3",
+      "/audio/voice/phonics-says-m.mp3",
+      "/audio/voice/phonics-says-n.mp3",
+      "/audio/voice/phonics-says-o.mp3",
+      "/audio/voice/phonics-says-p.mp3",
+      "/audio/voice/phonics-says-q.mp3",
+      "/audio/voice/phonics-says-r.mp3",
+      "/audio/voice/phonics-says-s.mp3",
+      "/audio/voice/phonics-says-t.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7479,6 +7489,9 @@ describe("audio registry", () => {
     expect(narrationClipForText("Z in Zoo.")?.id).toBe("voice.phonics.in-z-zoo");
     expect(narrationClipForText("J says /j/. Jam. Jar. Jump.")?.id).toBe(
       "voice.phonics.says-j",
+    );
+    expect(narrationClipForText("T says /t/. Taxi. Toast. Token.")?.id).toBe(
+      "voice.phonics.says-t",
     );
   });
 
