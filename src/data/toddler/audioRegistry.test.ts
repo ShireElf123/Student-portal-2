@@ -1787,6 +1787,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-in-i-in.mp3",
       "/audio/voice/phonics-in-i-igloo.mp3",
       "/audio/voice/phonics-in-j-jam.mp3",
+      "/audio/voice/phonics-in-j-jar.mp3",
+      "/audio/voice/phonics-in-j-jump.mp3",
+      "/audio/voice/phonics-in-k-key.mp3",
+      "/audio/voice/phonics-in-k-kite.mp3",
+      "/audio/voice/phonics-in-k-knob.mp3",
+      "/audio/voice/phonics-in-l-loaf.mp3",
+      "/audio/voice/phonics-in-l-lamp.mp3",
+      "/audio/voice/phonics-in-l-line.mp3",
+      "/audio/voice/phonics-in-m-mat.mp3",
+      "/audio/voice/phonics-in-m-moon.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7412,6 +7422,7 @@ describe("audio registry", () => {
     expect(narrationClipForText("C in Cup.")?.id).toBe("voice.phonics.in-c-cup");
     expect(narrationClipForText("F in Fish.")?.id).toBe("voice.phonics.in-f-fish");
     expect(narrationClipForText("J in Jam.")?.id).toBe("voice.phonics.in-j-jam");
+    expect(narrationClipForText("M in Moon.")?.id).toBe("voice.phonics.in-m-moon");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
