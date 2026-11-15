@@ -1837,6 +1837,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-in-z-zip.mp3",
       "/audio/voice/phonics-in-z-zigzag.mp3",
       "/audio/voice/phonics-in-z-zoo.mp3",
+      "/audio/voice/phonics-says-a.mp3",
+      "/audio/voice/phonics-says-b.mp3",
+      "/audio/voice/phonics-says-c.mp3",
+      "/audio/voice/phonics-says-d.mp3",
+      "/audio/voice/phonics-says-e.mp3",
+      "/audio/voice/phonics-says-f.mp3",
+      "/audio/voice/phonics-says-g.mp3",
+      "/audio/voice/phonics-says-h.mp3",
+      "/audio/voice/phonics-says-i.mp3",
+      "/audio/voice/phonics-says-j.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7467,6 +7477,9 @@ describe("audio registry", () => {
     expect(narrationClipForText("T in Taxi.")?.id).toBe("voice.phonics.in-t-taxi");
     expect(narrationClipForText("W in Window.")?.id).toBe("voice.phonics.in-w-window");
     expect(narrationClipForText("Z in Zoo.")?.id).toBe("voice.phonics.in-z-zoo");
+    expect(narrationClipForText("J says /j/. Jam. Jar. Jump.")?.id).toBe(
+      "voice.phonics.says-j",
+    );
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
