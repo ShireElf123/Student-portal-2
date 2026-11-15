@@ -1807,6 +1807,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-in-p-porch.mp3",
       "/audio/voice/phonics-in-p-pan.mp3",
       "/audio/voice/phonics-in-p-peg.mp3",
+      "/audio/voice/phonics-in-q-quilt.mp3",
+      "/audio/voice/phonics-in-q-quiet.mp3",
+      "/audio/voice/phonics-in-q-queen.mp3",
+      "/audio/voice/phonics-in-r-rain.mp3",
+      "/audio/voice/phonics-in-r-rope.mp3",
+      "/audio/voice/phonics-in-r-red.mp3",
+      "/audio/voice/phonics-in-s-stoop.mp3",
+      "/audio/voice/phonics-in-s-sun.mp3",
+      "/audio/voice/phonics-in-s-sock.mp3",
+      "/audio/voice/phonics-in-t-taxi.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7434,6 +7444,7 @@ describe("audio registry", () => {
     expect(narrationClipForText("J in Jam.")?.id).toBe("voice.phonics.in-j-jam");
     expect(narrationClipForText("M in Moon.")?.id).toBe("voice.phonics.in-m-moon");
     expect(narrationClipForText("P in Peg.")?.id).toBe("voice.phonics.in-p-peg");
+    expect(narrationClipForText("T in Taxi.")?.id).toBe("voice.phonics.in-t-taxi");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
