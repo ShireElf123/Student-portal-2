@@ -1896,6 +1896,16 @@ describe("audio registry", () => {
       "/audio/voice/piano-bravo-london.mp3",
       "/audio/voice/piano-bravo-baa.mp3",
       "/audio/voice/piano-bravo-jingle.mp3",
+      "/audio/voice/trace-rocket.mp3",
+      "/audio/voice/trace-yes-rocket.mp3",
+      "/audio/voice/trace-letter-a.mp3",
+      "/audio/voice/trace-yes-letter-a.mp3",
+      "/audio/voice/trace-count.mp3",
+      "/audio/voice/trace-yes-count.mp3",
+      "/audio/voice/trace-c.mp3",
+      "/audio/voice/trace-yes-c.mp3",
+      "/audio/voice/trace-d.mp3",
+      "/audio/voice/trace-yes-d.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7559,6 +7569,12 @@ describe("audio registry", () => {
         "Bravo! You played Jingle Bells Melody! What a wonderful musician!",
       )?.id,
     ).toBe("voice.piano.bravo-jingle");
+    expect(
+      narrationClipForText(
+        "Trace the letter R. Start on the blue dot. One line. R says /r/! Rocket!",
+      )?.id,
+    ).toBe("voice.trace.rocket");
+    expect(narrationClipForText("Yes! D!")?.id).toBe("voice.trace.yes-d");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
