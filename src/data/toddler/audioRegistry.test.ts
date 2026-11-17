@@ -7552,10 +7552,13 @@ describe("audio registry", () => {
     expect(narrationClipForText("Letter M says mmm. Mat. Moon. Milk.")?.id).toBe(
       "voice.phonics.says-m",
     );
-    expect(narrationClipForText("J says /j/. Jam. Jar. Jump.")?.id).toBe(
+    expect(narrationClipForText("Letter A says a. Attic. Apple. Ant.")?.id).toBe(
+      "voice.phonics.says-a",
+    );
+    expect(narrationClipForText("Letter J says juh. Jam. Jar. Jump.")?.id).toBe(
       "voice.phonics.says-j",
     );
-    expect(narrationClipForText("T says /t/. Taxi. Toast. Token.")?.id).toBe(
+    expect(narrationClipForText("Letter T says tuh. Taxi. Toast. Token.")?.id).toBe(
       "voice.phonics.says-t",
     );
     expect(narrationClipForText("Z says /z/. Zip. Zigzag. Zoo.")?.id).toBe(
