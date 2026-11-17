@@ -101,7 +101,7 @@ const IPA_TO_SPEECH: Record<string, string> = {
   w: "wuh",
   v: "vvv",
   z: "zzz",
-  j: "juh",
+  j: "yuh",
   y: "yuh",
 };
 

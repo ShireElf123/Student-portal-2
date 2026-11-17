@@ -183,6 +183,8 @@ describe("prepareSpeechText and spokenPageText", () => {
     const { prepareSpeechText } = await loadCoordinator();
     expect(prepareSpeechText("A says /æ/. Apple.")).toBe("A says a. Apple.");
     expect(prepareSpeechText("B says /b/. Bus.")).toBe("B says buh. Bus.");
+    expect(prepareSpeechText("J says /dʒ/. Jam.")).toBe("J says juh. Jam.");
+    expect(prepareSpeechText("Y says /j/. Yellow.")).toBe("Y says yuh. Yellow.");
     expect(prepareSpeechText("S plus H makes /ʃ/.")).toBe("S plus H makes shh.");
     expect(prepareSpeechText("C plus H makes /tʃ/.")).toBe("C plus H makes ch.");
   });
