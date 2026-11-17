@@ -1916,6 +1916,16 @@ describe("audio registry", () => {
       "/audio/voice/trace-yes-h.mp3",
       "/audio/voice/trace-i.mp3",
       "/audio/voice/trace-yes-i.mp3",
+      "/audio/voice/trace-j.mp3",
+      "/audio/voice/trace-yes-j.mp3",
+      "/audio/voice/trace-k.mp3",
+      "/audio/voice/trace-yes-k.mp3",
+      "/audio/voice/trace-l.mp3",
+      "/audio/voice/trace-yes-l.mp3",
+      "/audio/voice/trace-n.mp3",
+      "/audio/voice/trace-yes-n.mp3",
+      "/audio/voice/trace-o.mp3",
+      "/audio/voice/trace-yes-o.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7600,6 +7610,12 @@ describe("audio registry", () => {
       )?.id,
     ).toBe("voice.trace.e");
     expect(narrationClipForText("Yes! I!")?.id).toBe("voice.trace.yes-i");
+    expect(
+      narrationClipForText(
+        "Trace the letter J. Start on the blue dot. One line. J!",
+      )?.id,
+    ).toBe("voice.trace.j");
+    expect(narrationClipForText("Yes! O!")?.id).toBe("voice.trace.yes-o");
   });
 
   it("maps letter A explore bio to A says a like apple", () => {
