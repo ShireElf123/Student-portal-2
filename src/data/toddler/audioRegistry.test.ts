@@ -2176,6 +2176,16 @@ describe("audio registry", () => {
       "/audio/voice/trace-yes-home.mp3",
       "/audio/voice/trace-brush.mp3",
       "/audio/voice/trace-yes-brush.mp3",
+      "/audio/voice/trace-smile.mp3",
+      "/audio/voice/trace-yes-smile.mp3",
+      "/audio/voice/trace-mum.mp3",
+      "/audio/voice/trace-yes-mum.mp3",
+      "/audio/voice/trace-teeth.mp3",
+      "/audio/voice/trace-yes-teeth.mp3",
+      "/audio/voice/trace-family.mp3",
+      "/audio/voice/trace-yes-family.mp3",
+      "/audio/voice/trace-cup.mp3",
+      "/audio/voice/trace-yes-cup.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -8066,6 +8076,14 @@ describe("audio registry", () => {
     ).toBe("voice.trace.dragon");
     expect(narrationClipForText("Yes! B says /b/! Brush!")?.id).toBe(
       "voice.trace.yes-brush",
+    );
+    expect(
+      narrationClipForText(
+        "Trace the letter S. Start on the blue dot. One line. S says /s/! Smile!",
+      )?.id,
+    ).toBe("voice.trace.smile");
+    expect(narrationClipForText("Yes! C says /k/! Cup!")?.id).toBe(
+      "voice.trace.yes-cup",
     );
   });
 
