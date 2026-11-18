@@ -1791,7 +1791,7 @@ describe("audio registry", () => {
       "/audio/voice/phonics-in-j-jump.mp3",
       "/audio/voice/phonics-in-k-key.mp3",
       "/audio/voice/phonics-in-k-kite.mp3",
-      "/audio/voice/phonics-in-k-knob.mp3",
+      "/audio/voice/phonics-in-k-king.mp3",
       "/audio/voice/phonics-in-l-loaf.mp3",
       "/audio/voice/phonics-in-l-lamp.mp3",
       "/audio/voice/phonics-in-l-line.mp3",
@@ -7711,9 +7711,13 @@ describe("audio registry", () => {
     expect(narrationClipForText("Letter T says tuh. Taxi. Toast. Token.")?.id).toBe(
       "voice.phonics.says-t",
     );
-    expect(narrationClipForText("Z says /z/. Zip. Zigzag. Zoo.")?.id).toBe(
+    expect(narrationClipForText("Letter Z says zzz. Zip. Zigzag. Zoo.")?.id).toBe(
       "voice.phonics.says-z",
     );
+    expect(narrationClipForText("Letter U says uh. Umbrella. Up. Under.")?.id).toBe(
+      "voice.phonics.says-u",
+    );
+    expect(narrationClipForText("K in King.")?.id).toBe("voice.phonics.in-k-king");
     expect(narrationClipForText("A-G says ag. bag, tag, wag.")?.id).toBe(
       "voice.phonics.family-ag",
     );
