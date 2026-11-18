@@ -2006,6 +2006,16 @@ describe("audio registry", () => {
       "/audio/voice/trace-yes-plane.mp3",
       "/audio/voice/trace-train.mp3",
       "/audio/voice/trace-yes-train.mp3",
+      "/audio/voice/trace-van.mp3",
+      "/audio/voice/trace-yes-van.mp3",
+      "/audio/voice/trace-ship.mp3",
+      "/audio/voice/trace-yes-ship.mp3",
+      "/audio/voice/trace-road.mp3",
+      "/audio/voice/trace-yes-road.mp3",
+      "/audio/voice/trace-airport.mp3",
+      "/audio/voice/trace-yes-airport.mp3",
+      "/audio/voice/trace-horn.mp3",
+      "/audio/voice/trace-yes-horn.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7756,6 +7766,14 @@ describe("audio registry", () => {
     ).toBe("voice.trace.flour");
     expect(narrationClipForText("Yes! T says /t/! Train!")?.id).toBe(
       "voice.trace.yes-train",
+    );
+    expect(
+      narrationClipForText(
+        "Trace the letter V. Start on the blue dot. One line. V says /v/! Van!",
+      )?.id,
+    ).toBe("voice.trace.van");
+    expect(narrationClipForText("Yes! H says /h/! Horn!")?.id).toBe(
+      "voice.trace.yes-horn",
     );
   });
 
