@@ -2106,6 +2106,16 @@ describe("audio registry", () => {
       "/audio/voice/trace-yes-grass.mp3",
       "/audio/voice/trace-dew.mp3",
       "/audio/voice/trace-yes-dew.mp3",
+      "/audio/voice/trace-hive.mp3",
+      "/audio/voice/trace-yes-hive.mp3",
+      "/audio/voice/trace-pollen.mp3",
+      "/audio/voice/trace-yes-pollen.mp3",
+      "/audio/voice/trace-park.mp3",
+      "/audio/voice/trace-yes-park.mp3",
+      "/audio/voice/trace-town.mp3",
+      "/audio/voice/trace-yes-town.mp3",
+      "/audio/voice/trace-market.mp3",
+      "/audio/voice/trace-yes-market.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7940,6 +7950,14 @@ describe("audio registry", () => {
     ).toBe("voice.trace.caterpillar");
     expect(narrationClipForText("Yes! D says /d/! Dew!")?.id).toBe(
       "voice.trace.yes-dew",
+    );
+    expect(
+      narrationClipForText(
+        "Trace the letter H. Start on the blue dot. One line. H says /h/! Hive!",
+      )?.id,
+    ).toBe("voice.trace.hive");
+    expect(narrationClipForText("Yes! M says /m/! Market!")?.id).toBe(
+      "voice.trace.yes-market",
     );
   });
 
