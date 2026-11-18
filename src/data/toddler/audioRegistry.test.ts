@@ -1986,6 +1986,16 @@ describe("audio registry", () => {
       "/audio/voice/trace-yes-milk.mp3",
       "/audio/voice/trace-pear.mp3",
       "/audio/voice/trace-yes-pear.mp3",
+      "/audio/voice/trace-corn.mp3",
+      "/audio/voice/trace-yes-corn.mp3",
+      "/audio/voice/trace-tea.mp3",
+      "/audio/voice/trace-yes-tea.mp3",
+      "/audio/voice/trace-jam.mp3",
+      "/audio/voice/trace-yes-jam.mp3",
+      "/audio/voice/trace-oven.mp3",
+      "/audio/voice/trace-yes-oven.mp3",
+      "/audio/voice/trace-kettle.mp3",
+      "/audio/voice/trace-yes-kettle.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7720,6 +7730,14 @@ describe("audio registry", () => {
     ).toBe("voice.trace.rain");
     expect(narrationClipForText("Yes! P says /p/! Pear!")?.id).toBe(
       "voice.trace.yes-pear",
+    );
+    expect(
+      narrationClipForText(
+        "Trace the letter C. Start on the blue dot. One line. C says /k/! Corn!",
+      )?.id,
+    ).toBe("voice.trace.corn");
+    expect(narrationClipForText("Yes! K says /k/! Kettle!")?.id).toBe(
+      "voice.trace.yes-kettle",
     );
   });
 
