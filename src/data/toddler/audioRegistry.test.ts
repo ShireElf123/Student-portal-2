@@ -2096,6 +2096,16 @@ describe("audio registry", () => {
       "/audio/voice/trace-yes-worm.mp3",
       "/audio/voice/trace-snail.mp3",
       "/audio/voice/trace-yes-snail.mp3",
+      "/audio/voice/trace-caterpillar.mp3",
+      "/audio/voice/trace-yes-caterpillar.mp3",
+      "/audio/voice/trace-fly.mp3",
+      "/audio/voice/trace-yes-fly.mp3",
+      "/audio/voice/trace-moth.mp3",
+      "/audio/voice/trace-yes-moth.mp3",
+      "/audio/voice/trace-grass.mp3",
+      "/audio/voice/trace-yes-grass.mp3",
+      "/audio/voice/trace-dew.mp3",
+      "/audio/voice/trace-yes-dew.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7922,6 +7932,14 @@ describe("audio registry", () => {
     ).toBe("voice.trace.bee");
     expect(narrationClipForText("Yes! S says /s/! Snail!")?.id).toBe(
       "voice.trace.yes-snail",
+    );
+    expect(
+      narrationClipForText(
+        "Trace the letter C. Start on the blue dot. One line. C says /k/! Caterpillar!",
+      )?.id,
+    ).toBe("voice.trace.caterpillar");
+    expect(narrationClipForText("Yes! D says /d/! Dew!")?.id).toBe(
+      "voice.trace.yes-dew",
     );
   });
 
