@@ -2116,6 +2116,16 @@ describe("audio registry", () => {
       "/audio/voice/trace-yes-town.mp3",
       "/audio/voice/trace-market.mp3",
       "/audio/voice/trace-yes-market.mp3",
+      "/audio/voice/trace-shop.mp3",
+      "/audio/voice/trace-yes-shop.mp3",
+      "/audio/voice/trace-fire.mp3",
+      "/audio/voice/trace-yes-fire.mp3",
+      "/audio/voice/trace-clock.mp3",
+      "/audio/voice/trace-yes-clock.mp3",
+      "/audio/voice/trace-kiosk.mp3",
+      "/audio/voice/trace-yes-kiosk.mp3",
+      "/audio/voice/trace-news.mp3",
+      "/audio/voice/trace-yes-news.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7958,6 +7968,14 @@ describe("audio registry", () => {
     ).toBe("voice.trace.hive");
     expect(narrationClipForText("Yes! M says /m/! Market!")?.id).toBe(
       "voice.trace.yes-market",
+    );
+    expect(
+      narrationClipForText(
+        "Trace the letter S. Start on the blue dot. One line. S says /s/! Shop!",
+      )?.id,
+    ).toBe("voice.trace.shop");
+    expect(narrationClipForText("Yes! N says /n/! News!")?.id).toBe(
+      "voice.trace.yes-news",
     );
   });
 
