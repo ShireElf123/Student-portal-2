@@ -2076,6 +2076,16 @@ describe("audio registry", () => {
       "/audio/voice/trace-yes-sheep.mp3",
       "/audio/voice/trace-frog.mp3",
       "/audio/voice/trace-yes-frog.mp3",
+      "/audio/voice/trace-goat.mp3",
+      "/audio/voice/trace-yes-goat.mp3",
+      "/audio/voice/trace-wool.mp3",
+      "/audio/voice/trace-yes-wool.mp3",
+      "/audio/voice/trace-barn.mp3",
+      "/audio/voice/trace-yes-barn.mp3",
+      "/audio/voice/trace-rooster.mp3",
+      "/audio/voice/trace-yes-rooster.mp3",
+      "/audio/voice/trace-quiet.mp3",
+      "/audio/voice/trace-yes-quiet.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -7886,6 +7896,14 @@ describe("audio registry", () => {
     ).toBe("voice.trace.duck");
     expect(narrationClipForText("Yes! F says /f/! Frog!")?.id).toBe(
       "voice.trace.yes-frog",
+    );
+    expect(
+      narrationClipForText(
+        "Trace the letter G. Start on the blue dot. One line. G says /g/! Goat!",
+      )?.id,
+    ).toBe("voice.trace.goat");
+    expect(narrationClipForText("Yes! Tiptoe time!")?.id).toBe(
+      "voice.trace.yes-quiet",
     );
   });
 
