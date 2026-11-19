@@ -2226,6 +2226,12 @@ describe("audio registry", () => {
       "/audio/voice/trace-yes-pen.mp3",
       "/audio/voice/trace-nine.mp3",
       "/audio/voice/trace-yes-nine.mp3",
+      "/audio/voice/trace-six.mp3",
+      "/audio/voice/trace-yes-six.mp3",
+      "/audio/voice/trace-eight.mp3",
+      "/audio/voice/trace-yes-eight.mp3",
+      "/audio/voice/trace-ten.mp3",
+      "/audio/voice/trace-yes-ten.mp3",
       "/audio/voice/focus-body-zoomies.mp3",
       "/audio/voice/focus-body-wiggles.mp3",
       "/audio/voice/focus-body-loud.mp3",
@@ -8156,6 +8162,14 @@ describe("audio registry", () => {
     ).toBe("voice.trace.dot");
     expect(narrationClipForText("Yes! N says /n/! Nine!")?.id).toBe(
       "voice.trace.yes-nine",
+    );
+    expect(
+      narrationClipForText(
+        "Trace the letter 6. Start on the blue dot. One line. Six is a number we can count!",
+      )?.id,
+    ).toBe("voice.trace.six");
+    expect(narrationClipForText("Yes! Ten fills a ten-frame!")?.id).toBe(
+      "voice.trace.yes-ten",
     );
   });
 
