@@ -1909,6 +1909,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-family-sip.mp3",
       "/audio/voice/phonics-family-lip.mp3",
       "/audio/voice/phonics-family-dip.mp3",
+      "/audio/voice/phonics-family-hop.mp3",
+      "/audio/voice/phonics-family-mop.mp3",
+      "/audio/voice/phonics-family-top.mp3",
+      "/audio/voice/phonics-family-pot.mp3",
+      "/audio/voice/phonics-family-dot.mp3",
+      "/audio/voice/phonics-family-hot.mp3",
+      "/audio/voice/phonics-family-dog.mp3",
+      "/audio/voice/phonics-family-log.mp3",
+      "/audio/voice/phonics-family-fog.mp3",
+      "/audio/voice/phonics-family-bug.mp3",
       "/audio/voice/color-drop-ruby-red.mp3",
       "/audio/voice/color-drop-sunny-yellow.mp3",
       "/audio/voice/color-drop-ocean-blue.mp3",
@@ -7972,6 +7982,9 @@ describe("audio registry", () => {
     expect(narrationClipForText("fed. /ed/.")?.id).toBe("voice.phonics.family-fed");
     expect(narrationClipForText("pin. /in/.")?.id).toBe("voice.phonics.family-pin");
     expect(narrationClipForText("dip. /ip/.")?.id).toBe("voice.phonics.family-dip");
+    expect(narrationClipForText("hop. /op/.")?.id).toBe("voice.phonics.family-hop");
+    expect(narrationClipForText("dog. /og/.")?.id).toBe("voice.phonics.family-dog");
+    expect(narrationClipForText("bug. /ug/.")?.id).toBe("voice.phonics.family-bug");
     expect(narrationClipForText("Ruby Red")?.id).toBe("voice.color.drop-ruby-red");
     expect(narrationClipForText("Sunny Yellow")?.id).toBe("voice.color.drop-sunny-yellow");
     expect(
