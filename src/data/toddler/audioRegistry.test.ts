@@ -1919,6 +1919,16 @@ describe("audio registry", () => {
       "/audio/voice/count-tap-13.mp3",
       "/audio/voice/count-tap-14.mp3",
       "/audio/voice/count-tap-15.mp3",
+      "/audio/voice/count-tap-16.mp3",
+      "/audio/voice/count-tap-17.mp3",
+      "/audio/voice/count-tap-18.mp3",
+      "/audio/voice/count-tap-19.mp3",
+      "/audio/voice/count-tap-20.mp3",
+      "/audio/voice/count-peek-1.mp3",
+      "/audio/voice/count-peek-2.mp3",
+      "/audio/voice/count-peek-3.mp3",
+      "/audio/voice/count-peek-4.mp3",
+      "/audio/voice/count-peek-5.mp3",
       "/audio/voice/piano-welcome.mp3",
       "/audio/voice/piano-play-twinkle.mp3",
       "/audio/voice/piano-play-mary.mp3",
@@ -7952,6 +7962,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("6")?.id).toBe("voice.count.tap-6");
     expect(narrationClipForText("10")?.id).toBe("voice.count.tap-10");
     expect(narrationClipForText("15")?.id).toBe("voice.count.tap-15");
+    expect(narrationClipForText("16")?.id).toBe("voice.count.tap-16");
+    expect(narrationClipForText("20")?.id).toBe("voice.count.tap-20");
+    expect(narrationClipForText("1.")?.id).toBe("voice.count.peek-1");
+    expect(narrationClipForText("5.")?.id).toBe("voice.count.peek-5");
     expect(
       narrationClipForText(
         "Let's play Baa Baa Black Sheep! Tap the glowing rainbow keys!",
