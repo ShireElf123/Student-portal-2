@@ -1909,6 +1909,16 @@ describe("audio registry", () => {
       "/audio/voice/count-tap-3.mp3",
       "/audio/voice/count-tap-4.mp3",
       "/audio/voice/count-tap-5.mp3",
+      "/audio/voice/count-tap-6.mp3",
+      "/audio/voice/count-tap-7.mp3",
+      "/audio/voice/count-tap-8.mp3",
+      "/audio/voice/count-tap-9.mp3",
+      "/audio/voice/count-tap-10.mp3",
+      "/audio/voice/count-tap-11.mp3",
+      "/audio/voice/count-tap-12.mp3",
+      "/audio/voice/count-tap-13.mp3",
+      "/audio/voice/count-tap-14.mp3",
+      "/audio/voice/count-tap-15.mp3",
       "/audio/voice/piano-welcome.mp3",
       "/audio/voice/piano-play-twinkle.mp3",
       "/audio/voice/piano-play-mary.mp3",
@@ -7939,6 +7949,9 @@ describe("audio registry", () => {
     expect(narrationClipForText("1")?.id).toBe("voice.count.tap-1");
     expect(narrationClipForText("2")?.id).toBe("voice.count.tap-2");
     expect(narrationClipForText("5")?.id).toBe("voice.count.tap-5");
+    expect(narrationClipForText("6")?.id).toBe("voice.count.tap-6");
+    expect(narrationClipForText("10")?.id).toBe("voice.count.tap-10");
+    expect(narrationClipForText("15")?.id).toBe("voice.count.tap-15");
     expect(
       narrationClipForText(
         "Let's play Baa Baa Black Sheep! Tap the glowing rainbow keys!",
