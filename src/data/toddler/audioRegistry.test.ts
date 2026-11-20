@@ -1879,6 +1879,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-family-ug.mp3",
       "/audio/voice/phonics-family-un.mp3",
       "/audio/voice/phonics-family-ut.mp3",
+      "/audio/voice/phonics-family-cat.mp3",
+      "/audio/voice/phonics-family-hat.mp3",
+      "/audio/voice/phonics-family-mat.mp3",
+      "/audio/voice/phonics-family-can.mp3",
+      "/audio/voice/phonics-family-man.mp3",
+      "/audio/voice/phonics-family-pan.mp3",
+      "/audio/voice/phonics-family-cap.mp3",
+      "/audio/voice/phonics-family-map.mp3",
+      "/audio/voice/phonics-family-tap.mp3",
+      "/audio/voice/phonics-family-bag.mp3",
       "/audio/voice/piano-welcome.mp3",
       "/audio/voice/piano-play-twinkle.mp3",
       "/audio/voice/piano-play-mary.mp3",
@@ -7893,6 +7903,9 @@ describe("audio registry", () => {
     expect(narrationClipForText("U-T says ut. nut, cut, hut.")?.id).toBe(
       "voice.phonics.family-ut",
     );
+    expect(narrationClipForText("cat. /at/.")?.id).toBe("voice.phonics.family-cat");
+    expect(narrationClipForText("hat. /at/.")?.id).toBe("voice.phonics.family-hat");
+    expect(narrationClipForText("bag. /ag/.")?.id).toBe("voice.phonics.family-bag");
     expect(
       narrationClipForText(
         "Let's play Baa Baa Black Sheep! Tap the glowing rainbow keys!",
