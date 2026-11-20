@@ -1889,6 +1889,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-family-map.mp3",
       "/audio/voice/phonics-family-tap.mp3",
       "/audio/voice/phonics-family-bag.mp3",
+      "/audio/voice/phonics-family-tag.mp3",
+      "/audio/voice/phonics-family-wag.mp3",
+      "/audio/voice/phonics-family-pen.mp3",
+      "/audio/voice/phonics-family-hen.mp3",
+      "/audio/voice/phonics-family-ten.mp3",
+      "/audio/voice/phonics-family-net.mp3",
+      "/audio/voice/phonics-family-pet.mp3",
+      "/audio/voice/phonics-family-wet.mp3",
+      "/audio/voice/phonics-family-bed.mp3",
+      "/audio/voice/phonics-family-red.mp3",
       "/audio/voice/piano-welcome.mp3",
       "/audio/voice/piano-play-twinkle.mp3",
       "/audio/voice/piano-play-mary.mp3",
@@ -7906,6 +7916,9 @@ describe("audio registry", () => {
     expect(narrationClipForText("cat. /at/.")?.id).toBe("voice.phonics.family-cat");
     expect(narrationClipForText("hat. /at/.")?.id).toBe("voice.phonics.family-hat");
     expect(narrationClipForText("bag. /ag/.")?.id).toBe("voice.phonics.family-bag");
+    expect(narrationClipForText("tag. /ag/.")?.id).toBe("voice.phonics.family-tag");
+    expect(narrationClipForText("ten. /en/.")?.id).toBe("voice.phonics.family-ten");
+    expect(narrationClipForText("red. /ed/.")?.id).toBe("voice.phonics.family-red");
     expect(
       narrationClipForText(
         "Let's play Baa Baa Black Sheep! Tap the glowing rainbow keys!",
