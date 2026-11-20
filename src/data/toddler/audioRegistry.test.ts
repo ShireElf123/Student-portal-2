@@ -1929,6 +1929,16 @@ describe("audio registry", () => {
       "/audio/voice/count-peek-3.mp3",
       "/audio/voice/count-peek-4.mp3",
       "/audio/voice/count-peek-5.mp3",
+      "/audio/voice/color-mix-red-yellow.mp3",
+      "/audio/voice/color-mix-yellow-red.mp3",
+      "/audio/voice/color-mix-blue-yellow.mp3",
+      "/audio/voice/color-mix-yellow-blue.mp3",
+      "/audio/voice/color-mix-red-blue.mp3",
+      "/audio/voice/color-mix-blue-red.mp3",
+      "/audio/voice/color-two-ruby-red.mp3",
+      "/audio/voice/color-two-sunny-yellow.mp3",
+      "/audio/voice/color-two-ocean-blue.mp3",
+      "/audio/voice/color-two-cloud-white.mp3",
       "/audio/voice/piano-welcome.mp3",
       "/audio/voice/piano-play-twinkle.mp3",
       "/audio/voice/piano-play-mary.mp3",
@@ -7966,6 +7976,15 @@ describe("audio registry", () => {
     expect(narrationClipForText("20")?.id).toBe("voice.count.tap-20");
     expect(narrationClipForText("1.")?.id).toBe("voice.count.peek-1");
     expect(narrationClipForText("5.")?.id).toBe("voice.count.peek-5");
+    expect(
+      narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
+    ).toBe("voice.color.mix-red-yellow");
+    expect(
+      narrationClipForText("Blue plus Red creates deep royal Purple!")?.id,
+    ).toBe("voice.color.mix-blue-red");
+    expect(
+      narrationClipForText("Two Ruby Reds! Pick a different color to mix magic!")?.id,
+    ).toBe("voice.color.two-ruby-red");
     expect(
       narrationClipForText(
         "Let's play Baa Baa Black Sheep! Tap the glowing rainbow keys!",
