@@ -212,6 +212,15 @@ describe("prepareSpeechText and spokenPageText", () => {
     await wait(150);
     expect(engineLog).toContain("speak:A says a. Apple.");
   });
+
+  it("looks up clips with IPA slashes intact so games do not fall back to device TTS", async () => {
+    const { narrationClipLookups, prepareSpeechText } = await loadCoordinator();
+    const line = "Trace the letter R. Start on the blue dot. One line. R says /r/! Rocket!";
+    expect(narrationClipLookups(line)[0]).toBe(line);
+    expect(prepareSpeechText(line)).toBe(
+      "Trace the letter R. Start on the blue dot. One line. R says rrr! Rocket!",
+    );
+  });
 });
 
 describe("narrator clip and parent priority", () => {
@@ -261,6 +270,52 @@ describe("narrator clip and parent priority", () => {
     speakText(SAFARI_EXPLORE_WELCOME_PROMPT);
     await wait(200);
     expect(engineLog.some((line) => line.includes("Tap any animal friend to hear their call"))).toBe(true);
+  });
+
+  it("plays an IPA game clip instead of rewriting the line into device TTS", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const played: string[] = [];
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => {
+        played.push(src);
+        return Promise.resolve();
+      },
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    const { speakText } = await import("./speechUtils");
+    speakText("Trace the letter R. Start on the blue dot. One line. R says /r/! Rocket!");
+    await wait(50);
+    expect(played).toEqual(["/audio/voice/trace-rocket.mp3"]);
+    expect(engineLog.some((line) => line.startsWith("speak:"))).toBe(false);
+  });
+
+  it("closedKit plays an IPA game clip and stays quiet without Web Speech", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const played: string[] = [];
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => {
+        played.push(src);
+        return Promise.resolve();
+      },
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    const { speakText } = await import("./speechUtils");
+    speakText("Yes! R says /r/! Rocket!", { closedKit: true });
+    await wait(50);
+    expect(played).toEqual(["/audio/voice/trace-yes-rocket.mp3"]);
+    expect(engineLog.some((line) => line.startsWith("speak:"))).toBe(false);
   });
 
   it("closedKit plays a matching clip and never starts Web Speech on a miss", async () => {

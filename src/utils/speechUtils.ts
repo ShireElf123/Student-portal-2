@@ -2,8 +2,9 @@
  * Speech synthesis utility for Toddler and Primary school learning.
  * Uses the best available English system voice with a user-selectable override.
  * Speech quality depends on voices installed by the browser/operating system.
- * One registered narrator MP3 may replace a matching line; missing files fall
- * back here. Parent recordings (toddlerAudio parent channel) outrank both.
+ * One registered narrator MP3 may replace a matching line (exact promptText,
+ * including IPA slashes). Missing files fall back here. Parent recordings
+ * (toddlerAudio parent channel) outrank both.
  */
 
 import { toddlerAudio } from "./toddlerAudio";
@@ -114,6 +115,17 @@ export function prepareSpeechText(text: string): string {
   }
   out = out.replace(/\/([A-Za-zæʃθðəɪɒʌɑŋ]{1,4})\//g, "$1");
   return out.replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Clip keys for exact registry lookup. IPA slashes stay on the first key
+ * because promptText is stored that way. Device TTS still uses prepareSpeechText.
+ */
+export function narrationClipLookups(text: string): string[] {
+  const raw = (text || "").replace(/\s+/g, " ").trim();
+  if (!raw) return [];
+  const prepared = prepareSpeechText(raw);
+  return raw === prepared ? [raw] : [raw, prepared];
 }
 
 /** Read-to-me speaks the printed page so the voice matches the picture and tap-words. */
@@ -480,7 +492,8 @@ class SpeechCoordinator {
       return false;
     }
 
-    const cleanText = prepareSpeechText(text || "");
+    const rawText = (text || "").replace(/\s+/g, " ").trim();
+    const cleanText = prepareSpeechText(rawText);
     if (!cleanText) {
       options?.onEnd?.();
       return false;
@@ -491,11 +504,13 @@ class SpeechCoordinator {
       return false;
     }
 
+    const clipLookups = narrationClipLookups(rawText);
+
     if (options?.closedKit) {
       this.stop();
       const token = ++this.activeToken;
       if (!options.skipClip) {
-        const clipStarted = toddlerAudio.tryNarrationClip(cleanText, {
+        const clipHandlers = {
           onStart: () => {
             if (token !== this.activeToken) return;
             this.notify(true);
@@ -523,8 +538,10 @@ class SpeechCoordinator {
               // ignore
             }
           },
-        });
-        if (clipStarted) return true;
+        };
+        for (const lookup of clipLookups) {
+          if (toddlerAudio.tryNarrationClip(lookup, clipHandlers)) return true;
+        }
       }
       options?.onEnd?.();
       return false;
@@ -551,7 +568,7 @@ class SpeechCoordinator {
     const token = ++this.activeToken;
 
     if (!options?.skipClip) {
-      const clipStarted = toddlerAudio.tryNarrationClip(cleanText, {
+      const clipHandlers = {
         onStart: () => {
           if (token !== this.activeToken) return;
           this.notify(true);
@@ -574,8 +591,10 @@ class SpeechCoordinator {
           if (token !== this.activeToken) return;
           this.speak(cleanText, { ...options, skipClip: true, isRetry: true });
         },
-      });
-      if (clipStarted) return true;
+      };
+      for (const lookup of clipLookups) {
+        if (toddlerAudio.tryNarrationClip(lookup, clipHandlers)) return true;
+      }
     }
 
     // Generous spacing (100ms) before triggering speech prevents WebKit / Chromium audio collisions
