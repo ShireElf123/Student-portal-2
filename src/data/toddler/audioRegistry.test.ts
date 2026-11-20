@@ -1899,6 +1899,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-family-wet.mp3",
       "/audio/voice/phonics-family-bed.mp3",
       "/audio/voice/phonics-family-red.mp3",
+      "/audio/voice/color-drop-ruby-red.mp3",
+      "/audio/voice/color-drop-sunny-yellow.mp3",
+      "/audio/voice/color-drop-ocean-blue.mp3",
+      "/audio/voice/color-drop-cloud-white.mp3",
+      "/audio/voice/color-magic-welcome.mp3",
+      "/audio/voice/count-tap-1.mp3",
+      "/audio/voice/count-tap-2.mp3",
+      "/audio/voice/count-tap-3.mp3",
+      "/audio/voice/count-tap-4.mp3",
+      "/audio/voice/count-tap-5.mp3",
       "/audio/voice/piano-welcome.mp3",
       "/audio/voice/piano-play-twinkle.mp3",
       "/audio/voice/piano-play-mary.mp3",
@@ -7919,6 +7929,16 @@ describe("audio registry", () => {
     expect(narrationClipForText("tag. /ag/.")?.id).toBe("voice.phonics.family-tag");
     expect(narrationClipForText("ten. /en/.")?.id).toBe("voice.phonics.family-ten");
     expect(narrationClipForText("red. /ed/.")?.id).toBe("voice.phonics.family-red");
+    expect(narrationClipForText("Ruby Red")?.id).toBe("voice.color.drop-ruby-red");
+    expect(narrationClipForText("Sunny Yellow")?.id).toBe("voice.color.drop-sunny-yellow");
+    expect(
+      narrationClipForText(
+        "Welcome to Color Magic! Tap two primary color droplets to blend a magical new color!",
+      )?.id,
+    ).toBe("voice.color.magic-welcome");
+    expect(narrationClipForText("1")?.id).toBe("voice.count.tap-1");
+    expect(narrationClipForText("2")?.id).toBe("voice.count.tap-2");
+    expect(narrationClipForText("5")?.id).toBe("voice.count.tap-5");
     expect(
       narrationClipForText(
         "Let's play Baa Baa Black Sheep! Tap the glowing rainbow keys!",

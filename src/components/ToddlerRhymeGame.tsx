@@ -247,11 +247,7 @@ export function ToddlerRhymeGame({
       speakText(
         closedKit && index === 0 && welcomeLine
           ? welcomeLine
-          : closedKit
-            ? current.spokenPrompt
-            : index === 0
-              ? `Welcome to Rhyme Time! ${current.spokenPrompt}`
-              : current.spokenPrompt,
+          : current.spokenPrompt,
         { pitch: 1.25, rate: 0.92, closedKit },
       );
     }, 240);

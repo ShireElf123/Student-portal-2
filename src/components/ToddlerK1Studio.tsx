@@ -39,11 +39,7 @@ export function ToddlerK1Studio({ gameId, onAddStar, onComplete, closedKit = fal
       const line =
         closedKit && roundIndex === 0 && welcomeLine
           ? welcomeLine
-          : closedKit
-            ? round.spoken
-            : roundIndex === 0
-              ? `Welcome to ${game.title}. ${round.spoken}`
-              : round.spoken;
+          : round.spoken;
       speakText(line, {
         pitch: 1.18,
         rate: 0.94,
