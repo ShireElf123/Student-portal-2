@@ -1967,6 +1967,13 @@ describe("audio registry", () => {
       "/audio/voice/count-peek-13.mp3",
       "/audio/voice/count-peek-14.mp3",
       "/audio/voice/count-peek-15.mp3",
+      "/audio/voice/nav-balloon-a.mp3",
+      "/audio/voice/nav-balloon-b.mp3",
+      "/audio/voice/nav-balloon-c.mp3",
+      "/audio/voice/nav-balloon-d.mp3",
+      "/audio/voice/nav-balloon-e.mp3",
+      "/audio/voice/nav-balloon-s.mp3",
+      "/audio/voice/nav-balloon-t.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8024,6 +8031,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("5.")?.id).toBe("voice.count.peek-5");
     expect(narrationClipForText("6.")?.id).toBe("voice.count.peek-6");
     expect(narrationClipForText("15.")?.id).toBe("voice.count.peek-15");
+    expect(
+      narrationClipForText("Welcome to Balloon Sky! Can you find and pop balloon A?")?.id,
+    ).toBe("voice.nav.balloon-a");
+    expect(
+      narrationClipForText("Welcome to Balloon Sky! Can you find and pop balloon T?")?.id,
+    ).toBe("voice.nav.balloon-t");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
