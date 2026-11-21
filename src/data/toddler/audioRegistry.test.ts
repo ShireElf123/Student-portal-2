@@ -1974,6 +1974,16 @@ describe("audio registry", () => {
       "/audio/voice/nav-balloon-e.mp3",
       "/audio/voice/nav-balloon-s.mp3",
       "/audio/voice/nav-balloon-t.mp3",
+      "/audio/voice/nav-balloon-m.mp3",
+      "/audio/voice/nav-balloon-1.mp3",
+      "/audio/voice/nav-balloon-2.mp3",
+      "/audio/voice/nav-balloon-3.mp3",
+      "/audio/voice/nav-balloon-4.mp3",
+      "/audio/voice/nav-balloon-5.mp3",
+      "/audio/voice/count-cheer-1.mp3",
+      "/audio/voice/count-cheer-2.mp3",
+      "/audio/voice/count-cheer-3.mp3",
+      "/audio/voice/count-cheer-4.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8037,6 +8047,13 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Welcome to Balloon Sky! Can you find and pop balloon T?")?.id,
     ).toBe("voice.nav.balloon-t");
+    expect(
+      narrationClipForText("Welcome to Balloon Sky! Can you find and pop balloon M?")?.id,
+    ).toBe("voice.nav.balloon-m");
+    expect(
+      narrationClipForText("Welcome to Balloon Sky! Can you find and pop balloon 1?")?.id,
+    ).toBe("voice.nav.balloon-1");
+    expect(narrationClipForText("1!")?.id).toBe("voice.count.cheer-1");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
