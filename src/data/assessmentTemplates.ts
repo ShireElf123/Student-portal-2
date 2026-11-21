@@ -85,7 +85,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
         options: ["Identifies circle and square correctly", "Knows circle only", "Confuses both shapes"],
         correctAnswer: "Identifies circle and square correctly",
         score: "not_assessed",
-        visualCue: "🔴 🟦",
+        visualCue: "🔴 📘",
       },
       {
         id: "math-item-3",
@@ -128,7 +128,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
         options: ["Summarizes main idea concisely in own words", "Recalls single detail but misses big picture", "Unable to summarize without leading clues"],
         correctAnswer: "Summarizes main idea concisely in own words",
         score: "not_assessed",
-        visualCue: "💡 🧠",
+        visualCue: "💡 💭",
       },
       {
         id: "pri-item-3",
@@ -248,7 +248,7 @@ export const GUIDED_ASSESSMENTS: GuidedAssessment[] = [
         options: ["Answers 14 confidently with place value explanation", "Guesses 104 or 5", "Needs counting from 1"],
         correctAnswer: "Answers 14 confidently with place value explanation",
         score: "not_assessed",
-        visualCue: "🧱 📦",
+        visualCue: "🏠 📦",
       },
       {
         id: "g1-math-3",

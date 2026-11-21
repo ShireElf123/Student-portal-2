@@ -59,20 +59,66 @@ export function countingBand(level: number): { min: number; max: number; label: 
   return { min: 11, max: 20, label: "11 to 20" };
 }
 
-/** First area stays 1–5. Next road 6–10. Deeper land 11–20. Never weaker than authored difficulty. */
+/** First area stays 1–5 even if the station was authored harder. Next road 6–10. Deeper land 11–20. */
 export function countingLevelForPlace(areaIndex: number, authoredDifficulty: number = 1): number {
-  const fromRoad = areaIndex <= 0 ? 1 : areaIndex === 1 ? 2 : 3;
+  if (areaIndex <= 0) return 1;
+  const fromRoad = areaIndex === 1 ? 2 : 3;
   return Math.max(authoredDifficulty || 1, fromRoad);
+}
+
+export interface CountingHint {
+  title?: string;
+  spokenPrompt?: string;
+  targetCount?: number;
+}
+
+function stemWord(value: string): string {
+  return value.toLowerCase().replace(/ies$/, "y").replace(/s$/, "");
+}
+
+export function pickCountingTemplate<T extends { name: string }>(pool: T[], title?: string): T {
+  const source = pool.length > 0 ? pool : (COUNTING_OBJECT_TEMPLATES as unknown as T[]);
+  if (title) {
+    const hay = title.toLowerCase();
+    const match = source.find((item) => {
+      const last = stemWord(item.name.split(" ").pop() || item.name);
+      return last.length >= 3 && hay.includes(last);
+    });
+    if (match) return match;
+  }
+  return source[Math.floor(Math.random() * source.length)];
+}
+
+export function countingHintFromActivity(activity: {
+  title: string;
+  spokenPrompt?: string;
+  options?: { id: string; label: string; isCorrect: boolean }[];
+}): CountingHint {
+  const correct = activity.options?.find((option) => option.isCorrect);
+  let targetCount: number | undefined;
+  if (correct) {
+    const fromId = Number.parseInt(correct.id, 10);
+    if (Number.isFinite(fromId)) targetCount = fromId;
+    else {
+      const digits = correct.label.match(/\d+/);
+      if (digits) targetCount = Number.parseInt(digits[0], 10);
+    }
+  }
+  return { title: activity.title, spokenPrompt: activity.spokenPrompt, targetCount };
 }
 
 export function generateCountingScenario(
   level: number = 1,
   pool: { name: string; emoji: string; sound: string; bg: string; text: string }[] = COUNTING_OBJECT_TEMPLATES,
+  hint?: CountingHint,
 ): DynamicCountingScenario {
   const { min, max, label } = countingBand(level);
-  const count = min + Math.floor(Math.random() * (max - min + 1));
+  let count = min + Math.floor(Math.random() * (max - min + 1));
+  if (hint?.targetCount != null && hint.targetCount >= min && hint.targetCount <= max) {
+    count = hint.targetCount;
+  }
   const source = pool.length > 0 ? pool : COUNTING_OBJECT_TEMPLATES;
-  const template = source[Math.floor(Math.random() * source.length)];
+  const template = pickCountingTemplate(source, hint?.title);
 
   const distractors: number[] = [];
   while (distractors.length < 2) {
@@ -94,9 +140,11 @@ export function generateCountingScenario(
     textColor: template.text,
     question: `How many ${template.name} can you count?`,
     spokenPrompt:
-      level <= 1
-        ? `Look! Count the ${template.name}. How many do you see?`
-        : `This group is bigger. Count the ${template.name} from ${label}. How many do you see?`,
+      hint?.spokenPrompt && hint.targetCount === count
+        ? hint.spokenPrompt
+        : level <= 1
+          ? `Look! Count the ${template.name}. How many do you see?`
+          : `This group is bigger. Count the ${template.name} from ${label}. How many do you see?`,
     distractorCounts: options,
   };
 }
@@ -141,10 +189,10 @@ export function generateSortingChallenge(pack?: {
       instruction: "Sort the food: Put crunchy fruits here, and sweet party treats there!",
       spokenPrompt: "Can you sort the snacks? Which ones are fresh fruits from trees, and which are sweet party treats?",
       catA: { id: "fruit", label: "Fresh Fruits", emoji: "🍎", dropZoneColor: "border-rose-400 bg-rose-950/40 text-rose-300" },
-      catB: { id: "treat", label: "Sweet Treats", emoji: "🧁", dropZoneColor: "border-amber-400 bg-amber-950/40 text-amber-300" },
+      catB: { id: "treat", label: "Sweet Treats", emoji: "🍰", dropZoneColor: "border-amber-400 bg-amber-950/40 text-amber-300" },
       items: [
         { id: "apple", label: "Apple", emoji: "🍎", correctCategory: "A" as const, soundFeedback: "Crisp red apple is full of vitamins!" },
-        { id: "cupcake", label: "Cupcake", emoji: "🧁", correctCategory: "B" as const, soundFeedback: "Yummy birthday cupcake with frosting!" },
+        { id: "cupcake", label: "Cupcake", emoji: "🍰", correctCategory: "B" as const, soundFeedback: "Yummy birthday cupcake with frosting!" },
         { id: "banana", label: "Banana", emoji: "🍌", correctCategory: "A" as const, soundFeedback: "Sweet yellow banana from the tree!" },
         { id: "lollipop", label: "Lollipop", emoji: "🍭", correctCategory: "B" as const, soundFeedback: "Rainbow swirl candy treat!" },
         { id: "strawberry", label: "Strawberry", emoji: "🍓", correctCategory: "A" as const, soundFeedback: "Juicy red garden strawberry!" },
@@ -159,9 +207,9 @@ export function generateSortingChallenge(pack?: {
       catB: { id: "winter", label: "Cozy Winter", emoji: "❄️", dropZoneColor: "border-sky-400 bg-sky-950/40 text-sky-300" },
       items: [
         { id: "sunglasses", label: "Sunglasses", emoji: "🕶️", correctCategory: "A" as const, soundFeedback: "Cool shades for bright sunny beach days!" },
-        { id: "muffler", label: "Wool Scarf", emoji: "🧣", correctCategory: "B" as const, soundFeedback: "Warm fluffy scarf keeps our neck cozy!" },
-        { id: "swimsuit", label: "Swimsuit", emoji: "🩱", correctCategory: "A" as const, soundFeedback: "Ready for splashing in the summer pool!" },
-        { id: "mittens", label: "Winter Mittens", emoji: "🧤", correctCategory: "B" as const, soundFeedback: "Warm knit mittens keep our hands toasty in the snow!" },
+        { id: "muffler", label: "Wool Scarf", emoji: "🎀", correctCategory: "B" as const, soundFeedback: "Warm fluffy scarf keeps our neck cozy!" },
+        { id: "swimsuit", label: "Swimsuit", emoji: "👙", correctCategory: "A" as const, soundFeedback: "Ready for splashing in the summer pool!" },
+        { id: "mittens", label: "Winter Mittens", emoji: "👋", correctCategory: "B" as const, soundFeedback: "Warm knit mittens keep our hands toasty in the snow!" },
       ],
     },
     {
@@ -188,7 +236,7 @@ export function generateSortingChallenge(pack?: {
       items: [
         { id: "sun", label: "Bright Sun", emoji: "☀️", correctCategory: "A" as const, soundFeedback: "The sun warms up the morning day!" },
         { id: "moon", label: "Glowing Moon", emoji: "🌙", correctCategory: "B" as const, soundFeedback: "The moon shines when we go to sleep!" },
-        { id: "kite", label: "Flying Kite", emoji: "🪁", correctCategory: "A" as const, soundFeedback: "Kites dance in the sunny breeze!" },
+        { id: "kite", label: "Flying Kite", emoji: "🎈", correctCategory: "A" as const, soundFeedback: "Kites dance in the sunny breeze!" },
         { id: "star", label: "Twinkling Star", emoji: "⭐", correctCategory: "B" as const, soundFeedback: "Stars sparkle in the velvet night!" },
         { id: "rainbow", label: "Rainbow", emoji: "🌈", correctCategory: "A" as const, soundFeedback: "Rainbows appear after daytime showers!" },
         { id: "owl", label: "Night Owl", emoji: "🦉", soundFeedback: "Owls wake up when night falls!", correctCategory: "B" as const },

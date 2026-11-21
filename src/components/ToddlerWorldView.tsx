@@ -26,8 +26,9 @@ import {
   Trash2,
 } from "lucide-react";
 import { PictureBook, PictureBookPage } from "../types";
-import { PICTURE_BOOKS } from "../data/pictureBooksData";
-import { speakText, stopSpeaking, speechCoordinator } from "../utils/speechUtils";
+import { PICTURE_BOOKS, pictureBookIsOnNamedStoriesShelf } from "../data/pictureBooksData";
+import { speakText, stopSpeaking, speechCoordinator, spokenPageText } from "../utils/speechUtils";
+import { toddlerAudio } from "../utils/toddlerAudio";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { resolveSkillForActivity } from "../data/activitySkillRegistry";
 import { soundEffects } from "../utils/soundEffects";
@@ -39,7 +40,12 @@ import {
 } from "../utils/parentAudioStorage";
 import { ToddlerQuizzesAndGames } from "./ToddlerQuizzesAndGames";
 import { ToddlerPlayhouse } from "./ToddlerPlayhouse";
+import { ToddlerPhonicsBoard } from "./ToddlerPhonicsBoard";
+import { ToddlerCountingBoard } from "./ToddlerCountingBoard";
+import { ToddlerFocusBoard } from "./ToddlerFocusBoard";
 import { ToddlerWorldsNavigator } from "./ToddlerWorldsNavigator";
+import { ToddlerSpaceNav } from "./ToddlerSpaceNav";
+import type { ToddlerSpaceTabId } from "../data/toddler/toddlerSpaceTabs";
 import { ToddlerDailyMissionsModal } from "./ToddlerDailyMissionsModal";
 import { ToddlerStickerAlbumModal } from "./ToddlerStickerAlbumModal";
 import { BuddyCompanionBadge } from "./BuddyCompanionBadge";
@@ -49,9 +55,7 @@ import {
   getExplorerRank,
   getTodayAdventure,
   getCompletedDailyMissionIds,
-  completeActiveMissionIfMatches,
-  recordPhonicsLetterTapped,
-  recordCountingCardTapped,
+  payDailyMissionIfMatches,
   TODDLER_STICKERS,
 } from "../data/toddler/toddlerDailyAdventure";
 import type { GameBlueprint } from "../contentEngine/types";
@@ -81,44 +85,26 @@ interface ToddlerWorldViewProps {
   onRequestExit?: () => void;
 }
 
-const PHONICS_TILES = [
-  { letter: "A", word: "Apple", emoji: "🍎", sound: "A says ah! Like delicious red Apple." },
-  { letter: "B", word: "Bear", emoji: "🐻", sound: "B says buh! Like friendly brown Bear." },
-  { letter: "C", word: "Cat", emoji: "🐱", sound: "C says kuh! Like playful kitten Cat." },
-  { letter: "D", word: "Duck", emoji: "🦆", sound: "D says duh! Quack quack says the Duck." },
-  { letter: "E", word: "Elephant", emoji: "🐘", sound: "E says eh! Huge friendly Elephant." },
-  { letter: "F", word: "Fish", emoji: "🐠", sound: "F says fff! Swimming orange Fish." },
-  { letter: "G", word: "Giraffe", emoji: "🦒", sound: "G says guh! Tall spotted Giraffe." },
-  { letter: "H", word: "Heart", emoji: "💖", sound: "H says huh! Happy warm Heart." },
-  { letter: "I", word: "Ice Cream", emoji: "🍦", sound: "I says ih! Sweet cool Ice cream." },
-  { letter: "J", word: "Jellyfish", emoji: "🪼", sound: "J says juh! Bouncy purple Jellyfish." },
-  { letter: "K", word: "Kangaroo", emoji: "🦘", sound: "K says kuh! Hop hop Kangaroo." },
-  { letter: "L", word: "Lion", emoji: "🦁", sound: "L says lll! Brave golden Lion." },
-  { letter: "M", word: "Monkey", emoji: "🐵", sound: "M says mmm! Cheerful cheeky Monkey." },
-  { letter: "N", word: "Nest", emoji: "🪺", sound: "N says nnn! Cozy bird Nest." },
-  { letter: "O", word: "Owl", emoji: "🦉", sound: "O says ah! Wise nighttime Owl." },
-  { letter: "P", word: "Puppy", emoji: "🐶", sound: "P says puh! Waggy tail Puppy." },
-  { letter: "Q", word: "Queen", emoji: "👑", sound: "Q says kwuh! Shiny golden Queen." },
-  { letter: "R", word: "Rainbow", emoji: "🌈", sound: "R says rrr! Seven colorful Rainbow." },
-  { letter: "S", word: "Star", emoji: "⭐", sound: "S says sss! Shiny twinkle Star." },
-  { letter: "T", word: "Tiger", emoji: "🐯", sound: "T says tuh! Striped orange Tiger." },
-  { letter: "U", word: "Umbrella", emoji: "☂️", sound: "U says uh! Rain protection Umbrella." },
-  { letter: "V", word: "Violin", emoji: "🎻", sound: "V says vvv! Sweet music Violin." },
-  { letter: "W", word: "Whale", emoji: "🐳", sound: "W says wuh! Giant blue Whale." },
-  { letter: "X", word: "Xylophone", emoji: "🎵", sound: "X says ks! Ding dong Xylophone." },
-  { letter: "Y", word: "Yacht", emoji: "⛵", sound: "Y says yuh! Sailing white Yacht." },
-  { letter: "Z", word: "Zebra", emoji: "🦓", sound: "Z says zzz! Black and white Zebra." },
-];
+const FEATURED_BOOK_IDS = [
+  "stoop-watermelon",
+  "pancake-saturday",
+  "how-a-ferry-floats",
+  "cat-on-mat",
+  "paper-gutter-boat",
+  "little-red-fire-truck",
+  "how-mail-travels",
+  "quilt-square-moon",
+] as const;
 
 const BOOK_SHELVES = [
-  { id: "all", label: "All", emoji: "📚" },
-  { id: "long", label: "Long tales", emoji: "✨" },
+  { id: "all", label: "Library", emoji: "📚" },
+  { id: "teddy-nana", label: "Teddy & Nana", emoji: "🧸" },
+  { id: "street", label: "Street", emoji: "🚕" },
+  { id: "first-words", label: "First words", emoji: "🔤" },
+  { id: "look-learn", label: "Look & learn", emoji: "🔍" },
   { id: "bedtime", label: "Bedtime", emoji: "🌙" },
-  { id: "adventure", label: "Adventure", emoji: "🚀" },
-  { id: "letters", label: "Letters", emoji: "🔤" },
-  { id: "numbers", label: "Numbers", emoji: "🔢" },
-  { id: "feelings", label: "Feelings", emoji: "💛" },
-  { id: "animals", label: "Animals", emoji: "🐾" },
+  { id: "more", label: "More stories", emoji: "📖" },
+  { id: "long", label: "Long tales", emoji: "✨" },
 ] as const;
 
 type BookShelfId = (typeof BOOK_SHELVES)[number]["id"];
@@ -126,81 +112,113 @@ type BookShelfId = (typeof BOOK_SHELVES)[number]["id"];
 function bookMatchesShelf(book: PictureBook, shelf: BookShelfId): boolean {
   if (shelf === "all") return true;
   if (shelf === "long") return book.pages.length >= 8;
-  if (shelf === "adventure") return book.category === "space" || book.category === "ocean" || book.category === "nature";
-  if (shelf === "letters") return book.category === "phonics";
-  if (shelf === "numbers") return book.category === "numbers";
-  if (shelf === "feelings") return book.category === "feelings" || book.category === "manners";
-  if (shelf === "animals") return book.category === "animals";
-  if (shelf === "bedtime") return book.category === "bedtime";
+  if (shelf === "teddy-nana") return book.series === "teddy-nana";
+  if (shelf === "street") return book.series === "street";
+  if (shelf === "first-words") return book.series === "first-words";
+  if (shelf === "look-learn") return book.series === "look-learn";
+  if (shelf === "bedtime") return book.category === "bedtime" || book.id === "big-hug-bed";
+  if (shelf === "more") return !pictureBookIsOnNamedStoriesShelf(book);
   return true;
+}
+
+function booksForRow(id: "featured" | "teddy-nana" | "street" | "first-words" | "look-learn" | "bedtime" | "more"): PictureBook[] {
+  if (id === "featured") {
+    return FEATURED_BOOK_IDS.map((bookId) => PICTURE_BOOKS.find((book) => book.id === bookId)).filter(
+      (book): book is PictureBook => Boolean(book),
+    );
+  }
+  return PICTURE_BOOKS.filter((book) => bookMatchesShelf(book, id));
 }
 
 function StoryReadAloudText({
   text,
   highlights,
+  activeWordIndex,
   onSpeakWord,
 }: {
   text: string;
   highlights?: string[];
+  activeWordIndex?: number | null;
   onSpeakWord: (word: string) => void;
 }) {
   const wanted = new Set((highlights ?? []).map((word) => word.toLowerCase()));
   const parts = text.split(/(\s+)/);
+  let wordNumber = -1;
   return (
-    <p className="text-base sm:text-2xl font-black text-slate-800 leading-relaxed">
+    <p className="text-lg sm:text-2xl font-black text-slate-800 leading-relaxed">
       {parts.map((part, index) => {
         const clean = part.replace(/[^A-Za-z0-9']/g, "");
-        if (clean && wanted.has(clean.toLowerCase())) {
-          return (
-            <button
-              key={`${clean}-${index}`}
-              type="button"
-              className="inline min-h-11 rounded-md bg-amber-200 px-1 text-amber-950 underline decoration-amber-500 decoration-2 underline-offset-4"
-              onClick={() => onSpeakWord(clean)}
-            >
-              {part}
-            </button>
-          );
-        }
-        return <span key={`${part}-${index}`}>{part}</span>;
+        if (!clean) return <span key={`${part}-${index}`}>{part}</span>;
+        wordNumber += 1;
+        const gold = wanted.has(clean.toLowerCase());
+        const reading = activeWordIndex === wordNumber;
+        return (
+          <button
+            key={`${clean}-${index}`}
+            type="button"
+            className={`inline min-h-12 rounded-md px-1 transition-colors ${
+              reading
+                ? "bg-amber-400 text-amber-950 ring-2 ring-amber-600"
+                : gold
+                ? "bg-amber-200 text-amber-950 underline decoration-amber-500 decoration-2 underline-offset-4"
+                : "hover:bg-amber-100"
+            }`}
+            onClick={() => onSpeakWord(clean)}
+          >
+            {part}
+          </button>
+        );
       })}
     </p>
   );
 }
 
-const COUNTING_CARDS = [
-  { num: 1, word: "One", emojis: "☀️", item: "Smiling Sun", color: "from-amber-400 to-yellow-300" },
-  { num: 2, word: "Two", emojis: "🎈 🎈", item: "Balloons", color: "from-sky-400 to-blue-300" },
-  { num: 3, word: "Three", emojis: "🍓 🍓 🍓", item: "Strawberries", color: "from-rose-400 to-pink-300" },
-  { num: 4, word: "Four", emojis: "🚗 🚗 🚗 🚗", item: "Toy Cars", color: "from-emerald-400 to-teal-300" },
-  { num: 5, word: "Five", emojis: "⭐ ⭐ ⭐ ⭐ ⭐", item: "Shiny Stars", color: "from-purple-400 to-indigo-300" },
-  { num: 6, word: "Six", emojis: "🐝 🐝 🐝 🐝 🐝 🐝", item: "Busy Bees", color: "from-yellow-400 to-amber-300" },
-  { num: 7, word: "Seven", emojis: "🐞 🐞 🐞 🐞 🐞 🐞 🐞", item: "Ladybugs", color: "from-red-400 to-rose-300" },
-  { num: 8, word: "Eight", emojis: "🍎 🍎 🍎 🍎 🍎 🍎 🍎 🍎", item: "Apples", color: "from-orange-400 to-red-300" },
-  { num: 9, word: "Nine", emojis: "🦋 🦋 🦋 🦋 🦋 🦋 🦋 🦋 🦋", item: "Butterflies", color: "from-fuchsia-400 to-violet-300" },
-  { num: 10, word: "Ten", emojis: "⭐⭐⭐⭐⭐ ⭐⭐⭐⭐⭐", item: "Ten Stars", color: "from-indigo-400 to-blue-300" },
-  { num: 11, word: "Eleven", emojis: "🚌", item: "Bus and a spare seat", color: "from-yellow-400 to-amber-500" },
-  { num: 12, word: "Twelve", emojis: "🥚", item: "A dozen eggs", color: "from-amber-200 to-yellow-400" },
-  { num: 13, word: "Thirteen", emojis: "🎂", item: "Birthday candles", color: "from-pink-400 to-rose-400" },
-  { num: 14, word: "Fourteen", emojis: "📬", item: "Letters in a week of days, twice", color: "from-sky-400 to-blue-500" },
-  { num: 15, word: "Fifteen", emojis: "🏀", item: "Bounces on the stoop", color: "from-orange-400 to-amber-500" },
-  { num: 16, word: "Sixteen", emojis: "🖍️", item: "Crayons in a new box row", color: "from-violet-400 to-fuchsia-500" },
-  { num: 17, word: "Seventeen", emojis: "🌧️", item: "Rain taps on the glass", color: "from-cyan-400 to-slate-500" },
-  { num: 18, word: "Eighteen", emojis: "🍪", item: "Cookies on a cooling rack", color: "from-amber-400 to-orange-500" },
-  { num: 19, word: "Nineteen", emojis: "🌙", item: "Almost twenty moon-steps", color: "from-indigo-500 to-violet-600" },
-  { num: 20, word: "Twenty", emojis: "🔢", item: "Two full ten-frames", color: "from-emerald-400 to-teal-600" },
-];
-
-const WORD_FAMILIES = [
-  { rime: "at", words: "cat · hat · mat", emoji: "🐱", sound: "A-T says at. Cat, hat, mat." },
-  { rime: "an", words: "can · man · pan", emoji: "🍳", sound: "A-N says an. Can, man, pan." },
-  { rime: "op", words: "hop · mop · top", emoji: "🧹", sound: "O-P says op. Hop, mop, top." },
-  { rime: "ig", words: "pig · dig · wig", emoji: "🐷", sound: "I-G says ig. Pig, dig, wig." },
-  { rime: "un", words: "sun · run · bun", emoji: "☀️", sound: "U-N says un. Sun, run, bun." },
-  { rime: "et", words: "net · pet · wet", emoji: "🥅", sound: "E-T says et. Net, pet, wet." },
-  { rime: "in", words: "pin · win · tin", emoji: "📌", sound: "I-N says in. Pin, win, tin." },
-  { rime: "ug", words: "bug · hug · mug", emoji: "🐞", sound: "U-G says ug. Bug, hug, mug." },
-];
+function StoryCoverCard({
+  book,
+  onOpen,
+  large,
+  eager,
+}: {
+  book: PictureBook;
+  onOpen: (book: PictureBook) => void;
+  large?: boolean;
+  eager?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen(book)}
+      className={`snap-start shrink-0 text-left ${large ? "w-[11.5rem] sm:w-56" : "w-40 sm:w-48"}`}
+    >
+      <div
+        className={`relative overflow-hidden rounded-[1.75rem] border-4 border-white/70 shadow-xl bg-gradient-to-br ${book.coverGradient} ${
+          large ? "aspect-[3/4]" : "aspect-[4/5]"
+        }`}
+      >
+        {book.coverImage ? (
+          <img
+            src={book.coverImage}
+            alt=""
+            width={640}
+            height={640}
+            loading={eager ? "eager" : "lazy"}
+            decoding="async"
+            fetchPriority={eager ? "high" : "low"}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <span className="absolute inset-0 flex items-center justify-center text-7xl drop-shadow">{book.coverEmoji}</span>
+        )}
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 pt-10">
+          <p className="text-[11px] font-black uppercase tracking-wide text-white/90">
+            {book.pages.length} pages · {book.readTimeMinutes} min
+          </p>
+          <h3 className="text-base sm:text-lg font-black leading-tight text-white line-clamp-2">{book.title}</h3>
+        </div>
+      </div>
+    </button>
+  );
+}
 
 export function ToddlerWorldView({
   initialActivityId,
@@ -213,11 +231,14 @@ export function ToddlerWorldView({
   onSwitchToEducator,
   onRequestExit,
 }: ToddlerWorldViewProps) {
-  const [activeTab, setActiveTab] = useState<"worlds" | "books" | "playhouse" | "phonics" | "counting" | "games" | "avatar-studio">("worlds");
+  const [activeTab, setActiveTab] = useState<ToddlerSpaceTabId>("worlds");
   const [gameState, setGameState] = useState(() => getGamificationState());
   const activeBuddy = gameState.buddy ?? DEFAULT_BUDDY;
   const [selectedBook, setSelectedBook] = useState<PictureBook | null>(null);
   const [bookShelf, setBookShelf] = useState<BookShelfId>("all");
+  const [readMode, setReadMode] = useState<"to-me" | "myself">("to-me");
+  const readModeRef = useRef<"to-me" | "myself">("to-me");
+  readModeRef.current = readMode;
   const [currentPageIndex, setCurrentPageIndex] = useState<number>(0);
   const [bookInteractionAnswers, setBookInteractionAnswers] = useState<Record<string, number>>({});
   const [bookInteractionHints, setBookInteractionHints] = useState<Record<string, boolean>>({});
@@ -227,11 +248,11 @@ export function ToddlerWorldView({
     selectedBook?.id === `generated-${initialBlueprint.id}` ? initialBlueprint : null;
   const [isBookCompleted, setIsBookCompleted] = useState<boolean>(false);
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+  const [readAlongWordIndex, setReadAlongWordIndex] = useState<number | null>(null);
   const [isMuted, setIsMuted] = useState<boolean>(() => speechCoordinator.isMuted());
   const [starsCount, setStarsCount] = useState<number>(() => {
     return getGamificationState().starsCount;
   });
-  const [activePhonicsLetter, setActivePhonicsLetter] = useState<string | null>(null);
 
   // Daily Quests and Sticker Album modals
   const [isDailyMissionsOpen, setIsDailyMissionsOpen] = useState<boolean>(false);
@@ -309,12 +330,14 @@ export function ToddlerWorldView({
       audioPlayerRef.current = null;
       setIsPlayingParentAudio(false);
     }
+    toddlerAudio.endParentPlayback();
     return () => {
       stopSpeaking();
       if (audioPlayerRef.current) {
         audioPlayerRef.current.pause();
         audioPlayerRef.current = null;
       }
+      toddlerAudio.endParentPlayback();
     };
   }, [activeTab]);
 
@@ -428,6 +451,54 @@ export function ToddlerWorldView({
     }
   };
 
+  const speakPrintedPage = (page: PictureBookPage) => {
+    const line = spokenPageText(page);
+    setReadAlongWordIndex(0);
+    speakText(line, {
+      onBoundary: ({ wordIndex }) => setReadAlongWordIndex(wordIndex),
+      onEnd: () => setReadAlongWordIndex(null),
+    });
+  };
+
+  const releaseParentAudio = () => {
+    if (audioPlayerRef.current) {
+      try {
+        audioPlayerRef.current.pause();
+      } catch {
+        // ignore
+      }
+      audioPlayerRef.current = null;
+    }
+    setIsPlayingParentAudio(false);
+    toddlerAudio.endParentPlayback();
+  };
+
+  const playParentBlob = (blob: Blob, onFail: () => void) => {
+    stopSpeaking();
+    const url = URL.createObjectURL(blob);
+    const aud = new Audio(url);
+    audioPlayerRef.current = aud;
+    toddlerAudio.beginParentPlayback();
+    setIsPlayingParentAudio(true);
+    aud.onended = () => {
+      setIsPlayingParentAudio(false);
+      audioPlayerRef.current = null;
+      toddlerAudio.endParentPlayback();
+    };
+    aud.onerror = () => {
+      setIsPlayingParentAudio(false);
+      audioPlayerRef.current = null;
+      toddlerAudio.endParentPlayback();
+      onFail();
+    };
+    aud.play().catch(() => {
+      setIsPlayingParentAudio(false);
+      audioPlayerRef.current = null;
+      toddlerAudio.endParentPlayback();
+      onFail();
+    });
+  };
+
   const handleOpenBook = (book: PictureBook, pageIndex = 0, learnerId?: string) => {
     const startingPage = book.pages[pageIndex];
     if (!startingPage) return;
@@ -440,29 +511,14 @@ export function ToddlerWorldView({
     setIsBookCompleted(false);
     recordBookEngagement(book, pageIndex, "experience_opened", learnerId);
     stopSpeaking();
-    if (audioPlayerRef.current) {
-      audioPlayerRef.current.pause();
-      audioPlayerRef.current = null;
-      setIsPlayingParentAudio(false);
-    }
+    releaseParentAudio();
     // Check if this page has parent recording, else auto narrate.
     getPageAudio(book.id, startingPage.pageNumber).then((rec) => {
       setParentAudioRecord(rec);
       if (rec?.audioBlob) {
-        const url = URL.createObjectURL(rec.audioBlob);
-        const aud = new Audio(url);
-        audioPlayerRef.current = aud;
-        setIsPlayingParentAudio(true);
-        aud.onended = () => {
-          setIsPlayingParentAudio(false);
-          audioPlayerRef.current = null;
-        };
-        aud.play().catch(() => {
-          setIsPlayingParentAudio(false);
-          speakText(startingPage.narration);
-        });
-      } else {
-        speakText(startingPage.narration);
+        playParentBlob(rec.audioBlob, () => speakPrintedPage(startingPage));
+      } else if (readModeRef.current === "to-me") {
+        speakPrintedPage(startingPage);
       }
     });
   };
@@ -486,11 +542,8 @@ export function ToddlerWorldView({
 
   const handleCloseBook = () => {
     stopSpeaking();
-    if (audioPlayerRef.current) {
-      audioPlayerRef.current.pause();
-      audioPlayerRef.current = null;
-      setIsPlayingParentAudio(false);
-    }
+    setReadAlongWordIndex(null);
+    releaseParentAudio();
     if (mediaRecorderRef.current && isRecordingParentVoice) {
       try {
         mediaRecorderRef.current.stop();
@@ -506,11 +559,7 @@ export function ToddlerWorldView({
   const handleNextPage = () => {
     if (!selectedBook) return;
     stopSpeaking();
-    if (audioPlayerRef.current) {
-      audioPlayerRef.current.pause();
-      audioPlayerRef.current = null;
-      setIsPlayingParentAudio(false);
-    }
+    releaseParentAudio();
     if (currentPageIndex < selectedBook.pages.length - 1) {
       const nextIdx = currentPageIndex + 1;
       setCurrentPageIndex(nextIdx);
@@ -518,20 +567,9 @@ export function ToddlerWorldView({
       getPageAudio(selectedBook.id, nextPageNum).then((rec) => {
         setParentAudioRecord(rec);
         if (rec?.audioBlob) {
-          const url = URL.createObjectURL(rec.audioBlob);
-          const aud = new Audio(url);
-          audioPlayerRef.current = aud;
-          setIsPlayingParentAudio(true);
-          aud.onended = () => {
-            setIsPlayingParentAudio(false);
-            audioPlayerRef.current = null;
-          };
-          aud.play().catch(() => {
-            setIsPlayingParentAudio(false);
-            speakText(selectedBook.pages[nextIdx].narration);
-          });
-        } else {
-          speakText(selectedBook.pages[nextIdx].narration);
+          playParentBlob(rec.audioBlob, () => speakPrintedPage(selectedBook.pages[nextIdx]));
+        } else if (readModeRef.current === "to-me") {
+          speakPrintedPage(selectedBook.pages[nextIdx]);
         }
       });
       if (!visitedBookPagesRef.current.has(nextIdx)) {
@@ -557,7 +595,7 @@ export function ToddlerWorldView({
         rate: 0.9,
       });
       try {
-        completeActiveMissionIfMatches("books");
+        payDailyMissionIfMatches("books");
       } catch {
         // ignore
       }
@@ -567,11 +605,7 @@ export function ToddlerWorldView({
   const handlePrevPage = () => {
     if (!selectedBook || currentPageIndex === 0) return;
     stopSpeaking();
-    if (audioPlayerRef.current) {
-      audioPlayerRef.current.pause();
-      audioPlayerRef.current = null;
-      setIsPlayingParentAudio(false);
-    }
+    releaseParentAudio();
     const prevIdx = currentPageIndex - 1;
     setCurrentPageIndex(prevIdx);
     if (!visitedBookPagesRef.current.has(prevIdx)) {
@@ -582,61 +616,39 @@ export function ToddlerWorldView({
     getPageAudio(selectedBook.id, prevPageNum).then((rec) => {
       setParentAudioRecord(rec);
       if (rec?.audioBlob) {
-        const url = URL.createObjectURL(rec.audioBlob);
-        const aud = new Audio(url);
-        audioPlayerRef.current = aud;
-        setIsPlayingParentAudio(true);
-        aud.onended = () => {
-          setIsPlayingParentAudio(false);
-          audioPlayerRef.current = null;
-        };
-        aud.play().catch(() => {
-          setIsPlayingParentAudio(false);
-          speakText(selectedBook.pages[prevIdx].narration);
+        playParentBlob(rec.audioBlob, () => {
+          if (readModeRef.current === "to-me") speakPrintedPage(selectedBook.pages[prevIdx]);
         });
-      } else {
-        speakText(selectedBook.pages[prevIdx].narration);
+      } else if (readModeRef.current === "to-me") {
+        speakPrintedPage(selectedBook.pages[prevIdx]);
       }
     });
   };
 
   const handleReadAloud = (text: string) => {
     if (audioPlayerRef.current && isPlayingParentAudio) {
-      audioPlayerRef.current.pause();
-      audioPlayerRef.current = null;
-      setIsPlayingParentAudio(false);
+      releaseParentAudio();
       return;
     }
 
     if (isSpeaking) {
       stopSpeaking();
+      setReadAlongWordIndex(null);
       return;
     }
 
     // Play parent recording if available
     if (parentAudioRecord?.audioBlob) {
-      stopSpeaking();
-      const url = URL.createObjectURL(parentAudioRecord.audioBlob);
-      const aud = new Audio(url);
-      audioPlayerRef.current = aud;
-      setIsPlayingParentAudio(true);
-      aud.onended = () => {
-        setIsPlayingParentAudio(false);
-        audioPlayerRef.current = null;
-      };
-      aud.onerror = () => {
-        setIsPlayingParentAudio(false);
-        audioPlayerRef.current = null;
-        speakText(text);
-      };
-      aud.play().catch(() => {
-        setIsPlayingParentAudio(false);
-        speakText(text);
+      setReadAlongWordIndex(null);
+      playParentBlob(parentAudioRecord.audioBlob, () => {
+        if (activePage) speakPrintedPage(activePage);
+        else speakText(text);
       });
       return;
     }
 
-    speakText(text);
+    if (activePage) speakPrintedPage(activePage);
+    else speakText(text);
   };
 
   const handleStartParentRecording = async () => {
@@ -691,28 +703,6 @@ export function ToddlerWorldView({
       setParentAudioRecord(null);
       soundEffects.playGentleBoing();
     }
-  };
-
-  // Stars for the soundboard and counting cards reward fresh discovery: each
-  // distinct tile earns one star per day, repeats are free play without pay.
-  const handlePhonicsClick = (tile: typeof PHONICS_TILES[0]) => {
-    setActivePhonicsLetter(tile.letter);
-    speakText(tile.sound, {
-      pitch: 1.2,
-      rate: 0.85,
-      onEnd: () => {
-        // slight pause
-      },
-    });
-    recordPhonicsLetterTapped(tile.letter);
-  };
-
-  const handleCountingClick = (card: typeof COUNTING_CARDS[0]) => {
-    speakText(`${card.word}! Number ${card.num}! Let's count: ${Array.from({ length: card.num }, (_, i) => i + 1).join(", ")}! ${card.item}!`, {
-      pitch: 1.2,
-      rate: 0.85,
-    });
-    recordCountingCardTapped(card.num);
   };
 
   const isMeadow = gameState.wonderlandTheme === "sunny-meadow";
@@ -908,111 +898,9 @@ export function ToddlerWorldView({
         className="-mt-1 mb-4"
       />
 
-      {/* Main Mode Navigation Tabs */}
+      {/* Main Mode Navigation Tabs — Worlds/Stories/Games/Focus first on the phone row */}
       <div className="max-w-7xl mx-auto px-4 pt-2 pb-2">
-        <div className={`grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3 p-2 sm:p-3 rounded-3xl max-w-6xl mx-auto mb-8 shadow-xl ${
-          isMeadow
-            ? "bg-white/95 backdrop-blur-md border-4 border-emerald-300 ring-4 ring-emerald-500/20"
-            : "bg-white/[0.08] border border-white/15"
-        }`}>
-          <button
-            onClick={() => setActiveTab("worlds")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "worlds"
-                ? "bg-gradient-to-b from-amber-400 to-orange-500 text-white border-b-4 border-orange-700 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-amber-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">🗺️</span>
-            <span>Worlds</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("books")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "books"
-                ? "bg-gradient-to-b from-amber-400 to-amber-500 text-amber-950 border-b-4 border-amber-700 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-amber-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">📚</span>
-            <span>Stories</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("playhouse")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "playhouse"
-                ? "bg-gradient-to-b from-violet-400 to-fuchsia-500 text-white border-b-4 border-fuchsia-800 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-violet-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">🎭</span>
-            <span>Playhouse</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("phonics")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "phonics"
-                ? "bg-gradient-to-b from-rose-400 to-pink-500 text-white border-b-4 border-pink-700 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-pink-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">🔤</span>
-            <span>Phonics</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("counting")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "counting"
-                ? "bg-gradient-to-b from-indigo-400 to-indigo-600 text-white border-b-4 border-indigo-800 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-indigo-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">🔢</span>
-            <span>Counting</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("games")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "games"
-                ? "bg-gradient-to-b from-emerald-400 to-teal-500 text-white border-b-4 border-emerald-800 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-emerald-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">🎮</span>
-            <span>Games</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("avatar-studio")}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none ${
-              activeTab === "avatar-studio"
-                ? "bg-gradient-to-b from-pink-400 to-purple-500 text-white border-b-4 border-purple-800 shadow-lg scale-102"
-                : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-purple-100/60 border-b-4 border-transparent"
-                : "text-white hover:bg-white/15 border-b-4 border-transparent"
-            }`}
-          >
-            <span className="text-2xl sm:text-3xl">🐾</span>
-            <span>My Buddy</span>
-          </button>
-        </div>
+        <ToddlerSpaceNav activeTab={activeTab} onSelect={setActiveTab} isMeadow={isMeadow} />
 
         {/* Worlds is the front page: full width like the phone. Other tabs keep the desktop sidebar. */}
         <div className={`grid grid-cols-1 gap-6 items-start ${activeTab === "worlds" ? "" : "lg:grid-cols-12"}`}>
@@ -1150,6 +1038,7 @@ export function ToddlerWorldView({
                 initialWorldId={initialWorldTarget}
                 onOpenPictureBooks={() => setActiveTab("books")}
                 onOpenGames={() => setActiveTab("games")}
+                onOpenFocus={() => setActiveTab("focus")}
               />
             )}
 
@@ -1171,7 +1060,7 @@ export function ToddlerWorldView({
                 <p className={`text-sm sm:text-base font-semibold ${
                   isMeadow ? "text-slate-800" : "text-white/85"
                 }`}>
-                  Long picture books with a beginning, middle, and end. Tap a cover. Hear it read. Tap gold words.
+                  A real library: series rows, long tales, first words, look-and-learn. Tap a cover. Tap any word.
                 </p>
               </div>
             </div>
@@ -1198,98 +1087,48 @@ export function ToddlerWorldView({
               })}
             </div>
 
-            {bookShelf === "all" && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                {PICTURE_BOOKS.filter((book) => book.pages.length >= 8).slice(0, 3).map((book) => (
-                  <button
-                    key={`featured-${book.id}`}
-                    type="button"
-                    onClick={() => handleOpenBook(book)}
-                    className={`text-left min-h-40 rounded-[2rem] p-5 border-4 border-white/40 shadow-xl bg-gradient-to-br ${book.coverGradient} text-white`}
-                  >
-                    {book.coverImage ? (
-                      <img src={book.coverImage} alt="" className="h-24 w-24 rounded-2xl object-cover shadow-lg border-2 border-white/50" />
-                    ) : (
-                      <span className="text-6xl drop-shadow">{book.coverEmoji}</span>
-                    )}
-                    <p className="mt-3 text-xs font-black uppercase tracking-wider text-white/90">Long tale · {book.pages.length} pages</p>
-                    <h3 className="text-2xl font-black leading-tight">{book.title}</h3>
-                    <p className="text-sm font-semibold text-white/95 line-clamp-2">{book.subtitle}</p>
-                  </button>
+            {bookShelf === "all" ? (
+              <div className="space-y-8">
+                {(
+                  [
+                    { id: "featured", label: "Open tonight", emoji: "✨" },
+                    { id: "teddy-nana", label: "Teddy & Nana", emoji: "🧸" },
+                    { id: "street", label: "Out on the street", emoji: "🚕" },
+                    { id: "first-words", label: "First words", emoji: "🔤" },
+                    { id: "look-learn", label: "Look & learn", emoji: "🔍" },
+                    { id: "bedtime", label: "Bedtime", emoji: "🌙" },
+                    { id: "more", label: "More stories", emoji: "📖" },
+                  ] as const
+                ).map((row) => {
+                  const rowBooks = booksForRow(row.id);
+                  if (rowBooks.length === 0) return null;
+                  return (
+                    <section key={row.id}>
+                      <h3 className={`text-lg sm:text-xl font-black mb-3 ${isMeadow ? "text-slate-900" : "text-white"}`}>
+                        {row.emoji} {row.label}
+                      </h3>
+                      <div className="flex gap-4 overflow-x-auto pb-3 snap-x">
+                        {rowBooks.map((book, index) => (
+                          <StoryCoverCard
+                            key={`${row.id}-${book.id}`}
+                            book={book}
+                            large
+                            eager={row.id === "featured" && index < 3}
+                            onOpen={handleOpenBook}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-4">
+                {PICTURE_BOOKS.filter((book) => bookMatchesShelf(book, bookShelf)).map((book) => (
+                  <StoryCoverCard key={book.id} book={book} large onOpen={handleOpenBook} />
                 ))}
               </div>
             )}
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {PICTURE_BOOKS.filter((book) => bookMatchesShelf(book, bookShelf)).map((book) => (
-                <motion.div
-                  key={book.id}
-                  whileHover={{ y: -6, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleOpenBook(book)}
-                  className={`group relative flex flex-col justify-between p-5 rounded-[2.25rem] transition-all cursor-pointer overflow-hidden ${
-                    isMeadow
-                      ? "bg-white text-slate-800 border-4 border-amber-200 hover:border-amber-400 shadow-[0_14px_30px_-6px_rgba(20,83,45,0.18)] hover:shadow-[0_20px_40px_-6px_rgba(20,83,45,0.25)]"
-                      : "bg-white/[0.03] border-2 border-white/10 hover:border-amber-400/50 hover:bg-white/[0.06] text-white shadow-xl"
-                  }`}
-                >
-                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${book.coverGradient} opacity-20 rounded-full blur-2xl group-hover:opacity-40 transition-opacity`} />
-                  
-                  <div>
-                    <div className="flex items-center justify-between mb-4">
-                      {book.coverImage ? (
-                        <img
-                          src={book.coverImage}
-                          alt=""
-                          className="h-16 w-16 rounded-2xl object-cover shadow-sm border-2 border-amber-200 transition-transform group-hover:scale-110"
-                        />
-                      ) : (
-                      <span className={`text-4xl p-3 rounded-2xl border transition-transform group-hover:scale-110 shadow-sm ${
-                        isMeadow ? "bg-amber-100 border-amber-200" : "bg-white/10 border-white/10"
-                      }`}>
-                        {book.coverEmoji}
-                      </span>
-                      )}
-                      <span className={`px-2.5 py-1 text-xs sm:text-sm font-black uppercase rounded-full ${
-                        isMeadow ? "bg-amber-200 text-amber-950" : "bg-white/10 text-white/80"
-                      }`}>
-                        {book.ageRange}
-                      </span>
-                    </div>
-
-                    <h3 className={`text-lg font-black leading-snug mb-1 transition-colors ${
-                      isMeadow
-                        ? "text-slate-900 group-hover:text-amber-600"
-                        : "text-white group-hover:text-amber-300"
-                    }`}>
-                      {book.title}
-                    </h3>
-                    <p className={`text-sm line-clamp-2 mb-3 ${
-                      isMeadow ? "text-slate-700 font-medium" : "text-white/90"
-                    }`}>
-                      {book.subtitle}
-                    </p>
-                  </div>
-
-                  <div className={`pt-3 border-t flex items-center justify-between text-sm ${
-                    isMeadow ? "border-slate-100" : "border-white/5"
-                  }`}>
-                    <span className={`flex items-center gap-1 font-black ${
-                      isMeadow ? "text-amber-700" : "text-amber-300"
-                    }`}>
-                      <Play size={13} className={isMeadow ? "fill-amber-700" : "fill-amber-300"} /> Read Now ({book.pages.length}p)
-                    </span>
-                    <span className={`text-xs sm:text-sm font-black px-2.5 py-1 rounded-lg border shadow-sm ${
-                      isMeadow
-                        ? "bg-amber-100 border-amber-300 text-amber-900"
-                        : "bg-amber-500/20 border-amber-400/30 text-amber-300"
-                    }`}>
-                      +3 ⭐
-                    </span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
 
             {/* Parent & Tutor Reading Tips Card (Tactile Cloud Card) */}
             <div className={`mt-8 p-5 sm:p-6 rounded-[2.25rem] flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl ${
@@ -1327,201 +1166,16 @@ export function ToddlerWorldView({
           <ToddlerPlayhouse isMeadow={isMeadow} onAddStar={addStar} />
         )}
 
-        {/* SECTION 2: ABC PHONICS SOUNDBOARD */}
         {activeTab === "phonics" && (
-          <div className="relative">
-            {/* Mascot peeking over phonics board */}
-            <div className="hidden sm:block">
-              <CharacterAnchor emoji="🦜" title="Phonics Polly" subtitle="Tap any letter!" position="top-right" />
-            </div>
-
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${
-                  isMeadow ? "text-slate-900" : "text-white"
-                }`}>
-                  <span>🔤</span> ABC Phonics Soundboard
-                </h2>
-                <p className={`text-sm sm:text-base font-semibold ${
-                  isMeadow ? "text-slate-800" : "text-white/85"
-                }`}>
-                  Tap any letter tile to hear letter names, phonics sounds, and example words spoken aloud!
-                </p>
-              </div>
-              <button
-                onClick={() => speakText("Let's learn our ABCs! Tap any letter to hear its sound!", { pitch: 1.2 })}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-2xl font-black text-sm min-h-12 border-b-4 shadow-md transition-all active:translate-y-1 cursor-pointer ${
-                  isMeadow
-                    ? "bg-white text-pink-700 border-pink-300 hover:bg-pink-50"
-                    : "bg-rose-500/20 text-rose-300 border-rose-600 hover:bg-rose-500/30"
-                }`}
-              >
-                <Volume2 size={15} /> Listen to Intro
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-3">
-              {PHONICS_TILES.map((tile) => {
-                const isActive = activePhonicsLetter === tile.letter;
-                return (
-                  <motion.button
-                    key={tile.letter}
-                    whileHover={{ scale: 1.06, y: -4 }}
-                    whileTap={{ scale: 0.92 }}
-                    onClick={() => handlePhonicsClick(tile)}
-                    className={`relative p-4 rounded-3xl flex flex-col items-center justify-center transition-all cursor-pointer select-none ${
-                      isMeadow
-                        ? isActive
-                          ? "bg-pink-100 border-b-4 border-pink-600 ring-4 ring-pink-400/40 shadow-xl scale-105"
-                          : "bg-white text-slate-900 border-b-4 border-pink-200 hover:border-pink-400 shadow-md active:translate-y-1"
-                        : isActive
-                        ? "bg-rose-500/30 border-2 border-rose-400 ring-4 ring-rose-400/30 text-white scale-105 shadow-lg"
-                        : "bg-white/[0.03] border-2 border-white/10 hover:border-pink-400/50 hover:bg-white/[0.07] text-white shadow-lg"
-                    }`}
-                  >
-                    <span className={`text-4xl sm:text-5xl font-black ${
-                      isMeadow
-                        ? "text-pink-600"
-                        : "text-transparent bg-clip-text bg-gradient-to-b from-white to-pink-200"
-                    }`}>
-                      {tile.letter}
-                    </span>
-                    <span className="text-3xl sm:text-4xl my-1">{tile.emoji}</span>
-                    <span className={`text-sm sm:text-base font-black ${
-                      isMeadow ? "text-slate-800" : "text-white"
-                    }`}>{tile.word}</span>
-                    <div className={`mt-1 flex items-center gap-1 text-xs sm:text-sm font-bold ${
-                      isMeadow ? "text-pink-700" : "text-pink-300"
-                    }`}>
-                      <Volume2 size={11} /> Tap Sound
-                    </div>
-                  </motion.button>
-                );
-              })}
-            </div>
-
-            <h3 className={`mt-8 mb-3 text-lg sm:text-xl font-black ${isMeadow ? "text-slate-900" : "text-white"}`}>
-              Word families
-            </h3>
-            <p className={`text-sm sm:text-base font-semibold mb-3 ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
-              Same ending, new beginning. Tap a family. Hear cat, hat, mat.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {WORD_FAMILIES.map((family) => (
-                <button
-                  key={family.rime}
-                  type="button"
-                  onClick={() => speakText(family.sound, { pitch: 1.15, rate: 0.9 })}
-                  className={`min-h-24 rounded-3xl p-4 text-left border-b-4 shadow-md ${
-                    isMeadow ? "bg-white border-pink-300 text-slate-900" : "bg-white/10 border-pink-500 text-white"
-                  }`}
-                >
-                  <span className="text-3xl">{family.emoji}</span>
-                  <p className="text-xl font-black">-{family.rime}</p>
-                  <p className="text-sm font-bold">{family.words}</p>
-                </button>
-              ))}
-            </div>
-          </div>
+          <ToddlerPhonicsBoard isMeadow={isMeadow} onAddStar={addStar} />
         )}
 
-        {/* SECTION 3: 1-2-3 COUNTING SAFARI */}
         {activeTab === "counting" && (
-          <div className="relative">
-            {/* Mascot peeking over counting safari */}
-            <div className="hidden sm:block">
-              <CharacterAnchor emoji="🦁" title="Safari Buddy" subtitle="Count with me!" position="top-right" />
-            </div>
+          <ToddlerCountingBoard isMeadow={isMeadow} onAddStar={addStar} onStartAssessment={onStartAssessment} />
+        )}
 
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${
-                  isMeadow ? "text-slate-900" : "text-white"
-                }`}>
-                  <span>🔢</span> Count to Twenty
-                </h2>
-                <p className={`text-sm sm:text-base font-semibold ${
-                  isMeadow ? "text-slate-800" : "text-white/85"
-                }`}>
-                  Count from 1 to 20. Tap a card. Hear the number. Two ten-frames make twenty.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {COUNTING_CARDS.map((card) => (
-                <motion.div
-                  key={card.num}
-                  whileHover={{ scale: 1.03, y: -4 }}
-                  whileTap={{ scale: 0.97 }}
-                  onClick={() => handleCountingClick(card)}
-                  className={`p-6 rounded-[2.25rem] transition-all cursor-pointer flex flex-col justify-between shadow-xl ${
-                    isMeadow
-                      ? "bg-white text-slate-800 border-4 border-indigo-200 hover:border-indigo-400 shadow-[0_14px_30px_-6px_rgba(20,83,45,0.18)]"
-                      : "bg-white/[0.03] border-2 border-white/10 hover:border-purple-400/50 hover:bg-white/[0.06] text-white"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-b from-purple-500 to-indigo-600 flex items-center justify-center text-3xl font-black text-white shadow-md border-b-4 border-indigo-800">
-                      {card.num}
-                    </div>
-                    <span className={`text-xl font-black uppercase tracking-wider ${
-                      isMeadow ? "text-indigo-800" : "text-purple-300"
-                    }`}>
-                      {card.word}
-                    </span>
-                  </div>
-
-                  <div className={`py-6 my-2 rounded-2xl border flex items-center justify-center text-4xl sm:text-5xl tracking-widest ${
-                    isMeadow
-                      ? "bg-indigo-50/80 border-indigo-100"
-                      : "bg-black/30 border-white/5"
-                  }`}>
-                    {card.emojis}
-                  </div>
-
-                  <div className={`flex items-center justify-between pt-3 border-t text-xs ${
-                    isMeadow ? "border-slate-100" : "border-white/5"
-                  }`}>
-                    <span className={`font-black ${
-                      isMeadow ? "text-slate-900" : "text-white/90"
-                    }`}>{card.item}</span>
-                    <span className={`flex items-center gap-1 font-bold ${
-                      isMeadow ? "text-indigo-700" : "text-purple-300"
-                    }`}>
-                      <Volume2 size={13} /> Count Aloud
-                    </span>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Toddler Math Assessment Prompt */}
-            {onStartAssessment && (
-              <div className={`mt-8 p-6 rounded-[2.25rem] flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left shadow-xl ${
-                isMeadow
-                  ? "bg-white/95 backdrop-blur-md border-4 border-emerald-300 text-slate-800"
-                  : "bg-gradient-to-r from-emerald-950/40 to-teal-950/40 border border-emerald-500/30 text-white"
-              }`}>
-                <div>
-                  <h4 className={`text-base font-black mb-1 ${
-                    isMeadow ? "text-slate-900" : "text-white"
-                  }`}>Lead a 5-Minute Toddler Math Milestone Check</h4>
-                  <p className={`text-xs font-semibold ${
-                    isMeadow ? "text-slate-600" : "text-white/60"
-                  }`}>
-                    Observe whether the child can count 3 physical items, distinguish a circle from a square, and identify 'more'.
-                  </p>
-                </div>
-                <button
-                  onClick={() => onStartAssessment("toddler-counting-shapes")}
-                  className="px-5 py-3 rounded-2xl bg-gradient-to-b from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-black text-xs sm:text-sm border-b-4 border-emerald-800 shadow-md transition-all active:translate-y-1 cursor-pointer whitespace-nowrap"
-                >
-                  Start Toddler Math Check →
-                </button>
-              </div>
-            )}
-          </div>
+        {activeTab === "focus" && (
+          <ToddlerFocusBoard isMeadow={isMeadow} onAddStar={addStar} onReadyLearn={() => setActiveTab("phonics")} />
         )}
 
         {/* SECTION 4: INTERACTIVE GAMES & PICTURE QUIZZES */}
@@ -1593,13 +1247,15 @@ export function ToddlerWorldView({
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="relative w-full max-w-3xl my-auto rounded-[2.5rem] bg-[#fffbeb] text-slate-900 border-8 border-amber-300 shadow-2xl overflow-hidden flex flex-col max-h-[94vh]"
+              className={`relative w-full my-auto rounded-[2.5rem] bg-[#fffbeb] text-slate-900 border-8 border-amber-300 shadow-2xl overflow-hidden flex flex-col max-h-[94vh] ${
+                activePage.illustrationImage ? "max-w-4xl" : "max-w-3xl"
+              }`}
             >
               {/* Book Header */}
               <div className="flex items-center justify-between p-3.5 sm:p-4 bg-amber-100/90 border-b-2 border-amber-200">
                 <div className="flex items-center gap-2.5 min-w-0">
                   {selectedBook.coverImage ? (
-                    <img src={selectedBook.coverImage} alt="" className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 rounded-2xl object-cover border border-amber-200 shadow-sm" />
+                    <img src={selectedBook.coverImage} alt="" width={48} height={48} decoding="async" className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 rounded-2xl object-cover border border-amber-200 shadow-sm" />
                   ) : (
                   <span className="text-2xl sm:text-3xl flex-shrink-0 p-1.5 bg-white rounded-2xl border border-amber-200 shadow-sm">{selectedBook.coverEmoji}</span>
                   )}
@@ -1612,9 +1268,29 @@ export function ToddlerWorldView({
                 </div>
 
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                  <div className="hidden sm:flex rounded-2xl border-2 border-amber-300 bg-white p-0.5">
+                    <button
+                      type="button"
+                      onClick={() => setReadMode("to-me")}
+                      className={`min-h-10 px-3 rounded-xl text-xs font-black ${readMode === "to-me" ? "bg-amber-400 text-amber-950" : "text-slate-600"}`}
+                    >
+                      Read to me
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setReadMode("myself");
+                        stopSpeaking();
+                        setReadAlongWordIndex(null);
+                      }}
+                      className={`min-h-10 px-3 rounded-xl text-xs font-black ${readMode === "myself" ? "bg-amber-400 text-amber-950" : "text-slate-600"}`}
+                    >
+                      I read
+                    </button>
+                  </div>
                   {/* Read to Me / Parent Voice Button */}
                   <button
-                    onClick={() => handleReadAloud(activePage.narration)}
+                    onClick={() => handleReadAloud(spokenPageText(activePage))}
                     className={`flex items-center gap-1 sm:gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 shadow-md active:translate-y-1 ${
                       isPlayingParentAudio
                         ? "bg-rose-500 text-white border-rose-700 animate-pulse"
@@ -1690,15 +1366,35 @@ export function ToddlerWorldView({
               {/* Book Canvas / Page Surface */}
               {!isBookCompleted ? (
                 <>
-                  <div className="p-4 sm:p-8 flex-1 overflow-y-auto grid md:grid-cols-2 gap-4 sm:gap-6 items-center">
-                    {/* Visual Scene Box (Pop-up Art Card) */}
+                  <div className={`flex-1 overflow-y-auto ${activePage.illustrationImage ? "" : "p-4 sm:p-8 grid md:grid-cols-5 gap-4 sm:gap-6 items-center"}`}>
+                    {activePage.illustrationImage ? (
+                      <motion.div
+                        key={`page-spread-${activePage.pageNumber}`}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="relative min-h-64 sm:min-h-[22rem] w-full overflow-hidden bg-amber-100"
+                      >
+                        <img
+                          src={activePage.illustrationImage}
+                          alt=""
+                          decoding="async"
+                          fetchPriority="high"
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
+                        {activePage.soundEffectText && (
+                          <span className="absolute top-3 left-3 px-3.5 py-1 text-sm font-black uppercase rounded-full bg-amber-400 text-amber-950 shadow-md border-b-2 border-amber-600">
+                            {activePage.soundEffectText}
+                          </span>
+                        )}
+                      </motion.div>
+                    ) : (
                     <motion.div
                       key={`page-illus-${activePage.pageNumber}`}
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      className="w-full min-h-48 py-8 sm:py-14 px-4 sm:px-6 rounded-[2rem] bg-white border-4 border-amber-200 flex flex-col items-center justify-center shadow-lg relative overflow-hidden"
+                      className={`md:col-span-3 w-full min-h-64 sm:min-h-80 py-10 sm:py-16 px-4 sm:px-6 rounded-[2rem] bg-gradient-to-br ${activePage.bgGradient} border-4 border-amber-200 flex flex-col items-center justify-center shadow-lg relative overflow-hidden`}
                     >
-                      <div className="text-7xl sm:text-9xl mb-2 sm:mb-3 filter drop-shadow-md">
+                      <div className="text-8xl sm:text-[9rem] mb-2 sm:mb-3 filter drop-shadow-md">
                         {activePage.illustration}
                       </div>
                       {activePage.soundEffectText && (
@@ -1707,15 +1403,19 @@ export function ToddlerWorldView({
                         </span>
                       )}
                     </motion.div>
+                    )}
 
                     {/* Page Heading & Story Text */}
-                    <div className="max-w-xl space-y-2 sm:space-y-3 text-center md:text-left mx-auto md:mx-0">
+                    <div className={`max-w-xl space-y-2 sm:space-y-3 text-center md:text-left mx-auto md:mx-0 ${
+                      activePage.illustrationImage ? "p-4 sm:p-6 w-full max-w-none" : "md:col-span-2"
+                    }`}>
                       <h4 className="text-lg sm:text-2xl font-black text-amber-900 font-display">
                         {activePage.title}
                       </h4>
                       <StoryReadAloudText
                         text={activePage.text}
                         highlights={activePage.wordHighlights}
+                        activeWordIndex={readAlongWordIndex}
                         onSpeakWord={(word) => speakText(word, { pitch: 1.18 })}
                       />
 
@@ -1789,28 +1489,18 @@ export function ToddlerWorldView({
                     <button
                       onClick={handlePrevPage}
                       disabled={currentPageIndex === 0}
-                      className="flex items-center gap-1 sm:gap-1.5 min-h-12 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl bg-white border-b-4 border-slate-300 hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none font-black text-sm text-slate-800 transition-all cursor-pointer shadow-md active:translate-y-1"
+                      className="flex items-center gap-1 sm:gap-1.5 min-h-16 px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl bg-white border-b-4 border-slate-300 hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none font-black text-sm text-slate-800 transition-all cursor-pointer shadow-md active:translate-y-1"
                     >
                       <ChevronLeft size={16} /> <span className="hidden sm:inline">Back</span>
                     </button>
 
-                    {/* Dots indicator */}
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      {selectedBook.pages.map((_, idx) => (
-                        <div
-                          key={idx}
-                          className={`h-2.5 sm:h-3 rounded-full transition-all ${
-                            idx === currentPageIndex
-                              ? "w-6 sm:w-8 bg-amber-500 border border-amber-600"
-                              : "w-2.5 sm:w-3 bg-amber-300"
-                          }`}
-                        />
-                      ))}
-                    </div>
+                    <p className="font-black text-amber-900 text-sm sm:text-base">
+                      {currentPageIndex + 1} / {selectedBook.pages.length}
+                    </p>
 
                     <button
                       onClick={handleNextPage}
-                      className="flex items-center gap-1 sm:gap-1.5 min-h-12 px-5 sm:px-7 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-b from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 font-black text-sm text-amber-950 border-b-4 border-orange-700 shadow-lg transition-all active:translate-y-1 cursor-pointer"
+                      className="flex items-center gap-1 sm:gap-1.5 min-h-16 px-5 sm:px-7 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-b from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 font-black text-sm text-amber-950 border-b-4 border-orange-700 shadow-lg transition-all active:translate-y-1 cursor-pointer"
                     >
                       <span>{currentPageIndex === selectedBook.pages.length - 1 ? "Finish ⭐" : "Next"}</span>
                       <ChevronRight size={16} />
@@ -1844,7 +1534,7 @@ export function ToddlerWorldView({
                         setCurrentPageIndex(0);
                         setIsBookCompleted(false);
                         if (selectedBook.pages[0]) {
-                          speakText(selectedBook.pages[0].narration);
+                          speakPrintedPage(selectedBook.pages[0]);
                         }
                       }}
                       className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-b from-amber-400 to-orange-500 hover:from-amber-300 hover:to-orange-400 text-amber-950 font-black text-sm border-b-4 border-orange-700 shadow-lg transition-all active:translate-y-1 cursor-pointer"

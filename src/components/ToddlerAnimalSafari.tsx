@@ -2,11 +2,16 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Volume2, Sparkles, Star, RotateCcw, Award, CheckCircle2 } from "lucide-react";
 import { soundEffects } from "../utils/soundEffects";
-import { speakText, stopSpeaking } from "../utils/speechUtils";
+import { stopSpeaking } from "../utils/speechUtils";
+import { playSafariAnimalSfx, playSafariDetectiveMystery, playSafariVoiceLine } from "../utils/toddlerAudio";
+import {
+  SAFARI_EXPLORE_WELCOME_PROMPT,
+  safariFriendBioText,
+} from "../data/toddler/audioRegistry";
 import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import {
-  completeActiveMissionIfMatches,
+  payDailyMissionIfMatches,
   recordDailyCount,
   recordDailySetMember,
 } from "../data/toddler/toddlerDailyAdventure";
@@ -16,8 +21,13 @@ type Animal = SafariFriend;
 
 interface ToddlerAnimalSafariProps {
   onAddStar?: (amount?: number) => void;
+  onComplete?: () => void;
   animals?: SafariFriend[];
   sceneTitle?: string;
+  /** Worlds station spokenPrompt — her clip, not the generic Games welcome. */
+  exploreWelcome?: string;
+  /** Worlds play already pays a worlds mission — do not also pay Games. */
+  missionSurface?: "games" | "off";
 }
 
 /**
@@ -27,10 +37,15 @@ interface ToddlerAnimalSafariProps {
  */
 const CELEBRATION_PAUSE_MS = 900;
 
+const STATION_HIT_GOAL = 3;
+
 export function ToddlerAnimalSafari({
   onAddStar,
+  onComplete,
   animals,
   sceneTitle = "Savanna Animal Detective",
+  exploreWelcome,
+  missionSurface = "games",
 }: ToddlerAnimalSafariProps) {
   const roster = animals && animals.length >= 3 ? animals : DEFAULT_SAFARI_FRIENDS;
   const [activeMode, setActiveMode] = useState<"explore" | "detective">("detective");
@@ -52,30 +67,32 @@ export function ToddlerAnimalSafari({
   const advancePendingRef = useRef(false);
   const activeModeRef = useRef(activeMode);
   activeModeRef.current = activeMode;
+  const stationHits = useRef(0);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+  const noteStationHit = () => {
+    stationHits.current += 1;
+    if (stationHits.current === STATION_HIT_GOAL) onCompleteRef.current?.();
+  };
 
   const clearCelebrationTimers = () => {
     celebrationTimersRef.current.forEach((timer) => clearTimeout(timer));
     celebrationTimersRef.current = [];
   };
 
-  // Automatically speak instructions on initial load and mode switch
+  // Closed Safari kit: narrator MP3s only. Missing clips stay quiet — no Web Speech.
   useEffect(() => {
     const timer = setTimeout(() => {
+      stopSpeaking();
       if (activeMode === "detective") {
-        speakText(`Welcome to ${sceneTitle}! Who makes this sound? ${targetAnimal.soundText}! Tap the right animal!`, {
-          pitch: 1.25,
-          rate: 0.9,
-        });
+        playSafariDetectiveMystery(targetAnimal.id);
       } else {
-        speakText(`Welcome to ${sceneTitle}! Tap any animal friend to hear their call and fun secrets!`, {
-          pitch: 1.2,
-          rate: 0.9,
-        });
+        playSafariVoiceLine(exploreWelcome || SAFARI_EXPLORE_WELCOME_PROMPT);
       }
     }, 150);
 
     return () => clearTimeout(timer);
-  }, [activeMode]);
+  }, [activeMode, exploreWelcome]);
 
   // Never leave a scheduled round running after the game is closed.
   useEffect(() => clearCelebrationTimers, []);
@@ -88,10 +105,8 @@ export function ToddlerAnimalSafari({
     setTargetAnimal(nextTarget);
     setSelectedAnimal(null);
     setShowCelebration(false);
-    speakText(`Who makes this sound? ${nextTarget.soundText}! Tap the right animal!`, {
-      pitch: 1.25,
-      rate: 0.9,
-    });
+    stopSpeaking();
+    playSafariDetectiveMystery(nextTarget.id);
   };
 
   /**
@@ -102,7 +117,6 @@ export function ToddlerAnimalSafari({
    * an end — the child must never be left on a screen that no longer responds.
    */
   const celebrateAndAdvance = (animal: Animal) => {
-    const praise = `Yes! Correct! It's the ${animal.name}! ${animal.call}`;
     advancePendingRef.current = true;
     clearCelebrationTimers();
 
@@ -119,17 +133,11 @@ export function ToddlerAnimalSafari({
       );
     };
 
-    speakText(praise, {
-      pitch: 1.25,
-      rate: 0.9,
-      onEnd: () => {
-        if (!advancePendingRef.current) return;
-        clearCelebrationTimers();
-        scheduleAdvance(CELEBRATION_PAUSE_MS);
-      },
-    });
-
-    scheduleAdvance(Math.max(CELEBRATION_PAUSE_MS + 1500, Math.ceil(praise.length / 10) * 1000 + 2500));
+    stopSpeaking();
+    playSafariAnimalSfx(animal.id);
+    // Visual celebration + her call; do not mix in the device narrator.
+    scheduleAdvance(CELEBRATION_PAUSE_MS);
+    scheduleAdvance(CELEBRATION_PAUSE_MS + 4000);
   };
 
 
@@ -139,12 +147,14 @@ export function ToddlerAnimalSafari({
     if (activeMode === "explore") {
       setSelectedAnimal(animal);
       soundEffects.playSuccessChime();
-      speakText(`${animal.call} ${animal.funFact}`, { pitch: 1.2, rate: 0.9 });
+      const bio = safariFriendBioText(animal);
+      if (!playSafariVoiceLine(bio)) playSafariAnimalSfx(animal.id);
       // Discovery stars: the first tap on each animal each day earns a star;
       // repeats are free play so stars cannot be farmed from one animal.
       if (recordDailySetMember("safari-explore", animal.id).isNew) {
         if (onAddStar) onAddStar(1);
         else awardStars(1);
+        noteStationHit();
       }
       return;
     }
@@ -165,14 +175,15 @@ export function ToddlerAnimalSafari({
         else awardStars(2);
         awardXP(25, `Identified ${animal.name}`);
       }
-      if (solvesToday === 3) {
+      if (solvesToday === 3 && missionSurface === "games") {
         try {
-          completeActiveMissionIfMatches("games", "animal-safari");
+          payDailyMissionIfMatches("games", "animal-safari");
         } catch {
           // ignore
         }
       }
       setScore((s) => s + 1);
+      noteStationHit();
 
       try {
         recordLearningEvent({
@@ -220,19 +231,13 @@ export function ToddlerAnimalSafari({
       } catch (error) {
         console.error("Failed to record safari response:", error);
       }
-      speakText(`That's the ${animal.name}! Listen again: ${targetAnimal.soundText}! Try finding the right one!`, {
-        pitch: 1.2,
-        rate: 0.9,
-      });
+      playSafariAnimalSfx(targetAnimal.id);
     }
   };
 
   const handlePlayTargetSound = () => {
     soundEffects.playPop();
-    speakText(`Listen carefully: ${targetAnimal.soundText}! Who says ${targetAnimal.soundText}?`, {
-      pitch: 1.25,
-      rate: 0.9,
-    });
+    playSafariDetectiveMystery(targetAnimal.id);
   };
 
   return (
@@ -342,9 +347,17 @@ export function ToddlerAnimalSafari({
                 {animal.habitat}
               </div>
 
-              {/* Big Animated Emoji Mascot */}
-              <div className="text-5xl sm:text-6xl py-2 filter drop-shadow-lg transition-transform hover:scale-110">
-                {animal.emoji}
+              {/* Painted portrait when we have one; emoji otherwise */}
+              <div className="py-2 filter drop-shadow-lg transition-transform hover:scale-110">
+                {animal.artSrc ? (
+                  <img
+                    src={animal.artSrc}
+                    alt={animal.name}
+                    className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-2xl mx-auto border-2 border-white/30"
+                  />
+                ) : (
+                  <div className="text-5xl sm:text-6xl">{animal.emoji}</div>
+                )}
               </div>
 
               {/* Name & Sound */}
@@ -370,7 +383,15 @@ export function ToddlerAnimalSafari({
           animate={{ opacity: 1, y: 0 }}
           className="p-5 rounded-3xl bg-white/[0.06] border border-white/20 flex items-center gap-4"
         >
-          <div className="text-5xl">{selectedAnimal.emoji}</div>
+          {selectedAnimal.artSrc ? (
+            <img
+              src={selectedAnimal.artSrc}
+              alt={selectedAnimal.name}
+              className="w-16 h-16 object-cover rounded-2xl border border-white/30"
+            />
+          ) : (
+            <div className="text-5xl">{selectedAnimal.emoji}</div>
+          )}
           <div className="space-y-1">
             <h4 className="text-lg font-black text-white flex items-center gap-2">
               <span>{selectedAnimal.name}</span>

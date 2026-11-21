@@ -23,6 +23,7 @@ import {
 } from "../utils/speechUtils";
 import { soundEffects } from "../utils/soundEffects";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
 import { ToddlerMemoryGame } from "./ToddlerMemoryGame";
 import { ToddlerBubblePopGame } from "./ToddlerBubblePopGame";
 import { ToddlerRhymeGame } from "./ToddlerRhymeGame";
@@ -87,17 +88,21 @@ const BONUS_EXPLORER_QUESTIONS: QuizQuestion[] = [
   { id: "q16", prompt: "Which tiny helper makes sweet honey?", spokenPrompt: "Which little buzzing friend visits flowers and helps make honey?", correctId: "bee", soundCue: "Bzzzz!", options: [{ id: "bee", label: "Busy Bee", emoji: "🐝", soundText: "Buzz buzz! I love flowers!" }, { id: "frog", label: "Frog", emoji: "🐸", soundText: "Ribbit ribbit!" }, { id: "duck", label: "Duck", emoji: "🦆", soundText: "Quack quack!" }, { id: "cat", label: "Kitten", emoji: "🐱", soundText: "Meow!" }] },
   { id: "q17", prompt: "Which animal lives in a cold, icy place and waddles?", spokenPrompt: "Who wears a black and white coat and waddles across the chilly ice?", correctId: "penguin", soundCue: "Waddle waddle!", options: [{ id: "penguin", label: "Penguin", emoji: "🐧", soundText: "Waddle, slide, splash!" }, { id: "camel", label: "Camel", emoji: "🐫", soundText: "I walk in the warm desert!" }, { id: "monkey", label: "Monkey", emoji: "🐵", soundText: "Ooh ooh aah aah!" }, { id: "cow", label: "Cow", emoji: "🐮", soundText: "Moo!" }] },
   { id: "q18", prompt: "What do plants need from the sky to help them grow?", spokenPrompt: "Plants drink rain and reach toward the warm sunshine. What shines in the daytime sky?", correctId: "sun", soundCue: "Shine bright!", options: [{ id: "sun", label: "Sunny Sun", emoji: "☀️", soundText: "Warm sunshine helps plants grow!" }, { id: "moon", label: "Moon", emoji: "🌙", soundText: "The moon glows at night!" }, { id: "snow", label: "Snowflake", emoji: "❄️", soundText: "Snow is cold and fluffy!" }, { id: "star", label: "Star", emoji: "⭐", soundText: "Stars twinkle at night!" }] },
-  { id: "q19", prompt: "Which shape has three straight sides?", spokenPrompt: "Let's count the sides together. One, two, three. Which shape has three sides?", correctId: "triangle", soundCue: "One, two, three!", options: [{ id: "triangle", label: "Triangle", emoji: "🔺", soundText: "Three sides make a triangle!" }, { id: "circle", label: "Circle", emoji: "🟠", soundText: "A circle is round!" }, { id: "square", label: "Square", emoji: "🟩", soundText: "A square has four sides!" }, { id: "star", label: "Star", emoji: "⭐", soundText: "A star has pointy tips!" }] },
+  { id: "q19", prompt: "Which shape has three straight sides?", spokenPrompt: "Let's count the sides together. One, two, three. Which shape has three sides?", correctId: "triangle", soundCue: "One, two, three!", options: [{ id: "triangle", label: "Triangle", emoji: "🔺", soundText: "Three sides make a triangle!" }, { id: "circle", label: "Circle", emoji: "🔵", soundText: "A circle is round!" }, { id: "square", label: "Square", emoji: "📦", soundText: "A square has four sides!" }, { id: "star", label: "Star", emoji: "⭐", soundText: "A star has pointy tips!" }] },
   { id: "q20", prompt: "Which one is the number three?", spokenPrompt: "Listen carefully. Which number comes after two: one, two, three?", correctId: "three", soundCue: "1, 2, 3!", options: [{ id: "one", label: "One", emoji: "1️⃣", soundText: "One little sun!" }, { id: "three", label: "Three", emoji: "3️⃣", soundText: "One, two, three!" }, { id: "five", label: "Five", emoji: "5️⃣", soundText: "Five little stars!" }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "One, two!" }] },
   { id: "q21", prompt: "Which fruit is yellow and monkeys love to eat?", spokenPrompt: "Peel it, take a bite, and say yum! Which yellow fruit do monkeys love?", correctId: "banana", soundCue: "Yummy banana!", options: [{ id: "banana", label: "Banana", emoji: "🍌", soundText: "A tasty yellow banana!" }, { id: "apple", label: "Apple", emoji: "🍎", soundText: "Crunchy red apple!" }, { id: "grapes", label: "Grapes", emoji: "🍇", soundText: "Juicy grapes!" }, { id: "lemon", label: "Lemon", emoji: "🍋", soundText: "A sour yellow lemon!" }] },
   { id: "q22", prompt: "What should you do before crossing a road?", spokenPrompt: "We keep safe near roads. Before crossing with a grown-up, what should we do?", correctId: "stop", soundCue: "Stop, look, listen!", options: [{ id: "stop", label: "Stop and Look", emoji: "🛑", soundText: "Hold a grown-up's hand and look both ways!" }, { id: "run", label: "Run fast", emoji: "🏃", soundText: "Let's stay safe and walk with a grown-up!" }, { id: "play", label: "Play ball", emoji: "⚽", soundText: "Roads are not a place to play!" }, { id: "hide", label: "Hide", emoji: "🙈", soundText: "We need to see and listen carefully!" }] },
   { id: "q23", prompt: "Which animal is the tallest and has a very long neck?", spokenPrompt: "Who reaches the highest leaves with a long spotted neck?", correctId: "giraffe", soundCue: "Reach up high!", options: [{ id: "giraffe", label: "Giraffe", emoji: "🦒", soundText: "I reach the tallest leaves!" }, { id: "zebra", label: "Zebra", emoji: "🦓", soundText: "I have black and white stripes!" }, { id: "lion", label: "Lion", emoji: "🦁", soundText: "Roaaar!" }, { id: "hippo", label: "Hippo", emoji: "🦛", soundText: "Splash!" }] },
   { id: "q24", prompt: "Which weather means we might need an umbrella?", spokenPrompt: "Drip drop! What falls from clouds and makes puddles?", correctId: "rain", soundCue: "Drip drop!", options: [{ id: "rain", label: "Rain", emoji: "🌧️", soundText: "Take an umbrella in the rain!" }, { id: "sun", label: "Sunshine", emoji: "☀️", soundText: "Bright sunny day!" }, { id: "wind", label: "Wind", emoji: "💨", soundText: "Whoosh goes the wind!" }, { id: "rainbow", label: "Rainbow", emoji: "🌈", soundText: "A rainbow can appear after rain!" }] },
   { id: "q25", prompt: "Which one belongs in the ocean?", spokenPrompt: "Splash into the blue ocean. Which friendly creature swims in the sea?", correctId: "dolphin", soundCue: "Splash!", options: [{ id: "dolphin", label: "Dolphin", emoji: "🐬", soundText: "I swim and leap in the ocean!" }, { id: "chicken", label: "Chicken", emoji: "🐔", soundText: "Cluck cluck on the farm!" }, { id: "camel", label: "Camel", emoji: "🐫", soundText: "I walk in the desert!" }, { id: "sheep", label: "Sheep", emoji: "🐑", soundText: "Baa baa in the meadow!" }] },
-  { id: "q26", prompt: "What comes next: red, blue, red, blue...?", spokenPrompt: "Let's spot the repeating colors. Red, blue, red, blue. What comes next?", correctId: "red", soundCue: "Red, blue, red, blue!", options: [{ id: "red", label: "Red", emoji: "🔴", soundText: "The pattern starts again with red!" }, { id: "blue", label: "Blue", emoji: "🔵", soundText: "Blue was just before. What starts again?" }, { id: "green", label: "Green", emoji: "🟢", soundText: "Green is a lovely color, but not in this pattern!" }, { id: "yellow", label: "Yellow", emoji: "🟡", soundText: "Look at the repeating colors again!" }] },
+  { id: "q26", prompt: "What comes next: red, blue, red, blue...?", spokenPrompt: "Let's spot the repeating colors. Red, blue, red, blue. What comes next?", correctId: "red", soundCue: "Red, blue, red, blue!", options: [{ id: "red", label: "Red", emoji: "🔴", soundText: "The pattern starts again with red!" }, { id: "blue", label: "Blue", emoji: "🔵", soundText: "Blue was just before. What starts again?" }, { id: "green", label: "Green", emoji: "💚", soundText: "Green is a lovely color, but not in this pattern!" }, { id: "yellow", label: "Yellow", emoji: "💛", soundText: "Look at the repeating colors again!" }] },
   { id: "q27", prompt: "Which one is the number six?", spokenPrompt: "After five comes six. Which number is six?", correctId: "six", soundCue: "Six!", options: [{ id: "four", label: "Four", emoji: "4️⃣", soundText: "Four!" }, { id: "six", label: "Six", emoji: "6️⃣", soundText: "Six little bees!" }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "Two!" }, { id: "nine", label: "Nine", emoji: "9️⃣", soundText: "Nine!" }] },
   { id: "q28", prompt: "Which one is the number eight?", spokenPrompt: "Count up: six, seven, eight. Which number is eight?", correctId: "eight", soundCue: "Eight!", options: [{ id: "three", label: "Three", emoji: "3️⃣", soundText: "Three!" }, { id: "five", label: "Five", emoji: "5️⃣", soundText: "Five!" }, { id: "eight", label: "Eight", emoji: "8️⃣", soundText: "Eight apples!" }, { id: "one", label: "One", emoji: "1️⃣", soundText: "One!" }] },
   { id: "q29", prompt: "Which one is the number ten?", spokenPrompt: "A full ten-frame. Which number is ten?", correctId: "ten", soundCue: "Ten!", options: [{ id: "seven", label: "Seven", emoji: "7️⃣", soundText: "Seven!" }, { id: "ten", label: "Ten", emoji: "🔟", soundText: "Ten stars!" }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "Two!" }, { id: "four", label: "Four", emoji: "4️⃣", soundText: "Four!" }] },
+  { id: "q30", prompt: "What letter comes after A, B, C?", spokenPrompt: "A, B, C. What letter comes next?", correctId: "d", soundCue: "D!", options: [{ id: "d", label: "D", emoji: "🇩", soundText: "D comes after C!" }, { id: "m", label: "M", emoji: "🇲", soundText: "M is later in the alphabet." }, { id: "s", label: "S", emoji: "🇸", soundText: "Listen again: A, B, C." }, { id: "z", label: "Z", emoji: "🇿", soundText: "Z is at the end." }] },
+  { id: "q31", prompt: "What letter comes after L, M, N?", spokenPrompt: "L, M, N. What letter comes next?", correctId: "o", soundCue: "O!", options: [{ id: "o", label: "O", emoji: "🇴", soundText: "O comes after N!" }, { id: "a", label: "A", emoji: "🇦", soundText: "A is at the start." }, { id: "t", label: "T", emoji: "🇹", soundText: "Listen again: L, M, N." }, { id: "k", label: "K", emoji: "🇰", soundText: "K comes before L." }] },
+  { id: "q32", prompt: "Fox starts with which letter?", spokenPrompt: "Fox. Fff. Which letter starts fox?", correctId: "f", soundCue: "F!", options: [{ id: "f", label: "F", emoji: "🦊", soundText: "F says fff, fox!" }, { id: "s", label: "S", emoji: "☀️", soundText: "S is for sun." }, { id: "b", label: "B", emoji: "🚌", soundText: "B is for bus." }, { id: "m", label: "M", emoji: "🐵", soundText: "M is for monkey." }] },
+  { id: "q33", prompt: "What number comes after nine?", spokenPrompt: "Nine. What number comes next?", correctId: "ten", soundCue: "Ten!", options: [{ id: "ten", label: "Ten", emoji: "🔟", soundText: "After nine comes ten!" }, { id: "eight", label: "Eight", emoji: "8️⃣", soundText: "Eight comes before nine." }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "Count up: eight, nine…" }, { id: "five", label: "Five", emoji: "5️⃣", soundText: "Keep counting." }] },
 ];
 
 const ANIMAL_QUIZ_QUESTIONS: QuizQuestion[] = [
@@ -234,7 +239,7 @@ const ANIMAL_QUIZ_QUESTIONS: QuizQuestion[] = [
   {
     id: "q11",
     prompt: "Who wakes up the sunny farm with 'Cock-a-doodle-doo'?",
-    spokenPrompt: "Who perches on the fence and crows cock-a-doodle-doo when morning arrives?",
+    spokenPrompt: "Who perches on the fence and crows like a rooster when morning arrives?",
     soundCue: "Cock a doodle doo!",
     correctId: "rooster",
     options: [
@@ -299,6 +304,28 @@ interface ShapeQuestion {
   }[];
 }
 
+function ShapeGlyph({ option }: { option: ShapeQuestion["options"][number] }) {
+  if (option.id === "square" || option.id === "circle" || option.id === "triangle") {
+    const clip =
+      option.id === "circle"
+        ? "circle(50% at 50% 50%)"
+        : option.id === "triangle"
+        ? "polygon(50% 8%, 4% 92%, 96% 92%)"
+        : undefined;
+    return (
+      <span
+        aria-hidden
+        data-testid={`shape-glyph-${option.id}`}
+        className={`inline-block h-14 w-14 sm:h-16 sm:w-16 mb-2 bg-gradient-to-br ${option.color} ${
+          option.id === "square" ? "rounded-sm border-2 border-white/80" : ""
+        }`}
+        style={clip ? { clipPath: clip } : undefined}
+      />
+    );
+  }
+  return <span className="text-6xl sm:text-7xl mb-2 filter drop-shadow-md">{option.emoji}</span>;
+}
+
 const SHAPE_QUESTIONS: ShapeQuestion[] = [
   {
     id: "s1",
@@ -308,7 +335,7 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
     options: [
       { id: "circle", label: "Blue Circle", emoji: "🔵", color: "from-blue-500 to-cyan-400" },
       { id: "star", label: "Golden Star", emoji: "⭐", color: "from-amber-400 to-yellow-300" },
-      { id: "square", label: "Green Square", emoji: "🟩", color: "from-emerald-500 to-teal-400" },
+      { id: "square", label: "Green Square", emoji: "📗", color: "from-emerald-500 to-teal-400" },
       { id: "heart", label: "Pink Heart", emoji: "💖", color: "from-pink-500 to-rose-400" },
     ],
   },
@@ -331,7 +358,7 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
     correctId: "circle",
     options: [
       { id: "triangle", label: "Orange Triangle", emoji: "🔺", color: "from-orange-500 to-amber-400" },
-      { id: "square", label: "Green Square", emoji: "🟩", color: "from-emerald-500 to-teal-400" },
+      { id: "square", label: "Green Square", emoji: "📗", color: "from-emerald-500 to-teal-400" },
       { id: "star", label: "Golden Star", emoji: "⭐", color: "from-amber-400 to-yellow-300" },
       { id: "circle", label: "Blue Circle", emoji: "🔵", color: "from-blue-500 to-cyan-400" },
     ],
@@ -354,9 +381,9 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
     spokenPrompt: "Can you find the green square? It has four equal straight sides!",
     correctId: "square",
     options: [
-      { id: "circle", label: "Orange Circle", emoji: "🟠", color: "from-orange-500 to-amber-400" },
+      { id: "circle", label: "Orange Circle", emoji: "🔶", color: "from-orange-500 to-amber-400" },
       { id: "triangle", label: "Yellow Triangle", emoji: "🔺", color: "from-amber-400 to-yellow-300" },
-      { id: "square", label: "Green Square", emoji: "🟩", color: "from-emerald-500 to-teal-400" },
+      { id: "square", label: "Green Square", emoji: "📗", color: "from-emerald-500 to-teal-400" },
       { id: "star", label: "Star", emoji: "⭐", color: "from-amber-400 to-yellow-300" },
     ],
   },
@@ -369,7 +396,7 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
       { id: "triangle", label: "Orange Triangle", emoji: "🔺", color: "from-orange-500 to-amber-400" },
       { id: "circle", label: "Blue Circle", emoji: "🔵", color: "from-blue-500 to-cyan-400" },
       { id: "heart", label: "Pink Heart", emoji: "💖", color: "from-pink-500 to-rose-400" },
-      { id: "square", label: "Purple Square", emoji: "🟪", color: "from-purple-500 to-indigo-400" },
+      { id: "square", label: "Purple Square", emoji: "💜", color: "from-purple-500 to-indigo-400" },
     ],
   },
   {
@@ -405,7 +432,7 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
       { id: "rainbow", label: "Rainbow Arc", emoji: "🌈", color: "from-pink-400 to-amber-300" },
       { id: "cloud", label: "Raincloud", emoji: "🌧️", color: "from-slate-400 to-blue-300" },
       { id: "circle", label: "Blue Circle", emoji: "🔵", color: "from-blue-500 to-cyan-400" },
-      { id: "square", label: "Green Square", emoji: "🟩", color: "from-emerald-500 to-teal-400" },
+      { id: "square", label: "Green Square", emoji: "📗", color: "from-emerald-500 to-teal-400" },
     ],
   },
   {
@@ -427,8 +454,8 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
     correctId: "bell",
     options: [
       { id: "bell", label: "Golden Bell", emoji: "🔔", color: "from-amber-400 to-yellow-300" },
-      { id: "square", label: "Blue Square", emoji: "🟦", color: "from-blue-500 to-indigo-400" },
-      { id: "circle", label: "Green Circle", emoji: "🟢", color: "from-emerald-500 to-teal-400" },
+      { id: "square", label: "Blue Square", emoji: "📘", color: "from-blue-500 to-indigo-400" },
+      { id: "circle", label: "Green Circle", emoji: "💚", color: "from-emerald-500 to-teal-400" },
       { id: "diamond", label: "Diamond", emoji: "💎", color: "from-purple-500 to-indigo-400" },
     ],
   },
@@ -438,10 +465,10 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
     spokenPrompt: "Where is the sweet red berry heart delicious and ripe?",
     correctId: "berry",
     options: [
-      { id: "circle", label: "Yellow Circle", emoji: "🟡", color: "from-amber-400 to-yellow-300" },
+      { id: "circle", label: "Yellow Circle", emoji: "💛", color: "from-amber-400 to-yellow-300" },
       { id: "triangle", label: "Blue Triangle", emoji: "🔺", color: "from-blue-500 to-cyan-400" },
       { id: "berry", label: "Red Berry", emoji: "🍓", color: "from-rose-500 to-red-400" },
-      { id: "square", label: "Green Square", emoji: "🟩", color: "from-emerald-500 to-teal-400" },
+      { id: "square", label: "Green Square", emoji: "📗", color: "from-emerald-500 to-teal-400" },
     ],
   },
   {
@@ -452,7 +479,7 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
     options: [
       { id: "pizza", label: "Pizza slice", emoji: "🍕", color: "from-orange-500 to-red-400" },
       { id: "plate", label: "Round plate", emoji: "🍽️", color: "from-slate-200 to-stone-400" },
-      { id: "window", label: "Window", emoji: "🪟", color: "from-sky-400 to-cyan-400" },
+      { id: "window", label: "Window", emoji: "🏠", color: "from-sky-400 to-cyan-400" },
       { id: "clock", label: "Clock", emoji: "🕐", color: "from-amber-400 to-yellow-300" },
     ],
   },
@@ -463,7 +490,7 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
     correctId: "window",
     options: [
       { id: "ball", label: "Ball", emoji: "⚽", color: "from-slate-600 to-emerald-500" },
-      { id: "window", label: "Square window", emoji: "🪟", color: "from-sky-400 to-cyan-500" },
+      { id: "window", label: "Square window", emoji: "🏠", color: "from-sky-400 to-cyan-500" },
       { id: "slice", label: "Pizza", emoji: "🍕", color: "from-orange-500 to-red-400" },
       { id: "moon", label: "Moon", emoji: "🌙", color: "from-indigo-400 to-blue-300" },
     ],
@@ -875,6 +902,11 @@ export function ToddlerQuizzesAndGames({
           setIsShapeCompleted(true);
           soundEffects.playFanfare();
           onAddStar(3);
+          try {
+            payDailyMissionIfMatches("games", "shape-match");
+          } catch {
+            // ignore
+          }
           setTimeout(() => {
             speakText("Hooray! You found all the beautiful shapes and colors! You are so smart!", {
               pitch: 1.25,
@@ -902,7 +934,8 @@ export function ToddlerQuizzesAndGames({
     } else {
       soundEffects.playGentleBoing();
       setWrongShapeShakeId(optionId);
-      speakText(`That's the ${chosen?.label}! Let's find ${currentShape.correctId}!`, {
+      const answerLabel = currentShape.options.find((option) => option.id === currentShape.correctId)?.label ?? "the right one";
+      speakText(`That's the ${chosen?.label}! Let's find ${answerLabel}!`, {
         pitch: 1.15,
         rate: 0.9,
       });
@@ -964,7 +997,17 @@ export function ToddlerQuizzesAndGames({
   const handlePopBubble = (bubble: BubbleItem) => {
     soundEffects.playPop();
     soundEffects.playStarSparkle();
-    setBubbles((prev) => prev.filter((b) => b.id !== bubble.id));
+    setBubbles((prev) => {
+      const next = prev.filter((b) => b.id !== bubble.id);
+      if (next.length === 0) {
+        try {
+          payDailyMissionIfMatches("games", "bubble-pop");
+        } catch {
+          // ignore
+        }
+      }
+      return next;
+    });
     setBubblesPoppedCount((prev) => prev + 1);
     onAddStar(1);
 
@@ -988,6 +1031,11 @@ export function ToddlerQuizzesAndGames({
     } else {
       soundEffects.playFanfare();
       onAddStar(3);
+      try {
+        payDailyMissionIfMatches("games", "feed-animal");
+      } catch {
+        // ignore
+      }
       speakText("Thank you so much! Benny Bunny is so full and happy! You earned three golden stars!", {
         pitch: 1.25,
       });
@@ -1154,7 +1202,7 @@ export function ToddlerQuizzesAndGames({
               : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🧩</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎲</span>
           <span className="text-center leading-tight">Memory</span>
         </button>
 
@@ -1199,7 +1247,7 @@ export function ToddlerQuizzesAndGames({
               : "bg-white/15 border-white/25 text-white hover:bg-white/25"
           }`}
         >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🫧</span>
+          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">💧</span>
           <span className="text-center leading-tight">Bubbles</span>
         </button>
 
@@ -1504,9 +1552,7 @@ export function ToddlerQuizzesAndGames({
                           : "bg-white/[0.04] border-white/15 hover:border-purple-400/60 hover:bg-white/[0.08] text-white"
                       }`}
                     >
-                      <span className="text-6xl sm:text-7xl mb-2 filter drop-shadow-md">
-                        {option.emoji}
-                      </span>
+                      <ShapeGlyph option={option} />
                       <span className="text-lg sm:text-xl font-black text-white">
                         {option.label}
                       </span>

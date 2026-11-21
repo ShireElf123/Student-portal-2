@@ -19,6 +19,8 @@ export function CastPortrait({
       alt={title ?? name}
       width={size}
       height={size}
+      loading="lazy"
+      decoding="async"
       className={`rounded-full object-cover object-top ring-2 ring-white shadow-lg ${className}`}
       style={{ width: size, height: size }}
     />

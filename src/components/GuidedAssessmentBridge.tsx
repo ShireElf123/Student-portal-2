@@ -24,7 +24,7 @@ import { speakText } from "../utils/speechUtils";
 import { todayISO } from "../utils/dateUtils";
 import { readScopedJSON, writeScopedJSON } from "../utils/accountStorage";
 import { getActiveLearnerId } from "../utils/learnerBrain";
-import { recordAssessmentResultEvidence } from "../utils/assessmentEvidence";
+import { recordAssessmentResultEvidence, tallyAssessmentScores } from "../utils/assessmentEvidence";
 
 const ASSESSMENTS_KEY = "my_student_portal_assessments_v1";
 
@@ -73,10 +73,23 @@ export function GuidedAssessmentBridge({
   };
 
   const handleNextItem = () => {
+    if (!activeItem) return;
+    if (!scores[activeItem.id]) return;
     if (currentItemIndex < activeAssessment.items.length - 1) {
       setCurrentItemIndex((prev) => prev + 1);
     } else {
       finalizeAssessment();
+    }
+  };
+
+  const handleSkipItem = () => {
+    if (!activeItem) return;
+    const nextScores = { ...scores, [activeItem.id]: "not_assessed" as AssessmentScore };
+    setScores(nextScores);
+    if (currentItemIndex < activeAssessment.items.length - 1) {
+      setCurrentItemIndex((prev) => prev + 1);
+    } else {
+      finalizeAssessment(nextScores);
     }
   };
 
@@ -86,26 +99,21 @@ export function GuidedAssessmentBridge({
     }
   };
 
-  const finalizeAssessment = () => {
+  const finalizeAssessment = (scoreSnapshot?: Record<string, AssessmentScore>) => {
     const total = activeAssessment.items.length;
-    let mastered = 0;
-    let developing = 0;
-    let needsPractice = 0;
-
-    activeAssessment.items.forEach((item) => {
-      const s = scores[item.id] || "developing";
-      if (s === "mastered") mastered += 1;
-      else if (s === "developing") developing += 1;
-      else if (s === "needs_practice") needsPractice += 1;
-    });
-
-    const percent = Math.round((mastered / total) * 100);
-    const stars = Math.max(1, Math.min(5, Math.ceil((percent / 100) * 5)));
+    const tallied = tallyAssessmentScores(
+      activeAssessment.items.map((item) => item.id),
+      scoreSnapshot ?? scores,
+    );
+    const { mastered, developing, needsPractice, unanswered, scored, percent, starsAwarded: stars } = tallied;
 
     let feedbackSummary = "";
     let nextStep = "";
 
-    if (percent >= 80) {
+    if (scored === 0) {
+      feedbackSummary = `No items were scored for ${studentName}. Skipped questions are unanswered — they are not counted as developing or as needs practice.`;
+      nextStep = "Re-open the snapshot and score each item, or skip only when the child did not attempt it.";
+    } else if (percent >= 80) {
       feedbackSummary = `Outstanding mastery! ${studentName} demonstrates confident grasp of foundational concepts in ${activeAssessment.category.replace("_", " ")}.`;
       nextStep = "Ready to advance to higher complexity word problems, expanded phonics patterns, and independent reading chapters.";
     } else if (percent >= 50) {
@@ -114,6 +122,9 @@ export function GuidedAssessmentBridge({
     } else {
       feedbackSummary = `Early developmental stage. ${studentName} benefits from one-on-one scaffolded guidance and hands-on demonstrations.`;
       nextStep = "Use multi-sensory materials (physical counters, finger-tracing letter cards, nursery rhymes) before re-assessing in 2 weeks.";
+    }
+    if (unanswered > 0 && scored > 0) {
+      feedbackSummary += ` ${unanswered} item${unanswered === 1 ? " was" : "s were"} skipped and not scored.`;
     }
 
     const result: AssessmentResult = {
@@ -129,10 +140,11 @@ export function GuidedAssessmentBridge({
       masteredCount: mastered,
       developingCount: developing,
       needsPracticeCount: needsPractice,
+      unansweredCount: unanswered,
       starsAwarded: stars,
       feedbackSummary,
       nextLearningStep: nextStep,
-      itemScores: scores,
+      itemScores: tallied.itemScores,
     };
 
     setCompletedResult(result);
@@ -430,7 +442,7 @@ export function GuidedAssessmentBridge({
           )}
 
           {/* Bottom Step Navigation */}
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex items-center justify-between gap-2 pt-2 flex-wrap">
             <button
               type="button"
               onClick={handlePrevItem}
@@ -443,8 +455,17 @@ export function GuidedAssessmentBridge({
 
             <button
               type="button"
+              onClick={handleSkipItem}
+              className="px-5 py-3 rounded-2xl bg-slate-950 hover:bg-slate-800 font-bold text-xs sm:text-sm text-amber-300 transition-all cursor-pointer border border-amber-500/30"
+            >
+              Skip — not scored
+            </button>
+
+            <button
+              type="button"
               onClick={handleNextItem}
-              className="flex items-center gap-2 px-6 sm:px-8 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 font-black text-xs sm:text-sm text-white shadow-lg shadow-emerald-950/40 transition-all cursor-pointer"
+              disabled={!activeItem || !scores[activeItem.id]}
+              className="flex items-center gap-2 px-6 sm:px-8 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:pointer-events-none font-black text-xs sm:text-sm text-white shadow-lg shadow-emerald-950/40 transition-all cursor-pointer"
             >
               <span>
                 {currentItemIndex === activeAssessment.items.length - 1
@@ -493,7 +514,7 @@ export function GuidedAssessmentBridge({
             </div>
 
             {/* Score Breakdown Tally */}
-            <div className="grid grid-cols-3 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
               <div className="p-4 sm:p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-center">
                 <div className="text-2xl sm:text-3xl font-black text-emerald-400">
                   {completedResult.masteredCount}
@@ -513,6 +534,13 @@ export function GuidedAssessmentBridge({
                   {completedResult.needsPracticeCount}
                 </div>
                 <div className="text-xs font-bold text-slate-300 uppercase mt-1">Needs Practice</div>
+              </div>
+
+              <div className="p-4 sm:p-5 rounded-2xl bg-slate-800/80 border border-slate-600 text-center">
+                <div className="text-2xl sm:text-3xl font-black text-slate-200">
+                  {completedResult.unansweredCount ?? 0}
+                </div>
+                <div className="text-xs font-bold text-slate-300 uppercase mt-1">Not scored</div>
               </div>
             </div>
 

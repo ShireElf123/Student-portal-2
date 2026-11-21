@@ -265,6 +265,28 @@ export function BuddyCompanionBadge({
           </g>
         )}
 
+        {current.hat === "baker" && (
+          <g>
+            <ellipse cx="50" cy="26" rx="22" ry="8" fill="#fff7ed" stroke="#a8a29e" strokeWidth="1.5" />
+            <ellipse cx="50" cy="16" rx="14" ry="10" fill="#fff" stroke="#d6d3d1" strokeWidth="1.5" />
+          </g>
+        )}
+
+        {current.hat === "rain" && (
+          <g>
+            <path d="M 28 28 L 50 8 L 72 28 Z" fill="#1d4ed8" stroke="#1e3a8a" strokeWidth="1.5" />
+            <ellipse cx="50" cy="28" rx="26" ry="5" fill="#2563eb" />
+          </g>
+        )}
+
+        {current.hat === "sailor" && (
+          <g>
+            <rect x="30" y="16" width="40" height="12" rx="2" fill="#1e3a8a" stroke="#0f172a" strokeWidth="1.5" />
+            <rect x="24" y="26" width="52" height="5" fill="#e2e8f0" stroke="#0f172a" strokeWidth="1" />
+            <rect x="46" y="16" width="8" height="12" fill="#f8fafc" />
+          </g>
+        )}
+
         {/* ACCESSORY: FRONT */}
         {current.accessory === "bowtie" && (
           <g>
@@ -288,6 +310,21 @@ export function BuddyCompanionBadge({
             <path d="M 78 70 Q 82 50 78 35" stroke="#94a3b8" strokeWidth="1" fill="none" strokeDasharray="2,2" />
             <ellipse cx="78" cy="28" rx="8" ry="11" fill="#ec4899" />
             <polygon points="77,39 79,39 78,41" fill="#be185d" />
+          </g>
+        )}
+
+        {current.accessory === "letter" && (
+          <g>
+            <rect x="68" y="62" width="18" height="12" rx="1" fill="#fef3c7" stroke="#b45309" strokeWidth="1.2" />
+            <path d="M 68 62 L 77 68 L 86 62" fill="none" stroke="#b45309" strokeWidth="1.2" />
+          </g>
+        )}
+
+        {current.accessory === "lantern" && (
+          <g>
+            <rect x="72" y="58" width="12" height="16" rx="2" fill="#f59e0b" stroke="#92400e" strokeWidth="1.2" />
+            <rect x="75" y="54" width="6" height="4" fill="#78350f" />
+            <circle cx="78" cy="66" r="3" fill="#fde68a" />
           </g>
         )}
       </motion.svg>

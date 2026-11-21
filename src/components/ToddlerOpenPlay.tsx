@@ -10,9 +10,9 @@ const COPY: Record<OpenPlayId, { title: string; line: string; emoji: string }> =
   stir: { title: "Stir the pot", line: "Drag round and round. There is no wrong way.", emoji: "🍲" },
   drive: { title: "Drive the bus", line: "Slide the bus. Beep when you like.", emoji: "🚌" },
   pour: { title: "Pour a cup", line: "Hold to pour. Stop when the cup is happy.", emoji: "🥛" },
-  scoop: { title: "Scoop the sand", line: "Dip and pour. There is no wrong way.", emoji: "🪣" },
-  pet: { title: "Pet the cub", line: "Stroke slowly. The cub likes kind hands.", emoji: "🐻‍❄️" },
-  plant: { title: "Water the plant", line: "Hold to rain. The leaves drink.", emoji: "🪴" },
+  scoop: { title: "Scoop the sand", line: "Dip and pour. There is no wrong way.", emoji: "🥄" },
+  pet: { title: "Pet the cub", line: "Stroke slowly. The cub likes kind hands.", emoji: "🐻" },
+  plant: { title: "Water the plant", line: "Hold to rain. The leaves drink.", emoji: "🌱" },
   comb: { title: "Comb the mane", line: "Stroke the comb. There is no wrong way.", emoji: "🐴" },
 };
 
@@ -42,6 +42,15 @@ export function ToddlerOpenPlay({
   const copy = COPY[playId];
   const still = TOY_STILL[playId];
 
+  if (!copy) {
+    return (
+      <div className="rounded-[2rem] border-4 border-amber-400/40 bg-slate-950/70 p-6 text-center">
+        <p className="text-xl font-black text-white">This toy is packing up.</p>
+        <p className="mt-2 text-sm font-semibold text-white/80">Pick another Play tile on the trail.</p>
+      </div>
+    );
+  }
+
   useEffect(() => {
     const t = setTimeout(() => speakText(copy.line, { pitch: 1.2, rate: 0.92 }), 200);
     return () => {
@@ -64,7 +73,7 @@ export function ToddlerOpenPlay({
     <div className="space-y-4">
       <div className="overflow-hidden rounded-[2rem] border-4 border-white/20 h-44 sm:h-52">
         {still ? (
-          <img src={still} alt="" className="h-full w-full object-cover" />
+          <img src={still} alt="" width={720} height={720} decoding="async" className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full items-center justify-center bg-gradient-to-br from-amber-200 via-orange-300 to-stone-800 text-8xl">
             {copy.emoji}
@@ -166,7 +175,7 @@ export function ToddlerOpenPlay({
             });
           }}
         >
-          {done ? "🏰" : scoops > 20 ? "🪣" : "🏖️"}
+          {done ? "🏰" : scoops > 20 ? "🥄" : "🏖️"}
         </button>
       )}
 
@@ -186,7 +195,7 @@ export function ToddlerOpenPlay({
             });
           }}
         >
-          {done ? "😴" : "🐻‍❄️"}
+          {done ? "😴" : "🐻"}
         </button>
       )}
 

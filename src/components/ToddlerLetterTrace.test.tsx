@@ -79,6 +79,13 @@ describe("letter trace completion", () => {
     }
   });
 
+  it("still finishes a toddler wobble along the line, not a scribble", () => {
+    const sample = walkStroke("A", 0, 3);
+    expect(isStrokePathComplete(sample)).toBe(true);
+    const scribble = walkStroke("A", 0, 40);
+    expect(isStrokePathComplete(scribble)).toBe(false);
+  });
+
   it("still finishes B when the finger is a little beside the end", () => {
     const sample = walkStroke("B", 1, 0);
     expect(isStrokePathComplete({ ...sample, endDistance: 5 })).toBe(true);

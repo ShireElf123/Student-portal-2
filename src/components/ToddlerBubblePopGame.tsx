@@ -50,14 +50,19 @@ const GRADIENTS = [
 
 export interface ToddlerBubblePopGameProps {
   onAddStar?: (amount?: number) => void;
+  onComplete?: () => void;
   onBack?: () => void;
   blueprint?: BubblePopBlueprint;
   blueprintLearnerId?: string;
   onPlayingChange?: (isPlaying: boolean) => void;
   catalog?: BubbleWord[];
+  closedKit?: boolean;
+  welcomeLine?: string;
 }
 
-export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLearnerId, onPlayingChange, catalog }: ToddlerBubblePopGameProps) {
+const STATION_HIT_GOAL = 3;
+
+export function ToddlerBubblePopGame({ onAddStar, onComplete, onBack, blueprint, blueprintLearnerId, onPlayingChange, catalog, closedKit = false, welcomeLine }: ToddlerBubblePopGameProps) {
   const words = catalog && catalog.length >= 4 ? catalog : BUBBLE_CATALOG;
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [poppedCount, setPoppedCount] = useState(0);
@@ -68,6 +73,9 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
   const bubbleIdCounter = useRef(0);
   const blueprintRoundIndex = useRef(0);
   const responseSessionId = useRef("");
+  const stationHits = useRef(0);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   // Spawn the first authored or generated round without changing the game engine.
   useEffect(() => {
@@ -75,10 +83,16 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
     blueprintRoundIndex.current = 0;
     setPoppedCount(0);
     setIsWon(false);
-    speakText(blueprint?.voice.introduction ?? "Welcome to Bubble Pop Phonics! Tap the floating bubbles to hear their letter sounds!", {
-      pitch: 1.2,
-      rate: 0.95,
-    });
+    speakText(
+      closedKit
+        ? welcomeLine || ""
+        : blueprint?.voice.introduction ?? "Welcome to Bubble Pop Phonics! Tap the floating bubbles to hear their letter sounds!",
+      {
+        pitch: 1.2,
+        rate: 0.95,
+        closedKit,
+      },
+    );
     spawnWave();
   }, [blueprint?.id]);
 
@@ -159,9 +173,9 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
     soundEffects.playPop();
     const item = words.find((b) => b.letter === bubble.letter) ?? BUBBLE_CATALOG.find((b) => b.letter === bubble.letter);
     if (blueprint) {
-      speakText(`${bubble.letter} begins ${bubble.word}.`, { pitch: 1.25, rate: 0.92 });
+      speakText(`${bubble.letter} begins ${bubble.word}.`, { pitch: 1.25, rate: 0.92, closedKit });
     } else if (item) {
-      speakText(item.sound, { pitch: 1.25, rate: 0.92 });
+      speakText(item.sound, { pitch: 1.25, rate: 0.92, closedKit });
     }
 
     // Add sparkle particle
@@ -229,6 +243,8 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
       soundEffects.playSuccessChime();
       awardStars(1);
       onAddStar?.(1);
+      stationHits.current += 1;
+      if (stationHits.current === STATION_HIT_GOAL) onCompleteRef.current?.();
     }
 
     // Check completion milestone
@@ -247,8 +263,9 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
           if (blueprintRoundIndex.current >= blueprint.content.rounds.length) {
             setBubbles([]);
             setIsWon(true);
-            speakText(blueprint.feedback.completion, { pitch: 1.1, rate: 0.95 });
+            speakText(blueprint.feedback.completion, { pitch: 1.1, rate: 0.95, closedKit });
             finishGeneratedSession();
+            onCompleteRef.current?.();
             triggerCelebrationConfetti();
           } else {
             spawnWave();
@@ -267,7 +284,7 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
       {/* Top HUD */}
       <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 bg-white/95 backdrop-blur-md p-4 rounded-3xl border-3 border-indigo-200 shadow-xl">
         <div className="flex items-center gap-3">
-          <span className="text-3xl p-2.5 bg-amber-100 border border-amber-300 rounded-2xl shadow-sm">🫧</span>
+          <span className="text-3xl p-2.5 bg-amber-100 border border-amber-300 rounded-2xl shadow-sm">💧</span>
           <div>
             <h3 className="text-base sm:text-lg font-black text-slate-900 font-display">Bubble Pop Phonics</h3>
             <p className="text-xs text-indigo-900 font-semibold">
@@ -293,7 +310,7 @@ export function ToddlerBubblePopGame({ onAddStar, onBack, blueprint, blueprintLe
           <div className="px-3.5 py-1.5 rounded-2xl bg-indigo-100 border-2 border-indigo-300 text-indigo-950 font-black text-xs flex items-center gap-1 shadow-sm">
             <span>Popped:</span>
             <span className="text-indigo-600 font-black text-sm">{poppedCount}</span>
-            <span>🫧</span>
+            <span>💧</span>
           </div>
 
           {onBack && (

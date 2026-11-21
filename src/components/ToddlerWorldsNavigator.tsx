@@ -39,7 +39,9 @@ import {
   isAreaUnlocked,
   ToddlerWorldProgressState,
 } from "../data/toddler/toddlerProgressManager";
+import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
 import {
+  countingHintFromActivity,
   countingLevelForPlace,
   generateCountingScenario,
   generateSortingChallenge,
@@ -47,11 +49,11 @@ import {
   DynamicSortingChallenge,
 } from "../data/toddler/toddlerReplayEngine";
 import { soundEffects } from "../utils/soundEffects";
-import { speakText, stopSpeaking } from "../utils/speechUtils";
+import { speakText as speakDevice, stopSpeaking, type SpeakOptions } from "../utils/speechUtils";
 import { awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { resolveSkillForActivity } from "../data/activitySkillRegistry";
-import { ToddlerColorLab } from "./ToddlerColorLab";
+import { mixTargetFromActivity, ToddlerColorLab } from "./ToddlerColorLab";
 import { ToddlerMusicPiano } from "./ToddlerMusicPiano";
 import { ToddlerMemoryGame } from "./ToddlerMemoryGame";
 import { ToddlerBalloonSky } from "./ToddlerBalloonSky";
@@ -68,7 +70,62 @@ import type { K1StudioGameId } from "../data/toddler/k1StudioGames";
 import { ToddlerWorldTrail } from "./ToddlerWorldTrail";
 import { ATLAS_CONTINENTS, TOY_ACTIVITY_TYPES } from "../data/toddler/toddlerWorldAtlasLayout";
 import { getWorldPlayTheme } from "../data/toddler/toddlerWorldPlayThemes";
+import { quizTapHint } from "../data/toddler/activityQuality";
 import { SECRET_COVER, WORLD_COVER } from "../data/toddler/toddlerWorldArt";
+
+function isClosedVoiceIsland(areaId?: string | null) {
+  return (
+    areaId === "farm-valley" ||
+    areaId === "jungle-canopy" ||
+    areaId === "ocean-reef" ||
+    areaId === "dino-valley" ||
+    areaId === "forest-trail" ||
+    areaId === "weather-adventure" ||
+    areaId === "space-blastoff" ||
+    areaId === "treasure-quest" ||
+    areaId === "color-studio" ||
+    areaId === "music-garden" ||
+    areaId === "pattern-workshop" ||
+    areaId === "sticker-atelier" ||
+    areaId === "barnyard-tales" ||
+    areaId === "space-tales" ||
+    areaId === "deep-sea-tales" ||
+    areaId === "phonics-meadow" ||
+    areaId === "counting-grove" ||
+    areaId === "shapes-patterns" ||
+    areaId === "feelings-emotions" ||
+    areaId === "healthy-habits" ||
+    areaId === "family-home" ||
+    areaId === "garage-bay" ||
+    areaId === "town-road" ||
+    areaId === "airport-runway" ||
+    areaId === "harbour-dock" ||
+    areaId === "flower-bed"
+  );
+}
+
+function firstOpenActivity(area: ToddlerArea, progress: ToddlerWorldProgressState) {
+  return area.activities.find((activity) => !progress.completedActivities[activity.id]) ?? area.activities[0] ?? null;
+}
+
+function nextAtlasPlay(progress: ToddlerWorldProgressState) {
+  const world =
+    ALL_TODDLER_WORLDS.find((item) => item.id === progress.lastVisitedWorldId) ||
+    ALL_TODDLER_WORLDS.find((item) => item.id === "animal-world") ||
+    ALL_TODDLER_WORLDS[0];
+  const unlocked = world.areas.filter((area) => isAreaUnlocked(area, progress));
+  const unfinished = unlocked.find((area) => {
+    const stats = getAreaProgressStats(area, progress);
+    return stats.completedCount < stats.totalCount;
+  });
+  const lastHere = unlocked.find((area) => area.id === progress.lastVisitedAreaId);
+  const lastStillOpen =
+    lastHere && getAreaProgressStats(lastHere, progress).completedCount < getAreaProgressStats(lastHere, progress).totalCount
+      ? lastHere
+      : null;
+  const area = lastStillOpen || unfinished || lastHere || unlocked[0] || world.areas[0];
+  return { world, area, activity: firstOpenActivity(area, progress) };
+}
 
 interface ToddlerWorldsNavigatorProps {
   onAddStar: (count: number) => void;
@@ -76,6 +133,7 @@ interface ToddlerWorldsNavigatorProps {
   initialWorldId?: string | null;
   onOpenPictureBooks?: () => void;
   onOpenGames?: () => void;
+  onOpenFocus?: () => void;
 }
 
 function countingLevelForActivity(activity: ToddlerActivity) {
@@ -99,6 +157,7 @@ export function ToddlerWorldsNavigator({
   initialWorldId,
   onOpenPictureBooks,
   onOpenGames,
+  onOpenFocus,
 }: ToddlerWorldsNavigatorProps) {
   const openingRoute = worldRouteParts(initialWorldId);
   // Navigation hierarchy state
@@ -127,24 +186,32 @@ export function ToddlerWorldsNavigator({
     toyCreditedRef.current = activity.id;
     recordActivityCompletion(activity.worldId, activity.areaId, activity.id, activity.rewardStars);
     onAddStar(activity.rewardStars);
-    if (activity.type === "color-lab" || activity.type === "letter-trace") {
+    try {
+      payDailyMissionIfMatches("worlds", activity.worldId);
+    } catch {
+      // ignore
+    }
+    if (
+      activity.type === "color-lab" ||
+      activity.type === "letter-trace" ||
+      activity.type === "balloon-sky" ||
+      activity.type === "animal-safari" ||
+      activity.type === "bubble-pop" ||
+      activity.type === "piano-melody"
+    ) {
       setStayPlayDone(true);
       return;
     }
     setShowCelebration(true);
   };
 
-  /** Toys auto-roll after a beat. Quizzes wait for a tap. Both go to the next stop. */
+  /** Finite toys auto-roll after a beat. Endless / mix labs stay. Quizzes wait for a tap. */
   const AUTO_TRAIL_TYPES = new Set([
     "land-play",
     "open-play",
     "memory-match",
-    "balloon-sky",
-    "animal-safari",
     "rhyme-garden",
-    "bubble-pop",
     "k1-studio",
-    "piano-melody",
   ]);
 
   // Activity execution states
@@ -257,6 +324,12 @@ export function ToddlerWorldsNavigator({
   const selectedWorld = ALL_TODDLER_WORLDS.find((w) => w.id === selectedWorldId) || null;
   const selectedArea = selectedWorld?.areas.find((a) => a.id === selectedAreaId) || null;
 
+  const speakText = (text: string, options?: SpeakOptions) =>
+    speakDevice(text, {
+      ...options,
+      closedKit: Boolean(options?.closedKit || isClosedVoiceIsland(activeActivity?.areaId)),
+    });
+
   // Speak activity prompt automatically after view renders
   useEffect(() => {
     if (!activeActivity) return;
@@ -281,7 +354,30 @@ export function ToddlerWorldsNavigator({
       }
 
       if (activeActivity.type === "color-lab") {
-        speakText("Welcome to the Color Lab! Blend primary color droplets into the bubbling cauldron to make magical new colors!", { pitch: 1.15 });
+        return;
+      }
+
+      // Safari owns its closed voice kit (station welcome + bios + mouth-calls).
+      if (activeActivity.type === "animal-safari") {
+        return;
+      }
+
+      // Land rooms speak their own hold/done lines.
+      if (activeActivity.type === "land-play") {
+        return;
+      }
+
+      // Closed islands: toys speak their own station clip.
+      if (
+        isClosedVoiceIsland(activeActivity.areaId) &&
+        (activeActivity.type === "letter-trace" ||
+          activeActivity.type === "k1-studio" ||
+          activeActivity.type === "memory-match" ||
+          activeActivity.type === "bubble-pop" ||
+          activeActivity.type === "balloon-sky" ||
+          activeActivity.type === "rhyme-garden" ||
+          activeActivity.type === "piano-melody")
+      ) {
         return;
       }
 
@@ -338,7 +434,26 @@ export function ToddlerWorldsNavigator({
     setSortedItems({});
     setCountingAnswered(false);
 
-    speakText(`${area.title}! ${area.tagline}. Let's explore together!`, { pitch: 1.15 });
+    const firstOpen = firstOpenActivity(area, progress);
+    if (firstOpen) {
+      handleStartActivity(firstOpen);
+      return;
+    }
+
+    speakText(`${area.title}! ${area.tagline}. Let's explore together!`, {
+      pitch: 1.15,
+      closedKit: isClosedVoiceIsland(area.id),
+    });
+  };
+
+  const handleContinueAtlas = () => {
+    const next = nextAtlasPlay(progress);
+    if (!next.activity) return;
+    soundEffects.playPop();
+    stopSpeaking();
+    setSelectedWorldId(next.world.id);
+    setSelectedAreaId(next.area.id);
+    handleStartActivity(next.activity);
   };
 
   const handleBackToWorldsMap = () => {
@@ -421,7 +536,11 @@ export function ToddlerWorldsNavigator({
     const playTheme = getWorldPlayTheme(activity.worldId, activity.areaId);
 
     if (activity.type === "counting") {
-      const countScenario = generateCountingScenario(countingLevelForActivity(activity), playTheme.counting);
+      const countScenario = generateCountingScenario(
+        countingLevelForActivity(activity),
+        playTheme.counting,
+        countingHintFromActivity(activity),
+      );
       setDynamicCounting(countScenario);
     } else {
       setDynamicCounting(null);
@@ -486,7 +605,9 @@ export function ToddlerWorldsNavigator({
         setUnlockedNotice(newlyUnlockedAreas);
       }
 
-      const victoryFeedback = `Hooray! ${chosen.label}! ${chosen.feedback}`;
+      const victoryFeedback = isClosedVoiceIsland(activeActivity.areaId)
+        ? chosen.feedback
+        : `Hooray! ${chosen.label}! ${chosen.feedback}`;
       speakThenRun(victoryFeedback, 600, () => {
         setShowCelebration(true);
         soundEffects.playFanfare();
@@ -519,7 +640,12 @@ export function ToddlerWorldsNavigator({
           console.error("Failed to record toddler-world response:", error);
         }
       }
-      speakText(`That is ${chosen.label}! ${chosen.feedback} Let's try again!`, { pitch: 1.15 });
+      speakText(
+        isClosedVoiceIsland(activeActivity.areaId)
+          ? chosen.feedback
+          : `That is ${chosen.label}! ${chosen.feedback} Let's try again!`,
+        { pitch: 1.15 },
+      );
       setTimeout(() => setSelectedOptionId(null), 1200);
     }
   };
@@ -573,6 +699,7 @@ export function ToddlerWorldsNavigator({
     const countScenario = generateCountingScenario(
       countingLevelForActivity(activeActivity),
       getWorldPlayTheme(activeActivity.worldId, activeActivity.areaId).counting,
+      countingHintFromActivity(activeActivity),
     );
     setDynamicCounting(countScenario);
     setCountingAnswered(false);
@@ -721,6 +848,14 @@ export function ToddlerWorldsNavigator({
     if (!option) return;
 
     setStorySelectedOption(optionId);
+
+    if (option.isCorrect === false) {
+      soundEffects.playGentleBoing();
+      speakText(option.feedback, { pitch: 1.15 });
+      setTimeout(() => setStorySelectedOption(null), 1200);
+      return;
+    }
+
     soundEffects.playSuccessChime();
     soundEffects.playStarSparkle();
     onAddStar(1);
@@ -793,6 +928,10 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl sm:text-2xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerColorLab
               mixFlavor={playTheme.mix}
+              targetColor={mixTargetFromActivity(activeActivity)}
+              spokenPrompt={activeActivity.spokenPrompt}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              missionSurface="off"
               onAddStar={() => completeWorldToy(activeActivity)}
             />
           </div>
@@ -810,6 +949,9 @@ export function ToddlerWorldsNavigator({
             </div>
             <ToddlerMusicPiano
               songIds={playTheme.songIds}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
+              missionSurface="off"
               onAddStar={() => {
                 completeWorldToy(activeActivity);
               }}
@@ -820,13 +962,25 @@ export function ToddlerWorldsNavigator({
         {activeActivity.type === "memory-match" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-emerald-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerMemoryGame pairs={playTheme.memory} onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerMemoryGame
+              pairs={playTheme.memory}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
+            />
           </div>
         )}
         {activeActivity.type === "balloon-sky" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-sky-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerBalloonSky letters={playTheme.balloonLetters} onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerBalloonSky
+              letters={playTheme.balloonLetters}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
+            />
           </div>
         )}
         {activeActivity.type === "animal-safari" && (
@@ -835,20 +989,36 @@ export function ToddlerWorldsNavigator({
             <ToddlerAnimalSafari
               animals={playTheme.safari}
               sceneTitle={playTheme.safariTitle}
-              onAddStar={() => completeWorldToy(activeActivity)}
+              exploreWelcome={activeActivity.spokenPrompt}
+              missionSurface="off"
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
             />
           </div>
         )}
         {activeActivity.type === "rhyme-garden" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-fuchsia-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerRhymeGame questions={playTheme.rhymes} onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerRhymeGame
+              questions={playTheme.rhymes}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
+              missionSurface="off"
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
+            />
           </div>
         )}
         {activeActivity.type === "bubble-pop" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-cyan-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerBubblePopGame catalog={playTheme.bubbles} onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerBubblePopGame
+              catalog={playTheme.bubbles}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
+            />
           </div>
         )}
         {activeActivity.type === "letter-trace" && (
@@ -858,6 +1028,8 @@ export function ToddlerWorldsNavigator({
               key={activeActivity.id}
               catalog={playTheme.bubbles}
               prompt={`${activeActivity.title}. ${activeActivity.cluePrompt}`}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
               onAddStar={() => completeWorldToy(activeActivity)}
             />
           </div>
@@ -883,8 +1055,18 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerK1Studio
               gameId={activeActivity.studioGameId as K1StudioGameId}
-              onAddStar={() => completeWorldToy(activeActivity)}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
+              onComplete={() => completeWorldToy(activeActivity)}
             />
+          </div>
+        )}
+        {((activeActivity.type === "open-play" && !activeActivity.openPlayId) ||
+          (activeActivity.type === "land-play" && !activeActivity.landPlayId) ||
+          (activeActivity.type === "k1-studio" && !activeActivity.studioGameId)) && (
+          <div className="rounded-[2rem] border-4 border-amber-400/40 bg-slate-950/70 p-6 text-center">
+            <p className="text-xl font-black text-white">This toy is packing up.</p>
+            <p className="mt-2 text-sm font-semibold text-white/80">Pick another Play tile on the trail.</p>
           </div>
         )}
 
@@ -947,7 +1129,9 @@ export function ToddlerWorldsNavigator({
                         onClick={() => handleSelectStoryOption(activeStory.steps[storyStepIndex], opt.id)}
                         className={`min-h-14 p-4 rounded-2xl border-2 flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer transition-all shadow-md active:scale-95 ${
                           storySelectedOption === opt.id
-                            ? "bg-emerald-500 border-emerald-300 text-white scale-105 shadow-emerald-500/40"
+                            ? opt.isCorrect === false
+                              ? "bg-rose-400 border-rose-200 text-white"
+                              : "bg-emerald-500 border-emerald-300 text-white scale-105 shadow-emerald-500/40"
                             : "bg-white/90 hover:bg-white text-slate-800 border-white/60 hover:border-amber-400"
                         }`}
                       >
@@ -1153,7 +1337,7 @@ export function ToddlerWorldsNavigator({
                       </span>
                     ))}
                   {Object.values(sortedItems).filter((v) => v === "A").length === 0 && (
-                    <span className="text-xs opacity-50 italic">Put matching friends here</span>
+                    <span className="text-xs opacity-50 italic">Tap a home for this friend</span>
                   )}
                 </div>
               </div>
@@ -1185,7 +1369,7 @@ export function ToddlerWorldsNavigator({
                       </span>
                     ))}
                   {Object.values(sortedItems).filter((v) => v === "B").length === 0 && (
-                    <span className="text-xs opacity-50 italic">Put matching friends here</span>
+                    <span className="text-xs opacity-50 italic">Tap a home for this friend</span>
                   )}
                 </div>
               </div>
@@ -1275,6 +1459,9 @@ export function ToddlerWorldsNavigator({
               <p className="text-slate-800 text-base sm:text-lg max-w-lg mx-auto font-bold">
                 {activeActivity.cluePrompt}
               </p>
+              {activeActivity.type === "pattern-match" && (
+                <p className="text-xs font-black uppercase tracking-wider text-slate-700">Pattern puzzle — look at the rhythm, then pick what comes next.</p>
+              )}
               <button
                 type="button"
                 onClick={() => {
@@ -1310,7 +1497,7 @@ export function ToddlerWorldsNavigator({
                   );
                 })}
               </div>
-              <p className="text-slate-800/80 text-sm font-black">Tap who it is</p>
+              <p className="text-slate-800/80 text-sm font-black">{quizTapHint(activeActivity.type)}</p>
             </div>
           </div>
         )}
@@ -1405,8 +1592,8 @@ export function ToddlerWorldsNavigator({
           </button>
 
           <div className="flex items-center gap-2">
-            <span className="px-3.5 py-1.5 rounded-2xl bg-white/10 text-white font-bold text-sm border border-white/10">
-              {areaStats.completedCount}/{areaStats.totalCount} Discoveries Made
+            <span className="px-3.5 py-1.5 rounded-2xl bg-white/10 text-white font-bold text-sm border border-white/10 tabular-nums whitespace-nowrap">
+              {areaStats.completedCount} of {areaStats.totalCount} Discoveries
             </span>
           </div>
         </div>
@@ -1446,7 +1633,7 @@ export function ToddlerWorldsNavigator({
             return (
               <ToddlerWorldTrail
                 label={`${selectedArea.title} · ${selectedArea.activities.length} stations`}
-                buddyEmoji="🧒"
+                buddyEmoji="🧸"
                 coverSrc={WORLD_COVER[selectedWorld.id]}
                 sceneryEmojis={selectedArea.environment.sceneryEmojis}
                 onSelect={(id) => {
@@ -1530,6 +1717,8 @@ export function ToddlerWorldsNavigator({
             <img
               src={WORLD_COVER[selectedWorld.id]}
               alt=""
+              decoding="async"
+              fetchPriority="high"
               className="absolute inset-0 h-full w-full object-cover"
             />
           )}
@@ -1639,6 +1828,8 @@ export function ToddlerWorldsNavigator({
     );
   }
 
+  const atlasNext = nextAtlasPlay(progress);
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -1666,6 +1857,18 @@ export function ToddlerWorldsNavigator({
           >
             Letter Lane
           </button>
+          {onOpenFocus && (
+            <button
+              type="button"
+              onClick={() => {
+                onOpenFocus();
+                speakText("Focus body. Check how you feel. Move or push. Then quiet.", { pitch: 1.12 });
+              }}
+              className="px-4 py-2.5 rounded-2xl bg-teal-400 hover:bg-teal-300 text-teal-950 font-black text-base min-h-12 cursor-pointer shadow-sm"
+            >
+              Busy body
+            </button>
+          )}
           {onOpenGames && (
             <button
               onClick={onOpenGames}
@@ -1676,6 +1879,16 @@ export function ToddlerWorldsNavigator({
           )}
         </div>
       </div>
+
+      {atlasNext.activity && (
+        <button
+          type="button"
+          onClick={handleContinueAtlas}
+          className="w-full min-h-16 px-6 rounded-3xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xl sm:text-2xl cursor-pointer shadow-md"
+        >
+          🧸 {progress.lastVisitedWorldId ? `Keep going · ${atlasNext.area.title}` : `Play ${atlasNext.area.title}`}
+        </button>
+      )}
 
       <div className="grid grid-cols-1 gap-6">
         {ATLAS_CONTINENTS.map((continent) => {
@@ -1694,10 +1907,11 @@ export function ToddlerWorldsNavigator({
                 <p className="text-sm font-bold text-slate-700">{continent.blurb}</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {lands.map((world) => {
+                {lands.map((world, landIndex) => {
                   const stats = getWorldProgressStats(world, progress);
                   const stations = world.areas.reduce((sum, area) => sum + area.activities.length, 0);
                   const here = progress.lastVisitedWorldId === world.id;
+                  const eagerLand = continent.id === ATLAS_CONTINENTS[0]?.id && landIndex < 3;
                   return (
                     <motion.button
                       key={world.id}
@@ -1711,7 +1925,16 @@ export function ToddlerWorldsNavigator({
                     >
                       <span className="relative mb-0 block h-44 sm:h-48 md:h-56 w-full overflow-hidden">
                         {WORLD_COVER[world.id] ? (
-                          <img src={WORLD_COVER[world.id]} alt="" className="h-full w-full object-cover" />
+                          <img
+                            src={WORLD_COVER[world.id]}
+                            alt=""
+                            width={800}
+                            height={437}
+                            loading={eagerLand ? "eager" : "lazy"}
+                            decoding="async"
+                            fetchPriority={eagerLand ? "high" : "low"}
+                            className="h-full w-full object-cover"
+                          />
                         ) : (
                           <span className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${world.gradient} text-5xl`}>
                             {world.emoji}
@@ -1779,6 +2002,10 @@ export function ToddlerWorldsNavigator({
                     <img
                       src={SECRET_COVER[zone.id]}
                       alt=""
+                      width={800}
+                      height={447}
+                      loading="lazy"
+                      decoding="async"
                       className={`h-full w-full object-cover ${isUnlocked ? "" : "grayscale"}`}
                     />
                   ) : (
