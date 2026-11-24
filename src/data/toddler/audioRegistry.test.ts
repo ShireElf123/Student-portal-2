@@ -2024,6 +2024,16 @@ describe("audio registry", () => {
       "/audio/voice/nav-pop-v.mp3",
       "/audio/voice/nav-pop-w.mp3",
       "/audio/voice/nav-pop-x.mp3",
+      "/audio/voice/nav-pop-y.mp3",
+      "/audio/voice/nav-pop-z.mp3",
+      "/audio/voice/ui-steady-too-fast.mp3",
+      "/audio/voice/ui-steady-buzz.mp3",
+      "/audio/voice/focus-body-in.mp3",
+      "/audio/voice/focus-body-out.mp3",
+      "/audio/voice/nav-zone-dino.mp3",
+      "/audio/voice/nav-zone-starlight.mp3",
+      "/audio/voice/nav-zone-coral.mp3",
+      "/audio/voice/nav-zone-dino-locked.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8104,6 +8114,14 @@ describe("audio registry", () => {
     expect(narrationClipForText("K")?.id).toBe("voice.nav.pop-k");
     expect(narrationClipForText("L")?.id).toBe("voice.nav.pop-l");
     expect(narrationClipForText("X")?.id).toBe("voice.nav.pop-x");
+    expect(narrationClipForText("Y")?.id).toBe("voice.nav.pop-y");
+    expect(narrationClipForText("Z")?.id).toBe("voice.nav.pop-z");
+    expect(narrationClipForText("In.")?.id).toBe("voice.focus.body-in");
+    expect(
+      narrationClipForText(
+        "Welcome to Dino Excavation Cave. Hold and brush. Sand hides five real fossils.",
+      )?.id,
+    ).toBe("voice.nav.zone-dino");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
