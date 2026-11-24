@@ -2094,6 +2094,15 @@ describe("audio registry", () => {
       "/audio/voice/nav-mission-wed-1.mp3",
       "/audio/voice/nav-mission-wed-2.mp3",
       "/audio/voice/nav-mission-wed-3.mp3",
+      "/audio/voice/nav-mission-thu-1.mp3",
+      "/audio/voice/nav-mission-thu-2.mp3",
+      "/audio/voice/nav-mission-thu-3.mp3",
+      "/audio/voice/nav-mission-fri-1.mp3",
+      "/audio/voice/nav-mission-fri-2.mp3",
+      "/audio/voice/nav-mission-fri-3.mp3",
+      "/audio/voice/nav-mission-sat-1.mp3",
+      "/audio/voice/nav-mission-sat-2.mp3",
+      "/audio/voice/nav-mission-sat-3.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8220,6 +8229,16 @@ describe("audio registry", () => {
         "Let's play: Colors & Shapes Parade! Find red circles and blue squares",
       )?.id,
     ).toBe("voice.nav.mission-wed-2");
+    expect(
+      narrationClipForText(
+        "Let's play: Feed Benny Bunny! Count carrots — 5, then 8, then 10",
+      )?.id,
+    ).toBe("voice.nav.mission-fri-1");
+    expect(
+      narrationClipForText(
+        "Let's play: Style Your Learning Buddy! Put on astronaut helmets or capes!",
+      )?.id,
+    ).toBe("voice.nav.mission-sat-3");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
