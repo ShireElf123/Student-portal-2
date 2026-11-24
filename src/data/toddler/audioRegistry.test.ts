@@ -2064,6 +2064,16 @@ describe("audio registry", () => {
       "/audio/voice/ui-rooms-nook-claps.mp3",
       "/audio/voice/ui-rooms-nook-tidy.mp3",
       "/audio/voice/ui-rooms-ba-na-na-hold.mp3",
+      "/audio/voice/ui-rooms-clap-seal.mp3",
+      "/audio/voice/ui-rooms-hoot-hold.mp3",
+      "/audio/voice/ui-rooms-ba-na-na-done.mp3",
+      "/audio/voice/ui-rooms-splash-home.mp3",
+      "/audio/voice/ui-rooms-balcony-glows.mp3",
+      "/audio/voice/ui-rooms-catch-seal.mp3",
+      "/audio/voice/ui-rooms-shopping-home.mp3",
+      "/audio/voice/ui-rooms-another-play.mp3",
+      "/audio/voice/ui-rooms-all-done.mp3",
+      "/audio/voice/ui-rooms-den-light.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8169,6 +8179,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Quiet house. Sweet sleep.")?.id).toBe(
       "voice.ui.rooms-quiet-house",
+    );
+    expect(narrationClipForText("Hold. Clap with the seal.")?.id).toBe(
+      "voice.ui.rooms-clap-seal",
+    );
+    expect(narrationClipForText("Once upon a time, a den light came on.")?.id).toBe(
+      "voice.ui.rooms-den-light",
     );
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
