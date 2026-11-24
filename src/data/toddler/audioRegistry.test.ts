@@ -2173,6 +2173,16 @@ describe("audio registry", () => {
       "/audio/voice/sort-yes-daisy.mp3",
       "/audio/voice/sort-yes-cricket.mp3",
       "/audio/voice/sort-yes-blossom.mp3",
+      "/audio/voice/sort-yes-pasture-cow.mp3",
+      "/audio/voice/sort-yes-canopy-monkey.mp3",
+      "/audio/voice/sort-yes-barn-hen.mp3",
+      "/audio/voice/sort-yes-tiger.mp3",
+      "/audio/voice/sort-yes-farm-pig.mp3",
+      "/audio/voice/sort-yes-parrot.mp3",
+      "/audio/voice/sort-yes-sheep.mp3",
+      "/audio/voice/sort-yes-frog.mp3",
+      "/audio/voice/sort-yes-goat.mp3",
+      "/audio/voice/sort-yes-snake.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8333,6 +8343,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("Yes! Ant marches with the bugs!")?.id).toBe("voice.sort.yes-ant");
     expect(narrationClipForText("Yes! Blossom is a garden flower!")?.id).toBe(
       "voice.sort.yes-blossom",
+    );
+    expect(narrationClipForText("Yes! Cow lives in the pasture!")?.id).toBe(
+      "voice.sort.yes-pasture-cow",
+    );
+    expect(narrationClipForText("Yes! Snakes slide the jungle branch!")?.id).toBe(
+      "voice.sort.yes-snake",
     );
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
