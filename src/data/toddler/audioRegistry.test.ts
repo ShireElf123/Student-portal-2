@@ -2213,6 +2213,16 @@ describe("audio registry", () => {
       "/audio/voice/sort-yes-real-hen.mp3",
       "/audio/voice/sort-yes-dragon.mp3",
       "/audio/voice/sort-yes-egg.mp3",
+      "/audio/voice/sort-yes-wand.mp3",
+      "/audio/voice/sort-yes-hay.mp3",
+      "/audio/voice/sort-yes-castle.mp3",
+      "/audio/voice/sort-yes-real-cow.mp3",
+      "/audio/voice/sort-yes-wish-star.mp3",
+      "/audio/voice/sort-yes-real-pig.mp3",
+      "/audio/voice/sort-yes-book.mp3",
+      "/audio/voice/sort-yes-real-sheep.mp3",
+      "/audio/voice/sort-yes-soap.mp3",
+      "/audio/voice/sort-yes-pillow.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8388,6 +8398,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("Yes! Guitar strings sing!")?.id).toBe("voice.sort.yes-guitar");
     expect(narrationClipForText("Yes! The flute sings a note!")?.id).toBe("voice.sort.yes-flute");
     expect(narrationClipForText("Yes! Eggs wait in the barn nest!")?.id).toBe("voice.sort.yes-egg");
+    expect(narrationClipForText("Yes! Sheep live in the real field!")?.id).toBe(
+      "voice.sort.yes-real-sheep",
+    );
+    expect(narrationClipForText("Yes! Pillows wait on the bed!")?.id).toBe("voice.sort.yes-pillow");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
