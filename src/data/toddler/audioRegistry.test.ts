@@ -2153,6 +2153,16 @@ describe("audio registry", () => {
       "/audio/voice/sort-yes-moon.mp3",
       "/audio/voice/sort-yes-kite-day.mp3",
       "/audio/voice/sort-yes-owl.mp3",
+      "/audio/voice/sort-yes-bee-day.mp3",
+      "/audio/voice/sort-yes-bat.mp3",
+      "/audio/voice/sort-yes-rooster.mp3",
+      "/audio/voice/sort-yes-star.mp3",
+      "/audio/voice/sort-yes-sunflower.mp3",
+      "/audio/voice/sort-yes-lamp.mp3",
+      "/audio/voice/sort-yes-day-cloud.mp3",
+      "/audio/voice/sort-yes-teddy.mp3",
+      "/audio/voice/sort-yes-busy-bee.mp3",
+      "/audio/voice/sort-yes-bloom.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8308,6 +8318,8 @@ describe("audio registry", () => {
       "voice.sort.yes-ice-whale",
     );
     expect(narrationClipForText("Yes! Owls hoot after dark!")?.id).toBe("voice.sort.yes-owl");
+    expect(narrationClipForText("Yes! Teddy waits for bedtime!")?.id).toBe("voice.sort.yes-teddy");
+    expect(narrationClipForText("Yes! Bee is a busy bug!")?.id).toBe("voice.sort.yes-busy-bee");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
