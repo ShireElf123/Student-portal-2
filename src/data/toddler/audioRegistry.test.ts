@@ -2044,6 +2044,16 @@ describe("audio registry", () => {
       "/audio/voice/nav-zone-coral-found.mp3",
       "/audio/voice/nav-zone-fossil-rib.mp3",
       "/audio/voice/nav-zone-fossil-print.mp3",
+      "/audio/voice/nav-zone-fossil-tooth.mp3",
+      "/audio/voice/nav-zone-fossil-egg.mp3",
+      "/audio/voice/nav-zone-fossil-horn.mp3",
+      "/audio/voice/nav-zone-clam-shell.mp3",
+      "/audio/voice/nav-zone-clam-moon.mp3",
+      "/audio/voice/nav-zone-clam-crab.mp3",
+      "/audio/voice/nav-zone-clam-rose.mp3",
+      "/audio/voice/nav-zone-clam-royal.mp3",
+      "/audio/voice/nav-zone-clam-sprig.mp3",
+      "/audio/voice/nav-zone-star-1.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8138,6 +8148,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("You found the Royal Pearl in the rainbow clam!")?.id,
     ).toBe("voice.nav.zone-coral-found");
+    expect(narrationClipForText("The golden Triceratops horn!")?.id).toBe(
+      "voice.nav.zone-fossil-horn",
+    );
+    expect(narrationClipForText("The royal rainbow pearl!")?.id).toBe(
+      "voice.nav.zone-clam-royal",
+    );
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
