@@ -2034,6 +2034,16 @@ describe("audio registry", () => {
       "/audio/voice/nav-zone-starlight.mp3",
       "/audio/voice/nav-zone-coral.mp3",
       "/audio/voice/nav-zone-dino-locked.mp3",
+      "/audio/voice/nav-zone-starlight-locked.mp3",
+      "/audio/voice/nav-zone-coral-locked.mp3",
+      "/audio/voice/nav-zone-dino-in.mp3",
+      "/audio/voice/nav-zone-starlight-in.mp3",
+      "/audio/voice/nav-zone-coral-in.mp3",
+      "/audio/voice/nav-zone-dino-found.mp3",
+      "/audio/voice/nav-zone-starlight-found.mp3",
+      "/audio/voice/nav-zone-coral-found.mp3",
+      "/audio/voice/nav-zone-fossil-rib.mp3",
+      "/audio/voice/nav-zone-fossil-print.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8122,6 +8132,12 @@ describe("audio registry", () => {
         "Welcome to Dino Excavation Cave. Hold and brush. Sand hides five real fossils.",
       )?.id,
     ).toBe("voice.nav.zone-dino");
+    expect(
+      narrationClipForText("The Starlight Sky Observatory is locked! You need 20 stars.")?.id,
+    ).toBe("voice.nav.zone-starlight-locked");
+    expect(
+      narrationClipForText("You found the Royal Pearl in the rainbow clam!")?.id,
+    ).toBe("voice.nav.zone-coral-found");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
