@@ -2243,6 +2243,15 @@ describe("audio registry", () => {
       "/audio/voice/sort-yes-key.mp3",
       "/audio/voice/sort-yes-rock.mp3",
       "/audio/voice/sort-yes-chest.mp3",
+      "/audio/voice/sort-yes-mushroom.mp3",
+      "/audio/voice/sort-yes-gem-crown.mp3",
+      "/audio/voice/sort-yes-letter-a.mp3",
+      "/audio/voice/sort-yes-num-one.mp3",
+      "/audio/voice/sort-yes-letter-s.mp3",
+      "/audio/voice/sort-yes-letter-m.mp3",
+      "/audio/voice/sort-yes-num-six.mp3",
+      "/audio/voice/sort-yes-letter-p.mp3",
+      "/audio/voice/sort-yes-num-eight.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8430,6 +8439,8 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Yes! Pines stand on the trail!")?.id).toBe("voice.sort.yes-pine");
     expect(narrationClipForText("Yes! The chest holds treasure!")?.id).toBe("voice.sort.yes-chest");
+    expect(narrationClipForText("Yes! A is a letter!")?.id).toBe("voice.sort.yes-letter-a");
+    expect(narrationClipForText("Yes! Eight is a number!")?.id).toBe("voice.sort.yes-num-eight");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
