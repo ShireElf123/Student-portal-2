@@ -2103,6 +2103,16 @@ describe("audio registry", () => {
       "/audio/voice/nav-mission-sat-1.mp3",
       "/audio/voice/nav-mission-sat-2.mp3",
       "/audio/voice/nav-mission-sat-3.mp3",
+      "/audio/voice/ui-rooms-clap-done.mp3",
+      "/audio/voice/ui-rooms-hoot-done.mp3",
+      "/audio/voice/sort-yes-lion.mp3",
+      "/audio/voice/sort-yes-whale.mp3",
+      "/audio/voice/sort-yes-monkey.mp3",
+      "/audio/voice/sort-yes-dolphin.mp3",
+      "/audio/voice/sort-yes-elephant.mp3",
+      "/audio/voice/sort-yes-fish.mp3",
+      "/audio/voice/sort-yes-cow.mp3",
+      "/audio/voice/sort-yes-octopus.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8239,6 +8249,11 @@ describe("audio registry", () => {
         "Let's play: Style Your Learning Buddy! Put on astronaut helmets or capes!",
       )?.id,
     ).toBe("voice.nav.mission-sat-3");
+    expect(narrationClipForText("Clap clap clap!")?.id).toBe("voice.ui.rooms-clap-done");
+    expect(narrationClipForText("Hoo hoo hoo.")?.id).toBe("voice.ui.rooms-hoot-done");
+    expect(narrationClipForText("Yes! Lions roar on the sunny savanna!")?.id).toBe(
+      "voice.sort.yes-lion",
+    );
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
