@@ -2074,6 +2074,16 @@ describe("audio registry", () => {
       "/audio/voice/ui-rooms-another-play.mp3",
       "/audio/voice/ui-rooms-all-done.mp3",
       "/audio/voice/ui-rooms-den-light.mp3",
+      "/audio/voice/ui-rooms-moon-hill.mp3",
+      "/audio/voice/ui-rooms-pine-path.mp3",
+      "/audio/voice/ui-rooms-fox-berry.mp3",
+      "/audio/voice/ui-rooms-split-berry.mp3",
+      "/audio/voice/ui-rooms-owl-asked.mp3",
+      "/audio/voice/ui-rooms-blanket-sea.mp3",
+      "/audio/voice/ui-rooms-den-end.mp3",
+      "/audio/voice/ui-rooms-fish-lunch.mp3",
+      "/audio/voice/nav-mission-sun-1.mp3",
+      "/audio/voice/nav-mission-sun-2.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8186,6 +8196,12 @@ describe("audio registry", () => {
     expect(narrationClipForText("Once upon a time, a den light came on.")?.id).toBe(
       "voice.ui.rooms-den-light",
     );
+    expect(narrationClipForText("The end. The den kept watch until morning.")?.id).toBe(
+      "voice.ui.rooms-den-end",
+    );
+    expect(
+      narrationClipForText("Let's play: Star Constellation Count! Count the shiny twinkling stars")?.id,
+    ).toBe("voice.nav.mission-sun-1");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
