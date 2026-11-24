@@ -2004,6 +2004,16 @@ describe("audio registry", () => {
       "/audio/voice/nav-pop-b.mp3",
       "/audio/voice/nav-pop-c.mp3",
       "/audio/voice/nav-pop-d.mp3",
+      "/audio/voice/nav-pop-e.mp3",
+      "/audio/voice/nav-pop-s.mp3",
+      "/audio/voice/nav-pop-t.mp3",
+      "/audio/voice/nav-pop-m.mp3",
+      "/audio/voice/nav-pop-f.mp3",
+      "/audio/voice/nav-pop-g.mp3",
+      "/audio/voice/nav-pop-h.mp3",
+      "/audio/voice/nav-pop-i.mp3",
+      "/audio/voice/nav-pop-j.mp3",
+      "/audio/voice/nav-pop-k.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8079,6 +8089,9 @@ describe("audio registry", () => {
     expect(narrationClipForText("14!")?.id).toBe("voice.count.cheer-14");
     expect(narrationClipForText("20!")?.id).toBe("voice.count.cheer-20");
     expect(narrationClipForText("A")?.id).toBe("voice.nav.pop-a");
+    expect(narrationClipForText("E")?.id).toBe("voice.nav.pop-e");
+    expect(narrationClipForText("M")?.id).toBe("voice.nav.pop-m");
+    expect(narrationClipForText("K")?.id).toBe("voice.nav.pop-k");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
