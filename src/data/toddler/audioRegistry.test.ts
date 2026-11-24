@@ -2054,6 +2054,16 @@ describe("audio registry", () => {
       "/audio/voice/nav-zone-clam-royal.mp3",
       "/audio/voice/nav-zone-clam-sprig.mp3",
       "/audio/voice/nav-zone-star-1.mp3",
+      "/audio/voice/nav-zone-star-2.mp3",
+      "/audio/voice/nav-zone-star-3.mp3",
+      "/audio/voice/nav-zone-star-4.mp3",
+      "/audio/voice/nav-zone-star-5.mp3",
+      "/audio/voice/nav-zone-star-6.mp3",
+      "/audio/voice/ui-rooms-quiet-house.mp3",
+      "/audio/voice/ui-rooms-puppet-bow.mp3",
+      "/audio/voice/ui-rooms-nook-claps.mp3",
+      "/audio/voice/ui-rooms-nook-tidy.mp3",
+      "/audio/voice/ui-rooms-ba-na-na-hold.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8153,6 +8163,12 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("The royal rainbow pearl!")?.id).toBe(
       "voice.nav.zone-clam-royal",
+    );
+    expect(narrationClipForText("Yes. That is star 6 of Little Bear.")?.id).toBe(
+      "voice.nav.zone-star-6",
+    );
+    expect(narrationClipForText("Quiet house. Sweet sleep.")?.id).toBe(
+      "voice.ui.rooms-quiet-house",
     );
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
