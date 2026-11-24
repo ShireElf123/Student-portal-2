@@ -2252,6 +2252,16 @@ describe("audio registry", () => {
       "/audio/voice/sort-yes-num-six.mp3",
       "/audio/voice/sort-yes-letter-p.mp3",
       "/audio/voice/sort-yes-num-eight.mp3",
+      "/audio/voice/sort-yes-letter-b.mp3",
+      "/audio/voice/sort-yes-num-three.mp3",
+      "/audio/voice/sort-yes-letter-t.mp3",
+      "/audio/voice/sort-yes-num-two.mp3",
+      "/audio/voice/sort-oops-lion.mp3",
+      "/audio/voice/sort-oops-whale.mp3",
+      "/audio/voice/sort-oops-monkey.mp3",
+      "/audio/voice/sort-oops-dolphin.mp3",
+      "/audio/voice/sort-oops-elephant.mp3",
+      "/audio/voice/sort-oops-fish.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8441,6 +8451,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("Yes! The chest holds treasure!")?.id).toBe("voice.sort.yes-chest");
     expect(narrationClipForText("Yes! A is a letter!")?.id).toBe("voice.sort.yes-letter-a");
     expect(narrationClipForText("Yes! Eight is a number!")?.id).toBe("voice.sort.yes-num-eight");
+    expect(narrationClipForText("Yes! B is a letter!")?.id).toBe("voice.sort.yes-letter-b");
+    expect(
+      narrationClipForText("Oops! Lion belongs in Land Animals! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-lion");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
