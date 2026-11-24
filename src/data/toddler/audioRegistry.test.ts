@@ -2084,6 +2084,16 @@ describe("audio registry", () => {
       "/audio/voice/ui-rooms-fish-lunch.mp3",
       "/audio/voice/nav-mission-sun-1.mp3",
       "/audio/voice/nav-mission-sun-2.mp3",
+      "/audio/voice/nav-mission-sun-3.mp3",
+      "/audio/voice/nav-mission-mon-1.mp3",
+      "/audio/voice/nav-mission-mon-2.mp3",
+      "/audio/voice/nav-mission-mon-3.mp3",
+      "/audio/voice/nav-mission-tue-1.mp3",
+      "/audio/voice/nav-mission-tue-2.mp3",
+      "/audio/voice/nav-mission-tue-3.mp3",
+      "/audio/voice/nav-mission-wed-1.mp3",
+      "/audio/voice/nav-mission-wed-2.mp3",
+      "/audio/voice/nav-mission-wed-3.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8202,6 +8212,14 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Let's play: Star Constellation Count! Count the shiny twinkling stars")?.id,
     ).toBe("voice.nav.mission-sun-1");
+    expect(
+      narrationClipForText("Let's play: Goodnight Little Bear! Read the peaceful bedtime story")?.id,
+    ).toBe("voice.nav.mission-sun-3");
+    expect(
+      narrationClipForText(
+        "Let's play: Colors & Shapes Parade! Find red circles and blue squares",
+      )?.id,
+    ).toBe("voice.nav.mission-wed-2");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
