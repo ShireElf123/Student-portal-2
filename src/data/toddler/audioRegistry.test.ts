@@ -2071,6 +2071,9 @@ describe("audio registry", () => {
       "/audio/voice/primary-slot-trapezoid.mp3",
       "/audio/voice/primary-arch-fox.mp3",
       "/audio/voice/primary-arch-crown.mp3",
+      "/audio/voice/primary-hw-task-done.mp3",
+      "/audio/voice/primary-hw-signature.mp3",
+      "/audio/voice/primary-hw-turned-in.mp3",
       "/audio/voice/nav-balloon-a.mp3",
       "/audio/voice/nav-balloon-b.mp3",
       "/audio/voice/nav-balloon-c.mp3",
@@ -8988,6 +8991,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Magnificent architecture! You assembled the Royal Stellar Crown!")?.id,
     ).toBe("voice.primary.arch-crown");
+    expect(
+      narrationClipForText("Awesome work! One more task completed!")?.id,
+    ).toBe("voice.primary.hw-task-done");
+    expect(
+      narrationClipForText("Great job! Your assignment has been turned in to your teacher!")?.id,
+    ).toBe("voice.primary.hw-turned-in");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");

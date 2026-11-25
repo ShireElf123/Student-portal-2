@@ -14508,6 +14508,27 @@ export const AUDIO_ASSETS: AudioAsset[] = [
     "Primary tangram done. Replaces device TTS.",
   ),
   voiceClip(
+    "voice.primary.hw-task-done",
+    "/audio/voice/primary-hw-task-done.mp3",
+    "Primary homework task done",
+    "Awesome work! One more task completed!",
+    "Primary homework desk. Replaces device TTS.",
+  ),
+  voiceClip(
+    "voice.primary.hw-signature",
+    "/audio/voice/primary-hw-signature.mp3",
+    "Primary homework signature",
+    "Parent signature verified! Excellent responsibility!",
+    "Primary homework desk. Replaces device TTS.",
+  ),
+  voiceClip(
+    "voice.primary.hw-turned-in",
+    "/audio/voice/primary-hw-turned-in.mp3",
+    "Primary homework turned in",
+    "Great job! Your assignment has been turned in to your teacher!",
+    "Primary homework desk. Replaces device TTS.",
+  ),
+  voiceClip(
     "voice.nav.balloon-a",
     "/audio/voice/nav-balloon-a.mp3",
     "Balloon Sky welcome A",
