@@ -2027,6 +2027,16 @@ describe("audio registry", () => {
       "/audio/voice/primary-shape-hexagon.mp3",
       "/audio/voice/primary-shape-trapezoid.mp3",
       "/audio/voice/primary-arch-sailboat.mp3",
+      "/audio/voice/primary-frac-new-half.mp3",
+      "/audio/voice/primary-frac-mode-half.mp3",
+      "/audio/voice/primary-frac-new-three-fourths.mp3",
+      "/audio/voice/primary-frac-mode-three-fourths.mp3",
+      "/audio/voice/primary-frac-mode-two-thirds.mp3",
+      "/audio/voice/primary-frac-new-five-eighths.mp3",
+      "/audio/voice/primary-frac-new-four-sixths.mp3",
+      "/audio/voice/primary-frac-mode-four-sixths.mp3",
+      "/audio/voice/primary-frac-new-seven-tenths.mp3",
+      "/audio/voice/primary-frac-mode-seven-tenths.mp3",
       "/audio/voice/nav-balloon-a.mp3",
       "/audio/voice/nav-balloon-b.mp3",
       "/audio/voice/nav-balloon-c.mp3",
@@ -8926,6 +8936,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Magnificent architecture! You assembled the Ocean Breeze Sailboat!")?.id,
     ).toBe("voice.primary.arch-sailboat");
+    expect(
+      narrationClipForText("New Challenge! Can you build One Half (1/2)? Adjust the slices!")?.id,
+    ).toBe("voice.primary.frac-new-half");
+    expect(
+      narrationClipForText("Challenge mode active! Can you build Seven Tenths (7/10)?")?.id,
+    ).toBe("voice.primary.frac-mode-seven-tenths");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
