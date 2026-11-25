@@ -2442,6 +2442,16 @@ describe("audio registry", () => {
       "/audio/voice/sort-oops-wool-scarf.mp3",
       "/audio/voice/sort-oops-swimsuit.mp3",
       "/audio/voice/sort-oops-mittens.mp3",
+      "/audio/voice/sort-oops-airplane.mp3",
+      "/audio/voice/sort-oops-family-car.mp3",
+      "/audio/voice/sort-oops-sky-helicopter.mp3",
+      "/audio/voice/sort-oops-choo-train.mp3",
+      "/audio/voice/sort-oops-space-rocket.mp3",
+      "/audio/voice/sort-oops-bicycle.mp3",
+      "/audio/voice/sort-oops-bright-sun.mp3",
+      "/audio/voice/sort-oops-glowing-moon.mp3",
+      "/audio/voice/sort-oops-kite-breeze.mp3",
+      "/audio/voice/sort-oops-twinkling-star.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8754,6 +8764,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Oops! Winter Mittens belongs in Cozy Winter! Let's try putting it there!")?.id,
     ).toBe("voice.sort.oops-mittens");
+    expect(
+      narrationClipForText("Oops! Airplane belongs in Sky Flyers! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-airplane");
+    expect(
+      narrationClipForText("Oops! Twinkling Star belongs in Nighttime Sky! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-twinkling-star");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
