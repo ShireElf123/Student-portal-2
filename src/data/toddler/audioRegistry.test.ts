@@ -2047,6 +2047,16 @@ describe("audio registry", () => {
       "/audio/voice/primary-word-yes-gravity.mp3",
       "/audio/voice/primary-word-yes-magnet.mp3",
       "/audio/voice/primary-word-yes-fossil.mp3",
+      "/audio/voice/primary-word-yes-comet.mp3",
+      "/audio/voice/primary-word-yes-prism.mp3",
+      "/audio/voice/primary-word-yes-nucleus.mp3",
+      "/audio/voice/primary-word-yes-volcano.mp3",
+      "/audio/voice/primary-word-yes-circuit.mp3",
+      "/audio/voice/primary-word-yes-climate.mp3",
+      "/audio/voice/primary-word-yes-habitat.mp3",
+      "/audio/voice/primary-word-yes-crater.mp3",
+      "/audio/voice/primary-word-yes-nebula.mp3",
+      "/audio/voice/primary-word-yes-robot.mp3",
       "/audio/voice/nav-balloon-a.mp3",
       "/audio/voice/nav-balloon-b.mp3",
       "/audio/voice/nav-balloon-c.mp3",
@@ -8956,6 +8966,7 @@ describe("audio registry", () => {
       narrationClipForText("Challenge mode active! Can you build Five Sixths (5/6)?")?.id,
     ).toBe("voice.primary.frac-mode-five-sixths");
     expect(narrationClipForText("Correct! FOSSIL!")?.id).toBe("voice.primary.word-yes-fossil");
+    expect(narrationClipForText("Correct! ROBOT!")?.id).toBe("voice.primary.word-yes-robot");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
