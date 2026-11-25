@@ -2408,6 +2408,16 @@ describe("audio registry", () => {
       "/audio/voice/sort-oops-num-three.mp3",
       "/audio/voice/sort-oops-letter-t.mp3",
       "/audio/voice/sort-oops-num-two.mp3",
+      "/audio/voice/sort-yes-cow-graze.mp3",
+      "/audio/voice/sort-yes-octopus-arms.mp3",
+      "/audio/voice/sort-yes-crisp-apple.mp3",
+      "/audio/voice/sort-yes-cupcake.mp3",
+      "/audio/voice/sort-yes-tree-banana.mp3",
+      "/audio/voice/sort-yes-lollipop.mp3",
+      "/audio/voice/sort-yes-strawberry.mp3",
+      "/audio/voice/sort-yes-donut.mp3",
+      "/audio/voice/sort-yes-sunglasses.mp3",
+      "/audio/voice/sort-yes-wool-scarf.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8696,6 +8706,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Oops! Two belongs in Numbers! Let's try putting it there!")?.id,
     ).toBe("voice.sort.oops-num-two");
+    expect(
+      narrationClipForText("Yes! Cows graze in green grassy fields!")?.id,
+    ).toBe("voice.sort.yes-cow-graze");
+    expect(
+      narrationClipForText("Yes! Warm fluffy scarf keeps our neck cozy!")?.id,
+    ).toBe("voice.sort.yes-wool-scarf");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
