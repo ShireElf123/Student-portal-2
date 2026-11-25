@@ -2402,6 +2402,12 @@ describe("audio registry", () => {
       "/audio/voice/sort-oops-num-ten.mp3",
       "/audio/voice/sort-oops-letter-m.mp3",
       "/audio/voice/sort-oops-num-six.mp3",
+      "/audio/voice/sort-oops-letter-p.mp3",
+      "/audio/voice/sort-oops-num-eight.mp3",
+      "/audio/voice/sort-oops-letter-b.mp3",
+      "/audio/voice/sort-oops-num-three.mp3",
+      "/audio/voice/sort-oops-letter-t.mp3",
+      "/audio/voice/sort-oops-num-two.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8684,6 +8690,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Oops! Six belongs in Numbers! Let's try putting it there!")?.id,
     ).toBe("voice.sort.oops-num-six");
+    expect(
+      narrationClipForText("Oops! P belongs in Letters! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-letter-p");
+    expect(
+      narrationClipForText("Oops! Two belongs in Numbers! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-num-two");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
