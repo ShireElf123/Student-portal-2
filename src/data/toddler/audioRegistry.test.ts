@@ -2482,6 +2482,12 @@ describe("audio registry", () => {
       "/audio/voice/phonics-tap-sit.mp3",
       "/audio/voice/phonics-tap-slice.mp3",
       "/audio/voice/phonics-tap-stoop.mp3",
+      "/audio/voice/phonics-tap-teddy.mp3",
+      "/audio/voice/phonics-tap-the-cap.mp3",
+      "/audio/voice/phonics-tap-the.mp3",
+      "/audio/voice/phonics-tap-to.mp3",
+      "/audio/voice/phonics-tap-warm.mp3",
+      "/audio/voice/phonics-tap-we.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8809,6 +8815,10 @@ describe("audio registry", () => {
     expect(narrationClipForText("on")?.id).toBe("voice.phonics.tap-on");
     expect(narrationClipForText("Pat")?.id).toBe("voice.phonics.tap-pat");
     expect(narrationClipForText("stoop")?.id).toBe("voice.phonics.tap-stoop");
+    expect(narrationClipForText("Teddy")?.id).toBe("voice.phonics.tap-teddy");
+    expect(narrationClipForText("The")?.id).toBe("voice.phonics.tap-the-cap");
+    expect(narrationClipForText("the")?.id).toBe("voice.phonics.tap-the");
+    expect(narrationClipForText("We")?.id).toBe("voice.phonics.tap-we");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
