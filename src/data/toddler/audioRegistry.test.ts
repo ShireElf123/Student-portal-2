@@ -1987,6 +1987,16 @@ describe("audio registry", () => {
       "/audio/voice/primary-solar-congrats.mp3",
       "/audio/voice/primary-planet-mercury.mp3",
       "/audio/voice/primary-planet-venus.mp3",
+      "/audio/voice/primary-planet-earth.mp3",
+      "/audio/voice/primary-planet-mars.mp3",
+      "/audio/voice/primary-planet-jupiter.mp3",
+      "/audio/voice/primary-planet-saturn.mp3",
+      "/audio/voice/primary-planet-uranus.mp3",
+      "/audio/voice/primary-planet-neptune.mp3",
+      "/audio/voice/primary-quiz-yes-saturn.mp3",
+      "/audio/voice/primary-quiz-yes-jupiter.mp3",
+      "/audio/voice/primary-quiz-yes-mars.mp3",
+      "/audio/voice/primary-quiz-yes-venus.mp3",
       "/audio/voice/nav-balloon-a.mp3",
       "/audio/voice/nav-balloon-b.mp3",
       "/audio/voice/nav-balloon-c.mp3",
@@ -8854,6 +8864,16 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Congratulations! You completed the Cosmic Astronomy Challenge!")?.id,
     ).toBe("voice.primary.solar-congrats");
+    expect(
+      narrationClipForText(
+        "Earth! The Blue Oasis. Earth is our home planet and the only world in the solar system with liquid oceans, breathable air, and life!",
+      )?.id,
+    ).toBe("voice.primary.planet-earth");
+    expect(
+      narrationClipForText(
+        "Excellent! That is correct! Saturn has seven main rings made of billions of glistening chunks of ice and rock!",
+      )?.id,
+    ).toBe("voice.primary.quiz-yes-saturn");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
