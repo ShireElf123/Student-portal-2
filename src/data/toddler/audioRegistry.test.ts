@@ -1967,6 +1967,16 @@ describe("audio registry", () => {
       "/audio/voice/count-peek-13.mp3",
       "/audio/voice/count-peek-14.mp3",
       "/audio/voice/count-peek-15.mp3",
+      "/audio/voice/count-peek-16.mp3",
+      "/audio/voice/count-peek-17.mp3",
+      "/audio/voice/count-peek-18.mp3",
+      "/audio/voice/count-peek-19.mp3",
+      "/audio/voice/count-peek-20.mp3",
+      "/audio/voice/primary-welcome-math.mp3",
+      "/audio/voice/primary-welcome-fraction.mp3",
+      "/audio/voice/primary-welcome-word.mp3",
+      "/audio/voice/primary-welcome-balance.mp3",
+      "/audio/voice/primary-welcome-solar.mp3",
       "/audio/voice/nav-balloon-a.mp3",
       "/audio/voice/nav-balloon-b.mp3",
       "/audio/voice/nav-balloon-c.mp3",
@@ -8819,6 +8829,13 @@ describe("audio registry", () => {
     expect(narrationClipForText("The")?.id).toBe("voice.phonics.tap-the-cap");
     expect(narrationClipForText("the")?.id).toBe("voice.phonics.tap-the");
     expect(narrationClipForText("We")?.id).toBe("voice.phonics.tap-we");
+    expect(narrationClipForText("16.")?.id).toBe("voice.count.peek-16");
+    expect(narrationClipForText("20.")?.id).toBe("voice.count.peek-20");
+    expect(
+      narrationClipForText(
+        "Welcome to Cosmic Astronomy! Tap any planet to explore its orbit, atmosphere, and space secrets!",
+      )?.id,
+    ).toBe("voice.primary.welcome-solar");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
