@@ -1977,6 +1977,16 @@ describe("audio registry", () => {
       "/audio/voice/primary-welcome-word.mp3",
       "/audio/voice/primary-welcome-balance.mp3",
       "/audio/voice/primary-welcome-solar.mp3",
+      "/audio/voice/primary-welcome-tangram.mp3",
+      "/audio/voice/primary-welcome-rover.mp3",
+      "/audio/voice/primary-welcome-times.mp3",
+      "/audio/voice/primary-welcome-solar-lab.mp3",
+      "/audio/voice/primary-word-reset.mp3",
+      "/audio/voice/primary-rover-memory.mp3",
+      "/audio/voice/primary-rover-done.mp3",
+      "/audio/voice/primary-solar-congrats.mp3",
+      "/audio/voice/primary-planet-mercury.mp3",
+      "/audio/voice/primary-planet-venus.mp3",
       "/audio/voice/nav-balloon-a.mp3",
       "/audio/voice/nav-balloon-b.mp3",
       "/audio/voice/nav-balloon-c.mp3",
@@ -8836,6 +8846,14 @@ describe("audio registry", () => {
         "Welcome to Cosmic Astronomy! Tap any planet to explore its orbit, atmosphere, and space secrets!",
       )?.id,
     ).toBe("voice.primary.welcome-solar");
+    expect(
+      narrationClipForText(
+        "Welcome to Tangram Geometry! Combine shapes and rotate polygons to architect geometric creations!",
+      )?.id,
+    ).toBe("voice.primary.welcome-tangram");
+    expect(
+      narrationClipForText("Congratulations! You completed the Cosmic Astronomy Challenge!")?.id,
+    ).toBe("voice.primary.solar-congrats");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
