@@ -2362,6 +2362,16 @@ describe("audio registry", () => {
       "/audio/voice/sort-oops-flute.mp3",
       "/audio/voice/sort-oops-crown.mp3",
       "/audio/voice/sort-oops-real-hen.mp3",
+      "/audio/voice/sort-oops-dragon.mp3",
+      "/audio/voice/sort-oops-egg.mp3",
+      "/audio/voice/sort-oops-wand.mp3",
+      "/audio/voice/sort-oops-hay.mp3",
+      "/audio/voice/sort-oops-castle.mp3",
+      "/audio/voice/sort-oops-real-cow.mp3",
+      "/audio/voice/sort-oops-wish-star.mp3",
+      "/audio/voice/sort-oops-real-pig.mp3",
+      "/audio/voice/sort-oops-book.mp3",
+      "/audio/voice/sort-oops-real-sheep.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8617,6 +8627,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Oops! Hen belongs in Barn! Let's try putting it there!")?.id,
     ).toBe("voice.sort.oops-real-hen");
+    expect(
+      narrationClipForText("Oops! Dragon belongs in Tale! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-dragon");
+    expect(
+      narrationClipForText("Oops! Sheep belongs in Barn! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-real-sheep");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
