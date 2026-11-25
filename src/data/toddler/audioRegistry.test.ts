@@ -2282,6 +2282,16 @@ describe("audio registry", () => {
       "/audio/voice/sort-oops-car.mp3",
       "/audio/voice/sort-oops-rocket.mp3",
       "/audio/voice/sort-oops-bike.mp3",
+      "/audio/voice/sort-oops-kite.mp3",
+      "/audio/voice/sort-oops-train.mp3",
+      "/audio/voice/sort-oops-cloud.mp3",
+      "/audio/voice/sort-oops-truck.mp3",
+      "/audio/voice/sort-oops-balloon.mp3",
+      "/audio/voice/sort-oops-scooter.mp3",
+      "/audio/voice/sort-oops-penguin.mp3",
+      "/audio/voice/sort-oops-lion-warm.mp3",
+      "/audio/voice/sort-oops-seal.mp3",
+      "/audio/voice/sort-oops-cow-warm.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8489,6 +8499,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Oops! Bike belongs in Street! Let's try putting it there!")?.id,
     ).toBe("voice.sort.oops-bike");
+    expect(
+      narrationClipForText("Oops! Scooter belongs in Street! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-scooter");
+    expect(
+      narrationClipForText("Oops! Penguin belongs in On the Ice! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-penguin");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
