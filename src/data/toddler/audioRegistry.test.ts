@@ -1997,6 +1997,16 @@ describe("audio registry", () => {
       "/audio/voice/primary-quiz-yes-jupiter.mp3",
       "/audio/voice/primary-quiz-yes-mars.mp3",
       "/audio/voice/primary-quiz-yes-venus.mp3",
+      "/audio/voice/primary-quiz-yes-mercury.mp3",
+      "/audio/voice/primary-quiz-yes-uranus.mp3",
+      "/audio/voice/primary-quiz-yes-neptune.mp3",
+      "/audio/voice/primary-quiz-yes-earth.mp3",
+      "/audio/voice/primary-quiz-oops-saturn.mp3",
+      "/audio/voice/primary-quiz-oops-jupiter.mp3",
+      "/audio/voice/primary-quiz-oops-mars.mp3",
+      "/audio/voice/primary-quiz-oops-venus.mp3",
+      "/audio/voice/primary-quiz-oops-mercury.mp3",
+      "/audio/voice/primary-quiz-oops-uranus.mp3",
       "/audio/voice/nav-balloon-a.mp3",
       "/audio/voice/nav-balloon-b.mp3",
       "/audio/voice/nav-balloon-c.mp3",
@@ -8874,6 +8884,16 @@ describe("audio registry", () => {
         "Excellent! That is correct! Saturn has seven main rings made of billions of glistening chunks of ice and rock!",
       )?.id,
     ).toBe("voice.primary.quiz-yes-saturn");
+    expect(
+      narrationClipForText(
+        "Excellent! That is correct! Earth sits in the habitable Goldilocks Zone, where temperatures allow stable liquid water oceans and thriving life!",
+      )?.id,
+    ).toBe("voice.primary.quiz-yes-earth");
+    expect(
+      narrationClipForText(
+        "Good try! The correct answer is Saturn. Saturn has seven main rings made of billions of glistening chunks of ice and rock!",
+      )?.id,
+    ).toBe("voice.primary.quiz-oops-saturn");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
