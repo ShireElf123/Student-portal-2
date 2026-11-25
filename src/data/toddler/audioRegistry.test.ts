@@ -2292,6 +2292,16 @@ describe("audio registry", () => {
       "/audio/voice/sort-oops-lion-warm.mp3",
       "/audio/voice/sort-oops-seal.mp3",
       "/audio/voice/sort-oops-cow-warm.mp3",
+      "/audio/voice/sort-oops-snow-bear.mp3",
+      "/audio/voice/sort-oops-hen-warm.mp3",
+      "/audio/voice/sort-oops-whale-ice.mp3",
+      "/audio/voice/sort-oops-pig-warm.mp3",
+      "/audio/voice/sort-oops-seal-pup.mp3",
+      "/audio/voice/sort-oops-horse-warm.mp3",
+      "/audio/voice/sort-oops-snowflake.mp3",
+      "/audio/voice/sort-oops-chick.mp3",
+      "/audio/voice/sort-oops-sun.mp3",
+      "/audio/voice/sort-oops-moon.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8505,6 +8515,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Oops! Penguin belongs in On the Ice! Let's try putting it there!")?.id,
     ).toBe("voice.sort.oops-penguin");
+    expect(
+      narrationClipForText("Oops! Chick belongs in Warm Grass! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-chick");
+    expect(
+      narrationClipForText("Oops! Moon belongs in Night! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-moon");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
