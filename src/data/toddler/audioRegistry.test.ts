@@ -2067,6 +2067,10 @@ describe("audio registry", () => {
       "/audio/voice/primary-slot-triangle.mp3",
       "/audio/voice/primary-slot-square.mp3",
       "/audio/voice/primary-slot-rhombus.mp3",
+      "/audio/voice/primary-slot-hexagon.mp3",
+      "/audio/voice/primary-slot-trapezoid.mp3",
+      "/audio/voice/primary-arch-fox.mp3",
+      "/audio/voice/primary-arch-crown.mp3",
       "/audio/voice/nav-balloon-a.mp3",
       "/audio/voice/nav-balloon-b.mp3",
       "/audio/voice/nav-balloon-c.mp3",
@@ -8981,6 +8985,9 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("That slot needs a Square! Try selecting that shape.")?.id,
     ).toBe("voice.primary.slot-square");
+    expect(
+      narrationClipForText("Magnificent architecture! You assembled the Royal Stellar Crown!")?.id,
+    ).toBe("voice.primary.arch-crown");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
