@@ -2017,6 +2017,16 @@ describe("audio registry", () => {
       "/audio/voice/primary-shape-triangle.mp3",
       "/audio/voice/primary-shape-square.mp3",
       "/audio/voice/primary-arch-rocket.mp3",
+      "/audio/voice/primary-frac-yes-two-thirds.mp3",
+      "/audio/voice/primary-frac-yes-five-eighths.mp3",
+      "/audio/voice/primary-frac-yes-four-sixths.mp3",
+      "/audio/voice/primary-frac-yes-seven-tenths.mp3",
+      "/audio/voice/primary-frac-yes-three-sixths.mp3",
+      "/audio/voice/primary-frac-yes-five-sixths.mp3",
+      "/audio/voice/primary-shape-rhombus.mp3",
+      "/audio/voice/primary-shape-hexagon.mp3",
+      "/audio/voice/primary-shape-trapezoid.mp3",
+      "/audio/voice/primary-arch-sailboat.mp3",
       "/audio/voice/nav-balloon-a.mp3",
       "/audio/voice/nav-balloon-b.mp3",
       "/audio/voice/nav-balloon-c.mp3",
@@ -8910,6 +8920,12 @@ describe("audio registry", () => {
       )?.id,
     ).toBe("voice.primary.quiz-oops-earth");
     expect(narrationClipForText("Correct! PLANET!")?.id).toBe("voice.primary.word-yes-planet");
+    expect(
+      narrationClipForText("Hooray! You built Five Sixths (5/6)! Excellent fraction mastery!")?.id,
+    ).toBe("voice.primary.frac-yes-five-sixths");
+    expect(
+      narrationClipForText("Magnificent architecture! You assembled the Ocean Breeze Sailboat!")?.id,
+    ).toBe("voice.primary.arch-sailboat");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
