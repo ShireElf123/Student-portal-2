@@ -2057,6 +2057,16 @@ describe("audio registry", () => {
       "/audio/voice/primary-word-yes-crater.mp3",
       "/audio/voice/primary-word-yes-nebula.mp3",
       "/audio/voice/primary-word-yes-robot.mp3",
+      "/audio/voice/primary-word-yes-species.mp3",
+      "/audio/voice/primary-word-yes-glacier.mp3",
+      "/audio/voice/primary-word-yes-velocity.mp3",
+      "/audio/voice/primary-word-yes-aurora.mp3",
+      "/audio/voice/primary-word-yes-crystal.mp3",
+      "/audio/voice/primary-word-yes-telescope.mp3",
+      "/audio/voice/primary-word-yes-ecosystem.mp3",
+      "/audio/voice/primary-slot-triangle.mp3",
+      "/audio/voice/primary-slot-square.mp3",
+      "/audio/voice/primary-slot-rhombus.mp3",
       "/audio/voice/nav-balloon-a.mp3",
       "/audio/voice/nav-balloon-b.mp3",
       "/audio/voice/nav-balloon-c.mp3",
@@ -8967,6 +8977,10 @@ describe("audio registry", () => {
     ).toBe("voice.primary.frac-mode-five-sixths");
     expect(narrationClipForText("Correct! FOSSIL!")?.id).toBe("voice.primary.word-yes-fossil");
     expect(narrationClipForText("Correct! ROBOT!")?.id).toBe("voice.primary.word-yes-robot");
+    expect(narrationClipForText("Correct! ECOSYSTEM!")?.id).toBe("voice.primary.word-yes-ecosystem");
+    expect(
+      narrationClipForText("That slot needs a Square! Try selecting that shape.")?.id,
+    ).toBe("voice.primary.slot-square");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
