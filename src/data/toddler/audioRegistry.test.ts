@@ -2418,6 +2418,16 @@ describe("audio registry", () => {
       "/audio/voice/sort-yes-donut.mp3",
       "/audio/voice/sort-yes-sunglasses.mp3",
       "/audio/voice/sort-yes-wool-scarf.mp3",
+      "/audio/voice/sort-yes-swimsuit.mp3",
+      "/audio/voice/sort-yes-mittens.mp3",
+      "/audio/voice/sort-yes-airplane.mp3",
+      "/audio/voice/sort-yes-family-car.mp3",
+      "/audio/voice/sort-yes-heli-air.mp3",
+      "/audio/voice/sort-yes-choo-train.mp3",
+      "/audio/voice/sort-yes-space-rocket.mp3",
+      "/audio/voice/sort-yes-bicycle.mp3",
+      "/audio/voice/sort-yes-bright-sun.mp3",
+      "/audio/voice/sort-yes-glowing-moon.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8712,6 +8722,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Yes! Warm fluffy scarf keeps our neck cozy!")?.id,
     ).toBe("voice.sort.yes-wool-scarf");
+    expect(
+      narrationClipForText("Yes! Ready for splashing in the summer pool!")?.id,
+    ).toBe("voice.sort.yes-swimsuit");
+    expect(
+      narrationClipForText("Yes! The moon shines when we go to sleep!")?.id,
+    ).toBe("voice.sort.yes-glowing-moon");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
