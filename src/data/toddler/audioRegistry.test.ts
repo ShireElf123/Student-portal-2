@@ -2037,6 +2037,16 @@ describe("audio registry", () => {
       "/audio/voice/primary-frac-mode-four-sixths.mp3",
       "/audio/voice/primary-frac-new-seven-tenths.mp3",
       "/audio/voice/primary-frac-mode-seven-tenths.mp3",
+      "/audio/voice/primary-frac-new-three-sixths.mp3",
+      "/audio/voice/primary-frac-mode-three-sixths.mp3",
+      "/audio/voice/primary-frac-new-five-sixths.mp3",
+      "/audio/voice/primary-frac-mode-five-sixths.mp3",
+      "/audio/voice/primary-word-yes-energy.mp3",
+      "/audio/voice/primary-word-yes-galaxy.mp3",
+      "/audio/voice/primary-word-yes-oxygen.mp3",
+      "/audio/voice/primary-word-yes-gravity.mp3",
+      "/audio/voice/primary-word-yes-magnet.mp3",
+      "/audio/voice/primary-word-yes-fossil.mp3",
       "/audio/voice/nav-balloon-a.mp3",
       "/audio/voice/nav-balloon-b.mp3",
       "/audio/voice/nav-balloon-c.mp3",
@@ -8942,6 +8952,10 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Challenge mode active! Can you build Seven Tenths (7/10)?")?.id,
     ).toBe("voice.primary.frac-mode-seven-tenths");
+    expect(
+      narrationClipForText("Challenge mode active! Can you build Five Sixths (5/6)?")?.id,
+    ).toBe("voice.primary.frac-mode-five-sixths");
+    expect(narrationClipForText("Correct! FOSSIL!")?.id).toBe("voice.primary.word-yes-fossil");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
