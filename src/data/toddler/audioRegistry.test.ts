@@ -2428,6 +2428,16 @@ describe("audio registry", () => {
       "/audio/voice/sort-yes-bicycle.mp3",
       "/audio/voice/sort-yes-bright-sun.mp3",
       "/audio/voice/sort-yes-glowing-moon.mp3",
+      "/audio/voice/sort-yes-kite-breeze.mp3",
+      "/audio/voice/sort-yes-twinkling-star.mp3",
+      "/audio/voice/sort-yes-rainbow.mp3",
+      "/audio/voice/sort-yes-night-owl.mp3",
+      "/audio/voice/sort-oops-fresh-apple.mp3",
+      "/audio/voice/sort-oops-cupcake.mp3",
+      "/audio/voice/sort-oops-fresh-banana.mp3",
+      "/audio/voice/sort-oops-lollipop.mp3",
+      "/audio/voice/sort-oops-strawberry.mp3",
+      "/audio/voice/sort-oops-donut.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8728,6 +8738,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Yes! The moon shines when we go to sleep!")?.id,
     ).toBe("voice.sort.yes-glowing-moon");
+    expect(
+      narrationClipForText("Yes! Kites dance in the sunny breeze!")?.id,
+    ).toBe("voice.sort.yes-kite-breeze");
+    expect(
+      narrationClipForText("Oops! Donut belongs in Sweet Treats! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-donut");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
