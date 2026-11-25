@@ -2452,6 +2452,16 @@ describe("audio registry", () => {
       "/audio/voice/sort-oops-glowing-moon.mp3",
       "/audio/voice/sort-oops-kite-breeze.mp3",
       "/audio/voice/sort-oops-twinkling-star.mp3",
+      "/audio/voice/sort-oops-rainbow.mp3",
+      "/audio/voice/sort-oops-night-owl.mp3",
+      "/audio/voice/phonics-tap-and.mp3",
+      "/audio/voice/phonics-tap-at.mp3",
+      "/audio/voice/phonics-tap-bun.mp3",
+      "/audio/voice/phonics-tap-bus.mp3",
+      "/audio/voice/phonics-tap-cat.mp3",
+      "/audio/voice/phonics-tap-come.mp3",
+      "/audio/voice/phonics-tap-cut.mp3",
+      "/audio/voice/phonics-tap-door.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8770,6 +8780,11 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Oops! Twinkling Star belongs in Nighttime Sky! Let's try putting it there!")?.id,
     ).toBe("voice.sort.oops-twinkling-star");
+    expect(
+      narrationClipForText("Oops! Night Owl belongs in Nighttime Sky! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-night-owl");
+    expect(narrationClipForText("cat")?.id).toBe("voice.phonics.tap-cat");
+    expect(narrationClipForText("Come")?.id).toBe("voice.phonics.tap-come");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
