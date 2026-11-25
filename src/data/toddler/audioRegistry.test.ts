@@ -2462,6 +2462,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-tap-come.mp3",
       "/audio/voice/phonics-tap-cut.mp3",
       "/audio/voice/phonics-tap-door.mp3",
+      "/audio/voice/phonics-tap-ferry.mp3",
+      "/audio/voice/phonics-tap-go.mp3",
+      "/audio/voice/phonics-tap-hat.mp3",
+      "/audio/voice/phonics-tap-hop.mp3",
+      "/audio/voice/phonics-tap-hot.mp3",
+      "/audio/voice/phonics-tap-is.mp3",
+      "/audio/voice/phonics-tap-mat.mp3",
+      "/audio/voice/phonics-tap-nana.mp3",
+      "/audio/voice/phonics-tap-nap.mp3",
+      "/audio/voice/phonics-tap-on.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8785,6 +8795,8 @@ describe("audio registry", () => {
     ).toBe("voice.sort.oops-night-owl");
     expect(narrationClipForText("cat")?.id).toBe("voice.phonics.tap-cat");
     expect(narrationClipForText("Come")?.id).toBe("voice.phonics.tap-come");
+    expect(narrationClipForText("Nana")?.id).toBe("voice.phonics.tap-nana");
+    expect(narrationClipForText("on")?.id).toBe("voice.phonics.tap-on");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
