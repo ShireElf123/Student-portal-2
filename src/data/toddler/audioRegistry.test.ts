@@ -2438,6 +2438,10 @@ describe("audio registry", () => {
       "/audio/voice/sort-oops-lollipop.mp3",
       "/audio/voice/sort-oops-strawberry.mp3",
       "/audio/voice/sort-oops-donut.mp3",
+      "/audio/voice/sort-oops-sunglasses.mp3",
+      "/audio/voice/sort-oops-wool-scarf.mp3",
+      "/audio/voice/sort-oops-swimsuit.mp3",
+      "/audio/voice/sort-oops-mittens.mp3",
       "/audio/voice/color-mix-red-yellow.mp3",
       "/audio/voice/color-mix-yellow-red.mp3",
       "/audio/voice/color-mix-blue-yellow.mp3",
@@ -8744,6 +8748,12 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Oops! Donut belongs in Sweet Treats! Let's try putting it there!")?.id,
     ).toBe("voice.sort.oops-donut");
+    expect(
+      narrationClipForText("Oops! Sunglasses belongs in Sunny Summer! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-sunglasses");
+    expect(
+      narrationClipForText("Oops! Winter Mittens belongs in Cozy Winter! Let's try putting it there!")?.id,
+    ).toBe("voice.sort.oops-mittens");
     expect(
       narrationClipForText("Red plus Yellow creates sparkling sweet Orange!")?.id,
     ).toBe("voice.color.mix-red-yellow");
