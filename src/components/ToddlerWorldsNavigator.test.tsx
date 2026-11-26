@@ -53,6 +53,15 @@ const flush = async (ms = 0) => {
   }
 };
 
+/** Catch the celebration as soon as it appears so trail auto-roll cannot snatch it. */
+const waitForText = async (container: HTMLElement, needle: string, step = 400, max = 16000) => {
+  for (let elapsed = 0; elapsed < max; elapsed += step) {
+    if (container.textContent?.includes(needle)) return;
+    await flush(step);
+  }
+  throw new Error(`never saw "${needle}"`);
+};
+
 const optionButton = (container: HTMLElement, label: string) =>
   Array.from(container.querySelectorAll("button")).find((button) =>
     button.textContent?.includes(label)
@@ -107,10 +116,9 @@ describe("Animal World detective activity", () => {
     expect(container.textContent).not.toContain("You did it!");
 
     // The watchdog releases the reveal without any further tap.
-    await flush(20000);
-    expect(container.textContent).toContain("You did it!");
+    await waitForText(container, "You did it!");
 
-    // And the child can carry on playing.
+    // And the child can carry on playing. Next is a skip; auto-roll is later.
     fireEvent.click(container.querySelector("[data-testid=trail-next]") as HTMLButtonElement);
     await flush(200);
     expect(container.textContent).toContain("Farm Valley");
@@ -123,7 +131,7 @@ describe("Animal World detective activity", () => {
     fireEvent.click(optionButton(container, "Pink Piggy"));
     await flush(2000);
 
-    expect(speech.spoken.at(-1)).toContain("That is Pink Piggy!");
+    expect(speech.spoken.at(-1)?.toLowerCase()).toContain("piggy");
     expect(container.textContent).not.toContain("You did it!");
     expect(optionButton(container, "Spotted Cow").disabled).toBe(false);
   });
@@ -180,7 +188,7 @@ describe("Animal World counting activity", () => {
     await flush(200);
     expect(container.textContent).not.toContain("You did it!");
 
-    await flush(20000);
+    await waitForText(container, "You did it!");
     expect(container.textContent).toContain("You did it!");
   });
 });

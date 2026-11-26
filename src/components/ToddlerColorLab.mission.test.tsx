@@ -85,4 +85,22 @@ describe("Color Lab mission surface", () => {
     await flush(3000);
     expect(pay).toHaveBeenCalledWith("games", "color-magic");
   });
+
+  it("a wrong pair on a named target does not look like a win", async () => {
+    const stars: number[] = [];
+    const { container } = render(<ToddlerColorLab targetColor="Purple" onAddStar={(n) => stars.push(n ?? 1)} />);
+    fireEvent.click(named(container, "Ruby Red"));
+    fireEvent.click(named(container, "Sunny Yellow"));
+    await flush(3000);
+    expect(container.textContent).not.toContain("Magical Orange!");
+    expect(container.textContent).not.toContain("Mix Another Color");
+    expect(container.textContent).toContain("We need Purple");
+    expect(stars).toHaveLength(0);
+    expect(pay).not.toHaveBeenCalled();
+    fireEvent.click(named(container, "Ruby Red"));
+    fireEvent.click(named(container, "Ocean Blue"));
+    await flush(3000);
+    expect(container.textContent).toContain("Royal Purple!");
+    expect(stars).toEqual([1]);
+  });
 });

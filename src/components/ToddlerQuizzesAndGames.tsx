@@ -606,6 +606,9 @@ export function ToddlerQuizzesAndGames({
   // Timers refs to ensure seamless synchronization and eliminate any overlap
   const advanceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const promptTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const bubbleRefillRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const bubbleIdRef = useRef(0);
+  const bunnyAdvanceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentQuiz = questionDeck[questionIndex];
   const currentShape = SHAPE_QUESTIONS[shapeIndex];
@@ -640,6 +643,14 @@ export function ToddlerQuizzesAndGames({
       clearTimeout(promptTimerRef.current);
       promptTimerRef.current = null;
     }
+    if (bubbleRefillRef.current) {
+      clearTimeout(bubbleRefillRef.current);
+      bubbleRefillRef.current = null;
+    }
+    if (bunnyAdvanceRef.current) {
+      clearTimeout(bunnyAdvanceRef.current);
+      bunnyAdvanceRef.current = null;
+    }
 
     if (currentActivity === "bubble-pop") {
       spawnBubbles();
@@ -663,6 +674,14 @@ export function ToddlerQuizzesAndGames({
       if (promptTimerRef.current) {
         clearTimeout(promptTimerRef.current);
         promptTimerRef.current = null;
+      }
+      if (bubbleRefillRef.current) {
+        clearTimeout(bubbleRefillRef.current);
+        bubbleRefillRef.current = null;
+      }
+      if (bunnyAdvanceRef.current) {
+        clearTimeout(bunnyAdvanceRef.current);
+        bunnyAdvanceRef.current = null;
       }
     };
   }, [currentActivity]);
@@ -979,7 +998,7 @@ export function ToddlerQuizzesAndGames({
     const newBubbles: BubbleItem[] = Array.from({ length: 8 }, (_, i) => {
       const type = types[i % types.length];
       return {
-        id: Date.now() + i,
+        id: ++bubbleIdRef.current,
         type,
         emoji: emojis[type],
         name: type,
@@ -1005,6 +1024,11 @@ export function ToddlerQuizzesAndGames({
         } catch {
           // ignore
         }
+        if (bubbleRefillRef.current) clearTimeout(bubbleRefillRef.current);
+        bubbleRefillRef.current = setTimeout(() => {
+          bubbleRefillRef.current = null;
+          spawnBubbles();
+        }, 450);
       }
       return next;
     });
@@ -1039,6 +1063,11 @@ export function ToddlerQuizzesAndGames({
       speakText("Thank you so much! Benny Bunny is so full and happy! You earned three golden stars!", {
         pitch: 1.25,
       });
+      if (bunnyAdvanceRef.current) clearTimeout(bunnyAdvanceRef.current);
+      bunnyAdvanceRef.current = setTimeout(() => {
+        bunnyAdvanceRef.current = null;
+        handleResetBunny();
+      }, 1800);
 
       try {
         recordLearningEvent({
@@ -1065,6 +1094,10 @@ export function ToddlerQuizzesAndGames({
   };
 
   const handleResetBunny = () => {
+    if (bunnyAdvanceRef.current) {
+      clearTimeout(bunnyAdvanceRef.current);
+      bunnyAdvanceRef.current = null;
+    }
     const nextGoal = Math.min(bunnyGoalIndex + 1, BUNNY_GOALS.length - 1);
     setBunnyGoalIndex(nextGoal);
     setCarrotsFed(0);
@@ -1075,6 +1108,24 @@ export function ToddlerQuizzesAndGames({
       { pitch: 1.2 }
     );
   };
+
+  // Finite hub quizzes: celebrate, then roll to the next game. Buttons stay as a skip.
+  useEffect(() => {
+    if (currentActivity !== "animal-quiz" || !isQuizCompleted) return;
+    const id = window.setTimeout(() => {
+      setCurrentActivity("shape-match");
+      handleRestartShapes();
+    }, 3800);
+    return () => window.clearTimeout(id);
+  }, [currentActivity, isQuizCompleted]);
+
+  useEffect(() => {
+    if (currentActivity !== "shape-match" || !isShapeCompleted) return;
+    const id = window.setTimeout(() => {
+      setCurrentActivity("bubble-pop");
+    }, 3800);
+    return () => window.clearTimeout(id);
+  }, [currentActivity, isShapeCompleted]);
 
   return (
     <div className="space-y-6">

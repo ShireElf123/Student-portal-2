@@ -230,6 +230,7 @@ export function ToddlerColorLab({
   };
   const [selectedDrops, setSelectedDrops] = useState<ColorDrop[]>([]);
   const [currentResult, setCurrentResult] = useState<MixResult | null>(null);
+  const [mixHint, setMixHint] = useState<string | null>(null);
   const rewardPaid = useRef(false);
   const resolutionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -257,6 +258,7 @@ export function ToddlerColorLab({
 
     const next = [...selectedDrops, drop];
     setSelectedDrops(next);
+    if (next.length === 1) setMixHint(null);
     speakText(drop.name, { pitch: 1.3, closedKit });
 
     if (next.length === 2) {
@@ -266,13 +268,19 @@ export function ToddlerColorLab({
       if (result) {
         resolutionTimer.current = setTimeout(() => {
           resolutionTimer.current = null;
-          setCurrentResult(result);
           const matchesTarget = !targetColor || result.colorName.toLowerCase() === targetColor.toLowerCase();
           if (!matchesTarget) {
+            // Named Worlds mix: a wrong pair must not look like a win, and
+            // drops must unlock so the child can mix again without hunting Reset.
             soundEffects.playGentleBoing();
             speakText(`That made ${result.colorName}. We need ${targetColor}. Mix again!`, { pitch: 1.2, closedKit });
+            setCurrentResult(null);
+            setSelectedDrops([]);
+            setMixHint(`That made ${result.colorName}. We need ${targetColor}. Mix again!`);
             return;
           }
+          setMixHint(null);
+          setCurrentResult(result);
           soundEffects.playSuccessChime();
           triggerCelebrationConfetti();
           speakText(result.phrase, { pitch: 1.3, closedKit });
@@ -309,6 +317,7 @@ export function ToddlerColorLab({
       } else {
         // Same color mixed
         speakText(`Two ${next[0].name}s! Pick a different color to mix magic!`, { pitch: 1.2, closedKit });
+        setMixHint(`Two ${next[0].name}s! Pick a different color to mix magic!`);
         resolutionTimer.current = setTimeout(() => {
           resolutionTimer.current = null;
           setSelectedDrops([]);
@@ -324,6 +333,7 @@ export function ToddlerColorLab({
     }
     setSelectedDrops([]);
     setCurrentResult(null);
+    setMixHint(null);
     soundEffects.playPop();
   };
 
@@ -383,9 +393,13 @@ export function ToddlerColorLab({
             </div>
 
             <div className="text-sm font-bold text-white/80">
-              {selectedDrops.length === 0 && "Tap your first colour below"}
-              {selectedDrops.length === 1 && "Now tap a second colour to mix!"}
-              {selectedDrops.length === 2 && "Mixing…"}
+              {mixHint
+                ? mixHint
+                : selectedDrops.length === 0
+                  ? "Tap your first colour below"
+                  : selectedDrops.length === 1
+                    ? "Now tap a second colour to mix!"
+                    : "Mixing…"}
             </div>
 
             {selectedDrops.length > 0 && (

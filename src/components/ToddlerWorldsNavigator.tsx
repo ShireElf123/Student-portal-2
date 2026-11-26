@@ -205,13 +205,20 @@ export function ToddlerWorldsNavigator({
     setShowCelebration(true);
   };
 
-  /** Finite toys auto-roll after a beat. Endless / mix labs stay. Quizzes wait for a tap. */
+  /** Finite toys auto-roll after a beat. Endless / mix labs stay. Next remains a skip. */
   const AUTO_TRAIL_TYPES = new Set([
     "land-play",
     "open-play",
     "memory-match",
     "rhyme-garden",
     "k1-studio",
+    "counting",
+    "sorting",
+    "clue-detective",
+    "sound-detective",
+    "habitat-match",
+    "pattern-match",
+    "feed-friend",
   ]);
 
   // Activity execution states
