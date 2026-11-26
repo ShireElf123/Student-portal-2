@@ -5474,6 +5474,16 @@ describe("audio registry", () => {
       "/audio/voice/games-no-monkey-penguin.mp3",
       "/audio/voice/games-no-cow-penguin.mp3",
       "/audio/voice/games-no-moon-sun.mp3",
+      "/audio/voice/games-no-snow-sun.mp3",
+      "/audio/voice/games-no-star-sun.mp3",
+      "/audio/voice/games-no-circle-triangle.mp3",
+      "/audio/voice/games-no-square-triangle.mp3",
+      "/audio/voice/games-no-star-triangle.mp3",
+      "/audio/voice/games-no-one-three.mp3",
+      "/audio/voice/games-no-five-three.mp3",
+      "/audio/voice/games-no-two-three.mp3",
+      "/audio/voice/games-no-apple-banana.mp3",
+      "/audio/voice/games-no-grapes-banana.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -5929,6 +5939,36 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That's the Moon! Let's try to find Sunny Sun!")?.id).toBe(
       "voice.games.no-moon-sun",
+    );
+    expect(narrationClipForText("That's the Snowflake! Let's try to find Sunny Sun!")?.id).toBe(
+      "voice.games.no-snow-sun",
+    );
+    expect(narrationClipForText("That's the Star! Let's try to find Sunny Sun!")?.id).toBe(
+      "voice.games.no-star-sun",
+    );
+    expect(narrationClipForText("That's the Circle! Let's try to find Triangle!")?.id).toBe(
+      "voice.games.no-circle-triangle",
+    );
+    expect(narrationClipForText("That's the Square! Let's try to find Triangle!")?.id).toBe(
+      "voice.games.no-square-triangle",
+    );
+    expect(narrationClipForText("That's the Star! Let's try to find Triangle!")?.id).toBe(
+      "voice.games.no-star-triangle",
+    );
+    expect(narrationClipForText("That's the One! Let's try to find Three!")?.id).toBe(
+      "voice.games.no-one-three",
+    );
+    expect(narrationClipForText("That's the Five! Let's try to find Three!")?.id).toBe(
+      "voice.games.no-five-three",
+    );
+    expect(narrationClipForText("That's the Two! Let's try to find Three!")?.id).toBe(
+      "voice.games.no-two-three",
+    );
+    expect(narrationClipForText("That's the Apple! Let's try to find Banana!")?.id).toBe(
+      "voice.games.no-apple-banana",
+    );
+    expect(narrationClipForText("That's the Grapes! Let's try to find Banana!")?.id).toBe(
+      "voice.games.no-grapes-banana",
     );
   });
 
