@@ -5643,6 +5643,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-pond-4.mp3",
       "/audio/voice/world-no-pond-11.mp3",
       "/audio/voice/world-yes-pond-reeds.mp3",
+      "/audio/voice/world-no-pond-bakery.mp3",
+      "/audio/voice/world-no-pond-runway.mp3",
+      "/audio/voice/world-yes-pond-frog.mp3",
+      "/audio/voice/world-no-pond-plane.mp3",
+      "/audio/voice/world-no-pond-bell.mp3",
+      "/audio/voice/world-yes-pond-p.mp3",
+      "/audio/voice/world-no-pond-b.mp3",
+      "/audio/voice/world-no-pond-d.mp3",
+      "/audio/voice/world-yes-pond-circle.mp3",
+      "/audio/voice/world-no-pond-star.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6647,6 +6657,35 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Hooray! Wet reeds! By the wet reeds.")?.id).toBe(
       "voice.world.yes-pond-reeds",
+    );
+    expect(narrationClipForText("That is Bakery! Too dry and floury. Let's try again!")?.id).toBe(
+      "voice.world.no-pond-bakery",
+    );
+    expect(narrationClipForText("That is Runway! Planes, not frogs. Let's try again!")?.id).toBe(
+      "voice.world.no-pond-runway",
+    );
+    expect(narrationClipForText("Hooray! Frog! A frog hopped in.")?.id).toBe(
+      "voice.world.yes-pond-frog",
+    );
+    expect(
+      narrationClipForText("That is Plane! Planes whoosh, they do not plop here. Let's try again!")
+        ?.id,
+    ).toBe("voice.world.no-pond-plane");
+    expect(
+      narrationClipForText("That is A bell! Bells ring, they do not plop. Let's try again!")?.id,
+    ).toBe("voice.world.no-pond-bell");
+    expect(narrationClipForText("Hooray! P! Pond starts with P.")?.id).toBe("voice.world.yes-pond-p");
+    expect(narrationClipForText("That is B! B starts bug. Let's try again!")?.id).toBe(
+      "voice.world.no-pond-b",
+    );
+    expect(narrationClipForText("That is D! D starts dog. Let's try again!")?.id).toBe(
+      "voice.world.no-pond-d",
+    );
+    expect(narrationClipForText("Hooray! Circle! A round pad.")?.id).toBe(
+      "voice.world.yes-pond-circle",
+    );
+    expect(narrationClipForText("That is Star! Stars are pointy. Let's try again!")?.id).toBe(
+      "voice.world.no-pond-star",
     );
   });
 
