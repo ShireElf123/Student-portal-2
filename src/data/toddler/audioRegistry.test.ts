@@ -5464,6 +5464,16 @@ describe("audio registry", () => {
       "/audio/voice/games-no-hippo-pig.mp3",
       "/audio/voice/games-no-bunny-pig.mp3",
       "/audio/voice/games-no-cat-pig.mp3",
+      "/audio/voice/games-no-rabbit-turtle.mp3",
+      "/audio/voice/games-no-fish-turtle.mp3",
+      "/audio/voice/games-no-bird-turtle.mp3",
+      "/audio/voice/games-no-frog-bee.mp3",
+      "/audio/voice/games-no-duck-bee.mp3",
+      "/audio/voice/games-no-cat-bee.mp3",
+      "/audio/voice/games-no-camel-penguin.mp3",
+      "/audio/voice/games-no-monkey-penguin.mp3",
+      "/audio/voice/games-no-cow-penguin.mp3",
+      "/audio/voice/games-no-moon-sun.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -5889,6 +5899,36 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That's the Kitten! Let's try to find Happy Piggy!")?.id).toBe(
       "voice.games.no-cat-pig",
+    );
+    expect(narrationClipForText("That's the Rabbit! Let's try to find Turtle!")?.id).toBe(
+      "voice.games.no-rabbit-turtle",
+    );
+    expect(narrationClipForText("That's the Fish! Let's try to find Turtle!")?.id).toBe(
+      "voice.games.no-fish-turtle",
+    );
+    expect(narrationClipForText("That's the Bird! Let's try to find Turtle!")?.id).toBe(
+      "voice.games.no-bird-turtle",
+    );
+    expect(narrationClipForText("That's the Frog! Let's try to find Busy Bee!")?.id).toBe(
+      "voice.games.no-frog-bee",
+    );
+    expect(narrationClipForText("That's the Duck! Let's try to find Busy Bee!")?.id).toBe(
+      "voice.games.no-duck-bee",
+    );
+    expect(narrationClipForText("That's the Kitten! Let's try to find Busy Bee!")?.id).toBe(
+      "voice.games.no-cat-bee",
+    );
+    expect(narrationClipForText("That's the Camel! Let's try to find Penguin!")?.id).toBe(
+      "voice.games.no-camel-penguin",
+    );
+    expect(narrationClipForText("That's the Monkey! Let's try to find Penguin!")?.id).toBe(
+      "voice.games.no-monkey-penguin",
+    );
+    expect(narrationClipForText("That's the Cow! Let's try to find Penguin!")?.id).toBe(
+      "voice.games.no-cow-penguin",
+    );
+    expect(narrationClipForText("That's the Moon! Let's try to find Sunny Sun!")?.id).toBe(
+      "voice.games.no-moon-sun",
     );
   });
 
