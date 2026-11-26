@@ -5683,6 +5683,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-night-glow.mp3",
       "/audio/voice/world-yes-compost-worm.mp3",
       "/audio/voice/world-no-compost-dolphin.mp3",
+      "/audio/voice/world-no-compost-plane.mp3",
+      "/audio/voice/world-yes-compost-soil.mp3",
+      "/audio/voice/world-no-compost-fridge.mp3",
+      "/audio/voice/world-no-compost-sky.mp3",
+      "/audio/voice/world-yes-compost-peel.mp3",
+      "/audio/voice/world-no-compost-boot.mp3",
+      "/audio/voice/world-no-compost-key.mp3",
+      "/audio/voice/world-yes-compost-5.mp3",
+      "/audio/voice/world-no-compost-2.mp3",
+      "/audio/voice/world-no-compost-8.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6800,6 +6810,34 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That is Dolphin! Dolphins swim seas. Let's try again!")?.id).toBe(
       "voice.world.no-compost-dolphin",
+    );
+    expect(narrationClipForText("That is Plane! Planes fly runways. Let's try again!")?.id).toBe(
+      "voice.world.no-compost-plane",
+    );
+    expect(narrationClipForText("Hooray! Damp soil! Damp soil is home.")?.id).toBe(
+      "voice.world.yes-compost-soil",
+    );
+    expect(narrationClipForText("That is Fridge! Too cold and closed. Let's try again!")?.id).toBe(
+      "voice.world.no-compost-fridge",
+    );
+    expect(narrationClipForText("That is The sky! Worms do not fly. Let's try again!")?.id).toBe(
+      "voice.world.no-compost-sky",
+    );
+    expect(narrationClipForText("Hooray! Apple peel! Peels can compost.")?.id).toBe(
+      "voice.world.yes-compost-peel",
+    );
+    expect(narrationClipForText("That is A boot! Boots are not compost. Let's try again!")?.id).toBe(
+      "voice.world.no-compost-boot",
+    );
+    expect(narrationClipForText("That is A key! Keys stay on a hook. Let's try again!")?.id).toBe(
+      "voice.world.no-compost-key",
+    );
+    expect(narrationClipForText("Hooray! 5 worms! Five worms.")?.id).toBe("voice.world.yes-compost-5");
+    expect(narrationClipForText("That is 2 worms! Count every worm. Let's try again!")?.id).toBe(
+      "voice.world.no-compost-2",
+    );
+    expect(narrationClipForText("That is 8 worms! Not eight this rain. Let's try again!")?.id).toBe(
+      "voice.world.no-compost-8",
     );
   });
 
