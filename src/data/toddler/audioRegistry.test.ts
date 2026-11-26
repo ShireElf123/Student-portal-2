@@ -5414,6 +5414,16 @@ describe("audio registry", () => {
       "/audio/voice/games-yes-giraffe.mp3",
       "/audio/voice/games-yes-rain.mp3",
       "/audio/voice/games-yes-dolphin.mp3",
+      "/audio/voice/games-yes-red.mp3",
+      "/audio/voice/games-yes-six.mp3",
+      "/audio/voice/games-yes-eight.mp3",
+      "/audio/voice/games-yes-tenstars.mp3",
+      "/audio/voice/games-yes-letter-d.mp3",
+      "/audio/voice/games-yes-letter-o.mp3",
+      "/audio/voice/games-yes-letter-f.mp3",
+      "/audio/voice/games-yes-ten-after-nine.mp3",
+      "/audio/voice/games-no-dog-cow.mp3",
+      "/audio/voice/games-no-cat-cow.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -5689,6 +5699,37 @@ describe("audio registry", () => {
       narrationClipForText("Yes! That is the Dolphin! I swim and leap in the ocean! Super star!")
         ?.id,
     ).toBe("voice.games.yes-dolphin");
+    expect(
+      narrationClipForText("Yes! That is the Red! The pattern starts again with red! Super star!")
+        ?.id,
+    ).toBe("voice.games.yes-red");
+    expect(narrationClipForText("Yes! That is the Six! Six little bees! Super star!")?.id).toBe(
+      "voice.games.yes-six",
+    );
+    expect(narrationClipForText("Yes! That is the Eight! Eight apples! Super star!")?.id).toBe(
+      "voice.games.yes-eight",
+    );
+    expect(narrationClipForText("Yes! That is the Ten! Ten stars! Super star!")?.id).toBe(
+      "voice.games.yes-tenstars",
+    );
+    expect(narrationClipForText("Yes! That is the D! D comes after C! Super star!")?.id).toBe(
+      "voice.games.yes-letter-d",
+    );
+    expect(narrationClipForText("Yes! That is the O! O comes after N! Super star!")?.id).toBe(
+      "voice.games.yes-letter-o",
+    );
+    expect(narrationClipForText("Yes! That is the F! F says fff, fox! Super star!")?.id).toBe(
+      "voice.games.yes-letter-f",
+    );
+    expect(narrationClipForText("Yes! That is the Ten! After nine comes ten! Super star!")?.id).toBe(
+      "voice.games.yes-ten-after-nine",
+    );
+    expect(narrationClipForText("That's the Dog! Let's try to find Cow!")?.id).toBe(
+      "voice.games.no-dog-cow",
+    );
+    expect(narrationClipForText("That's the Cat! Let's try to find Cow!")?.id).toBe(
+      "voice.games.no-cat-cow",
+    );
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
