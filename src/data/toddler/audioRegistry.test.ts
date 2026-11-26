@@ -5484,6 +5484,16 @@ describe("audio registry", () => {
       "/audio/voice/games-no-two-three.mp3",
       "/audio/voice/games-no-apple-banana.mp3",
       "/audio/voice/games-no-grapes-banana.mp3",
+      "/audio/voice/games-no-lemon-banana.mp3",
+      "/audio/voice/games-no-run-stop.mp3",
+      "/audio/voice/games-no-play-stop.mp3",
+      "/audio/voice/games-no-hide-stop.mp3",
+      "/audio/voice/games-no-zebra-giraffe.mp3",
+      "/audio/voice/games-no-lion-giraffe.mp3",
+      "/audio/voice/games-no-hippo-giraffe.mp3",
+      "/audio/voice/games-no-sun-rain.mp3",
+      "/audio/voice/games-no-wind-rain.mp3",
+      "/audio/voice/games-no-rainbow-rain.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -5969,6 +5979,36 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That's the Grapes! Let's try to find Banana!")?.id).toBe(
       "voice.games.no-grapes-banana",
+    );
+    expect(narrationClipForText("That's the Lemon! Let's try to find Banana!")?.id).toBe(
+      "voice.games.no-lemon-banana",
+    );
+    expect(narrationClipForText("That's the Run fast! Let's try to find Stop and Look!")?.id).toBe(
+      "voice.games.no-run-stop",
+    );
+    expect(narrationClipForText("That's the Play ball! Let's try to find Stop and Look!")?.id).toBe(
+      "voice.games.no-play-stop",
+    );
+    expect(narrationClipForText("That's the Hide! Let's try to find Stop and Look!")?.id).toBe(
+      "voice.games.no-hide-stop",
+    );
+    expect(narrationClipForText("That's the Zebra! Let's try to find Giraffe!")?.id).toBe(
+      "voice.games.no-zebra-giraffe",
+    );
+    expect(narrationClipForText("That's the Lion! Let's try to find Giraffe!")?.id).toBe(
+      "voice.games.no-lion-giraffe",
+    );
+    expect(narrationClipForText("That's the Hippo! Let's try to find Giraffe!")?.id).toBe(
+      "voice.games.no-hippo-giraffe",
+    );
+    expect(narrationClipForText("That's the Sunshine! Let's try to find Rain!")?.id).toBe(
+      "voice.games.no-sun-rain",
+    );
+    expect(narrationClipForText("That's the Wind! Let's try to find Rain!")?.id).toBe(
+      "voice.games.no-wind-rain",
+    );
+    expect(narrationClipForText("That's the Rainbow! Let's try to find Rain!")?.id).toBe(
+      "voice.games.no-rainbow-rain",
     );
   });
 
