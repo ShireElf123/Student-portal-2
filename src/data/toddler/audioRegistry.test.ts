@@ -5524,6 +5524,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-trace-r.mp3",
       "/audio/voice/phonics-trace-s.mp3",
       "/audio/voice/phonics-trace-t.mp3",
+      "/audio/voice/phonics-yes-k.mp3",
+      "/audio/voice/phonics-yes-l.mp3",
+      "/audio/voice/phonics-yes-m.mp3",
+      "/audio/voice/phonics-yes-n.mp3",
+      "/audio/voice/phonics-yes-o.mp3",
+      "/audio/voice/phonics-yes-p.mp3",
+      "/audio/voice/phonics-yes-q.mp3",
+      "/audio/voice/phonics-yes-r.mp3",
+      "/audio/voice/phonics-yes-s.mp3",
+      "/audio/voice/phonics-yes-t.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6170,6 +6180,36 @@ describe("audio registry", () => {
         "Trace the letter T. Start on the blue dot. One line. Letter T says tuh. Taxi. Toast. Token.",
       )?.id,
     ).toBe("voice.phonics.trace-t");
+    expect(narrationClipForText("Yes! Letter K says kuh. Key. Kite. King.")?.id).toBe(
+      "voice.phonics.yes-k",
+    );
+    expect(narrationClipForText("Yes! Letter L says lll. Loaf. Lamp. Line.")?.id).toBe(
+      "voice.phonics.yes-l",
+    );
+    expect(narrationClipForText("Yes! Letter M says mmm. Mat. Moon. Milk.")?.id).toBe(
+      "voice.phonics.yes-m",
+    );
+    expect(narrationClipForText("Yes! Letter N says nnn. Nest. Nap. Nana.")?.id).toBe(
+      "voice.phonics.yes-n",
+    );
+    expect(narrationClipForText("Yes! Letter O says o. Orange. On. Otter.")?.id).toBe(
+      "voice.phonics.yes-o",
+    );
+    expect(narrationClipForText("Yes! Letter P says puh. Porch. Pan. Peg.")?.id).toBe(
+      "voice.phonics.yes-p",
+    );
+    expect(narrationClipForText("Yes! Letter Q says kwuh. Quilt. Quiet. Queen.")?.id).toBe(
+      "voice.phonics.yes-q",
+    );
+    expect(narrationClipForText("Yes! Letter R says rrr. Rain. Rope. Red.")?.id).toBe(
+      "voice.phonics.yes-r",
+    );
+    expect(narrationClipForText("Yes! Letter S says sss. Stoop. Sun. Sock.")?.id).toBe(
+      "voice.phonics.yes-s",
+    );
+    expect(narrationClipForText("Yes! Letter T says tuh. Taxi. Toast. Token.")?.id).toBe(
+      "voice.phonics.yes-t",
+    );
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
