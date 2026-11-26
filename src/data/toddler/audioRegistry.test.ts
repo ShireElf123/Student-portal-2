@@ -5614,6 +5614,16 @@ describe("audio registry", () => {
       "/audio/voice/games-no-ball-window.mp3",
       "/audio/voice/games-no-slice-window.mp3",
       "/audio/voice/games-no-moon-window.mp3",
+      "/audio/voice/games-no-door-clock.mp3",
+      "/audio/voice/games-no-slice-clock.mp3",
+      "/audio/voice/games-no-book-clock.mp3",
+      "/audio/voice/games-benny-munch-1.mp3",
+      "/audio/voice/games-benny-munch-2.mp3",
+      "/audio/voice/games-benny-munch-3.mp3",
+      "/audio/voice/games-benny-munch-4.mp3",
+      "/audio/voice/games-benny-munch-5.mp3",
+      "/audio/voice/games-benny-munch-6.mp3",
+      "/audio/voice/games-benny-munch-7.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6541,6 +6551,36 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That's the Moon! Let's find Square window!")?.id).toBe(
       "voice.games.no-moon-window",
+    );
+    expect(narrationClipForText("That's the Door! Let's find Town clock!")?.id).toBe(
+      "voice.games.no-door-clock",
+    );
+    expect(narrationClipForText("That's the Pizza! Let's find Town clock!")?.id).toBe(
+      "voice.games.no-slice-clock",
+    );
+    expect(narrationClipForText("That's the Book! Let's find Town clock!")?.id).toBe(
+      "voice.games.no-book-clock",
+    );
+    expect(narrationClipForText("1! Munch munch munch! Yummy!")?.id).toBe(
+      "voice.games.benny-munch-1",
+    );
+    expect(narrationClipForText("2! Munch munch munch! Yummy!")?.id).toBe(
+      "voice.games.benny-munch-2",
+    );
+    expect(narrationClipForText("3! Munch munch munch! Yummy!")?.id).toBe(
+      "voice.games.benny-munch-3",
+    );
+    expect(narrationClipForText("4! Munch munch munch! Yummy!")?.id).toBe(
+      "voice.games.benny-munch-4",
+    );
+    expect(narrationClipForText("5! Munch munch munch! Yummy!")?.id).toBe(
+      "voice.games.benny-munch-5",
+    );
+    expect(narrationClipForText("6! Munch munch munch! Yummy!")?.id).toBe(
+      "voice.games.benny-munch-6",
+    );
+    expect(narrationClipForText("7! Munch munch munch! Yummy!")?.id).toBe(
+      "voice.games.benny-munch-7",
     );
   });
 
