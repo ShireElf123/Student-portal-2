@@ -15,7 +15,7 @@ export function ToddlerSpaceNav({
       role="tablist"
       aria-label="Toddler destinations"
       data-testid="toddler-space-nav"
-      className={`grid grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3 p-1.5 sm:p-3 rounded-3xl max-w-6xl mx-auto mb-4 lg:mb-8 shadow-xl ${
+      className={`grid grid-cols-4 lg:grid-cols-8 gap-1.5 sm:gap-3 p-1 sm:p-3 rounded-3xl max-w-6xl mx-auto mb-2 sm:mb-4 lg:mb-8 shadow-xl ${
         isMeadow
           ? "bg-white/95 backdrop-blur-md border-4 border-emerald-300 ring-4 ring-emerald-500/20"
           : "bg-white/[0.08] border border-white/15"
@@ -31,7 +31,7 @@ export function ToddlerSpaceNav({
             aria-selected={selected}
             data-testid={`toddler-tab-${tab.id}`}
             onClick={() => onSelect(tab.id)}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none min-h-12 ${
+            className={`flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 py-2 sm:py-4 px-1.5 sm:px-3 rounded-2xl font-black text-[11px] sm:text-base md:text-lg transition-all cursor-pointer select-none min-h-11 sm:min-h-12 ${
               selected
                 ? tab.activeClass
                 : isMeadow

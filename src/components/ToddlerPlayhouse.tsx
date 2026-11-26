@@ -67,17 +67,17 @@ export function ToddlerPlayhouse({
           <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${isMeadow ? "text-slate-900" : "text-white"}`}>
             <span>🎭</span> Playhouse
           </h2>
-          <p className={`text-sm sm:text-base font-semibold ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
+          <p className={`hidden sm:block text-sm sm:text-base font-semibold ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
             Short plays with Teddy, Nana, Rosie, Dot, and friends. Tap a line. Hear the voice. No songs — just talking.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {PLAYHOUSE_SHOWS.map((item) => (
             <button
               key={item.id}
               type="button"
               onClick={() => openShow(item)}
-              className={`text-left min-h-40 rounded-[2rem] p-5 border-4 shadow-xl bg-gradient-to-br ${item.coverGradient} text-white`}
+              className={`text-left min-h-32 sm:min-h-40 rounded-[2rem] p-3 sm:p-5 border-4 shadow-xl bg-gradient-to-br ${item.coverGradient} text-white`}
             >
               {item.coverImage || PLAYHOUSE_COVERS[item.id] ? (
                 <img

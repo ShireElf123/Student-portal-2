@@ -1841,8 +1841,8 @@ export function ToddlerWorldsNavigator({
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-amber-600">Wonderland Atlas</p>
-          <h2 className="text-4xl sm:text-5xl font-black tracking-tight">Pick a land</h2>
+          <p className="hidden sm:block text-xs font-black uppercase tracking-[0.22em] text-amber-600">Wonderland Atlas</p>
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight">Pick a land</h2>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button

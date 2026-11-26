@@ -176,13 +176,13 @@ export function PrimaryLearningLab({
         </div>
 
         {/* Activity Selector Tabs (Tactile 3D Buttons) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 mt-4 p-2 rounded-3xl bg-white/90 backdrop-blur-md border-3 border-indigo-200 shadow-xl">
+        <div className="flex sm:grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 mt-4 p-2 rounded-3xl bg-white/90 backdrop-blur-md border-3 border-indigo-200 shadow-xl overflow-x-auto snap-x sm:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <button
             onClick={() => {
               setActiveActivity("math-blitz");
               soundEffects.playPop();
             }}
-            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none ${
+            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none shrink-0 min-w-[9rem] sm:min-w-0 snap-start ${
               activeActivity === "math-blitz"
                 ? "bg-gradient-to-b from-amber-400 to-orange-500 border-orange-700 text-white shadow-orange-500/30 active:translate-y-1"
                 : "bg-white hover:bg-amber-50 border-slate-200 text-slate-700 hover:text-slate-900"
@@ -197,7 +197,7 @@ export function PrimaryLearningLab({
               setActiveActivity("fraction-lab");
               soundEffects.playPop();
             }}
-            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none ${
+            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none shrink-0 min-w-[9rem] sm:min-w-0 snap-start ${
               activeActivity === "fraction-lab"
                 ? "bg-gradient-to-b from-emerald-400 to-teal-500 border-teal-700 text-white shadow-emerald-500/30 active:translate-y-1"
                 : "bg-white hover:bg-emerald-50 border-slate-200 text-slate-700 hover:text-slate-900"
@@ -212,7 +212,7 @@ export function PrimaryLearningLab({
               setActiveActivity("word-forge");
               soundEffects.playPop();
             }}
-            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none ${
+            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none shrink-0 min-w-[9rem] sm:min-w-0 snap-start ${
               activeActivity === "word-forge"
                 ? "bg-gradient-to-b from-purple-400 to-indigo-500 border-indigo-700 text-white shadow-purple-500/30 active:translate-y-1"
                 : "bg-white hover:bg-purple-50 border-slate-200 text-slate-700 hover:text-slate-900"
@@ -227,7 +227,7 @@ export function PrimaryLearningLab({
               setActiveActivity("balance-scale");
               soundEffects.playPop();
             }}
-            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none ${
+            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none shrink-0 min-w-[9rem] sm:min-w-0 snap-start ${
               activeActivity === "balance-scale"
                 ? "bg-gradient-to-b from-cyan-400 to-blue-500 border-blue-700 text-white shadow-cyan-500/30 active:translate-y-1"
                 : "bg-white hover:bg-cyan-50 border-slate-200 text-slate-700 hover:text-slate-900"
@@ -242,7 +242,7 @@ export function PrimaryLearningLab({
               setActiveActivity("solar-system");
               soundEffects.playPop();
             }}
-            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none ${
+            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none shrink-0 min-w-[9rem] sm:min-w-0 snap-start ${
               activeActivity === "solar-system"
                 ? "bg-gradient-to-b from-indigo-500 to-purple-600 border-purple-800 text-white shadow-indigo-500/30 active:translate-y-1"
                 : "bg-white hover:bg-indigo-50 border-slate-200 text-slate-700 hover:text-slate-900"
@@ -257,7 +257,7 @@ export function PrimaryLearningLab({
               setActiveActivity("geometry-builder");
               soundEffects.playPop();
             }}
-            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none ${
+            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none shrink-0 min-w-[9rem] sm:min-w-0 snap-start ${
               activeActivity === "geometry-builder"
                 ? "bg-gradient-to-b from-rose-500 to-pink-600 border-pink-800 text-white shadow-pink-500/30 active:translate-y-1"
                 : "bg-white hover:bg-pink-50 border-slate-200 text-slate-700 hover:text-slate-900"
@@ -272,7 +272,7 @@ export function PrimaryLearningLab({
               setActiveActivity("code-runner");
               soundEffects.playPop();
             }}
-            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none ${
+            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none shrink-0 min-w-[9rem] sm:min-w-0 snap-start ${
               activeActivity === "code-runner"
                 ? "bg-gradient-to-b from-emerald-500 to-teal-700 border-teal-900 text-white shadow-teal-500/30 active:translate-y-1"
                 : "bg-white hover:bg-teal-50 border-slate-200 text-slate-700 hover:text-slate-900"
@@ -287,7 +287,7 @@ export function PrimaryLearningLab({
               setActiveActivity("times-matrix");
               soundEffects.playPop();
             }}
-            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none ${
+            className={`p-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 border-b-4 transition-all cursor-pointer shadow-md select-none shrink-0 min-w-[9rem] sm:min-w-0 snap-start ${
               activeActivity === "times-matrix"
                 ? "bg-gradient-to-b from-amber-500 to-yellow-600 border-yellow-800 text-white shadow-yellow-500/30 active:translate-y-1"
                 : "bg-white hover:bg-amber-50 border-slate-200 text-slate-700 hover:text-slate-900"
