@@ -714,7 +714,7 @@ export function ToddlerWorldView({
         : "bg-[#0c0d14] text-white"
     }`}>
       {/* Top Playful Banner with Organic Sky & Clouds */}
-      <div className={`relative overflow-hidden px-3 sm:px-4 pt-3 sm:pt-6 pb-1 sm:pb-2 transition-all duration-500 ${
+      <div className={`relative overflow-hidden px-4 pt-6 pb-2 transition-all duration-500 ${
         isMeadow
           ? "bg-gradient-to-b from-[#38bdf8] via-[#7dd3fc] to-[#bae6fd] text-slate-900"
           : "bg-gradient-to-b from-indigo-950 via-slate-900 to-[#0c0d14] text-white"
@@ -739,25 +739,25 @@ export function ToddlerWorldView({
           </>
         )}
 
-        <div className="max-w-7xl mx-auto flex flex-row items-center justify-between gap-2 sm:gap-4 relative z-10">
-          <div className="flex items-center gap-2 sm:gap-3.5 text-left min-w-0">
-            <div className="w-11 h-11 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-2xl sm:rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-400 to-pink-500 flex items-center justify-center text-2xl sm:text-3xl md:text-4xl shadow-2xl shadow-orange-500/40 ring-2 sm:ring-4 ring-white border-2 border-amber-300 sm:animate-bounce flex-shrink-0">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
+          <div className="flex items-center gap-3.5 text-center md:text-left">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-400 to-pink-500 flex items-center justify-center text-3xl sm:text-4xl shadow-2xl shadow-orange-500/40 ring-4 ring-white border-2 border-amber-300 animate-bounce flex-shrink-0">
               🧸
             </div>
-            <div className="min-w-0">
-              <div className={`hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-1 shadow-md ${
+            <div>
+              <div className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-1 shadow-md ${
                 isMeadow
                   ? "bg-white text-amber-900 border-2 border-amber-300"
                   : "bg-amber-400/20 text-amber-300 border border-amber-400/30"
               }`}>
                 <Sparkles size={13} className="text-amber-500" /> Ages 2–5
               </div>
-              <h1 className={`text-lg sm:text-3xl md:text-5xl font-black tracking-tight truncate ${
+              <h1 className={`text-3xl sm:text-5xl font-black tracking-tight ${
                 isMeadow ? "text-slate-900 drop-shadow-sm font-display" : "text-white"
               }`}>
                 Toddler Wonderland
               </h1>
-              <p className={`hidden sm:block text-sm sm:text-base font-bold ${
+              <p className={`text-sm sm:text-base font-bold ${
                 isMeadow ? "text-slate-800 max-w-xl" : "text-white/90 max-w-xl"
               }`}>
                 Pick a land. Play inside.
@@ -766,7 +766,7 @@ export function ToddlerWorldView({
           </div>
 
           {/* Stars Rewards Jar, Buddy Companion & Quick Actions */}
-          <div className="flex flex-nowrap sm:flex-wrap items-center justify-end gap-1.5 sm:gap-2.5 overflow-x-auto max-w-[55%] sm:max-w-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex flex-wrap items-center justify-center gap-2.5">
             {/* Wonderland Theme Toggle (Tactile 3D) */}
             <button
               onClick={() => {
@@ -893,19 +893,15 @@ export function ToddlerWorldView({
       {/* Organic Rolling Hills Landscape Divider (Separating Sky from Meadow) */}
       <RollingHillsDivider
         variant={isMeadow ? "meadow" : "night-starlight"}
-        heightClass="h-6 sm:h-10 md:h-16"
+        heightClass="h-10 sm:h-14 md:h-16"
         showFlowers={isMeadow}
         className="-mt-1 mb-4"
       />
 
       {/* Main Mode Navigation Tabs — Worlds/Stories/Games/Focus first on the phone row */}
-      <div className={`sticky top-0 z-30 max-w-7xl mx-auto px-3 sm:px-4 pt-1 pb-1 backdrop-blur-md ${
-        isMeadow ? "bg-emerald-400/80" : "bg-[#0c0d14]/85"
-      }`}>
+      <div className="max-w-7xl mx-auto px-4 pt-2 pb-2">
         <ToddlerSpaceNav activeTab={activeTab} onSelect={setActiveTab} isMeadow={isMeadow} />
-      </div>
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 pb-2">
         {/* Worlds is the front page: full width like the phone. Other tabs keep the desktop sidebar. */}
         <div className={`grid grid-cols-1 gap-6 items-start ${activeTab === "worlds" ? "" : "lg:grid-cols-12"}`}>
           {/* Desktop Left Sidebar: Buddy Mascot, Explorer Rank, Today's Quests */}
@@ -1061,7 +1057,7 @@ export function ToddlerWorldView({
                 }`}>
                   <span>📖</span> Story Library
                 </h2>
-                <p className={`hidden sm:block text-sm sm:text-base font-semibold ${
+                <p className={`text-sm sm:text-base font-semibold ${
                   isMeadow ? "text-slate-800" : "text-white/85"
                 }`}>
                   A real library: series rows, long tales, first words, look-and-learn. Tap a cover. Tap any word.
@@ -1185,7 +1181,7 @@ export function ToddlerWorldView({
         {/* SECTION 4: INTERACTIVE GAMES & PICTURE QUIZZES */}
         {activeTab === "games" && (
           <div>
-            <div className="hidden sm:flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
                   <span>🎮</span> Toddler Interactive Quizzes & Play Games

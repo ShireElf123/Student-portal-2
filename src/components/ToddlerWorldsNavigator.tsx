@@ -175,10 +175,6 @@ export function ToddlerWorldsNavigator({
   const toyCreditedRef = useRef<string | null>(null);
   const [tapsMuted, setTapsMuted] = useState(() => soundEffects.isMuted());
   const [letterLaneOpen, setLetterLaneOpen] = useState(false);
-  const [atlasPane, setAtlasPane] = useState<string>(() => {
-    const worldId = openingRoute.worldId || getToddlerProgress().lastVisitedWorldId;
-    return ATLAS_CONTINENTS.find((band) => (band.worldIds as readonly string[]).includes(worldId || ""))?.id ?? ATLAS_CONTINENTS[0].id;
-  });
   const toggleTapSounds = () => {
     const next = !soundEffects.isMuted();
     soundEffects.setMuted(next);
@@ -1845,10 +1841,10 @@ export function ToddlerWorldsNavigator({
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="hidden sm:block text-xs font-black uppercase tracking-[0.22em] text-amber-600">Wonderland Atlas</p>
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight">Pick a land</h2>
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-amber-600">Wonderland Atlas</p>
+          <h2 className="text-4xl sm:text-5xl font-black tracking-tight">Pick a land</h2>
         </div>
-        <div className="flex flex-nowrap sm:flex-wrap items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={toggleTapSounds}
@@ -1901,40 +1897,8 @@ export function ToddlerWorldsNavigator({
         </button>
       )}
 
-      <div
-        data-testid="atlas-bands"
-        className="flex gap-2 overflow-x-auto snap-x pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {ATLAS_CONTINENTS.map((band) => {
-          const on = atlasPane === band.id;
-          return (
-            <button
-              key={band.id}
-              type="button"
-              data-testid={`atlas-band-${band.id}`}
-              onClick={() => setAtlasPane(band.id)}
-              className={`snap-start shrink-0 min-h-12 px-4 rounded-2xl font-black text-sm border-b-4 ${
-                on ? "bg-amber-400 text-amber-950 border-amber-700" : "bg-white text-slate-800 border-white"
-              }`}
-            >
-              {band.emoji} {band.title}
-            </button>
-          );
-        })}
-        <button
-          type="button"
-          data-testid="atlas-band-doors"
-          onClick={() => setAtlasPane("doors")}
-          className={`snap-start shrink-0 min-h-12 px-4 rounded-2xl font-black text-sm border-b-4 ${
-            atlasPane === "doors" ? "bg-violet-400 text-violet-950 border-violet-700" : "bg-white text-slate-800 border-white"
-          }`}
-        >
-          🚪 Doors
-        </button>
-      </div>
-
       <div className="grid grid-cols-1 gap-6">
-        {atlasPane !== "doors" && ATLAS_CONTINENTS.filter((continent) => continent.id === atlasPane).map((continent) => {
+        {ATLAS_CONTINENTS.map((continent) => {
           const lands = continent.worldIds
             .map((id) => ALL_TODDLER_WORLDS.find((world) => world.id === id))
             .filter((world): world is ToddlerWorld => Boolean(world));
@@ -1949,7 +1913,7 @@ export function ToddlerWorldsNavigator({
                 </h3>
                 <p className="text-sm font-bold text-slate-700">{continent.blurb}</p>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {lands.map((world, landIndex) => {
                   const stats = getWorldProgressStats(world, progress);
                   const stations = world.areas.reduce((sum, area) => sum + area.activities.length, 0);
@@ -1966,7 +1930,7 @@ export function ToddlerWorldsNavigator({
                         here ? "border-amber-400" : "border-white"
                       }`}
                     >
-                      <span className="relative mb-0 block h-28 sm:h-40 md:h-56 w-full overflow-hidden">
+                      <span className="relative mb-0 block h-44 sm:h-48 md:h-56 w-full overflow-hidden">
                         {WORLD_COVER[world.id] ? (
                           <img
                             src={WORLD_COVER[world.id]}
@@ -2008,7 +1972,6 @@ export function ToddlerWorldsNavigator({
         })}
       </div>
 
-      {atlasPane === "doors" && (
       <section className="rounded-[2rem] bg-gradient-to-br from-indigo-300 via-violet-200 to-amber-200 p-4 sm:p-6 shadow-xl border border-white/40">
         <div className="mb-5 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
           <h3 className="text-2xl sm:text-3xl font-black text-slate-900">Hidden doors</h3>
@@ -2077,7 +2040,6 @@ export function ToddlerWorldsNavigator({
           })}
         </div>
       </section>
-      )}
     </div>
   );
 }

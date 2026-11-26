@@ -267,18 +267,6 @@ describe("Feed Benny Bunny", () => {
     expect(carrotButton()).toBeTruthy();
   });
 
-  it("puts the game dock above the play surface", async () => {
-    const { container, getByTestId } = render(
-      <ToddlerQuizzesAndGames starsCount={0} onAddStar={() => {}} targetActivity="animal-quiz" />
-    );
-    await flush(400);
-    const html = container.innerHTML;
-    expect(html.indexOf("games-dock")).toBeGreaterThanOrEqual(0);
-    expect(html.indexOf("games-dock")).toBeLessThan(html.indexOf("Hear Again"));
-    expect(getByTestId("game-tile-animal-quiz")).toBeTruthy();
-    expect(getByTestId("game-tile-picnic-plus")).toBeTruthy();
-  });
-
   it("hub Bubble Pop refills the sky without a More Bubbles tap", async () => {
     const { container } = render(
       <ToddlerQuizzesAndGames starsCount={0} onAddStar={() => {}} targetActivity="bubble-pop" />

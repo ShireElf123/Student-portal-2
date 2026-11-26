@@ -177,12 +177,12 @@ export function ToddlerFocusBoard({
         <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${isMeadow ? "text-slate-900" : "text-white"}`}>
           <span>🎯</span> Focus Body
         </h2>
-        <p className={`hidden sm:block text-sm sm:text-base font-semibold ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
+        <p className={`text-sm sm:text-base font-semibold ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
           Check the body. Slow gold paths buzz if you rush. Move, push, freeze, breathe, look, then quiet.
         </p>
       </div>
 
-      <div className="flex flex-nowrap sm:flex-wrap gap-2 mb-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex flex-wrap gap-2 mb-5">
         {MODES.map((item) => (
           <button
             key={item.id}
@@ -198,7 +198,7 @@ export function ToddlerFocusBoard({
               if (item.id === "slow") speakText("Pick a path. Finger stays in the gold. Red edge buzzes.", { pitch: 1.1, rate: 0.88 });
               if (item.id === "check") speakText("How does the body feel right now?", { pitch: 1.12, rate: 0.9 });
             }}
-            className={`shrink-0 min-h-12 sm:min-h-14 rounded-full px-4 py-2 font-black border-b-4 ${
+            className={`min-h-14 rounded-full px-4 py-2 font-black border-b-4 ${
               mode === item.id ? "bg-teal-400 border-teal-700 text-teal-950" : ghost
             }`}
           >

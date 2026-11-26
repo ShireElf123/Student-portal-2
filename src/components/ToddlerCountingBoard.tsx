@@ -144,12 +144,12 @@ export function ToddlerCountingBoard({
         <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${isMeadow ? "text-slate-900" : "text-white"}`}>
           <span>🔢</span> Count to Twenty
         </h2>
-        <p className={`hidden sm:block text-sm sm:text-base font-semibold ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
+        <p className={`text-sm sm:text-base font-semibold ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
           Ten-frames, more and less, make ten, a quick look, stoop shapes, patterns, and what number comes after.
         </p>
       </div>
 
-      <div className="flex flex-nowrap sm:flex-wrap gap-2 mb-5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="flex flex-wrap gap-2 mb-5">
         {MODES.map((item) => (
           <button
             key={item.id}
@@ -158,7 +158,7 @@ export function ToddlerCountingBoard({
               setMode(item.id);
               soundEffects.playPop();
             }}
-            className={`shrink-0 min-h-12 sm:min-h-14 rounded-full px-4 py-2 font-black border-b-4 ${
+            className={`min-h-14 rounded-full px-4 py-2 font-black border-b-4 ${
               mode === item.id ? "bg-indigo-400 border-indigo-700 text-indigo-950" : ghost
             }`}
           >
