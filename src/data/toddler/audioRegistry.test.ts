@@ -5404,6 +5404,16 @@ describe("audio registry", () => {
       "/audio/voice/games-yes-pizza.mp3",
       "/audio/voice/games-yes-window.mp3",
       "/audio/voice/games-yes-clock.mp3",
+      "/audio/voice/games-yes-bee.mp3",
+      "/audio/voice/games-yes-penguin.mp3",
+      "/audio/voice/games-yes-sunnysun.mp3",
+      "/audio/voice/games-yes-threesides.mp3",
+      "/audio/voice/games-yes-three.mp3",
+      "/audio/voice/games-yes-banana.mp3",
+      "/audio/voice/games-yes-stop.mp3",
+      "/audio/voice/games-yes-giraffe.mp3",
+      "/audio/voice/games-yes-rain.mp3",
+      "/audio/voice/games-yes-dolphin.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -5640,6 +5650,45 @@ describe("audio registry", () => {
     expect(narrationClipForText("Wonderful! That is the Town clock! You found it!")?.id).toBe(
       "voice.games.yes-clock",
     );
+    expect(
+      narrationClipForText("Yes! That is the Busy Bee! Buzz buzz! I love flowers! Super star!")
+        ?.id,
+    ).toBe("voice.games.yes-bee");
+    expect(
+      narrationClipForText("Yes! That is the Penguin! Waddle, slide, splash! Super star!")?.id,
+    ).toBe("voice.games.yes-penguin");
+    expect(
+      narrationClipForText(
+        "Yes! That is the Sunny Sun! Warm sunshine helps plants grow! Super star!",
+      )?.id,
+    ).toBe("voice.games.yes-sunnysun");
+    expect(
+      narrationClipForText("Yes! That is the Triangle! Three sides make a triangle! Super star!")
+        ?.id,
+    ).toBe("voice.games.yes-threesides");
+    expect(
+      narrationClipForText("Yes! That is the Three! One, two, three! Super star!")?.id,
+    ).toBe("voice.games.yes-three");
+    expect(
+      narrationClipForText("Yes! That is the Banana! A tasty yellow banana! Super star!")?.id,
+    ).toBe("voice.games.yes-banana");
+    expect(
+      narrationClipForText(
+        "Yes! That is the Stop and Look! Hold a grown-up's hand and look both ways! Super star!",
+      )?.id,
+    ).toBe("voice.games.yes-stop");
+    expect(
+      narrationClipForText("Yes! That is the Giraffe! I reach the tallest leaves! Super star!")
+        ?.id,
+    ).toBe("voice.games.yes-giraffe");
+    expect(
+      narrationClipForText("Yes! That is the Rain! Take an umbrella in the rain! Super star!")
+        ?.id,
+    ).toBe("voice.games.yes-rain");
+    expect(
+      narrationClipForText("Yes! That is the Dolphin! I swim and leap in the ocean! Super star!")
+        ?.id,
+    ).toBe("voice.games.yes-dolphin");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
