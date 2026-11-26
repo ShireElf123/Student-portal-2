@@ -5594,6 +5594,16 @@ describe("audio registry", () => {
       "/audio/voice/games-no-sun-diamond.mp3",
       "/audio/voice/games-no-cloud-diamond.mp3",
       "/audio/voice/games-no-sun-moon.mp3",
+      "/audio/voice/games-no-heart-moon.mp3",
+      "/audio/voice/games-no-star-moon.mp3",
+      "/audio/voice/games-no-cloud-rainbow.mp3",
+      "/audio/voice/games-no-circle-rainbow.mp3",
+      "/audio/voice/games-no-square-rainbow.mp3",
+      "/audio/voice/games-no-star-cloud.mp3",
+      "/audio/voice/games-no-sun-cloud.mp3",
+      "/audio/voice/games-no-heart-cloud.mp3",
+      "/audio/voice/games-no-square-bell.mp3",
+      "/audio/voice/games-no-circle-bell.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6461,6 +6471,36 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That's the Daytime Sun! Let's find Crescent Moon!")?.id).toBe(
       "voice.games.no-sun-moon",
+    );
+    expect(narrationClipForText("That's the Pink Heart! Let's find Crescent Moon!")?.id).toBe(
+      "voice.games.no-heart-moon",
+    );
+    expect(narrationClipForText("That's the Golden Star! Let's find Crescent Moon!")?.id).toBe(
+      "voice.games.no-star-moon",
+    );
+    expect(narrationClipForText("That's the Raincloud! Let's find Rainbow Arc!")?.id).toBe(
+      "voice.games.no-cloud-rainbow",
+    );
+    expect(narrationClipForText("That's the Blue Circle! Let's find Rainbow Arc!")?.id).toBe(
+      "voice.games.no-circle-rainbow",
+    );
+    expect(narrationClipForText("That's the Green Square! Let's find Rainbow Arc!")?.id).toBe(
+      "voice.games.no-square-rainbow",
+    );
+    expect(narrationClipForText("That's the Star! Let's find Fluffy Cloud!")?.id).toBe(
+      "voice.games.no-star-cloud",
+    );
+    expect(narrationClipForText("That's the Sun! Let's find Fluffy Cloud!")?.id).toBe(
+      "voice.games.no-sun-cloud",
+    );
+    expect(narrationClipForText("That's the Heart! Let's find Fluffy Cloud!")?.id).toBe(
+      "voice.games.no-heart-cloud",
+    );
+    expect(narrationClipForText("That's the Blue Square! Let's find Golden Bell!")?.id).toBe(
+      "voice.games.no-square-bell",
+    );
+    expect(narrationClipForText("That's the Green Circle! Let's find Golden Bell!")?.id).toBe(
+      "voice.games.no-circle-bell",
     );
   });
 
