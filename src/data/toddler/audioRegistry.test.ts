@@ -5604,6 +5604,16 @@ describe("audio registry", () => {
       "/audio/voice/games-no-heart-cloud.mp3",
       "/audio/voice/games-no-square-bell.mp3",
       "/audio/voice/games-no-circle-bell.mp3",
+      "/audio/voice/games-no-diamond-bell.mp3",
+      "/audio/voice/games-no-circle-berry.mp3",
+      "/audio/voice/games-no-triangle-berry.mp3",
+      "/audio/voice/games-no-square-berry.mp3",
+      "/audio/voice/games-no-plate-pizza.mp3",
+      "/audio/voice/games-no-window-pizza.mp3",
+      "/audio/voice/games-no-clock-pizza.mp3",
+      "/audio/voice/games-no-ball-window.mp3",
+      "/audio/voice/games-no-slice-window.mp3",
+      "/audio/voice/games-no-moon-window.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6501,6 +6511,36 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That's the Green Circle! Let's find Golden Bell!")?.id).toBe(
       "voice.games.no-circle-bell",
+    );
+    expect(narrationClipForText("That's the Diamond! Let's find Golden Bell!")?.id).toBe(
+      "voice.games.no-diamond-bell",
+    );
+    expect(narrationClipForText("That's the Yellow Circle! Let's find Red Berry!")?.id).toBe(
+      "voice.games.no-circle-berry",
+    );
+    expect(narrationClipForText("That's the Blue Triangle! Let's find Red Berry!")?.id).toBe(
+      "voice.games.no-triangle-berry",
+    );
+    expect(narrationClipForText("That's the Green Square! Let's find Red Berry!")?.id).toBe(
+      "voice.games.no-square-berry",
+    );
+    expect(narrationClipForText("That's the Round plate! Let's find Pizza slice!")?.id).toBe(
+      "voice.games.no-plate-pizza",
+    );
+    expect(narrationClipForText("That's the Window! Let's find Pizza slice!")?.id).toBe(
+      "voice.games.no-window-pizza",
+    );
+    expect(narrationClipForText("That's the Clock! Let's find Pizza slice!")?.id).toBe(
+      "voice.games.no-clock-pizza",
+    );
+    expect(narrationClipForText("That's the Ball! Let's find Square window!")?.id).toBe(
+      "voice.games.no-ball-window",
+    );
+    expect(narrationClipForText("That's the Pizza! Let's find Square window!")?.id).toBe(
+      "voice.games.no-slice-window",
+    );
+    expect(narrationClipForText("That's the Moon! Let's find Square window!")?.id).toBe(
+      "voice.games.no-moon-window",
     );
   });
 
