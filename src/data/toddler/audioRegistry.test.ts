@@ -5554,6 +5554,16 @@ describe("audio registry", () => {
       "/audio/voice/games-no-yellow-red.mp3",
       "/audio/voice/games-no-four-six.mp3",
       "/audio/voice/games-no-two-six.mp3",
+      "/audio/voice/games-no-nine-six.mp3",
+      "/audio/voice/games-no-three-eight.mp3",
+      "/audio/voice/games-no-five-eight.mp3",
+      "/audio/voice/games-no-one-eight.mp3",
+      "/audio/voice/games-no-seven-ten.mp3",
+      "/audio/voice/games-no-two-ten.mp3",
+      "/audio/voice/games-no-four-ten.mp3",
+      "/audio/voice/games-no-m-d.mp3",
+      "/audio/voice/games-no-s-d.mp3",
+      "/audio/voice/games-no-z-d.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6301,6 +6311,36 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That's the Two! Let's try to find Six!")?.id).toBe(
       "voice.games.no-two-six",
+    );
+    expect(narrationClipForText("That's the Nine! Let's try to find Six!")?.id).toBe(
+      "voice.games.no-nine-six",
+    );
+    expect(narrationClipForText("That's the Three! Let's try to find Eight!")?.id).toBe(
+      "voice.games.no-three-eight",
+    );
+    expect(narrationClipForText("That's the Five! Let's try to find Eight!")?.id).toBe(
+      "voice.games.no-five-eight",
+    );
+    expect(narrationClipForText("That's the One! Let's try to find Eight!")?.id).toBe(
+      "voice.games.no-one-eight",
+    );
+    expect(narrationClipForText("That's the Seven! Let's try to find Ten!")?.id).toBe(
+      "voice.games.no-seven-ten",
+    );
+    expect(narrationClipForText("That's the Two! Let's try to find Ten!")?.id).toBe(
+      "voice.games.no-two-ten",
+    );
+    expect(narrationClipForText("That's the Four! Let's try to find Ten!")?.id).toBe(
+      "voice.games.no-four-ten",
+    );
+    expect(narrationClipForText("That's the M! Let's try to find D!")?.id).toBe(
+      "voice.games.no-m-d",
+    );
+    expect(narrationClipForText("That's the S! Let's try to find D!")?.id).toBe(
+      "voice.games.no-s-d",
+    );
+    expect(narrationClipForText("That's the Z! Let's try to find D!")?.id).toBe(
+      "voice.games.no-z-d",
     );
   });
 
