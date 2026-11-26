@@ -5633,6 +5633,16 @@ describe("audio registry", () => {
       "/audio/voice/games-bubble-super.mp3",
       "/audio/voice/games-bubble-sparkle.mp3",
       "/audio/voice/games-bubble-wheee.mp3",
+      "/audio/voice/world-yes-pond-dragon.mp3",
+      "/audio/voice/world-no-pond-hen.mp3",
+      "/audio/voice/world-no-pond-truck.mp3",
+      "/audio/voice/world-yes-pond-skater.mp3",
+      "/audio/voice/world-no-pond-lady.mp3",
+      "/audio/voice/world-no-pond-bee.mp3",
+      "/audio/voice/world-yes-pond-8.mp3",
+      "/audio/voice/world-no-pond-4.mp3",
+      "/audio/voice/world-no-pond-11.mp3",
+      "/audio/voice/world-yes-pond-reeds.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6610,6 +6620,34 @@ describe("audio registry", () => {
     expect(narrationClipForText("Super!")?.id).toBe("voice.games.bubble-super");
     expect(narrationClipForText("Sparkle!")?.id).toBe("voice.games.bubble-sparkle");
     expect(narrationClipForText("Wheee!")?.id).toBe("voice.games.bubble-wheee");
+    expect(narrationClipForText("Hooray! Dragonfly! A dragonfly over the reeds.")?.id).toBe(
+      "voice.world.yes-pond-dragon",
+    );
+    expect(narrationClipForText("That is Hen! Hens stay in the yard. Let's try again!")?.id).toBe(
+      "voice.world.no-pond-hen",
+    );
+    expect(narrationClipForText("That is Truck! Trucks stay on roads. Let's try again!")?.id).toBe(
+      "voice.world.no-pond-truck",
+    );
+    expect(narrationClipForText("Hooray! Pond skater! Skaters live on the pond skin.")?.id).toBe(
+      "voice.world.yes-pond-skater",
+    );
+    expect(narrationClipForText("That is Ladybird! Ladybirds stay on leaves. Let's try again!")?.id).toBe(
+      "voice.world.no-pond-lady",
+    );
+    expect(narrationClipForText("That is Bee! Bees visit flowers. Let's try again!")?.id).toBe(
+      "voice.world.no-pond-bee",
+    );
+    expect(narrationClipForText("Hooray! 8 pads! Eight pads.")?.id).toBe("voice.world.yes-pond-8");
+    expect(narrationClipForText("That is 4 pads! Count the whole ring. Let's try again!")?.id).toBe(
+      "voice.world.no-pond-4",
+    );
+    expect(narrationClipForText("That is 11 pads! Not eleven. Let's try again!")?.id).toBe(
+      "voice.world.no-pond-11",
+    );
+    expect(narrationClipForText("Hooray! Wet reeds! By the wet reeds.")?.id).toBe(
+      "voice.world.yes-pond-reeds",
+    );
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
