@@ -5693,6 +5693,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-compost-5.mp3",
       "/audio/voice/world-no-compost-2.mp3",
       "/audio/voice/world-no-compost-8.mp3",
+      "/audio/voice/world-yes-compost-w.mp3",
+      "/audio/voice/world-no-compost-m.mp3",
+      "/audio/voice/world-no-compost-v.mp3",
+      "/audio/voice/world-yes-compost-8.mp3",
+      "/audio/voice/world-no-compost-44.mp3",
+      "/audio/voice/world-no-compost-4.mp3",
+      "/audio/voice/world-yes-compost-dog.mp3",
+      "/audio/voice/world-no-compost-leaf.mp3",
+      "/audio/voice/world-no-compost-worm.mp3",
+      "/audio/voice/world-yes-compost-slide.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6838,6 +6848,34 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That is 8 worms! Not eight this rain. Let's try again!")?.id).toBe(
       "voice.world.no-compost-8",
+    );
+    expect(narrationClipForText("Hooray! W! Worm starts with W.")?.id).toBe("voice.world.yes-compost-w");
+    expect(narrationClipForText("That is M! M starts moth. Let's try again!")?.id).toBe(
+      "voice.world.no-compost-m",
+    );
+    expect(narrationClipForText("That is V! V starts van. Let's try again!")?.id).toBe(
+      "voice.world.no-compost-v",
+    );
+    expect(narrationClipForText("Hooray! 8 leaves! Four and four make eight.")?.id).toBe(
+      "voice.world.yes-compost-8",
+    );
+    expect(narrationClipForText("That is 44 leaves! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-compost-44",
+    );
+    expect(narrationClipForText("That is 4 leaves! Count both piles. Let's try again!")?.id).toBe(
+      "voice.world.no-compost-4",
+    );
+    expect(narrationClipForText("Hooray! Dog! Log and dog rhyme.")?.id).toBe(
+      "voice.world.yes-compost-dog",
+    );
+    expect(
+      narrationClipForText("That is Leaf! Leaf does not rhyme with log. Let's try again!")?.id,
+    ).toBe("voice.world.no-compost-leaf");
+    expect(
+      narrationClipForText("That is Worm! Worm does not rhyme with log. Let's try again!")?.id,
+    ).toBe("voice.world.no-compost-worm");
+    expect(narrationClipForText("Hooray! So worms can slide! Damp soil helps worms move.")?.id).toBe(
+      "voice.world.yes-compost-slide",
     );
   });
 
