@@ -5653,6 +5653,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-pond-d.mp3",
       "/audio/voice/world-yes-pond-circle.mp3",
       "/audio/voice/world-no-pond-star.mp3",
+      "/audio/voice/world-no-pond-square.mp3",
+      "/audio/voice/world-yes-pond-6.mp3",
+      "/audio/voice/world-no-pond-24.mp3",
+      "/audio/voice/world-no-pond-4-frogs.mp3",
+      "/audio/voice/world-yes-night-cricket.mp3",
+      "/audio/voice/world-no-night-cow.mp3",
+      "/audio/voice/world-no-night-plane.mp3",
+      "/audio/voice/world-yes-night-moth.mp3",
+      "/audio/voice/world-no-night-shark.mp3",
+      "/audio/voice/world-no-night-bus.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6686,6 +6696,36 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That is Star! Stars are pointy. Let's try again!")?.id).toBe(
       "voice.world.no-pond-star",
+    );
+    expect(narrationClipForText("That is Square! This pad is round. Let's try again!")?.id).toBe(
+      "voice.world.no-pond-square",
+    );
+    expect(narrationClipForText("Hooray! 6 frogs! Two and four make six.")?.id).toBe(
+      "voice.world.yes-pond-6",
+    );
+    expect(narrationClipForText("That is 24 frogs! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-pond-24",
+    );
+    expect(narrationClipForText("That is 4 frogs! Count both banks. Let's try again!")?.id).toBe(
+      "voice.world.no-pond-4-frogs",
+    );
+    expect(narrationClipForText("Hooray! Cricket! A cricket in the grass.")?.id).toBe(
+      "voice.world.yes-night-cricket",
+    );
+    expect(narrationClipForText("That is Cow! Cows moo in the day field. Let's try again!")?.id).toBe(
+      "voice.world.no-night-cow",
+    );
+    expect(narrationClipForText("That is Plane! Planes whoosh the sky. Let's try again!")?.id).toBe(
+      "voice.world.no-night-plane",
+    );
+    expect(narrationClipForText("Hooray! Moth! A moth at the lamp.")?.id).toBe(
+      "voice.world.yes-night-moth",
+    );
+    expect(narrationClipForText("That is Shark! Sharks stay in the sea. Let's try again!")?.id).toBe(
+      "voice.world.no-night-shark",
+    );
+    expect(narrationClipForText("That is Bus! Buses stay on roads. Let's try again!")?.id).toBe(
+      "voice.world.no-night-bus",
     );
   });
 
