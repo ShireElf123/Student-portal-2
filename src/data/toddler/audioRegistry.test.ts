@@ -5624,6 +5624,15 @@ describe("audio registry", () => {
       "/audio/voice/games-benny-munch-5.mp3",
       "/audio/voice/games-benny-munch-6.mp3",
       "/audio/voice/games-benny-munch-7.mp3",
+      "/audio/voice/games-benny-munch-8.mp3",
+      "/audio/voice/games-benny-munch-9.mp3",
+      "/audio/voice/games-benny-hungrier-8.mp3",
+      "/audio/voice/games-benny-hungrier-10.mp3",
+      "/audio/voice/games-benny-ready.mp3",
+      "/audio/voice/games-bubble-short-pop.mp3",
+      "/audio/voice/games-bubble-super.mp3",
+      "/audio/voice/games-bubble-sparkle.mp3",
+      "/audio/voice/games-bubble-wheee.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6582,6 +6591,25 @@ describe("audio registry", () => {
     expect(narrationClipForText("7! Munch munch munch! Yummy!")?.id).toBe(
       "voice.games.benny-munch-7",
     );
+    expect(narrationClipForText("8! Munch munch munch! Yummy!")?.id).toBe(
+      "voice.games.benny-munch-8",
+    );
+    expect(narrationClipForText("9! Munch munch munch! Yummy!")?.id).toBe(
+      "voice.games.benny-munch-9",
+    );
+    expect(narrationClipForText("Bunny is hungrier! This time count to 8!")?.id).toBe(
+      "voice.games.benny-hungrier-8",
+    );
+    expect(narrationClipForText("Bunny is hungrier! This time count to 10!")?.id).toBe(
+      "voice.games.benny-hungrier-10",
+    );
+    expect(narrationClipForText("Bunny is ready to eat again! Tap the crunchy carrots!")?.id).toBe(
+      "voice.games.benny-ready",
+    );
+    expect(narrationClipForText("Pop!")?.id).toBe("voice.games.bubble-short-pop");
+    expect(narrationClipForText("Super!")?.id).toBe("voice.games.bubble-super");
+    expect(narrationClipForText("Sparkle!")?.id).toBe("voice.games.bubble-sparkle");
+    expect(narrationClipForText("Wheee!")?.id).toBe("voice.games.bubble-wheee");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
