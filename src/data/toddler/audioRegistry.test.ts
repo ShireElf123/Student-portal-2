@@ -5584,6 +5584,16 @@ describe("audio registry", () => {
       "/audio/voice/games-no-sleepy-moon-sun.mp3",
       "/audio/voice/games-no-cloud-sun.mp3",
       "/audio/voice/games-no-rainbow-sun.mp3",
+      "/audio/voice/games-no-circle-square.mp3",
+      "/audio/voice/games-no-triangle-square.mp3",
+      "/audio/voice/games-no-star-square.mp3",
+      "/audio/voice/games-no-blue-circle-triangle.mp3",
+      "/audio/voice/games-no-heart-triangle.mp3",
+      "/audio/voice/games-no-purple-square-triangle.mp3",
+      "/audio/voice/games-no-circle-diamond.mp3",
+      "/audio/voice/games-no-sun-diamond.mp3",
+      "/audio/voice/games-no-cloud-diamond.mp3",
+      "/audio/voice/games-no-sun-moon.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6421,6 +6431,36 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That's the Rainbow! Let's find Bright Sun!")?.id).toBe(
       "voice.games.no-rainbow-sun",
+    );
+    expect(narrationClipForText("That's the Orange Circle! Let's find Green Square!")?.id).toBe(
+      "voice.games.no-circle-square",
+    );
+    expect(narrationClipForText("That's the Yellow Triangle! Let's find Green Square!")?.id).toBe(
+      "voice.games.no-triangle-square",
+    );
+    expect(narrationClipForText("That's the Star! Let's find Green Square!")?.id).toBe(
+      "voice.games.no-star-square",
+    );
+    expect(narrationClipForText("That's the Blue Circle! Let's find Orange Triangle!")?.id).toBe(
+      "voice.games.no-blue-circle-triangle",
+    );
+    expect(narrationClipForText("That's the Pink Heart! Let's find Orange Triangle!")?.id).toBe(
+      "voice.games.no-heart-triangle",
+    );
+    expect(narrationClipForText("That's the Purple Square! Let's find Orange Triangle!")?.id).toBe(
+      "voice.games.no-purple-square-triangle",
+    );
+    expect(narrationClipForText("That's the Circle! Let's find Purple Diamond!")?.id).toBe(
+      "voice.games.no-circle-diamond",
+    );
+    expect(narrationClipForText("That's the Sun! Let's find Purple Diamond!")?.id).toBe(
+      "voice.games.no-sun-diamond",
+    );
+    expect(narrationClipForText("That's the Cloud! Let's find Purple Diamond!")?.id).toBe(
+      "voice.games.no-cloud-diamond",
+    );
+    expect(narrationClipForText("That's the Daytime Sun! Let's find Crescent Moon!")?.id).toBe(
+      "voice.games.no-sun-moon",
     );
   });
 
