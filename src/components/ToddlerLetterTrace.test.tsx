@@ -43,8 +43,8 @@ describe("letter trace deck", () => {
     expect(deck.map((item) => item.letter)).toEqual(["A", "B", "S"]);
   });
 
-  it("Phonics tab and Letter Lane first-stroke A–J share one baked clip each", () => {
-    const letters = "ABCDEFGHIJ".split("");
+  it("Phonics tab and Letter Lane first-stroke A–T share one baked clip each", () => {
+    const letters = "ABCDEFGHIJKLMNOPQRST".split("");
     for (const letter of letters) {
       const tile = PHONICS_TILES.find((item) => item.letter === letter);
       expect(tile, letter).toBeTruthy();
@@ -62,7 +62,11 @@ describe("letter trace deck", () => {
       const laneLine = firstStrokeLine(laneItem.letter, laneItem.sound);
       expect(phonicsLine).toBe(laneLine);
       expect(narrationClipForText(phonicsLine)?.id).toBe(`voice.phonics.trace-${letter.toLowerCase()}`);
-      expect(narrationClipForText(`Yes! ${tile!.sound}`)?.id).toBe(`voice.phonics.yes-${letter.toLowerCase()}`);
+      if (letter <= "J") {
+        expect(narrationClipForText(`Yes! ${tile!.sound}`)?.id).toBe(`voice.phonics.yes-${letter.toLowerCase()}`);
+      } else {
+        expect(narrationClipForText(`Yes! ${tile!.sound}`)).toBeUndefined();
+      }
     }
   });
 });

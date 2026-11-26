@@ -5514,6 +5514,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-yes-h.mp3",
       "/audio/voice/phonics-yes-i.mp3",
       "/audio/voice/phonics-yes-j.mp3",
+      "/audio/voice/phonics-trace-k.mp3",
+      "/audio/voice/phonics-trace-l.mp3",
+      "/audio/voice/phonics-trace-m.mp3",
+      "/audio/voice/phonics-trace-n.mp3",
+      "/audio/voice/phonics-trace-o.mp3",
+      "/audio/voice/phonics-trace-p.mp3",
+      "/audio/voice/phonics-trace-q.mp3",
+      "/audio/voice/phonics-trace-r.mp3",
+      "/audio/voice/phonics-trace-s.mp3",
+      "/audio/voice/phonics-trace-t.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6110,6 +6120,56 @@ describe("audio registry", () => {
     expect(narrationClipForText("Yes! Letter J says juh. Jam. Jar. Jump.")?.id).toBe(
       "voice.phonics.yes-j",
     );
+    expect(
+      narrationClipForText(
+        "Trace the letter K. Start on the blue dot. One line. Letter K says kuh. Key. Kite. King.",
+      )?.id,
+    ).toBe("voice.phonics.trace-k");
+    expect(
+      narrationClipForText(
+        "Trace the letter L. Start on the blue dot. One line. Letter L says lll. Loaf. Lamp. Line.",
+      )?.id,
+    ).toBe("voice.phonics.trace-l");
+    expect(
+      narrationClipForText(
+        "Trace the letter M. Start on the blue dot. One line. Letter M says mmm. Mat. Moon. Milk.",
+      )?.id,
+    ).toBe("voice.phonics.trace-m");
+    expect(
+      narrationClipForText(
+        "Trace the letter N. Start on the blue dot. One line. Letter N says nnn. Nest. Nap. Nana.",
+      )?.id,
+    ).toBe("voice.phonics.trace-n");
+    expect(
+      narrationClipForText(
+        "Trace the letter O. Start on the blue dot. One line. Letter O says o. Orange. On. Otter.",
+      )?.id,
+    ).toBe("voice.phonics.trace-o");
+    expect(
+      narrationClipForText(
+        "Trace the letter P. Start on the blue dot. One line. Letter P says puh. Porch. Pan. Peg.",
+      )?.id,
+    ).toBe("voice.phonics.trace-p");
+    expect(
+      narrationClipForText(
+        "Trace the letter Q. Start on the blue dot. One line. Letter Q says kwuh. Quilt. Quiet. Queen.",
+      )?.id,
+    ).toBe("voice.phonics.trace-q");
+    expect(
+      narrationClipForText(
+        "Trace the letter R. Start on the blue dot. One line. Letter R says rrr. Rain. Rope. Red.",
+      )?.id,
+    ).toBe("voice.phonics.trace-r");
+    expect(
+      narrationClipForText(
+        "Trace the letter S. Start on the blue dot. One line. Letter S says sss. Stoop. Sun. Sock.",
+      )?.id,
+    ).toBe("voice.phonics.trace-s");
+    expect(
+      narrationClipForText(
+        "Trace the letter T. Start on the blue dot. One line. Letter T says tuh. Taxi. Toast. Token.",
+      )?.id,
+    ).toBe("voice.phonics.trace-t");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
