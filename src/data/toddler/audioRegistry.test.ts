@@ -5663,6 +5663,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-night-moth.mp3",
       "/audio/voice/world-no-night-shark.mp3",
       "/audio/voice/world-no-night-bus.mp3",
+      "/audio/voice/world-yes-night-cricket-sing.mp3",
+      "/audio/voice/world-no-night-bee.mp3",
+      "/audio/voice/world-no-night-rooster.mp3",
+      "/audio/voice/world-yes-night-4.mp3",
+      "/audio/voice/world-no-night-1.mp3",
+      "/audio/voice/world-no-night-7.mp3",
+      "/audio/voice/world-yes-night-soft.mp3",
+      "/audio/voice/world-no-night-crash.mp3",
+      "/audio/voice/world-no-night-shout.mp3",
+      "/audio/voice/world-yes-night-m.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6727,6 +6737,32 @@ describe("audio registry", () => {
     expect(narrationClipForText("That is Bus! Buses stay on roads. Let's try again!")?.id).toBe(
       "voice.world.no-night-bus",
     );
+    expect(narrationClipForText("Hooray! Cricket! Crickets sing at night.")?.id).toBe(
+      "voice.world.yes-night-cricket-sing",
+    );
+    expect(
+      narrationClipForText("That is Bee! Bees work in the day flowers. Let's try again!")?.id,
+    ).toBe("voice.world.no-night-bee");
+    expect(narrationClipForText("That is Rooster! Roosters shout at dawn. Let's try again!")?.id).toBe(
+      "voice.world.no-night-rooster",
+    );
+    expect(narrationClipForText("Hooray! 4 moths! Four moths.")?.id).toBe("voice.world.yes-night-4");
+    expect(narrationClipForText("That is 1 moth! Count the whole glass. Let's try again!")?.id).toBe(
+      "voice.world.no-night-1",
+    );
+    expect(narrationClipForText("That is 7 moths! Not seven tonight. Let's try again!")?.id).toBe(
+      "voice.world.no-night-7",
+    );
+    expect(narrationClipForText("Hooray! Soft notes! Quiet notes for night.")?.id).toBe(
+      "voice.world.yes-night-soft",
+    );
+    expect(narrationClipForText("That is Crash! Too loud for moths. Let's try again!")?.id).toBe(
+      "voice.world.no-night-crash",
+    );
+    expect(narrationClipForText("That is Shout! We play, we do not shout. Let's try again!")?.id).toBe(
+      "voice.world.no-night-shout",
+    );
+    expect(narrationClipForText("Hooray! M! Moth starts with M.")?.id).toBe("voice.world.yes-night-m");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
