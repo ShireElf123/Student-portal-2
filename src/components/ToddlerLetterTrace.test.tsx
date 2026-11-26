@@ -62,7 +62,7 @@ describe("letter trace deck", () => {
       const laneLine = firstStrokeLine(laneItem.letter, laneItem.sound);
       expect(phonicsLine).toBe(laneLine);
       expect(narrationClipForText(phonicsLine)?.id).toBe(`voice.phonics.trace-${letter.toLowerCase()}`);
-      expect(narrationClipForText(`Yes! ${tile!.sound}`)).toBeUndefined();
+      expect(narrationClipForText(`Yes! ${tile!.sound}`)?.id).toBe(`voice.phonics.yes-${letter.toLowerCase()}`);
     }
   });
 });

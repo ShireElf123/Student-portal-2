@@ -5504,6 +5504,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-trace-h.mp3",
       "/audio/voice/phonics-trace-i.mp3",
       "/audio/voice/phonics-trace-j.mp3",
+      "/audio/voice/phonics-yes-a.mp3",
+      "/audio/voice/phonics-yes-b.mp3",
+      "/audio/voice/phonics-yes-c.mp3",
+      "/audio/voice/phonics-yes-d.mp3",
+      "/audio/voice/phonics-yes-e.mp3",
+      "/audio/voice/phonics-yes-f.mp3",
+      "/audio/voice/phonics-yes-g.mp3",
+      "/audio/voice/phonics-yes-h.mp3",
+      "/audio/voice/phonics-yes-i.mp3",
+      "/audio/voice/phonics-yes-j.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6070,6 +6080,36 @@ describe("audio registry", () => {
         "Trace the letter J. Start on the blue dot. One line. Letter J says juh. Jam. Jar. Jump.",
       )?.id,
     ).toBe("voice.phonics.trace-j");
+    expect(narrationClipForText("Yes! Letter A says a. Attic. Apple. Ant.")?.id).toBe(
+      "voice.phonics.yes-a",
+    );
+    expect(narrationClipForText("Yes! Letter B says buh. Bus. Bun. Bell.")?.id).toBe(
+      "voice.phonics.yes-b",
+    );
+    expect(narrationClipForText("Yes! Letter C says kuh. Cat. Cup. Coin.")?.id).toBe(
+      "voice.phonics.yes-c",
+    );
+    expect(narrationClipForText("Yes! Letter D says duh. Dock. Door. Dot.")?.id).toBe(
+      "voice.phonics.yes-d",
+    );
+    expect(narrationClipForText("Yes! Letter E says eh. Egg. Exit. End.")?.id).toBe(
+      "voice.phonics.yes-e",
+    );
+    expect(narrationClipForText("Yes! Letter F says fff. Ferry. Fog. Fish.")?.id).toBe(
+      "voice.phonics.yes-f",
+    );
+    expect(narrationClipForText("Yes! Letter G says guh. Gull. Gate. Gum.")?.id).toBe(
+      "voice.phonics.yes-g",
+    );
+    expect(narrationClipForText("Yes! Letter H says huh. Hat. Home. Hop.")?.id).toBe(
+      "voice.phonics.yes-h",
+    );
+    expect(narrationClipForText("Yes! Letter I says ih. Ink. In. Igloo.")?.id).toBe(
+      "voice.phonics.yes-i",
+    );
+    expect(narrationClipForText("Yes! Letter J says juh. Jam. Jar. Jump.")?.id).toBe(
+      "voice.phonics.yes-j",
+    );
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
