@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { LETTER_STROKE_COUNTS, strokesForLetter } from "../data/toddler/toddlerLetterStrokes";
+import { PHONICS_TILES } from "../data/toddler/phonicsBoard";
+import { narrationClipForText } from "../data/toddler/audioRegistry";
 import {
   advanceAlongStroke,
   isClosedStroke,
@@ -12,6 +14,10 @@ import {
   STROKE_HIT_RADIUS,
   strokeProgress,
 } from "./ToddlerLetterTrace";
+
+function firstStrokeLine(letter: string, sound: string) {
+  return `Trace the letter ${letter}. Start on the blue dot. One line. ${sound}`;
+}
 
 describe("letter trace deck", () => {
   it("locks a land prompt to the named letter instead of a six-letter skip deck", () => {
@@ -35,6 +41,29 @@ describe("letter trace deck", () => {
       { letter: "S", word: "Sun", emoji: "☀️", sound: "S!" },
     ]);
     expect(deck.map((item) => item.letter)).toEqual(["A", "B", "S"]);
+  });
+
+  it("Phonics tab and Letter Lane first-stroke A–J share one baked clip each", () => {
+    const letters = "ABCDEFGHIJ".split("");
+    for (const letter of letters) {
+      const tile = PHONICS_TILES.find((item) => item.letter === letter);
+      expect(tile, letter).toBeTruthy();
+      const phonicsDeck = pickTraceDeck(
+        [{ letter: tile!.letter, word: tile!.word, emoji: tile!.emoji, sound: tile!.sound }],
+        { prompt: `Trace ${tile!.letter} for ${tile!.word}` },
+      );
+      const laneItem = {
+        letter,
+        word: tile!.word,
+        emoji: tile!.emoji,
+        sound: tile!.sound ?? `${letter}!`,
+      };
+      const phonicsLine = firstStrokeLine(phonicsDeck[0].letter, phonicsDeck[0].sound);
+      const laneLine = firstStrokeLine(laneItem.letter, laneItem.sound);
+      expect(phonicsLine).toBe(laneLine);
+      expect(narrationClipForText(phonicsLine)?.id).toBe(`voice.phonics.trace-${letter.toLowerCase()}`);
+      expect(narrationClipForText(`Yes! ${tile!.sound}`)).toBeUndefined();
+    }
   });
 });
 
