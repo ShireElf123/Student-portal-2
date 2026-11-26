@@ -5564,6 +5564,16 @@ describe("audio registry", () => {
       "/audio/voice/games-no-m-d.mp3",
       "/audio/voice/games-no-s-d.mp3",
       "/audio/voice/games-no-z-d.mp3",
+      "/audio/voice/games-no-a-o.mp3",
+      "/audio/voice/games-no-t-o.mp3",
+      "/audio/voice/games-no-k-o.mp3",
+      "/audio/voice/games-no-s-f.mp3",
+      "/audio/voice/games-no-b-f.mp3",
+      "/audio/voice/games-no-m-f.mp3",
+      "/audio/voice/games-no-eight-ten.mp3",
+      "/audio/voice/games-no-five-ten.mp3",
+      "/audio/voice/games-no-circle-star.mp3",
+      "/audio/voice/games-no-square-star.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6341,6 +6351,36 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That's the Z! Let's try to find D!")?.id).toBe(
       "voice.games.no-z-d",
+    );
+    expect(narrationClipForText("That's the A! Let's try to find O!")?.id).toBe(
+      "voice.games.no-a-o",
+    );
+    expect(narrationClipForText("That's the T! Let's try to find O!")?.id).toBe(
+      "voice.games.no-t-o",
+    );
+    expect(narrationClipForText("That's the K! Let's try to find O!")?.id).toBe(
+      "voice.games.no-k-o",
+    );
+    expect(narrationClipForText("That's the S! Let's try to find F!")?.id).toBe(
+      "voice.games.no-s-f",
+    );
+    expect(narrationClipForText("That's the B! Let's try to find F!")?.id).toBe(
+      "voice.games.no-b-f",
+    );
+    expect(narrationClipForText("That's the M! Let's try to find F!")?.id).toBe(
+      "voice.games.no-m-f",
+    );
+    expect(narrationClipForText("That's the Eight! Let's try to find Ten!")?.id).toBe(
+      "voice.games.no-eight-ten",
+    );
+    expect(narrationClipForText("That's the Five! Let's try to find Ten!")?.id).toBe(
+      "voice.games.no-five-ten",
+    );
+    expect(narrationClipForText("That's the Blue Circle! Let's find Golden Star!")?.id).toBe(
+      "voice.games.no-circle-star",
+    );
+    expect(narrationClipForText("That's the Green Square! Let's find Golden Star!")?.id).toBe(
+      "voice.games.no-square-star",
     );
   });
 
