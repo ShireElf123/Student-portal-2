@@ -5384,6 +5384,16 @@ describe("audio registry", () => {
       "/audio/voice/games-yes-circle.mp3",
       "/audio/voice/games-yes-sun.mp3",
       "/audio/voice/games-yes-square.mp3",
+      "/audio/voice/games-yes-puppy.mp3",
+      "/audio/voice/games-yes-duck.mp3",
+      "/audio/voice/games-yes-monkey.mp3",
+      "/audio/voice/games-yes-elephant.mp3",
+      "/audio/voice/games-yes-sheep.mp3",
+      "/audio/voice/games-yes-triangle.mp3",
+      "/audio/voice/games-yes-diamond.mp3",
+      "/audio/voice/games-yes-moon.mp3",
+      "/audio/voice/games-yes-rainbow.mp3",
+      "/audio/voice/games-yes-cloud.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -5551,6 +5561,38 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Wonderful! That is the Green Square! You found it!")?.id).toBe(
       "voice.games.yes-square",
+    );
+    expect(
+      narrationClipForText("Yes! That is the Puppy Dog! Woof woof! Friendly pup! Super star!")?.id,
+    ).toBe("voice.games.yes-puppy");
+    expect(
+      narrationClipForText("Yes! That is the Yellow Duck! Quack quack! Splash! Super star!")?.id,
+    ).toBe("voice.games.yes-duck");
+    expect(
+      narrationClipForText("Yes! That is the Cheeky Monkey! Ooh ooh aah aah! Super star!")?.id,
+    ).toBe("voice.games.yes-monkey");
+    expect(
+      narrationClipForText(
+        "Yes! That is the Gentle Elephant! Pawoooot! Big trumpeting elephant! Super star!",
+      )?.id,
+    ).toBe("voice.games.yes-elephant");
+    expect(
+      narrationClipForText("Yes! That is the Fluffy Sheep! Baa baa! Soft wool! Super star!")?.id,
+    ).toBe("voice.games.yes-sheep");
+    expect(narrationClipForText("Wonderful! That is the Orange Triangle! You found it!")?.id).toBe(
+      "voice.games.yes-triangle",
+    );
+    expect(narrationClipForText("Wonderful! That is the Purple Diamond! You found it!")?.id).toBe(
+      "voice.games.yes-diamond",
+    );
+    expect(narrationClipForText("Wonderful! That is the Crescent Moon! You found it!")?.id).toBe(
+      "voice.games.yes-moon",
+    );
+    expect(narrationClipForText("Wonderful! That is the Rainbow Arc! You found it!")?.id).toBe(
+      "voice.games.yes-rainbow",
+    );
+    expect(narrationClipForText("Wonderful! That is the Fluffy Cloud! You found it!")?.id).toBe(
+      "voice.games.yes-cloud",
     );
   });
 
