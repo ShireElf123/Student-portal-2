@@ -198,20 +198,24 @@ const FARM_DAWN_ROUTE = "world:animal-world:farm-valley:act-farm-rooster-dawn";
 
 describe("wonderland atlas", () => {
   it("opens as a map of many lands, not six demo cards", async () => {
-    const { container } = render(
+    const { container, getByTestId } = render(
       <ToddlerWorldsNavigator onAddStar={() => {}} starsCount={0} />
     );
     await flush(200);
     expect(container.textContent).toContain("Wonderland Atlas");
     expect(container.textContent).toContain("The Wilds");
     expect(container.textContent).toContain("Busy Town");
-    expect(container.textContent).toContain("Busy Roads");
-    expect(container.textContent).toContain("Bug Garden");
-    expect(container.textContent).toContain("Market Kitchen");
-    expect(container.textContent).toContain("Town Square");
-    expect(container.textContent).toContain("Ice Neighbours");
-    expect(container.textContent).toContain("Night Neighbourhood");
     expect(container.textContent).toContain("Animal World");
+    expect(container.textContent).toContain("Bug Garden");
+    expect(container.textContent).toContain("Ice Neighbours");
+    fireEvent.click(getByTestId("atlas-band-town"));
+    await flush(50);
+    expect(container.textContent).toContain("Busy Roads");
+    expect(container.textContent).toContain("Town Square");
+    expect(container.textContent).toContain("Market Kitchen");
+    fireEvent.click(getByTestId("atlas-band-sky-home"));
+    await flush(50);
+    expect(container.textContent).toContain("Night Neighbourhood");
   });
 });
 
