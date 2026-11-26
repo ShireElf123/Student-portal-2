@@ -5374,6 +5374,16 @@ describe("audio registry", () => {
       "/audio/voice/count-yes-after-15.mp3",
       "/audio/voice/count-yes-after-20.mp3",
       "/audio/voice/count-train-cars.mp3",
+      "/audio/voice/games-yes-cow.mp3",
+      "/audio/voice/games-yes-lion.mp3",
+      "/audio/voice/games-yes-apple.mp3",
+      "/audio/voice/games-yes-whale.mp3",
+      "/audio/voice/games-yes-bunny.mp3",
+      "/audio/voice/games-yes-star.mp3",
+      "/audio/voice/games-yes-heart.mp3",
+      "/audio/voice/games-yes-circle.mp3",
+      "/audio/voice/games-yes-sun.mp3",
+      "/audio/voice/games-yes-square.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -5508,6 +5518,39 @@ describe("audio registry", () => {
     ).toBe("voice.sort.land-ocean");
     expect(narrationClipForText("Look! Count the Train Cars. How many do you see?")?.id).toBe(
       "voice.count.train-cars",
+    );
+  });
+
+  it("maps Games hub Animals and Shapes correct-answer lines", () => {
+    expect(narrationClipForText("Yes! That is the Cow! Moooo! Super star!")?.id).toBe(
+      "voice.games.yes-cow",
+    );
+    expect(narrationClipForText("Yes! That is the Lion! Raaawr! Super star!")?.id).toBe(
+      "voice.games.yes-lion",
+    );
+    expect(narrationClipForText("Yes! That is the Apple! A says Ah, Apple! Super star!")?.id).toBe(
+      "voice.games.yes-apple",
+    );
+    expect(narrationClipForText("Yes! That is the Whale! Giant friendly whale! Super star!")?.id).toBe(
+      "voice.games.yes-whale",
+    );
+    expect(narrationClipForText("Yes! That is the Bunny! Boing boing bunny! Super star!")?.id).toBe(
+      "voice.games.yes-bunny",
+    );
+    expect(narrationClipForText("Wonderful! That is the Golden Star! You found it!")?.id).toBe(
+      "voice.games.yes-star",
+    );
+    expect(narrationClipForText("Wonderful! That is the Warm Heart! You found it!")?.id).toBe(
+      "voice.games.yes-heart",
+    );
+    expect(narrationClipForText("Wonderful! That is the Blue Circle! You found it!")?.id).toBe(
+      "voice.games.yes-circle",
+    );
+    expect(narrationClipForText("Wonderful! That is the Bright Sun! You found it!")?.id).toBe(
+      "voice.games.yes-sun",
+    );
+    expect(narrationClipForText("Wonderful! That is the Green Square! You found it!")?.id).toBe(
+      "voice.games.yes-square",
     );
   });
 
