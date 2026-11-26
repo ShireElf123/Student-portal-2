@@ -5394,6 +5394,16 @@ describe("audio registry", () => {
       "/audio/voice/games-yes-moon.mp3",
       "/audio/voice/games-yes-rainbow.mp3",
       "/audio/voice/games-yes-cloud.mp3",
+      "/audio/voice/games-yes-rooster.mp3",
+      "/audio/voice/games-yes-owl.mp3",
+      "/audio/voice/games-yes-horse.mp3",
+      "/audio/voice/games-yes-piggy.mp3",
+      "/audio/voice/games-yes-turtle.mp3",
+      "/audio/voice/games-yes-bell.mp3",
+      "/audio/voice/games-yes-berry.mp3",
+      "/audio/voice/games-yes-pizza.mp3",
+      "/audio/voice/games-yes-window.mp3",
+      "/audio/voice/games-yes-clock.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -5593,6 +5603,42 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Wonderful! That is the Fluffy Cloud! You found it!")?.id).toBe(
       "voice.games.yes-cloud",
+    );
+    expect(
+      narrationClipForText(
+        "Yes! That is the Morning Rooster! Cock a doodle doo! Good morning! Super star!",
+      )?.id,
+    ).toBe("voice.games.yes-rooster");
+    expect(
+      narrationClipForText("Yes! That is the Wise Owl! Hoo hoo! Starry night! Super star!")?.id,
+    ).toBe("voice.games.yes-owl");
+    expect(
+      narrationClipForText(
+        "Yes! That is the Galloping Horse! Neigh neigh! Clippity clop! Super star!",
+      )?.id,
+    ).toBe("voice.games.yes-horse");
+    expect(
+      narrationClipForText("Yes! That is the Happy Piggy! Oink oink! Splish in mud! Super star!")
+        ?.id,
+    ).toBe("voice.games.yes-piggy");
+    expect(
+      narrationClipForText("Yes! That is the Turtle! I carry my home wherever I go! Super star!")
+        ?.id,
+    ).toBe("voice.games.yes-turtle");
+    expect(narrationClipForText("Wonderful! That is the Golden Bell! You found it!")?.id).toBe(
+      "voice.games.yes-bell",
+    );
+    expect(narrationClipForText("Wonderful! That is the Red Berry! You found it!")?.id).toBe(
+      "voice.games.yes-berry",
+    );
+    expect(narrationClipForText("Wonderful! That is the Pizza slice! You found it!")?.id).toBe(
+      "voice.games.yes-pizza",
+    );
+    expect(narrationClipForText("Wonderful! That is the Square window! You found it!")?.id).toBe(
+      "voice.games.yes-window",
+    );
+    expect(narrationClipForText("Wonderful! That is the Town clock! You found it!")?.id).toBe(
+      "voice.games.yes-clock",
     );
   });
 
