@@ -5534,6 +5534,16 @@ describe("audio registry", () => {
       "/audio/voice/phonics-yes-r.mp3",
       "/audio/voice/phonics-yes-s.mp3",
       "/audio/voice/phonics-yes-t.mp3",
+      "/audio/voice/phonics-trace-u.mp3",
+      "/audio/voice/phonics-trace-v.mp3",
+      "/audio/voice/phonics-trace-w.mp3",
+      "/audio/voice/phonics-trace-x.mp3",
+      "/audio/voice/phonics-trace-y.mp3",
+      "/audio/voice/phonics-trace-z.mp3",
+      "/audio/voice/phonics-yes-u.mp3",
+      "/audio/voice/phonics-yes-v.mp3",
+      "/audio/voice/phonics-yes-w.mp3",
+      "/audio/voice/phonics-yes-x.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6209,6 +6219,48 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Yes! Letter T says tuh. Taxi. Toast. Token.")?.id).toBe(
       "voice.phonics.yes-t",
+    );
+    expect(
+      narrationClipForText(
+        "Trace the letter U. Start on the blue dot. One line. Letter U says uh. Umbrella. Up. Under.",
+      )?.id,
+    ).toBe("voice.phonics.trace-u");
+    expect(
+      narrationClipForText(
+        "Trace the letter V. Start on the blue dot. One line. Letter V says vvv. Van. Vine. Vest.",
+      )?.id,
+    ).toBe("voice.phonics.trace-v");
+    expect(
+      narrationClipForText(
+        "Trace the letter W. Start on the blue dot. One line. Letter W says wuh. Wash. Window. Wagon.",
+      )?.id,
+    ).toBe("voice.phonics.trace-w");
+    expect(
+      narrationClipForText(
+        "Trace the letter X. Start on the blue dot. One line. Letter X says ks. Box. Fox. Six.",
+      )?.id,
+    ).toBe("voice.phonics.trace-x");
+    expect(
+      narrationClipForText(
+        "Trace the letter Y. Start on the blue dot. One line. Letter Y says yuh. Yellow. Yarn. Yard.",
+      )?.id,
+    ).toBe("voice.phonics.trace-y");
+    expect(
+      narrationClipForText(
+        "Trace the letter Z. Start on the blue dot. One line. Letter Z says zzz. Zip. Zigzag. Zoo.",
+      )?.id,
+    ).toBe("voice.phonics.trace-z");
+    expect(narrationClipForText("Yes! Letter U says uh. Umbrella. Up. Under.")?.id).toBe(
+      "voice.phonics.yes-u",
+    );
+    expect(narrationClipForText("Yes! Letter V says vvv. Van. Vine. Vest.")?.id).toBe(
+      "voice.phonics.yes-v",
+    );
+    expect(narrationClipForText("Yes! Letter W says wuh. Wash. Window. Wagon.")?.id).toBe(
+      "voice.phonics.yes-w",
+    );
+    expect(narrationClipForText("Yes! Letter X says ks. Box. Fox. Six.")?.id).toBe(
+      "voice.phonics.yes-x",
     );
   });
 
