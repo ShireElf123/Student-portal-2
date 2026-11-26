@@ -5673,6 +5673,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-night-crash.mp3",
       "/audio/voice/world-no-night-shout.mp3",
       "/audio/voice/world-yes-night-m.mp3",
+      "/audio/voice/world-no-night-n.mp3",
+      "/audio/voice/world-no-night-s.mp3",
+      "/audio/voice/world-yes-night-nana.mp3",
+      "/audio/voice/world-no-night-pip.mp3",
+      "/audio/voice/world-no-night-dog.mp3",
+      "/audio/voice/world-yes-night-dim.mp3",
+      "/audio/voice/world-no-night-crash-pattern.mp3",
+      "/audio/voice/world-no-night-glow.mp3",
+      "/audio/voice/world-yes-compost-worm.mp3",
+      "/audio/voice/world-no-compost-dolphin.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6763,6 +6773,34 @@ describe("audio registry", () => {
       "voice.world.no-night-shout",
     );
     expect(narrationClipForText("Hooray! M! Moth starts with M.")?.id).toBe("voice.world.yes-night-m");
+    expect(narrationClipForText("That is N! N starts nest. Let's try again!")?.id).toBe(
+      "voice.world.no-night-n",
+    );
+    expect(narrationClipForText("That is S! S starts sun. Let's try again!")?.id).toBe(
+      "voice.world.no-night-s",
+    );
+    expect(narrationClipForText("Hooray! Nana! Nana spoke last.")?.id).toBe("voice.world.yes-night-nana");
+    expect(narrationClipForText("That is Pip! Pip spoke first. Let's try again!")?.id).toBe(
+      "voice.world.no-night-pip",
+    );
+    expect(narrationClipForText("That is The dog! No dog in this whisper. Let's try again!")?.id).toBe(
+      "voice.world.no-night-dog",
+    );
+    expect(narrationClipForText("Hooray! Dim! AB continues with dim.")?.id).toBe(
+      "voice.world.yes-night-dim",
+    );
+    expect(narrationClipForText("That is Crash! This pattern is glows. Let's try again!")?.id).toBe(
+      "voice.world.no-night-crash-pattern",
+    );
+    expect(narrationClipForText("That is Glow! Glow just happened. Let's try again!")?.id).toBe(
+      "voice.world.no-night-glow",
+    );
+    expect(narrationClipForText("Hooray! Worm! A worm in the compost.")?.id).toBe(
+      "voice.world.yes-compost-worm",
+    );
+    expect(narrationClipForText("That is Dolphin! Dolphins swim seas. Let's try again!")?.id).toBe(
+      "voice.world.no-compost-dolphin",
+    );
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
