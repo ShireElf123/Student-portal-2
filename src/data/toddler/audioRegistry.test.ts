@@ -5823,6 +5823,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-fire-dal.mp3",
       "/audio/voice/world-no-fire-owl.mp3",
       "/audio/voice/world-yes-park-5.mp3",
+      "/audio/voice/world-no-park-2.mp3",
+      "/audio/voice/world-no-park-8.mp3",
+      "/audio/voice/world-yes-park-swing.mp3",
+      "/audio/voice/world-no-park-lorry.mp3",
+      "/audio/voice/world-no-park-oven.mp3",
+      "/audio/voice/world-yes-park-duck.mp3",
+      "/audio/voice/world-no-park-lion.mp3",
+      "/audio/voice/world-no-park-truck.mp3",
+      "/audio/voice/world-yes-park-d.mp3",
+      "/audio/voice/world-no-park-b.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7341,6 +7351,32 @@ describe("audio registry", () => {
       "voice.world.no-fire-owl",
     );
     expect(narrationClipForText("Hooray! 5 ducks! Five ducks.")?.id).toBe("voice.world.yes-park-5");
+    expect(narrationClipForText("That is 2 ducks! Count the whole pond. Let's try again!")?.id).toBe(
+      "voice.world.no-park-2",
+    );
+    expect(narrationClipForText("That is 8 ducks! Not eight this morning. Let's try again!")?.id).toBe(
+      "voice.world.no-park-8",
+    );
+    expect(narrationClipForText("Hooray! A swing! Swings belong in the park.")?.id).toBe(
+      "voice.world.yes-park-swing",
+    );
+    expect(narrationClipForText("That is A lorry! Lorries stay on the road. Let's try again!")?.id).toBe(
+      "voice.world.no-park-lorry",
+    );
+    expect(narrationClipForText("That is An oven! Ovens stay in kitchens. Let's try again!")?.id).toBe(
+      "voice.world.no-park-oven",
+    );
+    expect(narrationClipForText("Hooray! Duck! A duck on the pond.")?.id).toBe("voice.world.yes-park-duck");
+    expect(narrationClipForText("That is Lion! Lions roar on grass plains. Let's try again!")?.id).toBe(
+      "voice.world.no-park-lion",
+    );
+    expect(narrationClipForText("That is Truck! Trucks rumble roads. Let's try again!")?.id).toBe(
+      "voice.world.no-park-truck",
+    );
+    expect(narrationClipForText("Hooray! D! Duck starts with D.")?.id).toBe("voice.world.yes-park-d");
+    expect(narrationClipForText("That is B! B starts ball. Let's try again!")?.id).toBe(
+      "voice.world.no-park-b",
+    );
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
