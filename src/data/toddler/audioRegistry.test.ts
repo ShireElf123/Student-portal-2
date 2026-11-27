@@ -5803,6 +5803,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-picnic-red.mp3",
       "/audio/voice/world-yes-fire-crew.mp3",
       "/audio/voice/world-no-fire-baker.mp3",
+      "/audio/voice/world-no-fire-penguin.mp3",
+      "/audio/voice/world-yes-fire-3.mp3",
+      "/audio/voice/world-no-fire-1.mp3",
+      "/audio/voice/world-no-fire-6.mp3",
+      "/audio/voice/world-yes-fire-hose.mp3",
+      "/audio/voice/world-no-fire-book.mp3",
+      "/audio/voice/world-yes-fire-f.mp3",
+      "/audio/voice/world-no-fire-s.mp3",
+      "/audio/voice/world-yes-fire-bell.mp3",
+      "/audio/voice/world-no-fire-ran.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7264,6 +7274,34 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That is Baker! Bakers ride bakery vans. Let's try again!")?.id).toBe(
       "voice.world.no-fire-baker",
+    );
+    expect(narrationClipForText("That is Penguin! Penguins live on ice. Let's try again!")?.id).toBe(
+      "voice.world.no-fire-penguin",
+    );
+    expect(narrationClipForText("Hooray! 3 helmets! Three helmets.")?.id).toBe(
+      "voice.world.yes-fire-3",
+    );
+    expect(narrationClipForText("That is 1 helmet! Count every peg. Let's try again!")?.id).toBe(
+      "voice.world.no-fire-1",
+    );
+    expect(narrationClipForText("That is 6 helmets! Not six this rack. Let's try again!")?.id).toBe(
+      "voice.world.no-fire-6",
+    );
+    expect(narrationClipForText("Hooray! Hose! Hoses belong here.")?.id).toBe(
+      "voice.world.yes-fire-hose",
+    );
+    expect(narrationClipForText("That is A book! Books live in the library. Let's try again!")?.id).toBe(
+      "voice.world.no-fire-book",
+    );
+    expect(narrationClipForText("Hooray! F! Fire starts with F.")?.id).toBe("voice.world.yes-fire-f");
+    expect(narrationClipForText("That is S! S starts siren. Let's try again!")?.id).toBe(
+      "voice.world.no-fire-s",
+    );
+    expect(narrationClipForText("Hooray! The bell rang! The bell first.")?.id).toBe(
+      "voice.world.yes-fire-bell",
+    );
+    expect(narrationClipForText("That is The crew ran! That was second. Let's try again!")?.id).toBe(
+      "voice.world.no-fire-ran",
     );
   });
 
