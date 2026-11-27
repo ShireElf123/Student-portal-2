@@ -6132,6 +6132,16 @@ describe("audio registry", () => {
       "/audio/voice/book-finish-ferry-horn-morning.mp3",
       "/audio/voice/book-finish-sidewalk-chalk-sun.mp3",
       "/audio/voice/book-finish-bakery-window-fog.mp3",
+      "/audio/voice/book-finish-hardware-drawer-knobs.mp3",
+      "/audio/voice/book-finish-park-bandstand-pigeons.mp3",
+      "/audio/voice/book-finish-subway-token-mouse.mp3",
+      "/audio/voice/book-finish-porch-dusk-jar.mp3",
+      "/audio/voice/book-finish-lighthouse-blink.mp3",
+      "/audio/voice/book-finish-corner-shop-ding.mp3",
+      "/audio/voice/book-finish-fountain-three-coins.mp3",
+      "/audio/voice/book-finish-yellow-taxi-puddle.mp3",
+      "/audio/voice/book-finish-lost-key-mat.mp3",
+      "/audio/voice/book-finish-quilt-square-moon.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8582,6 +8592,56 @@ describe("audio registry", () => {
         "Hooray! You finished reading Bakery Window Fog! You earned three golden stars!",
       )?.id,
     ).toBe("voice.book.finish-bakery-window-fog");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Hardware Drawer of Knobs! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-hardware-drawer-knobs");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Bandstand Pigeons! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-park-bandstand-pigeons");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading The Token and the Tunnel! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-subway-token-mouse");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Dusk in a Jar! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-porch-dusk-jar");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading The Lighthouse Blink! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-lighthouse-blink");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Corner Shop Ding! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-corner-shop-ding");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Three Coins in the Fountain! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-fountain-three-coins");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Yellow Taxi Puddle! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-yellow-taxi-puddle");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading The Key Under the Mat! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-lost-key-mat");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Quilt Square Moon! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-quilt-square-moon");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
