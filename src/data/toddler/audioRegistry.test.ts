@@ -5773,6 +5773,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-soup-3.mp3",
       "/audio/voice/world-yes-soup-nana.mp3",
       "/audio/voice/world-no-soup-pip.mp3",
+      "/audio/voice/world-no-soup-cat.mp3",
+      "/audio/voice/world-yes-soup-chop.mp3",
+      "/audio/voice/world-no-soup-nap.mp3",
+      "/audio/voice/world-no-soup-rest.mp3",
+      "/audio/voice/world-yes-picnic-sandwich.mp3",
+      "/audio/voice/world-no-picnic-hammer.mp3",
+      "/audio/voice/world-no-picnic-tyre.mp3",
+      "/audio/voice/world-yes-picnic-4.mp3",
+      "/audio/voice/world-no-picnic-2.mp3",
+      "/audio/voice/world-no-picnic-7.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7146,6 +7156,34 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That is Pip! Pip tasted first. Let's try again!")?.id).toBe(
       "voice.world.no-soup-pip",
+    );
+    expect(narrationClipForText("That is The cat! No cat at this pot. Let's try again!")?.id).toBe(
+      "voice.world.no-soup-cat",
+    );
+    expect(narrationClipForText("Hooray! A chop! The pattern continues with a chop.")?.id).toBe(
+      "voice.world.yes-soup-chop",
+    );
+    expect(
+      narrationClipForText("That is A nap! Stay with the chopping pattern. Let's try again!")?.id,
+    ).toBe("voice.world.no-soup-nap");
+    expect(
+      narrationClipForText("That is A rest! Rest already just happened. Let's try again!")?.id,
+    ).toBe("voice.world.no-soup-rest");
+    expect(narrationClipForText("Hooray! Sandwich! Sandwiches go in the basket.")?.id).toBe(
+      "voice.world.yes-picnic-sandwich",
+    );
+    expect(narrationClipForText("That is Hammer! Hammers stay in the toolbox. Let's try again!")?.id).toBe(
+      "voice.world.no-picnic-hammer",
+    );
+    expect(narrationClipForText("That is A tyre! Tyres stay on cars. Let's try again!")?.id).toBe(
+      "voice.world.no-picnic-tyre",
+    );
+    expect(narrationClipForText("Hooray! 4 cups! Four cups.")?.id).toBe("voice.world.yes-picnic-4");
+    expect(narrationClipForText("That is 2 cups! Count every cup. Let's try again!")?.id).toBe(
+      "voice.world.no-picnic-2",
+    );
+    expect(narrationClipForText("That is 7 cups! Not seven this picnic. Let's try again!")?.id).toBe(
+      "voice.world.no-picnic-7",
     );
   });
 
