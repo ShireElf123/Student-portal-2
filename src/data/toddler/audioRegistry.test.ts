@@ -5853,6 +5853,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-library-b.mp3",
       "/audio/voice/world-yes-library-7.mp3",
       "/audio/voice/world-no-library-3.mp3",
+      "/audio/voice/world-no-library-10.mp3",
+      "/audio/voice/world-yes-library-whisper.mp3",
+      "/audio/voice/world-no-library-drum.mp3",
+      "/audio/voice/world-no-library-siren.mp3",
+      "/audio/voice/world-yes-library-nana.mp3",
+      "/audio/voice/world-no-library-pip.mp3",
+      "/audio/voice/world-no-library-duck.mp3",
+      "/audio/voice/world-yes-library-hook.mp3",
+      "/audio/voice/world-no-library-shelf.mp3",
+      "/audio/voice/world-no-library-page.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7454,6 +7464,36 @@ describe("audio registry", () => {
     expect(narrationClipForText("That is 3 books! Count the whole box. Let's try again!")?.id).toBe(
       "voice.world.no-library-3",
     );
+    expect(narrationClipForText("That is 10 books! Not ten this box. Let's try again!")?.id).toBe(
+      "voice.world.no-library-10",
+    );
+    expect(narrationClipForText("Hooray! A whisper! Whispers belong here.")?.id).toBe(
+      "voice.world.yes-library-whisper",
+    );
+    expect(narrationClipForText("That is A drum kit! Drums are too loud here. Let's try again!")?.id).toBe(
+      "voice.world.no-library-drum",
+    );
+    expect(
+      narrationClipForText("That is A siren! Sirens stay at the fire house. Let's try again!")?.id,
+    ).toBe("voice.world.no-library-siren");
+    expect(narrationClipForText("Hooray! Nana! Nana read last.")?.id).toBe(
+      "voice.world.yes-library-nana",
+    );
+    expect(narrationClipForText("That is Pip! Pip read first. Let's try again!")?.id).toBe(
+      "voice.world.no-library-pip",
+    );
+    expect(narrationClipForText("That is A duck! No duck in this nook. Let's try again!")?.id).toBe(
+      "voice.world.no-library-duck",
+    );
+    expect(narrationClipForText("Hooray! Hook! Book and hook rhyme.")?.id).toBe(
+      "voice.world.yes-library-hook",
+    );
+    expect(
+      narrationClipForText("That is Shelf! Shelf does not rhyme with book. Let's try again!")?.id,
+    ).toBe("voice.world.no-library-shelf");
+    expect(
+      narrationClipForText("That is Page! Page does not rhyme with book. Let's try again!")?.id,
+    ).toBe("voice.world.no-library-page");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
