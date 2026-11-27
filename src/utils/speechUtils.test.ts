@@ -429,5 +429,36 @@ describe("narrator clip and parent priority", () => {
     ]);
     expect(engineLog.some((line) => line.startsWith("speak:"))).toBe(false);
   });
+
+  it("plays studio book-finish clips instead of Web Speech, including a repeat tap", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const played: string[] = [];
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => {
+        played.push(src);
+        return Promise.resolve();
+      },
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    const { speakText, narrationClipLookups } = await import("./speechUtils");
+    const line =
+      "Hooray! You finished reading How a Ferry Floats! You earned three golden stars!";
+    expect(narrationClipLookups(line)).toEqual([line]);
+    speakText(line);
+    await wait(50);
+    speakText(line);
+    await wait(50);
+    expect(played).toEqual([
+      "/audio/voice/book-finish-how-a-ferry-floats.mp3",
+      "/audio/voice/book-finish-how-a-ferry-floats.mp3",
+    ]);
+    expect(engineLog.some((line) => line.startsWith("speak:"))).toBe(false);
+  });
 });
 

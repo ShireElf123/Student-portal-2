@@ -224,4 +224,21 @@ describe("toddlerAudio ColorLab mix-again and bus beep", () => {
     expect(created[4].src).toContain("book-finish-animal-phonics-safari.mp3");
     expect(toddlerAudio.getLastVoiceIdForTests()).toBe("voice.book.finish-animal-phonics-safari");
   });
+
+  it("plays studio book-finish clips, including repeats, and yields to parent audio", async () => {
+    installFactory();
+    const watermelon =
+      "Hooray! You finished reading The Stoop Watermelon! You earned three golden stars!";
+    const redBus = "Hooray! You finished reading The Red Bus! You earned three golden stars!";
+    expect(toddlerAudio.tryNarrationClip(watermelon)).toBe(true);
+    expect(toddlerAudio.tryNarrationClip(watermelon)).toBe(true);
+    expect(created[0].pauseCalls).toBeGreaterThanOrEqual(1);
+    expect(created[1].src).toContain("book-finish-stoop-watermelon.mp3");
+    expect(toddlerAudio.tryNarrationClip(redBus)).toBe(true);
+    expect(created[2].src).toContain("book-finish-the-red-bus.mp3");
+    expect(toddlerAudio.getLastVoiceIdForTests()).toBe("voice.book.finish-the-red-bus");
+
+    toddlerAudio.beginParentPlayback();
+    expect(toddlerAudio.tryNarrationClip(watermelon)).toBe(false);
+  });
 });
