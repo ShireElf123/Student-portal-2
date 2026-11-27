@@ -377,4 +377,15 @@ describe("toddlerAudio ColorLab mix-again and bus beep", () => {
     toddlerAudio.beginParentPlayback();
     expect(toddlerAudio.tryNarrationClip(line)).toBe(false);
   });
+
+  it("plays Puppet Nook area welcome on repeat and blocks it for parent audio", async () => {
+    installFactory();
+    const line = "Puppet Nook! Tiny stage, big voices. Let's explore together!";
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(true);
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(true);
+    expect(created[0].pauseCalls).toBeGreaterThanOrEqual(1);
+    expect(created[1].src).toContain("district-puppet-nook-welcome.mp3");
+    toddlerAudio.beginParentPlayback();
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(false);
+  });
 });

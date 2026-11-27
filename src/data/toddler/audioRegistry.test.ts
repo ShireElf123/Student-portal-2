@@ -6204,6 +6204,9 @@ describe("audio registry", () => {
       "/audio/voice/mission-phonics-detective-complete.mp3",
       "/audio/voice/mission-happy-helper-start.mp3",
       "/audio/voice/mission-happy-helper-complete.mp3",
+      "/audio/voice/district-puppet-nook-welcome.mp3",
+      "/audio/voice/district-word-stream-welcome.mp3",
+      "/audio/voice/district-rainy-window-welcome.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -9014,6 +9017,15 @@ describe("audio registry", () => {
         "Congratulations! You completed the entire mission: Warm Heart Explorer! You earned the Sunshine Sprout badge!",
       )?.id,
     ).toBe("voice.mission.happy-helper-complete");
+    expect(
+      narrationClipForText("Puppet Nook! Tiny stage, big voices. Let's explore together!")?.id,
+    ).toBe("voice.district.puppet-nook-welcome");
+    expect(
+      narrationClipForText("Word Stream! Sounds that swim. Let's explore together!")?.id,
+    ).toBe("voice.district.word-stream-welcome");
+    expect(
+      narrationClipForText("Rainy Window! Boots, drops and cocoa. Let's explore together!")?.id,
+    ).toBe("voice.district.rainy-window-welcome");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
