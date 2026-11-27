@@ -5883,6 +5883,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-market-hose.mp3",
       "/audio/voice/world-yes-market-m.mp3",
       "/audio/voice/world-no-market-n.mp3",
+      "/audio/voice/world-no-market-k.mp3",
+      "/audio/voice/world-yes-market-5.mp3",
+      "/audio/voice/world-no-market-32.mp3",
+      "/audio/voice/world-no-market-2.mp3",
+      "/audio/voice/world-yes-market-red-cap.mp3",
+      "/audio/voice/world-no-market-kite.mp3",
+      "/audio/voice/world-no-market-hose-stall.mp3",
+      "/audio/voice/world-yes-market-white.mp3",
+      "/audio/voice/world-no-market-green.mp3",
+      "/audio/voice/world-no-market-red.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7569,6 +7579,36 @@ describe("audio registry", () => {
     expect(narrationClipForText("Hooray! M! Market starts with M.")?.id).toBe("voice.world.yes-market-m");
     expect(narrationClipForText("That is N! N starts nook. Let's try again!")?.id).toBe(
       "voice.world.no-market-n",
+    );
+    expect(narrationClipForText("That is K! K starts kite. Let's try again!")?.id).toBe(
+      "voice.world.no-market-k",
+    );
+    expect(narrationClipForText("Hooray! 5 coins! Three and two make five.")?.id).toBe(
+      "voice.world.yes-market-5",
+    );
+    expect(narrationClipForText("That is 32 coins! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-market-32",
+    );
+    expect(narrationClipForText("That is 2 coins! Count both purses. Let's try again!")?.id).toBe(
+      "voice.world.no-market-2",
+    );
+    expect(narrationClipForText("Hooray! A red cap! A red cap.")?.id).toBe(
+      "voice.world.yes-market-red-cap",
+    );
+    expect(
+      narrationClipForText("That is A blue kite! Nana said not the kite. Let's try again!")?.id,
+    ).toBe("voice.world.no-market-kite");
+    expect(narrationClipForText("That is A hose! Not this stall. Let's try again!")?.id).toBe(
+      "voice.world.no-market-hose-stall",
+    );
+    expect(narrationClipForText("Hooray! White! AB continues with white.")?.id).toBe(
+      "voice.world.yes-market-white",
+    );
+    expect(
+      narrationClipForText("That is Green! Green is not in this stripe. Let's try again!")?.id,
+    ).toBe("voice.world.no-market-green");
+    expect(narrationClipForText("That is Red! Red just happened. Let's try again!")?.id).toBe(
+      "voice.world.no-market-red",
     );
   });
 
