@@ -5973,6 +5973,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-seal-5-seals.mp3",
       "/audio/voice/world-no-seal-23.mp3",
       "/audio/voice/world-no-seal-3.mp3",
+      "/audio/voice/world-yes-seal-sea.mp3",
+      "/audio/voice/world-no-seal-attic.mp3",
+      "/audio/voice/world-no-seal-desert.mp3",
+      "/audio/voice/world-yes-seal-sock.mp3",
+      "/audio/voice/world-no-seal-seal.mp3",
+      "/audio/voice/world-no-seal-fish.mp3",
+      "/audio/voice/world-yes-bedroom-sleep.mp3",
+      "/audio/voice/world-no-bedroom-run.mp3",
+      "/audio/voice/world-no-bedroom-drums.mp3",
+      "/audio/voice/world-yes-bedroom-3.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7906,6 +7916,30 @@ describe("audio registry", () => {
     expect(narrationClipForText("That is 3 seals! Count both rocks. Let's try again!")?.id).toBe(
       "voice.world.no-seal-3",
     );
+    expect(narrationClipForText("Hooray! Cold sea and rocks! Sea and wet rocks.")?.id).toBe(
+      "voice.world.yes-seal-sea",
+    );
+    expect(narrationClipForText("That is Attic! Too dry and high. Let's try again!")?.id).toBe(
+      "voice.world.no-seal-attic",
+    );
+    expect(narrationClipForText("That is Desert! Too hot. Let's try again!")?.id).toBe(
+      "voice.world.no-seal-desert",
+    );
+    expect(narrationClipForText("Hooray! Sock! Rock and sock rhyme.")?.id).toBe("voice.world.yes-seal-sock");
+    expect(
+      narrationClipForText("That is Seal! Seal does not rhyme with rock. Let's try again!")?.id,
+    ).toBe("voice.world.no-seal-seal");
+    expect(
+      narrationClipForText("That is Fish! Fish does not rhyme with rock. Let's try again!")?.id,
+    ).toBe("voice.world.no-seal-fish");
+    expect(narrationClipForText("Hooray! Sleep! Time to sleep.")?.id).toBe("voice.world.yes-bedroom-sleep");
+    expect(
+      narrationClipForText("That is A long run! The body is asking for rest. Let's try again!")?.id,
+    ).toBe("voice.world.no-bedroom-run");
+    expect(narrationClipForText("That is Loud drums! Quiet helps sleep. Let's try again!")?.id).toBe(
+      "voice.world.no-bedroom-drums",
+    );
+    expect(narrationClipForText("Hooray! 3 teddies! Three teddies.")?.id).toBe("voice.world.yes-bedroom-3");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
