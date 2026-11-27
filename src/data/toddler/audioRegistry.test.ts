@@ -6003,6 +6003,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-owl-owl.mp3",
       "/audio/voice/world-no-owl-duck.mp3",
       "/audio/voice/world-no-owl-bus.mp3",
+      "/audio/voice/world-yes-owl-tree.mp3",
+      "/audio/voice/world-no-owl-fridge.mp3",
+      "/audio/voice/world-yes-owl-2.mp3",
+      "/audio/voice/world-no-owl-1.mp3",
+      "/audio/voice/world-no-owl-5.mp3",
+      "/audio/voice/world-yes-owl-hunt.mp3",
+      "/audio/voice/world-no-owl-bee.mp3",
+      "/audio/voice/world-yes-owl-o.mp3",
+      "/audio/voice/world-no-owl-a.mp3",
+      "/audio/voice/world-no-owl-u.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8013,6 +8023,26 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That is Bus! Buses rumble roads. Let's try again!")?.id).toBe(
       "voice.world.no-owl-bus",
+    );
+    expect(narrationClipForText("Hooray! A tree hole! In a tree hole.")?.id).toBe("voice.world.yes-owl-tree");
+    expect(narrationClipForText("That is Fridge! Too closed and cold. Let's try again!")?.id).toBe(
+      "voice.world.no-owl-fridge",
+    );
+    expect(narrationClipForText("Hooray! 2 eyes! Two eyes.")?.id).toBe("voice.world.yes-owl-2");
+    expect(narrationClipForText("That is 1 eye! Owls have two. Let's try again!")?.id).toBe(
+      "voice.world.no-owl-1",
+    );
+    expect(narrationClipForText("That is 5 eyes! Not five. Let's try again!")?.id).toBe(
+      "voice.world.no-owl-5",
+    );
+    expect(narrationClipForText("Hooray! Owl! Owls hunt at night.")?.id).toBe("voice.world.yes-owl-hunt");
+    expect(narrationClipForText("That is Bee! Bees work in day flowers. Let's try again!")?.id).toBe(
+      "voice.world.no-owl-bee",
+    );
+    expect(narrationClipForText("Hooray! O! Owl starts with O.")?.id).toBe("voice.world.yes-owl-o");
+    expect(narrationClipForText("That is A! A starts ant. Let's try again!")?.id).toBe("voice.world.no-owl-a");
+    expect(narrationClipForText("That is U! U starts under. Let's try again!")?.id).toBe(
+      "voice.world.no-owl-u",
     );
   });
 
