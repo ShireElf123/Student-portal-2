@@ -5783,6 +5783,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-picnic-4.mp3",
       "/audio/voice/world-no-picnic-2.mp3",
       "/audio/voice/world-no-picnic-7.mp3",
+      "/audio/voice/world-yes-picnic-5.mp3",
+      "/audio/voice/world-no-picnic-32.mp3",
+      "/audio/voice/world-no-picnic-2-sandwiches.mp3",
+      "/audio/voice/world-yes-picnic-ant.mp3",
+      "/audio/voice/world-no-picnic-whale.mp3",
+      "/audio/voice/world-no-picnic-bus.mp3",
+      "/audio/voice/world-yes-picnic-p.mp3",
+      "/audio/voice/world-no-picnic-b.mp3",
+      "/audio/voice/world-no-picnic-n.mp3",
+      "/audio/voice/world-yes-picnic-square.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7184,6 +7194,36 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That is 7 cups! Not seven this picnic. Let's try again!")?.id).toBe(
       "voice.world.no-picnic-7",
+    );
+    expect(narrationClipForText("Hooray! 5 sandwiches! Three and two make five.")?.id).toBe(
+      "voice.world.yes-picnic-5",
+    );
+    expect(narrationClipForText("That is 32 sandwiches! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-picnic-32",
+    );
+    expect(narrationClipForText("That is 2 sandwiches! Count both packs. Let's try again!")?.id).toBe(
+      "voice.world.no-picnic-2-sandwiches",
+    );
+    expect(narrationClipForText("Hooray! Ants! Ants found the crumb.")?.id).toBe(
+      "voice.world.yes-picnic-ant",
+    );
+    expect(narrationClipForText("That is Whale! Whales are in the sea. Let's try again!")?.id).toBe(
+      "voice.world.no-picnic-whale",
+    );
+    expect(narrationClipForText("That is Bus! Buses are on the road. Let's try again!")?.id).toBe(
+      "voice.world.no-picnic-bus",
+    );
+    expect(narrationClipForText("Hooray! P! Picnic starts with P.")?.id).toBe("voice.world.yes-picnic-p");
+    expect(
+      narrationClipForText(
+        "That is B! B starts basket — close, but this word is picnic. Let's try again!",
+      )?.id,
+    ).toBe("voice.world.no-picnic-b");
+    expect(narrationClipForText("That is N! N starts napkin. Let's try again!")?.id).toBe(
+      "voice.world.no-picnic-n",
+    );
+    expect(narrationClipForText("Hooray! Square! A square cloth.")?.id).toBe(
+      "voice.world.yes-picnic-square",
     );
   });
 
