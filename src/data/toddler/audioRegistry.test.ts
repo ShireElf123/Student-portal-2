@@ -6053,6 +6053,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-porch-p.mp3",
       "/audio/voice/world-yes-porch-5-add.mp3",
       "/audio/voice/world-no-porch-32.mp3",
+      "/audio/voice/world-no-porch-2-panes.mp3",
+      "/audio/voice/world-yes-porch-watch.mp3",
+      "/audio/voice/world-no-porch-catch.mp3",
+      "/audio/voice/world-no-porch-shout.mp3",
+      "/audio/voice/world-no-porch-drum.mp3",
+      "/audio/voice/world-no-porch-circle.mp3",
+      "/audio/voice/world-yes-porch-night.mp3",
+      "/audio/voice/world-no-porch-moth.mp3",
+      "/audio/voice/world-no-porch-porch.mp3",
+      "/audio/voice/world-yes-play.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8190,6 +8200,34 @@ describe("audio registry", () => {
     expect(narrationClipForText("That is 32 moths! Add the groups. Let's try again!")?.id).toBe(
       "voice.world.no-porch-32",
     );
+    expect(narrationClipForText("That is 2 moths! Count both panes. Let's try again!")?.id).toBe(
+      "voice.world.no-porch-2-panes",
+    );
+    expect(narrationClipForText("Hooray! Watch, do not catch! Watch the moths.")?.id).toBe(
+      "voice.world.yes-porch-watch",
+    );
+    expect(
+      narrationClipForText("That is Catch them all! Nana said not to catch. Let's try again!")?.id,
+    ).toBe("voice.world.no-porch-catch");
+    expect(narrationClipForText("That is Shout at them! We stay quiet. Let's try again!")?.id).toBe(
+      "voice.world.no-porch-shout",
+    );
+    expect(narrationClipForText("That is A drum! This pattern is circles. Let's try again!")?.id).toBe(
+      "voice.world.no-porch-drum",
+    );
+    expect(narrationClipForText("That is A circle! Circle just happened. Let's try again!")?.id).toBe(
+      "voice.world.no-porch-circle",
+    );
+    expect(narrationClipForText("Hooray! Night! Light and night rhyme.")?.id).toBe(
+      "voice.world.yes-porch-night",
+    );
+    expect(
+      narrationClipForText("That is Moth! Moth does not rhyme with light. Let's try again!")?.id,
+    ).toBe("voice.world.no-porch-moth");
+    expect(
+      narrationClipForText("That is Porch! Porch does not rhyme with light. Let's try again!")?.id,
+    ).toBe("voice.world.no-porch-porch");
+    expect(narrationClipForText("Hooray! Let's play! Time to play!")?.id).toBe("voice.world.yes-play");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
