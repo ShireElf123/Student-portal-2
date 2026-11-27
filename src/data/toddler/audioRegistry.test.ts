@@ -6043,6 +6043,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-star-bus.mp3",
       "/audio/voice/world-no-star-spoon.mp3",
       "/audio/voice/world-yes-porch-moth.mp3",
+      "/audio/voice/world-yes-porch-5.mp3",
+      "/audio/voice/world-no-porch-2.mp3",
+      "/audio/voice/world-no-porch-8.mp3",
+      "/audio/voice/world-yes-porch-bulbs.mp3",
+      "/audio/voice/world-no-porch-penguin.mp3",
+      "/audio/voice/world-no-porch-loaf.mp3",
+      "/audio/voice/world-no-porch-n.mp3",
+      "/audio/voice/world-no-porch-p.mp3",
+      "/audio/voice/world-yes-porch-5-add.mp3",
+      "/audio/voice/world-no-porch-32.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8154,6 +8164,32 @@ describe("audio registry", () => {
       narrationClipForText("That is A spoon! Spoons stay in the kitchen. Let's try again!")?.id,
     ).toBe("voice.world.no-star-spoon");
     expect(narrationClipForText("Hooray! Moth! A moth at the bulb.")?.id).toBe("voice.world.yes-porch-moth");
+    expect(narrationClipForText("Hooray! 5 moths! Five moths.")?.id).toBe("voice.world.yes-porch-5");
+    expect(narrationClipForText("That is 2 moths! Count the whole glass. Let's try again!")?.id).toBe(
+      "voice.world.no-porch-2",
+    );
+    expect(narrationClipForText("That is 8 moths! Not eight tonight. Let's try again!")?.id).toBe(
+      "voice.world.no-porch-8",
+    );
+    expect(narrationClipForText("Hooray! Moth! Moths come to bulbs.")?.id).toBe("voice.world.yes-porch-bulbs");
+    expect(narrationClipForText("That is Penguin! Penguins stay on ice. Let's try again!")?.id).toBe(
+      "voice.world.no-porch-penguin",
+    );
+    expect(narrationClipForText("That is A loaf! Loaves stay in the bakery. Let's try again!")?.id).toBe(
+      "voice.world.no-porch-loaf",
+    );
+    expect(narrationClipForText("That is N! N starts night. Let's try again!")?.id).toBe(
+      "voice.world.no-porch-n",
+    );
+    expect(narrationClipForText("That is P! P starts porch. Let's try again!")?.id).toBe(
+      "voice.world.no-porch-p",
+    );
+    expect(narrationClipForText("Hooray! 5 moths! Three and two make five.")?.id).toBe(
+      "voice.world.yes-porch-5-add",
+    );
+    expect(narrationClipForText("That is 32 moths! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-porch-32",
+    );
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
