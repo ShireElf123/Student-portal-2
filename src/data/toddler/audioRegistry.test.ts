@@ -6217,6 +6217,16 @@ describe("audio registry", () => {
       "/audio/voice/nook-library-fb-ten.mp3",
       "/audio/voice/nook-library-fb-look.mp3",
       "/audio/voice/nook-library-fb-toss.mp3",
+      "/audio/voice/nook-library-fb-click.mp3",
+      "/audio/voice/nook-kindness-fb-notes.mp3",
+      "/audio/voice/nook-kindness-fb-rocks.mp3",
+      "/audio/voice/nook-kindness-fb-three.mp3",
+      "/audio/voice/nook-kindness-fb-one.mp3",
+      "/audio/voice/nook-kindness-fb-gardener.mp3",
+      "/audio/voice/nook-kindness-fb-moon.mp3",
+      "/audio/voice/nook-kindness-fb-water.mp3",
+      "/audio/voice/nook-kindness-fb-hat.mp3",
+      "/audio/voice/nook-kindness-fb-hands.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -9065,6 +9075,36 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Books stay in laps. Eyes on the page.")?.id).toBe(
       "voice.nook.library-fb.toss",
+    );
+    expect(narrationClipForText("Click. The lion sleeps. Dot sleeps.")?.id).toBe(
+      "voice.nook.library-fb.click",
+    );
+    expect(
+      narrationClipForText("Notes that say hi. The wagon likes paper hugs.")?.id,
+    ).toBe("voice.nook.kindness-fb.notes");
+    expect(
+      narrationClipForText("Too heavy for little wheels. Notes first!")?.id,
+    ).toBe("voice.nook.kindness-fb.rocks");
+    expect(narrationClipForText("Three shy bells of fruit.")?.id).toBe(
+      "voice.nook.kindness-fb.three",
+    );
+    expect(narrationClipForText("Look: one, two, three.")?.id).toBe(
+      "voice.nook.kindness-fb.one",
+    );
+    expect(
+      narrationClipForText("A note and a pear. The wagon feels bigger.")?.id,
+    ).toBe("voice.nook.kindness-fb.gardener");
+    expect(
+      narrationClipForText("The moon has plenty of glow. The gardener needed this pear.")?.id,
+    ).toBe("voice.nook.kindness-fb.moon");
+    expect(narrationClipForText("Lick lick. Kindness is a rest stop.")?.id).toBe(
+      "voice.nook.kindness-fb.water",
+    );
+    expect(narrationClipForText("Cute! And also a drink. Water first.")?.id).toBe(
+      "voice.nook.kindness-fb.hat",
+    );
+    expect(narrationClipForText("Two paws. For you, Nana.")?.id).toBe(
+      "voice.nook.kindness-fb.hands",
     );
   });
 
