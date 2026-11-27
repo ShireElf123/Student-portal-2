@@ -285,4 +285,15 @@ describe("toddlerAudio ColorLab mix-again and bus beep", () => {
     toddlerAudio.beginParentPlayback();
     expect(toddlerAudio.tryNarrationClip(line)).toBe(false);
   });
+
+  it("plays Buddy's Busy Day on the Farm finish with the book apostrophe, including repeats", async () => {
+    installFactory();
+    const line = "Hooray! You finished reading Buddy's Busy Day on the Farm! You earned three golden stars!";
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(true);
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(true);
+    expect(created[0].pauseCalls).toBeGreaterThanOrEqual(1);
+    expect(created[1].src).toContain("book-finish-buddy-farm-tale.mp3");
+    toddlerAudio.beginParentPlayback();
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(false);
+  });
 });
