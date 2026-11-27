@@ -6237,6 +6237,9 @@ describe("audio registry", () => {
       "/audio/voice/nook-firehouse-fb-cloud.mp3",
       "/audio/voice/nook-firehouse-fb-three.mp3",
       "/audio/voice/nook-firehouse-fb-twenty.mp3",
+      "/audio/voice/nook-firehouse-fb-purr.mp3",
+      "/audio/voice/nook-firehouse-fb-dance.mp3",
+      "/audio/voice/nook-firehouse-fb-park.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -9146,6 +9149,15 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("It feels long! Today we count three brave steps.")?.id,
     ).toBe("voice.nook.firehouse-fb.twenty");
+    expect(narrationClipForText("Purr. Wave. Sparkle.")?.id).toBe(
+      "voice.nook.firehouse-fb.purr",
+    );
+    expect(
+      narrationClipForText("A careful boot dance beside the truck!")?.id,
+    ).toBe("voice.nook.firehouse-fb.dance");
+    expect(
+      narrationClipForText("Parked. Helpers rest. Ready again tomorrow.")?.id,
+    ).toBe("voice.nook.firehouse-fb.park");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {

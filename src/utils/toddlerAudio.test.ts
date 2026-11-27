@@ -421,4 +421,15 @@ describe("toddlerAudio ColorLab mix-again and bus beep", () => {
     toddlerAudio.beginParentPlayback();
     expect(toddlerAudio.tryNarrationClip(line)).toBe(false);
   });
+
+  it("plays firehouse purr feedback on repeat and blocks it for parent audio", async () => {
+    installFactory();
+    const line = "Purr. Wave. Sparkle.";
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(true);
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(true);
+    expect(created[0].pauseCalls).toBeGreaterThanOrEqual(1);
+    expect(created[1].src).toContain("nook-firehouse-fb-purr.mp3");
+    toddlerAudio.beginParentPlayback();
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(false);
+  });
 });
