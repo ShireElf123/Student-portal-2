@@ -5733,6 +5733,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-bakery-pilot.mp3",
       "/audio/voice/world-no-bakery-frog.mp3",
       "/audio/voice/world-yes-bakery-6.mp3",
+      "/audio/voice/world-no-bakery-3.mp3",
+      "/audio/voice/world-no-bakery-9.mp3",
+      "/audio/voice/world-yes-bakery-loaf.mp3",
+      "/audio/voice/world-no-bakery-milk.mp3",
+      "/audio/voice/world-no-bakery-ice.mp3",
+      "/audio/voice/world-yes-bakery-b.mp3",
+      "/audio/voice/world-no-bakery-d.mp3",
+      "/audio/voice/world-no-bakery-p.mp3",
+      "/audio/voice/world-yes-bakery-br.mp3",
+      "/audio/voice/world-no-bakery-st.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6991,6 +7001,36 @@ describe("audio registry", () => {
       "voice.world.no-bakery-frog",
     );
     expect(narrationClipForText("Hooray! 6 buns! Six buns.")?.id).toBe("voice.world.yes-bakery-6");
+    expect(narrationClipForText("That is 3 buns! Count the whole tray. Let's try again!")?.id).toBe(
+      "voice.world.no-bakery-3",
+    );
+    expect(narrationClipForText("That is 9 buns! Not nine this bake. Let's try again!")?.id).toBe(
+      "voice.world.no-bakery-9",
+    );
+    expect(narrationClipForText("Hooray! A loaf! Loaves bake in the oven.")?.id).toBe(
+      "voice.world.yes-bakery-loaf",
+    );
+    expect(narrationClipForText("That is Milk! Milk stays cool. Let's try again!")?.id).toBe(
+      "voice.world.no-bakery-milk",
+    );
+    expect(narrationClipForText("That is Ice! Ice would melt. Let's try again!")?.id).toBe(
+      "voice.world.no-bakery-ice",
+    );
+    expect(narrationClipForText("Hooray! B! Bread starts with B.")?.id).toBe("voice.world.yes-bakery-b");
+    expect(
+      narrationClipForText(
+        "That is D! D starts dough — close, but this word is bread. Let's try again!",
+      )?.id,
+    ).toBe("voice.world.no-bakery-d");
+    expect(narrationClipForText("That is P! P starts pie. Let's try again!")?.id).toBe(
+      "voice.world.no-bakery-p",
+    );
+    expect(narrationClipForText("Hooray! br! Bread starts with br.")?.id).toBe(
+      "voice.world.yes-bakery-br",
+    );
+    expect(narrationClipForText("That is st! St starts stem. Let's try again!")?.id).toBe(
+      "voice.world.no-bakery-st",
+    );
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
