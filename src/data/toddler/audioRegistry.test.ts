@@ -5753,6 +5753,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-bakery-circle.mp3",
       "/audio/voice/world-no-bakery-square.mp3",
       "/audio/voice/world-no-bakery-star.mp3",
+      "/audio/voice/world-yes-soup-spoon.mp3",
+      "/audio/voice/world-no-soup-key.mp3",
+      "/audio/voice/world-no-soup-shoe.mp3",
+      "/audio/voice/world-yes-soup-4.mp3",
+      "/audio/voice/world-no-soup-1.mp3",
+      "/audio/voice/world-no-soup-7.mp3",
+      "/audio/voice/world-yes-soup-wait.mp3",
+      "/audio/voice/world-no-soup-touch.mp3",
+      "/audio/voice/world-no-soup-pour-floor.mp3",
+      "/audio/voice/world-yes-soup-onion.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7070,6 +7080,34 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That is Star! Not a star tin today. Let's try again!")?.id).toBe(
       "voice.world.no-bakery-star",
+    );
+    expect(narrationClipForText("Hooray! Wooden spoon! The wooden spoon.")?.id).toBe(
+      "voice.world.yes-soup-spoon",
+    );
+    expect(narrationClipForText("That is A key! Keys open doors. Let's try again!")?.id).toBe(
+      "voice.world.no-soup-key",
+    );
+    expect(narrationClipForText("That is A shoe! Shoes stay by the door. Let's try again!")?.id).toBe(
+      "voice.world.no-soup-shoe",
+    );
+    expect(narrationClipForText("Hooray! 4 carrots! Four carrots.")?.id).toBe("voice.world.yes-soup-4");
+    expect(narrationClipForText("That is 1 carrot! Count all of them. Let's try again!")?.id).toBe(
+      "voice.world.no-soup-1",
+    );
+    expect(narrationClipForText("That is 7 carrots! Not seven this pot. Let's try again!")?.id).toBe(
+      "voice.world.no-soup-7",
+    );
+    expect(narrationClipForText("Hooray! Wait for a grown-up! A grown-up lifts hot pots.")?.id).toBe(
+      "voice.world.yes-soup-wait",
+    );
+    expect(narrationClipForText("That is Touch the lid! Hot lids burn. Let's try again!")?.id).toBe(
+      "voice.world.no-soup-touch",
+    );
+    expect(
+      narrationClipForText("That is Pour on the floor! Soup stays in the pot. Let's try again!")?.id,
+    ).toBe("voice.world.no-soup-pour-floor");
+    expect(narrationClipForText("Hooray! Onion! Onions can go in soup.")?.id).toBe(
+      "voice.world.yes-soup-onion",
     );
   });
 
