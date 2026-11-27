@@ -353,4 +353,16 @@ describe("toddlerAudio ColorLab mix-again and bus beep", () => {
     toddlerAudio.beginParentPlayback();
     expect(toddlerAudio.tryNarrationClip(line)).toBe(false);
   });
+
+  it("plays Lunar Landing start with Pip's apostrophe on repeat and blocks parent audio", async () => {
+    installFactory();
+    const line =
+      "Mission started: Lunar Landing Mission! Step 1: Launch Pip's Rocket. Pip is ready! Countdown: 3, 2, 1! Tap the glowing launch button to blast off!";
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(true);
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(true);
+    expect(created[0].pauseCalls).toBeGreaterThanOrEqual(1);
+    expect(created[1].src).toContain("mission-moon-voyager-start.mp3");
+    toddlerAudio.beginParentPlayback();
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(false);
+  });
 });

@@ -6186,6 +6186,16 @@ describe("audio registry", () => {
       "/audio/voice/mission-jungle-expedition-next-parrot.mp3",
       "/audio/voice/mission-jungle-expedition-next-bananas.mp3",
       "/audio/voice/mission-jungle-expedition-complete.mp3",
+      "/audio/voice/mission-ocean-voyage-start.mp3",
+      "/audio/voice/mission-ocean-voyage-next-jellyfish.mp3",
+      "/audio/voice/mission-ocean-voyage-next-sort.mp3",
+      "/audio/voice/mission-ocean-voyage-complete.mp3",
+      "/audio/voice/mission-dino-excavation-start.mp3",
+      "/audio/voice/mission-dino-excavation-next-roar.mp3",
+      "/audio/voice/mission-dino-excavation-complete.mp3",
+      "/audio/voice/mission-moon-voyager-start.mp3",
+      "/audio/voice/mission-moon-voyager-next-stars.mp3",
+      "/audio/voice/mission-moon-voyager-complete.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8906,6 +8916,56 @@ describe("audio registry", () => {
         "Congratulations! You completed the entire mission: Great Jungle Expedition! You earned the Jungle Master Scout badge!",
       )?.id,
     ).toBe("voice.mission.jungle-expedition-complete");
+    expect(
+      narrationClipForText(
+        "Mission started: Coral Reef Submarine Voyage! Step 1: Find the Leaping Dolphin. Listen to the sparkling water! Who clicks happily and leaps high out of ocean waves?",
+      )?.id,
+    ).toBe("voice.mission.ocean-voyage-start");
+    expect(
+      narrationClipForText(
+        "Next Mission Step: Spot the Glowing Jellyfish! Who floats like a magical lantern glowing softly in the deep water?",
+      )?.id,
+    ).toBe("voice.mission.ocean-voyage-next-jellyfish");
+    expect(
+      narrationClipForText(
+        "Next Mission Step: Sort Land vs Sea! Can you sort our animal friends? Put land walkers on the left and ocean swimmers on the right!",
+      )?.id,
+    ).toBe("voice.mission.ocean-voyage-next-sort");
+    expect(
+      narrationClipForText(
+        "Congratulations! You completed the entire mission: Coral Reef Submarine Voyage! You earned the Deep Sea Navigator badge!",
+      )?.id,
+    ).toBe("voice.mission.ocean-voyage-complete");
+    expect(
+      narrationClipForText(
+        "Mission started: Prehistoric Fossil Expedition! Step 1: Find the Long-Neck Giant. Who had the magnificent extra-long neck to reach sweet green leaves in the highest treetops?",
+      )?.id,
+    ).toBe("voice.mission.dino-excavation-start");
+    expect(
+      narrationClipForText(
+        "Next Mission Step: Hear the Mighty Roar! Listen to the heavy footsteps: Boom! Boom! Who lets out a mighty dinosaur roar?",
+      )?.id,
+    ).toBe("voice.mission.dino-excavation-next-roar");
+    expect(
+      narrationClipForText(
+        "Congratulations! You completed the entire mission: Prehistoric Fossil Expedition! You earned the Dino Master Paleontologist badge!",
+      )?.id,
+    ).toBe("voice.mission.dino-excavation-complete");
+    expect(
+      narrationClipForText(
+        "Mission started: Lunar Landing Mission! Step 1: Launch Pip's Rocket. Pip is ready! Countdown: 3, 2, 1! Tap the glowing launch button to blast off!",
+      )?.id,
+    ).toBe("voice.mission.moon-voyager-start");
+    expect(
+      narrationClipForText(
+        "Next Mission Step: Count 4 Twinkling Stars! Look at the glowing stars outside the rocket! Can you count 4 shiny stars?",
+      )?.id,
+    ).toBe("voice.mission.moon-voyager-next-stars");
+    expect(
+      narrationClipForText(
+        "Congratulations! You completed the entire mission: Lunar Landing Mission! You earned the Space Cadet Commander badge!",
+      )?.id,
+    ).toBe("voice.mission.moon-voyager-complete");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
