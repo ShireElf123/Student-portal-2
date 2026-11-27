@@ -5983,6 +5983,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-bedroom-run.mp3",
       "/audio/voice/world-no-bedroom-drums.mp3",
       "/audio/voice/world-yes-bedroom-3.mp3",
+      "/audio/voice/world-no-bedroom-1.mp3",
+      "/audio/voice/world-no-bedroom-6.mp3",
+      "/audio/voice/world-yes-bedroom-book.mp3",
+      "/audio/voice/world-no-bedroom-trumpet.mp3",
+      "/audio/voice/world-yes-bedroom-b.mp3",
+      "/audio/voice/world-no-bedroom-d.mp3",
+      "/audio/voice/world-no-bedroom-p.mp3",
+      "/audio/voice/world-yes-bedroom-soft.mp3",
+      "/audio/voice/world-no-bedroom-crash.mp3",
+      "/audio/voice/world-yes-bedroom-nana.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7940,6 +7950,32 @@ describe("audio registry", () => {
       "voice.world.no-bedroom-drums",
     );
     expect(narrationClipForText("Hooray! 3 teddies! Three teddies.")?.id).toBe("voice.world.yes-bedroom-3");
+    expect(narrationClipForText("That is 1 teddy! Count the whole quilt. Let's try again!")?.id).toBe(
+      "voice.world.no-bedroom-1",
+    );
+    expect(narrationClipForText("That is 6 teddies! Not six tonight. Let's try again!")?.id).toBe(
+      "voice.world.no-bedroom-6",
+    );
+    expect(narrationClipForText("Hooray! A picture book! Books belong at bedtime.")?.id).toBe(
+      "voice.world.yes-bedroom-book",
+    );
+    expect(narrationClipForText("That is A trumpet! Trumpets are loud. Let's try again!")?.id).toBe(
+      "voice.world.no-bedroom-trumpet",
+    );
+    expect(narrationClipForText("Hooray! B! Bed starts with B.")?.id).toBe("voice.world.yes-bedroom-b");
+    expect(narrationClipForText("That is D! D starts dark. Let's try again!")?.id).toBe(
+      "voice.world.no-bedroom-d",
+    );
+    expect(narrationClipForText("That is P! P starts pillow. Let's try again!")?.id).toBe(
+      "voice.world.no-bedroom-p",
+    );
+    expect(narrationClipForText("Hooray! Soft notes! Soft notes for sleep.")?.id).toBe(
+      "voice.world.yes-bedroom-soft",
+    );
+    expect(narrationClipForText("That is Crash! Too loud for bed. Let's try again!")?.id).toBe(
+      "voice.world.no-bedroom-crash",
+    );
+    expect(narrationClipForText("Hooray! Nana! Nana said it last.")?.id).toBe("voice.world.yes-bedroom-nana");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
