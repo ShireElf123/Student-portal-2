@@ -329,4 +329,28 @@ describe("toddlerAudio ColorLab mix-again and bus beep", () => {
     toddlerAudio.beginParentPlayback();
     expect(toddlerAudio.tryNarrationClip(line)).toBe(false);
   });
+
+  it("plays Farm Helper mission start on repeat and blocks it for parent audio", async () => {
+    installFactory();
+    const line =
+      "Mission started: Barnyard Morning Helper! Step 1: Listen for the Cow. Listen with your ears! Who is chewing sweet clover in the meadow and says Moooo?";
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(true);
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(true);
+    expect(created[0].pauseCalls).toBeGreaterThanOrEqual(1);
+    expect(created[1].src).toContain("mission-farm-helper-start.mp3");
+    toddlerAudio.beginParentPlayback();
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(false);
+  });
+
+  it("plays Jungle Parrot next-step wrap with the book apostrophe, including repeats", async () => {
+    installFactory();
+    const line =
+      "Next Mission Step: Find the Parrot's Home! Where does the beautiful tropical parrot make its cozy home?";
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(true);
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(true);
+    expect(created[0].pauseCalls).toBeGreaterThanOrEqual(1);
+    expect(created[1].src).toContain("mission-jungle-expedition-next-parrot.mp3");
+    toddlerAudio.beginParentPlayback();
+    expect(toddlerAudio.tryNarrationClip(line)).toBe(false);
+  });
 });

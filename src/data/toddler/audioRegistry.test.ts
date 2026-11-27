@@ -6176,6 +6176,16 @@ describe("audio registry", () => {
       "/audio/voice/book-finish-letter-meadow-abc.mp3",
       "/audio/voice/book-finish-pine-trail-map.mp3",
       "/audio/voice/book-finish-home-kind-morning.mp3",
+      "/audio/voice/mission-farm-helper-start.mp3",
+      "/audio/voice/mission-farm-helper-next-kitten.mp3",
+      "/audio/voice/mission-farm-helper-next-chicks.mp3",
+      "/audio/voice/mission-farm-helper-next-barnaby.mp3",
+      "/audio/voice/mission-farm-helper-complete.mp3",
+      "/audio/voice/mission-jungle-expedition-start.mp3",
+      "/audio/voice/mission-jungle-expedition-next-paws.mp3",
+      "/audio/voice/mission-jungle-expedition-next-parrot.mp3",
+      "/audio/voice/mission-jungle-expedition-next-bananas.mp3",
+      "/audio/voice/mission-jungle-expedition-complete.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8846,6 +8856,56 @@ describe("audio registry", () => {
         "Hooray! You finished reading Home Kind Morning! You earned three golden stars!",
       )?.id,
     ).toBe("voice.book.finish-home-kind-morning");
+    expect(
+      narrationClipForText(
+        "Mission started: Barnyard Morning Helper! Step 1: Listen for the Cow. Listen with your ears! Who is chewing sweet clover in the meadow and says Moooo?",
+      )?.id,
+    ).toBe("voice.mission.farm-helper-start");
+    expect(
+      narrationClipForText(
+        "Next Mission Step: Find the Kitten! Mother Cat says meow meow! Can you find her tiny baby kitten?",
+      )?.id,
+    ).toBe("voice.mission.farm-helper-next-kitten");
+    expect(
+      narrationClipForText(
+        "Next Mission Step: Count the Chicks! Look at the cozy hay! Count the fluffy yellow chicks: one, two, three!",
+      )?.id,
+    ).toBe("voice.mission.farm-helper-next-chicks");
+    expect(
+      narrationClipForText(
+        "Next Mission Step: Feed Barnaby! Barnaby the brown horse is hungry! What sweet crunchy treat does he love to eat?",
+      )?.id,
+    ).toBe("voice.mission.farm-helper-next-barnaby");
+    expect(
+      narrationClipForText(
+        "Congratulations! You completed the entire mission: Barnyard Morning Helper! You earned the Farm Helper Hero badge!",
+      )?.id,
+    ).toBe("voice.mission.farm-helper-complete");
+    expect(
+      narrationClipForText(
+        "Mission started: Great Jungle Expedition! Step 1: Listen for the Swinging Monkey. Listen to the treetop chatter! Who is swinging on the vines shouting ooh ooh aah aah?",
+      )?.id,
+    ).toBe("voice.mission.jungle-expedition-start");
+    expect(
+      narrationClipForText(
+        "Next Mission Step: Examine Giant Paw Prints! Look at these giant paw prints in the dirt! Who has a magnificent furry mane and padded paws?",
+      )?.id,
+    ).toBe("voice.mission.jungle-expedition-next-paws");
+    expect(
+      narrationClipForText(
+        "Next Mission Step: Find the Parrot's Home! Where does the beautiful tropical parrot make its cozy home?",
+      )?.id,
+    ).toBe("voice.mission.jungle-expedition-next-parrot");
+    expect(
+      narrationClipForText(
+        "Next Mission Step: Count 4 Ripe Bananas! Count the sweet ripe bananas hanging in the cluster: one, two, three, four!",
+      )?.id,
+    ).toBe("voice.mission.jungle-expedition-next-bananas");
+    expect(
+      narrationClipForText(
+        "Congratulations! You completed the entire mission: Great Jungle Expedition! You earned the Jungle Master Scout badge!",
+      )?.id,
+    ).toBe("voice.mission.jungle-expedition-complete");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
