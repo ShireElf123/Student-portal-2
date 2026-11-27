@@ -5943,6 +5943,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-northern-8.mp3",
       "/audio/voice/world-no-northern-4.mp3",
       "/audio/voice/world-no-northern-11.mp3",
+      "/audio/voice/world-yes-northern-fade.mp3",
+      "/audio/voice/world-no-northern-drum.mp3",
+      "/audio/voice/world-yes-northern-s.mp3",
+      "/audio/voice/world-no-northern-t.mp3",
+      "/audio/voice/world-no-northern-r.mp3",
+      "/audio/voice/world-yes-northern-ribbon.mp3",
+      "/audio/voice/world-no-northern-seal.mp3",
+      "/audio/voice/world-no-northern-bus.mp3",
+      "/audio/voice/world-yes-northern-7.mp3",
+      "/audio/voice/world-no-northern-34.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7795,6 +7805,34 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That is 11 stars! Not eleven. Let's try again!")?.id).toBe(
       "voice.world.no-northern-11",
+    );
+    expect(narrationClipForText("Hooray! Fade! AB continues with fade.")?.id).toBe(
+      "voice.world.yes-northern-fade",
+    );
+    expect(narrationClipForText("That is A drum! This pattern is glows. Let's try again!")?.id).toBe(
+      "voice.world.no-northern-drum",
+    );
+    expect(narrationClipForText("Hooray! S! Star starts with S.")?.id).toBe("voice.world.yes-northern-s");
+    expect(narrationClipForText("That is T! T starts telescope. Let's try again!")?.id).toBe(
+      "voice.world.no-northern-t",
+    );
+    expect(narrationClipForText("That is R! R starts ribbon. Let's try again!")?.id).toBe(
+      "voice.world.no-northern-r",
+    );
+    expect(narrationClipForText("Hooray! The light ribbon! The ribbon is in the sky.")?.id).toBe(
+      "voice.world.yes-northern-ribbon",
+    );
+    expect(narrationClipForText("That is A seal! Seals stay in the water. Let's try again!")?.id).toBe(
+      "voice.world.no-northern-seal",
+    );
+    expect(narrationClipForText("That is A bus! Buses stay on roads. Let's try again!")?.id).toBe(
+      "voice.world.no-northern-bus",
+    );
+    expect(narrationClipForText("Hooray! 7 sparks! Three and four make seven.")?.id).toBe(
+      "voice.world.yes-northern-7",
+    );
+    expect(narrationClipForText("That is 34 sparks! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-northern-34",
     );
   });
 
