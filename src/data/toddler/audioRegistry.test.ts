@@ -6033,6 +6033,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-star-9-add.mp3",
       "/audio/voice/world-no-star-45.mp3",
       "/audio/voice/world-no-star-5.mp3",
+      "/audio/voice/world-yes-star-rest.mp3",
+      "/audio/voice/world-no-star-drum.mp3",
+      "/audio/voice/world-no-star-twinkle.mp3",
+      "/audio/voice/world-yes-star-rail.mp3",
+      "/audio/voice/world-no-star-kettle.mp3",
+      "/audio/voice/world-no-star-shoe.mp3",
+      "/audio/voice/world-yes-star-star.mp3",
+      "/audio/voice/world-no-star-bus.mp3",
+      "/audio/voice/world-no-star-spoon.mp3",
+      "/audio/voice/world-yes-porch-moth.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8116,6 +8126,34 @@ describe("audio registry", () => {
     expect(narrationClipForText("That is 5 stars! Count both clusters. Let's try again!")?.id).toBe(
       "voice.world.no-star-5",
     );
+    expect(narrationClipForText("Hooray! A rest! AB continues with rest.")?.id).toBe(
+      "voice.world.yes-star-rest",
+    );
+    expect(narrationClipForText("That is A drum! This pattern is twinkles. Let's try again!")?.id).toBe(
+      "voice.world.no-star-drum",
+    );
+    expect(narrationClipForText("That is A twinkle! Twinkle just happened. Let's try again!")?.id).toBe(
+      "voice.world.no-star-twinkle",
+    );
+    expect(narrationClipForText("Hooray! Above the rail! Above the rail.")?.id).toBe(
+      "voice.world.yes-star-rail",
+    );
+    expect(narrationClipForText("That is In the kettle! Not the kettle. Let's try again!")?.id).toBe(
+      "voice.world.no-star-kettle",
+    );
+    expect(narrationClipForText("That is In a shoe! Not a shoe. Let's try again!")?.id).toBe(
+      "voice.world.no-star-shoe",
+    );
+    expect(narrationClipForText("Hooray! A star! Stars belong in the sky.")?.id).toBe(
+      "voice.world.yes-star-star",
+    );
+    expect(narrationClipForText("That is A bus! Buses stay on the street. Let's try again!")?.id).toBe(
+      "voice.world.no-star-bus",
+    );
+    expect(
+      narrationClipForText("That is A spoon! Spoons stay in the kitchen. Let's try again!")?.id,
+    ).toBe("voice.world.no-star-spoon");
+    expect(narrationClipForText("Hooray! Moth! A moth at the bulb.")?.id).toBe("voice.world.yes-porch-moth");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
