@@ -5993,6 +5993,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-bedroom-soft.mp3",
       "/audio/voice/world-no-bedroom-crash.mp3",
       "/audio/voice/world-yes-bedroom-nana.mp3",
+      "/audio/voice/world-no-bedroom-pip.mp3",
+      "/audio/voice/world-no-bedroom-owl.mp3",
+      "/audio/voice/world-no-bedroom-flash.mp3",
+      "/audio/voice/world-no-bedroom-bright.mp3",
+      "/audio/voice/world-yes-bedroom-rect.mp3",
+      "/audio/voice/world-no-bedroom-circle.mp3",
+      "/audio/voice/world-no-bedroom-star.mp3",
+      "/audio/voice/world-yes-owl-owl.mp3",
+      "/audio/voice/world-no-owl-duck.mp3",
+      "/audio/voice/world-no-owl-bus.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7976,6 +7986,34 @@ describe("audio registry", () => {
       "voice.world.no-bedroom-crash",
     );
     expect(narrationClipForText("Hooray! Nana! Nana said it last.")?.id).toBe("voice.world.yes-bedroom-nana");
+    expect(narrationClipForText("That is Pip! Pip said it first. Let's try again!")?.id).toBe(
+      "voice.world.no-bedroom-pip",
+    );
+    expect(narrationClipForText("That is The owl! The owl is outside. Let's try again!")?.id).toBe(
+      "voice.world.no-bedroom-owl",
+    );
+    expect(
+      narrationClipForText("That is A camera flash! This pattern is the lamp. Let's try again!")?.id,
+    ).toBe("voice.world.no-bedroom-flash");
+    expect(narrationClipForText("That is Bright! Bright just happened. Let's try again!")?.id).toBe(
+      "voice.world.no-bedroom-bright",
+    );
+    expect(narrationClipForText("Hooray! Rectangle! A rectangle window.")?.id).toBe(
+      "voice.world.yes-bedroom-rect",
+    );
+    expect(
+      narrationClipForText("That is Circle! This window has long sides. Let's try again!")?.id,
+    ).toBe("voice.world.no-bedroom-circle");
+    expect(narrationClipForText("That is Star! Not a star window. Let's try again!")?.id).toBe(
+      "voice.world.no-bedroom-star",
+    );
+    expect(narrationClipForText("Hooray! Owl! An owl in the hole.")?.id).toBe("voice.world.yes-owl-owl");
+    expect(narrationClipForText("That is Duck! Ducks quack on ponds. Let's try again!")?.id).toBe(
+      "voice.world.no-owl-duck",
+    );
+    expect(narrationClipForText("That is Bus! Buses rumble roads. Let's try again!")?.id).toBe(
+      "voice.world.no-owl-bus",
+    );
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
