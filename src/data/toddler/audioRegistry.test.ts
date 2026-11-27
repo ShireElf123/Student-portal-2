@@ -5833,6 +5833,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-park-truck.mp3",
       "/audio/voice/world-yes-park-d.mp3",
       "/audio/voice/world-no-park-b.mp3",
+      "/audio/voice/world-no-park-g.mp3",
+      "/audio/voice/world-yes-park-circle.mp3",
+      "/audio/voice/world-no-park-square.mp3",
+      "/audio/voice/world-no-park-triangle.mp3",
+      "/audio/voice/world-yes-park-5-balls.mp3",
+      "/audio/voice/world-no-park-23.mp3",
+      "/audio/voice/world-no-park-3.mp3",
+      "/audio/voice/world-yes-park-nana.mp3",
+      "/audio/voice/world-no-park-dog.mp3",
+      "/audio/voice/world-no-park-pip.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7376,6 +7386,37 @@ describe("audio registry", () => {
     expect(narrationClipForText("Hooray! D! Duck starts with D.")?.id).toBe("voice.world.yes-park-d");
     expect(narrationClipForText("That is B! B starts ball. Let's try again!")?.id).toBe(
       "voice.world.no-park-b",
+    );
+    expect(narrationClipForText("That is G! G starts grass. Let's try again!")?.id).toBe(
+      "voice.world.no-park-g",
+    );
+    expect(narrationClipForText("Hooray! Circle! A round pond.")?.id).toBe(
+      "voice.world.yes-park-circle",
+    );
+    expect(narrationClipForText("That is Square! This pond is round. Let's try again!")?.id).toBe(
+      "voice.world.no-park-square",
+    );
+    expect(narrationClipForText("That is Triangle! Not three-sided. Let's try again!")?.id).toBe(
+      "voice.world.no-park-triangle",
+    );
+    expect(narrationClipForText("Hooray! 5 balls! Two and three make five.")?.id).toBe(
+      "voice.world.yes-park-5-balls",
+    );
+    expect(narrationClipForText("That is 23 balls! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-park-23",
+    );
+    expect(narrationClipForText("That is 3 balls! Count both lots. Let's try again!")?.id).toBe(
+      "voice.world.no-park-3",
+    );
+    expect(narrationClipForText("Hooray! Nana! AB continues with Nana.")?.id).toBe(
+      "voice.world.yes-park-nana",
+    );
+    expect(
+      narrationClipForText("That is The dog! The dog is not in this turn pattern. Let's try again!")
+        ?.id,
+    ).toBe("voice.world.no-park-dog");
+    expect(narrationClipForText("That is Pip! Pip just had a turn. Let's try again!")?.id).toBe(
+      "voice.world.no-park-pip",
     );
   });
 
