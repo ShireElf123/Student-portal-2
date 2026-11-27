@@ -5923,6 +5923,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-polar-2.mp3",
       "/audio/voice/world-no-polar-6.mp3",
       "/audio/voice/world-yes-polar-bear-coat.mp3",
+      "/audio/voice/world-no-polar-monkey.mp3",
+      "/audio/voice/world-yes-polar-c.mp3",
+      "/audio/voice/world-yes-polar-grown.mp3",
+      "/audio/voice/world-no-polar-cub.mp3",
+      "/audio/voice/world-no-polar-ferry.mp3",
+      "/audio/voice/world-yes-polar-6.mp3",
+      "/audio/voice/world-no-polar-33.mp3",
+      "/audio/voice/world-no-polar-3.mp3",
+      "/audio/voice/world-yes-polar-circle.mp3",
+      "/audio/voice/world-no-polar-star.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7719,6 +7729,34 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Hooray! Polar bear! Snow-coat bear.")?.id).toBe(
       "voice.world.yes-polar-bear-coat",
+    );
+    expect(
+      narrationClipForText("That is Monkey! Monkeys stay in jungle vines. Let's try again!")?.id,
+    ).toBe("voice.world.no-polar-monkey");
+    expect(narrationClipForText("Hooray! C! Cub starts with C.")?.id).toBe("voice.world.yes-polar-c");
+    expect(narrationClipForText("Hooray! The grown bear! The grown bear slept last.")?.id).toBe(
+      "voice.world.yes-polar-grown",
+    );
+    expect(narrationClipForText("That is The cub! The cub napped first. Let's try again!")?.id).toBe(
+      "voice.world.no-polar-cub",
+    );
+    expect(narrationClipForText("That is The ferry! No ferry in this den. Let's try again!")?.id).toBe(
+      "voice.world.no-polar-ferry",
+    );
+    expect(narrationClipForText("Hooray! 6 prints! Three and three make six.")?.id).toBe(
+      "voice.world.yes-polar-6",
+    );
+    expect(narrationClipForText("That is 33 prints! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-polar-33",
+    );
+    expect(narrationClipForText("That is 3 prints! Count both trails. Let's try again!")?.id).toBe(
+      "voice.world.no-polar-3",
+    );
+    expect(narrationClipForText("Hooray! Circle! A round door.")?.id).toBe(
+      "voice.world.yes-polar-circle",
+    );
+    expect(narrationClipForText("That is Star! Not a star door. Let's try again!")?.id).toBe(
+      "voice.world.no-polar-star",
     );
   });
 
