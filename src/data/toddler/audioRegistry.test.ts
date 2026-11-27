@@ -5743,6 +5743,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-bakery-p.mp3",
       "/audio/voice/world-yes-bakery-br.mp3",
       "/audio/voice/world-no-bakery-st.mp3",
+      "/audio/voice/world-no-bakery-fl.mp3",
+      "/audio/voice/world-yes-bakery-loaf-pattern.mp3",
+      "/audio/voice/world-no-bakery-fish.mp3",
+      "/audio/voice/world-no-bakery-bun.mp3",
+      "/audio/voice/world-yes-bakery-window.mp3",
+      "/audio/voice/world-no-bakery-oven.mp3",
+      "/audio/voice/world-no-bakery-pond.mp3",
+      "/audio/voice/world-yes-bakery-circle.mp3",
+      "/audio/voice/world-no-bakery-square.mp3",
+      "/audio/voice/world-no-bakery-star.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7030,6 +7040,36 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That is st! St starts stem. Let's try again!")?.id).toBe(
       "voice.world.no-bakery-st",
+    );
+    expect(
+      narrationClipForText("That is fl! Fl starts flour — not this word. Let's try again!")?.id,
+    ).toBe("voice.world.no-bakery-fl");
+    expect(narrationClipForText("Hooray! Loaf! AB continues with loaf.")?.id).toBe(
+      "voice.world.yes-bakery-loaf-pattern",
+    );
+    expect(narrationClipForText("That is Fish! Fish is not on this tray. Let's try again!")?.id).toBe(
+      "voice.world.no-bakery-fish",
+    );
+    expect(narrationClipForText("That is Bun! Bun just happened. Let's try again!")?.id).toBe(
+      "voice.world.no-bakery-bun",
+    );
+    expect(narrationClipForText("Hooray! The window! On the window.")?.id).toBe(
+      "voice.world.yes-bakery-window",
+    );
+    expect(narrationClipForText("That is The oven! Nana said not the oven. Let's try again!")?.id).toBe(
+      "voice.world.no-bakery-oven",
+    );
+    expect(narrationClipForText("That is The pond! Not this kitchen. Let's try again!")?.id).toBe(
+      "voice.world.no-bakery-pond",
+    );
+    expect(narrationClipForText("Hooray! Circle! A round tin.")?.id).toBe(
+      "voice.world.yes-bakery-circle",
+    );
+    expect(narrationClipForText("That is Square! This tin is round. Let's try again!")?.id).toBe(
+      "voice.world.no-bakery-square",
+    );
+    expect(narrationClipForText("That is Star! Not a star tin today. Let's try again!")?.id).toBe(
+      "voice.world.no-bakery-star",
     );
   });
 
