@@ -6207,6 +6207,16 @@ describe("audio registry", () => {
       "/audio/voice/district-puppet-nook-welcome.mp3",
       "/audio/voice/district-word-stream-welcome.mp3",
       "/audio/voice/district-rainy-window-welcome.mp3",
+      "/audio/voice/nook-library-fb-whisper.mp3",
+      "/audio/voice/nook-library-fb-shout.mp3",
+      "/audio/voice/nook-library-fb-low.mp3",
+      "/audio/voice/nook-library-fb-roof.mp3",
+      "/audio/voice/nook-library-fb-lion.mp3",
+      "/audio/voice/nook-library-fb-sub.mp3",
+      "/audio/voice/nook-library-fb-two.mp3",
+      "/audio/voice/nook-library-fb-ten.mp3",
+      "/audio/voice/nook-library-fb-look.mp3",
+      "/audio/voice/nook-library-fb-toss.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -9026,6 +9036,36 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("Rainy Window! Boots, drops and cocoa. Let's explore together!")?.id,
     ).toBe("voice.district.rainy-window-welcome");
+    expect(
+      narrationClipForText("Hello, whispered. The librarian whispers hello back.")?.id,
+    ).toBe("voice.nook.library-fb.whisper");
+    expect(
+      narrationClipForText("Outside voice stays outside. Inside we whisper. Hello…")?.id,
+    ).toBe("voice.nook.library-fb.shout");
+    expect(
+      narrationClipForText("Yes — the low row, just right for little paws.")?.id,
+    ).toBe("voice.nook.library-fb.low");
+    expect(
+      narrationClipForText("Roof is for rain. Books live on the low sunny row.")?.id,
+    ).toBe("voice.nook.library-fb.roof");
+    expect(narrationClipForText("A listening roar. Sit criss-cross.")?.id).toBe(
+      "voice.nook.library-fb.lion",
+    );
+    expect(narrationClipForText("Not today. Today a quiet lion.")?.id).toBe(
+      "voice.nook.library-fb.sub",
+    );
+    expect(narrationClipForText("Two weeks. Magic ticket.")?.id).toBe(
+      "voice.nook.library-fb.two",
+    );
+    expect(
+      narrationClipForText("That is a long nap. Two weeks is the library clock.")?.id,
+    ).toBe("voice.nook.library-fb.ten");
+    expect(narrationClipForText("Eyes on the page. The lion looks back.")?.id).toBe(
+      "voice.nook.library-fb.look",
+    );
+    expect(narrationClipForText("Books stay in laps. Eyes on the page.")?.id).toBe(
+      "voice.nook.library-fb.toss",
+    );
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
