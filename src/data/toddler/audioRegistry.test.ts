@@ -6122,6 +6122,16 @@ describe("audio registry", () => {
       "/audio/voice/book-finish-gully-harbor-morning.mp3",
       "/audio/voice/book-finish-diner-booth-two.mp3",
       "/audio/voice/book-finish-first-day-yellow-bus.mp3",
+      "/audio/voice/book-finish-corner-store-bell.mp3",
+      "/audio/voice/book-finish-laundromat-rain.mp3",
+      "/audio/voice/book-finish-backyard-sprinkler.mp3",
+      "/audio/voice/book-finish-red-wagon-hill.mp3",
+      "/audio/voice/book-finish-market-saturday-berries.mp3",
+      "/audio/voice/book-finish-elevator-buttons.mp3",
+      "/audio/voice/book-finish-attic-rain-trunk.mp3",
+      "/audio/voice/book-finish-ferry-horn-morning.mp3",
+      "/audio/voice/book-finish-sidewalk-chalk-sun.mp3",
+      "/audio/voice/book-finish-bakery-window-fog.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8522,6 +8532,56 @@ describe("audio registry", () => {
         "Hooray! You finished reading The First Day Yellow Bus! You earned three golden stars!",
       )?.id,
     ).toBe("voice.book.finish-first-day-yellow-bus");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading The Corner Store Bell! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-corner-store-bell");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Laundromat Rain! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-laundromat-rain");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Backyard Sprinkler! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-backyard-sprinkler");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading The Red Wagon Hill! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-red-wagon-hill");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Market Saturday Berries! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-market-saturday-berries");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Elevator Buttons! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-elevator-buttons");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading The Rainy Attic Trunk! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-attic-rain-trunk");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Ferry Horn Morning! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-ferry-horn-morning");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Sidewalk Chalk Sun! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-sidewalk-chalk-sun");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Bakery Window Fog! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-bakery-window-fog");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {

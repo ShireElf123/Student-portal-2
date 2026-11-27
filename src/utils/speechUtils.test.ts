@@ -519,5 +519,35 @@ describe("narrator clip and parent priority", () => {
     ]);
     expect(engineLog.some((row) => row.startsWith("speak:"))).toBe(false);
   });
+
+  it("plays The Corner Store Bell finish instead of Web Speech", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const played: string[] = [];
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => {
+        played.push(src);
+        return Promise.resolve();
+      },
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    const { speakText } = await import("./speechUtils");
+    const line =
+      "Hooray! You finished reading The Corner Store Bell! You earned three golden stars!";
+    speakText(line);
+    await wait(50);
+    speakText(line);
+    await wait(50);
+    expect(played).toEqual([
+      "/audio/voice/book-finish-corner-store-bell.mp3",
+      "/audio/voice/book-finish-corner-store-bell.mp3",
+    ]);
+    expect(engineLog.some((row) => row.startsWith("speak:"))).toBe(false);
+  });
 });
 
