@@ -72,6 +72,33 @@ describe("Color Magic mix target", () => {
     expect(narrationClipForText(mixAgain("Pink", "Green"))?.src).toBe(
       "/audio/voice/color-need-pink-green.mp3",
     );
+    expect(narrationClipForText(mixAgain("Cream", "Orange"))?.src).toBe(
+      "/audio/voice/color-need-cream-orange.mp3",
+    );
+    expect(narrationClipForText(mixAgain("Cream", "Purple"))?.src).toBe(
+      "/audio/voice/color-need-cream-purple.mp3",
+    );
+    expect(narrationClipForText(mixAgain("Cream", "Green"))?.src).toBe(
+      "/audio/voice/color-need-cream-green.mp3",
+    );
+    expect(narrationClipForText(mixAgain("Sky", "Orange"))?.src).toBe(
+      "/audio/voice/color-need-sky-orange.mp3",
+    );
+    expect(narrationClipForText(mixAgain("Sky", "Purple"))?.src).toBe(
+      "/audio/voice/color-need-sky-purple.mp3",
+    );
+    expect(narrationClipForText(mixAgain("Sky", "Green"))?.src).toBe(
+      "/audio/voice/color-need-sky-green.mp3",
+    );
+    expect(narrationClipForText("Mix two colours until you make Orange!")?.src).toBe(
+      "/audio/voice/color-mix-until-orange.mp3",
+    );
+    expect(narrationClipForText("Mix two colours until you make Purple!")?.src).toBe(
+      "/audio/voice/color-mix-until-purple.mp3",
+    );
+    expect(narrationClipForText("Mix two colours until you make Green!")?.src).toBe(
+      "/audio/voice/color-mix-until-green.mp3",
+    );
     expect(narrationClipForText(mixAgain("Orange", "Purple"))?.author).toContain("voice-01");
   });
 });

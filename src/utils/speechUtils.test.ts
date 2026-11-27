@@ -398,5 +398,36 @@ describe("narrator clip and parent priority", () => {
     ]);
     expect(engineLog.some((line) => line.startsWith("speak:"))).toBe(false);
   });
+
+  it("plays Cream mix-again, mix-until, and book-finish clips instead of Web Speech", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const played: string[] = [];
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => {
+        played.push(src);
+        return Promise.resolve();
+      },
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    const { speakText } = await import("./speechUtils");
+    speakText("That made Sky. We need Green. Mix again!", { closedKit: true });
+    await wait(50);
+    speakText("Mix two colours until you make Orange!", { closedKit: true });
+    await wait(50);
+    speakText("Hooray! You finished reading Animal Phonics Safari! You earned three golden stars!");
+    await wait(50);
+    expect(played).toEqual([
+      "/audio/voice/color-need-sky-green.mp3",
+      "/audio/voice/color-mix-until-orange.mp3",
+      "/audio/voice/book-finish-animal-phonics-safari.mp3",
+    ]);
+    expect(engineLog.some((line) => line.startsWith("speak:"))).toBe(false);
+  });
 });
 

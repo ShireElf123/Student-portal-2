@@ -6082,6 +6082,16 @@ describe("audio registry", () => {
       "/audio/voice/color-need-pink-orange.mp3",
       "/audio/voice/color-need-pink-purple.mp3",
       "/audio/voice/color-need-pink-green.mp3",
+      "/audio/voice/color-need-cream-orange.mp3",
+      "/audio/voice/color-need-cream-purple.mp3",
+      "/audio/voice/color-need-cream-green.mp3",
+      "/audio/voice/color-need-sky-orange.mp3",
+      "/audio/voice/color-need-sky-purple.mp3",
+      "/audio/voice/color-need-sky-green.mp3",
+      "/audio/voice/color-mix-until-orange.mp3",
+      "/audio/voice/color-mix-until-purple.mp3",
+      "/audio/voice/color-mix-until-green.mp3",
+      "/audio/voice/book-finish-animal-phonics-safari.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8300,6 +8310,38 @@ describe("audio registry", () => {
     expect(narrationClipForText("That made Pink. We need Green. Mix again!")?.id).toBe(
       "voice.color.need-pink-green",
     );
+    expect(narrationClipForText("That made Cream. We need Orange. Mix again!")?.id).toBe(
+      "voice.color.need-cream-orange",
+    );
+    expect(narrationClipForText("That made Cream. We need Purple. Mix again!")?.id).toBe(
+      "voice.color.need-cream-purple",
+    );
+    expect(narrationClipForText("That made Cream. We need Green. Mix again!")?.id).toBe(
+      "voice.color.need-cream-green",
+    );
+    expect(narrationClipForText("That made Sky. We need Orange. Mix again!")?.id).toBe(
+      "voice.color.need-sky-orange",
+    );
+    expect(narrationClipForText("That made Sky. We need Purple. Mix again!")?.id).toBe(
+      "voice.color.need-sky-purple",
+    );
+    expect(narrationClipForText("That made Sky. We need Green. Mix again!")?.id).toBe(
+      "voice.color.need-sky-green",
+    );
+    expect(narrationClipForText("Mix two colours until you make Orange!")?.id).toBe(
+      "voice.color.mix-until-orange",
+    );
+    expect(narrationClipForText("Mix two colours until you make Purple!")?.id).toBe(
+      "voice.color.mix-until-purple",
+    );
+    expect(narrationClipForText("Mix two colours until you make Green!")?.id).toBe(
+      "voice.color.mix-until-green",
+    );
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Animal Phonics Safari! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-animal-phonics-safari");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {

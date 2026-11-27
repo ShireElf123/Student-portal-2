@@ -205,4 +205,23 @@ describe("toddlerAudio ColorLab mix-again and bus beep", () => {
     expect(toddlerAudio.tryNarrationClip(busBeep)).toBe(false);
     expect(created).toHaveLength(0);
   });
+
+  it("plays Cream/Sky mix-again, mix-until, and book-finish clips, including repeats", async () => {
+    installFactory();
+    const cream = "That made Cream. We need Orange. Mix again!";
+    const until = "Mix two colours until you make Purple!";
+    const book =
+      "Hooray! You finished reading Animal Phonics Safari! You earned three golden stars!";
+    expect(toddlerAudio.tryNarrationClip(cream)).toBe(true);
+    expect(toddlerAudio.tryNarrationClip(cream)).toBe(true);
+    expect(created[0].pauseCalls).toBeGreaterThanOrEqual(1);
+    expect(created[1].src).toContain("color-need-cream-orange.mp3");
+    expect(toddlerAudio.tryNarrationClip(until)).toBe(true);
+    expect(created[2].src).toContain("color-mix-until-purple.mp3");
+    expect(toddlerAudio.tryNarrationClip(book)).toBe(true);
+    expect(toddlerAudio.tryNarrationClip(book)).toBe(true);
+    expect(created[3].pauseCalls).toBeGreaterThanOrEqual(1);
+    expect(created[4].src).toContain("book-finish-animal-phonics-safari.mp3");
+    expect(toddlerAudio.getLastVoiceIdForTests()).toBe("voice.book.finish-animal-phonics-safari");
+  });
 });
