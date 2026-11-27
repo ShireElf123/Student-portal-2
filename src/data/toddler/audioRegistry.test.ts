@@ -5863,6 +5863,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-library-hook.mp3",
       "/audio/voice/world-no-library-shelf.mp3",
       "/audio/voice/world-no-library-page.mp3",
+      "/audio/voice/world-yes-library-blue.mp3",
+      "/audio/voice/world-no-library-gold.mp3",
+      "/audio/voice/world-no-library-red.mp3",
+      "/audio/voice/world-yes-library-6.mp3",
+      "/audio/voice/world-no-library-42.mp3",
+      "/audio/voice/world-no-library-2.mp3",
+      "/audio/voice/world-yes-market-seller.mp3",
+      "/audio/voice/world-no-market-owl.mp3",
+      "/audio/voice/world-no-market-sub.mp3",
+      "/audio/voice/world-yes-market-4.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7494,6 +7504,34 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("That is Page! Page does not rhyme with book. Let's try again!")?.id,
     ).toBe("voice.world.no-library-page");
+    expect(narrationClipForText("Hooray! Blue spine! AB continues with blue.")?.id).toBe(
+      "voice.world.yes-library-blue",
+    );
+    expect(
+      narrationClipForText("That is Gold spine! Gold is not in this row. Let's try again!")?.id,
+    ).toBe("voice.world.no-library-gold");
+    expect(narrationClipForText("That is Red spine! Red just happened. Let's try again!")?.id).toBe(
+      "voice.world.no-library-red",
+    );
+    expect(narrationClipForText("Hooray! 6 books! Four and two make six.")?.id).toBe(
+      "voice.world.yes-library-6",
+    );
+    expect(narrationClipForText("That is 42 books! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-library-42",
+    );
+    expect(narrationClipForText("That is 2 books! Count both stacks. Let's try again!")?.id).toBe(
+      "voice.world.no-library-2",
+    );
+    expect(narrationClipForText("Hooray! The stall keeper! The stall keeper rings it.")?.id).toBe(
+      "voice.world.yes-market-seller",
+    );
+    expect(narrationClipForText("That is An owl! Owls do not keep stalls. Let's try again!")?.id).toBe(
+      "voice.world.no-market-owl",
+    );
+    expect(
+      narrationClipForText("That is A submarine! Subs stay under water. Let's try again!")?.id,
+    ).toBe("voice.world.no-market-sub");
+    expect(narrationClipForText("Hooray! 4 kites! Four kites.")?.id).toBe("voice.world.yes-market-4");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
