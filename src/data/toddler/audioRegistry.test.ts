@@ -5913,6 +5913,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-ice-ice.mp3",
       "/audio/voice/world-no-ice-fish.mp3",
       "/audio/voice/world-yes-ice-hop.mp3",
+      "/audio/voice/world-no-ice-swim.mp3",
+      "/audio/voice/world-no-ice-rest.mp3",
+      "/audio/voice/world-yes-polar-bear.mp3",
+      "/audio/voice/world-no-polar-parrot.mp3",
+      "/audio/voice/world-yes-polar-den.mp3",
+      "/audio/voice/world-no-polar-harbour.mp3",
+      "/audio/voice/world-yes-polar-4.mp3",
+      "/audio/voice/world-no-polar-2.mp3",
+      "/audio/voice/world-no-polar-6.mp3",
+      "/audio/voice/world-yes-polar-bear-coat.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7681,6 +7691,34 @@ describe("audio registry", () => {
     ).toBe("voice.world.no-ice-fish");
     expect(narrationClipForText("Hooray! A hop! The pattern continues with a hop.")?.id).toBe(
       "voice.world.yes-ice-hop",
+    );
+    expect(
+      narrationClipForText("That is A long swim! This pattern is hops. Let's try again!")?.id,
+    ).toBe("voice.world.no-ice-swim");
+    expect(narrationClipForText("That is A rest! Rest just happened. Let's try again!")?.id).toBe(
+      "voice.world.no-ice-rest",
+    );
+    expect(narrationClipForText("Hooray! Polar bear! A polar bear.")?.id).toBe(
+      "voice.world.yes-polar-bear",
+    );
+    expect(narrationClipForText("That is Parrot! Parrots live in jungles. Let's try again!")?.id).toBe(
+      "voice.world.no-polar-parrot",
+    );
+    expect(narrationClipForText("Hooray! Snow den! In the snow den.")?.id).toBe(
+      "voice.world.yes-polar-den",
+    );
+    expect(narrationClipForText("That is Harbour! Too wet and busy. Let's try again!")?.id).toBe(
+      "voice.world.no-polar-harbour",
+    );
+    expect(narrationClipForText("Hooray! 4 paws! Four paws.")?.id).toBe("voice.world.yes-polar-4");
+    expect(narrationClipForText("That is 2 paws! Count every print. Let's try again!")?.id).toBe(
+      "voice.world.no-polar-2",
+    );
+    expect(narrationClipForText("That is 6 paws! Bears have four. Let's try again!")?.id).toBe(
+      "voice.world.no-polar-6",
+    );
+    expect(narrationClipForText("Hooray! Polar bear! Snow-coat bear.")?.id).toBe(
+      "voice.world.yes-polar-bear-coat",
     );
   });
 
