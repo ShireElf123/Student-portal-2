@@ -5713,6 +5713,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-fruit-8.mp3",
       "/audio/voice/world-yes-fruit-carrot.mp3",
       "/audio/voice/world-no-fruit-banana.mp3",
+      "/audio/voice/world-no-fruit-cake.mp3",
+      "/audio/voice/world-yes-fruit-orange-jam.mp3",
+      "/audio/voice/world-no-fruit-blue.mp3",
+      "/audio/voice/world-no-fruit-black.mp3",
+      "/audio/voice/world-yes-fruit-a.mp3",
+      "/audio/voice/world-no-fruit-b.mp3",
+      "/audio/voice/world-no-fruit-p.mp3",
+      "/audio/voice/world-yes-fruit-pear.mp3",
+      "/audio/voice/world-no-fruit-melon.mp3",
+      "/audio/voice/world-no-fruit-apple.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6914,6 +6924,34 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That is Banana! Bananas are fruit. Let's try again!")?.id).toBe(
       "voice.world.no-fruit-banana",
+    );
+    expect(narrationClipForText("That is Cake! Cake is for the bakery. Let's try again!")?.id).toBe(
+      "voice.world.no-fruit-cake",
+    );
+    expect(narrationClipForText("Hooray! Orange jam! Red and yellow make orange.")?.id).toBe(
+      "voice.world.yes-fruit-orange-jam",
+    );
+    expect(narrationClipForText("That is Blue jam! No blue in this mix. Let's try again!")?.id).toBe(
+      "voice.world.no-fruit-blue",
+    );
+    expect(
+      narrationClipForText("That is Black jam! The mix stays warm and bright. Let's try again!")?.id,
+    ).toBe("voice.world.no-fruit-black");
+    expect(narrationClipForText("Hooray! A! Apple starts with A.")?.id).toBe("voice.world.yes-fruit-a");
+    expect(narrationClipForText("That is B! B starts banana. Let's try again!")?.id).toBe(
+      "voice.world.no-fruit-b",
+    );
+    expect(narrationClipForText("That is P! P starts pear. Let's try again!")?.id).toBe(
+      "voice.world.no-fruit-p",
+    );
+    expect(narrationClipForText("Hooray! Pear! AB continues with pear.")?.id).toBe(
+      "voice.world.yes-fruit-pear",
+    );
+    expect(narrationClipForText("That is Melon! Melon is not in this row. Let's try again!")?.id).toBe(
+      "voice.world.no-fruit-melon",
+    );
+    expect(narrationClipForText("That is Apple! Apple just happened. Let's try again!")?.id).toBe(
+      "voice.world.no-fruit-apple",
     );
   });
 
