@@ -873,6 +873,35 @@ describe("narrator clip and parent priority", () => {
     ]);
     expect(engineLog.some((row) => row.startsWith("speak:"))).toBe(false);
   });
+
+  it("plays firehouse pillow feedback instead of Web Speech", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const played: string[] = [];
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => {
+        played.push(src);
+        return Promise.resolve();
+      },
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    const { speakText } = await import("./speechUtils");
+    const line = "Pillows are for later. The bell is singing — clang!";
+    speakText(line);
+    await wait(50);
+    speakText(line);
+    await wait(50);
+    expect(played).toEqual([
+      "/audio/voice/nook-firehouse-fb-pillow.mp3",
+      "/audio/voice/nook-firehouse-fb-pillow.mp3",
+    ]);
+    expect(engineLog.some((row) => row.startsWith("speak:"))).toBe(false);
+  });
 });
 
 describe("mission wrap clip and TTS completion callbacks", () => {

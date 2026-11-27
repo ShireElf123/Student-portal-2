@@ -6227,6 +6227,16 @@ describe("audio registry", () => {
       "/audio/voice/nook-kindness-fb-water.mp3",
       "/audio/voice/nook-kindness-fb-hat.mp3",
       "/audio/voice/nook-kindness-fb-hands.mp3",
+      "/audio/voice/nook-kindness-fb-toss.mp3",
+      "/audio/voice/nook-kindness-fb-nap.mp3",
+      "/audio/voice/nook-firehouse-fb-bell.mp3",
+      "/audio/voice/nook-firehouse-fb-pillow.mp3",
+      "/audio/voice/nook-firehouse-fb-roll.mp3",
+      "/audio/voice/nook-firehouse-fb-fly.mp3",
+      "/audio/voice/nook-firehouse-fb-cat.mp3",
+      "/audio/voice/nook-firehouse-fb-cloud.mp3",
+      "/audio/voice/nook-firehouse-fb-three.mp3",
+      "/audio/voice/nook-firehouse-fb-twenty.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -9106,6 +9116,36 @@ describe("audio registry", () => {
     expect(narrationClipForText("Two paws. For you, Nana.")?.id).toBe(
       "voice.nook.kindness-fb.hands",
     );
+    expect(
+      narrationClipForText("Wind is wild. Two careful paws instead.")?.id,
+    ).toBe("voice.nook.kindness-fb.toss");
+    expect(
+      narrationClipForText("Parked. The block feels lighter. You did it.")?.id,
+    ).toBe("voice.nook.kindness-fb.nap");
+    expect(
+      narrationClipForText("CLANG CLANG! Lights blink. The door lifts.")?.id,
+    ).toBe("voice.nook.firehouse-fb.bell");
+    expect(
+      narrationClipForText("Pillows are for later. The bell is singing — clang!")?.id,
+    ).toBe("voice.nook.firehouse-fb.pillow");
+    expect(narrationClipForText("Wee-ooo! A polite, careful roll.")?.id).toBe(
+      "voice.nook.firehouse-fb.roll",
+    );
+    expect(
+      narrationClipForText("Trucks stay on the road. Rosie rolls, and that is plenty brave.")?.id,
+    ).toBe("voice.nook.firehouse-fb.fly");
+    expect(
+      narrationClipForText("Mew! Helpers help, even when it is not a fire.")?.id,
+    ).toBe("voice.nook.firehouse-fb.cat");
+    expect(
+      narrationClipForText("Clouds float fine. Look — a cat in the oak.")?.id,
+    ).toBe("voice.nook.firehouse-fb.cloud");
+    expect(narrationClipForText("Three careful steps. Pepper is close.")?.id).toBe(
+      "voice.nook.firehouse-fb.three",
+    );
+    expect(
+      narrationClipForText("It feels long! Today we count three brave steps.")?.id,
+    ).toBe("voice.nook.firehouse-fb.twenty");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
