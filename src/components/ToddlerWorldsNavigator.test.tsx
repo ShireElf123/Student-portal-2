@@ -15,17 +15,25 @@ import { render, fireEvent, cleanup, act } from "@testing-library/react";
 const speech = vi.hoisted(() => ({
   spoken: [] as string[],
   reportEnd: { value: true },
+  autoEnd: { value: true },
+  pendingEnds: [] as Array<() => void>,
 }));
 
 vi.mock("../utils/speechUtils", () => ({
   speakText: (text: string, options?: { onEnd?: () => void }) => {
     speech.spoken.push(text);
-    if (speech.reportEnd.value && options?.onEnd) {
-      setTimeout(() => options.onEnd?.(), 0);
+    const finish = () => options?.onEnd?.();
+    if (!speech.reportEnd.value) return true;
+    if (speech.autoEnd.value) {
+      setTimeout(finish, 0);
+    } else {
+      speech.pendingEnds.push(finish);
     }
     return true;
   },
-  stopSpeaking: () => {},
+  stopSpeaking: () => {
+    speech.pendingEnds.length = 0;
+  },
   isVoiceMuted: () => false,
   setVoiceMuted: () => {},
   speechCoordinator: { subscribe: () => () => {} },
@@ -78,11 +86,34 @@ const startActivity = async () => {
   return utils;
 };
 
+const releaseSpeechEnds = async () => {
+  const ends = speech.pendingEnds.splice(0);
+  await act(async () => {
+    ends.forEach((end) => end());
+    await Promise.resolve();
+  });
+};
+
+const openAreaHub = async (route: string, backLabel: string) => {
+  const utils = render(
+    <ToddlerWorldsNavigator onAddStar={() => {}} starsCount={0} initialWorldId={route} />,
+  );
+  await flush(500);
+  const back = Array.from(utils.container.querySelectorAll("button")).find((button) =>
+    button.textContent?.includes(backLabel),
+  ) as HTMLButtonElement;
+  fireEvent.click(back);
+  await flush(200);
+  return utils;
+};
+
 beforeEach(() => {
   cleanup();
   vi.useFakeTimers();
   speech.spoken.length = 0;
   speech.reportEnd.value = true;
+  speech.autoEnd.value = true;
+  speech.pendingEnds.length = 0;
   localStorage.clear();
 });
 
@@ -325,5 +356,116 @@ describe("trail ease", () => {
     await flush(4000);
     expect(container.textContent).toContain("Pasture Safari");
     expect(container.textContent).not.toContain("You did it!");
+  });
+});
+
+describe("worlds mission narration sequencing", () => {
+  const FARM_START =
+    "Mission started: Barnyard Morning Helper! Step 1: Listen for the Cow. Listen with your ears! Who is chewing sweet clover in the meadow and says Moooo?";
+  const FARM_NEXT_KITTEN =
+    "Next Mission Step: Find the Kitten! Mother Cat says meow meow! Can you find her tiny baby kitten?";
+  const HAPPY_START =
+    "Mission started: Warm Heart Explorer! Step 1: Find the Big Happy Smile. Can you tap the friend who is feeling super happy and wearing a big bright smile?";
+  const HAPPY_COMPLETE =
+    "Congratulations! You completed the entire mission: Warm Heart Explorer! You earned the Sunshine Sprout badge!";
+
+  it("finishes the mission introduction before the first activity narration", async () => {
+    const { container } = await openAreaHub(FARM_SOUND_ROUTE, "Back to Farm Valley");
+    expect(container.textContent).toContain("Barnyard Morning Helper");
+
+    speech.spoken.length = 0;
+    speech.autoEnd.value = false;
+    fireEvent.click(optionButton(container, "Barnyard Morning Helper"));
+    await flush(50);
+
+    expect(speech.spoken).toEqual([FARM_START]);
+    expect(container.textContent).toContain("Barnyard Morning Helper");
+    expect(container.textContent).toContain("Back to Animal World Map");
+    expect(container.textContent).not.toContain("Tap who made the sound");
+    expect(container.textContent).not.toContain("Mission Step");
+
+    speech.autoEnd.value = true;
+    await releaseSpeechEnds();
+    await flush(400);
+
+    expect(container.textContent).toContain("The Grassy Pasture Sound");
+    expect(container.textContent).toContain("Tap who made the sound");
+    expect(container.textContent).toContain("Mission Step 1 of");
+    expect(speech.spoken[0]).toBe(FARM_START);
+    expect(speech.spoken.slice(1).some((line) => line.includes("Listen with your ears"))).toBe(true);
+  });
+
+  it("finishes the next-step introduction before the next activity narration", async () => {
+    const { container } = await openAreaHub(FARM_SOUND_ROUTE, "Back to Farm Valley");
+    fireEvent.click(optionButton(container, "Barnyard Morning Helper"));
+    await flush(400);
+    expect(container.textContent).toContain("The Grassy Pasture Sound");
+
+    fireEvent.click(optionButton(container, "Spotted Cow"));
+    await flush(2000);
+    expect(container.textContent).toContain("You did it!");
+
+    speech.spoken.length = 0;
+    speech.autoEnd.value = false;
+    fireEvent.click(container.querySelector("[data-testid=trail-next]") as HTMLButtonElement);
+    await flush(50);
+
+    expect(speech.spoken).toEqual([FARM_NEXT_KITTEN]);
+    expect(container.textContent).toContain("You did it!");
+    expect(container.textContent).not.toContain("Mother Cat's Tiny Baby");
+
+    speech.autoEnd.value = true;
+    await releaseSpeechEnds();
+    await flush(400);
+
+    expect(container.textContent).toContain("Mother Cat's Tiny Baby");
+    expect(speech.spoken[0]).toBe(FARM_NEXT_KITTEN);
+    expect(speech.spoken.slice(1).some((line) => line.includes("tiny baby kitten"))).toBe(true);
+  });
+
+  it("finishes the completion announcement before returning to the area hub", async () => {
+    const { container } = await openAreaHub(
+      "world:my-world:feelings-emotions:act-feelings-happy-smile",
+      "Back to Feelings & Emotions",
+    );
+    fireEvent.click(optionButton(container, "Warm Heart Explorer"));
+    await flush(400);
+    expect(container.textContent).toContain("Happy & Smiling Face");
+
+    fireEvent.click(optionButton(container, "Happy Smile"));
+    await flush(2000);
+    expect(container.textContent).toContain("You did it!");
+
+    speech.spoken.length = 0;
+    speech.autoEnd.value = false;
+    fireEvent.click(container.querySelector("[data-testid=trail-next]") as HTMLButtonElement);
+    await flush(50);
+
+    expect(speech.spoken).toEqual([HAPPY_COMPLETE]);
+    expect(container.textContent).toContain("You did it!");
+    expect(container.textContent).toContain("Happy & Smiling Face");
+    expect(container.textContent).not.toContain("Replay Warm Heart Explorer");
+
+    speech.autoEnd.value = true;
+    await releaseSpeechEnds();
+    await flush(400);
+
+    expect(container.textContent).toContain("Feelings & Emotions");
+    expect(container.textContent).toContain("Replay Warm Heart Explorer");
+    expect(container.textContent).not.toContain("You did it!");
+    expect(container.textContent).not.toContain("Tap who made the sound");
+  });
+
+  it("still starts the first activity if the wrap callback never arrives", async () => {
+    const { container } = await openAreaHub(FARM_SOUND_ROUTE, "Back to Farm Valley");
+    speech.spoken.length = 0;
+    speech.reportEnd.value = false;
+    fireEvent.click(optionButton(container, "Barnyard Morning Helper"));
+    await flush(200);
+    expect(container.textContent).not.toContain("Tap who made the sound");
+
+    await flush(20000);
+    expect(container.textContent).toContain("Tap who made the sound");
+    expect(container.textContent).toContain("The Grassy Pasture Sound");
   });
 });

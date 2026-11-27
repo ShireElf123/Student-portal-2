@@ -235,10 +235,22 @@ export function ToddlerWorldsNavigator({
   // answer cards disabled — the child had to leave and re-enter the activity.
   const advanceTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const advancePendingRef = useRef(false);
+  const missionWrapTokenRef = useRef(0);
+  const missionWrapTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const clearAdvanceTimers = () => {
     advanceTimersRef.current.forEach((timer) => clearTimeout(timer));
     advanceTimersRef.current = [];
+  };
+
+  const clearMissionWrapTimers = () => {
+    missionWrapTimersRef.current.forEach((timer) => clearTimeout(timer));
+    missionWrapTimersRef.current = [];
+  };
+
+  const cancelMissionWrap = () => {
+    missionWrapTokenRef.current += 1;
+    clearMissionWrapTimers();
   };
 
   /** Speaks `feedback`, then runs `onSpokenEnd` — always exactly once. */
@@ -264,6 +276,30 @@ export function ToddlerWorldsNavigator({
 
     advanceTimersRef.current.push(
       setTimeout(run, Math.max(7000, Math.ceil(feedback.length / 10) * 1000 + 2500))
+    );
+  };
+
+  /**
+   * Mission wrap lines (start / next step / complete) must finish before the
+   * next navigation speak. onEnd is the primary signal (clip or Web Speech);
+   * a watchdog still advances if that callback is dropped.
+   */
+  const speakMissionWrapThen = (line: string, pitch: number, then: () => void) => {
+    clearMissionWrapTimers();
+    const token = ++missionWrapTokenRef.current;
+    const run = () => {
+      if (token !== missionWrapTokenRef.current) return;
+      missionWrapTokenRef.current += 1;
+      clearMissionWrapTimers();
+      then();
+    };
+    speakDevice(line, {
+      pitch,
+      closedKit: false,
+      onEnd: run,
+    });
+    missionWrapTimersRef.current.push(
+      setTimeout(run, Math.max(7000, Math.ceil(line.length / 10) * 1000 + 2500)),
     );
   };
 
@@ -324,6 +360,9 @@ export function ToddlerWorldsNavigator({
   // Clean audio on unmount
   useEffect(() => {
     return () => {
+      missionWrapTokenRef.current += 1;
+      missionWrapTimersRef.current.forEach((timer) => clearTimeout(timer));
+      missionWrapTimersRef.current = [];
       stopSpeaking();
     };
   }, []);
@@ -465,6 +504,7 @@ export function ToddlerWorldsNavigator({
 
   const handleBackToWorldsMap = () => {
     soundEffects.playPop();
+    cancelMissionWrap();
     stopSpeaking();
     setSelectedWorldId(null);
     setSelectedAreaId(null);
@@ -480,6 +520,7 @@ export function ToddlerWorldsNavigator({
 
   const handleBackToWorldHub = () => {
     soundEffects.playPop();
+    cancelMissionWrap();
     stopSpeaking();
     setSelectedAreaId(null);
     setActiveActivity(null);
@@ -494,6 +535,7 @@ export function ToddlerWorldsNavigator({
 
   const handleBackToAreaHub = () => {
     soundEffects.playPop();
+    cancelMissionWrap();
     stopSpeaking();
     // Leaving the activity cancels any pending celebration reveal.
     advancePendingRef.current = false;
@@ -514,6 +556,7 @@ export function ToddlerWorldsNavigator({
   // ------------------ LAUNCH ACTIVITY ------------------
   const handleStartActivity = (activity: ToddlerActivity) => {
     soundEffects.playStarSparkle();
+    cancelMissionWrap();
     stopSpeaking();
     toyCreditedRef.current = null;
     advancePendingRef.current = false;
@@ -567,6 +610,7 @@ export function ToddlerWorldsNavigator({
   // ------------------ MULTI-STEP MISSION FLOW ------------------
   const handleStartMission = (mission: ToddlerMission) => {
     soundEffects.playStarSparkle();
+    cancelMissionWrap();
     stopSpeaking();
     setActiveMission(mission);
     setMissionStepIdx(0);
@@ -577,10 +621,11 @@ export function ToddlerWorldsNavigator({
       selectedWorld?.areas.flatMap((area) => area.activities).find((a) => a.id === firstStep.activityId);
 
     if (targetActivity) {
-      handleStartActivity(targetActivity);
-      speakText(`Mission started: ${mission.title}! Step 1: ${firstStep.title}. ${targetActivity.spokenPrompt}`, {
-        pitch: 1.15,
-      });
+      speakMissionWrapThen(
+        `Mission started: ${mission.title}! Step 1: ${firstStep.title}. ${targetActivity.spokenPrompt}`,
+        1.15,
+        () => handleStartActivity(targetActivity),
+      );
     }
   };
 
@@ -785,24 +830,22 @@ export function ToddlerWorldsNavigator({
 
   // Handle continuing to next mission step or the next trail stop
   const handleContinueAfterCelebration = () => {
-    setShowCelebration(false);
-    setStayPlayDone(false);
-    setSelectedOptionId(null);
-    setIsAnswered(false);
-    setCountingAnswered(false);
-    setTappedCountIndices([]);
-
     if (activeMission && missionStepIdx < activeMission.steps.length - 1) {
       const nextStepIdx = missionStepIdx + 1;
-      setMissionStepIdx(nextStepIdx);
       const nextStep = activeMission.steps[nextStepIdx];
       const nextAct =
         selectedArea?.activities.find((a) => a.id === nextStep.activityId) ||
         selectedWorld?.areas.flatMap((area) => area.activities).find((a) => a.id === nextStep.activityId);
 
       if (nextAct) {
-        handleStartActivity(nextAct);
-        speakText(`Next Mission Step: ${nextStep.title}! ${nextAct.spokenPrompt}`, { pitch: 1.15 });
+        speakMissionWrapThen(
+          `Next Mission Step: ${nextStep.title}! ${nextAct.spokenPrompt}`,
+          1.15,
+          () => {
+            setMissionStepIdx(nextStepIdx);
+            handleStartActivity(nextAct);
+          },
+        );
         return;
       }
     } else if (activeMission && missionStepIdx === activeMission.steps.length - 1) {
@@ -821,11 +864,23 @@ export function ToddlerWorldsNavigator({
       }
       soundEffects.playFanfare();
       triggerCelebrationConfetti();
-      speakText(`Congratulations! You completed the entire mission: ${activeMission.title}! You earned the ${activeMission.badgeTitle} badge!`, { pitch: 1.2 });
-      setActiveMission(null);
-      handleBackToAreaHub();
+      speakMissionWrapThen(
+        `Congratulations! You completed the entire mission: ${activeMission.title}! You earned the ${activeMission.badgeTitle} badge!`,
+        1.2,
+        () => {
+          setActiveMission(null);
+          handleBackToAreaHub();
+        },
+      );
       return;
     }
+
+    setShowCelebration(false);
+    setStayPlayDone(false);
+    setSelectedOptionId(null);
+    setIsAnswered(false);
+    setCountingAnswered(false);
+    setTappedCountIndices([]);
 
     const next = nextTrailActivity();
     if (next) {

@@ -698,3 +698,63 @@ describe("narrator clip and parent priority", () => {
   });
 });
 
+describe("mission wrap clip and TTS completion callbacks", () => {
+  it("fires onEnd from a generated clip before a follow-up line", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const { SAFARI_EXPLORE_WELCOME_PROMPT } = await import("../data/toddler/audioRegistry");
+    const played: string[] = [];
+    audio.setAudioFactoryForTests((src) => {
+      const node = {
+        src,
+        volume: 1,
+        play: () => {
+          played.push(src);
+          queueMicrotask(() => node.onended?.());
+          return Promise.resolve();
+        },
+        pause: () => {},
+        onended: null as ((this: unknown, ev?: Event) => void) | null,
+        onerror: null as ((this: unknown, ev?: Event) => void) | null,
+      };
+      return node;
+    });
+    const { speakText } = await import("./speechUtils");
+    const order: string[] = [];
+    speakText(SAFARI_EXPLORE_WELCOME_PROMPT, {
+      closedKit: false,
+      onEnd: () => {
+        order.push("wrap-end");
+        speakText("Mission follow-up activity line", {
+          onEnd: () => order.push("follow-up-end"),
+        });
+      },
+    });
+    await wait(200);
+    expect(order).toEqual(["wrap-end", "follow-up-end"]);
+    expect(played[0]).toContain("safari");
+    expect(engineLog.some((row) => row.includes("Mission follow-up activity line"))).toBe(true);
+  });
+
+  it("fires onEnd from Web Speech fallback before a follow-up line", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const { speakText } = await import("./speechUtils");
+    const order: string[] = [];
+    speakText("ZZZ mission wrap line with no clip 111", {
+      closedKit: false,
+      onEnd: () => {
+        order.push("wrap-end");
+        speakText("ZZZ activity prompt line with no clip 222", {
+          onEnd: () => order.push("follow-up-end"),
+        });
+      },
+    });
+    await wait(400);
+    expect(order).toEqual(["wrap-end", "follow-up-end"]);
+    expect(engineLog.some((row) => row.includes("ZZZ mission wrap line with no clip 111"))).toBe(true);
+    expect(engineLog.some((row) => row.includes("ZZZ activity prompt line with no clip 222"))).toBe(true);
+  });
+});
+
