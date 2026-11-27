@@ -5843,6 +5843,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-park-nana.mp3",
       "/audio/voice/world-no-park-dog.mp3",
       "/audio/voice/world-no-park-pip.mp3",
+      "/audio/voice/world-yes-park-bench.mp3",
+      "/audio/voice/world-no-park-pond.mp3",
+      "/audio/voice/world-no-park-in-oven.mp3",
+      "/audio/voice/world-yes-library-shelf.mp3",
+      "/audio/voice/world-no-library-fridge.mp3",
+      "/audio/voice/world-yes-library-l.mp3",
+      "/audio/voice/world-no-library-r.mp3",
+      "/audio/voice/world-no-library-b.mp3",
+      "/audio/voice/world-yes-library-7.mp3",
+      "/audio/voice/world-no-library-3.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7417,6 +7427,32 @@ describe("audio registry", () => {
     ).toBe("voice.world.no-park-dog");
     expect(narrationClipForText("That is Pip! Pip just had a turn. Let's try again!")?.id).toBe(
       "voice.world.no-park-pip",
+    );
+    expect(narrationClipForText("Hooray! Under the bench! Under the bench.")?.id).toBe(
+      "voice.world.yes-park-bench",
+    );
+    expect(narrationClipForText("That is In the pond! Not the pond. Let's try again!")?.id).toBe(
+      "voice.world.no-park-pond",
+    );
+    expect(narrationClipForText("That is In the oven! Not this park. Let's try again!")?.id).toBe(
+      "voice.world.no-park-in-oven",
+    );
+    expect(narrationClipForText("Hooray! On the shelf! On the shelf.")?.id).toBe(
+      "voice.world.yes-library-shelf",
+    );
+    expect(narrationClipForText("That is In the fridge! Not the fridge. Let's try again!")?.id).toBe(
+      "voice.world.no-library-fridge",
+    );
+    expect(narrationClipForText("Hooray! L! Library starts with L.")?.id).toBe("voice.world.yes-library-l");
+    expect(narrationClipForText("That is R! R starts read. Let's try again!")?.id).toBe(
+      "voice.world.no-library-r",
+    );
+    expect(narrationClipForText("That is B! B starts book. Let's try again!")?.id).toBe(
+      "voice.world.no-library-b",
+    );
+    expect(narrationClipForText("Hooray! 7 books! Seven books.")?.id).toBe("voice.world.yes-library-7");
+    expect(narrationClipForText("That is 3 books! Count the whole box. Let's try again!")?.id).toBe(
+      "voice.world.no-library-3",
     );
   });
 
