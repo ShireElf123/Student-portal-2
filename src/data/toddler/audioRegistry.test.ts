@@ -6172,6 +6172,10 @@ describe("audio registry", () => {
       "/audio/voice/book-finish-nana-soup-pot.mp3",
       "/audio/voice/book-finish-pond-edge-bugs.mp3",
       "/audio/voice/book-finish-park-green-picnic.mp3",
+      "/audio/voice/book-finish-atelier-paint-day.mp3",
+      "/audio/voice/book-finish-letter-meadow-abc.mp3",
+      "/audio/voice/book-finish-pine-trail-map.mp3",
+      "/audio/voice/book-finish-home-kind-morning.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8822,6 +8826,26 @@ describe("audio registry", () => {
         "Hooray! You finished reading Park Green Picnic! You earned three golden stars!",
       )?.id,
     ).toBe("voice.book.finish-park-green-picnic");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Atelier Paint Day! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-atelier-paint-day");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Letter Meadow ABC! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-letter-meadow-abc");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Pine Trail Map! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-pine-trail-map");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Home Kind Morning! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-home-kind-morning");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
