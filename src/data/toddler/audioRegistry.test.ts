@@ -6023,6 +6023,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-owl-owl.mp3",
       "/audio/voice/world-no-owl-wood.mp3",
       "/audio/voice/world-yes-star-9.mp3",
+      "/audio/voice/world-no-star-4.mp3",
+      "/audio/voice/world-no-star-12.mp3",
+      "/audio/voice/world-yes-star-moon.mp3",
+      "/audio/voice/world-no-star-orange.mp3",
+      "/audio/voice/world-no-star-m.mp3",
+      "/audio/voice/world-yes-star-circle.mp3",
+      "/audio/voice/world-no-star-square.mp3",
+      "/audio/voice/world-yes-star-9-add.mp3",
+      "/audio/voice/world-no-star-45.mp3",
+      "/audio/voice/world-no-star-5.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8080,6 +8090,32 @@ describe("audio registry", () => {
       narrationClipForText("That is Wood! Wood does not rhyme with tree. Let's try again!")?.id,
     ).toBe("voice.world.no-owl-wood");
     expect(narrationClipForText("Hooray! 9 stars! Nine stars.")?.id).toBe("voice.world.yes-star-9");
+    expect(narrationClipForText("That is 4 stars! Count the whole rail-sky. Let's try again!")?.id).toBe(
+      "voice.world.no-star-4",
+    );
+    expect(narrationClipForText("That is 12 stars! Not twelve this night. Let's try again!")?.id).toBe(
+      "voice.world.no-star-12",
+    );
+    expect(narrationClipForText("Hooray! The moon! The moon.")?.id).toBe("voice.world.yes-star-moon");
+    expect(
+      narrationClipForText("That is An orange! Oranges stay at the stall. Let's try again!")?.id,
+    ).toBe("voice.world.no-star-orange");
+    expect(narrationClipForText("That is M! M starts moon. Let's try again!")?.id).toBe(
+      "voice.world.no-star-m",
+    );
+    expect(narrationClipForText("Hooray! Circle! A round moon.")?.id).toBe("voice.world.yes-star-circle");
+    expect(narrationClipForText("That is Square! The moon is not square. Let's try again!")?.id).toBe(
+      "voice.world.no-star-square",
+    );
+    expect(narrationClipForText("Hooray! 9 stars! Four and five make nine.")?.id).toBe(
+      "voice.world.yes-star-9-add",
+    );
+    expect(narrationClipForText("That is 45 stars! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-star-45",
+    );
+    expect(narrationClipForText("That is 5 stars! Count both clusters. Let's try again!")?.id).toBe(
+      "voice.world.no-star-5",
+    );
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
