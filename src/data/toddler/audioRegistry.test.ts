@@ -5953,6 +5953,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-northern-bus.mp3",
       "/audio/voice/world-yes-northern-7.mp3",
       "/audio/voice/world-no-northern-34.mp3",
+      "/audio/voice/world-no-northern-4-sparks.mp3",
+      "/audio/voice/world-yes-northern-hill.mp3",
+      "/audio/voice/world-no-northern-thin.mp3",
+      "/audio/voice/world-no-northern-oven.mp3",
+      "/audio/voice/world-yes-seal-seal.mp3",
+      "/audio/voice/world-no-seal-hen.mp3",
+      "/audio/voice/world-no-seal-crane.mp3",
+      "/audio/voice/world-yes-seal-bark.mp3",
+      "/audio/voice/world-no-seal-dog.mp3",
+      "/audio/voice/world-no-seal-owl.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7833,6 +7843,32 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That is 34 sparks! Add the groups. Let's try again!")?.id).toBe(
       "voice.world.no-northern-34",
+    );
+    expect(narrationClipForText("That is 4 sparks! Count both bands. Let's try again!")?.id).toBe(
+      "voice.world.no-northern-4-sparks",
+    );
+    expect(narrationClipForText("Hooray! The hill! From the hill.")?.id).toBe(
+      "voice.world.yes-northern-hill",
+    );
+    expect(
+      narrationClipForText("That is The thin ice! Nana said not the thin ice. Let's try again!")?.id,
+    ).toBe("voice.world.no-northern-thin");
+    expect(narrationClipForText("That is The oven! Not this sky. Let's try again!")?.id).toBe(
+      "voice.world.no-northern-oven",
+    );
+    expect(narrationClipForText("Hooray! Seal! A seal on the rock.")?.id).toBe("voice.world.yes-seal-seal");
+    expect(narrationClipForText("That is Hen! Hens stay in yards. Let's try again!")?.id).toBe(
+      "voice.world.no-seal-hen",
+    );
+    expect(narrationClipForText("That is Crane! Cranes lift crates. Let's try again!")?.id).toBe(
+      "voice.world.no-seal-crane",
+    );
+    expect(narrationClipForText("Hooray! Seal! A seal barking.")?.id).toBe("voice.world.yes-seal-bark");
+    expect(
+      narrationClipForText("That is Yard dog! Yard dogs stay by houses. Let's try again!")?.id,
+    ).toBe("voice.world.no-seal-dog");
+    expect(narrationClipForText("That is Owl! Owls hoot in woods. Let's try again!")?.id).toBe(
+      "voice.world.no-seal-owl",
     );
   });
 
