@@ -5813,6 +5813,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-fire-s.mp3",
       "/audio/voice/world-yes-fire-bell.mp3",
       "/audio/voice/world-no-fire-ran.mp3",
+      "/audio/voice/world-no-fire-nap.mp3",
+      "/audio/voice/world-yes-fire-circle.mp3",
+      "/audio/voice/world-no-fire-square.mp3",
+      "/audio/voice/world-no-fire-star.mp3",
+      "/audio/voice/world-yes-fire-4.mp3",
+      "/audio/voice/world-no-fire-22.mp3",
+      "/audio/voice/world-no-fire-2.mp3",
+      "/audio/voice/world-yes-fire-dal.mp3",
+      "/audio/voice/world-no-fire-owl.mp3",
+      "/audio/voice/world-yes-park-5.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7303,6 +7313,34 @@ describe("audio registry", () => {
     expect(narrationClipForText("That is The crew ran! That was second. Let's try again!")?.id).toBe(
       "voice.world.no-fire-ran",
     );
+    expect(narrationClipForText("That is A nap! Not this beat. Let's try again!")?.id).toBe(
+      "voice.world.no-fire-nap",
+    );
+    expect(narrationClipForText("Hooray! Circle! A round badge.")?.id).toBe(
+      "voice.world.yes-fire-circle",
+    );
+    expect(narrationClipForText("That is Square! This badge is round. Let's try again!")?.id).toBe(
+      "voice.world.no-fire-square",
+    );
+    expect(narrationClipForText("That is Star! Not this badge. Let's try again!")?.id).toBe(
+      "voice.world.no-fire-star",
+    );
+    expect(narrationClipForText("Hooray! 4 boots! Two and two make four.")?.id).toBe(
+      "voice.world.yes-fire-4",
+    );
+    expect(narrationClipForText("That is 22 boots! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-fire-22",
+    );
+    expect(narrationClipForText("That is 2 boots! Count both lockers. Let's try again!")?.id).toBe(
+      "voice.world.no-fire-2",
+    );
+    expect(narrationClipForText("Hooray! Dalmatian! The station dog.")?.id).toBe(
+      "voice.world.yes-fire-dal",
+    );
+    expect(narrationClipForText("That is Owl! Owls stay in woods. Let's try again!")?.id).toBe(
+      "voice.world.no-fire-owl",
+    );
+    expect(narrationClipForText("Hooray! 5 ducks! Five ducks.")?.id).toBe("voice.world.yes-park-5");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
