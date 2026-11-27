@@ -5893,6 +5893,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-market-white.mp3",
       "/audio/voice/world-no-market-green.mp3",
       "/audio/voice/world-no-market-red.mp3",
+      "/audio/voice/world-yes-ice-penguin.mp3",
+      "/audio/voice/world-no-ice-camel.mp3",
+      "/audio/voice/world-yes-ice-6.mp3",
+      "/audio/voice/world-no-ice-3.mp3",
+      "/audio/voice/world-no-ice-9.mp3",
+      "/audio/voice/world-yes-ice-ice.mp3",
+      "/audio/voice/world-no-ice-bakery.mp3",
+      "/audio/voice/world-no-ice-desert.mp3",
+      "/audio/voice/world-yes-ice-penguin-hop.mp3",
+      "/audio/voice/world-no-ice-horse.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7609,6 +7619,32 @@ describe("audio registry", () => {
     ).toBe("voice.world.no-market-green");
     expect(narrationClipForText("That is Red! Red just happened. Let's try again!")?.id).toBe(
       "voice.world.no-market-red",
+    );
+    expect(narrationClipForText("Hooray! Penguin! A penguin on the floe.")?.id).toBe(
+      "voice.world.yes-ice-penguin",
+    );
+    expect(narrationClipForText("That is Camel! Camels live in hot dunes. Let's try again!")?.id).toBe(
+      "voice.world.no-ice-camel",
+    );
+    expect(narrationClipForText("Hooray! 6 fish! Six fish.")?.id).toBe("voice.world.yes-ice-6");
+    expect(narrationClipForText("That is 3 fish! Count the whole gift. Let's try again!")?.id).toBe(
+      "voice.world.no-ice-3",
+    );
+    expect(narrationClipForText("That is 9 fish! Not nine this hole. Let's try again!")?.id).toBe(
+      "voice.world.no-ice-9",
+    );
+    expect(narrationClipForText("Hooray! Cold ice! On the cold ice.")?.id).toBe("voice.world.yes-ice-ice");
+    expect(narrationClipForText("That is Bakery! Too warm. Let's try again!")?.id).toBe(
+      "voice.world.no-ice-bakery",
+    );
+    expect(narrationClipForText("That is Hot desert! Too dry and hot. Let's try again!")?.id).toBe(
+      "voice.world.no-ice-desert",
+    );
+    expect(narrationClipForText("Hooray! Penguin! Penguins hop floes.")?.id).toBe(
+      "voice.world.yes-ice-penguin-hop",
+    );
+    expect(narrationClipForText("That is Horse! Horses stay in fields. Let's try again!")?.id).toBe(
+      "voice.world.no-ice-horse",
     );
   });
 
