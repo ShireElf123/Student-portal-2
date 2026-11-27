@@ -5793,6 +5793,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-picnic-b.mp3",
       "/audio/voice/world-no-picnic-n.mp3",
       "/audio/voice/world-yes-picnic-square.mp3",
+      "/audio/voice/world-no-picnic-circle.mp3",
+      "/audio/voice/world-no-picnic-triangle.mp3",
+      "/audio/voice/world-yes-picnic-cloth.mp3",
+      "/audio/voice/world-no-picnic-trail.mp3",
+      "/audio/voice/world-no-picnic-road.mp3",
+      "/audio/voice/world-yes-picnic-blue.mp3",
+      "/audio/voice/world-no-picnic-green.mp3",
+      "/audio/voice/world-no-picnic-red.mp3",
+      "/audio/voice/world-yes-fire-crew.mp3",
+      "/audio/voice/world-no-fire-baker.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7224,6 +7234,36 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("Hooray! Square! A square cloth.")?.id).toBe(
       "voice.world.yes-picnic-square",
+    );
+    expect(narrationClipForText("That is Circle! This cloth has corners. Let's try again!")?.id).toBe(
+      "voice.world.no-picnic-circle",
+    );
+    expect(
+      narrationClipForText("That is Triangle! This cloth has four sides. Let's try again!")?.id,
+    ).toBe("voice.world.no-picnic-triangle");
+    expect(narrationClipForText("Hooray! On the cloth! On the cloth.")?.id).toBe(
+      "voice.world.yes-picnic-cloth",
+    );
+    expect(
+      narrationClipForText("That is On the ant trail! Nana said not the trail. Let's try again!")?.id,
+    ).toBe("voice.world.no-picnic-trail");
+    expect(narrationClipForText("That is In the road! Not the road. Let's try again!")?.id).toBe(
+      "voice.world.no-picnic-road",
+    );
+    expect(narrationClipForText("Hooray! Blue cup! AB continues with blue.")?.id).toBe(
+      "voice.world.yes-picnic-blue",
+    );
+    expect(
+      narrationClipForText("That is Green cup! Green is not in this row. Let's try again!")?.id,
+    ).toBe("voice.world.no-picnic-green");
+    expect(narrationClipForText("That is Red cup! Red just happened. Let's try again!")?.id).toBe(
+      "voice.world.no-picnic-red",
+    );
+    expect(narrationClipForText("Hooray! Firefighters! Firefighters ride it.")?.id).toBe(
+      "voice.world.yes-fire-crew",
+    );
+    expect(narrationClipForText("That is Baker! Bakers ride bakery vans. Let's try again!")?.id).toBe(
+      "voice.world.no-fire-baker",
     );
   });
 
