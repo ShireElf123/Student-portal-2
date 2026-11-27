@@ -363,5 +363,40 @@ describe("narrator clip and parent priority", () => {
     expect(engineLog).toHaveLength(0);
     audio.toddlerAudio.endParentPlayback();
   });
+
+  it("plays ColorLab closedKit mix-again and open-play Beep beep clips instead of Web Speech", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const played: string[] = [];
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => {
+        played.push(src);
+        return Promise.resolve();
+      },
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    const { speakText, narrationClipLookups } = await import("./speechUtils");
+    const mix = "That made Pink. We need Green. Mix again!";
+    expect(narrationClipLookups(mix)).toEqual([mix]);
+    expect(narrationClipLookups("Beep beep!")).toEqual(["Beep beep!"]);
+
+    speakText(mix, { closedKit: true });
+    await wait(50);
+    speakText("Beep beep!");
+    await wait(50);
+    speakText("Beep beep!");
+    await wait(50);
+    expect(played).toEqual([
+      "/audio/voice/color-need-pink-green.mp3",
+      "/audio/voice/open-play-beep.mp3",
+      "/audio/voice/open-play-beep.mp3",
+    ]);
+    expect(engineLog.some((line) => line.startsWith("speak:"))).toBe(false);
+  });
 });
 

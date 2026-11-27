@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { narrationClipForText } from "../data/toddler/audioRegistry";
 import { mixTargetFromActivity } from "./ToddlerColorLab";
 
 describe("Color Magic mix target", () => {
@@ -40,5 +41,37 @@ describe("Color Magic mix target", () => {
         cluePrompt: "Blend droplets into market colours.",
       }),
     ).toBeUndefined();
+  });
+
+  it("maps ColorLab wrong-mix lines to voice-01 clips", () => {
+    const mixAgain = (made: string, need: string) => `That made ${made}. We need ${need}. Mix again!`;
+    expect(narrationClipForText(mixAgain("Orange", "Purple"))?.src).toBe(
+      "/audio/voice/color-need-orange-purple.mp3",
+    );
+    expect(narrationClipForText(mixAgain("Orange", "Green"))?.src).toBe(
+      "/audio/voice/color-need-orange-green.mp3",
+    );
+    expect(narrationClipForText(mixAgain("Green", "Orange"))?.src).toBe(
+      "/audio/voice/color-need-green-orange.mp3",
+    );
+    expect(narrationClipForText(mixAgain("Green", "Purple"))?.src).toBe(
+      "/audio/voice/color-need-green-purple.mp3",
+    );
+    expect(narrationClipForText(mixAgain("Purple", "Orange"))?.src).toBe(
+      "/audio/voice/color-need-purple-orange.mp3",
+    );
+    expect(narrationClipForText(mixAgain("Purple", "Green"))?.src).toBe(
+      "/audio/voice/color-need-purple-green.mp3",
+    );
+    expect(narrationClipForText(mixAgain("Pink", "Orange"))?.src).toBe(
+      "/audio/voice/color-need-pink-orange.mp3",
+    );
+    expect(narrationClipForText(mixAgain("Pink", "Purple"))?.src).toBe(
+      "/audio/voice/color-need-pink-purple.mp3",
+    );
+    expect(narrationClipForText(mixAgain("Pink", "Green"))?.src).toBe(
+      "/audio/voice/color-need-pink-green.mp3",
+    );
+    expect(narrationClipForText(mixAgain("Orange", "Purple"))?.author).toContain("voice-01");
   });
 });

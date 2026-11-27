@@ -172,3 +172,37 @@ describe("toddlerAudio parent-recording priority", () => {
     expect(toddlerAudio.getLastVoiceIdForTests()).toBeNull();
   });
 });
+
+describe("toddlerAudio ColorLab mix-again and bus beep", () => {
+  const mixOrangePurple = "That made Orange. We need Purple. Mix again!";
+  const busBeep = "Beep beep!";
+
+  it("plays ColorLab wrong-mix and bus beep clips, including repeats", async () => {
+    installFactory();
+    expect(toddlerAudio.tryNarrationClip(mixOrangePurple)).toBe(true);
+    await Promise.resolve();
+    expect(created[0].src).toContain("color-need-orange-purple.mp3");
+    expect(created[0].playCalls).toBe(1);
+
+    expect(toddlerAudio.tryNarrationClip(mixOrangePurple)).toBe(true);
+    expect(created[0].pauseCalls).toBeGreaterThanOrEqual(1);
+    expect(created[1].src).toContain("color-need-orange-purple.mp3");
+    expect(created[1].playCalls).toBe(1);
+
+    expect(toddlerAudio.tryNarrationClip(busBeep)).toBe(true);
+    expect(created[2].src).toContain("open-play-beep.mp3");
+    expect(toddlerAudio.tryNarrationClip(busBeep)).toBe(true);
+    expect(created[2].pauseCalls).toBeGreaterThanOrEqual(1);
+    expect(created[3].src).toContain("open-play-beep.mp3");
+    expect(created[3].playCalls).toBe(1);
+    expect(toddlerAudio.getLastVoiceIdForTests()).toBe("voice.open.beep");
+  });
+
+  it("does not play ColorLab or bus clips while a parent recording is playing", () => {
+    installFactory();
+    toddlerAudio.beginParentPlayback();
+    expect(toddlerAudio.tryNarrationClip(mixOrangePurple)).toBe(false);
+    expect(toddlerAudio.tryNarrationClip(busBeep)).toBe(false);
+    expect(created).toHaveLength(0);
+  });
+});

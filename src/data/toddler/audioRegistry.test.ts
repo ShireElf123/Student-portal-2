@@ -6072,6 +6072,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-rainy-boots.mp3",
       "/audio/voice/world-no-rainy-socks.mp3",
       "/audio/voice/world-no-rainy-hat.mp3",
+      "/audio/voice/color-need-orange-purple.mp3",
+      "/audio/voice/color-need-orange-green.mp3",
+      "/audio/voice/color-need-green-orange.mp3",
+      "/audio/voice/color-need-green-purple.mp3",
+      "/audio/voice/color-need-purple-orange.mp3",
+      "/audio/voice/color-need-purple-green.mp3",
+      "/audio/voice/open-play-beep.mp3",
+      "/audio/voice/color-need-pink-orange.mp3",
+      "/audio/voice/color-need-pink-purple.mp3",
+      "/audio/voice/color-need-pink-green.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8262,6 +8272,34 @@ describe("audio registry", () => {
     expect(
       narrationClipForText("That is Sun hat! A sun hat is for bright days. Let's try again!")?.id,
     ).toBe("voice.world.no-rainy-hat");
+    expect(narrationClipForText("That made Orange. We need Purple. Mix again!")?.id).toBe(
+      "voice.color.need-orange-purple",
+    );
+    expect(narrationClipForText("That made Orange. We need Green. Mix again!")?.id).toBe(
+      "voice.color.need-orange-green",
+    );
+    expect(narrationClipForText("That made Green. We need Orange. Mix again!")?.id).toBe(
+      "voice.color.need-green-orange",
+    );
+    expect(narrationClipForText("That made Green. We need Purple. Mix again!")?.id).toBe(
+      "voice.color.need-green-purple",
+    );
+    expect(narrationClipForText("That made Purple. We need Orange. Mix again!")?.id).toBe(
+      "voice.color.need-purple-orange",
+    );
+    expect(narrationClipForText("That made Purple. We need Green. Mix again!")?.id).toBe(
+      "voice.color.need-purple-green",
+    );
+    expect(narrationClipForText("Beep beep!")?.id).toBe("voice.open.beep");
+    expect(narrationClipForText("That made Pink. We need Orange. Mix again!")?.id).toBe(
+      "voice.color.need-pink-orange",
+    );
+    expect(narrationClipForText("That made Pink. We need Purple. Mix again!")?.id).toBe(
+      "voice.color.need-pink-purple",
+    );
+    expect(narrationClipForText("That made Pink. We need Green. Mix again!")?.id).toBe(
+      "voice.color.need-pink-green",
+    );
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
