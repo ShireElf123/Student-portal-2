@@ -5763,6 +5763,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-soup-touch.mp3",
       "/audio/voice/world-no-soup-pour-floor.mp3",
       "/audio/voice/world-yes-soup-onion.mp3",
+      "/audio/voice/world-no-soup-sock.mp3",
+      "/audio/voice/world-no-soup-crayon.mp3",
+      "/audio/voice/world-yes-soup-s.mp3",
+      "/audio/voice/world-no-soup-z.mp3",
+      "/audio/voice/world-no-soup-c.mp3",
+      "/audio/voice/world-yes-soup-5.mp3",
+      "/audio/voice/world-no-soup-23.mp3",
+      "/audio/voice/world-no-soup-3.mp3",
+      "/audio/voice/world-yes-soup-nana.mp3",
+      "/audio/voice/world-no-soup-pip.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7108,6 +7118,34 @@ describe("audio registry", () => {
     ).toBe("voice.world.no-soup-pour-floor");
     expect(narrationClipForText("Hooray! Onion! Onions can go in soup.")?.id).toBe(
       "voice.world.yes-soup-onion",
+    );
+    expect(narrationClipForText("That is A sock! Socks are not soup. Let's try again!")?.id).toBe(
+      "voice.world.no-soup-sock",
+    );
+    expect(narrationClipForText("That is A crayon! Crayons are for paper. Let's try again!")?.id).toBe(
+      "voice.world.no-soup-crayon",
+    );
+    expect(narrationClipForText("Hooray! S! Soup starts with S.")?.id).toBe("voice.world.yes-soup-s");
+    expect(narrationClipForText("That is Z! Z starts zip. Let's try again!")?.id).toBe(
+      "voice.world.no-soup-z",
+    );
+    expect(narrationClipForText("That is C! C starts cup. Let's try again!")?.id).toBe(
+      "voice.world.no-soup-c",
+    );
+    expect(narrationClipForText("Hooray! 5 spoons! Two and three make five.")?.id).toBe(
+      "voice.world.yes-soup-5",
+    );
+    expect(narrationClipForText("That is 23 spoons! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-soup-23",
+    );
+    expect(narrationClipForText("That is 3 spoons! Count both lots. Let's try again!")?.id).toBe(
+      "voice.world.no-soup-3",
+    );
+    expect(narrationClipForText("Hooray! Nana! Nana tasted last.")?.id).toBe(
+      "voice.world.yes-soup-nana",
+    );
+    expect(narrationClipForText("That is Pip! Pip tasted first. Let's try again!")?.id).toBe(
+      "voice.world.no-soup-pip",
     );
   });
 
