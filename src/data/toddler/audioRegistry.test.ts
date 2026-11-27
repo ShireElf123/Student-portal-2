@@ -5903,6 +5903,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-ice-desert.mp3",
       "/audio/voice/world-yes-ice-penguin-hop.mp3",
       "/audio/voice/world-no-ice-horse.mp3",
+      "/audio/voice/world-yes-ice-p.mp3",
+      "/audio/voice/world-no-ice-b.mp3",
+      "/audio/voice/world-no-ice-g.mp3",
+      "/audio/voice/world-yes-ice-6-penguins.mp3",
+      "/audio/voice/world-no-ice-42.mp3",
+      "/audio/voice/world-no-ice-2.mp3",
+      "/audio/voice/world-yes-ice-go.mp3",
+      "/audio/voice/world-no-ice-ice.mp3",
+      "/audio/voice/world-no-ice-fish.mp3",
+      "/audio/voice/world-yes-ice-hop.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7645,6 +7655,32 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That is Horse! Horses stay in fields. Let's try again!")?.id).toBe(
       "voice.world.no-ice-horse",
+    );
+    expect(narrationClipForText("Hooray! P! Penguin starts with P.")?.id).toBe("voice.world.yes-ice-p");
+    expect(narrationClipForText("That is B! B starts bear. Let's try again!")?.id).toBe(
+      "voice.world.no-ice-b",
+    );
+    expect(narrationClipForText("That is G! G starts gift. Let's try again!")?.id).toBe(
+      "voice.world.no-ice-g",
+    );
+    expect(narrationClipForText("Hooray! 6 penguins! Four and two make six.")?.id).toBe(
+      "voice.world.yes-ice-6-penguins",
+    );
+    expect(narrationClipForText("That is 42 penguins! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-ice-42",
+    );
+    expect(narrationClipForText("That is 2 penguins! Count both huddles. Let's try again!")?.id).toBe(
+      "voice.world.no-ice-2",
+    );
+    expect(narrationClipForText("Hooray! Go! Snow and go rhyme.")?.id).toBe("voice.world.yes-ice-go");
+    expect(
+      narrationClipForText("That is Ice! Ice does not rhyme with snow. Let's try again!")?.id,
+    ).toBe("voice.world.no-ice-ice");
+    expect(
+      narrationClipForText("That is Fish! Fish does not rhyme with snow. Let's try again!")?.id,
+    ).toBe("voice.world.no-ice-fish");
+    expect(narrationClipForText("Hooray! A hop! The pattern continues with a hop.")?.id).toBe(
+      "voice.world.yes-ice-hop",
     );
   });
 
