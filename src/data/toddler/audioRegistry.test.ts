@@ -5873,6 +5873,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-market-owl.mp3",
       "/audio/voice/world-no-market-sub.mp3",
       "/audio/voice/world-yes-market-4.mp3",
+      "/audio/voice/world-no-market-1.mp3",
+      "/audio/voice/world-no-market-7.mp3",
+      "/audio/voice/world-yes-market-square.mp3",
+      "/audio/voice/world-no-market-circle.mp3",
+      "/audio/voice/world-no-market-heart.mp3",
+      "/audio/voice/world-yes-market-cap.mp3",
+      "/audio/voice/world-no-market-fish.mp3",
+      "/audio/voice/world-no-market-hose.mp3",
+      "/audio/voice/world-yes-market-m.mp3",
+      "/audio/voice/world-no-market-n.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7532,6 +7542,34 @@ describe("audio registry", () => {
       narrationClipForText("That is A submarine! Subs stay under water. Let's try again!")?.id,
     ).toBe("voice.world.no-market-sub");
     expect(narrationClipForText("Hooray! 4 kites! Four kites.")?.id).toBe("voice.world.yes-market-4");
+    expect(narrationClipForText("That is 1 kite! Count every kite. Let's try again!")?.id).toBe(
+      "voice.world.no-market-1",
+    );
+    expect(narrationClipForText("That is 7 kites! Not seven this stall. Let's try again!")?.id).toBe(
+      "voice.world.no-market-7",
+    );
+    expect(narrationClipForText("Hooray! Square! A square sign.")?.id).toBe(
+      "voice.world.yes-market-square",
+    );
+    expect(narrationClipForText("That is Circle! This sign has corners. Let's try again!")?.id).toBe(
+      "voice.world.no-market-circle",
+    );
+    expect(narrationClipForText("That is Heart! Not this sign. Let's try again!")?.id).toBe(
+      "voice.world.no-market-heart",
+    );
+    expect(narrationClipForText("Hooray! A cap! Caps belong here.")?.id).toBe(
+      "voice.world.yes-market-cap",
+    );
+    expect(
+      narrationClipForText("That is A fish! Fish belong at the fish stall. Let's try again!")?.id,
+    ).toBe("voice.world.no-market-fish");
+    expect(
+      narrationClipForText("That is A hose! Hoses stay at the fire house. Let's try again!")?.id,
+    ).toBe("voice.world.no-market-hose");
+    expect(narrationClipForText("Hooray! M! Market starts with M.")?.id).toBe("voice.world.yes-market-m");
+    expect(narrationClipForText("That is N! N starts nook. Let's try again!")?.id).toBe(
+      "voice.world.no-market-n",
+    );
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
