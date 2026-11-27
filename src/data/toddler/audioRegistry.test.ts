@@ -5723,6 +5723,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-fruit-pear.mp3",
       "/audio/voice/world-no-fruit-melon.mp3",
       "/audio/voice/world-no-fruit-apple.mp3",
+      "/audio/voice/world-yes-fruit-6.mp3",
+      "/audio/voice/world-no-fruit-33.mp3",
+      "/audio/voice/world-no-fruit-3.mp3",
+      "/audio/voice/world-yes-fruit-bear.mp3",
+      "/audio/voice/world-no-fruit-apple-rhyme.mp3",
+      "/audio/voice/world-no-fruit-plum.mp3",
+      "/audio/voice/world-yes-bakery-baker.mp3",
+      "/audio/voice/world-no-bakery-pilot.mp3",
+      "/audio/voice/world-no-bakery-frog.mp3",
+      "/audio/voice/world-yes-bakery-6.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6953,6 +6963,34 @@ describe("audio registry", () => {
     expect(narrationClipForText("That is Apple! Apple just happened. Let's try again!")?.id).toBe(
       "voice.world.no-fruit-apple",
     );
+    expect(narrationClipForText("Hooray! 6 pears! Three and three make six.")?.id).toBe(
+      "voice.world.yes-fruit-6",
+    );
+    expect(narrationClipForText("That is 33 pears! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-fruit-33",
+    );
+    expect(narrationClipForText("That is 3 pears! Count both bags. Let's try again!")?.id).toBe(
+      "voice.world.no-fruit-3",
+    );
+    expect(narrationClipForText("Hooray! Bear! Pear and bear rhyme.")?.id).toBe(
+      "voice.world.yes-fruit-bear",
+    );
+    expect(
+      narrationClipForText("That is Apple! Apple does not rhyme with pear. Let's try again!")?.id,
+    ).toBe("voice.world.no-fruit-apple-rhyme");
+    expect(
+      narrationClipForText("That is Plum! Plum does not rhyme with pear. Let's try again!")?.id,
+    ).toBe("voice.world.no-fruit-plum");
+    expect(narrationClipForText("Hooray! Baker! The baker at the oven.")?.id).toBe(
+      "voice.world.yes-bakery-baker",
+    );
+    expect(narrationClipForText("That is Pilot! Pilots fly planes. Let's try again!")?.id).toBe(
+      "voice.world.no-bakery-pilot",
+    );
+    expect(narrationClipForText("That is Frog! Frogs stay by ponds. Let's try again!")?.id).toBe(
+      "voice.world.no-bakery-frog",
+    );
+    expect(narrationClipForText("Hooray! 6 buns! Six buns.")?.id).toBe("voice.world.yes-bakery-6");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
