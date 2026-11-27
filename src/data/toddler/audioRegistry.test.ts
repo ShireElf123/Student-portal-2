@@ -5933,6 +5933,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-polar-3.mp3",
       "/audio/voice/world-yes-polar-circle.mp3",
       "/audio/voice/world-no-polar-star.mp3",
+      "/audio/voice/world-no-polar-triangle.mp3",
+      "/audio/voice/world-yes-northern-green.mp3",
+      "/audio/voice/world-no-northern-brown.mp3",
+      "/audio/voice/world-no-northern-grey.mp3",
+      "/audio/voice/world-yes-northern-green-mix.mp3",
+      "/audio/voice/world-no-northern-red.mp3",
+      "/audio/voice/world-no-northern-black.mp3",
+      "/audio/voice/world-yes-northern-8.mp3",
+      "/audio/voice/world-no-northern-4.mp3",
+      "/audio/voice/world-no-northern-11.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7757,6 +7767,34 @@ describe("audio registry", () => {
     );
     expect(narrationClipForText("That is Star! Not a star door. Let's try again!")?.id).toBe(
       "voice.world.no-polar-star",
+    );
+    expect(narrationClipForText("That is Triangle! This door is round. Let's try again!")?.id).toBe(
+      "voice.world.no-polar-triangle",
+    );
+    expect(narrationClipForText("Hooray! Green! A green ribbon.")?.id).toBe(
+      "voice.world.yes-northern-green",
+    );
+    expect(narrationClipForText("That is Brown! Not bakery brown. Let's try again!")?.id).toBe(
+      "voice.world.no-northern-brown",
+    );
+    expect(narrationClipForText("That is Grey! The ribbon glows green. Let's try again!")?.id).toBe(
+      "voice.world.no-northern-grey",
+    );
+    expect(narrationClipForText("Hooray! Green! Blue and yellow make green.")?.id).toBe(
+      "voice.world.yes-northern-green-mix",
+    );
+    expect(narrationClipForText("That is Red! No red in this mix. Let's try again!")?.id).toBe(
+      "voice.world.no-northern-red",
+    );
+    expect(narrationClipForText("That is Black! The mix stays bright. Let's try again!")?.id).toBe(
+      "voice.world.no-northern-black",
+    );
+    expect(narrationClipForText("Hooray! 8 stars! Eight stars.")?.id).toBe("voice.world.yes-northern-8");
+    expect(narrationClipForText("That is 4 stars! Count the whole band. Let's try again!")?.id).toBe(
+      "voice.world.no-northern-4",
+    );
+    expect(narrationClipForText("That is 11 stars! Not eleven. Let's try again!")?.id).toBe(
+      "voice.world.no-northern-11",
     );
   });
 
