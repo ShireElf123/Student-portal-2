@@ -6063,6 +6063,15 @@ describe("audio registry", () => {
       "/audio/voice/world-no-porch-moth.mp3",
       "/audio/voice/world-no-porch-porch.mp3",
       "/audio/voice/world-yes-play.mp3",
+      "/audio/voice/world-yes-puppet-puppet.mp3",
+      "/audio/voice/world-no-puppet-rock.mp3",
+      "/audio/voice/world-no-puppet-spoon.mp3",
+      "/audio/voice/world-yes-word-moon.mp3",
+      "/audio/voice/world-no-word-sun.mp3",
+      "/audio/voice/world-no-word-fish.mp3",
+      "/audio/voice/world-yes-rainy-boots.mp3",
+      "/audio/voice/world-no-rainy-socks.mp3",
+      "/audio/voice/world-no-rainy-hat.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8228,6 +8237,31 @@ describe("audio registry", () => {
       narrationClipForText("That is Porch! Porch does not rhyme with light. Let's try again!")?.id,
     ).toBe("voice.world.no-porch-porch");
     expect(narrationClipForText("Hooray! Let's play! Time to play!")?.id).toBe("voice.world.yes-play");
+    expect(
+      narrationClipForText("Hooray! Hand puppet! The puppet talks when a hand is inside!")?.id,
+    ).toBe("voice.world.yes-puppet-puppet");
+    expect(narrationClipForText("That is Quiet rock! Rocks do not tell tales. Let's try again!")?.id).toBe(
+      "voice.world.no-puppet-rock",
+    );
+    expect(
+      narrationClipForText("That is Soup spoon! Spoons belong in the kitchen. Let's try again!")?.id,
+    ).toBe("voice.world.no-puppet-spoon");
+    expect(narrationClipForText("Hooray! Moon! Moon starts with mmm!")?.id).toBe("voice.world.yes-word-moon");
+    expect(narrationClipForText("That is Sun! Sun starts with sss. Let's try again!")?.id).toBe(
+      "voice.world.no-word-sun",
+    );
+    expect(narrationClipForText("That is Fish! Fish starts with fff. Let's try again!")?.id).toBe(
+      "voice.world.no-word-fish",
+    );
+    expect(narrationClipForText("Hooray! Rain boots! Boots splash and stay dry inside!")?.id).toBe(
+      "voice.world.yes-rainy-boots",
+    );
+    expect(
+      narrationClipForText("That is Soft socks! Socks get soggy in puddles. Let's try again!")?.id,
+    ).toBe("voice.world.no-rainy-socks");
+    expect(
+      narrationClipForText("That is Sun hat! A sun hat is for bright days. Let's try again!")?.id,
+    ).toBe("voice.world.no-rainy-hat");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
