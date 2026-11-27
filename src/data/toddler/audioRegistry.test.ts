@@ -5703,6 +5703,16 @@ describe("audio registry", () => {
       "/audio/voice/world-no-compost-leaf.mp3",
       "/audio/voice/world-no-compost-worm.mp3",
       "/audio/voice/world-yes-compost-slide.mp3",
+      "/audio/voice/world-no-compost-boats.mp3",
+      "/audio/voice/world-no-compost-fire.mp3",
+      "/audio/voice/world-yes-fruit-orange.mp3",
+      "/audio/voice/world-no-fruit-pea.mp3",
+      "/audio/voice/world-no-fruit-loaf.mp3",
+      "/audio/voice/world-yes-fruit-5.mp3",
+      "/audio/voice/world-no-fruit-2.mp3",
+      "/audio/voice/world-no-fruit-8.mp3",
+      "/audio/voice/world-yes-fruit-carrot.mp3",
+      "/audio/voice/world-no-fruit-banana.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -6876,6 +6886,34 @@ describe("audio registry", () => {
     ).toBe("voice.world.no-compost-worm");
     expect(narrationClipForText("Hooray! So worms can slide! Damp soil helps worms move.")?.id).toBe(
       "voice.world.yes-compost-slide",
+    );
+    expect(
+      narrationClipForText("That is So boats can park! No boats in the heap. Let's try again!")?.id,
+    ).toBe("voice.world.no-compost-boats");
+    expect(
+      narrationClipForText("That is To start a fire! We do not burn the heap. Let's try again!")?.id,
+    ).toBe("voice.world.no-compost-fire");
+    expect(narrationClipForText("Hooray! Orange! A sweet orange.")?.id).toBe(
+      "voice.world.yes-fruit-orange",
+    );
+    expect(narrationClipForText("That is Pea! Peas are small and green. Let's try again!")?.id).toBe(
+      "voice.world.no-fruit-pea",
+    );
+    expect(narrationClipForText("That is Loaf! Bread is for the bakery. Let's try again!")?.id).toBe(
+      "voice.world.no-fruit-loaf",
+    );
+    expect(narrationClipForText("Hooray! 5 apples! Five apples.")?.id).toBe("voice.world.yes-fruit-5");
+    expect(narrationClipForText("That is 2 apples! Count the whole crate. Let's try again!")?.id).toBe(
+      "voice.world.no-fruit-2",
+    );
+    expect(narrationClipForText("That is 8 apples! Not eight this crate. Let's try again!")?.id).toBe(
+      "voice.world.no-fruit-8",
+    );
+    expect(narrationClipForText("Hooray! Carrot! A carrot is a veg.")?.id).toBe(
+      "voice.world.yes-fruit-carrot",
+    );
+    expect(narrationClipForText("That is Banana! Bananas are fruit. Let's try again!")?.id).toBe(
+      "voice.world.no-fruit-banana",
     );
   });
 
