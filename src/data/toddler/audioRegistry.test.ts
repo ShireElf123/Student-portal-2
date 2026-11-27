@@ -5963,6 +5963,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-seal-bark.mp3",
       "/audio/voice/world-no-seal-dog.mp3",
       "/audio/voice/world-no-seal-owl.mp3",
+      "/audio/voice/world-yes-seal-rest.mp3",
+      "/audio/voice/world-yes-seal-5.mp3",
+      "/audio/voice/world-no-seal-2.mp3",
+      "/audio/voice/world-no-seal-8.mp3",
+      "/audio/voice/world-yes-seal-s.mp3",
+      "/audio/voice/world-no-seal-c.mp3",
+      "/audio/voice/world-no-seal-t.mp3",
+      "/audio/voice/world-yes-seal-5-seals.mp3",
+      "/audio/voice/world-no-seal-23.mp3",
+      "/audio/voice/world-no-seal-3.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -7869,6 +7879,32 @@ describe("audio registry", () => {
     ).toBe("voice.world.no-seal-dog");
     expect(narrationClipForText("That is Owl! Owls hoot in woods. Let's try again!")?.id).toBe(
       "voice.world.no-seal-owl",
+    );
+    expect(narrationClipForText("Hooray! Seal! Seals rest on wet rocks.")?.id).toBe(
+      "voice.world.yes-seal-rest",
+    );
+    expect(narrationClipForText("Hooray! 5 shells! Five shells.")?.id).toBe("voice.world.yes-seal-5");
+    expect(narrationClipForText("That is 2 shells! Count the whole line. Let's try again!")?.id).toBe(
+      "voice.world.no-seal-2",
+    );
+    expect(narrationClipForText("That is 8 shells! Not eight this tide. Let's try again!")?.id).toBe(
+      "voice.world.no-seal-8",
+    );
+    expect(narrationClipForText("Hooray! S! Seal starts with S.")?.id).toBe("voice.world.yes-seal-s");
+    expect(narrationClipForText("That is C! C starts cub. Let's try again!")?.id).toBe(
+      "voice.world.no-seal-c",
+    );
+    expect(narrationClipForText("That is T! T starts tide. Let's try again!")?.id).toBe(
+      "voice.world.no-seal-t",
+    );
+    expect(narrationClipForText("Hooray! 5 seals! Two and three make five.")?.id).toBe(
+      "voice.world.yes-seal-5-seals",
+    );
+    expect(narrationClipForText("That is 23 seals! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-seal-23",
+    );
+    expect(narrationClipForText("That is 3 seals! Count both rocks. Let's try again!")?.id).toBe(
+      "voice.world.no-seal-3",
     );
   });
 
