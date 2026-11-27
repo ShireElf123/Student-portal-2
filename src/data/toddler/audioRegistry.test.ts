@@ -6196,6 +6196,14 @@ describe("audio registry", () => {
       "/audio/voice/mission-moon-voyager-start.mp3",
       "/audio/voice/mission-moon-voyager-next-stars.mp3",
       "/audio/voice/mission-moon-voyager-complete.mp3",
+      "/audio/voice/mission-color-wizard-start.mp3",
+      "/audio/voice/mission-color-wizard-next-green.mp3",
+      "/audio/voice/mission-color-wizard-complete.mp3",
+      "/audio/voice/mission-phonics-detective-start.mp3",
+      "/audio/voice/mission-phonics-detective-next-s.mp3",
+      "/audio/voice/mission-phonics-detective-complete.mp3",
+      "/audio/voice/mission-happy-helper-start.mp3",
+      "/audio/voice/mission-happy-helper-complete.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8966,6 +8974,46 @@ describe("audio registry", () => {
         "Congratulations! You completed the entire mission: Lunar Landing Mission! You earned the Space Cadet Commander badge!",
       )?.id,
     ).toBe("voice.mission.moon-voyager-complete");
+    expect(
+      narrationClipForText(
+        "Mission started: Apprentice Color Wizard! Step 1: Brew Sweet Orange. When we mix ruby Red with sunny Yellow paint, what magical color appears?",
+      )?.id,
+    ).toBe("voice.mission.color-wizard-start");
+    expect(
+      narrationClipForText(
+        "Next Mission Step: Brew Emerald Green! When we mix ocean Blue with sunny Yellow paint, what fresh nature color appears?",
+      )?.id,
+    ).toBe("voice.mission.color-wizard-next-green");
+    expect(
+      narrationClipForText(
+        "Congratulations! You completed the entire mission: Apprentice Color Wizard! You earned the Master Color Chemist badge!",
+      )?.id,
+    ).toBe("voice.mission.color-wizard-complete");
+    expect(
+      narrationClipForText(
+        "Mission started: Alphabet Sound Detective! Step 1: Find the B sound. B says buh! Which item starts with the buh buh sound of letter B?",
+      )?.id,
+    ).toBe("voice.mission.phonics-detective-start");
+    expect(
+      narrationClipForText(
+        "Next Mission Step: Find the S sound! S says sss! Which item starts with the sss sss sound of letter S?",
+      )?.id,
+    ).toBe("voice.mission.phonics-detective-next-s");
+    expect(
+      narrationClipForText(
+        "Congratulations! You completed the entire mission: Alphabet Sound Detective! You earned the Phonics Scout Master badge!",
+      )?.id,
+    ).toBe("voice.mission.phonics-detective-complete");
+    expect(
+      narrationClipForText(
+        "Mission started: Warm Heart Explorer! Step 1: Find the Big Happy Smile. Can you tap the friend who is feeling super happy and wearing a big bright smile?",
+      )?.id,
+    ).toBe("voice.mission.happy-helper-start");
+    expect(
+      narrationClipForText(
+        "Congratulations! You completed the entire mission: Warm Heart Explorer! You earned the Sunshine Sprout badge!",
+      )?.id,
+    ).toBe("voice.mission.happy-helper-complete");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {

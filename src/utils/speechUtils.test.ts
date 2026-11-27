@@ -756,6 +756,36 @@ describe("narrator clip and parent priority", () => {
     ]);
     expect(engineLog.some((row) => row.startsWith("speak:"))).toBe(false);
   });
+
+  it("plays Alphabet Sound Detective start instead of Web Speech", async () => {
+    installFakeSpeechEngine({ endAfterMs: 20, cancelErrorDelayMs: 0 });
+    vi.resetModules();
+    const audio = await import("./toddlerAudio");
+    const played: string[] = [];
+    audio.setAudioFactoryForTests((src) => ({
+      src,
+      volume: 1,
+      play: () => {
+        played.push(src);
+        return Promise.resolve();
+      },
+      pause: () => {},
+      onended: null,
+      onerror: null,
+    }));
+    const { speakText } = await import("./speechUtils");
+    const line =
+      "Mission started: Alphabet Sound Detective! Step 1: Find the B sound. B says buh! Which item starts with the buh buh sound of letter B?";
+    speakText(line);
+    await wait(50);
+    speakText(line);
+    await wait(50);
+    expect(played).toEqual([
+      "/audio/voice/mission-phonics-detective-start.mp3",
+      "/audio/voice/mission-phonics-detective-start.mp3",
+    ]);
+    expect(engineLog.some((row) => row.startsWith("speak:"))).toBe(false);
+  });
 });
 
 describe("mission wrap clip and TTS completion callbacks", () => {
