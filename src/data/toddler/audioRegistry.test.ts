@@ -6013,6 +6013,16 @@ describe("audio registry", () => {
       "/audio/voice/world-yes-owl-o.mp3",
       "/audio/voice/world-no-owl-a.mp3",
       "/audio/voice/world-no-owl-u.mp3",
+      "/audio/voice/world-yes-owl-deep.mp3",
+      "/audio/voice/world-no-owl-small.mp3",
+      "/audio/voice/world-no-owl-ferry.mp3",
+      "/audio/voice/world-yes-owl-6.mp3",
+      "/audio/voice/world-no-owl-33.mp3",
+      "/audio/voice/world-no-owl-3.mp3",
+      "/audio/voice/world-yes-owl-bee.mp3",
+      "/audio/voice/world-no-owl-owl.mp3",
+      "/audio/voice/world-no-owl-wood.mp3",
+      "/audio/voice/world-yes-star-9.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8044,6 +8054,32 @@ describe("audio registry", () => {
     expect(narrationClipForText("That is U! U starts under. Let's try again!")?.id).toBe(
       "voice.world.no-owl-u",
     );
+    expect(narrationClipForText("Hooray! The deep owl! The deep owl called last.")?.id).toBe(
+      "voice.world.yes-owl-deep",
+    );
+    expect(
+      narrationClipForText("That is The small owl! The small owl called first. Let's try again!")?.id,
+    ).toBe("voice.world.no-owl-small");
+    expect(narrationClipForText("That is The ferry! No ferry in this wood. Let's try again!")?.id).toBe(
+      "voice.world.no-owl-ferry",
+    );
+    expect(narrationClipForText("Hooray! 6 pines! Three and three make six.")?.id).toBe(
+      "voice.world.yes-owl-6",
+    );
+    expect(narrationClipForText("That is 33 pines! Add the groups. Let's try again!")?.id).toBe(
+      "voice.world.no-owl-33",
+    );
+    expect(narrationClipForText("That is 3 pines! Count both rows. Let's try again!")?.id).toBe(
+      "voice.world.no-owl-3",
+    );
+    expect(narrationClipForText("Hooray! Bee! Tree and bee rhyme.")?.id).toBe("voice.world.yes-owl-bee");
+    expect(
+      narrationClipForText("That is Owl! Owl does not rhyme with tree. Let's try again!")?.id,
+    ).toBe("voice.world.no-owl-owl");
+    expect(
+      narrationClipForText("That is Wood! Wood does not rhyme with tree. Let's try again!")?.id,
+    ).toBe("voice.world.no-owl-wood");
+    expect(narrationClipForText("Hooray! 9 stars! Nine stars.")?.id).toBe("voice.world.yes-star-9");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
