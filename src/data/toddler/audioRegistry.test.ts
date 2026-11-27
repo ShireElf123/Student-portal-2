@@ -6152,6 +6152,16 @@ describe("audio registry", () => {
       "/audio/voice/book-finish-ocean-friends-dive.mp3",
       "/audio/voice/book-finish-feelings-with-leo.mp3",
       "/audio/voice/book-finish-cosmic-rocket-journey.mp3",
+      "/audio/voice/book-finish-deep-ocean-wonders.mp3",
+      "/audio/voice/book-finish-tiny-seed-grows.mp3",
+      "/audio/voice/book-finish-bedtime-starlight-lullaby.mp3",
+      "/audio/voice/book-finish-magic-manners-tea-party.mp3",
+      "/audio/voice/book-finish-the-noisy-farm-chorus.mp3",
+      "/audio/voice/book-finish-dino-footprint-detective.mp3",
+      "/audio/voice/book-finish-rainy-day-rainbow-builder.mp3",
+      "/audio/voice/book-finish-the-brave-little-firefly.mp3",
+      "/audio/voice/book-finish-busy-beehive-architects.mp3",
+      "/audio/voice/book-finish-the-curious-caterpillar.mp3",
       "/audio/sfx/animal-lion.mp3",
       "/audio/sfx/animal-elephant.mp3",
       "/audio/sfx/animal-monkey.mp3",
@@ -8702,6 +8712,56 @@ describe("audio registry", () => {
         "Hooray! You finished reading Cosmic Rocket Journey to the Stars! You earned three golden stars!",
       )?.id,
     ).toBe("voice.book.finish-cosmic-rocket-journey");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Deep Ocean Wonders! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-deep-ocean-wonders");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading How the Tiny Seed Grows! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-tiny-seed-grows");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Bedtime Starlight Lullaby! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-bedtime-starlight-lullaby");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Magic Manners Tea Party! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-magic-manners-tea-party");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading The Noisy Farm Chorus! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-the-noisy-farm-chorus");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Dino Footprint Detective! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-dino-footprint-detective");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Rainy Day Rainbow Builder! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-rainy-day-rainbow-builder");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading The Brave Little Firefly! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-the-brave-little-firefly");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading Busy Beehive Architects! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-busy-beehive-architects");
+    expect(
+      narrationClipForText(
+        "Hooray! You finished reading The Curious Caterpillar's Big Change! You earned three golden stars!",
+      )?.id,
+    ).toBe("voice.book.finish-the-curious-caterpillar");
   });
 
   it("maps extra farm clue and quiz-feedback lines", () => {
