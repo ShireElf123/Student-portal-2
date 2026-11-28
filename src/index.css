@@ -619,8 +619,15 @@
 }
 .wonder-place-worlds {
   background:
-    radial-gradient(circle at 12% 8%, rgba(253, 224, 71, 0.55), transparent 36%),
-    linear-gradient(180deg, #fde68a 0%, #bbf7d0 42%, #4ade80 100%);
+    radial-gradient(circle at 14% 0%, rgba(125, 211, 252, 0.55), transparent 38%),
+    linear-gradient(180deg, #bae6fd 0%, #bbf7d0 46%, #34d399 100%);
+}
+.worlds-meadow-btn {
+  background: #fff;
+  color: #1c1917;
+  border: 2px solid #fff;
+  border-bottom-width: 4px;
+  border-bottom-color: #34d399;
 }
 .wonder-place-books {
   background:

@@ -1728,13 +1728,13 @@ export function ToddlerWorldsNavigator({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <button
             onClick={handleBackToWorldHub}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-sm min-h-12 cursor-pointer transition-all border border-white/10"
+            className="worlds-meadow-btn flex items-center gap-1.5 px-3.5 py-2 rounded-2xl font-black text-sm min-h-12 cursor-pointer"
           >
             <ChevronLeft size={16} /> Back to {selectedWorld.title} Map
           </button>
 
           <div className="flex items-center gap-2">
-            <span className="px-3.5 py-1.5 rounded-2xl bg-white/10 text-white font-bold text-sm border border-white/10 tabular-nums whitespace-nowrap">
+            <span className="px-3.5 py-1.5 rounded-2xl bg-white text-slate-800 font-bold text-sm border-2 border-white shadow-sm tabular-nums whitespace-nowrap">
               <span className="count-num">{areaStats.completedCount}</span> of <span className="count-num">{areaStats.totalCount}</span> Discoveries
             </span>
           </div>
@@ -1834,22 +1834,22 @@ export function ToddlerWorldsNavigator({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <button
             onClick={handleBackToWorldsMap}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-sm min-h-12 cursor-pointer transition-all border border-white/10"
+            className="worlds-meadow-btn flex items-center gap-1.5 px-3.5 py-2 rounded-2xl font-black text-sm min-h-12 cursor-pointer"
           >
             <ChevronLeft size={16} /> All lands
           </button>
 
           <div className="flex items-center gap-3">
-            <div className="text-xs text-white/60 font-bold hidden sm:block">
+            <div className="text-xs text-slate-700 font-bold hidden sm:block">
               {worldStats.completedActivities} of {worldStats.totalActivities} stops
             </div>
-            <div className="w-32 h-2.5 rounded-full bg-white/10 overflow-hidden">
+            <div className="w-32 h-2.5 rounded-full bg-white/80 overflow-hidden border border-white">
               <div
-                className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-sky-400 to-emerald-500 rounded-full transition-all duration-500"
                 style={{ width: `${worldStats.percentage}%` }}
               />
             </div>
-            <span className="text-xs font-black text-amber-300">{worldStats.percentage}%</span>
+            <span className="text-xs font-black text-emerald-800">{worldStats.percentage}%</span>
           </div>
         </div>
 
@@ -1976,7 +1976,7 @@ export function ToddlerWorldsNavigator({
     <div className="space-y-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-800">Wonderland Atlas</p>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-800">Wonderland Atlas</p>
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 drop-shadow-sm">Pick a land</h2>
         </div>
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
@@ -1995,7 +1995,7 @@ export function ToddlerWorldsNavigator({
               setLetterLaneOpen(true);
               speakText("Letter Lane. Three letters. About five minutes. No streak.", { pitch: 1.15 });
             }}
-            className="px-3 py-2 rounded-2xl bg-white text-slate-800 font-black text-sm min-h-12 cursor-pointer border border-amber-200 shadow-sm"
+            className="px-3 py-2 rounded-2xl bg-white text-slate-800 font-black text-sm min-h-12 cursor-pointer border border-lime-200 shadow-sm"
           >
             Letter Lane
           </button>
@@ -2026,7 +2026,7 @@ export function ToddlerWorldsNavigator({
         <button
           type="button"
           onClick={handleContinueAtlas}
-          className="w-full min-h-16 px-6 rounded-3xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xl sm:text-2xl cursor-pointer border-b-4 border-amber-700 shadow-lg"
+          className="w-full min-h-16 px-6 rounded-3xl bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-black text-xl sm:text-2xl cursor-pointer border-b-4 border-emerald-700 shadow-lg"
         >
           🧸 {progress.lastVisitedWorldId ? `Keep going · ${atlasNext.area.title}` : `Play ${atlasNext.area.title}`}
         </button>
@@ -2062,7 +2062,7 @@ export function ToddlerWorldsNavigator({
                       whileTap={{ scale: 0.97 }}
                       onClick={() => handleSelectWorld(world)}
                       className={`wonder-land-card overflow-hidden rounded-3xl bg-white text-left cursor-pointer border-4 ${
-                        here ? "border-amber-400" : "border-white"
+                        here ? "border-emerald-400" : "border-white"
                       }`}
                     >
                       <span className="relative mb-0 block h-44 sm:h-48 md:h-56 w-full overflow-hidden">
@@ -2093,7 +2093,7 @@ export function ToddlerWorldsNavigator({
                       </p>
                       <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100">
                         <div
-                          className="h-full rounded-full bg-amber-400"
+                          className="h-full rounded-full bg-emerald-400"
                           style={{ width: `${stats.percentage}%` }}
                         />
                       </div>
@@ -2107,7 +2107,7 @@ export function ToddlerWorldsNavigator({
         })}
       </div>
 
-      <section className="rounded-[2rem] bg-gradient-to-br from-indigo-300 via-violet-200 to-amber-200 p-4 sm:p-6 shadow-xl border border-white/40">
+      <section className="rounded-[2rem] bg-gradient-to-br from-indigo-300 via-violet-200 to-sky-200 p-4 sm:p-6 shadow-xl border border-white/40">
         <div className="mb-5 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
           <h3 className="text-2xl sm:text-3xl font-black text-slate-900">Hidden doors</h3>
           <p className="text-sm font-bold text-slate-700">Secret rooms · earn stars, then step in</p>
@@ -2136,7 +2136,7 @@ export function ToddlerWorldsNavigator({
                   speakText(`Welcome to ${zone.title}. ${zone.subtitle}`, { pitch: 1.18 });
                 }}
                 className={`wonder-land-card overflow-hidden rounded-3xl bg-white text-left cursor-pointer border-4 ${
-                  found ? "border-amber-400" : "border-white"
+                  found ? "border-sky-400" : "border-white"
                 }`}
               >
                 <span className="relative mb-0 block h-44 sm:h-48 md:h-56 w-full overflow-hidden">

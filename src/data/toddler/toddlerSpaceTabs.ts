@@ -53,7 +53,7 @@ export const TODDLER_DESTINATION_SHELL: Record<
   ToddlerSpaceTabId,
   { kicker: string; barClass: string; placeClass: string }
 > = {
-  worlds: { kicker: "Adventure atlas", barClass: "from-amber-300 via-lime-200 to-emerald-300", placeClass: "wonder-place-worlds" },
+  worlds: { kicker: "Adventure atlas", barClass: "from-sky-300 via-lime-200 to-emerald-300", placeClass: "wonder-place-worlds" },
   books: { kicker: "Story library", barClass: "from-orange-300 via-amber-200 to-yellow-200", placeClass: "wonder-place-books" },
   games: { kicker: "Play now", barClass: "from-emerald-300 via-teal-200 to-cyan-300", placeClass: "wonder-place-games" },
   focus: { kicker: "Calm body", barClass: "from-teal-200 via-cyan-100 to-sky-200", placeClass: "wonder-place-focus" },

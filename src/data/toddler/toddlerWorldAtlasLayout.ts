@@ -13,7 +13,7 @@ export const ATLAS_CONTINENTS = [
     title: "Busy Town",
     blurb: "Roads, square and market",
     emoji: "🏘️",
-    band: "from-amber-200 via-orange-100 to-rose-200",
+    band: "from-sky-200 via-stone-100 to-orange-100",
     worldIds: ["vehicle-world", "city-world", "kitchen-world"],
   },
   {
