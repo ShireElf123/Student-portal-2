@@ -173,14 +173,9 @@ export function ToddlerFocusBoard({
       <div className="hidden sm:block">
         <CharacterAnchor emoji="🧸" title="Teddy" subtitle="Slow, then settle." position="top-right" />
       </div>
-      <div className="mb-4">
-        <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${isMeadow ? "text-slate-900" : "text-white"}`}>
-          <span>🎯</span> Focus Body
-        </h2>
-        <p className={`text-sm sm:text-base font-semibold ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
-          Check the body. Slow gold paths buzz if you rush. Move, push, freeze, breathe, look, then quiet.
-        </p>
-      </div>
+      <p className={`text-sm sm:text-base font-black mb-4 ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
+        Check the body. Slow gold paths buzz if you rush. Move, push, freeze, breathe, look, then quiet.
+      </p>
 
       <div className="flex flex-wrap gap-2 mb-5">
         {MODES.map((item) => (

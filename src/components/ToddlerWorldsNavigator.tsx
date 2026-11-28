@@ -1946,8 +1946,8 @@ export function ToddlerWorldsNavigator({
     <div className="space-y-8">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-700">Wonderland Atlas</p>
-          <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">Pick a land</h2>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-800">Wonderland Atlas</p>
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 drop-shadow-sm">Pick a land</h2>
         </div>
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <button
@@ -1996,7 +1996,7 @@ export function ToddlerWorldsNavigator({
         <button
           type="button"
           onClick={handleContinueAtlas}
-          className="w-full min-h-16 px-6 rounded-3xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xl sm:text-2xl cursor-pointer shadow-md"
+          className="w-full min-h-16 px-6 rounded-3xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xl sm:text-2xl cursor-pointer border-b-4 border-amber-700 shadow-lg"
         >
           🧸 {progress.lastVisitedWorldId ? `Keep going · ${atlasNext.area.title}` : `Play ${atlasNext.area.title}`}
         </button>
@@ -2031,7 +2031,7 @@ export function ToddlerWorldsNavigator({
                       whileHover={{ y: -4 }}
                       whileTap={{ scale: 0.97 }}
                       onClick={() => handleSelectWorld(world)}
-                      className={`overflow-hidden rounded-3xl bg-white text-left shadow-md cursor-pointer border-4 ${
+                      className={`wonder-land-card overflow-hidden rounded-3xl bg-white text-left cursor-pointer border-4 ${
                         here ? "border-amber-400" : "border-white"
                       }`}
                     >
@@ -2105,7 +2105,7 @@ export function ToddlerWorldsNavigator({
                   soundEffects.playPop();
                   speakText(`Welcome to ${zone.title}. ${zone.subtitle}`, { pitch: 1.18 });
                 }}
-                className={`overflow-hidden rounded-3xl bg-white text-left shadow-md cursor-pointer border-4 ${
+                className={`wonder-land-card overflow-hidden rounded-3xl bg-white text-left cursor-pointer border-4 ${
                   found ? "border-amber-400" : "border-white"
                 }`}
               >

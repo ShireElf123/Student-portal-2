@@ -1131,8 +1131,8 @@ export function ToddlerQuizzesAndGames({
   }, [currentActivity, isShapeCompleted]);
 
   const idleTile = isMeadow
-    ? "bg-white text-slate-800 border-emerald-200 hover:bg-amber-50"
-    : "bg-white/15 border-white/25 text-white hover:bg-white/25";
+    ? "wonder-clay-tile bg-white text-slate-800 border-emerald-200 hover:bg-amber-50"
+    : "wonder-clay-tile bg-white/15 border-white/25 text-white hover:bg-white/25";
 
   return (
     <div className="space-y-4">

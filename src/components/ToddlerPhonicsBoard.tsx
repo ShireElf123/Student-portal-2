@@ -71,14 +71,9 @@ export function ToddlerPhonicsBoard({
       <div className="hidden sm:block">
         <CharacterAnchor emoji="🧸" title="Teddy" subtitle="Tap a letter!" position="top-right" />
       </div>
-      <div className="mb-4">
-        <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${isMeadow ? "text-slate-900" : "text-white"}`}>
-          <span>🔤</span> ABC Phonics
-        </h2>
-        <p className={`text-sm sm:text-base font-semibold ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
-          Letters, first sounds, blending, families, sight words, and ABC order. Neighborhood words. Trace if you like.
-        </p>
-      </div>
+      <p className={`text-sm sm:text-base font-black mb-4 ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
+        Letters, first sounds, blending, families, sight words, and ABC order. Neighborhood words. Trace if you like.
+      </p>
 
       <div className="flex flex-wrap gap-2 mb-5">
         {MODES.map((item) => (
@@ -112,7 +107,7 @@ export function ToddlerPhonicsBoard({
                   key={item.letter}
                   type="button"
                   onClick={() => openTile(item)}
-                  className={`relative min-h-[5.5rem] p-3 rounded-3xl flex flex-col items-center justify-center ${
+                  className={`wonder-clay-tile relative min-h-[5.5rem] p-3 rounded-3xl flex flex-col items-center justify-center ${
                     on ? "bg-pink-100 border-b-4 border-pink-600 ring-4 ring-pink-400/40" : ghost
                   }`}
                 >

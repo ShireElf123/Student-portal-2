@@ -140,14 +140,9 @@ export function ToddlerCountingBoard({
       <div className="hidden sm:block">
         <CharacterAnchor emoji="🧸" title="Teddy" subtitle="Count with me!" position="top-right" />
       </div>
-      <div className="mb-4">
-        <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${isMeadow ? "text-slate-900" : "text-white"}`}>
-          <span>🔢</span> Count to Twenty
-        </h2>
-        <p className={`text-sm sm:text-base font-semibold ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
-          Ten-frames, more and less, make ten, a quick look, stoop shapes, patterns, and what number comes after.
-        </p>
-      </div>
+      <p className={`text-sm sm:text-base font-black mb-4 ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
+        Ten-frames, more and less, make ten, a quick look, stoop shapes, patterns, and what number comes after.
+      </p>
 
       <div className="flex flex-wrap gap-2 mb-5">
         {MODES.map((item) => (
@@ -175,7 +170,7 @@ export function ToddlerCountingBoard({
                 key={item.num}
                 type="button"
                 onClick={() => open(item)}
-                className={`min-h-28 rounded-[1.75rem] p-4 text-left border-4 ${card?.num === item.num ? "bg-indigo-200 border-indigo-700" : ghost}`}
+                className={`wonder-clay-tile min-h-28 rounded-[1.75rem] p-4 text-left border-4 ${card?.num === item.num ? "bg-indigo-200 border-indigo-700" : ghost}`}
               >
                 <p className="text-3xl font-black">{item.num}</p>
                 <p className="text-sm font-black uppercase">{item.word}</p>

@@ -28,13 +28,15 @@ describe("Toddler Wonderland home composition", () => {
 
   it("groups rewards in a treasure tray and utilities in a dedicated rail", () => {
     expect(css).toContain(".wonder-treasure-tray");
-    expect(css).toContain(".wonder-utility-btn");
+    expect(css).toContain(".wonder-clay");
+    expect(css).toContain(".wonder-brand-title");
     expect(view).toContain('data-testid="wonder-treasure-tray"');
     expect(view).toContain('data-testid="wonder-utility-rail"');
     expect(view).toContain('data-testid="wonder-buddy-stage"');
     expect(view).toContain('data-testid="hud-champion-chip"');
     expect(view).toContain('data-testid="hud-star-count"');
     expect(view).toContain('data-testid="hud-sticker-count"');
+    expect(view).toContain("wonder-brand-title");
   });
 
   it("keeps star digits on .count-num and does not hide rewards", () => {

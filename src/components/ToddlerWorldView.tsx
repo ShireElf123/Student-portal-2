@@ -193,7 +193,7 @@ function StoryCoverCard({
     <button
       type="button"
       onClick={() => onOpen(book)}
-      className={`snap-start shrink-0 text-left ${large ? "w-[11.5rem] sm:w-56" : "w-40 sm:w-48"}`}
+      className={`snap-start shrink-0 text-left wonder-clay-tile ${large ? "w-[11.5rem] sm:w-56" : "w-40 sm:w-48"}`}
     >
       <div
         className={`relative overflow-hidden rounded-[1.75rem] border-4 border-white/70 shadow-xl bg-gradient-to-br ${book.coverGradient} ${
@@ -781,164 +781,160 @@ export function ToddlerWorldView({
           </>
         )}
 
-        <div className="max-w-7xl mx-auto relative z-10 space-y-3 sm:space-y-4" data-testid="wonder-home-header">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-amber-400 via-orange-400 to-pink-500 flex items-center justify-center text-2xl sm:text-3xl shadow-lg shadow-orange-500/30 ring-4 ring-white/80 border-2 border-amber-200 flex-shrink-0">
-                🧸
-              </div>
-              <div className="min-w-0">
-                <div className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider mb-0.5 ${
-                  isMeadow
-                    ? "bg-white/90 text-amber-900 border border-amber-200"
-                    : "bg-amber-400/20 text-amber-300 border border-amber-400/30"
-                }`}>
-                  <Sparkles size={11} className="text-amber-500" /> Ages 2–5
+        <div className="max-w-7xl mx-auto relative z-10" data-testid="wonder-home-header">
+          <div className="flex flex-col gap-3 sm:gap-4">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+              <div className="flex items-center gap-3 sm:gap-3.5">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-400 to-pink-500 flex items-center justify-center text-3xl sm:text-4xl shadow-2xl shadow-orange-500/40 ring-4 ring-white border-2 border-amber-300 animate-bounce flex-shrink-0">
+                  🧸
                 </div>
-                <h1 className={`text-2xl sm:text-4xl font-black tracking-tight leading-tight truncate ${
-                  isMeadow ? "text-slate-900 font-display" : "text-white"
-                }`}>
-                  Toddler Wonderland
-                </h1>
+                <div className="min-w-0 flex-1">
+                  <div className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-1 shadow-md ${
+                    isMeadow
+                      ? "bg-white text-amber-900 border-2 border-amber-300"
+                      : "bg-amber-400/20 text-amber-300 border border-amber-400/30"
+                  }`}>
+                    <Sparkles size={13} className="text-amber-500" /> Ages 2–5
+                  </div>
+                  <h1 className={`wonder-brand-title font-black font-display ${
+                    isMeadow ? "text-slate-900 drop-shadow-sm" : "text-white"
+                  }`}>
+                    Toddler Wonderland
+                  </h1>
+                  <p className={`text-sm sm:text-base font-bold mt-0.5 ${
+                    isMeadow ? "text-slate-800" : "text-white/90"
+                  }`}>
+                    Play inside. Every land is a new place.
+                  </p>
+                </div>
+              </div>
+
+              <div className="wonder-utility-rail" data-testid="wonder-utility-rail">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const nextTheme = isMeadow ? "night-starlight" : "sunny-meadow";
+                    setWonderlandTheme(nextTheme);
+                    soundEffects.playPop();
+                  }}
+                  className={`wonder-clay border-b-4 ${
+                    isMeadow
+                      ? "bg-white text-slate-800 border-slate-300 hover:bg-slate-50"
+                      : "bg-white/10 text-white border-white/20 hover:bg-white/20"
+                  }`}
+                  title="Switch between Sunny Meadow & Cosmic Starlight themes"
+                >
+                  <span>{isMeadow ? "☀️ Meadow" : "🌙 Galaxy"}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={toggleMute}
+                  className={`wonder-clay border-b-4 ${
+                    isMuted
+                      ? "bg-rose-500 text-white border-rose-700"
+                      : isMeadow
+                      ? "bg-white text-slate-800 border-slate-300 hover:bg-slate-50"
+                      : "bg-white/10 text-white border-white/20 hover:bg-white/20"
+                  }`}
+                  title={isMuted ? "Sound is Muted - Click to Unmute" : "Sound is Active - Click to Mute"}
+                >
+                  {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                  <span className="hidden sm:inline">{isMuted ? "Muted" : "Voice On"}</span>
+                </button>
+                {onStartAssessment && (
+                  <button
+                    type="button"
+                    onClick={() => onStartAssessment("toddler-phonics-basics")}
+                    className="wonder-clay border-b-4 bg-gradient-to-b from-emerald-500 to-emerald-600 hover:from-emerald-400 text-white border-emerald-800"
+                  >
+                    <GraduationCap size={16} />
+                    <span className="hidden sm:inline">Milestone Check</span>
+                    <span className="sm:hidden">Check</span>
+                  </button>
+                )}
+                {onRequestExit && (
+                  <button
+                    type="button"
+                    onClick={onRequestExit}
+                    className="wonder-clay border-b-4 bg-slate-800 hover:bg-slate-700 text-white border-slate-950"
+                    title="Grown-Up Gate: Exit Toddler Space or Switch Profile"
+                  >
+                    <Lock size={14} className="text-amber-400" />
+                    <span>Exit 🔒</span>
+                  </button>
+                )}
               </div>
             </div>
 
-            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0" data-testid="wonder-utility-rail">
+            <div className="flex flex-wrap items-center gap-2.5">
               <button
                 type="button"
+                data-testid="wonder-buddy-stage"
                 onClick={() => {
-                  const nextTheme = isMeadow ? "night-starlight" : "sunny-meadow";
-                  setWonderlandTheme(nextTheme);
+                  enterDestination("avatar-studio");
                   soundEffects.playPop();
                 }}
-                className={`wonder-utility-btn border-b-4 shadow-sm ${
+                className={`wonder-clay border-b-4 gap-2 px-3.5 py-1.5 ${
                   isMeadow
-                    ? "bg-white text-slate-800 border-slate-300 hover:bg-slate-50"
-                    : "bg-white/10 text-white border-white/20 hover:bg-white/20"
+                    ? "bg-white text-slate-800 border-pink-400 hover:bg-pink-50"
+                    : "bg-pink-500/20 text-pink-200 border-pink-600 hover:bg-pink-500/30"
                 }`}
-                title="Switch between Sunny Meadow & Cosmic Starlight themes"
+                title="Customize your Learning Buddy!"
               >
-                <span aria-hidden>{isMeadow ? "☀️" : "🌙"}</span>
-                <span className="hidden md:inline">{isMeadow ? "Meadow" : "Galaxy"}</span>
-              </button>
-              <button
-                type="button"
-                onClick={toggleMute}
-                className={`wonder-utility-btn border-b-4 shadow-sm ${
-                  isMuted
-                    ? "bg-rose-500 text-white border-rose-700"
-                    : isMeadow
-                    ? "bg-white text-slate-800 border-slate-300 hover:bg-slate-50"
-                    : "bg-white/10 text-white border-white/20 hover:bg-white/20"
-                }`}
-                title={isMuted ? "Sound is Muted - Click to Unmute" : "Sound is Active - Click to Mute"}
-              >
-                {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-                <span className="hidden md:inline">{isMuted ? "Muted" : "Voice"}</span>
-              </button>
-              {onStartAssessment && (
-                <button
-                  type="button"
-                  onClick={() => onStartAssessment("toddler-phonics-basics")}
-                  className="wonder-utility-btn border-b-4 shadow-sm bg-emerald-500 hover:bg-emerald-400 text-white border-emerald-800"
-                >
-                  <GraduationCap size={16} />
-                  <span className="hidden md:inline">Check</span>
-                </button>
-              )}
-              {onRequestExit && (
-                <button
-                  type="button"
-                  onClick={onRequestExit}
-                  className="wonder-utility-btn border-b-4 shadow-sm bg-slate-800 hover:bg-slate-700 text-white border-slate-950"
-                  title="Grown-Up Gate: Exit Toddler Space or Switch Profile"
-                >
-                  <Lock size={14} className="text-amber-400" />
-                  <span className="hidden sm:inline">Exit</span>
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <button
-              type="button"
-              data-testid="wonder-buddy-stage"
-              onClick={() => {
-                enterDestination("avatar-studio");
-                soundEffects.playPop();
-              }}
-              className={`wonder-buddy-stage border-b-4 shadow-md active:translate-y-1 ${
-                isMeadow
-                  ? "bg-white/95 text-slate-800 border-pink-300 hover:bg-pink-50"
-                  : "bg-pink-500/20 text-pink-100 border-pink-600 hover:bg-pink-500/30"
-              }`}
-              title="Visit your Learning Buddy"
-            >
-              <BuddyCompanionBadge buddy={activeBuddy} size="md" animated />
-              <div className="min-w-0">
-                <div className="text-[10px] uppercase font-black tracking-wider text-pink-600">Your Buddy</div>
-                <div className={`text-base sm:text-lg font-black leading-tight ${isMeadow ? "text-slate-900" : "text-white"}`}>
-                  {activeBuddy.name}
-                </div>
-                <div className={`text-xs font-bold line-clamp-1 ${isMeadow ? "text-slate-600" : "text-white/80"}`}>
-                  {activeBuddy.catchphrase || "Ready for another magical adventure!"}
-                </div>
-              </div>
-            </button>
-
-            <div
-              data-testid="wonder-treasure-tray"
-              className={`wonder-treasure-tray ${isMeadow ? "" : "wonder-treasure-tray--night"}`}
-            >
-              <div className="wonder-treasure-item bg-gradient-to-b from-amber-300 to-amber-400 text-amber-950 border-b-4 border-amber-600 shadow-sm">
-                <Star className="w-5 h-5 fill-amber-100 text-amber-950" />
-                <div>
-                  <div className="text-[10px] uppercase font-black tracking-wider leading-none text-amber-900/80">Star jar</div>
-                  <div className="text-base font-black leading-tight">
-                    <span className="count-num" data-testid="hud-star-count">{starsCount}</span>{" "}
-                    <span className="text-sm font-bold">Stars</span>
+                <BuddyCompanionBadge buddy={activeBuddy} size="sm" animated />
+                <div className="text-left">
+                  <div className="text-xs uppercase font-black text-pink-600">Buddy</div>
+                  <div className={`text-sm font-black leading-tight ${isMeadow ? "text-slate-900" : "text-white"}`}>
+                    {activeBuddy.name}
                   </div>
                 </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  soundEffects.playPop();
-                  setIsStickerAlbumOpen(true);
-                }}
-                className="wonder-treasure-item bg-gradient-to-b from-yellow-300 to-amber-400 text-amber-950 border-b-4 border-amber-700 shadow-sm cursor-pointer active:translate-y-1"
-                title="Explorer Sticker Album"
-              >
-                <Trophy size={16} />
-                <span>Stickers</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-amber-950/15 text-xs font-black count-num" data-testid="hud-sticker-count">
-                  {unlockedStickersCount}/{TODDLER_STICKERS.length}
-                </span>
               </button>
-              <div
-                data-testid="hud-champion-chip"
-                className="wonder-treasure-item bg-white text-slate-800 border-b-4 border-pink-300 shadow-sm"
-                title={currentRank.description}
-              >
-                <span className="text-lg leading-none" aria-hidden>{currentRank.emoji}</span>
-                <span className="text-xs sm:text-sm font-black leading-tight">{currentRank.title}</span>
+
+              <div data-testid="wonder-treasure-tray" className="wonder-treasure-tray">
+                <div className="wonder-clay border-b-4 bg-gradient-to-b from-amber-400 to-amber-500 text-amber-950 border-amber-600 cursor-default">
+                  <Star className="w-5 h-5 fill-amber-200 text-amber-950 animate-pulse" />
+                  <div className="text-left">
+                    <div className="text-xs uppercase font-black tracking-wider leading-none">Star jar</div>
+                    <div className="text-[11px] font-black leading-tight" data-testid="hud-champion-chip" title={currentRank.description}>
+                      {currentRank.emoji} {currentRank.title}
+                    </div>
+                    <div className="text-base font-black leading-tight">
+                      <span className="count-num" data-testid="hud-star-count">{starsCount}</span>{" "}
+                      <span className="text-sm font-bold">Stars</span>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundEffects.playPop();
+                    setIsStickerAlbumOpen(true);
+                  }}
+                  className="wonder-clay border-b-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 text-amber-950 border-amber-700"
+                  title="Explorer Sticker Album"
+                >
+                  <Trophy size={14} />
+                  <span>Stickers</span>
+                  <span className="px-1.5 py-0.5 rounded-full bg-amber-950/20 text-xs font-black count-num" data-testid="hud-sticker-count">
+                    {unlockedStickersCount}/{TODDLER_STICKERS.length}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundEffects.playPop();
+                    setIsDailyMissionsOpen(true);
+                  }}
+                  className="wonder-clay border-b-4 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-400 text-white border-indigo-800"
+                  title="Today's 3 Adventure Missions"
+                >
+                  <Calendar size={14} />
+                  <span>Quests</span>
+                  <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-xs">
+                    <span className="count-num">{completedMissions.length}/3</span>
+                  </span>
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => {
-                  soundEffects.playPop();
-                  setIsDailyMissionsOpen(true);
-                }}
-                className="wonder-treasure-item bg-gradient-to-b from-indigo-400 to-violet-500 text-white border-b-4 border-indigo-800 shadow-sm cursor-pointer active:translate-y-1"
-                title="Today's 3 Adventure Missions"
-              >
-                <Calendar size={14} />
-                <span>Quests</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-xs">
-                  <span className="count-num">{completedMissions.length}/3</span>
-                </span>
-              </button>
             </div>
           </div>
         </div>
@@ -947,9 +943,9 @@ export function ToddlerWorldView({
       {/* Organic Rolling Hills Landscape Divider (Separating Sky from Meadow) */}
       <RollingHillsDivider
         variant={isMeadow ? "meadow" : "night-starlight"}
-        heightClass="h-8 sm:h-12 md:h-14"
+        heightClass="h-10 sm:h-14 md:h-16"
         showFlowers={isMeadow}
-        className="-mt-1 mb-2 sm:mb-3"
+        className="-mt-1 mb-4"
       />
 
       <div className="max-w-7xl mx-auto px-4 pt-2 pb-2">
@@ -985,20 +981,11 @@ export function ToddlerWorldView({
               <CharacterAnchor emoji="🧸" title="Story Bear" subtitle="Choose a tale!" position="top-right" />
             </div>
 
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${
-                  isMeadow ? "text-slate-900" : "text-white"
-                }`}>
-                  <span>📖</span> Story Library
-                </h2>
-                <p className={`text-sm sm:text-base font-semibold ${
-                  isMeadow ? "text-slate-800" : "text-white/85"
-                }`}>
-                  A real library: series rows, long tales, first words, look-and-learn. Tap a cover. Tap any word.
-                </p>
-              </div>
-            </div>
+            <p className={`text-sm sm:text-base font-black mb-4 ${
+              isMeadow ? "text-slate-800" : "text-white/85"
+            }`}>
+              Series rows, long tales, first words, look-and-learn. Tap a cover. Tap any word.
+            </p>
 
             <div className="flex gap-2 overflow-x-auto pb-3 mb-4 snap-x">
               {BOOK_SHELVES.map((shelf) => {
@@ -1038,8 +1025,8 @@ export function ToddlerWorldView({
                   const rowBooks = booksForRow(row.id);
                   if (rowBooks.length === 0) return null;
                   return (
-                    <section key={row.id}>
-                      <h3 className={`text-lg sm:text-xl font-black mb-3 ${isMeadow ? "text-slate-900" : "text-white"}`}>
+                    <section key={row.id} className="wonder-library-row">
+                      <h3 className={`text-lg sm:text-xl font-black mb-3 px-1 ${isMeadow ? "text-slate-900" : "text-white"}`}>
                         {row.emoji} {row.label}
                       </h3>
                       <div className="flex gap-4 overflow-x-auto pb-3 snap-x">
@@ -1115,7 +1102,7 @@ export function ToddlerWorldView({
 
         {/* SECTION 4: INTERACTIVE GAMES & PICTURE QUIZZES */}
         {destination === "games" && (
-          <div>
+          <div className="wonder-arcade p-2 sm:p-3">
             <ToddlerQuizzesAndGames
               isMeadow={isMeadow}
               hideChrome

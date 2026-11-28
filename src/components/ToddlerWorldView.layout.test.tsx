@@ -19,6 +19,8 @@ describe("ToddlerWorldView home gateway", () => {
     expect(getByTestId("hud-sticker-count")).toBeTruthy();
     expect(getByTestId("hud-champion-chip")).toBeTruthy();
     expect(getByText("Toddler Wonderland")).toBeTruthy();
+    expect(getByText(/Ages 2/)).toBeTruthy();
+    expect(getByText("Play inside. Every land is a new place.")).toBeTruthy();
     expect(getByTestId("toddler-space-nav").querySelectorAll('[role="tab"]')).toHaveLength(8);
     expect(queryByText("Pick a land")).toBeNull();
     expect(queryByText("Xylophone")).toBeNull();

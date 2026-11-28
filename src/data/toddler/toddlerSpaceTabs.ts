@@ -46,14 +46,14 @@ export function readWonderlandDestination(state: unknown): ToddlerSpaceTabId | n
 
 export const TODDLER_DESTINATION_SHELL: Record<
   ToddlerSpaceTabId,
-  { kicker: string; barClass: string }
+  { kicker: string; barClass: string; placeClass: string }
 > = {
-  worlds: { kicker: "Adventure atlas", barClass: "from-amber-200 to-lime-200" },
-  books: { kicker: "Story library", barClass: "from-amber-100 to-orange-200" },
-  games: { kicker: "Play now", barClass: "from-emerald-200 to-teal-200" },
-  focus: { kicker: "Calm body", barClass: "from-teal-100 to-cyan-200" },
-  playhouse: { kicker: "The stage", barClass: "from-violet-200 to-fuchsia-200" },
-  phonics: { kicker: "Letters and sounds", barClass: "from-rose-100 to-pink-200" },
-  counting: { kicker: "Numbers", barClass: "from-indigo-100 to-sky-200" },
-  "avatar-studio": { kicker: "Character studio", barClass: "from-pink-100 to-purple-200" },
+  worlds: { kicker: "Adventure atlas", barClass: "from-amber-300 via-lime-200 to-emerald-300", placeClass: "wonder-place-worlds" },
+  books: { kicker: "Story library", barClass: "from-orange-300 via-amber-200 to-yellow-200", placeClass: "wonder-place-books" },
+  games: { kicker: "Play now", barClass: "from-emerald-300 via-teal-200 to-cyan-300", placeClass: "wonder-place-games" },
+  focus: { kicker: "Calm body", barClass: "from-teal-200 via-cyan-100 to-sky-200", placeClass: "wonder-place-focus" },
+  playhouse: { kicker: "The stage", barClass: "from-violet-300 via-fuchsia-200 to-pink-300", placeClass: "wonder-place-playhouse" },
+  phonics: { kicker: "Letters and sounds", barClass: "from-rose-300 via-pink-200 to-orange-200", placeClass: "wonder-place-phonics" },
+  counting: { kicker: "Numbers", barClass: "from-indigo-300 via-sky-200 to-blue-200", placeClass: "wonder-place-counting" },
+  "avatar-studio": { kicker: "Character studio", barClass: "from-pink-300 via-purple-200 to-violet-300", placeClass: "wonder-place-avatar-studio" },
 };

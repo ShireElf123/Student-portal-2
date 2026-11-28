@@ -246,98 +246,183 @@
 }
 
 /**
- * Toddler Wonderland home composition.
- * Groups utilities, Buddy, and rewards so they stop competing as equal chips.
+ * Toddler Wonderland identity: clay surfaces, illustrated places, full brand.
  */
-.wonder-utility-btn {
+.wonder-brand-title {
+  font-size: clamp(1.85rem, 7.4vw, 3.15rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  overflow: visible;
+  white-space: normal;
+  word-break: keep-all;
+  hyphens: none;
+}
+
+.wonder-clay {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   min-height: 3rem;
-  min-width: 3rem;
-  padding: 0.5rem 0.7rem;
-  border-radius: 1rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 1.15rem;
   font-weight: 900;
-  font-size: 0.8125rem;
-  line-height: 1;
+  line-height: 1.1;
   cursor: pointer;
-  transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.12s ease;
+  box-shadow:
+    0 2px 0 rgba(15, 23, 42, 0.08),
+    0 10px 18px -12px rgba(15, 23, 42, 0.35);
+  transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.wonder-utility-btn:active {
-  transform: translateY(2px);
+.wonder-clay:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.08);
+}
+
+.wonder-utility-rail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 .wonder-treasure-tray {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
-  justify-content: flex-start;
-  gap: 0.4rem;
-  padding: 0.4rem;
-  border-radius: 1.75rem;
-  background: rgba(255, 255, 255, 0.94);
-  border: 3px solid rgba(255, 255, 255, 0.95);
-  box-shadow:
-    0 10px 24px -10px rgba(22, 101, 52, 0.28),
-    0 2px 8px rgba(15, 23, 42, 0.06),
-    inset 0 -3px 0 rgba(22, 101, 52, 0.06);
-}
-
-@media (min-width: 640px) {
-  .wonder-treasure-tray {
-    justify-content: flex-end;
-  }
-}
-
-.wonder-treasure-tray--night {
-  background: rgba(15, 23, 42, 0.55);
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.45);
-}
-
-.wonder-treasure-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  min-height: 3rem;
-  padding: 0.35rem 0.7rem;
-  border-radius: 1.15rem;
-  font-weight: 900;
-  line-height: 1.1;
-}
-
-.wonder-buddy-stage {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  min-height: 3.5rem;
-  padding: 0.45rem 0.85rem 0.45rem 0.45rem;
-  border-radius: 1.75rem;
-  text-align: left;
-  cursor: pointer;
+  gap: 0.55rem;
 }
 
 .wonder-launcher {
   border-radius: 1.85rem;
   box-shadow:
-    0 14px 28px -12px rgba(22, 101, 52, 0.22),
-    inset 0 -3px 0 rgba(16, 185, 129, 0.12);
+    0 16px 32px -14px rgba(22, 101, 52, 0.28),
+    0 2px 0 rgba(255, 255, 255, 0.9) inset,
+    0 -6px 0 rgba(16, 185, 129, 0.18);
 }
 
 .wonder-destination-enter {
-  animation: wonderDestinationIn 0.22s ease-out;
+  animation: wonderDestinationIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes wonderDestinationIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(14px) scale(0.985);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
+}
+
+.wonder-place {
+  min-height: 100%;
+  position: relative;
+}
+.wonder-place-worlds {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(253, 224, 71, 0.55), transparent 36%),
+    linear-gradient(180deg, #fde68a 0%, #bbf7d0 42%, #4ade80 100%);
+}
+.wonder-place-books {
+  background:
+    radial-gradient(circle at 88% 0%, rgba(251, 146, 60, 0.35), transparent 34%),
+    linear-gradient(180deg, #fed7aa 0%, #ffedd5 38%, #fbbf24 100%);
+}
+.wonder-place-games {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(52, 211, 153, 0.45), transparent 40%),
+    linear-gradient(180deg, #6ee7b7 0%, #5eead4 45%, #14b8a6 100%);
+}
+.wonder-place-focus {
+  background:
+    radial-gradient(circle at 80% 10%, rgba(125, 211, 252, 0.55), transparent 38%),
+    linear-gradient(180deg, #ccfbf1 0%, #a5f3fc 48%, #5eead4 100%);
+}
+.wonder-place-playhouse {
+  background:
+    radial-gradient(circle at 10% 0%, rgba(244, 114, 182, 0.35), transparent 36%),
+    linear-gradient(180deg, #e9d5ff 0%, #fbcfe8 48%, #f472b6 100%);
+}
+.wonder-place-phonics {
+  background:
+    radial-gradient(circle at 90% 8%, rgba(251, 113, 133, 0.4), transparent 36%),
+    linear-gradient(180deg, #fecdd3 0%, #fbcfe8 42%, #fb7185 100%);
+}
+.wonder-place-counting {
+  background:
+    radial-gradient(circle at 14% 6%, rgba(165, 180, 252, 0.55), transparent 36%),
+    linear-gradient(180deg, #c7d2fe 0%, #bfdbfe 48%, #818cf8 100%);
+}
+.wonder-place-avatar-studio {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(244, 114, 182, 0.4), transparent 42%),
+    linear-gradient(180deg, #fbcfe8 0%, #ddd6fe 48%, #c084fc 100%);
+}
+.wonder-place-night {
+  background: linear-gradient(180deg, #1e1b4b 0%, #0c0d14 55%, #020617 100%);
+}
+
+.wonder-place-bar {
+  position: relative;
+  overflow: hidden;
+}
+.wonder-place-bar::before {
+  content: "";
+  position: absolute;
+  inset: auto -10% -55% auto;
+  width: 9rem;
+  height: 9rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+  pointer-events: none;
+}
+.wonder-place-bar::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  top: -70%;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+}
+
+.wonder-arcade {
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.92);
+  border: 4px solid #fff;
+  box-shadow:
+    0 18px 36px -16px rgba(15, 118, 110, 0.4),
+    0 -8px 0 rgba(13, 148, 136, 0.18);
+}
+
+.wonder-library-row {
+  padding: 0.85rem 0.65rem 0.35rem;
+  border-radius: 1.75rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent 28%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(180, 83, 9, 0.08) 0 12px,
+      rgba(146, 64, 14, 0.05) 12px 24px
+    );
+  box-shadow: inset 0 -10px 0 rgba(146, 64, 14, 0.18);
+}
+
+.wonder-land-card {
+  box-shadow:
+    0 16px 28px -16px rgba(15, 23, 42, 0.4),
+    0 8px 0 rgba(15, 23, 42, 0.08);
+}
+
+.wonder-clay-tile {
+  box-shadow:
+    0 8px 0 rgba(15, 23, 42, 0.08),
+    0 14px 22px -14px rgba(15, 23, 42, 0.3);
 }
 
 /* Custom sleek PC scrollbars (replaces bulky default OS scrollbars) */

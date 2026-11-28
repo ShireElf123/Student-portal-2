@@ -177,7 +177,7 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
   };
 
   return (
-    <div className="min-h-full pb-20 bg-[#070814] text-white p-4 sm:p-8">
+    <div className="rounded-[2rem] border-4 border-pink-300/70 bg-[#14121f] text-white p-4 sm:p-8 shadow-2xl overflow-hidden">
       {/* Top Banner (Amumba / Smeshariki Inspired) */}
       <div className="max-w-4xl mx-auto text-center space-y-2 mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-pink-500/20 via-sky-500/20 to-lime-500/20 border border-white/10 text-pink-300 text-xs font-black uppercase tracking-wider">
