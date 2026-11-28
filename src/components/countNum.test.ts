@@ -16,6 +16,9 @@ describe("multi-digit counter spacing", () => {
     expect(view).toContain('data-testid="hud-star-count"');
     expect(view).toContain('data-testid="hud-sticker-count"');
     expect(view).toMatch(/className="count-num"[^>]*>\{starsCount\}/);
+    const counting = fs.readFileSync(path.join(root, "src/components/ToddlerCountingBoard.tsx"), "utf8");
+    expect(counting).toMatch(/count-num">\{n\}/);
+    expect(counting).toMatch(/count-num">\{item\.num\}/);
     expect(view).toMatch(/hud-sticker-count"[\s\S]{0,80}\{unlockedStickersCount\}\/\{TODDLER_STICKERS\.length\}/);
     expect(view).not.toMatch(/\{starsCount\.toString\(\)\.split/);
     expect(view).not.toMatch(/\{String\(starsCount\)\.split/);

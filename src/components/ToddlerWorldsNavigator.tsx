@@ -1854,7 +1854,7 @@ export function ToddlerWorldsNavigator({
         </div>
 
         {/* World Header Banner */}
-        <div className={`relative overflow-hidden p-6 sm:p-8 rounded-[2.5rem] bg-gradient-to-r ${selectedWorld.gradient} text-white shadow-xl space-y-4 border-2 border-white/30`}>
+        <div className={`relative overflow-hidden p-5 sm:p-7 rounded-[2.5rem] bg-gradient-to-r ${selectedWorld.gradient} shadow-xl space-y-4 border-4 border-white`}>
           {WORLD_COVER[selectedWorld.id] && (
             <img
               src={WORLD_COVER[selectedWorld.id]}
@@ -1864,26 +1864,26 @@ export function ToddlerWorldsNavigator({
               className="absolute inset-0 h-full w-full object-cover"
             />
           )}
-          <div className="absolute inset-0 bg-slate-950/28" />
+          <div className="absolute inset-0 world-hub-scrim pointer-events-none" />
           <div className="relative z-10 space-y-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-4xl p-3 rounded-2xl bg-white/20 backdrop-blur-sm shadow-md">
+            <div className="world-hub-titleplate flex items-center gap-3 max-w-full">
+              <span className="text-4xl p-2.5 rounded-2xl bg-white shadow-md flex-shrink-0">
                 {selectedWorld.emoji}
               </span>
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-black">{selectedWorld.title}</h2>
-                <div className="text-xs sm:text-sm font-bold opacity-90">{selectedWorld.tagline}</div>
+              <div className="min-w-0">
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">{selectedWorld.title}</h2>
+                <div className="text-xs sm:text-sm font-bold text-slate-700">{selectedWorld.tagline}</div>
               </div>
             </div>
 
-            <div className="px-4 py-2 rounded-2xl bg-black/20 backdrop-blur-sm border border-white/20 text-xs font-black flex items-center gap-1.5">
-              <Star size={14} className="text-amber-300 fill-amber-300" />
+            <div className="px-4 py-2 rounded-2xl bg-white/95 text-slate-900 border-2 border-white text-xs font-black flex items-center gap-1.5 shadow-md">
+              <Star size={14} className="text-amber-500 fill-amber-400" />
               <span><span className="count-num">{worldStats.starsEarned}</span> Stars Earned Here</span>
             </div>
           </div>
 
-          <p className="text-xs sm:text-sm font-medium opacity-90 max-w-2xl leading-relaxed">
+          <p className="world-hub-titleplate text-xs sm:text-sm font-semibold max-w-2xl leading-relaxed">
             {selectedWorld.description}
           </p>
           </div>

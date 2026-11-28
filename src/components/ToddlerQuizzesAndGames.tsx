@@ -1280,21 +1280,21 @@ export function ToddlerQuizzesAndGames({
       {currentActivity === "animal-quiz" && (
         <div className="max-w-3xl mx-auto">
           {!isQuizCompleted ? (
-            <div className="p-6 sm:p-8 rounded-3xl bg-[#141524] border-2 border-amber-400/30 shadow-2xl relative overflow-hidden">
+            <div className="play-board play-theme-quiz p-5 sm:p-7" data-testid="play-board-quiz">
               {/* Header with Question Progress & Speaker */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-amber-400/20 text-amber-200 font-extrabold text-xs sm:text-sm">
-                    Question {questionIndex + 1} of {questionDeck.length}
+              <div className="flex items-center justify-between gap-2 mb-6">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="play-chip px-3 py-1 rounded-full font-extrabold text-xs sm:text-sm">
+                    Question <span className="count-num">{questionIndex + 1}</span> of <span className="count-num">{questionDeck.length}</span>
                   </span>
-                  <div className="hidden sm:block w-24 h-2 overflow-hidden rounded-full bg-white/10" aria-label={`${questionIndex} of ${questionDeck.length} questions complete`}>
+                  <div className="hidden sm:block w-24 h-2 overflow-hidden rounded-full bg-orange-100" aria-label={`${questionIndex} of ${questionDeck.length} questions complete`}>
                     <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-400 transition-all duration-500" style={{ width: `${(questionIndex / questionDeck.length) * 100}%` }} />
                   </div>
                 </div>
 
                 <button
                   onClick={() => speakText(currentQuiz.spokenPrompt, { pitch: 1.2, rate: 0.88 })}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-xs border border-amber-400/30 transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 min-h-12 px-3 py-1.5 rounded-xl bg-white text-amber-900 font-bold text-xs border-b-4 border-amber-400 cursor-pointer"
                 >
                   <Volume2 size={15} />
                   <span>Hear Again</span>
@@ -1303,11 +1303,11 @@ export function ToddlerQuizzesAndGames({
 
               {/* Big Question Prompt */}
               <div className="text-center mb-8">
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-2 leading-tight">
+                <h3 className="play-title text-xl sm:text-2xl md:text-3xl font-black mb-2 leading-tight">
                   {currentQuiz.prompt}
                 </h3>
                 {currentQuiz.soundCue && (
-                  <span className="inline-block px-4 py-1 rounded-full bg-orange-500/20 text-orange-300 text-sm font-black border border-orange-400/30 animate-bounce">
+                  <span className="play-chip inline-block px-4 py-1 rounded-full text-sm font-black animate-bounce">
                     🔊 {currentQuiz.soundCue}
                   </span>
                 )}
@@ -1334,22 +1334,22 @@ export function ToddlerQuizzesAndGames({
                       }
                       transition={{ duration: 0.3 }}
                       onClick={() => handleSelectQuizOption(option.id)}
-                      className={`relative p-5 sm:p-7 rounded-3xl border-3 flex flex-col items-center justify-center transition-all cursor-pointer shadow-xl ${
+                      className={`relative p-5 sm:p-7 flex flex-col items-center justify-center transition-all cursor-pointer ${
                         isCorrect
-                          ? "bg-emerald-500/30 border-emerald-400 ring-4 ring-emerald-400/40 text-white"
+                          ? "play-card play-card-on ring-4 ring-emerald-500/40 text-slate-900"
                           : isShaking
-                          ? "bg-rose-500/30 border-rose-400 ring-4 ring-rose-400/40 text-white"
-                          : "bg-white/[0.04] border-white/15 hover:border-amber-400/60 hover:bg-white/[0.08] text-white"
+                          ? "play-card bg-rose-100 border-rose-400 ring-4 ring-rose-400/40 text-slate-900"
+                          : "play-card hover:border-amber-300 text-slate-900"
                       }`}
                     >
                       <span className="text-5xl sm:text-7xl mb-2 filter drop-shadow-md">
                         {option.emoji}
                       </span>
-                      <span className="text-lg sm:text-xl font-black text-white">
+                      <span className="text-lg sm:text-xl font-black text-slate-900">
                         {option.label}
                       </span>
                       {option.soundText && (
-                        <span className="text-sm font-semibold text-white/85 mt-0.5">
+                        <span className="text-sm font-semibold text-slate-600 mt-0.5">
                           {option.soundText}
                         </span>
                       )}
@@ -1365,11 +1365,11 @@ export function ToddlerQuizzesAndGames({
               </div>
 
               {/* Bottom Guidance for Toddler / Parent */}
-              <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-sm text-white/85">
-                <span className="flex items-center gap-1.5 text-amber-300 font-bold">
+              <div className="mt-8 pt-4 border-t border-orange-200 flex flex-wrap items-center justify-between gap-2 text-sm play-copy">
+                <span className="flex items-center gap-1.5 font-bold">
                   <span>✨</span> Correct taps add golden stars to the Star Jar!
                 </span>
-                <span className="text-white/80">Tap any picture to answer</span>
+                <span>Tap any picture to answer</span>
               </div>
             </div>
           ) : (
@@ -1377,29 +1377,29 @@ export function ToddlerQuizzesAndGames({
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="p-8 sm:p-12 rounded-3xl bg-gradient-to-b from-amber-500/20 via-[#141524] to-[#141524] border-2 border-amber-400/40 shadow-2xl text-center space-y-5"
+              className="play-board play-theme-quiz p-8 sm:p-12 text-center space-y-5"
             >
               <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-5xl shadow-xl shadow-orange-500/40 animate-bounce">
                 🏆
               </div>
 
-              <h3 className="text-3xl font-black text-white">
+              <h3 className="play-title text-3xl font-black">
                 Super Job, Little Explorer!
               </h3>
-              <p className="text-amber-200 text-sm max-w-md mx-auto">
+              <p className="play-copy text-sm max-w-md mx-auto">
                 You recognized all the animal sounds and words! You earned{" "}
-                <span className="font-extrabold text-white text-base">+3 Extra Golden Stars ⭐</span>!
+                <span className="font-extrabold text-amber-800 text-base">+3 Extra Golden Stars ⭐</span>!
               </p>
 
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-amber-400/20 border border-amber-400/40 text-amber-300 font-black text-base">
+              <div className="play-chip inline-flex items-center gap-2 px-4 py-2 rounded-2xl font-black text-base">
                 <Star className="w-6 h-6 fill-amber-400 text-amber-400" />
-                <span>Your Total Stars: {starsCount}</span>
+                <span>Your Total Stars: <span className="count-num">{starsCount}</span></span>
               </div>
 
               <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
                 <button
                   onClick={handleRestartQuiz}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black text-sm shadow-lg shadow-orange-500/30 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  className="flex items-center gap-2 min-h-12 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-sm border-b-4 border-orange-700 cursor-pointer"
                 >
                   <RotateCcw size={16} />
                   <span>Play Quiz Again</span>
@@ -1410,7 +1410,7 @@ export function ToddlerQuizzesAndGames({
                     setCurrentActivity("shape-match");
                     handleRestartShapes();
                   }}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-sm transition-all cursor-pointer"
+                  className="flex items-center gap-2 min-h-12 px-6 py-3 rounded-2xl bg-white text-slate-900 font-black text-sm border-b-4 border-slate-300 cursor-pointer"
                 >
                   <span>Next: Shapes & Colors! ⭐</span>
                 </button>
@@ -1424,11 +1424,11 @@ export function ToddlerQuizzesAndGames({
       {currentActivity === "shape-match" && (
         <div className="max-w-3xl mx-auto">
           {!isShapeCompleted ? (
-            <div className="p-6 sm:p-8 rounded-3xl bg-[#151326] border-2 border-purple-400/30 shadow-2xl relative overflow-hidden">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-purple-400/20 text-purple-300 font-extrabold text-xs">
-                    Shape {shapeIndex + 1} of {SHAPE_QUESTIONS.length}
+            <div className="play-board play-theme-shapes p-5 sm:p-7" data-testid="play-board-shapes">
+              <div className="flex items-center justify-between gap-2 mb-6">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="play-chip px-3 py-1 rounded-full font-extrabold text-xs">
+                    Shape <span className="count-num">{shapeIndex + 1}</span> of <span className="count-num">{SHAPE_QUESTIONS.length}</span>
                   </span>
                   <div className="flex items-center gap-1">
                     {SHAPE_QUESTIONS.map((_, idx) => (
@@ -1440,7 +1440,7 @@ export function ToddlerQuizzesAndGames({
                             ? "fill-purple-400 text-purple-400"
                             : idx === shapeIndex
                             ? "fill-purple-400/40 text-purple-300 animate-pulse"
-                            : "text-white/20"
+                            : "text-violet-200"
                         }
                       />
                     ))}
@@ -1449,7 +1449,7 @@ export function ToddlerQuizzesAndGames({
 
                 <button
                   onClick={() => speakText(currentShape.spokenPrompt, { pitch: 1.2, rate: 0.88 })}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 font-bold text-xs border border-purple-400/30 transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 min-h-12 px-3 py-1.5 rounded-xl bg-white text-violet-900 font-bold text-xs border-b-4 border-violet-400 cursor-pointer"
                 >
                   <Volume2 size={15} />
                   <span>Hear Again</span>
@@ -1457,10 +1457,10 @@ export function ToddlerQuizzesAndGames({
               </div>
 
               <div className="text-center mb-8">
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-2 leading-tight">
+                <h3 className="play-title text-xl sm:text-2xl md:text-3xl font-black mb-2 leading-tight">
                   {currentShape.prompt}
                 </h3>
-                <span className="inline-block px-4 py-1 rounded-full bg-purple-500/20 text-purple-300 text-sm font-bold border border-purple-400/30">
+                <span className="play-chip inline-block px-4 py-1 rounded-full text-sm font-bold">
                   ✨ Color & Shape Identification
                 </span>
               </div>
@@ -1485,16 +1485,16 @@ export function ToddlerQuizzesAndGames({
                       }
                       transition={{ duration: 0.3 }}
                       onClick={() => handleSelectShapeOption(option.id)}
-                      className={`relative p-6 sm:p-8 rounded-3xl border-3 flex flex-col items-center justify-center transition-all cursor-pointer shadow-xl ${
+                      className={`relative p-6 sm:p-8 flex flex-col items-center justify-center transition-all cursor-pointer ${
                         isCorrect
-                          ? "bg-emerald-500/30 border-emerald-400 ring-4 ring-emerald-400/40 text-white"
+                          ? "play-card play-card-on ring-4 ring-emerald-500/40 text-slate-900"
                           : isShaking
-                          ? "bg-rose-500/30 border-rose-400 ring-4 ring-rose-400/40 text-white"
-                          : "bg-white/[0.04] border-white/15 hover:border-purple-400/60 hover:bg-white/[0.08] text-white"
+                          ? "play-card bg-rose-100 border-rose-400 ring-4 ring-rose-400/40 text-slate-900"
+                          : "play-card hover:border-violet-300 text-slate-900"
                       }`}
                     >
                       <ShapeGlyph option={option} />
-                      <span className="text-lg sm:text-xl font-black text-white">
+                      <span className="text-lg sm:text-xl font-black text-slate-900">
                         {option.label}
                       </span>
 
@@ -1508,35 +1508,35 @@ export function ToddlerQuizzesAndGames({
                 })}
               </div>
 
-              <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-sm text-white/85">
-                <span className="flex items-center gap-1.5 text-purple-300 font-bold">
+              <div className="mt-8 pt-4 border-t border-violet-200 flex flex-wrap items-center justify-between gap-2 text-sm play-copy">
+                <span className="flex items-center gap-1.5 font-bold">
                   <span>🎨</span> Great for visual discrimination and color recognition!
                 </span>
-                <span className="text-white/80">Tap any shape to answer</span>
+                <span>Tap any shape to answer</span>
               </div>
             </div>
           ) : (
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="p-8 sm:p-12 rounded-3xl bg-gradient-to-b from-purple-500/20 via-[#151326] to-[#151326] border-2 border-purple-400/40 shadow-2xl text-center space-y-5"
+              className="play-board play-theme-shapes p-8 sm:p-12 text-center space-y-5"
             >
               <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center text-5xl shadow-xl shadow-purple-500/40 animate-bounce">
                 🌟
               </div>
 
-              <h3 className="text-3xl font-black text-white">
+              <h3 className="play-title text-3xl font-black">
                 You Mastered the Shapes & Colors!
               </h3>
-              <p className="text-purple-200 text-sm max-w-md mx-auto">
+              <p className="play-copy text-sm max-w-md mx-auto">
                 You found every star, heart, circle, and bright sun! You earned{" "}
-                <span className="font-extrabold text-white text-base">+3 Extra Golden Stars ⭐</span>!
+                <span className="font-extrabold text-violet-800 text-base">+3 Extra Golden Stars ⭐</span>!
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
                 <button
                   onClick={handleRestartShapes}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-400 hover:to-indigo-400 text-white font-black text-sm shadow-lg shadow-purple-500/30 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  className="flex items-center gap-2 min-h-12 px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-black text-sm border-b-4 border-indigo-800 cursor-pointer"
                 >
                   <RotateCcw size={16} />
                   <span>Play Shapes Again</span>
@@ -1547,7 +1547,7 @@ export function ToddlerQuizzesAndGames({
                     setCurrentActivity("bubble-pop");
                     spawnBubbles();
                   }}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-sm transition-all cursor-pointer"
+                  className="flex items-center gap-2 min-h-12 px-6 py-3 rounded-2xl bg-white text-slate-900 font-black text-sm border-b-4 border-slate-300 cursor-pointer"
                 >
                   <span>Next: Pop Bubbles! 🎈</span>
                 </button>
@@ -1560,25 +1560,25 @@ export function ToddlerQuizzesAndGames({
       {/* ACTIVITY 3: RAINBOW BUBBLE POP GAME */}
       {currentActivity === "bubble-pop" && (
         <div className="max-w-4xl mx-auto">
-          <div className="p-4 sm:p-6 rounded-3xl bg-[#121320] border-2 border-pink-400/30 shadow-2xl relative overflow-hidden">
+          <div className="play-board play-theme-bubbles p-4 sm:p-6" data-testid="play-board-bubbles">
             {/* Top Bar for Bubble Pop */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <div>
-                <h3 className="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                <h3 className="play-title text-lg sm:text-xl font-black flex items-center gap-2">
                   <span>🎈</span> Rainbow Bubble Popper
                 </h3>
-                <p className="text-white/90 text-sm sm:text-base">
+                <p className="play-copy text-sm sm:text-base">
                   Tap any floating bubble to pop it and collect stars!
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="px-3 py-1.5 rounded-xl bg-pink-500/20 text-pink-300 border border-pink-400/30 font-black text-xs">
-                  Popped: {bubblesPoppedCount} 🎈
+                <div className="play-chip px-3 py-1.5 rounded-xl font-black text-xs">
+                  Popped: <span className="count-num">{bubblesPoppedCount}</span> 🎈
                 </div>
                 <button
                   onClick={spawnBubbles}
-                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer text-xs font-bold flex items-center gap-1"
+                  className="min-h-12 px-3 rounded-xl bg-white text-slate-800 border-b-4 border-fuchsia-300 cursor-pointer text-xs font-bold flex items-center gap-1"
                 >
                   <RotateCcw size={14} /> Respawn
                 </button>
@@ -1586,7 +1586,7 @@ export function ToddlerQuizzesAndGames({
             </div>
 
             {/* Bubble Play Surface */}
-            <div className="relative w-full h-[380px] sm:h-[440px] rounded-2xl bg-gradient-to-b from-indigo-950/40 via-purple-950/30 to-black/60 border border-white/10 overflow-hidden select-none">
+            <div className="relative w-full h-[380px] sm:h-[440px] rounded-2xl bg-gradient-to-b from-sky-200 via-fuchsia-100 to-violet-200 border-4 border-white overflow-hidden select-none">
               <AnimatePresence>
                 {bubbles.map((bubble) => (
                   <motion.button
@@ -1623,8 +1623,8 @@ export function ToddlerQuizzesAndGames({
               {bubbles.length === 0 && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 space-y-3">
                   <span className="text-6xl animate-bounce">🌟</span>
-                  <h4 className="text-xl font-black text-white">All Bubbles Popped!</h4>
-                  <p className="text-sm text-pink-200">You're super quick!</p>
+                  <h4 className="text-xl font-black text-fuchsia-950">All Bubbles Popped!</h4>
+                  <p className="text-sm text-fuchsia-800">You're super quick!</p>
                   <button
                     onClick={spawnBubbles}
                     className="px-5 py-2.5 rounded-2xl bg-pink-500 hover:bg-pink-400 text-white font-black text-sm min-h-12 shadow-lg shadow-pink-500/40 cursor-pointer"
@@ -1635,7 +1635,7 @@ export function ToddlerQuizzesAndGames({
               )}
             </div>
 
-            <div className="mt-3 text-center text-sm text-white/85">
+            <div className="mt-3 text-center text-sm play-copy">
               💡 Parents: Encourages hand-eye coordination and fine motor touch tracking!
             </div>
           </div>
@@ -1645,15 +1645,15 @@ export function ToddlerQuizzesAndGames({
       {/* ACTIVITY 4: FEED THE BUNNY (COUNTING GAME) */}
       {currentActivity === "feed-animal" && (
         <div className="max-w-2xl mx-auto">
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#131722] border-2 border-emerald-400/30 shadow-2xl text-center space-y-6">
+          <div className="play-board play-theme-bunny p-6 sm:p-8 text-center space-y-6" data-testid="play-board-bunny">
             <div>
-              <span className="px-3 py-1 rounded-full bg-emerald-400/20 text-emerald-200 text-sm font-bold border border-emerald-400/30">
+              <span className="play-chip px-3 py-1 rounded-full text-sm font-bold">
                 🥕 1-2-3 Counting Safari Game
               </span>
-              <h3 className="text-2xl sm:text-3xl font-black text-white mt-2">
+              <h3 className="play-title text-2xl sm:text-3xl font-black mt-2">
                 Feed Hungry Benny Bunny!
               </h3>
-              <p className="text-white/90 text-sm sm:text-base sm:text-sm mt-1">
+              <p className="play-copy text-sm sm:text-base mt-1">
                 Tap carrots to count. First tummy is 5, then 8, then 10.
               </p>
             </div>
@@ -1666,7 +1666,7 @@ export function ToddlerQuizzesAndGames({
                   : { y: [0, -6, 0] }
               }
               transition={{ repeat: Infinity, duration: 2.5 }}
-              className="w-40 h-40 mx-auto rounded-full bg-gradient-to-b from-emerald-500/20 to-teal-500/10 border-4 border-emerald-400/40 flex flex-col items-center justify-center shadow-inner relative"
+              className="w-40 h-40 mx-auto rounded-full bg-gradient-to-b from-emerald-100 to-lime-50 border-4 border-emerald-300 flex flex-col items-center justify-center shadow-inner relative"
             >
               <span className="text-7xl">🐰</span>
               {carrotsFed === targetCarrots && (
@@ -1678,11 +1678,11 @@ export function ToddlerQuizzesAndGames({
 
             {/* Belly meter */}
             <div className="max-w-xs mx-auto space-y-1.5">
-              <div className="flex items-center justify-between text-xs font-bold text-white">
+              <div className="flex items-center justify-between text-xs font-bold text-emerald-950">
                 <span>Bunny's Full Tummy:</span>
-                <span className="text-emerald-300">{carrotsFed} of {targetCarrots} Carrots</span>
+                <span className="text-emerald-800"><span className="count-num">{carrotsFed}</span> of <span className="count-num">{targetCarrots}</span> Carrots</span>
               </div>
-              <div className="h-4 rounded-full bg-white/10 overflow-hidden p-0.5 border border-white/15">
+              <div className="h-4 rounded-full bg-emerald-100 overflow-hidden p-0.5 border border-emerald-300">
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-300 transition-all duration-300"
                   style={{ width: `${(carrotsFed / targetCarrots) * 100}%` }}
@@ -1703,12 +1703,12 @@ export function ToddlerQuizzesAndGames({
               </motion.button>
             ) : (
               <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 font-bold text-sm">
-                  🎉 Benny Bunny is so full! You counted to {targetCarrots}! Next time the tummy holds more.
+                <div className="p-4 rounded-2xl bg-emerald-100 border-2 border-emerald-300 text-emerald-900 font-bold text-sm">
+                  🎉 Benny Bunny is so full! You counted to <span className="count-num">{targetCarrots}</span>! Next time the tummy holds more.
                 </div>
                 <button
                   onClick={handleResetBunny}
-                  className="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-sm min-h-12 transition-all cursor-pointer"
+                  className="px-6 py-3 rounded-2xl bg-white text-emerald-950 font-black text-sm min-h-12 border-b-4 border-emerald-400 cursor-pointer"
                 >
                   Feed Bunny Again 🥕
                 </button>

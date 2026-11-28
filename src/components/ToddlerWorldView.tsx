@@ -883,7 +883,7 @@ export function ToddlerWorldView({
           <div className="flex flex-col gap-3 sm:gap-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
               <div className="flex items-center gap-3 sm:gap-3.5">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-400 to-pink-500 flex items-center justify-center text-3xl sm:text-4xl shadow-2xl shadow-orange-500/40 ring-4 ring-white border-2 border-amber-300 animate-bounce flex-shrink-0">
+                <div className="wonder-home-teddy w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-400 to-pink-500 flex items-center justify-center text-3xl sm:text-4xl shadow-2xl shadow-orange-500/40 ring-4 ring-white border-2 border-amber-300 animate-bounce flex-shrink-0">
                   🧸
                 </div>
                 <div className="min-w-0 flex-1">

@@ -55,8 +55,8 @@ export function ToddlerPhonicsBoard({
   const order = LETTER_NEXT_ROUNDS[orderIndex % LETTER_NEXT_ROUNDS.length];
   const huntChoices = useMemo(() => shuffle([hunt.letter, ...hunt.decoys]), [hunt]);
 
-  const panel = isMeadow ? "bg-white border-pink-300 text-slate-900" : "bg-[#16162a] border-pink-500/40 text-white";
-  const ghost = isMeadow ? "bg-white border-pink-200 text-slate-900" : "bg-white/10 border-pink-500 text-white";
+  const panel = "dest-panel dest-phonics-panel text-slate-900";
+  const ghost = "bg-white text-slate-900 border-pink-200";
 
   const openTile = (next: PhonicsTile) => {
     setTile(next);
@@ -88,8 +88,8 @@ export function ToddlerPhonicsBoard({
               if (item.id === "sight") speakText(sight.spoken, { pitch: 1.16, rate: 0.9 });
               if (item.id === "order") speakText(order.spoken, { pitch: 1.16, rate: 0.9 });
             }}
-            className={`min-h-14 rounded-full px-4 py-2 font-black border-b-4 ${
-              mode === item.id ? "bg-pink-400 border-pink-700 text-pink-950" : ghost
+            className={`dest-mode ${
+              mode === item.id ? "bg-pink-400 border-pink-700 text-pink-950" : "bg-white border-pink-200 text-slate-800"
             }`}
           >
             {item.emoji} {item.label}

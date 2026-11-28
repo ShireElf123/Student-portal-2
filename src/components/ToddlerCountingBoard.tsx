@@ -64,7 +64,7 @@ function TenFrames({
                         : "bg-white/70 border-slate-300"
                 }`}
               >
-                {on ? n : n > target ? "" : "·"}
+                {on ? <span className="count-num">{n}</span> : n > target ? "" : "·"}
               </button>
             );
           })}
@@ -104,8 +104,7 @@ export function ToddlerCountingBoard({
   const after = NEXT_NUMBER_ROUNDS[afterIndex % NEXT_NUMBER_ROUNDS.length];
   const moreAnswer = more.left === more.right ? "same" : more.left > more.right ? "left" : "right";
 
-  const panel = isMeadow ? "bg-white border-indigo-300 text-slate-900" : "bg-[#16162a] border-indigo-400/50 text-white";
-  const ghost = isMeadow ? "bg-white border-indigo-200 text-slate-900" : "bg-white/[0.04] border-white/15 text-white";
+  const panel = "dest-panel dest-counting-panel text-slate-900";
 
   useEffect(() => {
     if (mode !== "peek") return;
@@ -153,8 +152,8 @@ export function ToddlerCountingBoard({
               setMode(item.id);
               soundEffects.playPop();
             }}
-            className={`min-h-14 rounded-full px-4 py-2 font-black border-b-4 ${
-              mode === item.id ? "bg-indigo-400 border-indigo-700 text-indigo-950" : ghost
+            className={`dest-mode ${
+              mode === item.id ? "bg-indigo-400 border-indigo-700 text-indigo-950" : "bg-white border-indigo-200 text-slate-800"
             }`}
           >
             {item.emoji} {item.label}
@@ -170,9 +169,9 @@ export function ToddlerCountingBoard({
                 key={item.num}
                 type="button"
                 onClick={() => open(item)}
-                className={`wonder-clay-tile min-h-28 rounded-[1.75rem] p-4 text-left border-4 ${card?.num === item.num ? "bg-indigo-200 border-indigo-700" : ghost}`}
+                className={`wonder-clay-tile dest-choice p-4 text-left ${card?.num === item.num ? "dest-choice-on bg-indigo-100" : ""}`}
               >
-                <p className="text-3xl font-black">{item.num}</p>
+                <p className="text-3xl font-black count-num">{item.num}</p>
                 <p className="text-sm font-black uppercase">{item.word}</p>
                 <p className="text-2xl mt-1">
                   {Array.from({ length: Math.min(item.num, 5) }, () => item.emoji).join("")}
@@ -184,7 +183,7 @@ export function ToddlerCountingBoard({
           {card && (
             <div className={`mt-5 rounded-[2rem] border-4 p-4 sm:p-6 ${panel}`}>
               <div className="flex flex-wrap items-center gap-3 mb-4">
-                <span className="text-6xl font-black text-indigo-600">{card.num}</span>
+                <span className="text-6xl font-black text-indigo-600 count-num">{card.num}</span>
                 <div className="min-w-0">
                   <p className="text-2xl font-black">
                     {card.word} {card.emoji}
@@ -200,7 +199,7 @@ export function ToddlerCountingBoard({
                 </button>
               </div>
               <p className="text-sm font-black mb-2">
-                {filled} of {card.num} · tap the glowing box
+                <span className="count-num">{filled}</span> of <span className="count-num">{card.num}</span> · tap the glowing box
               </p>
               <TenFrames filled={filled} target={card.num} onTapNext={tapNext} />
               {filled >= card.num && (
@@ -238,7 +237,7 @@ export function ToddlerCountingBoard({
                   }}
                 >
                   {Array.from({ length: n }, () => more.emoji).join("")}
-                  <p className="text-xl font-black mt-2">{n}</p>
+                  <p className="text-xl font-black mt-2 count-num">{n}</p>
                 </button>
               );
             })}
@@ -263,7 +262,7 @@ export function ToddlerCountingBoard({
         <div className={`rounded-[2rem] border-4 p-5 ${panel}`}>
           <p className="text-lg font-black mb-3">{ten.spoken}</p>
           <p className="text-sm font-black mb-2">
-            {tenFilled} of 10 {ten.emoji}
+            <span className="count-num">{tenFilled}</span> of <span className="count-num">10</span> {ten.emoji}
           </p>
           <TenFrames
             filled={tenFilled}
@@ -308,7 +307,7 @@ export function ToddlerCountingBoard({
                 key={n}
                 type="button"
                 data-testid={`peek-${n}`}
-                className="min-h-16 min-w-16 rounded-3xl bg-indigo-100 text-2xl font-black text-indigo-950 border-b-4 border-indigo-500"
+                className="min-h-16 min-w-16 rounded-3xl bg-indigo-100 text-2xl font-black text-indigo-950 border-b-4 border-indigo-500 count-num"
                 onClick={() => {
                   if (n !== peek.n) {
                     speakText(SHARED_VOICE.lookAgain, { pitch: 1.1 });
@@ -399,14 +398,14 @@ export function ToddlerCountingBoard({
 
       {mode === "after" && (
         <div className={`rounded-[2rem] border-4 p-5 ${panel}`}>
-          <p className="text-6xl font-black mb-2">{after.n}</p>
+          <p className="text-6xl font-black mb-2 count-num">{after.n}</p>
           <p className="text-lg font-black mb-4">{after.spoken}</p>
           <div className="flex flex-wrap gap-3">
             {after.options.map((option) => (
               <button
                 key={option}
                 type="button"
-                className="min-h-16 min-w-20 rounded-full bg-indigo-100 px-6 py-3 text-3xl font-black text-indigo-950 border-b-4 border-indigo-500"
+                className="min-h-16 min-w-20 rounded-full bg-indigo-100 px-6 py-3 text-3xl font-black text-indigo-950 border-b-4 border-indigo-500 count-num"
                 onClick={() => {
                   if (option !== after.answer) {
                     speakText(SHARED_VOICE.tryAnother, { pitch: 1.1 });

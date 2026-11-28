@@ -72,8 +72,8 @@ export function TimerBar({
   const pct = Math.max(0, Math.min(100, (left / seconds) * 100));
   return (
     <div className="mt-4">
-      <p className="text-4xl font-black tabular-nums mb-2" data-testid="quiet-seconds-left">
-        {left}s
+      <p className="text-4xl font-black mb-2" data-testid="quiet-seconds-left">
+        <span className="count-num">{left}</span>s
       </p>
       <div className="h-5 rounded-full bg-teal-100 border-2 border-teal-400 overflow-hidden">
         <div
@@ -114,8 +114,8 @@ export function ToddlerFocusBoard({
   const [freezeLeft, setFreezeLeft] = useState(0);
   const [canFreeze, setCanFreeze] = useState(false);
 
-  const panel = isMeadow ? "bg-white border-teal-300 text-slate-900" : "bg-[#16162a] border-teal-400/50 text-white";
-  const ghost = isMeadow ? "bg-white border-teal-200 text-slate-900" : "bg-white/[0.04] border-white/15 text-white";
+  const panel = "dest-panel dest-focus-panel text-slate-900";
+  const ghost = "bg-white text-slate-900 border-teal-200";
   const movePool = body === "floppy" ? MOVE_ROUNDS.filter((round) => round.kind === "cardio") : MOVE_ROUNDS;
 
   useEffect(() => {
@@ -193,8 +193,8 @@ export function ToddlerFocusBoard({
               if (item.id === "slow") speakText("Pick a path. Finger stays in the gold. Red edge buzzes.", { pitch: 1.1, rate: 0.88 });
               if (item.id === "check") speakText("How does the body feel right now?", { pitch: 1.12, rate: 0.9 });
             }}
-            className={`min-h-14 rounded-full px-4 py-2 font-black border-b-4 ${
-              mode === item.id ? "bg-teal-400 border-teal-700 text-teal-950" : ghost
+            className={`dest-mode ${
+              mode === item.id ? "bg-teal-400 border-teal-700 text-teal-950" : "bg-white border-teal-200 text-slate-800"
             }`}
           >
             {item.emoji} {item.label}
@@ -214,8 +214,8 @@ export function ToddlerFocusBoard({
                   setBody(item.id);
                   goSuggested(item.suggest, item.spoken);
                 }}
-                className={`min-h-28 rounded-[1.75rem] p-4 text-left border-4 ${
-                  body === item.id ? "bg-teal-200 border-teal-700" : ghost
+                className={`dest-choice p-4 text-left ${
+                  body === item.id ? "dest-choice-on bg-teal-100" : ""
                 }`}
               >
                 <p className="text-4xl">{item.emoji}</p>
@@ -240,7 +240,7 @@ export function ToddlerFocusBoard({
                       setTrack(item);
                       soundEffects.playPop();
                     }}
-                    className={`min-h-28 rounded-[1.75rem] p-4 text-left border-4 ${ghost}`}
+                    className="dest-choice p-4 text-left"
                   >
                     <p className="text-4xl">{item.emoji}</p>
                     <p className="text-base font-black mt-1">{item.title}</p>
@@ -283,7 +283,7 @@ export function ToddlerFocusBoard({
                     speakText(item.spoken, { pitch: 1.12, rate: 0.9 });
                     soundEffects.playPop();
                   }}
-                  className={`min-h-28 rounded-[1.75rem] p-4 text-left border-4 ${ghost}`}
+                  className="dest-choice p-4 text-left"
                 >
                   <p className="text-4xl">{item.emoji}</p>
                   <p className="text-base font-black mt-1">{item.title}</p>
@@ -335,7 +335,7 @@ export function ToddlerFocusBoard({
                     speakText(item.spoken, { pitch: 1.1, rate: 0.88 });
                     soundEffects.playPop();
                   }}
-                  className={`min-h-28 rounded-[1.75rem] p-4 text-left border-4 ${ghost}`}
+                  className="dest-choice p-4 text-left"
                 >
                   <p className="text-4xl">{item.emoji}</p>
                   <p className="text-base font-black mt-1">{item.title}</p>
@@ -386,7 +386,7 @@ export function ToddlerFocusBoard({
                     speakText(item.spoken, { pitch: 1.12, rate: 0.9 });
                     soundEffects.playPop();
                   }}
-                  className={`min-h-28 rounded-[1.75rem] p-4 text-left border-4 ${ghost}`}
+                  className="dest-choice p-4 text-left"
                 >
                   <p className="text-4xl">{item.emoji}</p>
                   <p className="text-base font-black mt-1">{item.title}</p>
@@ -397,7 +397,7 @@ export function ToddlerFocusBoard({
             <>
               <p className="text-5xl mb-2">{freeze.emoji}</p>
               <p className="text-2xl font-black">{freeze.title}</p>
-              <p className="text-4xl font-black my-3">{canFreeze ? "FREEZE" : freezeLeft}</p>
+              <p className="text-4xl font-black my-3">{canFreeze ? "FREEZE" : <span className="count-num">{freezeLeft}</span>}</p>
               <button
                 type="button"
                 className="min-h-20 rounded-full bg-teal-400 px-8 py-3 text-2xl font-black text-teal-950 border-b-4 border-teal-700"
