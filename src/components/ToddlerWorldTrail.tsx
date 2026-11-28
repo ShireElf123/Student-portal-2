@@ -27,7 +27,7 @@ export function ToddlerWorldTrail({
   label,
   nodes,
   onSelect,
-  buddyEmoji = "🧒",
+  buddyEmoji = "🧸",
   buddySrc,
   coverSrc,
   sceneryEmojis = [],
@@ -43,7 +43,7 @@ export function ToddlerWorldTrail({
 
   return (
     <section className="space-y-2">
-      <p className="px-1 text-sm font-black text-white/80">{label}</p>
+      <p className="px-1 text-sm font-black text-slate-800 whitespace-nowrap">{label}</p>
       <div
         ref={scrollerRef}
         className="overflow-x-auto rounded-[2rem] border border-white/20 shadow-xl"
@@ -53,6 +53,7 @@ export function ToddlerWorldTrail({
             <img
               src={coverSrc}
               alt=""
+              decoding="async"
               className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-55"
             />
           )}
@@ -67,7 +68,7 @@ export function ToddlerWorldTrail({
           </div>
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-lime-600/80 to-transparent" />
           <div className="relative flex items-end gap-10 px-12 pb-8 pt-16">
-            <div className="absolute left-16 right-16 bottom-[4.35rem] h-2 rounded-full bg-amber-700/70" />
+            <div className="absolute left-16 right-16 bottom-[4.35rem] h-2 rounded-full bg-lime-800/55" />
             {nodes.map((node) => (
               <div key={node.id} className="relative z-10 flex w-28 shrink-0 flex-col items-center">
                 {node.current && (
@@ -81,6 +82,9 @@ export function ToddlerWorldTrail({
                       <img
                         src={buddySrc}
                         alt=""
+                        width={48}
+                        height={48}
+                        decoding="async"
                         className="h-12 w-12 rounded-full object-cover object-top ring-2 ring-white shadow-md"
                       />
                     ) : (
@@ -100,7 +104,7 @@ export function ToddlerWorldTrail({
                     node.locked
                       ? "border-white/40 bg-slate-400 cursor-not-allowed"
                       : node.current
-                        ? "border-amber-300 bg-white ring-4 ring-amber-300/70 cursor-pointer"
+                        ? "border-sky-400 bg-white ring-4 ring-sky-300/70 cursor-pointer"
                         : node.toy
                           ? "border-sky-400 bg-white cursor-pointer"
                           : node.done

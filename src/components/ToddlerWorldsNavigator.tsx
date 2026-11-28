@@ -39,19 +39,25 @@ import {
   isAreaUnlocked,
   ToddlerWorldProgressState,
 } from "../data/toddler/toddlerProgressManager";
+import { getTodaysOpenWorldMission, payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
+import { SHARED_VOICE } from "../data/toddler/sharedVoiceLines";
 import {
+  countingHintFromActivity,
   countingLevelForPlace,
+  farmChicksVictoryLines,
   generateCountingScenario,
   generateSortingChallenge,
+  shouldUseFarmChicksVictoryQueue,
+  shuffleCopy,
   DynamicCountingScenario,
   DynamicSortingChallenge,
 } from "../data/toddler/toddlerReplayEngine";
 import { soundEffects } from "../utils/soundEffects";
-import { speakText, stopSpeaking } from "../utils/speechUtils";
+import { speakText as speakDevice, speakQueuedNarration, stopSpeaking, type SpeakOptions } from "../utils/speechUtils";
 import { awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { resolveSkillForActivity } from "../data/activitySkillRegistry";
-import { ToddlerColorLab } from "./ToddlerColorLab";
+import { mixTargetFromActivity, ToddlerColorLab } from "./ToddlerColorLab";
 import { ToddlerMusicPiano } from "./ToddlerMusicPiano";
 import { ToddlerMemoryGame } from "./ToddlerMemoryGame";
 import { ToddlerBalloonSky } from "./ToddlerBalloonSky";
@@ -68,7 +74,62 @@ import type { K1StudioGameId } from "../data/toddler/k1StudioGames";
 import { ToddlerWorldTrail } from "./ToddlerWorldTrail";
 import { ATLAS_CONTINENTS, TOY_ACTIVITY_TYPES } from "../data/toddler/toddlerWorldAtlasLayout";
 import { getWorldPlayTheme } from "../data/toddler/toddlerWorldPlayThemes";
+import { quizTapHint } from "../data/toddler/activityQuality";
 import { SECRET_COVER, WORLD_COVER } from "../data/toddler/toddlerWorldArt";
+
+function isClosedVoiceIsland(areaId?: string | null) {
+  return (
+    areaId === "farm-valley" ||
+    areaId === "jungle-canopy" ||
+    areaId === "ocean-reef" ||
+    areaId === "dino-valley" ||
+    areaId === "forest-trail" ||
+    areaId === "weather-adventure" ||
+    areaId === "space-blastoff" ||
+    areaId === "treasure-quest" ||
+    areaId === "color-studio" ||
+    areaId === "music-garden" ||
+    areaId === "pattern-workshop" ||
+    areaId === "sticker-atelier" ||
+    areaId === "barnyard-tales" ||
+    areaId === "space-tales" ||
+    areaId === "deep-sea-tales" ||
+    areaId === "phonics-meadow" ||
+    areaId === "counting-grove" ||
+    areaId === "shapes-patterns" ||
+    areaId === "feelings-emotions" ||
+    areaId === "healthy-habits" ||
+    areaId === "family-home" ||
+    areaId === "garage-bay" ||
+    areaId === "town-road" ||
+    areaId === "airport-runway" ||
+    areaId === "harbour-dock" ||
+    areaId === "flower-bed"
+  );
+}
+
+function firstOpenActivity(area: ToddlerArea, progress: ToddlerWorldProgressState) {
+  return area.activities.find((activity) => !progress.completedActivities[activity.id]) ?? area.activities[0] ?? null;
+}
+
+function nextAtlasPlay(progress: ToddlerWorldProgressState) {
+  const world =
+    ALL_TODDLER_WORLDS.find((item) => item.id === progress.lastVisitedWorldId) ||
+    ALL_TODDLER_WORLDS.find((item) => item.id === "animal-world") ||
+    ALL_TODDLER_WORLDS[0];
+  const unlocked = world.areas.filter((area) => isAreaUnlocked(area, progress));
+  const unfinished = unlocked.find((area) => {
+    const stats = getAreaProgressStats(area, progress);
+    return stats.completedCount < stats.totalCount;
+  });
+  const lastHere = unlocked.find((area) => area.id === progress.lastVisitedAreaId);
+  const lastStillOpen =
+    lastHere && getAreaProgressStats(lastHere, progress).completedCount < getAreaProgressStats(lastHere, progress).totalCount
+      ? lastHere
+      : null;
+  const area = lastStillOpen || unfinished || lastHere || unlocked[0] || world.areas[0];
+  return { world, area, activity: firstOpenActivity(area, progress) };
+}
 
 interface ToddlerWorldsNavigatorProps {
   onAddStar: (count: number) => void;
@@ -76,6 +137,11 @@ interface ToddlerWorldsNavigatorProps {
   initialWorldId?: string | null;
   onOpenPictureBooks?: () => void;
   onOpenGames?: () => void;
+  onOpenFocus?: () => void;
+  onWorldNav?: (
+    route: { worldId: string | null; areaId: string | null; activityId: string | null },
+    action: "push" | "back",
+  ) => void;
 }
 
 function countingLevelForActivity(activity: ToddlerActivity) {
@@ -99,12 +165,16 @@ export function ToddlerWorldsNavigator({
   initialWorldId,
   onOpenPictureBooks,
   onOpenGames,
+  onOpenFocus,
+  onWorldNav,
 }: ToddlerWorldsNavigatorProps) {
+  const skipWorldHistoryRef = useRef(false);
   const openingRoute = worldRouteParts(initialWorldId);
   // Navigation hierarchy state
   const [selectedWorldId, setSelectedWorldId] = useState<string | null>(openingRoute.worldId);
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(openingRoute.areaId);
   const [activeActivity, setActiveActivity] = useState<ToddlerActivity | null>(null);
+  const [playOptions, setPlayOptions] = useState<ToddlerActivity["options"]>([]);
   const [activeMission, setActiveMission] = useState<ToddlerMission | null>(null);
   const [missionStepIdx, setMissionStepIdx] = useState<number>(0);
   const [activeSecretZone, setActiveSecretZone] = useState<(typeof SECRET_ZONES)[number] | null>(null);
@@ -127,24 +197,39 @@ export function ToddlerWorldsNavigator({
     toyCreditedRef.current = activity.id;
     recordActivityCompletion(activity.worldId, activity.areaId, activity.id, activity.rewardStars);
     onAddStar(activity.rewardStars);
-    if (activity.type === "color-lab" || activity.type === "letter-trace") {
+    try {
+      payDailyMissionIfMatches("worlds", activity.worldId);
+    } catch {
+      // ignore
+    }
+    if (
+      activity.type === "color-lab" ||
+      activity.type === "letter-trace" ||
+      activity.type === "balloon-sky" ||
+      activity.type === "animal-safari" ||
+      activity.type === "bubble-pop" ||
+      activity.type === "piano-melody"
+    ) {
       setStayPlayDone(true);
       return;
     }
     setShowCelebration(true);
   };
 
-  /** Toys auto-roll after a beat. Quizzes wait for a tap. Both go to the next stop. */
+  /** Finite toys auto-roll after a beat. Endless / mix labs stay. Next remains a skip. */
   const AUTO_TRAIL_TYPES = new Set([
     "land-play",
     "open-play",
     "memory-match",
-    "balloon-sky",
-    "animal-safari",
     "rhyme-garden",
-    "bubble-pop",
     "k1-studio",
-    "piano-melody",
+    "counting",
+    "sorting",
+    "clue-detective",
+    "sound-detective",
+    "habitat-match",
+    "pattern-match",
+    "feed-friend",
   ]);
 
   // Activity execution states
@@ -161,10 +246,22 @@ export function ToddlerWorldsNavigator({
   // answer cards disabled — the child had to leave and re-enter the activity.
   const advanceTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const advancePendingRef = useRef(false);
+  const missionWrapTokenRef = useRef(0);
+  const missionWrapTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const clearAdvanceTimers = () => {
     advanceTimersRef.current.forEach((timer) => clearTimeout(timer));
     advanceTimersRef.current = [];
+  };
+
+  const clearMissionWrapTimers = () => {
+    missionWrapTimersRef.current.forEach((timer) => clearTimeout(timer));
+    missionWrapTimersRef.current = [];
+  };
+
+  const cancelMissionWrap = () => {
+    missionWrapTokenRef.current += 1;
+    clearMissionWrapTimers();
   };
 
   /** Speaks `feedback`, then runs `onSpokenEnd` — always exactly once. */
@@ -193,6 +290,69 @@ export function ToddlerWorldsNavigator({
     );
   };
 
+  /**
+   * Farm Chicks PoC: four finished-thought clips, then the existing fanfare.
+   * Missing clips / parent lock do not start the chain or the fanfare.
+   * A watchdog still releases celebration if clip onEnd is dropped.
+   */
+  const speakQueuedThenRun = (lines: string[], pauseMs: number, onSpokenEnd: () => void) => {
+    advancePendingRef.current = true;
+    clearAdvanceTimers();
+
+    const run = () => {
+      if (!advancePendingRef.current) return;
+      advancePendingRef.current = false;
+      clearAdvanceTimers();
+      onSpokenEnd();
+    };
+
+    const started = speakQueuedNarration(lines, {
+      pitch: 1.2,
+      closedKit: true,
+      requireClips: true,
+      gapMs: 160,
+      onEnd: () => {
+        if (!advancePendingRef.current) return;
+        clearAdvanceTimers();
+        advanceTimersRef.current.push(setTimeout(run, pauseMs));
+      },
+    });
+
+    if (!started) {
+      advancePendingRef.current = false;
+      return;
+    }
+
+    const chars = lines.join(" ").length;
+    advanceTimersRef.current.push(
+      setTimeout(run, Math.max(7000, Math.ceil(chars / 10) * 1000 + 2500 + lines.length * 160)),
+    );
+  };
+
+  /**
+   * Mission wrap lines (start / next step / complete) must finish before the
+   * next navigation speak. onEnd is the primary signal (clip or Web Speech);
+   * a watchdog still advances if that callback is dropped.
+   */
+  const speakMissionWrapThen = (line: string, pitch: number, then: () => void) => {
+    clearMissionWrapTimers();
+    const token = ++missionWrapTokenRef.current;
+    const run = () => {
+      if (token !== missionWrapTokenRef.current) return;
+      missionWrapTokenRef.current += 1;
+      clearMissionWrapTimers();
+      then();
+    };
+    speakDevice(line, {
+      pitch,
+      closedKit: false,
+      onEnd: run,
+    });
+    missionWrapTimersRef.current.push(
+      setTimeout(run, Math.max(7000, Math.ceil(line.length / 10) * 1000 + 2500)),
+    );
+  };
+
   useEffect(() => clearAdvanceTimers, []);
 
   // Integrated Engine states: Story
@@ -218,7 +378,14 @@ export function ToddlerWorldsNavigator({
   // Sync a world choice or a full registry route from the parent. Full routes
   // select the actual activity and initialize its specialized counting/sorting state.
   useEffect(() => {
-    if (!initialWorldId) return;
+    if (!initialWorldId) {
+      setSelectedWorldId(null);
+      setSelectedAreaId(null);
+      setActiveActivity(null);
+      setActiveMission(null);
+      setActiveStory(null);
+      return;
+    }
     if (initialWorldId.startsWith("world:")) {
       const [, worldId, areaId, activityId] = initialWorldId.split(":");
       const targetWorld = ALL_TODDLER_WORLDS.find((world) => world.id === worldId);
@@ -237,7 +404,11 @@ export function ToddlerWorldsNavigator({
         return;
       }
       setSelectedAreaId(areaId);
-      handleStartActivity(targetActivity);
+      if (activeActivity?.id !== targetActivity.id) {
+        skipWorldHistoryRef.current = true;
+        handleStartActivity(targetActivity);
+        skipWorldHistoryRef.current = false;
+      }
       return;
     }
 
@@ -250,12 +421,21 @@ export function ToddlerWorldsNavigator({
   // Clean audio on unmount
   useEffect(() => {
     return () => {
+      missionWrapTokenRef.current += 1;
+      missionWrapTimersRef.current.forEach((timer) => clearTimeout(timer));
+      missionWrapTimersRef.current = [];
       stopSpeaking();
     };
   }, []);
 
   const selectedWorld = ALL_TODDLER_WORLDS.find((w) => w.id === selectedWorldId) || null;
   const selectedArea = selectedWorld?.areas.find((a) => a.id === selectedAreaId) || null;
+
+  const speakText = (text: string, options?: SpeakOptions) =>
+    speakDevice(text, {
+      ...options,
+      closedKit: Boolean(options?.closedKit || isClosedVoiceIsland(activeActivity?.areaId)),
+    });
 
   // Speak activity prompt automatically after view renders
   useEffect(() => {
@@ -281,7 +461,30 @@ export function ToddlerWorldsNavigator({
       }
 
       if (activeActivity.type === "color-lab") {
-        speakText("Welcome to the Color Lab! Blend primary color droplets into the bubbling cauldron to make magical new colors!", { pitch: 1.15 });
+        return;
+      }
+
+      // Safari owns its closed voice kit (station welcome + bios + mouth-calls).
+      if (activeActivity.type === "animal-safari") {
+        return;
+      }
+
+      // Land rooms speak their own hold/done lines.
+      if (activeActivity.type === "land-play") {
+        return;
+      }
+
+      // Closed islands: toys speak their own station clip.
+      if (
+        isClosedVoiceIsland(activeActivity.areaId) &&
+        (activeActivity.type === "letter-trace" ||
+          activeActivity.type === "k1-studio" ||
+          activeActivity.type === "memory-match" ||
+          activeActivity.type === "bubble-pop" ||
+          activeActivity.type === "balloon-sky" ||
+          activeActivity.type === "rhyme-garden" ||
+          activeActivity.type === "piano-melody")
+      ) {
         return;
       }
 
@@ -308,6 +511,7 @@ export function ToddlerWorldsNavigator({
     setSelectedWorldId(world.id);
     setSelectedAreaId(null);
     setActiveActivity(null);
+    onWorldNav?.({ worldId: world.id, areaId: null, activityId: null }, "push");
     setActiveMission(null);
     setActiveStory(null);
     setDynamicCounting(null);
@@ -338,12 +542,31 @@ export function ToddlerWorldsNavigator({
     setSortedItems({});
     setCountingAnswered(false);
 
-    speakText(`${area.title}! ${area.tagline}. Let's explore together!`, { pitch: 1.15 });
+    if (!skipWorldHistoryRef.current) {
+      onWorldNav?.({ worldId: area.worldId, areaId: area.id, activityId: null }, "push");
+    }
+
+    speakText(`${area.title}! ${area.tagline}. Look around, then pick a stop.`, {
+      pitch: 1.15,
+      closedKit: isClosedVoiceIsland(area.id),
+    });
+  };
+
+  const handleContinueAtlas = () => {
+    const next = nextAtlasPlay(progress);
+    if (!next.activity) return;
+    soundEffects.playPop();
+    stopSpeaking();
+    setSelectedWorldId(next.world.id);
+    setSelectedAreaId(next.area.id);
+    handleStartActivity(next.activity);
   };
 
   const handleBackToWorldsMap = () => {
     soundEffects.playPop();
+    cancelMissionWrap();
     stopSpeaking();
+    onWorldNav?.({ worldId: null, areaId: null, activityId: null }, "back");
     setSelectedWorldId(null);
     setSelectedAreaId(null);
     setActiveActivity(null);
@@ -358,7 +581,9 @@ export function ToddlerWorldsNavigator({
 
   const handleBackToWorldHub = () => {
     soundEffects.playPop();
+    cancelMissionWrap();
     stopSpeaking();
+    onWorldNav?.({ worldId: selectedWorldId, areaId: null, activityId: null }, "back");
     setSelectedAreaId(null);
     setActiveActivity(null);
     setActiveMission(null);
@@ -372,7 +597,12 @@ export function ToddlerWorldsNavigator({
 
   const handleBackToAreaHub = () => {
     soundEffects.playPop();
+    cancelMissionWrap();
     stopSpeaking();
+    onWorldNav?.(
+      { worldId: selectedWorldId, areaId: selectedAreaId, activityId: null },
+      "back",
+    );
     // Leaving the activity cancels any pending celebration reveal.
     advancePendingRef.current = false;
     clearAdvanceTimers();
@@ -392,7 +622,14 @@ export function ToddlerWorldsNavigator({
   // ------------------ LAUNCH ACTIVITY ------------------
   const handleStartActivity = (activity: ToddlerActivity) => {
     soundEffects.playStarSparkle();
+    cancelMissionWrap();
     stopSpeaking();
+    if (!skipWorldHistoryRef.current) {
+      onWorldNav?.(
+        { worldId: activity.worldId, areaId: activity.areaId, activityId: activity.id },
+        "push",
+      );
+    }
     toyCreditedRef.current = null;
     advancePendingRef.current = false;
     clearAdvanceTimers();
@@ -404,6 +641,7 @@ export function ToddlerWorldsNavigator({
     setTappedCountIndices([]);
     setCountingAnswered(false);
     setSortedItems({});
+    setPlayOptions(shuffleCopy(activity.options));
 
     // Check if activity uses specialized engines
     if (activity.storyAdventureId) {
@@ -421,7 +659,11 @@ export function ToddlerWorldsNavigator({
     const playTheme = getWorldPlayTheme(activity.worldId, activity.areaId);
 
     if (activity.type === "counting") {
-      const countScenario = generateCountingScenario(countingLevelForActivity(activity), playTheme.counting);
+      const countScenario = generateCountingScenario(
+        countingLevelForActivity(activity),
+        playTheme.counting,
+        countingHintFromActivity(activity),
+      );
       setDynamicCounting(countScenario);
     } else {
       setDynamicCounting(null);
@@ -441,6 +683,7 @@ export function ToddlerWorldsNavigator({
   // ------------------ MULTI-STEP MISSION FLOW ------------------
   const handleStartMission = (mission: ToddlerMission) => {
     soundEffects.playStarSparkle();
+    cancelMissionWrap();
     stopSpeaking();
     setActiveMission(mission);
     setMissionStepIdx(0);
@@ -451,10 +694,11 @@ export function ToddlerWorldsNavigator({
       selectedWorld?.areas.flatMap((area) => area.activities).find((a) => a.id === firstStep.activityId);
 
     if (targetActivity) {
-      handleStartActivity(targetActivity);
-      speakText(`Mission started: ${mission.title}! Step 1: ${firstStep.title}. ${targetActivity.spokenPrompt}`, {
-        pitch: 1.15,
-      });
+      speakMissionWrapThen(
+        `Mission started: ${mission.title}! Step 1: ${firstStep.title}. ${targetActivity.spokenPrompt}`,
+        1.15,
+        () => handleStartActivity(targetActivity),
+      );
     }
   };
 
@@ -481,12 +725,19 @@ export function ToddlerWorldsNavigator({
 
       onAddStar(activeActivity.rewardStars);
       awardXP(activeActivity.rewardXP, `Explored ${activeActivity.title}`);
+      try {
+        payDailyMissionIfMatches("worlds", activeActivity.worldId);
+      } catch {
+        // ignore
+      }
 
       if (newlyUnlockedAreas.length > 0) {
         setUnlockedNotice(newlyUnlockedAreas);
       }
 
-      const victoryFeedback = `Hooray! ${chosen.label}! ${chosen.feedback}`;
+      const victoryFeedback = isClosedVoiceIsland(activeActivity.areaId)
+        ? chosen.feedback
+        : `Hooray! ${chosen.label}! ${chosen.feedback}`;
       speakThenRun(victoryFeedback, 600, () => {
         setShowCelebration(true);
         soundEffects.playFanfare();
@@ -519,7 +770,12 @@ export function ToddlerWorldsNavigator({
           console.error("Failed to record toddler-world response:", error);
         }
       }
-      speakText(`That is ${chosen.label}! ${chosen.feedback} Let's try again!`, { pitch: 1.15 });
+      speakText(
+        isClosedVoiceIsland(activeActivity.areaId)
+          ? chosen.feedback
+          : `That is ${chosen.label}! ${chosen.feedback} ${SHARED_VOICE.tryAnother}`,
+        { pitch: 1.15 },
+      );
       setTimeout(() => setSelectedOptionId(null), 1200);
     }
   };
@@ -550,29 +806,44 @@ export function ToddlerWorldsNavigator({
 
       onAddStar(activeActivity.rewardStars);
       awardXP(activeActivity.rewardXP, `Counted ${dynamicCounting.itemName}`);
+      try {
+        payDailyMissionIfMatches("worlds", activeActivity.worldId);
+      } catch {
+        // ignore
+      }
 
       if (newlyUnlockedAreas.length > 0) {
         setUnlockedNotice(newlyUnlockedAreas);
       }
 
-      const victoryFeedback = `Hooray! That's right, ${chosenNumber} ${dynamicCounting.itemName}! ${dynamicCounting.soundEffect}`;
-      speakThenRun(victoryFeedback, 600, () => {
+      const celebrate = () => {
         setShowCelebration(true);
         soundEffects.playFanfare();
         triggerCelebrationConfetti();
-      });
+      };
+      const farmChicksLines = farmChicksVictoryLines(chosenNumber);
+      if (
+        farmChicksLines &&
+        shouldUseFarmChicksVictoryQueue(activeActivity.areaId, dynamicCounting.itemName, chosenNumber)
+      ) {
+        speakQueuedThenRun(farmChicksLines, 600, celebrate);
+      } else {
+        const victoryFeedback = `Hooray! That's right, ${chosenNumber} ${dynamicCounting.itemName}! ${dynamicCounting.soundEffect}`;
+        speakThenRun(victoryFeedback, 600, celebrate);
+      }
     } else {
       soundEffects.playGentleBoing();
-      const countSequence = Array.from({ length: dynamicCounting.targetCount }, (_, i) => i + 1).join(", ");
-      speakText(`That is ${chosenNumber}! Let's count them together: ${countSequence}! Try tapping the right number!`, { pitch: 1.15 });
+      speakText(`${SHARED_VOICE.lookAgain} ${SHARED_VOICE.countAgain}`, { pitch: 1.15 });
     }
   };
 
   const handleRegenerateCounting = () => {
     if (!activeActivity) return;
+    const hint = countingHintFromActivity(activeActivity);
     const countScenario = generateCountingScenario(
       countingLevelForActivity(activeActivity),
       getWorldPlayTheme(activeActivity.worldId, activeActivity.areaId).counting,
+      { title: hint.title },
     );
     setDynamicCounting(countScenario);
     setCountingAnswered(false);
@@ -602,6 +873,11 @@ export function ToddlerWorldsNavigator({
 
         onAddStar(activeActivity.rewardStars);
         awardXP(activeActivity.rewardXP, `Sorted ${dynamicSorting.title}`);
+        try {
+          payDailyMissionIfMatches("worlds", activeActivity.worldId);
+        } catch {
+          // ignore
+        }
 
         if (newlyUnlockedAreas.length > 0) {
           setUnlockedNotice(newlyUnlockedAreas);
@@ -616,8 +892,7 @@ export function ToddlerWorldsNavigator({
       }
     } else {
       soundEffects.playGentleBoing();
-      const correctLabel = item.correctCategory === "A" ? dynamicSorting.categoryA.label : dynamicSorting.categoryB.label;
-      speakText(`Oops! ${item.label} belongs in ${correctLabel}! Let's try putting it there!`, { pitch: 1.15 });
+      speakText(SHARED_VOICE.sortAgain, { pitch: 1.15 });
     }
   };
 
@@ -651,24 +926,22 @@ export function ToddlerWorldsNavigator({
 
   // Handle continuing to next mission step or the next trail stop
   const handleContinueAfterCelebration = () => {
-    setShowCelebration(false);
-    setStayPlayDone(false);
-    setSelectedOptionId(null);
-    setIsAnswered(false);
-    setCountingAnswered(false);
-    setTappedCountIndices([]);
-
     if (activeMission && missionStepIdx < activeMission.steps.length - 1) {
       const nextStepIdx = missionStepIdx + 1;
-      setMissionStepIdx(nextStepIdx);
       const nextStep = activeMission.steps[nextStepIdx];
       const nextAct =
         selectedArea?.activities.find((a) => a.id === nextStep.activityId) ||
         selectedWorld?.areas.flatMap((area) => area.activities).find((a) => a.id === nextStep.activityId);
 
       if (nextAct) {
-        handleStartActivity(nextAct);
-        speakText(`Next Mission Step: ${nextStep.title}! ${nextAct.spokenPrompt}`, { pitch: 1.15 });
+        speakMissionWrapThen(
+          `Next Mission Step: ${nextStep.title}! ${nextAct.spokenPrompt}`,
+          1.15,
+          () => {
+            setMissionStepIdx(nextStepIdx);
+            handleStartActivity(nextAct);
+          },
+        );
         return;
       }
     } else if (activeMission && missionStepIdx === activeMission.steps.length - 1) {
@@ -687,11 +960,23 @@ export function ToddlerWorldsNavigator({
       }
       soundEffects.playFanfare();
       triggerCelebrationConfetti();
-      speakText(`Congratulations! You completed the entire mission: ${activeMission.title}! You earned the ${activeMission.badgeTitle} badge!`, { pitch: 1.2 });
-      setActiveMission(null);
-      handleBackToAreaHub();
+      speakMissionWrapThen(
+        `Congratulations! You completed the entire mission: ${activeMission.title}! You earned the ${activeMission.badgeTitle} badge!`,
+        1.2,
+        () => {
+          setActiveMission(null);
+          handleBackToAreaHub();
+        },
+      );
       return;
     }
+
+    setShowCelebration(false);
+    setStayPlayDone(false);
+    setSelectedOptionId(null);
+    setIsAnswered(false);
+    setCountingAnswered(false);
+    setTappedCountIndices([]);
 
     const next = nextTrailActivity();
     if (next) {
@@ -721,6 +1006,14 @@ export function ToddlerWorldsNavigator({
     if (!option) return;
 
     setStorySelectedOption(optionId);
+
+    if (option.isCorrect === false) {
+      soundEffects.playGentleBoing();
+      speakText(option.feedback, { pitch: 1.15 });
+      setTimeout(() => setStorySelectedOption(null), 1200);
+      return;
+    }
+
     soundEffects.playSuccessChime();
     soundEffects.playStarSparkle();
     onAddStar(1);
@@ -793,6 +1086,10 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl sm:text-2xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerColorLab
               mixFlavor={playTheme.mix}
+              targetColor={mixTargetFromActivity(activeActivity)}
+              spokenPrompt={activeActivity.spokenPrompt}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              missionSurface="off"
               onAddStar={() => completeWorldToy(activeActivity)}
             />
           </div>
@@ -810,6 +1107,9 @@ export function ToddlerWorldsNavigator({
             </div>
             <ToddlerMusicPiano
               songIds={playTheme.songIds}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
+              missionSurface="off"
               onAddStar={() => {
                 completeWorldToy(activeActivity);
               }}
@@ -820,13 +1120,25 @@ export function ToddlerWorldsNavigator({
         {activeActivity.type === "memory-match" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-emerald-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerMemoryGame pairs={playTheme.memory} onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerMemoryGame
+              pairs={playTheme.memory}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
+            />
           </div>
         )}
         {activeActivity.type === "balloon-sky" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-sky-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerBalloonSky letters={playTheme.balloonLetters} onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerBalloonSky
+              letters={playTheme.balloonLetters}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
+            />
           </div>
         )}
         {activeActivity.type === "animal-safari" && (
@@ -835,20 +1147,36 @@ export function ToddlerWorldsNavigator({
             <ToddlerAnimalSafari
               animals={playTheme.safari}
               sceneTitle={playTheme.safariTitle}
-              onAddStar={() => completeWorldToy(activeActivity)}
+              exploreWelcome={activeActivity.spokenPrompt}
+              missionSurface="off"
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
             />
           </div>
         )}
         {activeActivity.type === "rhyme-garden" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-fuchsia-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerRhymeGame questions={playTheme.rhymes} onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerRhymeGame
+              questions={playTheme.rhymes}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
+              missionSurface="off"
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
+            />
           </div>
         )}
         {activeActivity.type === "bubble-pop" && (
           <div className="p-4 rounded-3xl bg-[#131427] border-2 border-cyan-400/30 shadow-2xl space-y-3">
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
-            <ToddlerBubblePopGame catalog={playTheme.bubbles} onAddStar={() => completeWorldToy(activeActivity)} />
+            <ToddlerBubblePopGame
+              catalog={playTheme.bubbles}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
+              onAddStar={(amount) => onAddStar(amount ?? 1)}
+              onComplete={() => completeWorldToy(activeActivity)}
+            />
           </div>
         )}
         {activeActivity.type === "letter-trace" && (
@@ -858,6 +1186,8 @@ export function ToddlerWorldsNavigator({
               key={activeActivity.id}
               catalog={playTheme.bubbles}
               prompt={`${activeActivity.title}. ${activeActivity.cluePrompt}`}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
               onAddStar={() => completeWorldToy(activeActivity)}
             />
           </div>
@@ -883,8 +1213,18 @@ export function ToddlerWorldsNavigator({
             <h3 className="text-xl font-black text-white text-center">{activeActivity.title}</h3>
             <ToddlerK1Studio
               gameId={activeActivity.studioGameId as K1StudioGameId}
-              onAddStar={() => completeWorldToy(activeActivity)}
+              closedKit={isClosedVoiceIsland(activeActivity.areaId)}
+              welcomeLine={activeActivity.spokenPrompt}
+              onComplete={() => completeWorldToy(activeActivity)}
             />
+          </div>
+        )}
+        {((activeActivity.type === "open-play" && !activeActivity.openPlayId) ||
+          (activeActivity.type === "land-play" && !activeActivity.landPlayId) ||
+          (activeActivity.type === "k1-studio" && !activeActivity.studioGameId)) && (
+          <div className="rounded-[2rem] border-4 border-amber-400/40 bg-slate-950/70 p-6 text-center">
+            <p className="text-xl font-black text-white">This toy is packing up.</p>
+            <p className="mt-2 text-sm font-semibold text-white/80">Pick another Play tile on the trail.</p>
           </div>
         )}
 
@@ -947,7 +1287,9 @@ export function ToddlerWorldsNavigator({
                         onClick={() => handleSelectStoryOption(activeStory.steps[storyStepIndex], opt.id)}
                         className={`min-h-14 p-4 rounded-2xl border-2 flex items-center justify-center gap-2 font-black text-sm sm:text-base cursor-pointer transition-all shadow-md active:scale-95 ${
                           storySelectedOption === opt.id
-                            ? "bg-emerald-500 border-emerald-300 text-white scale-105 shadow-emerald-500/40"
+                            ? opt.isCorrect === false
+                              ? "bg-rose-400 border-rose-200 text-white"
+                              : "bg-emerald-500 border-emerald-300 text-white scale-105 shadow-emerald-500/40"
                             : "bg-white/90 hover:bg-white text-slate-800 border-white/60 hover:border-amber-400"
                         }`}
                       >
@@ -959,16 +1301,16 @@ export function ToddlerWorldsNavigator({
                 </div>
               </div>
             ) : (
-              <div className="p-8 rounded-3xl bg-gradient-to-b from-amber-500/20 via-[#14142b] to-[#14142b] border-2 border-amber-400/40 text-center space-y-5">
+              <div className="p-8 rounded-3xl bg-gradient-to-b from-sky-400/20 via-[#14142b] to-[#14142b] border-2 border-emerald-400/40 text-center space-y-5">
                 <div className="text-6xl animate-bounce">🌟</div>
                 <h3 className="text-3xl font-black text-white">Story Completed!</h3>
-                <p className="text-amber-200 text-sm max-w-md mx-auto">
+                <p className="text-sky-100 text-sm max-w-md mx-auto">
                   You helped the characters through every scene, solved the challenges, and earned 3 Golden Stars!
                 </p>
                 <button
                   type="button"
                   onClick={handleContinueAfterCelebration}
-                  className="min-h-16 px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-lg cursor-pointer shadow-lg hover:from-amber-400"
+                  className="min-h-16 px-8 py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-black text-lg cursor-pointer shadow-lg hover:from-sky-400"
                 >
                   {trailNext ? `Next: ${trailNext.clueIcon} ${trailNext.title}` : "Back to the trail"}
                 </button>
@@ -1153,7 +1495,7 @@ export function ToddlerWorldsNavigator({
                       </span>
                     ))}
                   {Object.values(sortedItems).filter((v) => v === "A").length === 0 && (
-                    <span className="text-xs opacity-50 italic">Put matching friends here</span>
+                    <span className="text-xs opacity-50 italic">Tap a home for this friend</span>
                   )}
                 </div>
               </div>
@@ -1185,7 +1527,7 @@ export function ToddlerWorldsNavigator({
                       </span>
                     ))}
                   {Object.values(sortedItems).filter((v) => v === "B").length === 0 && (
-                    <span className="text-xs opacity-50 italic">Put matching friends here</span>
+                    <span className="text-xs opacity-50 italic">Tap a home for this friend</span>
                   )}
                 </div>
               </div>
@@ -1275,6 +1617,9 @@ export function ToddlerWorldsNavigator({
               <p className="text-slate-800 text-base sm:text-lg max-w-lg mx-auto font-bold">
                 {activeActivity.cluePrompt}
               </p>
+              {activeActivity.type === "pattern-match" && (
+                <p className="text-xs font-black uppercase tracking-wider text-slate-700">Pattern puzzle — look at the rhythm, then pick what comes next.</p>
+              )}
               <button
                 type="button"
                 onClick={() => {
@@ -1286,7 +1631,7 @@ export function ToddlerWorldsNavigator({
                 <Volume2 size={18} /> Hear it again
               </button>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-xl mx-auto">
-                {activeActivity.options.map((opt) => {
+                {(playOptions.length > 0 ? playOptions : activeActivity.options).map((opt) => {
                   const isSelected = selectedOptionId === opt.id;
                   return (
                     <button
@@ -1310,7 +1655,7 @@ export function ToddlerWorldsNavigator({
                   );
                 })}
               </div>
-              <p className="text-slate-800/80 text-sm font-black">Tap who it is</p>
+              <p className="text-slate-800/80 text-sm font-black">{quizTapHint(activeActivity.type)}</p>
             </div>
           </div>
         )}
@@ -1325,6 +1670,9 @@ export function ToddlerWorldsNavigator({
                     You did it!
                   </span>
                   <h3 className="text-2xl font-black text-white">{activeActivity.title}</h3>
+                  {(progress.completedActivities[activeActivity.id]?.playCount ?? 0) > 1 && (
+                    <p className="text-sm font-bold text-emerald-200">{SHARED_VOICE.practicedAgain}</p>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-center gap-4 py-2">
@@ -1371,7 +1719,7 @@ export function ToddlerWorldsNavigator({
                     type="button"
                     data-testid="trail-next"
                     onClick={handleContinueAfterCelebration}
-                    className="w-full min-h-16 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black text-lg cursor-pointer shadow-lg transition-all"
+                    className="w-full min-h-16 py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-white font-black text-lg cursor-pointer shadow-lg transition-all"
                   >
                     {activeMission && missionStepIdx < activeMission.steps.length - 1
                       ? "Next Mission Step ➡️"
@@ -1399,14 +1747,14 @@ export function ToddlerWorldsNavigator({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <button
             onClick={handleBackToWorldHub}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-sm min-h-12 cursor-pointer transition-all border border-white/10"
+            className="worlds-meadow-btn flex items-center gap-1.5 px-3.5 py-2 rounded-2xl font-black text-sm min-h-12 cursor-pointer"
           >
             <ChevronLeft size={16} /> Back to {selectedWorld.title} Map
           </button>
 
           <div className="flex items-center gap-2">
-            <span className="px-3.5 py-1.5 rounded-2xl bg-white/10 text-white font-bold text-sm border border-white/10">
-              {areaStats.completedCount}/{areaStats.totalCount} Discoveries Made
+            <span className="px-3.5 py-1.5 rounded-2xl bg-white text-slate-800 font-bold text-sm border-2 border-white shadow-sm tabular-nums whitespace-nowrap">
+              <span className="count-num">{areaStats.completedCount}</span> of <span className="count-num">{areaStats.totalCount}</span> Discoveries
             </span>
           </div>
         </div>
@@ -1446,7 +1794,7 @@ export function ToddlerWorldsNavigator({
             return (
               <ToddlerWorldTrail
                 label={`${selectedArea.title} · ${selectedArea.activities.length} stations`}
-                buddyEmoji="🧒"
+                buddyEmoji="🧸"
                 coverSrc={WORLD_COVER[selectedWorld.id]}
                 sceneryEmojis={selectedArea.environment.sceneryEmojis}
                 onSelect={(id) => {
@@ -1505,54 +1853,56 @@ export function ToddlerWorldsNavigator({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <button
             onClick={handleBackToWorldsMap}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-sm min-h-12 cursor-pointer transition-all border border-white/10"
+            className="worlds-meadow-btn flex items-center gap-1.5 px-3.5 py-2 rounded-2xl font-black text-sm min-h-12 cursor-pointer"
           >
             <ChevronLeft size={16} /> All lands
           </button>
 
           <div className="flex items-center gap-3">
-            <div className="text-xs text-white/60 font-bold hidden sm:block">
+            <div className="text-xs text-slate-700 font-bold hidden sm:block">
               {worldStats.completedActivities} of {worldStats.totalActivities} stops
             </div>
-            <div className="w-32 h-2.5 rounded-full bg-white/10 overflow-hidden">
+            <div className="w-32 h-2.5 rounded-full bg-white/80 overflow-hidden border border-white">
               <div
-                className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-sky-400 to-emerald-500 rounded-full transition-all duration-500"
                 style={{ width: `${worldStats.percentage}%` }}
               />
             </div>
-            <span className="text-xs font-black text-amber-300">{worldStats.percentage}%</span>
+            <span className="text-xs font-black text-emerald-800">{worldStats.percentage}%</span>
           </div>
         </div>
 
         {/* World Header Banner */}
-        <div className={`relative overflow-hidden p-6 sm:p-8 rounded-[2.5rem] bg-gradient-to-r ${selectedWorld.gradient} text-white shadow-xl space-y-4 border-2 border-white/30`}>
+        <div className={`relative overflow-hidden p-5 sm:p-7 rounded-[2.5rem] bg-gradient-to-r ${selectedWorld.gradient} shadow-xl space-y-4 border-4 border-white`}>
           {WORLD_COVER[selectedWorld.id] && (
             <img
               src={WORLD_COVER[selectedWorld.id]}
               alt=""
+              decoding="async"
+              fetchPriority="high"
               className="absolute inset-0 h-full w-full object-cover"
             />
           )}
-          <div className="absolute inset-0 bg-slate-950/28" />
+          <div className="absolute inset-0 world-hub-scrim pointer-events-none" />
           <div className="relative z-10 space-y-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-4xl p-3 rounded-2xl bg-white/20 backdrop-blur-sm shadow-md">
+            <div className="world-hub-titleplate flex items-center gap-3 max-w-full">
+              <span className="text-4xl p-2.5 rounded-2xl bg-white shadow-md flex-shrink-0">
                 {selectedWorld.emoji}
               </span>
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-black">{selectedWorld.title}</h2>
-                <div className="text-xs sm:text-sm font-bold opacity-90">{selectedWorld.tagline}</div>
+              <div className="min-w-0">
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight">{selectedWorld.title}</h2>
+                <div className="text-xs sm:text-sm font-bold text-slate-700">{selectedWorld.tagline}</div>
               </div>
             </div>
 
-            <div className="px-4 py-2 rounded-2xl bg-black/20 backdrop-blur-sm border border-white/20 text-xs font-black flex items-center gap-1.5">
-              <Star size={14} className="text-amber-300 fill-amber-300" />
-              <span>{worldStats.starsEarned} Stars Earned Here</span>
+            <div className="px-4 py-2 rounded-2xl bg-white/95 text-slate-900 border-2 border-white text-xs font-black flex items-center gap-1.5 shadow-md">
+              <Star size={14} className="text-amber-500 fill-amber-400" />
+              <span><span className="count-num">{worldStats.starsEarned}</span> Stars Earned Here</span>
             </div>
           </div>
 
-          <p className="text-xs sm:text-sm font-medium opacity-90 max-w-2xl leading-relaxed">
+          <p className="world-hub-titleplate text-xs sm:text-sm font-semibold max-w-2xl leading-relaxed">
             {selectedWorld.description}
           </p>
           </div>
@@ -1639,18 +1989,20 @@ export function ToddlerWorldsNavigator({
     );
   }
 
+  const atlasNext = nextAtlasPlay(progress);
+
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-amber-600">Wonderland Atlas</p>
-          <h2 className="text-4xl sm:text-5xl font-black tracking-tight">Pick a land</h2>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-800">Wonderland Atlas</p>
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900 drop-shadow-sm">Pick a land</h2>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={toggleTapSounds}
-            className="px-4 py-2.5 rounded-2xl bg-white text-slate-900 font-bold text-base min-h-12 cursor-pointer border border-white/60 shadow-sm inline-flex items-center gap-1.5"
+            className="px-3 py-2 rounded-2xl bg-white/90 text-slate-800 font-bold text-sm min-h-12 cursor-pointer border border-white shadow-sm inline-flex items-center gap-1.5"
             title={tapsMuted ? "Tap sounds are off" : "Quiet tap sounds"}
           >
             {tapsMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
@@ -1662,20 +2014,59 @@ export function ToddlerWorldsNavigator({
               setLetterLaneOpen(true);
               speakText("Letter Lane. Three letters. About five minutes. No streak.", { pitch: 1.15 });
             }}
-            className="px-4 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-base min-h-12 cursor-pointer shadow-sm"
+            className="px-3 py-2 rounded-2xl bg-white text-slate-800 font-black text-sm min-h-12 cursor-pointer border border-lime-200 shadow-sm"
           >
             Letter Lane
           </button>
+          {onOpenFocus && (
+            <button
+              type="button"
+              onClick={() => {
+                onOpenFocus();
+                speakText("Focus body. Check how you feel. Move or push. Then quiet.", { pitch: 1.12 });
+              }}
+              className="px-3 py-2 rounded-2xl bg-white text-slate-800 font-black text-sm min-h-12 cursor-pointer border border-teal-200 shadow-sm"
+            >
+              Busy body
+            </button>
+          )}
           {onOpenGames && (
             <button
               onClick={onOpenGames}
-              className="px-4 py-2.5 rounded-2xl bg-white text-slate-900 font-bold text-base min-h-12 cursor-pointer border border-white/60 shadow-sm"
+              className="px-3 py-2 rounded-2xl bg-white text-slate-800 font-bold text-sm min-h-12 cursor-pointer border border-white shadow-sm"
             >
               Free Play
             </button>
           )}
         </div>
       </div>
+
+      {atlasNext.activity && (
+        <button
+          type="button"
+          onClick={handleContinueAtlas}
+          className="w-full min-h-16 px-6 rounded-3xl bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-black text-xl sm:text-2xl cursor-pointer border-b-4 border-emerald-700 shadow-lg"
+        >
+          🧸 {progress.lastVisitedWorldId ? `Keep going · ${atlasNext.area.title}` : `Play ${atlasNext.area.title}`}
+        </button>
+      )}
+
+      {(() => {
+        const todayWorld = getTodaysOpenWorldMission();
+        const todayLand = todayWorld?.targetSubactivity
+          ? ALL_TODDLER_WORLDS.find((world) => world.id === todayWorld.targetSubactivity)
+          : undefined;
+        if (!todayWorld || !todayLand) return null;
+        return (
+          <button
+            type="button"
+            onClick={() => handleSelectWorld(todayLand)}
+            className="w-full min-h-14 px-5 rounded-3xl bg-white text-slate-900 font-black text-lg cursor-pointer border-b-4 border-sky-400 shadow-sm"
+          >
+            {todayWorld.emoji} Today’s land · {todayLand.title}
+          </button>
+        );
+      })()}
 
       <div className="grid grid-cols-1 gap-6">
         {ATLAS_CONTINENTS.map((continent) => {
@@ -1694,10 +2085,11 @@ export function ToddlerWorldsNavigator({
                 <p className="text-sm font-bold text-slate-700">{continent.blurb}</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {lands.map((world) => {
+                {lands.map((world, landIndex) => {
                   const stats = getWorldProgressStats(world, progress);
                   const stations = world.areas.reduce((sum, area) => sum + area.activities.length, 0);
                   const here = progress.lastVisitedWorldId === world.id;
+                  const eagerLand = continent.id === ATLAS_CONTINENTS[0]?.id && landIndex < 3;
                   return (
                     <motion.button
                       key={world.id}
@@ -1705,13 +2097,22 @@ export function ToddlerWorldsNavigator({
                       whileHover={{ y: -4 }}
                       whileTap={{ scale: 0.97 }}
                       onClick={() => handleSelectWorld(world)}
-                      className={`overflow-hidden rounded-3xl bg-white text-left shadow-md cursor-pointer border-4 ${
-                        here ? "border-amber-400" : "border-white"
+                      className={`wonder-land-card overflow-hidden rounded-3xl bg-white text-left cursor-pointer border-4 ${
+                        here ? "border-emerald-400" : "border-white"
                       }`}
                     >
                       <span className="relative mb-0 block h-44 sm:h-48 md:h-56 w-full overflow-hidden">
                         {WORLD_COVER[world.id] ? (
-                          <img src={WORLD_COVER[world.id]} alt="" className="h-full w-full object-cover" />
+                          <img
+                            src={WORLD_COVER[world.id]}
+                            alt=""
+                            width={800}
+                            height={437}
+                            loading={eagerLand ? "eager" : "lazy"}
+                            decoding="async"
+                            fetchPriority={eagerLand ? "high" : "low"}
+                            className="h-full w-full object-cover"
+                          />
                         ) : (
                           <span className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${world.gradient} text-5xl`}>
                             {world.emoji}
@@ -1728,7 +2129,7 @@ export function ToddlerWorldsNavigator({
                       </p>
                       <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-100">
                         <div
-                          className="h-full rounded-full bg-amber-400"
+                          className="h-full rounded-full bg-emerald-400"
                           style={{ width: `${stats.percentage}%` }}
                         />
                       </div>
@@ -1742,7 +2143,7 @@ export function ToddlerWorldsNavigator({
         })}
       </div>
 
-      <section className="rounded-[2rem] bg-gradient-to-br from-indigo-300 via-violet-200 to-amber-200 p-4 sm:p-6 shadow-xl border border-white/40">
+      <section className="rounded-[2rem] bg-gradient-to-br from-indigo-300 via-violet-200 to-sky-200 p-4 sm:p-6 shadow-xl border border-white/40">
         <div className="mb-5 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
           <h3 className="text-2xl sm:text-3xl font-black text-slate-900">Hidden doors</h3>
           <p className="text-sm font-bold text-slate-700">Secret rooms · earn stars, then step in</p>
@@ -1770,8 +2171,8 @@ export function ToddlerWorldsNavigator({
                   soundEffects.playPop();
                   speakText(`Welcome to ${zone.title}. ${zone.subtitle}`, { pitch: 1.18 });
                 }}
-                className={`overflow-hidden rounded-3xl bg-white text-left shadow-md cursor-pointer border-4 ${
-                  found ? "border-amber-400" : "border-white"
+                className={`wonder-land-card overflow-hidden rounded-3xl bg-white text-left cursor-pointer border-4 ${
+                  found ? "border-sky-400" : "border-white"
                 }`}
               >
                 <span className="relative mb-0 block h-44 sm:h-48 md:h-56 w-full overflow-hidden">
@@ -1779,6 +2180,10 @@ export function ToddlerWorldsNavigator({
                     <img
                       src={SECRET_COVER[zone.id]}
                       alt=""
+                      width={800}
+                      height={447}
+                      loading="lazy"
+                      decoding="async"
                       className={`h-full w-full object-cover ${isUnlocked ? "" : "grayscale"}`}
                     />
                   ) : (

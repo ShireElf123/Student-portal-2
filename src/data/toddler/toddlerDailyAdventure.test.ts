@@ -13,16 +13,19 @@
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { setActiveLearnerId } from "../../utils/learnerBrain";
+import { getGamificationState } from "../../utils/gamification";
 import {
   completeActiveMissionIfMatches,
   getCompletedDailyMissionIds,
   getDailyCount,
   getTodayAdventure,
   markDailyMissionCompleted,
+  payDailyMissionIfMatches,
   recordCountingCardTapped,
   recordDailyCount,
   recordDailySetMember,
   recordPhonicsLetterTapped,
+  weeklyMissionTabs,
 } from "./toddlerDailyAdventure";
 
 class MemoryStorage implements Storage {
@@ -60,6 +63,19 @@ const yesterday = () => {
   date.setDate(date.getDate() - 1);
   return date.toISOString().split("T")[0];
 };
+
+describe("weekly learning mix", () => {
+  it("visits Worlds plus Playhouse across the week, not only Games", () => {
+    const tabs = weeklyMissionTabs();
+    expect(tabs).toContain("worlds");
+    expect(tabs).toContain("playhouse");
+    expect(tabs).toContain("phonics");
+    expect(tabs).toContain("counting");
+    expect(tabs).toContain("books");
+    expect(tabs).toContain("games");
+    expect(tabs).toContain("focus");
+  });
+});
 
 describe("daily counters", () => {
   it("counts within the day, starting from zero", () => {
@@ -128,6 +144,18 @@ describe("mission completion", () => {
     expect(getCompletedDailyMissionIds()).not.toContain(withSubactivity!.id);
   });
 
+  it("pays stars only when play matches the mission, not twice", () => {
+    const mission = getTodayAdventure().missions.find((item) => item.targetSubactivity) ?? getTodayAdventure().missions[0];
+    const before = getGamificationState().starsCount;
+    const first = payDailyMissionIfMatches(mission.targetTab, mission.targetSubactivity);
+    expect(first.completed).toBe(true);
+    expect(getGamificationState().starsCount).toBeGreaterThanOrEqual(before + mission.starsReward);
+    const after = getGamificationState().starsCount;
+    const second = payDailyMissionIfMatches(mission.targetTab, mission.targetSubactivity);
+    expect(second.completed).toBe(false);
+    expect(getGamificationState().starsCount).toBe(after);
+  });
+
   it("reports nothing to complete once today's missions are done", () => {
     const missions = getTodayAdventure().missions;
     missions.forEach((mission) => markDailyMissionCompleted(mission.id));
@@ -180,9 +208,13 @@ describe("discovery helpers that games pay through", () => {
     // Counting uses the same distinct-member rule.
     const before = getCompletedDailyMissionIds().length;
     // Same threshold as phonics: three distinct members. Repeats (the extra 1) do not count.
+    const starsBefore = getGamificationState().starsCount;
     [1, 1, 2, 3].forEach(recordCountingCardTapped);
     expect(getCompletedDailyMissionIds().length).toBe(
       before + (hasCountingMission ? 1 : 0)
     );
+    if (hasCountingMission) {
+      expect(getGamificationState().starsCount).toBeGreaterThan(starsBefore);
+    }
   });
 });

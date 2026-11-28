@@ -266,6 +266,26 @@ describe("Feed Benny Bunny", () => {
     expect(container.textContent).toContain("0 of 8 Carrots");
     expect(carrotButton()).toBeTruthy();
   });
+
+  it("hub Bubble Pop refills the sky without a More Bubbles tap", async () => {
+    const { container } = render(
+      <ToddlerQuizzesAndGames starsCount={0} onAddStar={() => {}} targetActivity="bubble-pop" />
+    );
+    await flush(400);
+
+    const hubBubbles = () =>
+      Array.from(container.querySelectorAll("button")).filter((button) =>
+        button.className.includes("absolute") && button.className.includes("rounded-full")
+      ) as HTMLButtonElement[];
+
+    expect(hubBubbles().length).toBe(8);
+    while (hubBubbles().length > 0) {
+      fireEvent.click(hubBubbles()[0]);
+      await flush(50);
+    }
+    await flush(600);
+    expect(hubBubbles().length).toBe(8);
+  });
 });
 
 describe("Open-ended toddler games", () => {
@@ -362,6 +382,18 @@ describe("Open-ended toddler games", () => {
 });
 
 describe("K–1 skill studio (curated, AI off)", () => {
+  it("does not fire onComplete until the last picnic round", async () => {
+    const onComplete = vi.fn();
+    const { getByText } = render(<ToddlerK1Studio gameId="picnic-plus" onComplete={onComplete} />);
+    await flush(250);
+    fireEvent.click(getByText("5 berries"));
+    await flush(800);
+    expect(onComplete).not.toHaveBeenCalled();
+    fireEvent.click(getByText("8 pretzels"));
+    await flush(800);
+    expect(onComplete).not.toHaveBeenCalled();
+  });
+
   it("Picnic Plus scores five put-together/take-away rounds and can replay", async () => {
     const { container, getByText } = render(<ToddlerK1Studio gameId="picnic-plus" />);
     await flush(250);

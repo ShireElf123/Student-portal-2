@@ -149,6 +149,11 @@ function loadScopedRole(accountId: string = getActiveAccountId()): UserRole {
 export default function App() {
   const [learningStage, setLearningStage] = useState<LearningStage>(() => {
     try {
+      if (!localStorage.getItem("wonderland_boot_v1")) {
+        localStorage.setItem("wonderland_boot_v1", "1");
+        localStorage.setItem("my_student_portal_learning_stage", "toddler");
+        return "toddler";
+      }
       const saved = localStorage.getItem("my_student_portal_learning_stage");
       if (saved && ["toddler", "primary", "educator"].includes(saved)) {
         return saved as LearningStage;
@@ -156,19 +161,19 @@ export default function App() {
     } catch {
       // ignore
     }
-    return "primary";
+    return "toddler";
   });
 
   const [activeTab, setActiveTab] = useState<NavigationTab>(() => {
     try {
       const stage = localStorage.getItem("my_student_portal_learning_stage");
-      if (stage === "toddler") return "toddler";
+      if (!localStorage.getItem("wonderland_boot_v1") || stage === "toddler") return "toddler";
       if (stage === "educator") return "parent";
       if (stage === "primary") return "homework";
     } catch {
       // ignore
     }
-    return "homework";
+    return "toddler";
   });
 
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -176,9 +181,8 @@ export default function App() {
   const [cloudModule, setCloudModule] = useState<typeof import("./firebase") | null>(null);
   const [firestoreSdk, setFirestoreSdk] = useState<typeof FirestoreSdk | null>(null);
 
-  // Primary Homework Desk is the default landing experience.
-  // The workspace switcher is opened on-demand via the sidebar switcher or profile action,
-  // so strangers and signed-in users land directly on their desk.
+  // Toddler Wonderland is the default landing experience on this branch.
+  // Grown-ups still reach Primary / Educator through Exit 🔒.
   const [isStartupGatewayOpen, setIsStartupGatewayOpen] = useState<boolean>(false);
   const [isParentalGateOpen, setIsParentalGateOpen] = useState<boolean>(false);
   const [pendingStageSwitch, setPendingStageSwitch] = useState<LearningStage | null>(null);
@@ -1036,7 +1040,7 @@ export default function App() {
   const isToddlerActive = learningStage === "toddler" || activeTab === "toddler";
 
   return (
-    <div className="h-screen w-screen bg-[#050507] text-white flex flex-col md:flex-row overflow-hidden font-sans selection:bg-indigo-500/30">
+    <div className={`${isToddlerActive ? "h-dvh max-h-dvh" : "h-screen"} w-screen bg-[#050507] text-white flex flex-col md:flex-row overflow-hidden font-sans selection:bg-indigo-500/30`}>
       <a href="#workspace-main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:font-bold focus:text-slate-950">Skip to main content</a>
       {/* Desktop Sidebar Navigation - Hidden in Toddler mode for 100% immersive wonderland */}
       {!isToddlerActive && (
@@ -1061,11 +1065,11 @@ export default function App() {
       {/* Main Workspace Area */}
       <main id="workspace-main" tabIndex={-1} className={`flex-1 flex flex-col min-w-0 min-h-0 ${
         isToddlerActive 
-          ? "bg-[#0c0d14]" 
+          ? "bg-[#0c0d14] overflow-y-auto overflow-x-hidden" 
           : learningStage === "primary"
-          ? "bg-[#f8fafc] text-slate-900"
-          : "bg-[#0b0f19] text-white"
-      } relative overflow-hidden ${isToddlerActive ? "pb-0" : "pb-16 md:pb-0"}`}>
+          ? "bg-[#f8fafc] text-slate-900 overflow-hidden"
+          : "bg-[#0b0f19] text-white overflow-hidden"
+      } relative ${isToddlerActive ? "pb-0" : "pb-16 md:pb-0"}`}>
         {/* Top Control Bar - Only displayed for Primary & Educator stages (Toddler has its own child-proof top bar) */}
         {!isToddlerActive && (
           <div

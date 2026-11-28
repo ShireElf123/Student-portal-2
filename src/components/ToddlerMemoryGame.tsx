@@ -6,6 +6,7 @@ import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { awardXP, awardStars, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import type { MemoryPair } from "../data/toddler/toddlerWorldPlayThemes";
+import { SHARED_VOICE } from "../data/toddler/sharedVoiceLines";
 
 interface CardItem {
   id: number;
@@ -48,10 +49,16 @@ function generateCards(pairCount: number, pairs: MemoryPair[] = MEMORY_PAIRS): C
 
 export function ToddlerMemoryGame({
   onAddStar,
+  onComplete,
   pairs,
+  closedKit = false,
+  welcomeLine,
 }: {
   onAddStar?: (amt?: number) => void;
+  onComplete?: () => void;
   pairs?: MemoryPair[];
+  closedKit?: boolean;
+  welcomeLine?: string;
 }) {
   const deckPairs = pairs && pairs.length >= 4 ? pairs : MEMORY_PAIRS;
   const [pairCount, setPairCount] = useState(6);
@@ -61,6 +68,13 @@ export function ToddlerMemoryGame({
   const [isWon, setIsWon] = useState<boolean>(false);
   const [moves, setMoves] = useState<number>(0);
   const gameTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const boardPaid = useRef(false);
+
+  const payStars = (amount: number) => {
+    if (boardPaid.current) return;
+    if (onAddStar) onAddStar(amount);
+    else awardStars(amount);
+  };
 
   const scheduleGameTimer = (callback: () => void, delay: number) => {
     const timer = setTimeout(() => {
@@ -84,18 +98,27 @@ export function ToddlerMemoryGame({
     setIsWon(false);
     setMoves(0);
     soundEffects.playPop();
-    speakText("Find the matching friends! Tap two cards to turn them over!", { pitch: 1.2 });
+    speakText(closedKit ? welcomeLine || "" : "Find the matching friends! Tap two cards to turn them over!", {
+      pitch: 1.2,
+      closedKit,
+    });
   };
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      speakText("Welcome to Memory Match! Can you find the matching friends? Tap two cards to turn them over!", {
-        pitch: 1.2,
-        rate: 0.92,
-      });
+      speakText(
+        closedKit
+          ? welcomeLine || ""
+          : "Welcome to Memory Match! Can you find the matching friends? Tap two cards to turn them over!",
+        {
+          pitch: 1.2,
+          rate: 0.92,
+          closedKit,
+        },
+      );
     }, 240);
     return () => clearTimeout(timer);
-  }, []);
+  }, [closedKit, welcomeLine]);
 
   useEffect(() => () => clearGameTimers(), []);
 
@@ -118,10 +141,9 @@ export function ToddlerMemoryGame({
       if (firstCard.pairId === secondCard.pairId) {
         // MATCH!
         soundEffects.playSuccessChime();
-        speakText(`Match! You found the ${secondCard.name}!`, { pitch: 1.3 });
+        speakText(SHARED_VOICE.matchFriend, { pitch: 1.3, closedKit });
         awardXP(20);
-        if (onAddStar) onAddStar(1);
-        else awardStars(1);
+        payStars(1);
 
         const nextMatchCount = matchesCount + 1;
         scheduleGameTimer(() => {
@@ -139,10 +161,12 @@ export function ToddlerMemoryGame({
               setIsWon(true);
               soundEffects.playFanfare();
               triggerCelebrationConfetti();
-              speakText("Hooray! You matched all the friends! You are a superstar!", { pitch: 1.2 });
+              speakText(SHARED_VOICE.memoryHooray, { pitch: 1.2, closedKit });
               awardXP(50);
-              if (onAddStar) onAddStar(3);
-              else awardStars(3);
+              const firstClear = !boardPaid.current;
+              payStars(3);
+              boardPaid.current = true;
+              if (firstClear) onComplete?.();
 
               try {
                 recordLearningEvent({
@@ -184,28 +208,27 @@ export function ToddlerMemoryGame({
   };
 
   return (
-    <div className="bg-[#121320] border border-white/10 rounded-3xl p-4 sm:p-6 shadow-xl max-w-2xl mx-auto">
-      {/* Header bar */}
+    <div className="play-board play-theme-memory p-4 sm:p-6 max-w-2xl" data-testid="play-board-memory">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-xl shadow-md">
-            🧩
+            🎲
           </div>
           <div>
-            <h3 className="text-base sm:text-lg font-black text-white">Memory Card Match</h3>
-            <p className="text-xs text-white/60">Flip two cards to match the cute characters!</p>
+            <h3 className="text-base sm:text-lg font-black play-title">Memory Card Match</h3>
+            <p className="text-xs play-copy">Flip two cards to match the cute characters!</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="px-3 py-1 bg-amber-500/15 border border-amber-400/30 rounded-xl text-amber-300 text-xs font-bold flex items-center gap-1">
+          <div className="px-3 py-1 bg-amber-100 border-2 border-amber-400 rounded-xl text-amber-950 text-xs font-bold flex items-center gap-1">
             <Star size={14} className="fill-amber-400" />
             <span>{matchesCount}/{pairCount} Pairs</span>
           </div>
 
           <button
             onClick={() => resetGame()}
-            className="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-white/80 hover:text-white transition-all cursor-pointer"
+            className="p-2 bg-white hover:bg-violet-50 rounded-xl text-violet-800 border-2 border-violet-200 transition-all cursor-pointer"
             title="Shuffle & Play Again"
           >
             <RotateCcw size={16} />
@@ -213,15 +236,15 @@ export function ToddlerMemoryGame({
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-white/[0.04] border border-white/10 px-3 py-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl play-panel bg-white px-3 py-2">
         <div>
-          <p className="text-[11px] font-black uppercase tracking-wider text-white/50">Choose your challenge</p>
-          <p className="text-xs text-white/70">More pairs make the game trickier</p>
+          <p className="text-[11px] font-black uppercase tracking-wider text-violet-800">Choose your challenge</p>
+          <p className="text-xs text-slate-600">More pairs make the game trickier</p>
         </div>
         <div className="flex gap-2" role="group" aria-label="Memory game difficulty">
           {[4, 6, 8].map((count) => (
             <button key={count} onClick={() => resetGame(count)} aria-pressed={pairCount === count}
-              className={`rounded-xl px-3 py-2 text-xs font-black transition ${pairCount === count ? "bg-violet-500 text-white shadow-lg" : "bg-white/10 text-white/70 hover:bg-white/20"}`}>
+              className={`rounded-xl px-3 py-2 text-xs font-black transition ${pairCount === count ? "bg-violet-600 text-white shadow-lg" : "bg-white text-violet-800 border-2 border-violet-200 hover:bg-violet-50"}`}>
               {count === 4 ? "Cozy" : count === 6 ? "Explorer" : "Superstar"} · {count}
             </button>
           ))}
@@ -235,16 +258,17 @@ export function ToddlerMemoryGame({
             return (
               <motion.button
                 key={card.id}
+                data-testid={`memory-card-${card.pairId}-${card.id}`}
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleCardClick(card)}
                 disabled={card.isMatched}
                 className={`aspect-square rounded-2xl flex flex-col items-center justify-center p-2 text-center transition-all cursor-pointer border-b-4 select-none relative ${
                   card.isMatched
-                    ? "bg-emerald-500/20 border-emerald-400/50 border-b-emerald-600 opacity-90 scale-95"
+                    ? "bg-emerald-100 border-emerald-400 border-b-emerald-600 opacity-90 scale-95"
                     : showFace
-                    ? "bg-white/15 border-white/40 border-b-white/20 shadow-lg"
-                    : "bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 border-indigo-400/40 border-b-indigo-900 shadow-md"
+                    ? "bg-white border-violet-200 border-b-violet-300 shadow-lg"
+                    : "bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 border-indigo-400 border-b-indigo-900 shadow-md"
                 }`}
               >
                 {showFace ? (
@@ -255,7 +279,7 @@ export function ToddlerMemoryGame({
                     className="flex flex-col items-center justify-center"
                   >
                     <span className="text-3xl sm:text-4xl filter drop-shadow-md">{card.emoji}</span>
-                    <span className="text-[10px] sm:text-xs font-black text-white mt-1 leading-none">{card.name}</span>
+                    <span className="text-[10px] sm:text-xs font-black text-slate-900 mt-1 leading-none">{card.name}</span>
                   </motion.div>
                 ) : (
                   <div className="flex flex-col items-center justify-center text-white/50">
@@ -277,9 +301,9 @@ export function ToddlerMemoryGame({
           <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-amber-400 to-yellow-300 flex items-center justify-center text-5xl shadow-xl shadow-amber-500/30 animate-bounce">
             🏆
           </div>
-          <h4 className="text-2xl font-black text-white">Super Memory Champion!</h4>
-          <p className="text-sm text-amber-200">
-            You matched all pairs in <strong className="text-white">{moves} turns</strong>! Earned <strong className="text-white">+3 Golden Stars</strong> &amp; <strong className="text-white">+50 XP</strong>!
+          <h4 className="text-2xl font-black play-title">Super Memory Champion!</h4>
+          <p className="text-sm text-violet-800">
+            You matched all pairs in <strong className="text-slate-900">{moves} turns</strong>! Earned <strong className="text-slate-900">+3 Golden Stars</strong> &amp; <strong className="text-slate-900">+50 XP</strong>!
           </p>
           <button
             onClick={() => resetGame()}

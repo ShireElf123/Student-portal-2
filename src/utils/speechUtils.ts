@@ -2,7 +2,12 @@
  * Speech synthesis utility for Toddler and Primary school learning.
  * Uses the best available English system voice with a user-selectable override.
  * Speech quality depends on voices installed by the browser/operating system.
+ * One registered narrator MP3 may replace a matching line (exact promptText,
+ * including IPA slashes). Missing files fall back here. Parent recordings
+ * (toddlerAudio parent channel) outrank both.
  */
+
+import { toddlerAudio } from "./toddlerAudio";
 
 export interface VoiceProfile {
   id: string;
@@ -60,6 +65,76 @@ export const VOICE_PERSONAS: VoicePersona[] = [
   },
 ];
 
+/**
+ * Web Speech reads IPA slashes as "slash ae slash". Turn letter-sound marks
+ * into toddler-friendly talk so stories, cards, and games match the picture.
+ */
+const IPA_TO_SPEECH: Record<string, string> = {
+  tʃ: "ch",
+  dʒ: "juh",
+  kw: "kwuh",
+  ks: "ks",
+  æ: "a",
+  ʃ: "shh",
+  θ: "th",
+  ð: "th",
+  ɛ: "eh",
+  ɪ: "ih",
+  ɒ: "o",
+  ʌ: "uh",
+  ɑ: "ah",
+  e: "eh",
+  i: "ee",
+  o: "oh",
+  b: "buh",
+  k: "kuh",
+  d: "duh",
+  p: "puh",
+  t: "tuh",
+  g: "guh",
+  h: "huh",
+  s: "sss",
+  f: "fff",
+  m: "mmm",
+  n: "nnn",
+  r: "rrr",
+  l: "lll",
+  w: "wuh",
+  v: "vvv",
+  z: "zzz",
+  j: "yuh",
+  y: "yuh",
+};
+
+export function prepareSpeechText(text: string): string {
+  let out = (text || "").replace(/\s+/g, " ").trim();
+  if (!out) return "";
+  const keys = Object.keys(IPA_TO_SPEECH).sort((a, b) => b.length - a.length);
+  for (const key of keys) {
+    out = out.replace(new RegExp(`/${key}/`, "gi"), IPA_TO_SPEECH[key]);
+  }
+  out = out.replace(/\/([A-Za-zæʃθðəɪɒʌɑŋ]{1,4})\//g, "$1");
+  return out.replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Clip keys for exact registry lookup. IPA slashes stay on the first key
+ * because promptText is stored that way. Device TTS still uses prepareSpeechText.
+ */
+export function narrationClipLookups(text: string): string[] {
+  const raw = (text || "").replace(/\s+/g, " ").trim();
+  if (!raw) return [];
+  const prepared = prepareSpeechText(raw);
+  return raw === prepared ? [raw] : [raw, prepared];
+}
+
+/** Read-to-me speaks the printed page so the voice matches the picture and tap-words. */
+export function spokenPageText(page: { text?: string; narration?: string }): string {
+  const printed = (page.text || "").trim();
+  if (printed) return printed;
+  return (page.narration || "").trim();
+}
+
 export function getActivePersona(): VoicePersona {
   try {
     const saved = localStorage.getItem("app_voice_persona_id");
@@ -103,9 +178,45 @@ export interface SpeakOptions {
   onStart?: () => void;
   onEnd?: () => void;
   onError?: (err: unknown) => void;
+  /** Word-by-word read-along. charIndex is in the spoken string. */
+  onBoundary?: (info: { charIndex: number; wordIndex: number }) => void;
   timeoutFallbackMs?: number;
   profile?: VoiceProfile;
   isRetry?: boolean;
+  /** Skip the local narrator MP3 and use Web Speech (clip miss / fallback). */
+  skipClip?: boolean;
+  /**
+   * Closed island kit (Safari, Farm Valley): play a matching narrator MP3 only.
+   * Missing files stay quiet — never fall through to the device narrator.
+   */
+  closedKit?: boolean;
+}
+
+/** Clip-only chain used by the Farm Chicks counting victory PoC. */
+export interface QueuedNarrationOptions extends SpeakOptions {
+  /** Pause between finished thoughts. Default 160ms. */
+  gapMs?: number;
+  /** Every line must have a narrator clip or nothing plays. */
+  requireClips?: boolean;
+}
+
+/** Start indexes of each spoken word, for read-along highlight. */
+export function wordStarts(text: string): number[] {
+  const starts: number[] = [];
+  const re = /\S+/g;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(text))) starts.push(match.index);
+  return starts;
+}
+
+export function wordIndexFromCharIndex(text: string, charIndex: number): number {
+  const starts = wordStarts(text);
+  if (starts.length === 0) return 0;
+  let index = 0;
+  for (let i = 0; i < starts.length; i++) {
+    if (charIndex >= starts[i]) index = i;
+  }
+  return index;
 }
 
 export type SpeechListener = (isSpeaking: boolean) => void;
@@ -148,6 +259,7 @@ class SpeechCoordinator {
    * the live utterance with no safety net and its caller waiting forever.
    */
   private activeWatchdog: { token: number; timer: NodeJS.Timeout } | null = null;
+  private queueTimer: ReturnType<typeof setTimeout> | null = null;
   private activeUtterance: SpeechSynthesisUtterance | null = null;
   private listeners: Set<SpeechListener> = new Set();
   private voiceChangeListeners: Set<() => void> = new Set();
@@ -364,9 +476,18 @@ class SpeechCoordinator {
     this.activeWatchdog = null;
   }
 
+  private clearQueueTimer(): void {
+    if (this.queueTimer) {
+      clearTimeout(this.queueTimer);
+      this.queueTimer = null;
+    }
+  }
+
   public stop(): void {
     this.activeToken++;
     this.clearActiveWatchdog();
+    this.clearQueueTimer();
+    toddlerAudio.stopVoice();
 
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       try {
@@ -383,19 +504,68 @@ class SpeechCoordinator {
   }
 
   public speak(text: string, options?: SpeakOptions): boolean {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      // Headless test or SSR environments - finish silently
-      options?.onEnd?.();
-      return false;
-    }
-
     if (this.isVoiceMuted) {
       options?.onEnd?.();
       return false;
     }
 
-    const cleanText = (text || "").trim();
+    const rawText = (text || "").replace(/\s+/g, " ").trim();
+    const cleanText = prepareSpeechText(rawText);
     if (!cleanText) {
+      options?.onEnd?.();
+      return false;
+    }
+
+    if (toddlerAudio.isParentPlaying()) {
+      options?.onEnd?.();
+      return false;
+    }
+
+    const clipLookups = narrationClipLookups(rawText);
+
+    if (options?.closedKit) {
+      this.stop();
+      const token = ++this.activeToken;
+      if (!options.skipClip) {
+        const clipHandlers = {
+          onStart: () => {
+            if (token !== this.activeToken) return;
+            this.notify(true);
+            try {
+              options?.onStart?.();
+            } catch {
+              // ignore
+            }
+          },
+          onEnd: () => {
+            if (token !== this.activeToken) return;
+            this.notify(false);
+            try {
+              options?.onEnd?.();
+            } catch {
+              // ignore
+            }
+          },
+          onFail: () => {
+            if (token !== this.activeToken) return;
+            this.notify(false);
+            try {
+              options?.onEnd?.();
+            } catch {
+              // ignore
+            }
+          },
+        };
+        for (const lookup of clipLookups) {
+          if (toddlerAudio.tryNarrationClip(lookup, clipHandlers)) return true;
+        }
+      }
+      options?.onEnd?.();
+      return false;
+    }
+
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      // Headless test or SSR environments - finish silently
       options?.onEnd?.();
       return false;
     }
@@ -413,6 +583,36 @@ class SpeechCoordinator {
     }
 
     const token = ++this.activeToken;
+
+    if (!options?.skipClip) {
+      const clipHandlers = {
+        onStart: () => {
+          if (token !== this.activeToken) return;
+          this.notify(true);
+          try {
+            options?.onStart?.();
+          } catch {
+            // ignore
+          }
+        },
+        onEnd: () => {
+          if (token !== this.activeToken) return;
+          this.notify(false);
+          try {
+            options?.onEnd?.();
+          } catch {
+            // ignore
+          }
+        },
+        onFail: () => {
+          if (token !== this.activeToken) return;
+          this.speak(cleanText, { ...options, skipClip: true, isRetry: true });
+        },
+      };
+      for (const lookup of clipLookups) {
+        if (toddlerAudio.tryNarrationClip(lookup, clipHandlers)) return true;
+      }
+    }
 
     // Generous spacing (100ms) before triggering speech prevents WebKit / Chromium audio collisions
     setTimeout(() => {
@@ -460,10 +660,28 @@ class SpeechCoordinator {
         utterance.rate = naturalRate;
 
         let hasFinished = false;
+        let boundaryHeard = false;
+        let fallbackTick: ReturnType<typeof setInterval> | null = null;
+
+        const emitBoundary = (charIndex: number) => {
+          if (token !== this.activeToken || hasFinished) return;
+          try {
+            options?.onBoundary?.({
+              charIndex,
+              wordIndex: wordIndexFromCharIndex(cleanText, charIndex),
+            });
+          } catch {
+            // ignore
+          }
+        };
 
         const handleFinish = () => {
           if (hasFinished) return;
           hasFinished = true;
+          if (fallbackTick) {
+            clearInterval(fallbackTick);
+            fallbackTick = null;
+          }
 
           // Only this utterance's own watchdog may be disarmed here.
           this.clearActiveWatchdog(token);
@@ -487,7 +705,21 @@ class SpeechCoordinator {
             } catch {
               // ignore
             }
+            const starts = wordStarts(cleanText);
+            if (starts.length > 0) emitBoundary(starts[0]);
           }
+        };
+
+        utterance.onboundary = (event: SpeechSynthesisEvent) => {
+          if (token !== this.activeToken || hasFinished) return;
+          const name = (event as SpeechSynthesisEvent & { name?: string }).name;
+          if (name && name !== "word") return;
+          boundaryHeard = true;
+          if (fallbackTick) {
+            clearInterval(fallbackTick);
+            fallbackTick = null;
+          }
+          emitBoundary(typeof event.charIndex === "number" ? event.charIndex : 0);
         };
 
         utterance.onend = () => {
@@ -538,6 +770,27 @@ class SpeechCoordinator {
           }, timeoutDuration),
         };
 
+        // Some mobile browsers never fire word boundaries. Walk the words on a timer until a real boundary arrives.
+        if (options?.onBoundary) {
+          const starts = wordStarts(cleanText);
+          const stepMs = Math.max(280, Math.floor(timeoutDuration / Math.max(2, starts.length + 1)));
+          let walk = 1;
+          fallbackTick = setInterval(() => {
+            if (token !== this.activeToken || hasFinished || boundaryHeard) {
+              if (fallbackTick) clearInterval(fallbackTick);
+              fallbackTick = null;
+              return;
+            }
+            if (walk >= starts.length) {
+              if (fallbackTick) clearInterval(fallbackTick);
+              fallbackTick = null;
+              return;
+            }
+            emitBoundary(starts[walk]);
+            walk += 1;
+          }, stepMs);
+        }
+
         // Keep a reference on window to prevent Chrome garbage-collecting active utterance prematurely
         (window as unknown as { __activeSpeechUtterance?: SpeechSynthesisUtterance }).__activeSpeechUtterance = utterance;
 
@@ -552,12 +805,117 @@ class SpeechCoordinator {
 
     return true;
   }
+
+  /**
+   * Play finished-thought narrator clips in order. Does not change exact-text
+   * lookup. Missing required clips, parent playback, or stop() cancel the rest
+   * without Web Speech and without a success onEnd.
+   */
+  public speakQueued(lines: string[], options?: QueuedNarrationOptions): boolean {
+    const parts = (lines || []).map((line) => (line || "").replace(/\s+/g, " ").trim()).filter(Boolean);
+    if (parts.length === 0) {
+      return false;
+    }
+
+    if (this.isVoiceMuted) {
+      options?.onEnd?.();
+      return true;
+    }
+
+    if (toddlerAudio.isParentPlaying()) {
+      return false;
+    }
+
+    const requireClips = Boolean(options?.requireClips || options?.closedKit);
+    if (requireClips) {
+      for (const part of parts) {
+        const found = narrationClipLookups(part).some((lookup) => toddlerAudio.hasNarrationClip(lookup));
+        if (!found) return false;
+      }
+    }
+
+    this.stop();
+    const token = ++this.activeToken;
+    const gapMs = options?.gapMs ?? 160;
+    let index = 0;
+    let settled = false;
+
+    const finishSuccess = () => {
+      if (token !== this.activeToken || settled) return;
+      settled = true;
+      this.notify(false);
+      try {
+        options?.onEnd?.();
+      } catch {
+        // ignore
+      }
+    };
+
+    const playIndex = () => {
+      if (token !== this.activeToken) return;
+      if (toddlerAudio.isParentPlaying()) return;
+      if (index >= parts.length) {
+        finishSuccess();
+        return;
+      }
+
+      const part = parts[index];
+      const clipHandlers = {
+        onStart: () => {
+          if (token !== this.activeToken) return;
+          this.notify(true);
+          if (index === 0) {
+            try {
+              options?.onStart?.();
+            } catch {
+              // ignore
+            }
+          }
+        },
+        onEnd: () => {
+          if (token !== this.activeToken || settled) return;
+          index += 1;
+          if (index >= parts.length) {
+            finishSuccess();
+            return;
+          }
+          this.clearQueueTimer();
+          this.queueTimer = setTimeout(() => {
+            this.queueTimer = null;
+            playIndex();
+          }, gapMs);
+        },
+        onFail: () => {
+          if (token !== this.activeToken) return;
+          this.notify(false);
+        },
+      };
+
+      let started = false;
+      for (const lookup of narrationClipLookups(part)) {
+        if (toddlerAudio.tryNarrationClip(lookup, clipHandlers)) {
+          started = true;
+          break;
+        }
+      }
+      if (!started) {
+        this.notify(false);
+      }
+    };
+
+    playIndex();
+    return true;
+  }
 }
 
 export const speechCoordinator = new SpeechCoordinator();
 
 export function speakText(text: string, options?: SpeakOptions): boolean {
   return speechCoordinator.speak(text, options);
+}
+
+export function speakQueuedNarration(lines: string[], options?: QueuedNarrationOptions): boolean {
+  return speechCoordinator.speakQueued(lines, options);
 }
 
 export function stopSpeaking(): void {
@@ -600,7 +958,7 @@ export function testVoice(sampleText?: string): void {
   const info = getActiveVoiceInfo();
   const text =
     sampleText ||
-    `Hello there! I am your AI learning coach. Ready to explore and learn together today?`;
+    `Hello there! I am your learning coach. Ready to explore and learn together today?`;
   speakText(text);
 }
 

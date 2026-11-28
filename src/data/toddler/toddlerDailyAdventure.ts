@@ -1,11 +1,22 @@
 import { getActiveLearnerId } from "../../utils/learnerBrain";
+import { awardStars, awardXP } from "../../utils/gamification";
+
+export type DailyMissionTab =
+  | "books"
+  | "phonics"
+  | "counting"
+  | "games"
+  | "worlds"
+  | "avatar-studio"
+  | "focus"
+  | "playhouse";
 
 export interface DailyMission {
   id: string;
   title: string;
   tagline: string;
   emoji: string;
-  targetTab: "books" | "phonics" | "counting" | "games" | "worlds" | "avatar-studio";
+  targetTab: DailyMissionTab;
   targetSubactivity?: string;
   starsReward: number;
   xpReward: number;
@@ -36,11 +47,12 @@ export const TODDLER_STICKERS: CollectibleSticker[] = [
   { id: "stk-twinkle-star", name: "Twinkle Star", emoji: "⭐", category: "space", requiredStars: 30, description: "Filled the golden Star Jar with bright starlight!" },
   { id: "stk-color-wizard", name: "Color Wizard", emoji: "🎨", category: "learning", requiredStars: 35, description: "Mixed bright magical paints in the Color Lab!" },
   { id: "stk-melody-maestro", name: "Melody Maestro", emoji: "🎹", category: "learning", requiredStars: 40, description: "Played rainbow piano notes without missing a beat!" },
+  { id: "stk-focus-body", name: "Steady Body", emoji: "🎯", category: "learning", requiredStars: 42, description: "Moved, pushed, breathed, and settled with Teddy!" },
   { id: "stk-phonics-champ", name: "Phonics Champ", emoji: "🔤", category: "learning", requiredStars: 45, description: "Mastered all 26 letter sounds from A to Z!" },
   { id: "stk-farm-hero", name: "Farm Hero", emoji: "🚜", category: "animal", requiredStars: 50, description: "Helped Mother Hen count her fluffy yellow chicks!" },
   { id: "stk-bubble-pop", name: "Bubble Popper", emoji: "🎈", category: "learning", requiredStars: 55, description: "Popped 10 floating rainbow bubbles in the sky!" },
   { id: "stk-sunshine-sprout", name: "Sunshine Sprout", emoji: "☀️", category: "learning", requiredStars: 60, description: "Greeted the morning sun with a cheerful smile!" },
-  { id: "stk-puzzle-whiz", name: "Puzzle Whiz", emoji: "🧩", category: "learning", requiredStars: 65, description: "Matched every shape, circle, and star perfectly!" },
+  { id: "stk-puzzle-whiz", name: "Puzzle Whiz", emoji: "🎲", category: "learning", requiredStars: 65, description: "Matched every shape, circle, and star perfectly!" },
   { id: "stk-story-reader", name: "Story Reader", emoji: "📚", category: "buddy", requiredStars: 70, description: "Turned pages and read aloud illustrated tales!" },
   { id: "stk-buddy-bestie", name: "Buddy Bestie", emoji: "🧸", category: "buddy", requiredStars: 75, description: "Customized Pip with hats, capes, and bowties!" },
   { id: "stk-sweet-explorer", name: "Fruit Picker", emoji: "🍓", category: "learning", requiredStars: 80, description: "Sorted delicious fruits and healthy snacks!" },
@@ -107,7 +119,7 @@ const WEEKLY_SCHEDULES: Record<number, DailySchedule> = {
     missions: [
       { id: "wed-1", title: "Ocean Deep Dive", tagline: "Spot turtles and glowing jellyfish", emoji: "🐬", targetTab: "worlds", targetSubactivity: "adventure-world", starsReward: 2, xpReward: 30 },
       { id: "wed-2", title: "Colors & Shapes Parade", tagline: "Find red circles and blue squares", emoji: "🔷", targetTab: "games", targetSubactivity: "shape-match", starsReward: 2, xpReward: 30 },
-      { id: "wed-3", title: "The Colors & Shapes Book", tagline: "Read the bright circus story", emoji: "🎪", targetTab: "books", starsReward: 3, xpReward: 50 },
+      { id: "wed-3", title: "Playhouse Story Time", tagline: "Watch a neighborhood show", emoji: "🎭", targetTab: "playhouse", starsReward: 3, xpReward: 50 },
     ],
   },
   // 4 = Thursday
@@ -139,7 +151,7 @@ const WEEKLY_SCHEDULES: Record<number, DailySchedule> = {
     themeBannerEmoji: "🎈",
     missions: [
       { id: "sat-1", title: "Pop Floating Bubbles", tagline: "Tap bubbles before they float away", emoji: "🎈", targetTab: "games", targetSubactivity: "bubble-pop", starsReward: 2, xpReward: 30 },
-      { id: "sat-2", title: "Memory Card Match", tagline: "Flip and find cute matching friends", emoji: "🃏", targetTab: "games", targetSubactivity: "memory-match", starsReward: 2, xpReward: 30 },
+      { id: "sat-2", title: "Move Then Settle", tagline: "Zoomies, push, breathe, then quiet", emoji: "🎯", targetTab: "focus", starsReward: 2, xpReward: 30 },
       { id: "sat-3", title: "Style Your Learning Buddy", tagline: "Put on astronaut helmets or capes!", emoji: "🐾", targetTab: "avatar-studio", starsReward: 3, xpReward: 50 },
     ],
   },
@@ -148,6 +160,19 @@ const WEEKLY_SCHEDULES: Record<number, DailySchedule> = {
 export function getTodayAdventure(): DailySchedule {
   const dayIndex = new Date().getDay();
   return WEEKLY_SCHEDULES[dayIndex] || WEEKLY_SCHEDULES[1];
+}
+
+export function weeklyMissionTabs(): DailyMissionTab[] {
+  return [0, 1, 2, 3, 4, 5, 6].flatMap((day) =>
+    (WEEKLY_SCHEDULES[day] ?? WEEKLY_SCHEDULES[1]).missions.map((mission) => mission.targetTab),
+  );
+}
+
+export function getTodaysOpenWorldMission(): DailyMission | undefined {
+  const completed = getCompletedDailyMissionIds();
+  return getTodayAdventure().missions.find(
+    (mission) => mission.targetTab === "worlds" && !completed.includes(mission.id),
+  );
 }
 
 const MISSIONS_STORAGE_KEY = "toddler_daily_missions_completed_v1";
@@ -270,16 +295,45 @@ export function completeActiveMissionIfMatches(
   }
 }
 
+/** Mark a matching mission complete and pay its stars — only after real play. */
+export function payDailyMissionIfMatches(
+  targetTab: string,
+  targetSubactivity?: string,
+): { completed: boolean; mission?: DailyMission } {
+  const beforeCount = getCompletedDailyMissionIds().length;
+  const result = completeActiveMissionIfMatches(targetTab, targetSubactivity);
+  if (!result.completed || !result.mission) return result;
+  try {
+    awardStars(result.mission.starsReward);
+    awardXP(result.mission.xpReward, `Completed daily mission: ${result.mission.title}`);
+    if (beforeCount < 3 && getCompletedDailyMissionIds().length >= 3) {
+      awardStars(5);
+      awardXP(100, "Completed all daily missions bonus");
+    }
+  } catch {
+    // Stars are best-effort; the mission is already marked done.
+  }
+  return result;
+}
+
 export function recordPhonicsLetterTapped(letter: string): void {
   const result = recordDailySetMember("phonics-letters", letter);
   if (result.count >= 3) {
-    completeActiveMissionIfMatches("phonics");
+    payDailyMissionIfMatches("phonics");
   }
 }
 
 export function recordCountingCardTapped(num: number): void {
   const result = recordDailySetMember("counting-cards", String(num));
   if (result.count >= 3) {
-    completeActiveMissionIfMatches("counting");
+    payDailyMissionIfMatches("counting");
+  }
+}
+
+export function recordFocusRoundDone(): void {
+  const stamp = String(Date.now());
+  const result = recordDailySetMember("focus-rounds", stamp.slice(-8));
+  if (result.count >= 3) {
+    payDailyMissionIfMatches("focus");
   }
 }

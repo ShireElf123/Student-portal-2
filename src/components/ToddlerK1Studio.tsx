@@ -4,13 +4,18 @@ import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { soundEffects } from "../utils/soundEffects";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { getK1StudioGame, type K1StudioGameId, type K1StudioChoice } from "../data/toddler/k1StudioGames";
+import { SHARED_VOICE } from "../data/toddler/sharedVoiceLines";
 
 interface ToddlerK1StudioProps {
   gameId: K1StudioGameId;
   onAddStar?: (amount?: number) => void;
+  /** Worlds trail: fire once when every round is done — not on the first tap. */
+  onComplete?: () => void;
+  closedKit?: boolean;
+  welcomeLine?: string;
 }
 
-export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
+export function ToddlerK1Studio({ gameId, onAddStar, onComplete, closedKit = false, welcomeLine }: ToddlerK1StudioProps) {
   const game = getK1StudioGame(gameId);
   const [roundIndex, setRoundIndex] = useState(0);
   const [locked, setLocked] = useState(false);
@@ -31,18 +36,31 @@ export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
   useEffect(() => {
     if (!game || !round || done) return;
     const timer = window.setTimeout(() => {
-      speakText(roundIndex === 0 ? `Welcome to ${game.title}. ${round.spoken}` : round.spoken, {
+      const line =
+        closedKit && roundIndex === 0 && welcomeLine
+          ? welcomeLine
+          : round.spoken;
+      speakText(line, {
         pitch: 1.18,
         rate: 0.94,
+        closedKit,
       });
     }, 220);
     return () => {
       window.clearTimeout(timer);
       stopSpeaking();
     };
-  }, [gameId, roundIndex, done, game, round]);
+  }, [gameId, roundIndex, done, game, round, closedKit, welcomeLine]);
 
-  if (!game || !round) return null;
+  if (!game) {
+    return (
+      <section className="play-board play-theme-studio p-6 text-center">
+        <p className="text-xl font-black play-title">This studio game is packing up.</p>
+        <p className="mt-2 text-sm font-semibold play-copy">Pick another Play tile on the trail.</p>
+      </section>
+    );
+  }
+  if (!round) return null;
 
   const handleChoice = (choice: K1StudioChoice) => {
     if (locked || done) return;
@@ -72,24 +90,25 @@ export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
     if (!choice.correct) {
       soundEffects.playPop();
       setShakeId(choice.id);
-      speakText("Try another one.", { pitch: 1.1 });
+      speakText(SHARED_VOICE.tryAnother, { pitch: 1.1, closedKit });
       window.setTimeout(() => setShakeId(null), 450);
       return;
     }
 
     setLocked(true);
     soundEffects.playSuccessChime();
-    onAddStar?.(1);
     const nextCorrect = correctCount + 1;
     setCorrectCount(nextCorrect);
-    speakText("Yes!", { pitch: 1.28 });
+    speakText(SHARED_VOICE.yes, { pitch: 1.28, closedKit });
 
     window.setTimeout(() => {
       const nextIndex = roundIndex + 1;
       if (nextIndex >= game.rounds.length) {
         setDone(true);
         soundEffects.playFanfare();
-        speakText(`You finished ${game.title}.`, { pitch: 1.2 });
+        speakText(SHARED_VOICE.finishedGame, { pitch: 1.2, closedKit });
+        onAddStar?.(1);
+        onComplete?.();
         return;
       }
       setRoundIndex(nextIndex);
@@ -106,25 +125,25 @@ export function ToddlerK1Studio({ gameId, onAddStar }: ToddlerK1StudioProps) {
   };
 
   return (
-    <section className="rounded-[2rem] border-4 border-white/15 bg-slate-950/70 p-5 sm:p-7 shadow-2xl">
+    <section className="play-board play-theme-studio p-5 sm:p-7" data-testid="play-board-studio">
       <header className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-xs sm:text-sm font-black uppercase tracking-wider text-white/80">Skill studio</p>
-          <h3 className="mt-1 text-2xl font-black text-white sm:text-3xl">
+          <p className="text-xs sm:text-sm font-black uppercase tracking-wider play-copy">Skill studio</p>
+          <h3 className="mt-1 text-2xl font-black play-title sm:text-3xl">
             <span className="mr-2">{game.emoji}</span>
             {game.title}
           </h3>
-          <p className="mt-1 max-w-2xl text-sm sm:text-base font-semibold text-white/90">{game.tagline}</p>
+          <p className="mt-1 max-w-2xl text-sm sm:text-base font-semibold play-copy">{game.tagline}</p>
         </div>
-        <p className="rounded-2xl bg-white/10 px-3 py-1.5 text-xs font-black text-white">
+        <p className="rounded-2xl play-chip px-3 py-1.5 text-xs font-black">
           {done ? `${correctCount}/${game.rounds.length}` : `${roundIndex + 1}/${game.rounds.length}`}
         </p>
       </header>
 
       {done ? (
-        <div className="rounded-3xl bg-emerald-500/15 border border-emerald-400/30 p-8 text-center">
-          <p className="text-2xl font-black text-white">You did it!</p>
-          <p className="mt-2 text-sm text-emerald-100">
+        <div className="rounded-3xl play-panel bg-white p-8 text-center">
+          <p className="text-2xl font-black play-title">You did it!</p>
+          <p className="mt-2 text-sm text-emerald-800">
             {correctCount} of {game.rounds.length} in {game.title}.
           </p>
           <button

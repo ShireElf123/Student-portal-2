@@ -6,6 +6,7 @@ import { speakText } from "../utils/speechUtils";
 import { awardStars, awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { getDailyCount, recordDailyCount } from "../data/toddler/toddlerDailyAdventure";
+import { SHARED_VOICE } from "../data/toddler/sharedVoiceLines";
 
 interface Balloon {
   id: number;
@@ -30,12 +31,16 @@ const NUMBERS = ["1", "2", "3", "4", "5"];
 
 interface ToddlerBalloonSkyProps {
   onAddStar?: (amount?: number) => void;
+  onComplete?: () => void;
   letters?: string[];
+  closedKit?: boolean;
+  welcomeLine?: string;
 }
 
 const DAILY_TARGET_STAR_GOAL = 10;
+const STATION_HIT_GOAL = 3;
 
-export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps) {
+export function ToddlerBalloonSky({ onAddStar, onComplete, letters, closedKit = false, welcomeLine }: ToddlerBalloonSkyProps) {
   const letterSet = letters && letters.length >= 4 ? letters : LETTERS;
   const [balloons, setBalloons] = useState<Balloon[]>([]);
   const [targetLabel, setTargetLabel] = useState<string>("A");
@@ -44,6 +49,9 @@ export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps
   // Ref mirror so the every-10-pops celebration fires exactly on time even
   // when taps land faster than React re-renders.
   const poppedRef = useRef(0);
+  const stationHits = useRef(0);
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   // Initialize and spawn balloons
   const spawnBalloon = (forcedLabel?: string) => {
@@ -79,10 +87,16 @@ export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps
     const interval = setInterval(() => spawnBalloon(), 2200);
 
     const speechTimer = setTimeout(() => {
-      speakText(`Welcome to Balloon Sky! Can you find and pop balloon ${targetLabel}?`, {
-        pitch: 1.3,
-        rate: 0.95,
-      });
+      speakText(
+        closedKit
+          ? welcomeLine || ""
+          : `Welcome to Balloon Sky! Can you find and pop balloon ${targetLabel}?`,
+        {
+          pitch: 1.3,
+          rate: 0.95,
+          closedKit,
+        },
+      );
     }, 150);
 
     return () => {
@@ -100,7 +114,7 @@ export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps
     setPoppedCount(poppedRef.current);
 
     // Speak letter or number
-    speakText(balloon.label, { pitch: 1.3, rate: 1.0 });
+    speakText(balloon.label, { pitch: 1.3, rate: 1.0, closedKit });
 
     const targetIsNumber = !isNaN(Number(targetLabel));
     const targetSkillId = targetIsNumber ? "math-k1-counting" : "read-k1-alphabet-letters";
@@ -138,6 +152,8 @@ export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps
         if (onAddStar) onAddStar(1);
         else awardStars(1);
       }
+      stationHits.current += 1;
+      if (stationHits.current === STATION_HIT_GOAL) onCompleteRef.current?.();
 
       // pick new target and release a balloon carrying it, so the new
       // request is always answerable instead of hoping random spawns help.
@@ -145,7 +161,7 @@ export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps
       const nextTarget = nextLetters[Math.floor(Math.random() * nextLetters.length)];
       setTargetLabel(nextTarget);
       spawnBalloon(nextTarget);
-      speakText(`Great job! Now can you pop ${nextTarget}?`, { pitch: 1.3, rate: 0.95 });
+      speakText(SHARED_VOICE.balloonNext, { pitch: 1.3, rate: 0.95, closedKit });
     }
 
     if (poppedRef.current > 0 && poppedRef.current % 10 === 0) {
@@ -160,16 +176,15 @@ export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header Banner */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-sky-400/20 via-blue-500/20 to-indigo-500/20 border-2 border-sky-400/30 text-center space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-400/20 text-sky-300 text-xs font-black uppercase tracking-wider">
+    <div className="play-board play-theme-balloons space-y-4" data-testid="play-board-balloons">
+      <div className="play-panel p-5 sm:p-6 text-center space-y-2">
+        <div className="play-chip inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">
           <span>🎈</span> Balloon Sky Carnival
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-white">
+        <h2 className="play-title text-2xl sm:text-3xl">
           Pop &amp; Learn Floating Balloons
         </h2>
-        <p className="text-white/70 text-xs sm:text-sm max-w-lg mx-auto">
+        <p className="play-copy text-xs sm:text-sm max-w-lg mx-auto">
           Tap the floating balloons as they drift through the fluffy clouds. Pop the target to earn golden stars!
         </p>
 
@@ -234,10 +249,10 @@ export function ToddlerBalloonSky({ onAddStar, letters }: ToddlerBalloonSkyProps
       </div>
 
       {/* Popped Stats Counter */}
-      <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.04] border border-white/10 text-xs font-bold text-white/80">
+      <div className="flex items-center justify-between p-4 rounded-2xl play-panel bg-white text-xs font-bold text-sky-900">
         <div className="flex items-center gap-2">
           <span>🎈 Total Popped:</span>
-          <span className="text-base font-black text-amber-300">{poppedCount}</span>
+          <span className="text-base font-black text-amber-700 count-num">{poppedCount}</span>
         </div>
         <div>
           Target pops today: {Math.min(targetPopsToday, DAILY_TARGET_STAR_GOAL)}/{DAILY_TARGET_STAR_GOAL} ⭐

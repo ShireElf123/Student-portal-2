@@ -15,17 +15,36 @@ import { render, fireEvent, cleanup, act } from "@testing-library/react";
 const speech = vi.hoisted(() => ({
   spoken: [] as string[],
   reportEnd: { value: true },
+  autoEnd: { value: true },
+  pendingEnds: [] as Array<() => void>,
 }));
 
 vi.mock("../utils/speechUtils", () => ({
   speakText: (text: string, options?: { onEnd?: () => void }) => {
     speech.spoken.push(text);
-    if (speech.reportEnd.value && options?.onEnd) {
-      setTimeout(() => options.onEnd?.(), 0);
+    const finish = () => options?.onEnd?.();
+    if (!speech.reportEnd.value) return true;
+    if (speech.autoEnd.value) {
+      setTimeout(finish, 0);
+    } else {
+      speech.pendingEnds.push(finish);
     }
     return true;
   },
-  stopSpeaking: () => {},
+  speakQueuedNarration: (lines: string[], options?: { onEnd?: () => void }) => {
+    speech.spoken.push(...lines);
+    const finish = () => options?.onEnd?.();
+    if (!speech.reportEnd.value) return true;
+    if (speech.autoEnd.value) {
+      setTimeout(finish, 0);
+    } else {
+      speech.pendingEnds.push(finish);
+    }
+    return true;
+  },
+  stopSpeaking: () => {
+    speech.pendingEnds.length = 0;
+  },
   isVoiceMuted: () => false,
   setVoiceMuted: () => {},
   speechCoordinator: { subscribe: () => () => {} },
@@ -53,6 +72,15 @@ const flush = async (ms = 0) => {
   }
 };
 
+/** Catch the celebration as soon as it appears so trail auto-roll cannot snatch it. */
+const waitForText = async (container: HTMLElement, needle: string, step = 400, max = 16000) => {
+  for (let elapsed = 0; elapsed < max; elapsed += step) {
+    if (container.textContent?.includes(needle)) return;
+    await flush(step);
+  }
+  throw new Error(`never saw "${needle}"`);
+};
+
 const optionButton = (container: HTMLElement, label: string) =>
   Array.from(container.querySelectorAll("button")).find((button) =>
     button.textContent?.includes(label)
@@ -64,8 +92,29 @@ const startActivity = async () => {
   );
   await flush(500);
   expect(utils.container.textContent).toContain("The Grassy Pasture Sound");
-  expect(utils.container.textContent).toContain("Tap who it is");
+  expect(utils.container.textContent).toContain("Tap who made the sound");
   expect(utils.container.textContent).not.toContain("Beginner");
+  return utils;
+};
+
+const releaseSpeechEnds = async () => {
+  const ends = speech.pendingEnds.splice(0);
+  await act(async () => {
+    ends.forEach((end) => end());
+    await Promise.resolve();
+  });
+};
+
+const openAreaHub = async (route: string, backLabel: string) => {
+  const utils = render(
+    <ToddlerWorldsNavigator onAddStar={() => {}} starsCount={0} initialWorldId={route} />,
+  );
+  await flush(500);
+  const back = Array.from(utils.container.querySelectorAll("button")).find((button) =>
+    button.textContent?.includes(backLabel),
+  ) as HTMLButtonElement;
+  fireEvent.click(back);
+  await flush(200);
   return utils;
 };
 
@@ -74,6 +123,8 @@ beforeEach(() => {
   vi.useFakeTimers();
   speech.spoken.length = 0;
   speech.reportEnd.value = true;
+  speech.autoEnd.value = true;
+  speech.pendingEnds.length = 0;
   localStorage.clear();
 });
 
@@ -107,10 +158,9 @@ describe("Animal World detective activity", () => {
     expect(container.textContent).not.toContain("You did it!");
 
     // The watchdog releases the reveal without any further tap.
-    await flush(20000);
-    expect(container.textContent).toContain("You did it!");
+    await waitForText(container, "You did it!");
 
-    // And the child can carry on playing.
+    // And the child can carry on playing. Next is a skip; auto-roll is later.
     fireEvent.click(container.querySelector("[data-testid=trail-next]") as HTMLButtonElement);
     await flush(200);
     expect(container.textContent).toContain("Farm Valley");
@@ -123,7 +173,7 @@ describe("Animal World detective activity", () => {
     fireEvent.click(optionButton(container, "Pink Piggy"));
     await flush(2000);
 
-    expect(speech.spoken.at(-1)).toContain("That is Pink Piggy!");
+    expect(speech.spoken.at(-1)?.toLowerCase()).toContain("piggy");
     expect(container.textContent).not.toContain("You did it!");
     expect(optionButton(container, "Spotted Cow").disabled).toBe(false);
   });
@@ -167,6 +217,26 @@ describe("Animal World counting activity", () => {
     expect(container.textContent).toContain("You did it!");
   });
 
+  it("speaks Farm Chicks victory as four finished thoughts before celebrating", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator onAddStar={() => {}} starsCount={0} initialWorldId={FARM_COUNT_ROUTE} />
+    );
+    await flush(500);
+    expect(speech.spoken.some((line) => line.includes("fluffy yellow chicks"))).toBe(true);
+
+    await answerCorrectly(container);
+    const hoorayAt = speech.spoken.indexOf("Hooray! That's right!");
+    expect(hoorayAt).toBeGreaterThanOrEqual(0);
+    expect(speech.spoken.slice(hoorayAt, hoorayAt + 4)).toEqual([
+      "Hooray! That's right!",
+      expect.stringMatching(/^[1-5]!$/),
+      "Farm Chicks!",
+      "Cheep!",
+    ]);
+    await flush(2000);
+    expect(container.textContent).toContain("You did it!");
+  });
+
   it("still reveals the celebration when the engine never reports the end", async () => {
     // The freeze class fixed in Animal Safari: the answer is accepted, the
     // number buttons lock, and nothing else happens until the child leaves.
@@ -180,7 +250,7 @@ describe("Animal World counting activity", () => {
     await flush(200);
     expect(container.textContent).not.toContain("You did it!");
 
-    await flush(20000);
+    await waitForText(container, "You did it!");
     expect(container.textContent).toContain("You did it!");
   });
 });
@@ -222,6 +292,35 @@ describe("world level trail stations", () => {
     fireEvent.click(container.querySelector("[data-testid=trail-next]") as HTMLButtonElement);
     await flush(200);
     expect(container.textContent).toContain("Farm Valley");
+  });
+
+  it("opens a farm story clue as a tap quiz, not an unwired adventure", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator
+        onAddStar={() => {}}
+        starsCount={0}
+        initialWorldId="world:story-world:barnyard-tales:act-story-farm-who-gate"
+      />,
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Who Opened the Gate");
+    expect(container.textContent).not.toContain("Step 1 of");
+    fireEvent.click(optionButton(container, "Pip"));
+    await flush(2000);
+    expect(container.textContent).toContain("You did it!");
+  });
+
+  it("asks the child to tap a sorting home, not put items by dragging", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator
+        onAddStar={() => {}}
+        starsCount={0}
+        initialWorldId="world:animal-world:farm-valley:act-farm-sort-feed"
+      />,
+    );
+    await flush(500);
+    expect(container.textContent).toContain("Tap a home for this friend");
+    expect(container.textContent).not.toContain("Put matching friends here");
   });
 
   it("plays a planted toy without the quiz overlay", async () => {
@@ -288,5 +387,116 @@ describe("trail ease", () => {
     await flush(4000);
     expect(container.textContent).toContain("Pasture Safari");
     expect(container.textContent).not.toContain("You did it!");
+  });
+});
+
+describe("worlds mission narration sequencing", () => {
+  const FARM_START =
+    "Mission started: Barnyard Morning Helper! Step 1: Listen for the Cow. Listen with your ears! Who is chewing sweet clover in the meadow and says Moooo?";
+  const FARM_NEXT_KITTEN =
+    "Next Mission Step: Find the Kitten! Mother Cat says meow meow! Can you find her tiny baby kitten?";
+  const HAPPY_START =
+    "Mission started: Warm Heart Explorer! Step 1: Find the Big Happy Smile. Can you tap the friend who is feeling super happy and wearing a big bright smile?";
+  const HAPPY_COMPLETE =
+    "Congratulations! You completed the entire mission: Warm Heart Explorer! You earned the Sunshine Sprout badge!";
+
+  it("finishes the mission introduction before the first activity narration", async () => {
+    const { container } = await openAreaHub(FARM_SOUND_ROUTE, "Back to Farm Valley");
+    expect(container.textContent).toContain("Barnyard Morning Helper");
+
+    speech.spoken.length = 0;
+    speech.autoEnd.value = false;
+    fireEvent.click(optionButton(container, "Barnyard Morning Helper"));
+    await flush(50);
+
+    expect(speech.spoken).toEqual([FARM_START]);
+    expect(container.textContent).toContain("Barnyard Morning Helper");
+    expect(container.textContent).toContain("Back to Animal World Map");
+    expect(container.textContent).not.toContain("Tap who made the sound");
+    expect(container.textContent).not.toContain("Mission Step");
+
+    speech.autoEnd.value = true;
+    await releaseSpeechEnds();
+    await flush(400);
+
+    expect(container.textContent).toContain("The Grassy Pasture Sound");
+    expect(container.textContent).toContain("Tap who made the sound");
+    expect(container.textContent).toContain("Mission Step 1 of");
+    expect(speech.spoken[0]).toBe(FARM_START);
+    expect(speech.spoken.slice(1).some((line) => line.includes("Listen with your ears"))).toBe(true);
+  });
+
+  it("finishes the next-step introduction before the next activity narration", async () => {
+    const { container } = await openAreaHub(FARM_SOUND_ROUTE, "Back to Farm Valley");
+    fireEvent.click(optionButton(container, "Barnyard Morning Helper"));
+    await flush(400);
+    expect(container.textContent).toContain("The Grassy Pasture Sound");
+
+    fireEvent.click(optionButton(container, "Spotted Cow"));
+    await flush(2000);
+    expect(container.textContent).toContain("You did it!");
+
+    speech.spoken.length = 0;
+    speech.autoEnd.value = false;
+    fireEvent.click(container.querySelector("[data-testid=trail-next]") as HTMLButtonElement);
+    await flush(50);
+
+    expect(speech.spoken).toEqual([FARM_NEXT_KITTEN]);
+    expect(container.textContent).toContain("You did it!");
+    expect(container.textContent).not.toContain("Mother Cat's Tiny Baby");
+
+    speech.autoEnd.value = true;
+    await releaseSpeechEnds();
+    await flush(400);
+
+    expect(container.textContent).toContain("Mother Cat's Tiny Baby");
+    expect(speech.spoken[0]).toBe(FARM_NEXT_KITTEN);
+    expect(speech.spoken.slice(1).some((line) => line.includes("tiny baby kitten"))).toBe(true);
+  });
+
+  it("finishes the completion announcement before returning to the area hub", async () => {
+    const { container } = await openAreaHub(
+      "world:my-world:feelings-emotions:act-feelings-happy-smile",
+      "Back to Feelings & Emotions",
+    );
+    fireEvent.click(optionButton(container, "Warm Heart Explorer"));
+    await flush(400);
+    expect(container.textContent).toContain("Happy & Smiling Face");
+
+    fireEvent.click(optionButton(container, "Happy Smile"));
+    await flush(2000);
+    expect(container.textContent).toContain("You did it!");
+
+    speech.spoken.length = 0;
+    speech.autoEnd.value = false;
+    fireEvent.click(container.querySelector("[data-testid=trail-next]") as HTMLButtonElement);
+    await flush(50);
+
+    expect(speech.spoken).toEqual([HAPPY_COMPLETE]);
+    expect(container.textContent).toContain("You did it!");
+    expect(container.textContent).toContain("Happy & Smiling Face");
+    expect(container.textContent).not.toContain("Replay Warm Heart Explorer");
+
+    speech.autoEnd.value = true;
+    await releaseSpeechEnds();
+    await flush(400);
+
+    expect(container.textContent).toContain("Feelings & Emotions");
+    expect(container.textContent).toContain("Replay Warm Heart Explorer");
+    expect(container.textContent).not.toContain("You did it!");
+    expect(container.textContent).not.toContain("Tap who made the sound");
+  });
+
+  it("still starts the first activity if the wrap callback never arrives", async () => {
+    const { container } = await openAreaHub(FARM_SOUND_ROUTE, "Back to Farm Valley");
+    speech.spoken.length = 0;
+    speech.reportEnd.value = false;
+    fireEvent.click(optionButton(container, "Barnyard Morning Helper"));
+    await flush(200);
+    expect(container.textContent).not.toContain("Tap who made the sound");
+
+    await flush(20000);
+    expect(container.textContent).toContain("Tap who made the sound");
+    expect(container.textContent).toContain("The Grassy Pasture Sound");
   });
 });

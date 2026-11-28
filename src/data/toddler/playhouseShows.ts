@@ -1,4 +1,6 @@
 import { MORE_PLAYHOUSE_SHOWS } from "./playhouseShowsMore";
+import { STOOP_PLAYHOUSE_SHOWS } from "./playhouseShowsStoop";
+import { STREET_PLAYHOUSE_SHOWS } from "./playhouseShowsStreet";
 
 export interface PlayhouseLine {
   speaker: string;
@@ -38,6 +40,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Teddy’s Loose Button",
       tagline: "Nana sews. Teddy holds still. The button stays.",
       coverEmoji: "🧸",
+      coverImage: "/playhouse/teddy-loose-button.jpg",
       coverGradient: "from-amber-400 to-rose-500",
     },
     [
@@ -45,21 +48,21 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "tb-1",
         title: "A Wiggle",
         setting: "Kitchen chair",
-        illustration: "🧸 🔘 🪑",
+        illustration: "🧸 🔘 💺",
         bgGradient: "from-amber-100 to-orange-200 text-amber-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "Nana, my belly button of the coat is doing a little dance." },
-          { speaker: "Nana", emoji: "🧶", line: "That is a coat button, dear. Sit. We do not chase dancing buttons down the stairs." },
+          { speaker: "Nana", emoji: "🎀", line: "That is a coat button, dear. Sit. We do not chase dancing buttons down the stairs." },
         ],
       },
       {
         id: "tb-2",
         title: "The Tin",
         setting: "Sewing tin",
-        illustration: "🧵 📦 🔘",
+        illustration: "🎀 📦 🔘",
         bgGradient: "from-rose-100 to-amber-100 text-rose-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "Red thread. The cousin of this button. Hold the coat like a quiet hill." },
+          { speaker: "Nana", emoji: "🎀", line: "Red thread. The cousin of this button. Hold the coat like a quiet hill." },
           { speaker: "Teddy", emoji: "🧸", line: "I am a hill. Hills do not wiggle. Hills almost do not wiggle." },
         ],
       },
@@ -67,10 +70,10 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "tb-3",
         title: "In and Out",
         setting: "Needle song",
-        illustration: "🪡 🧥 ✨",
+        illustration: "🎀 👕 ✨",
         bgGradient: "from-yellow-100 to-lime-100 text-yellow-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "In. Out. In. The needle writes a tiny road." },
+          { speaker: "Nana", emoji: "🎀", line: "In. Out. In. The needle writes a tiny road." },
           { speaker: "Teddy", emoji: "🧸", line: "The button is listening. I can feel it deciding to stay." },
         ],
       },
@@ -78,10 +81,10 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "tb-4",
         title: "A Knot Like a Hug",
         setting: "Last stitch",
-        illustration: "🪢 💛 🧸",
+        illustration: "➰ 💛 🧸",
         bgGradient: "from-orange-100 to-rose-200 text-orange-950",
         lines: [
-          { speaker: "Nana", emoji: "🧶", line: "A knot is a hug that does not let go." },
+          { speaker: "Nana", emoji: "🎀", line: "A knot is a hug that does not let go." },
           { speaker: "Teddy", emoji: "🧸", line: "Thank you, hug. Thank you, Nana. Coat, you may go outside again." },
         ],
       },
@@ -93,18 +96,18 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         bgGradient: "from-sky-100 to-amber-100 text-sky-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "Wind, you may try. Button is home." },
-          { speaker: "Nana", emoji: "🧶", line: "Home is a stitch and a sitting-still. Come sip lemon ice." },
+          { speaker: "Nana", emoji: "🎀", line: "Home is a stitch and a sitting-still. Come sip lemon ice." },
         ],
       },
       {
         id: "tb-6",
         title: "Bow",
         setting: "Curtain",
-        illustration: "🎭 🧸 🧶",
+        illustration: "🎭 🧸 🎀",
         bgGradient: "from-violet-100 to-amber-200 text-violet-950",
         lines: [
           { speaker: "Teddy", emoji: "🧸", line: "The coat takes a bow. The button takes a smaller bow." },
-          { speaker: "Nana", emoji: "🧶", line: "And Nana takes the sewing tin back to sleep." },
+          { speaker: "Nana", emoji: "🎀", line: "And Nana takes the sewing tin back to sleep." },
         ],
       },
     ],
@@ -115,6 +118,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Rosie’s Quiet Bell",
       tagline: "The firehouse practices a whisper alarm for a sleeping cat.",
       coverEmoji: "🚒",
+      coverImage: "/covers/playhouse-rosie.jpg",
       coverGradient: "from-red-500 to-amber-400",
     },
     [
@@ -192,6 +196,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Dot’s First Whisper",
       tagline: "A library mouse learns the feather voice.",
       coverEmoji: "📚",
+      coverImage: "/playhouse/dot-first-whisper.jpg",
       coverGradient: "from-amber-500 to-indigo-600",
     },
     [
@@ -210,7 +215,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "df-2",
         title: "Feather Take Two",
         setting: "Desk",
-        illustration: "🤫 🪪 🦉",
+        illustration: "🤫 🎫 🦉",
         bgGradient: "from-violet-100 to-amber-100 text-violet-950",
         lines: [
           { speaker: "Dot", emoji: "🐭", line: "Hello, library. I have a card." },
@@ -243,7 +248,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "df-5",
         title: "Bus Lap",
         setting: "Night bus",
-        illustration: "🚌 📗 🪟",
+        illustration: "🚌 📗 🏠",
         bgGradient: "from-sky-100 to-indigo-200 text-sky-950",
         lines: [
           { speaker: "Beep", emoji: "🚌", line: "Hold the book like a sleepy puppy. I know every corner." },
@@ -268,7 +273,8 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       id: "momo-snow-phone",
       title: "Momo’s Snow Phone",
       tagline: "A mitten is not a telephone. The plow still says hello.",
-      coverEmoji: "🧤",
+      coverEmoji: "👋",
+      coverImage: "/playhouse/momo-snow-phone.jpg",
       coverGradient: "from-sky-400 to-indigo-600",
     },
     [
@@ -276,11 +282,11 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "ms-1",
         title: "Glass Nose",
         setting: "Maple Street window",
-        illustration: "🐭 🪟 ❄️",
+        illustration: "🐭 🏠 ❄️",
         bgGradient: "from-sky-100 to-slate-200 text-sky-950",
         lines: [
           { speaker: "Momo", emoji: "🐭", line: "The street put on a white coat. I will call the plow on my mitten." },
-          { speaker: "Mitten", emoji: "🧤", line: "I am wool. I do not have numbers. I have thumbs." },
+          { speaker: "Mitten", emoji: "👋", line: "I am wool. I do not have numbers. I have thumbs." },
         ],
       },
       {
@@ -320,11 +326,11 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "ms-5",
         title: "Cocoa Steam",
         setting: "Kitchen",
-        illustration: "☕ ☁️ 🧦",
+        illustration: "☕ ☁️ 👟",
         bgGradient: "from-amber-100 to-orange-100 text-amber-950",
         lines: [
           { speaker: "Momo", emoji: "🐭", line: "The mitten-phone is drying. It smells like snow and cocoa." },
-          { speaker: "Mitten", emoji: "🧤", line: "I told you. Wool. Not numbers. Warm thumbs." },
+          { speaker: "Mitten", emoji: "👋", line: "I told you. Wool. Not numbers. Warm thumbs." },
         ],
       },
       {
@@ -346,6 +352,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Beep’s Last Seat",
       tagline: "The night bus saves one snug hill for a sleepy backpack.",
       coverEmoji: "🚌",
+      coverImage: "/playhouse/beep-last-seat.jpg",
       coverGradient: "from-indigo-600 to-amber-400",
     },
     [
@@ -423,6 +430,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Stamp and the Rain Letter",
       tagline: "A wet name, a flower sticker, house three.",
       coverEmoji: "🚚",
+      coverImage: "/playhouse/stamp-rain-letter.jpg",
       coverGradient: "from-blue-500 to-amber-400",
     },
     [
@@ -500,6 +508,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Gully and the Captain Cat",
       tagline: "A gull waits. A cat keeps the crate. The lighthouse blinks anyway.",
       coverEmoji: "⚓",
+      coverImage: "/playhouse/gully-captain-cat.jpg",
       coverGradient: "from-cyan-400 to-slate-600",
     },
     [
@@ -507,7 +516,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "gc-1",
         title: "Fog Hat",
         setting: "Piling",
-        illustration: "🐦 🪵 🌫️",
+        illustration: "🐦 🌳 🌫️",
         bgGradient: "from-slate-200 to-cyan-200 text-slate-900",
         lines: [
           { speaker: "Gully", emoji: "🐦", line: "The harbor wore a fog hat. I am a comma on a piling." },
@@ -518,7 +527,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "gc-2",
         title: "Red Tug",
         setting: "Channel",
-        illustration: "🚢 🟥 📦",
+        illustration: "🚢 📕 📦",
         bgGradient: "from-red-100 to-cyan-100 text-red-950",
         lines: [
           { speaker: "Tug", emoji: "🚢", line: "My job is push with patience. Follow if you can wait." },
@@ -529,7 +538,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "gc-3",
         title: "The Crate",
         setting: "Market dock",
-        illustration: "🍋 🐱 🪢",
+        illustration: "🍋 🐱 ➰",
         bgGradient: "from-amber-100 to-cyan-100 text-amber-950",
         lines: [
           { speaker: "Captain Cat", emoji: "🐱", line: "This crate is my ship. Lemons are cargo. You may salute." },
@@ -562,7 +571,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "gc-6",
         title: "Red Period",
         setting: "Piling again",
-        illustration: "🪵 🚢 ☀️",
+        illustration: "🌳 🚢 ☀️",
         bgGradient: "from-cyan-100 to-amber-100 text-cyan-950",
         lines: [
           { speaker: "Tug", emoji: "🚢", line: "I am a red period at the end of morning." },
@@ -577,6 +586,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "The Kindness Wagon Play",
       tagline: "Notes, pears, a snail in the shade.",
       coverEmoji: "🛒",
+      coverImage: "/playhouse/kindness-wagon-play.jpg",
       coverGradient: "from-lime-400 to-rose-400",
     },
     [
@@ -606,7 +616,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
         id: "kw-3",
         title: "Gardener",
         setting: "First stoop",
-        illustration: "🪴 💌 🍐",
+        illustration: "🌱 💌 🍐",
         bgGradient: "from-emerald-100 to-lime-200 text-emerald-950",
         lines: [
           { speaker: "Benny", emoji: "🐻", line: "A note and a pear. You look tired in a proud way." },
@@ -649,4 +659,6 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
     ],
   ),
   ...MORE_PLAYHOUSE_SHOWS,
+  ...STOOP_PLAYHOUSE_SHOWS,
+  ...STREET_PLAYHOUSE_SHOWS,
 ];

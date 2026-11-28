@@ -33,7 +33,7 @@ import {
 import { soundEffects } from "../utils/soundEffects";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import {
-  completeActiveMissionIfMatches,
+  payDailyMissionIfMatches,
   getDailyCount,
   recordDailyCount,
 } from "../data/toddler/toddlerDailyAdventure";
@@ -64,23 +64,28 @@ const EYES: { id: BuddyEyeStyle; label: string; icon: string }[] = [
   { id: "happy", label: "Happy Sparkle", icon: "👀" },
   { id: "starry", label: "Starry Wonder", icon: "⭐" },
   { id: "wink", label: "Cheeky Wink", icon: "😉" },
-  { id: "goggles", label: "Explorer Goggles", icon: "🥽" },
+  { id: "goggles", label: "Explorer Goggles", icon: "👓" },
 ];
 
 const HATS: { id: BuddyHat; label: string; icon: string }[] = [
   { id: "explorer", label: "Camp Scout Hat", icon: "🏕️" },
   { id: "party", label: "Party Cone", icon: "🎉" },
-  { id: "wizard", label: "Wizard Star Hat", icon: "🧙" },
+  { id: "wizard", label: "Wizard Star Hat", icon: "🎩" },
   { id: "astronaut", label: "Space Visor", icon: "🚀" },
   { id: "crown", label: "Golden Crown", icon: "👑" },
+  { id: "baker", label: "Bakery Hat", icon: "🍞" },
+  { id: "rain", label: "Rain Hat", icon: "🌧️" },
+  { id: "sailor", label: "Ferry Cap", icon: "⛴️" },
   { id: "none", label: "No Hat", icon: "✨" },
 ];
 
 const ACCESSORIES: { id: BuddyAccessory; label: string; icon: string }[] = [
   { id: "bowtie", label: "Red Bowtie", icon: "🎀" },
-  { id: "cape", label: "Hero Cape", icon: "🦸" },
+  { id: "cape", label: "Hero Cape", icon: "⭐" },
   { id: "medal", label: "Star Medal", icon: "🏅" },
   { id: "balloon", label: "Joy Balloon", icon: "🎈" },
+  { id: "letter", label: "Mail Letter", icon: "✉️" },
+  { id: "lantern", label: "Porch Lantern", icon: "🏮" },
   { id: "none", label: "None", icon: "🌟" },
 ];
 
@@ -102,6 +107,7 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
   const [buddy, setBuddy] = useState<BuddyCompanionConfig>(currentSaved);
   const [speechBubble, setSpeechBubble] = useState<string>(buddy.catchphrase);
   const [isSavedRecently, setIsSavedRecently] = useState(false);
+  const [walkCounts, setWalkCounts] = useState<Record<string, number>>({});
 
   // Clean speech on unmount
   useEffect(() => {
@@ -113,9 +119,9 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
   const handleHearVoice = () => {
     soundEffects.playPop();
     const greetings = [
-      `Hi friend! I'm ${buddy.name}! Ready to learn together?`,
-      `Yay! You made me look so cool! Let's go earn some golden stars!`,
-      `Beep boop! High five! Today is going to be amazing!`,
+      `Hi. I'm ${buddy.name}. The porch knows us.`,
+      `I am ready. Waiting is a kind of hug.`,
+      `Let's walk. Not run. Doors have opinions about running.`,
     ];
     const phrase = greetings[Math.floor(Math.random() * greetings.length)];
     setSpeechBubble(phrase);
@@ -134,12 +140,12 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
     setIsSavedRecently(true);
     soundEffects.playFanfare();
     triggerCelebrationConfetti();
-    speakText(`Hooray! ${buddy.name} is now your learning buddy! Let's conquer the odyssey!`, {
+    speakText(`${buddy.name} is your buddy now. The house keeps us.`, {
       pitch: 1.3,
       rate: 0.95,
     });
     try {
-      completeActiveMissionIfMatches("avatar-studio");
+      payDailyMissionIfMatches("avatar-studio");
     } catch {
       // ignore
     }
@@ -171,47 +177,47 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
   };
 
   return (
-    <div className="min-h-full pb-20 bg-[#070814] text-white p-4 sm:p-8">
-      {/* Top Banner (Amumba / Smeshariki Inspired) */}
+    <div className="dest-buddy p-4 sm:p-8 overflow-hidden" data-testid="buddy-studio">
+      {/* Top Banner */}
       <div className="max-w-4xl mx-auto text-center space-y-2 mb-8">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-pink-500/20 via-sky-500/20 to-lime-500/20 border border-white/10 text-pink-300 text-xs font-black uppercase tracking-wider">
-          <Sparkles size={14} className="animate-spin text-yellow-300" /> Buddy &amp; Companion Generator
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white text-pink-800 text-xs font-black uppercase tracking-wider border-2 border-pink-200">
+          <Sparkles size={14} className="text-amber-500" /> Character studio
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-          Create Your Learning Companion
+        <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+          Make your Buddy
         </h1>
-        <p className="text-white/60 text-xs sm:text-sm max-w-xl mx-auto">
-          Design your custom buddy! Choose your favorite creature, customize its colors, hats, and eyewear. Your buddy accompanies you on all quizzes and journeys!
+        <p className="text-slate-700 text-sm sm:text-base max-w-xl mx-auto font-semibold">
+          Dress your friend. Tap a hat, a color, a name. Buddy comes with you on every land.
         </p>
 
         {/* Step Tabs Bar */}
-        <div className="flex items-center justify-center gap-2 pt-4">
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-4">
           <button
             onClick={() => setActiveStep(1)}
-            className={`px-4 py-2 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer border-b-4 ${
+            className={`min-h-12 px-4 py-2 rounded-2xl font-black text-xs sm:text-sm cursor-pointer border-b-4 ${
               activeStep === 1
                 ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white border-pink-700 scale-105 shadow-lg shadow-pink-500/30"
-                : "bg-white/5 border-white/10 text-white/50 hover:text-white"
+                : "bg-white border-pink-200 text-slate-600"
             }`}
           >
             1. Character Type
           </button>
           <button
             onClick={() => setActiveStep(2)}
-            className={`px-4 py-2 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer border-b-4 ${
+            className={`min-h-12 px-4 py-2 rounded-2xl font-black text-xs sm:text-sm cursor-pointer border-b-4 ${
               activeStep === 2
                 ? "bg-gradient-to-r from-sky-500 to-blue-500 text-white border-blue-700 scale-105 shadow-lg shadow-blue-500/30"
-                : "bg-white/5 border-white/10 text-white/50 hover:text-white"
+                : "bg-white border-sky-200 text-slate-600"
             }`}
           >
             2. Colors &amp; Eyes
           </button>
           <button
             onClick={() => setActiveStep(3)}
-            className={`px-4 py-2 rounded-2xl font-black text-xs sm:text-sm transition-all cursor-pointer border-b-4 ${
+            className={`min-h-12 px-4 py-2 rounded-2xl font-black text-xs sm:text-sm cursor-pointer border-b-4 ${
               activeStep === 3
                 ? "bg-gradient-to-r from-lime-500 to-emerald-500 text-white border-emerald-700 scale-105 shadow-lg shadow-emerald-500/30"
-                : "bg-white/5 border-white/10 text-white/50 hover:text-white"
+                : "bg-white border-lime-200 text-slate-600"
             }`}
           >
             3. Hats &amp; Gear
@@ -223,7 +229,7 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
       <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* LEFT COLUMN: LIVE COMPANION PREVIEW CARD (Agency 3D Pedestal) */}
         <div className="lg:col-span-5 flex flex-col items-center">
-          <div className="w-full relative p-6 sm:p-8 rounded-3xl bg-gradient-to-b from-sky-500/10 via-white/[0.04] to-purple-500/10 border-2 border-white/20 shadow-2xl overflow-hidden text-center">
+          <div className="w-full relative p-6 sm:p-8 rounded-3xl bg-white border-4 border-pink-200 shadow-xl overflow-hidden text-center">
             {/* Background Ray Glow */}
             <div className="absolute inset-0 bg-gradient-radial from-white/10 to-transparent pointer-events-none" />
 
@@ -254,30 +260,68 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
 
             {/* Mascot Name & Archetype Tag */}
             <div className="mt-4 space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-white font-black text-xs uppercase tracking-wider">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-100 text-pink-900 font-black text-xs uppercase tracking-wider">
                 <span>{ARCHETYPES.find((a) => a.id === buddy.archetype)?.icon}</span>
                 <span>{ARCHETYPES.find((a) => a.id === buddy.archetype)?.label}</span>
               </div>
-              <h2 className="text-2xl font-black text-white">{buddy.name}</h2>
+              <h2 className="text-2xl font-black text-slate-900">{buddy.name}</h2>
             </div>
 
             {/* Voice & Randomize Action Bar */}
             <div className="mt-6 flex items-center justify-center gap-2">
               <button
                 onClick={handleHearVoice}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                className="flex items-center gap-1.5 min-h-12 px-4 py-2 rounded-2xl bg-white text-slate-800 font-bold text-xs border-b-4 border-sky-300 cursor-pointer"
               >
-                <Volume2 size={16} className="text-cyan-300" />
+                <Volume2 size={16} className="text-sky-600" />
                 <span>Hear Voice</span>
               </button>
 
               <button
                 onClick={handleRandomize}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95"
+                className="flex items-center gap-1.5 min-h-12 px-4 py-2 rounded-2xl bg-white text-slate-800 font-bold text-xs border-b-4 border-amber-300 cursor-pointer"
               >
                 <RefreshCw size={14} className="text-amber-300" />
                 <span>Surprise Me!</span>
               </button>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-2">
+              {[
+                { id: "porch", emoji: "🏡", need: 3, verb: "Sway", line: `I'm ${buddy.name} on the porch. The swing creaks.` },
+                { id: "bakery", emoji: "🔔", need: 1, verb: "Ding", line: `Bakery bell. Flour like quiet snow.` },
+                { id: "ferry", emoji: "⛴️", need: 1, verb: "Horn", line: `A low horn. Ready, not angry.` },
+                { id: "line", emoji: "👕", need: 4, verb: "Peg", line: `Hang the wash. The wind can work.` },
+                { id: "fountain", emoji: "⛲", need: 3, verb: "Look", line: `Looking is the wish. We do not throw.` },
+                { id: "bed", emoji: "🌙", need: 1, verb: "Tuck", line: `The bed is a dock. Goodnight squares.` },
+              ].map((room) => {
+                const count = walkCounts[room.id] ?? 0;
+                const done = count >= room.need;
+                return (
+                  <button
+                    key={room.id}
+                    type="button"
+                    onClick={() => {
+                      const next = Math.min(room.need, count + 1);
+                      setWalkCounts((prev) => ({ ...prev, [room.id]: next }));
+                      setSpeechBubble(room.line);
+                      speakText(next >= room.need ? room.line : room.verb, {
+                        pitch: buddy.archetype === "robot" ? 1.0 : buddy.archetype === "forest-bunny" ? 1.4 : 1.25,
+                        rate: 0.92,
+                      });
+                      soundEffects.playPop();
+                    }}
+                    className={`min-h-20 rounded-2xl border-4 px-3 py-3 text-left font-bold text-xs ${
+                      done ? "bg-emerald-100 border-emerald-400 text-emerald-950" : "bg-pink-50 border-pink-200 text-slate-800"
+                    }`}
+                  >
+                    <span className="text-2xl">{room.emoji}</span>
+                    <p className="mt-1">
+                      {room.verb} {count}/{room.need}
+                    </p>
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -286,12 +330,12 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
         <div className="lg:col-span-7 space-y-6">
           {/* STEP 1: ARCHETYPE & NAME */}
           {activeStep === 1 && (
-            <div className="p-6 rounded-3xl bg-white/[0.04] border border-white/10 space-y-6">
+            <div className="p-6 rounded-3xl bg-white border-4 border-pink-100 space-y-6">
               <div>
-                <h3 className="text-lg font-black text-white flex items-center gap-2">
+                <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
                   <span>1️⃣</span> Choose Your Character Species
                 </h3>
-                <p className="text-white/60 text-xs mt-1">
+                <p className="text-slate-600 text-sm mt-1 font-semibold">
                   Pick the creature body archetype for your companion buddy.
                 </p>
               </div>
@@ -308,19 +352,19 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
                         soundEffects.playPop();
                         setBuddy({ ...buddy, archetype: arch.id });
                       }}
-                      className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-center gap-3.5 ${
+                      className={`p-4 rounded-2xl border-4 transition-all cursor-pointer flex items-center gap-3.5 min-h-20 ${
                         isSelected
-                          ? "bg-pink-500/15 border-pink-400 ring-2 ring-pink-400/30"
-                          : "bg-white/5 border-white/10 hover:bg-white/10"
+                          ? "bg-pink-100 border-pink-500 ring-2 ring-pink-300"
+                          : "bg-pink-50/60 border-pink-100 hover:bg-white"
                       }`}
                     >
                       <div className="text-3xl">{arch.icon}</div>
                       <div>
-                        <div className="text-sm font-black text-white flex items-center gap-1.5">
+                        <div className="text-sm font-black text-slate-900 flex items-center gap-1.5">
                           <span>{arch.label}</span>
-                          {isSelected && <Check size={14} className="text-pink-400" />}
+                          {isSelected && <Check size={14} className="text-pink-600" />}
                         </div>
-                        <div className="text-[11px] text-white/60 line-clamp-1">{arch.desc}</div>
+                        <div className="text-[11px] text-slate-600 line-clamp-1">{arch.desc}</div>
                       </div>
                     </motion.div>
                   );
@@ -328,14 +372,14 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
               </div>
 
               {/* Name Picker */}
-              <div className="space-y-2 pt-2 border-t border-white/10">
-                <label className="text-xs font-black text-white/80">Companion's Name</label>
-                <div className="flex items-center gap-2">
+              <div className="space-y-2 pt-2 border-t border-pink-100">
+                <label className="text-xs font-black text-slate-700">Companion's Name</label>
+                <div className="flex flex-wrap items-center gap-2">
                   <input
                     type="text"
                     value={buddy.name}
                     onChange={(e) => setBuddy({ ...buddy, name: e.target.value })}
-                    className="flex-1 px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white font-bold text-sm focus:outline-none focus:border-pink-400"
+                    className="flex-1 min-h-12 px-4 py-2.5 rounded-xl bg-white border-2 border-pink-200 text-slate-900 font-bold text-sm focus:outline-none focus:border-pink-400"
                     placeholder="Enter buddy name..."
                     maxLength={14}
                   />
@@ -344,7 +388,7 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
                       <button
                         key={name}
                         onClick={() => setBuddy({ ...buddy, name })}
-                        className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/15 text-[11px] font-bold text-white/80 cursor-pointer"
+                        className="min-h-10 px-2.5 py-1 rounded-lg bg-white border border-pink-200 text-[11px] font-bold text-slate-700 cursor-pointer"
                       >
                         {name}
                       </button>
@@ -370,19 +414,19 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
 
           {/* STEP 2: COLORS & EYE STYLES */}
           {activeStep === 2 && (
-            <div className="p-6 rounded-3xl bg-white/[0.04] border border-white/10 space-y-6">
+            <div className="p-6 rounded-3xl bg-white border-4 border-sky-100 space-y-6">
               <div>
-                <h3 className="text-lg font-black text-white flex items-center gap-2">
+                <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
                   <span>2️⃣</span> Colors &amp; Expressions
                 </h3>
-                <p className="text-white/60 text-xs mt-1">
+                <p className="text-slate-600 text-sm mt-1 font-semibold">
                   Pick the body color palette and emotional eye style.
                 </p>
               </div>
 
               {/* Color Swatches */}
               <div className="space-y-2">
-                <label className="text-xs font-black text-white/80 flex items-center gap-1.5">
+                <label className="text-xs font-black text-slate-700 flex items-center gap-1.5">
                   <Palette size={14} /> Body Color
                 </label>
                 <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
@@ -395,14 +439,14 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
                           soundEffects.playPop();
                           setBuddy({ ...buddy, color: col.id });
                         }}
-                        className={`p-3 rounded-2xl flex flex-col items-center gap-2 border-2 transition-all cursor-pointer ${
+                        className={`p-3 rounded-2xl flex flex-col items-center gap-2 border-4 min-h-20 transition-all cursor-pointer ${
                           isSelected
-                            ? "border-white ring-2 ring-white/40 bg-white/10 scale-105"
-                            : "border-transparent bg-white/5 hover:bg-white/10"
+                            ? "border-sky-500 ring-2 ring-sky-200 bg-sky-50 scale-105"
+                            : "border-slate-100 bg-white hover:bg-sky-50"
                         }`}
                       >
                         <div className={`w-8 h-8 rounded-full ${col.bgClass} shadow-md`} />
-                        <span className="text-[10px] font-bold text-white/80 text-center leading-tight">
+                        <span className="text-[10px] font-bold text-slate-700 text-center leading-tight">
                           {col.label}
                         </span>
                       </button>
@@ -412,8 +456,8 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
               </div>
 
               {/* Eye Styles */}
-              <div className="space-y-2 pt-2 border-t border-white/10">
-                <label className="text-xs font-black text-white/80 flex items-center gap-1.5">
+              <div className="space-y-2 pt-2 border-t border-sky-100">
+                <label className="text-xs font-black text-slate-700 flex items-center gap-1.5">
                   <Smile size={14} /> Eyes &amp; Expression
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -426,14 +470,14 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
                           soundEffects.playPop();
                           setBuddy({ ...buddy, eyeStyle: eye.id });
                         }}
-                        className={`p-3 rounded-2xl flex items-center gap-2.5 border-2 transition-all cursor-pointer text-left ${
+                        className={`p-3 rounded-2xl flex items-center gap-2.5 border-4 min-h-14 transition-all cursor-pointer text-left ${
                           isSelected
-                            ? "bg-sky-500/15 border-sky-400 ring-2 ring-sky-400/30"
-                            : "bg-white/5 border-white/10 hover:bg-white/10"
+                            ? "bg-sky-100 border-sky-500 ring-2 ring-sky-200"
+                            : "bg-white border-sky-100 hover:bg-sky-50"
                         }`}
                       >
                         <span className="text-xl">{eye.icon}</span>
-                        <span className="text-xs font-black text-white">{eye.label}</span>
+                        <span className="text-xs font-black text-slate-900">{eye.label}</span>
                       </button>
                     );
                   })}
@@ -443,7 +487,7 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
               <div className="flex justify-between pt-2">
                 <button
                   onClick={() => setActiveStep(1)}
-                  className="px-4 py-2.5 rounded-2xl bg-white/10 text-white font-bold text-xs cursor-pointer"
+                  className="min-h-12 px-4 py-2.5 rounded-2xl bg-white text-slate-800 font-bold text-xs cursor-pointer border-b-4 border-slate-300"
                 >
                   Back
                 </button>
@@ -463,19 +507,19 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
 
           {/* STEP 3: HATS & ACCESSORIES */}
           {activeStep === 3 && (
-            <div className="p-6 rounded-3xl bg-white/[0.04] border border-white/10 space-y-6">
+            <div className="p-6 rounded-3xl bg-white border-4 border-lime-100 space-y-6">
               <div>
-                <h3 className="text-lg font-black text-white flex items-center gap-2">
+                <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
                   <span>3️⃣</span> Headwear &amp; Hero Gear
                 </h3>
-                <p className="text-white/60 text-xs mt-1">
+                <p className="text-slate-600 text-sm mt-1 font-semibold">
                   Equip cool camp explorer hats, crowns, capes, or medals!
                 </p>
               </div>
 
               {/* Hats */}
               <div className="space-y-2">
-                <label className="text-xs font-black text-white/80">Hats &amp; Headgear</label>
+                <label className="text-xs font-black text-slate-700">Hats &amp; Headgear</label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   {HATS.map((hat) => {
                     const isSelected = buddy.hat === hat.id;
@@ -486,14 +530,14 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
                           soundEffects.playPop();
                           setBuddy({ ...buddy, hat: hat.id });
                         }}
-                        className={`p-3 rounded-2xl flex items-center gap-2.5 border-2 transition-all cursor-pointer text-left ${
+                        className={`p-3 rounded-2xl flex items-center gap-2.5 border-4 min-h-14 transition-all cursor-pointer text-left ${
                           isSelected
-                            ? "bg-lime-500/15 border-lime-400 ring-2 ring-lime-400/30"
-                            : "bg-white/5 border-white/10 hover:bg-white/10"
+                            ? "bg-lime-100 border-lime-500 ring-2 ring-lime-200"
+                            : "bg-white border-lime-100 hover:bg-lime-50"
                         }`}
                       >
                         <span className="text-xl">{hat.icon}</span>
-                        <span className="text-xs font-black text-white">{hat.label}</span>
+                        <span className="text-xs font-black text-slate-900">{hat.label}</span>
                       </button>
                     );
                   })}
@@ -502,7 +546,7 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
 
               {/* Accessories */}
               <div className="space-y-2 pt-2 border-t border-white/10">
-                <label className="text-xs font-black text-white/80">Chest &amp; Back Accessories</label>
+                <label className="text-xs font-black text-slate-700">Chest &amp; Back Accessories</label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                   {ACCESSORIES.map((acc) => {
                     const isSelected = buddy.accessory === acc.id;
@@ -513,14 +557,14 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
                           soundEffects.playPop();
                           setBuddy({ ...buddy, accessory: acc.id });
                         }}
-                        className={`p-3 rounded-2xl flex items-center gap-2.5 border-2 transition-all cursor-pointer text-left ${
+                        className={`p-3 rounded-2xl flex items-center gap-2.5 border-4 min-h-14 transition-all cursor-pointer text-left ${
                           isSelected
-                            ? "bg-purple-500/15 border-purple-400 ring-2 ring-purple-400/30"
-                            : "bg-white/5 border-white/10 hover:bg-white/10"
+                            ? "bg-purple-100 border-purple-500 ring-2 ring-purple-200"
+                            : "bg-white border-purple-100 hover:bg-purple-50"
                         }`}
                       >
                         <span className="text-xl">{acc.icon}</span>
-                        <span className="text-xs font-black text-white">{acc.label}</span>
+                        <span className="text-xs font-black text-slate-900">{acc.label}</span>
                       </button>
                     );
                   })}
@@ -530,7 +574,7 @@ export function BuddyAvatarStudio({ onDone, onBack }: BuddyAvatarStudioProps) {
               <div className="flex justify-between pt-2">
                 <button
                   onClick={() => setActiveStep(2)}
-                  className="px-4 py-2.5 rounded-2xl bg-white/10 text-white font-bold text-xs cursor-pointer"
+                  className="min-h-12 px-4 py-2.5 rounded-2xl bg-white text-slate-800 font-bold text-xs cursor-pointer border-b-4 border-slate-300"
                 >
                   Back
                 </button>

@@ -173,7 +173,7 @@ const ODYSSEY_NODES: OdysseyNode[] = [
     subtitle: "Explore 8 planets, weight on other worlds, and space physics",
     stage: "primary",
     targetTab: "primary-lab",
-    emoji: "🪐",
+    emoji: "🌍",
     starsRequired: 28,
     xpReward: 75,
     colorClass: "from-violet-600 to-fuchsia-500",

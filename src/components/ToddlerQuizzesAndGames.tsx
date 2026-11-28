@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  Sparkles,
   Volume2,
   VolumeX,
   Star,
@@ -13,6 +12,7 @@ import {
   ArrowRight,
   PartyPopper,
   Shapes,
+  ChevronLeft,
 } from "lucide-react";
 import {
   speakText,
@@ -23,6 +23,7 @@ import {
 } from "../utils/speechUtils";
 import { soundEffects } from "../utils/soundEffects";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
+import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
 import { ToddlerMemoryGame } from "./ToddlerMemoryGame";
 import { ToddlerBubblePopGame } from "./ToddlerBubblePopGame";
 import { ToddlerRhymeGame } from "./ToddlerRhymeGame";
@@ -32,6 +33,11 @@ import { ToddlerAnimalSafari } from "./ToddlerAnimalSafari";
 import { ToddlerBalloonSky } from "./ToddlerBalloonSky";
 import { ToddlerK1Studio } from "./ToddlerK1Studio";
 import { K1_STUDIO_GAMES, K1_STUDIO_GAME_IDS, type K1StudioGameId } from "../data/toddler/k1StudioGames";
+import {
+  TODDLER_ARCADE_GAMES,
+  K1_STUDIO_ART,
+  studioAccent,
+} from "../data/toddler/toddlerArcadeCatalog";
 import type { BubblePopBlueprint } from "../contentEngine/types";
 
 interface ToddlerQuizzesAndGamesProps {
@@ -39,8 +45,11 @@ interface ToddlerQuizzesAndGamesProps {
   onAddStar: (amount?: number) => void;
   onBackToBooks?: () => void;
   targetActivity?: string;
+  onActivityChange?: (id: string | null) => void;
   initialBlueprint?: BubblePopBlueprint;
   initialBlueprintLearnerId?: string;
+  isMeadow?: boolean;
+  hideChrome?: boolean;
 }
 
 type ToddlerActivity =
@@ -87,17 +96,21 @@ const BONUS_EXPLORER_QUESTIONS: QuizQuestion[] = [
   { id: "q16", prompt: "Which tiny helper makes sweet honey?", spokenPrompt: "Which little buzzing friend visits flowers and helps make honey?", correctId: "bee", soundCue: "Bzzzz!", options: [{ id: "bee", label: "Busy Bee", emoji: "🐝", soundText: "Buzz buzz! I love flowers!" }, { id: "frog", label: "Frog", emoji: "🐸", soundText: "Ribbit ribbit!" }, { id: "duck", label: "Duck", emoji: "🦆", soundText: "Quack quack!" }, { id: "cat", label: "Kitten", emoji: "🐱", soundText: "Meow!" }] },
   { id: "q17", prompt: "Which animal lives in a cold, icy place and waddles?", spokenPrompt: "Who wears a black and white coat and waddles across the chilly ice?", correctId: "penguin", soundCue: "Waddle waddle!", options: [{ id: "penguin", label: "Penguin", emoji: "🐧", soundText: "Waddle, slide, splash!" }, { id: "camel", label: "Camel", emoji: "🐫", soundText: "I walk in the warm desert!" }, { id: "monkey", label: "Monkey", emoji: "🐵", soundText: "Ooh ooh aah aah!" }, { id: "cow", label: "Cow", emoji: "🐮", soundText: "Moo!" }] },
   { id: "q18", prompt: "What do plants need from the sky to help them grow?", spokenPrompt: "Plants drink rain and reach toward the warm sunshine. What shines in the daytime sky?", correctId: "sun", soundCue: "Shine bright!", options: [{ id: "sun", label: "Sunny Sun", emoji: "☀️", soundText: "Warm sunshine helps plants grow!" }, { id: "moon", label: "Moon", emoji: "🌙", soundText: "The moon glows at night!" }, { id: "snow", label: "Snowflake", emoji: "❄️", soundText: "Snow is cold and fluffy!" }, { id: "star", label: "Star", emoji: "⭐", soundText: "Stars twinkle at night!" }] },
-  { id: "q19", prompt: "Which shape has three straight sides?", spokenPrompt: "Let's count the sides together. One, two, three. Which shape has three sides?", correctId: "triangle", soundCue: "One, two, three!", options: [{ id: "triangle", label: "Triangle", emoji: "🔺", soundText: "Three sides make a triangle!" }, { id: "circle", label: "Circle", emoji: "🟠", soundText: "A circle is round!" }, { id: "square", label: "Square", emoji: "🟩", soundText: "A square has four sides!" }, { id: "star", label: "Star", emoji: "⭐", soundText: "A star has pointy tips!" }] },
+  { id: "q19", prompt: "Which shape has three straight sides?", spokenPrompt: "Let's count the sides together. One, two, three. Which shape has three sides?", correctId: "triangle", soundCue: "One, two, three!", options: [{ id: "triangle", label: "Triangle", emoji: "🔺", soundText: "Three sides make a triangle!" }, { id: "circle", label: "Circle", emoji: "🔵", soundText: "A circle is round!" }, { id: "square", label: "Square", emoji: "📦", soundText: "A square has four sides!" }, { id: "star", label: "Star", emoji: "⭐", soundText: "A star has pointy tips!" }] },
   { id: "q20", prompt: "Which one is the number three?", spokenPrompt: "Listen carefully. Which number comes after two: one, two, three?", correctId: "three", soundCue: "1, 2, 3!", options: [{ id: "one", label: "One", emoji: "1️⃣", soundText: "One little sun!" }, { id: "three", label: "Three", emoji: "3️⃣", soundText: "One, two, three!" }, { id: "five", label: "Five", emoji: "5️⃣", soundText: "Five little stars!" }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "One, two!" }] },
   { id: "q21", prompt: "Which fruit is yellow and monkeys love to eat?", spokenPrompt: "Peel it, take a bite, and say yum! Which yellow fruit do monkeys love?", correctId: "banana", soundCue: "Yummy banana!", options: [{ id: "banana", label: "Banana", emoji: "🍌", soundText: "A tasty yellow banana!" }, { id: "apple", label: "Apple", emoji: "🍎", soundText: "Crunchy red apple!" }, { id: "grapes", label: "Grapes", emoji: "🍇", soundText: "Juicy grapes!" }, { id: "lemon", label: "Lemon", emoji: "🍋", soundText: "A sour yellow lemon!" }] },
   { id: "q22", prompt: "What should you do before crossing a road?", spokenPrompt: "We keep safe near roads. Before crossing with a grown-up, what should we do?", correctId: "stop", soundCue: "Stop, look, listen!", options: [{ id: "stop", label: "Stop and Look", emoji: "🛑", soundText: "Hold a grown-up's hand and look both ways!" }, { id: "run", label: "Run fast", emoji: "🏃", soundText: "Let's stay safe and walk with a grown-up!" }, { id: "play", label: "Play ball", emoji: "⚽", soundText: "Roads are not a place to play!" }, { id: "hide", label: "Hide", emoji: "🙈", soundText: "We need to see and listen carefully!" }] },
   { id: "q23", prompt: "Which animal is the tallest and has a very long neck?", spokenPrompt: "Who reaches the highest leaves with a long spotted neck?", correctId: "giraffe", soundCue: "Reach up high!", options: [{ id: "giraffe", label: "Giraffe", emoji: "🦒", soundText: "I reach the tallest leaves!" }, { id: "zebra", label: "Zebra", emoji: "🦓", soundText: "I have black and white stripes!" }, { id: "lion", label: "Lion", emoji: "🦁", soundText: "Roaaar!" }, { id: "hippo", label: "Hippo", emoji: "🦛", soundText: "Splash!" }] },
   { id: "q24", prompt: "Which weather means we might need an umbrella?", spokenPrompt: "Drip drop! What falls from clouds and makes puddles?", correctId: "rain", soundCue: "Drip drop!", options: [{ id: "rain", label: "Rain", emoji: "🌧️", soundText: "Take an umbrella in the rain!" }, { id: "sun", label: "Sunshine", emoji: "☀️", soundText: "Bright sunny day!" }, { id: "wind", label: "Wind", emoji: "💨", soundText: "Whoosh goes the wind!" }, { id: "rainbow", label: "Rainbow", emoji: "🌈", soundText: "A rainbow can appear after rain!" }] },
   { id: "q25", prompt: "Which one belongs in the ocean?", spokenPrompt: "Splash into the blue ocean. Which friendly creature swims in the sea?", correctId: "dolphin", soundCue: "Splash!", options: [{ id: "dolphin", label: "Dolphin", emoji: "🐬", soundText: "I swim and leap in the ocean!" }, { id: "chicken", label: "Chicken", emoji: "🐔", soundText: "Cluck cluck on the farm!" }, { id: "camel", label: "Camel", emoji: "🐫", soundText: "I walk in the desert!" }, { id: "sheep", label: "Sheep", emoji: "🐑", soundText: "Baa baa in the meadow!" }] },
-  { id: "q26", prompt: "What comes next: red, blue, red, blue...?", spokenPrompt: "Let's spot the repeating colors. Red, blue, red, blue. What comes next?", correctId: "red", soundCue: "Red, blue, red, blue!", options: [{ id: "red", label: "Red", emoji: "🔴", soundText: "The pattern starts again with red!" }, { id: "blue", label: "Blue", emoji: "🔵", soundText: "Blue was just before. What starts again?" }, { id: "green", label: "Green", emoji: "🟢", soundText: "Green is a lovely color, but not in this pattern!" }, { id: "yellow", label: "Yellow", emoji: "🟡", soundText: "Look at the repeating colors again!" }] },
+  { id: "q26", prompt: "What comes next: red, blue, red, blue...?", spokenPrompt: "Let's spot the repeating colors. Red, blue, red, blue. What comes next?", correctId: "red", soundCue: "Red, blue, red, blue!", options: [{ id: "red", label: "Red", emoji: "🔴", soundText: "The pattern starts again with red!" }, { id: "blue", label: "Blue", emoji: "🔵", soundText: "Blue was just before. What starts again?" }, { id: "green", label: "Green", emoji: "💚", soundText: "Green is a lovely color, but not in this pattern!" }, { id: "yellow", label: "Yellow", emoji: "💛", soundText: "Look at the repeating colors again!" }] },
   { id: "q27", prompt: "Which one is the number six?", spokenPrompt: "After five comes six. Which number is six?", correctId: "six", soundCue: "Six!", options: [{ id: "four", label: "Four", emoji: "4️⃣", soundText: "Four!" }, { id: "six", label: "Six", emoji: "6️⃣", soundText: "Six little bees!" }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "Two!" }, { id: "nine", label: "Nine", emoji: "9️⃣", soundText: "Nine!" }] },
   { id: "q28", prompt: "Which one is the number eight?", spokenPrompt: "Count up: six, seven, eight. Which number is eight?", correctId: "eight", soundCue: "Eight!", options: [{ id: "three", label: "Three", emoji: "3️⃣", soundText: "Three!" }, { id: "five", label: "Five", emoji: "5️⃣", soundText: "Five!" }, { id: "eight", label: "Eight", emoji: "8️⃣", soundText: "Eight apples!" }, { id: "one", label: "One", emoji: "1️⃣", soundText: "One!" }] },
   { id: "q29", prompt: "Which one is the number ten?", spokenPrompt: "A full ten-frame. Which number is ten?", correctId: "ten", soundCue: "Ten!", options: [{ id: "seven", label: "Seven", emoji: "7️⃣", soundText: "Seven!" }, { id: "ten", label: "Ten", emoji: "🔟", soundText: "Ten stars!" }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "Two!" }, { id: "four", label: "Four", emoji: "4️⃣", soundText: "Four!" }] },
+  { id: "q30", prompt: "What letter comes after A, B, C?", spokenPrompt: "A, B, C. What letter comes next?", correctId: "d", soundCue: "D!", options: [{ id: "d", label: "D", emoji: "🇩", soundText: "D comes after C!" }, { id: "m", label: "M", emoji: "🇲", soundText: "M is later in the alphabet." }, { id: "s", label: "S", emoji: "🇸", soundText: "Listen again: A, B, C." }, { id: "z", label: "Z", emoji: "🇿", soundText: "Z is at the end." }] },
+  { id: "q31", prompt: "What letter comes after L, M, N?", spokenPrompt: "L, M, N. What letter comes next?", correctId: "o", soundCue: "O!", options: [{ id: "o", label: "O", emoji: "🇴", soundText: "O comes after N!" }, { id: "a", label: "A", emoji: "🇦", soundText: "A is at the start." }, { id: "t", label: "T", emoji: "🇹", soundText: "Listen again: L, M, N." }, { id: "k", label: "K", emoji: "🇰", soundText: "K comes before L." }] },
+  { id: "q32", prompt: "Fox starts with which letter?", spokenPrompt: "Fox. Fff. Which letter starts fox?", correctId: "f", soundCue: "F!", options: [{ id: "f", label: "F", emoji: "🦊", soundText: "F says fff, fox!" }, { id: "s", label: "S", emoji: "☀️", soundText: "S is for sun." }, { id: "b", label: "B", emoji: "🚌", soundText: "B is for bus." }, { id: "m", label: "M", emoji: "🐵", soundText: "M is for monkey." }] },
+  { id: "q33", prompt: "What number comes after nine?", spokenPrompt: "Nine. What number comes next?", correctId: "ten", soundCue: "Ten!", options: [{ id: "ten", label: "Ten", emoji: "🔟", soundText: "After nine comes ten!" }, { id: "eight", label: "Eight", emoji: "8️⃣", soundText: "Eight comes before nine." }, { id: "two", label: "Two", emoji: "2️⃣", soundText: "Count up: eight, nine…" }, { id: "five", label: "Five", emoji: "5️⃣", soundText: "Keep counting." }] },
 ];
 
 const ANIMAL_QUIZ_QUESTIONS: QuizQuestion[] = [
@@ -234,7 +247,7 @@ const ANIMAL_QUIZ_QUESTIONS: QuizQuestion[] = [
   {
     id: "q11",
     prompt: "Who wakes up the sunny farm with 'Cock-a-doodle-doo'?",
-    spokenPrompt: "Who perches on the fence and crows cock-a-doodle-doo when morning arrives?",
+    spokenPrompt: "Who perches on the fence and crows like a rooster when morning arrives?",
     soundCue: "Cock a doodle doo!",
     correctId: "rooster",
     options: [
@@ -299,6 +312,28 @@ interface ShapeQuestion {
   }[];
 }
 
+function ShapeGlyph({ option }: { option: ShapeQuestion["options"][number] }) {
+  if (option.id === "square" || option.id === "circle" || option.id === "triangle") {
+    const clip =
+      option.id === "circle"
+        ? "circle(50% at 50% 50%)"
+        : option.id === "triangle"
+        ? "polygon(50% 8%, 4% 92%, 96% 92%)"
+        : undefined;
+    return (
+      <span
+        aria-hidden
+        data-testid={`shape-glyph-${option.id}`}
+        className={`inline-block h-14 w-14 sm:h-16 sm:w-16 mb-2 bg-gradient-to-br ${option.color} ${
+          option.id === "square" ? "rounded-sm border-2 border-white/80" : ""
+        }`}
+        style={clip ? { clipPath: clip } : undefined}
+      />
+    );
+  }
+  return <span className="text-6xl sm:text-7xl mb-2 filter drop-shadow-md">{option.emoji}</span>;
+}
+
 const SHAPE_QUESTIONS: ShapeQuestion[] = [
   {
     id: "s1",
@@ -308,7 +343,7 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
     options: [
       { id: "circle", label: "Blue Circle", emoji: "🔵", color: "from-blue-500 to-cyan-400" },
       { id: "star", label: "Golden Star", emoji: "⭐", color: "from-amber-400 to-yellow-300" },
-      { id: "square", label: "Green Square", emoji: "🟩", color: "from-emerald-500 to-teal-400" },
+      { id: "square", label: "Green Square", emoji: "📗", color: "from-emerald-500 to-teal-400" },
       { id: "heart", label: "Pink Heart", emoji: "💖", color: "from-pink-500 to-rose-400" },
     ],
   },
@@ -331,7 +366,7 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
     correctId: "circle",
     options: [
       { id: "triangle", label: "Orange Triangle", emoji: "🔺", color: "from-orange-500 to-amber-400" },
-      { id: "square", label: "Green Square", emoji: "🟩", color: "from-emerald-500 to-teal-400" },
+      { id: "square", label: "Green Square", emoji: "📗", color: "from-emerald-500 to-teal-400" },
       { id: "star", label: "Golden Star", emoji: "⭐", color: "from-amber-400 to-yellow-300" },
       { id: "circle", label: "Blue Circle", emoji: "🔵", color: "from-blue-500 to-cyan-400" },
     ],
@@ -354,9 +389,9 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
     spokenPrompt: "Can you find the green square? It has four equal straight sides!",
     correctId: "square",
     options: [
-      { id: "circle", label: "Orange Circle", emoji: "🟠", color: "from-orange-500 to-amber-400" },
+      { id: "circle", label: "Orange Circle", emoji: "🔶", color: "from-orange-500 to-amber-400" },
       { id: "triangle", label: "Yellow Triangle", emoji: "🔺", color: "from-amber-400 to-yellow-300" },
-      { id: "square", label: "Green Square", emoji: "🟩", color: "from-emerald-500 to-teal-400" },
+      { id: "square", label: "Green Square", emoji: "📗", color: "from-emerald-500 to-teal-400" },
       { id: "star", label: "Star", emoji: "⭐", color: "from-amber-400 to-yellow-300" },
     ],
   },
@@ -369,7 +404,7 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
       { id: "triangle", label: "Orange Triangle", emoji: "🔺", color: "from-orange-500 to-amber-400" },
       { id: "circle", label: "Blue Circle", emoji: "🔵", color: "from-blue-500 to-cyan-400" },
       { id: "heart", label: "Pink Heart", emoji: "💖", color: "from-pink-500 to-rose-400" },
-      { id: "square", label: "Purple Square", emoji: "🟪", color: "from-purple-500 to-indigo-400" },
+      { id: "square", label: "Purple Square", emoji: "💜", color: "from-purple-500 to-indigo-400" },
     ],
   },
   {
@@ -405,7 +440,7 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
       { id: "rainbow", label: "Rainbow Arc", emoji: "🌈", color: "from-pink-400 to-amber-300" },
       { id: "cloud", label: "Raincloud", emoji: "🌧️", color: "from-slate-400 to-blue-300" },
       { id: "circle", label: "Blue Circle", emoji: "🔵", color: "from-blue-500 to-cyan-400" },
-      { id: "square", label: "Green Square", emoji: "🟩", color: "from-emerald-500 to-teal-400" },
+      { id: "square", label: "Green Square", emoji: "📗", color: "from-emerald-500 to-teal-400" },
     ],
   },
   {
@@ -427,8 +462,8 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
     correctId: "bell",
     options: [
       { id: "bell", label: "Golden Bell", emoji: "🔔", color: "from-amber-400 to-yellow-300" },
-      { id: "square", label: "Blue Square", emoji: "🟦", color: "from-blue-500 to-indigo-400" },
-      { id: "circle", label: "Green Circle", emoji: "🟢", color: "from-emerald-500 to-teal-400" },
+      { id: "square", label: "Blue Square", emoji: "📘", color: "from-blue-500 to-indigo-400" },
+      { id: "circle", label: "Green Circle", emoji: "💚", color: "from-emerald-500 to-teal-400" },
       { id: "diamond", label: "Diamond", emoji: "💎", color: "from-purple-500 to-indigo-400" },
     ],
   },
@@ -438,10 +473,10 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
     spokenPrompt: "Where is the sweet red berry heart delicious and ripe?",
     correctId: "berry",
     options: [
-      { id: "circle", label: "Yellow Circle", emoji: "🟡", color: "from-amber-400 to-yellow-300" },
+      { id: "circle", label: "Yellow Circle", emoji: "💛", color: "from-amber-400 to-yellow-300" },
       { id: "triangle", label: "Blue Triangle", emoji: "🔺", color: "from-blue-500 to-cyan-400" },
       { id: "berry", label: "Red Berry", emoji: "🍓", color: "from-rose-500 to-red-400" },
-      { id: "square", label: "Green Square", emoji: "🟩", color: "from-emerald-500 to-teal-400" },
+      { id: "square", label: "Green Square", emoji: "📗", color: "from-emerald-500 to-teal-400" },
     ],
   },
   {
@@ -452,7 +487,7 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
     options: [
       { id: "pizza", label: "Pizza slice", emoji: "🍕", color: "from-orange-500 to-red-400" },
       { id: "plate", label: "Round plate", emoji: "🍽️", color: "from-slate-200 to-stone-400" },
-      { id: "window", label: "Window", emoji: "🪟", color: "from-sky-400 to-cyan-400" },
+      { id: "window", label: "Window", emoji: "🏠", color: "from-sky-400 to-cyan-400" },
       { id: "clock", label: "Clock", emoji: "🕐", color: "from-amber-400 to-yellow-300" },
     ],
   },
@@ -463,7 +498,7 @@ const SHAPE_QUESTIONS: ShapeQuestion[] = [
     correctId: "window",
     options: [
       { id: "ball", label: "Ball", emoji: "⚽", color: "from-slate-600 to-emerald-500" },
-      { id: "window", label: "Square window", emoji: "🪟", color: "from-sky-400 to-cyan-500" },
+      { id: "window", label: "Square window", emoji: "🏠", color: "from-sky-400 to-cyan-500" },
       { id: "slice", label: "Pizza", emoji: "🍕", color: "from-orange-500 to-red-400" },
       { id: "moon", label: "Moon", emoji: "🌙", color: "from-indigo-400 to-blue-300" },
     ],
@@ -497,14 +532,17 @@ export function ToddlerQuizzesAndGames({
   starsCount,
   onAddStar,
   targetActivity,
+  onActivityChange,
   initialBlueprint,
   initialBlueprintLearnerId,
+  isMeadow = false,
+  hideChrome = false,
 }: ToddlerQuizzesAndGamesProps) {
-  const [currentActivity, setCurrentActivity] = useState<ToddlerActivity>(() => {
+  const [currentActivity, setCurrentActivity] = useState<ToddlerActivity | null>(() => {
     if (targetActivity && TODDLER_ACTIVITY_IDS.includes(targetActivity as ToddlerActivity)) {
       return targetActivity as ToddlerActivity;
     }
-    return "animal-quiz";
+    return null;
   });
   const [generatedBubbleBlueprint, setGeneratedBubbleBlueprint] = useState<BubblePopBlueprint | null>(() => initialBlueprint ?? null);
   const [generatedBubbleLearnerId, setGeneratedBubbleLearnerId] = useState<string | null>(() => initialBlueprintLearnerId ?? null);
@@ -541,6 +579,8 @@ export function ToddlerQuizzesAndGames({
   useEffect(() => {
     if (targetActivity && TODDLER_ACTIVITY_IDS.includes(targetActivity as ToddlerActivity)) {
       setCurrentActivity(targetActivity as ToddlerActivity);
+    } else if (!targetActivity) {
+      setCurrentActivity(null);
     }
   }, [targetActivity]);
 
@@ -579,6 +619,9 @@ export function ToddlerQuizzesAndGames({
   // Timers refs to ensure seamless synchronization and eliminate any overlap
   const advanceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const promptTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const bubbleRefillRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const bubbleIdRef = useRef(0);
+  const bunnyAdvanceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const currentQuiz = questionDeck[questionIndex];
   const currentShape = SHAPE_QUESTIONS[shapeIndex];
@@ -613,6 +656,14 @@ export function ToddlerQuizzesAndGames({
       clearTimeout(promptTimerRef.current);
       promptTimerRef.current = null;
     }
+    if (bubbleRefillRef.current) {
+      clearTimeout(bubbleRefillRef.current);
+      bubbleRefillRef.current = null;
+    }
+    if (bunnyAdvanceRef.current) {
+      clearTimeout(bunnyAdvanceRef.current);
+      bunnyAdvanceRef.current = null;
+    }
 
     if (currentActivity === "bubble-pop") {
       spawnBubbles();
@@ -636,6 +687,14 @@ export function ToddlerQuizzesAndGames({
       if (promptTimerRef.current) {
         clearTimeout(promptTimerRef.current);
         promptTimerRef.current = null;
+      }
+      if (bubbleRefillRef.current) {
+        clearTimeout(bubbleRefillRef.current);
+        bubbleRefillRef.current = null;
+      }
+      if (bunnyAdvanceRef.current) {
+        clearTimeout(bunnyAdvanceRef.current);
+        bunnyAdvanceRef.current = null;
       }
     };
   }, [currentActivity]);
@@ -875,6 +934,11 @@ export function ToddlerQuizzesAndGames({
           setIsShapeCompleted(true);
           soundEffects.playFanfare();
           onAddStar(3);
+          try {
+            payDailyMissionIfMatches("games", "shape-match");
+          } catch {
+            // ignore
+          }
           setTimeout(() => {
             speakText("Hooray! You found all the beautiful shapes and colors! You are so smart!", {
               pitch: 1.25,
@@ -902,7 +966,8 @@ export function ToddlerQuizzesAndGames({
     } else {
       soundEffects.playGentleBoing();
       setWrongShapeShakeId(optionId);
-      speakText(`That's the ${chosen?.label}! Let's find ${currentShape.correctId}!`, {
+      const answerLabel = currentShape.options.find((option) => option.id === currentShape.correctId)?.label ?? "the right one";
+      speakText(`That's the ${chosen?.label}! Let's find ${answerLabel}!`, {
         pitch: 1.15,
         rate: 0.9,
       });
@@ -946,7 +1011,7 @@ export function ToddlerQuizzesAndGames({
     const newBubbles: BubbleItem[] = Array.from({ length: 8 }, (_, i) => {
       const type = types[i % types.length];
       return {
-        id: Date.now() + i,
+        id: ++bubbleIdRef.current,
         type,
         emoji: emojis[type],
         name: type,
@@ -964,7 +1029,22 @@ export function ToddlerQuizzesAndGames({
   const handlePopBubble = (bubble: BubbleItem) => {
     soundEffects.playPop();
     soundEffects.playStarSparkle();
-    setBubbles((prev) => prev.filter((b) => b.id !== bubble.id));
+    setBubbles((prev) => {
+      const next = prev.filter((b) => b.id !== bubble.id);
+      if (next.length === 0) {
+        try {
+          payDailyMissionIfMatches("games", "bubble-pop");
+        } catch {
+          // ignore
+        }
+        if (bubbleRefillRef.current) clearTimeout(bubbleRefillRef.current);
+        bubbleRefillRef.current = setTimeout(() => {
+          bubbleRefillRef.current = null;
+          spawnBubbles();
+        }, 450);
+      }
+      return next;
+    });
     setBubblesPoppedCount((prev) => prev + 1);
     onAddStar(1);
 
@@ -988,9 +1068,19 @@ export function ToddlerQuizzesAndGames({
     } else {
       soundEffects.playFanfare();
       onAddStar(3);
+      try {
+        payDailyMissionIfMatches("games", "feed-animal");
+      } catch {
+        // ignore
+      }
       speakText("Thank you so much! Benny Bunny is so full and happy! You earned three golden stars!", {
         pitch: 1.25,
       });
+      if (bunnyAdvanceRef.current) clearTimeout(bunnyAdvanceRef.current);
+      bunnyAdvanceRef.current = setTimeout(() => {
+        bunnyAdvanceRef.current = null;
+        handleResetBunny();
+      }, 1800);
 
       try {
         recordLearningEvent({
@@ -1017,6 +1107,10 @@ export function ToddlerQuizzesAndGames({
   };
 
   const handleResetBunny = () => {
+    if (bunnyAdvanceRef.current) {
+      clearTimeout(bunnyAdvanceRef.current);
+      bunnyAdvanceRef.current = null;
+    }
     const nextGoal = Math.min(bunnyGoalIndex + 1, BUNNY_GOALS.length - 1);
     setBunnyGoalIndex(nextGoal);
     setCarrotsFed(0);
@@ -1028,237 +1122,132 @@ export function ToddlerQuizzesAndGames({
     );
   };
 
-  return (
-    <div className="space-y-6">
-      {/* Top Controls: Voice Status & Audio Mute Toggle */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-2xl bg-white/[0.03] border border-white/10 max-w-3xl mx-auto">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-400/15 border border-amber-400/30 text-amber-200 font-extrabold text-xs sm:text-sm">
-            <Sparkles size={13} />
-            <span>Toddler Play Zone</span>
-          </div>
+  // Finite hub quizzes: celebrate, then roll to the next game. Buttons stay as a skip.
+  useEffect(() => {
+    if (currentActivity !== "animal-quiz" || !isQuizCompleted) return;
+    const id = window.setTimeout(() => {
+      setCurrentActivity("shape-match");
+      handleRestartShapes();
+    }, 3800);
+    return () => window.clearTimeout(id);
+  }, [currentActivity, isQuizCompleted]);
 
-          {/* Real-time speaking wave indicator */}
+  useEffect(() => {
+    if (currentActivity !== "shape-match" || !isShapeCompleted) return;
+    const id = window.setTimeout(() => {
+      setCurrentActivity("bubble-pop");
+    }, 3800);
+    return () => window.clearTimeout(id);
+  }, [currentActivity, isShapeCompleted]);
+
+  const openArcadeGame = (id: ToddlerActivity) => {
+    if (id === "animal-quiz") handleRestartQuiz();
+    else if (id === "shape-match") handleRestartShapes();
+    else if (id === "bubble-pop") spawnBubbles();
+    else if (id === "feed-animal") handleResetBunny();
+    else soundEffects.playPop();
+    setCurrentActivity(id);
+    onActivityChange?.(id);
+  };
+
+  const showArcade = currentActivity === null;
+
+  return (
+    <div className="space-y-4">
+      {!hideChrome && showArcade && (
+      <div className="flex items-center justify-between gap-3 max-w-6xl mx-auto">
+        <div className="flex items-center gap-2 min-w-0">
+          <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${isMeadow ? "text-slate-900" : "text-white"}`}>
+            Arcade
+          </h2>
           {isVoiceActive && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-bold"
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              <span>Speaking…</span>
-            </motion.div>
+            <span className={`text-xs font-black px-2 py-1 rounded-full ${isMeadow ? "bg-emerald-100 text-emerald-800" : "bg-emerald-500/20 text-emerald-300"}`}>
+              Speaking…
+            </span>
           )}
         </div>
-
-        {/* Child & Parent Voice Mute Button */}
         <button
+          type="button"
           onClick={toggleVoiceMute}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs sm:text-sm border transition-all cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3 py-2 rounded-2xl font-black text-xs sm:text-sm min-h-12 border-b-4 shadow-sm cursor-pointer ${
             voiceMuted
-              ? "bg-rose-500/20 border-rose-400/40 text-rose-300 hover:bg-rose-500/30"
-              : "bg-white/10 border-white/15 text-white/80 hover:text-white hover:bg-white/20"
+              ? "bg-rose-500 text-white border-rose-700"
+              : isMeadow
+              ? "bg-white text-slate-800 border-slate-300"
+              : "bg-white/10 border-white/20 text-white"
           }`}
           title={voiceMuted ? "Voice narration is muted. Click to turn on." : "Voice narration is active."}
         >
           {voiceMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-          <span>{voiceMuted ? "Voice Muted" : "Voice Sound On"}</span>
+          <span className="hidden sm:inline">{voiceMuted ? "Muted" : "Voice"}</span>
         </button>
       </div>
+      )}
 
-      {/* Game Selector Bar (Big, Touchable, Colorful - 11 Interactive Wonderland Games) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 p-3 rounded-3xl bg-white/[0.07] border border-white/15 max-w-6xl mx-auto">
-        <button
-          onClick={() => {
-            setCurrentActivity("rainbow-piano");
-            soundEffects.playPop();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "rainbow-piano"
-              ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white border-rose-700 shadow-md scale-102 ring-2 ring-pink-300/40"
-              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎹</span>
-          <span className="text-center leading-tight">Xylophone</span>
-        </button>
+      {showArcade ? (
+        <div data-testid="wonder-arcade-board" className="max-w-6xl mx-auto space-y-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+            {TODDLER_ARCADE_GAMES.map((game) => (
+              <button
+                key={game.id}
+                type="button"
+                data-testid={`arcade-game-${game.id}`}
+                onClick={() => openArcadeGame(game.id)}
+                className={`wonder-arcade-card ${game.rim}`}
+              >
+                <img src={game.art} alt="" width={640} height={480} loading="lazy" decoding="async" />
+                <span className={`block px-2.5 py-2 bg-gradient-to-r ${game.accent} text-white font-black text-sm sm:text-base leading-tight`}>
+                  {game.title}
+                </span>
+              </button>
+            ))}
+          </div>
 
-        <button
-          onClick={() => {
-            setCurrentActivity("animal-safari");
-            soundEffects.playPop();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "animal-safari"
-              ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md scale-102 ring-2 ring-emerald-300/40"
-              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🌿</span>
-          <span className="text-center leading-tight">Safari</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("balloon-sky");
-            soundEffects.playPop();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "balloon-sky"
-              ? "bg-gradient-to-r from-sky-400 to-blue-500 text-white border-blue-700 shadow-md scale-102 ring-2 ring-sky-300/40"
-              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎈</span>
-          <span className="text-center leading-tight">Balloons</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("animal-quiz");
-            handleRestartQuiz();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "animal-quiz"
-              ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-orange-700 shadow-md scale-102 ring-2 ring-amber-300/40"
-              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🦁</span>
-          <span className="text-center leading-tight">Animal Quiz</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("shape-match");
-            handleRestartShapes();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "shape-match"
-              ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-indigo-700 shadow-md scale-102 ring-2 ring-purple-300/40"
-              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">⭐</span>
-          <span className="text-center leading-tight">Shapes</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("memory-match");
-            soundEffects.playPop();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "memory-match"
-              ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-cyan-700 shadow-md scale-102 ring-2 ring-cyan-300/40"
-              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🧩</span>
-          <span className="text-center leading-tight">Memory</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("rhyme-time");
-            soundEffects.playPop();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "rhyme-time"
-              ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white border-rose-700 shadow-md scale-102 ring-2 ring-pink-300/40"
-              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎵</span>
-          <span className="text-center leading-tight">Rhymes</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("color-magic");
-            soundEffects.playPop();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "color-magic"
-              ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md scale-102 ring-2 ring-emerald-300/40"
-              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎨</span>
-          <span className="text-center leading-tight">Color Lab</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("bubble-pop");
-            spawnBubbles();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "bubble-pop"
-              ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white border-fuchsia-700 shadow-md scale-102 ring-2 ring-fuchsia-300/40"
-              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🫧</span>
-          <span className="text-center leading-tight">Bubbles</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("bubble-pop-phonics");
-            soundEffects.playPop();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "bubble-pop-phonics"
-              ? "bg-gradient-to-r from-sky-500 to-indigo-500 text-white border-indigo-700 shadow-md scale-102 ring-2 ring-sky-300/40"
-              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🔤</span>
-          <span className="text-center leading-tight">Phonics Pop</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("feed-animal");
-            handleResetBunny();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "feed-animal"
-              ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white border-amber-700 shadow-md scale-102 ring-2 ring-amber-300/40"
-              : "bg-white/15 border-white/25 text-white hover:bg-white/25"
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🐰</span>
-          <span className="text-center leading-tight">Feed Bunny</span>
-        </button>
-      </div>
-
-      <div className="mb-4">
-        <p className="mb-3 px-1 text-xs sm:text-sm font-black uppercase tracking-wider text-white/80">
-          Skill studio
-        </p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {K1_STUDIO_GAMES.map((studioGame) => (
-            <button
-              key={studioGame.id}
-              type="button"
-              onClick={() => {
-                setCurrentActivity(studioGame.id);
-                soundEffects.playPop();
-              }}
-              className={`flex min-h-[6rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 px-3 py-4 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-                currentActivity === studioGame.id
-                  ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md ring-2 ring-emerald-300/40"
-                  : "bg-white/15 border-white/25 text-white hover:bg-white/25"
-              }`}
-            >
-              <span className="text-3xl sm:text-4xl md:text-5xl leading-none">{studioGame.emoji}</span>
-              <span className="text-center leading-tight px-0.5">{studioGame.title}</span>
-            </button>
-          ))}
+          <div>
+            <p className={`mb-3 px-1 text-xs sm:text-sm font-black uppercase tracking-wider ${isMeadow ? "text-slate-800" : "text-white/80"}`}>
+              Skill studio
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+              {K1_STUDIO_GAMES.map((studioGame) => (
+                <button
+                  key={studioGame.id}
+                  type="button"
+                  data-testid={`arcade-game-${studioGame.id}`}
+                  onClick={() => openArcadeGame(studioGame.id)}
+                  className={`wonder-arcade-card border-emerald-600`}
+                >
+                  <img
+                    src={K1_STUDIO_ART[studioGame.id]}
+                    alt=""
+                    width={640}
+                    height={480}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span className={`block px-2.5 py-2 bg-gradient-to-r ${studioAccent(studioGame.id)} text-white font-black text-sm sm:text-base leading-tight`}>
+                    {studioGame.title}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        <button
+          type="button"
+          data-testid="arcade-more-games"
+          onClick={() => {
+            setCurrentActivity(null);
+            onActivityChange?.(null);
+            soundEffects.playPop();
+          }}
+          className={`inline-flex items-center gap-1 min-h-12 px-4 rounded-2xl font-black text-sm border-b-4 shadow-md ${
+            isMeadow ? "bg-white text-slate-900 border-emerald-400" : "bg-white/15 text-white border-white/25"
+          }`}
+        >
+          <ChevronLeft size={16} /> More games
+        </button>
+      )}
 
       {/* ACTIVITY 0: RAINBOW XYLOPHONE */}
       {currentActivity === "rainbow-piano" && (
@@ -1291,21 +1280,21 @@ export function ToddlerQuizzesAndGames({
       {currentActivity === "animal-quiz" && (
         <div className="max-w-3xl mx-auto">
           {!isQuizCompleted ? (
-            <div className="p-6 sm:p-8 rounded-3xl bg-[#141524] border-2 border-amber-400/30 shadow-2xl relative overflow-hidden">
+            <div className="play-board play-theme-quiz p-5 sm:p-7" data-testid="play-board-quiz">
               {/* Header with Question Progress & Speaker */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-amber-400/20 text-amber-200 font-extrabold text-xs sm:text-sm">
-                    Question {questionIndex + 1} of {questionDeck.length}
+              <div className="flex items-center justify-between gap-2 mb-6">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="play-chip px-3 py-1 rounded-full font-extrabold text-xs sm:text-sm">
+                    Question <span className="count-num">{questionIndex + 1}</span> of <span className="count-num">{questionDeck.length}</span>
                   </span>
-                  <div className="hidden sm:block w-24 h-2 overflow-hidden rounded-full bg-white/10" aria-label={`${questionIndex} of ${questionDeck.length} questions complete`}>
+                  <div className="hidden sm:block w-24 h-2 overflow-hidden rounded-full bg-orange-100" aria-label={`${questionIndex} of ${questionDeck.length} questions complete`}>
                     <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-orange-400 transition-all duration-500" style={{ width: `${(questionIndex / questionDeck.length) * 100}%` }} />
                   </div>
                 </div>
 
                 <button
                   onClick={() => speakText(currentQuiz.spokenPrompt, { pitch: 1.2, rate: 0.88 })}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-xs border border-amber-400/30 transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 min-h-12 px-3 py-1.5 rounded-xl bg-white text-amber-900 font-bold text-xs border-b-4 border-amber-400 cursor-pointer"
                 >
                   <Volume2 size={15} />
                   <span>Hear Again</span>
@@ -1314,11 +1303,11 @@ export function ToddlerQuizzesAndGames({
 
               {/* Big Question Prompt */}
               <div className="text-center mb-8">
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-2 leading-tight">
+                <h3 className="play-title text-xl sm:text-2xl md:text-3xl font-black mb-2 leading-tight">
                   {currentQuiz.prompt}
                 </h3>
                 {currentQuiz.soundCue && (
-                  <span className="inline-block px-4 py-1 rounded-full bg-orange-500/20 text-orange-300 text-sm font-black border border-orange-400/30 animate-bounce">
+                  <span className="play-chip inline-block px-4 py-1 rounded-full text-sm font-black animate-bounce">
                     🔊 {currentQuiz.soundCue}
                   </span>
                 )}
@@ -1345,22 +1334,22 @@ export function ToddlerQuizzesAndGames({
                       }
                       transition={{ duration: 0.3 }}
                       onClick={() => handleSelectQuizOption(option.id)}
-                      className={`relative p-5 sm:p-7 rounded-3xl border-3 flex flex-col items-center justify-center transition-all cursor-pointer shadow-xl ${
+                      className={`relative p-5 sm:p-7 flex flex-col items-center justify-center transition-all cursor-pointer ${
                         isCorrect
-                          ? "bg-emerald-500/30 border-emerald-400 ring-4 ring-emerald-400/40 text-white"
+                          ? "play-card play-card-on ring-4 ring-emerald-500/40 text-slate-900"
                           : isShaking
-                          ? "bg-rose-500/30 border-rose-400 ring-4 ring-rose-400/40 text-white"
-                          : "bg-white/[0.04] border-white/15 hover:border-amber-400/60 hover:bg-white/[0.08] text-white"
+                          ? "play-card bg-rose-100 border-rose-400 ring-4 ring-rose-400/40 text-slate-900"
+                          : "play-card hover:border-amber-300 text-slate-900"
                       }`}
                     >
                       <span className="text-5xl sm:text-7xl mb-2 filter drop-shadow-md">
                         {option.emoji}
                       </span>
-                      <span className="text-lg sm:text-xl font-black text-white">
+                      <span className="text-lg sm:text-xl font-black text-slate-900">
                         {option.label}
                       </span>
                       {option.soundText && (
-                        <span className="text-sm font-semibold text-white/85 mt-0.5">
+                        <span className="text-sm font-semibold text-slate-600 mt-0.5">
                           {option.soundText}
                         </span>
                       )}
@@ -1376,11 +1365,11 @@ export function ToddlerQuizzesAndGames({
               </div>
 
               {/* Bottom Guidance for Toddler / Parent */}
-              <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-sm text-white/85">
-                <span className="flex items-center gap-1.5 text-amber-300 font-bold">
+              <div className="mt-8 pt-4 border-t border-orange-200 flex flex-wrap items-center justify-between gap-2 text-sm play-copy">
+                <span className="flex items-center gap-1.5 font-bold">
                   <span>✨</span> Correct taps add golden stars to the Star Jar!
                 </span>
-                <span className="text-white/80">Tap any picture to answer</span>
+                <span>Tap any picture to answer</span>
               </div>
             </div>
           ) : (
@@ -1388,29 +1377,29 @@ export function ToddlerQuizzesAndGames({
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="p-8 sm:p-12 rounded-3xl bg-gradient-to-b from-amber-500/20 via-[#141524] to-[#141524] border-2 border-amber-400/40 shadow-2xl text-center space-y-5"
+              className="play-board play-theme-quiz p-8 sm:p-12 text-center space-y-5"
             >
               <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-5xl shadow-xl shadow-orange-500/40 animate-bounce">
                 🏆
               </div>
 
-              <h3 className="text-3xl font-black text-white">
+              <h3 className="play-title text-3xl font-black">
                 Super Job, Little Explorer!
               </h3>
-              <p className="text-amber-200 text-sm max-w-md mx-auto">
+              <p className="play-copy text-sm max-w-md mx-auto">
                 You recognized all the animal sounds and words! You earned{" "}
-                <span className="font-extrabold text-white text-base">+3 Extra Golden Stars ⭐</span>!
+                <span className="font-extrabold text-amber-800 text-base">+3 Extra Golden Stars ⭐</span>!
               </p>
 
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-amber-400/20 border border-amber-400/40 text-amber-300 font-black text-base">
+              <div className="play-chip inline-flex items-center gap-2 px-4 py-2 rounded-2xl font-black text-base">
                 <Star className="w-6 h-6 fill-amber-400 text-amber-400" />
-                <span>Your Total Stars: {starsCount}</span>
+                <span>Your Total Stars: <span className="count-num">{starsCount}</span></span>
               </div>
 
               <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
                 <button
                   onClick={handleRestartQuiz}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black text-sm shadow-lg shadow-orange-500/30 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  className="flex items-center gap-2 min-h-12 px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-sm border-b-4 border-orange-700 cursor-pointer"
                 >
                   <RotateCcw size={16} />
                   <span>Play Quiz Again</span>
@@ -1421,7 +1410,7 @@ export function ToddlerQuizzesAndGames({
                     setCurrentActivity("shape-match");
                     handleRestartShapes();
                   }}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-sm transition-all cursor-pointer"
+                  className="flex items-center gap-2 min-h-12 px-6 py-3 rounded-2xl bg-white text-slate-900 font-black text-sm border-b-4 border-slate-300 cursor-pointer"
                 >
                   <span>Next: Shapes & Colors! ⭐</span>
                 </button>
@@ -1435,11 +1424,11 @@ export function ToddlerQuizzesAndGames({
       {currentActivity === "shape-match" && (
         <div className="max-w-3xl mx-auto">
           {!isShapeCompleted ? (
-            <div className="p-6 sm:p-8 rounded-3xl bg-[#151326] border-2 border-purple-400/30 shadow-2xl relative overflow-hidden">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-purple-400/20 text-purple-300 font-extrabold text-xs">
-                    Shape {shapeIndex + 1} of {SHAPE_QUESTIONS.length}
+            <div className="play-board play-theme-shapes p-5 sm:p-7" data-testid="play-board-shapes">
+              <div className="flex items-center justify-between gap-2 mb-6">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="play-chip px-3 py-1 rounded-full font-extrabold text-xs">
+                    Shape <span className="count-num">{shapeIndex + 1}</span> of <span className="count-num">{SHAPE_QUESTIONS.length}</span>
                   </span>
                   <div className="flex items-center gap-1">
                     {SHAPE_QUESTIONS.map((_, idx) => (
@@ -1451,7 +1440,7 @@ export function ToddlerQuizzesAndGames({
                             ? "fill-purple-400 text-purple-400"
                             : idx === shapeIndex
                             ? "fill-purple-400/40 text-purple-300 animate-pulse"
-                            : "text-white/20"
+                            : "text-violet-200"
                         }
                       />
                     ))}
@@ -1460,7 +1449,7 @@ export function ToddlerQuizzesAndGames({
 
                 <button
                   onClick={() => speakText(currentShape.spokenPrompt, { pitch: 1.2, rate: 0.88 })}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 font-bold text-xs border border-purple-400/30 transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 min-h-12 px-3 py-1.5 rounded-xl bg-white text-violet-900 font-bold text-xs border-b-4 border-violet-400 cursor-pointer"
                 >
                   <Volume2 size={15} />
                   <span>Hear Again</span>
@@ -1468,10 +1457,10 @@ export function ToddlerQuizzesAndGames({
               </div>
 
               <div className="text-center mb-8">
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-2 leading-tight">
+                <h3 className="play-title text-xl sm:text-2xl md:text-3xl font-black mb-2 leading-tight">
                   {currentShape.prompt}
                 </h3>
-                <span className="inline-block px-4 py-1 rounded-full bg-purple-500/20 text-purple-300 text-sm font-bold border border-purple-400/30">
+                <span className="play-chip inline-block px-4 py-1 rounded-full text-sm font-bold">
                   ✨ Color & Shape Identification
                 </span>
               </div>
@@ -1496,18 +1485,16 @@ export function ToddlerQuizzesAndGames({
                       }
                       transition={{ duration: 0.3 }}
                       onClick={() => handleSelectShapeOption(option.id)}
-                      className={`relative p-6 sm:p-8 rounded-3xl border-3 flex flex-col items-center justify-center transition-all cursor-pointer shadow-xl ${
+                      className={`relative p-6 sm:p-8 flex flex-col items-center justify-center transition-all cursor-pointer ${
                         isCorrect
-                          ? "bg-emerald-500/30 border-emerald-400 ring-4 ring-emerald-400/40 text-white"
+                          ? "play-card play-card-on ring-4 ring-emerald-500/40 text-slate-900"
                           : isShaking
-                          ? "bg-rose-500/30 border-rose-400 ring-4 ring-rose-400/40 text-white"
-                          : "bg-white/[0.04] border-white/15 hover:border-purple-400/60 hover:bg-white/[0.08] text-white"
+                          ? "play-card bg-rose-100 border-rose-400 ring-4 ring-rose-400/40 text-slate-900"
+                          : "play-card hover:border-violet-300 text-slate-900"
                       }`}
                     >
-                      <span className="text-6xl sm:text-7xl mb-2 filter drop-shadow-md">
-                        {option.emoji}
-                      </span>
-                      <span className="text-lg sm:text-xl font-black text-white">
+                      <ShapeGlyph option={option} />
+                      <span className="text-lg sm:text-xl font-black text-slate-900">
                         {option.label}
                       </span>
 
@@ -1521,35 +1508,35 @@ export function ToddlerQuizzesAndGames({
                 })}
               </div>
 
-              <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-sm text-white/85">
-                <span className="flex items-center gap-1.5 text-purple-300 font-bold">
+              <div className="mt-8 pt-4 border-t border-violet-200 flex flex-wrap items-center justify-between gap-2 text-sm play-copy">
+                <span className="flex items-center gap-1.5 font-bold">
                   <span>🎨</span> Great for visual discrimination and color recognition!
                 </span>
-                <span className="text-white/80">Tap any shape to answer</span>
+                <span>Tap any shape to answer</span>
               </div>
             </div>
           ) : (
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="p-8 sm:p-12 rounded-3xl bg-gradient-to-b from-purple-500/20 via-[#151326] to-[#151326] border-2 border-purple-400/40 shadow-2xl text-center space-y-5"
+              className="play-board play-theme-shapes p-8 sm:p-12 text-center space-y-5"
             >
               <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center text-5xl shadow-xl shadow-purple-500/40 animate-bounce">
                 🌟
               </div>
 
-              <h3 className="text-3xl font-black text-white">
+              <h3 className="play-title text-3xl font-black">
                 You Mastered the Shapes & Colors!
               </h3>
-              <p className="text-purple-200 text-sm max-w-md mx-auto">
+              <p className="play-copy text-sm max-w-md mx-auto">
                 You found every star, heart, circle, and bright sun! You earned{" "}
-                <span className="font-extrabold text-white text-base">+3 Extra Golden Stars ⭐</span>!
+                <span className="font-extrabold text-violet-800 text-base">+3 Extra Golden Stars ⭐</span>!
               </p>
 
               <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
                 <button
                   onClick={handleRestartShapes}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-400 hover:to-indigo-400 text-white font-black text-sm shadow-lg shadow-purple-500/30 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  className="flex items-center gap-2 min-h-12 px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-black text-sm border-b-4 border-indigo-800 cursor-pointer"
                 >
                   <RotateCcw size={16} />
                   <span>Play Shapes Again</span>
@@ -1560,7 +1547,7 @@ export function ToddlerQuizzesAndGames({
                     setCurrentActivity("bubble-pop");
                     spawnBubbles();
                   }}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-sm transition-all cursor-pointer"
+                  className="flex items-center gap-2 min-h-12 px-6 py-3 rounded-2xl bg-white text-slate-900 font-black text-sm border-b-4 border-slate-300 cursor-pointer"
                 >
                   <span>Next: Pop Bubbles! 🎈</span>
                 </button>
@@ -1573,25 +1560,25 @@ export function ToddlerQuizzesAndGames({
       {/* ACTIVITY 3: RAINBOW BUBBLE POP GAME */}
       {currentActivity === "bubble-pop" && (
         <div className="max-w-4xl mx-auto">
-          <div className="p-4 sm:p-6 rounded-3xl bg-[#121320] border-2 border-pink-400/30 shadow-2xl relative overflow-hidden">
+          <div className="play-board play-theme-bubbles p-4 sm:p-6" data-testid="play-board-bubbles">
             {/* Top Bar for Bubble Pop */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <div>
-                <h3 className="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+                <h3 className="play-title text-lg sm:text-xl font-black flex items-center gap-2">
                   <span>🎈</span> Rainbow Bubble Popper
                 </h3>
-                <p className="text-white/90 text-sm sm:text-base">
+                <p className="play-copy text-sm sm:text-base">
                   Tap any floating bubble to pop it and collect stars!
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="px-3 py-1.5 rounded-xl bg-pink-500/20 text-pink-300 border border-pink-400/30 font-black text-xs">
-                  Popped: {bubblesPoppedCount} 🎈
+                <div className="play-chip px-3 py-1.5 rounded-xl font-black text-xs">
+                  Popped: <span className="count-num">{bubblesPoppedCount}</span> 🎈
                 </div>
                 <button
                   onClick={spawnBubbles}
-                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer text-xs font-bold flex items-center gap-1"
+                  className="min-h-12 px-3 rounded-xl bg-white text-slate-800 border-b-4 border-fuchsia-300 cursor-pointer text-xs font-bold flex items-center gap-1"
                 >
                   <RotateCcw size={14} /> Respawn
                 </button>
@@ -1599,7 +1586,7 @@ export function ToddlerQuizzesAndGames({
             </div>
 
             {/* Bubble Play Surface */}
-            <div className="relative w-full h-[380px] sm:h-[440px] rounded-2xl bg-gradient-to-b from-indigo-950/40 via-purple-950/30 to-black/60 border border-white/10 overflow-hidden select-none">
+            <div className="relative w-full h-[380px] sm:h-[440px] rounded-2xl bg-gradient-to-b from-sky-200 via-fuchsia-100 to-violet-200 border-4 border-white overflow-hidden select-none">
               <AnimatePresence>
                 {bubbles.map((bubble) => (
                   <motion.button
@@ -1636,8 +1623,8 @@ export function ToddlerQuizzesAndGames({
               {bubbles.length === 0 && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 space-y-3">
                   <span className="text-6xl animate-bounce">🌟</span>
-                  <h4 className="text-xl font-black text-white">All Bubbles Popped!</h4>
-                  <p className="text-sm text-pink-200">You're super quick!</p>
+                  <h4 className="text-xl font-black text-fuchsia-950">All Bubbles Popped!</h4>
+                  <p className="text-sm text-fuchsia-800">You're super quick!</p>
                   <button
                     onClick={spawnBubbles}
                     className="px-5 py-2.5 rounded-2xl bg-pink-500 hover:bg-pink-400 text-white font-black text-sm min-h-12 shadow-lg shadow-pink-500/40 cursor-pointer"
@@ -1648,7 +1635,7 @@ export function ToddlerQuizzesAndGames({
               )}
             </div>
 
-            <div className="mt-3 text-center text-sm text-white/85">
+            <div className="mt-3 text-center text-sm play-copy">
               💡 Parents: Encourages hand-eye coordination and fine motor touch tracking!
             </div>
           </div>
@@ -1658,15 +1645,15 @@ export function ToddlerQuizzesAndGames({
       {/* ACTIVITY 4: FEED THE BUNNY (COUNTING GAME) */}
       {currentActivity === "feed-animal" && (
         <div className="max-w-2xl mx-auto">
-          <div className="p-6 sm:p-8 rounded-3xl bg-[#131722] border-2 border-emerald-400/30 shadow-2xl text-center space-y-6">
+          <div className="play-board play-theme-bunny p-6 sm:p-8 text-center space-y-6" data-testid="play-board-bunny">
             <div>
-              <span className="px-3 py-1 rounded-full bg-emerald-400/20 text-emerald-200 text-sm font-bold border border-emerald-400/30">
+              <span className="play-chip px-3 py-1 rounded-full text-sm font-bold">
                 🥕 1-2-3 Counting Safari Game
               </span>
-              <h3 className="text-2xl sm:text-3xl font-black text-white mt-2">
+              <h3 className="play-title text-2xl sm:text-3xl font-black mt-2">
                 Feed Hungry Benny Bunny!
               </h3>
-              <p className="text-white/90 text-sm sm:text-base sm:text-sm mt-1">
+              <p className="play-copy text-sm sm:text-base mt-1">
                 Tap carrots to count. First tummy is 5, then 8, then 10.
               </p>
             </div>
@@ -1679,7 +1666,7 @@ export function ToddlerQuizzesAndGames({
                   : { y: [0, -6, 0] }
               }
               transition={{ repeat: Infinity, duration: 2.5 }}
-              className="w-40 h-40 mx-auto rounded-full bg-gradient-to-b from-emerald-500/20 to-teal-500/10 border-4 border-emerald-400/40 flex flex-col items-center justify-center shadow-inner relative"
+              className="w-40 h-40 mx-auto rounded-full bg-gradient-to-b from-emerald-100 to-lime-50 border-4 border-emerald-300 flex flex-col items-center justify-center shadow-inner relative"
             >
               <span className="text-7xl">🐰</span>
               {carrotsFed === targetCarrots && (
@@ -1691,11 +1678,11 @@ export function ToddlerQuizzesAndGames({
 
             {/* Belly meter */}
             <div className="max-w-xs mx-auto space-y-1.5">
-              <div className="flex items-center justify-between text-xs font-bold text-white">
+              <div className="flex items-center justify-between text-xs font-bold text-emerald-950">
                 <span>Bunny's Full Tummy:</span>
-                <span className="text-emerald-300">{carrotsFed} of {targetCarrots} Carrots</span>
+                <span className="text-emerald-800"><span className="count-num">{carrotsFed}</span> of <span className="count-num">{targetCarrots}</span> Carrots</span>
               </div>
-              <div className="h-4 rounded-full bg-white/10 overflow-hidden p-0.5 border border-white/15">
+              <div className="h-4 rounded-full bg-emerald-100 overflow-hidden p-0.5 border border-emerald-300">
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-teal-300 transition-all duration-300"
                   style={{ width: `${(carrotsFed / targetCarrots) * 100}%` }}
@@ -1716,12 +1703,12 @@ export function ToddlerQuizzesAndGames({
               </motion.button>
             ) : (
               <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 font-bold text-sm">
-                  🎉 Benny Bunny is so full! You counted to {targetCarrots}! Next time the tummy holds more.
+                <div className="p-4 rounded-2xl bg-emerald-100 border-2 border-emerald-300 text-emerald-900 font-bold text-sm">
+                  🎉 Benny Bunny is so full! You counted to <span className="count-num">{targetCarrots}</span>! Next time the tummy holds more.
                 </div>
                 <button
                   onClick={handleResetBunny}
-                  className="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-sm min-h-12 transition-all cursor-pointer"
+                  className="px-6 py-3 rounded-2xl bg-white text-emerald-950 font-black text-sm min-h-12 border-b-4 border-emerald-400 cursor-pointer"
                 >
                   Feed Bunny Again 🥕
                 </button>
