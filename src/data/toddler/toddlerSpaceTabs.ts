@@ -41,7 +41,12 @@ export function isToddlerSpaceTabId(value: unknown): value is ToddlerSpaceTabId 
 export function readWonderlandDestination(state: unknown): ToddlerSpaceTabId | null {
   if (!state || typeof state !== "object") return null;
   const value = (state as Record<string, unknown>)[WONDERLAND_HISTORY_KEY];
-  return isToddlerSpaceTabId(value) ? value : null;
+  if (isToddlerSpaceTabId(value)) return value;
+  if (value && typeof value === "object") {
+    const tab = (value as Record<string, unknown>).tab;
+    return isToddlerSpaceTabId(tab) ? tab : null;
+  }
+  return null;
 }
 
 export const TODDLER_DESTINATION_SHELL: Record<

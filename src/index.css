@@ -453,6 +453,55 @@
 .wonder-place {
   min-height: 100%;
   position: relative;
+  scroll-padding-top: 4.75rem;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.playhouse-poster {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 1.75rem;
+  border: 4px solid #fff;
+  background: #fff;
+  box-shadow:
+    0 14px 24px -14px rgba(15, 23, 42, 0.4),
+    0 8px 0 rgba(15, 23, 42, 0.08);
+}
+.playhouse-poster:active {
+  transform: translateY(3px);
+  box-shadow: 0 4px 0 rgba(15, 23, 42, 0.08);
+}
+.playhouse-poster-art {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #fde68a;
+  overflow: hidden;
+}
+.playhouse-poster-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.playhouse-scene-art {
+  width: min(100%, 22rem);
+  margin-inline: auto;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 1.75rem;
+  border: 4px solid rgba(255, 255, 255, 0.85);
+  background: #fff7ed;
+  box-shadow: 0 14px 24px -14px rgba(15, 23, 42, 0.35);
+}
+.playhouse-scene-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
 }
 .wonder-place-worlds {
   background:

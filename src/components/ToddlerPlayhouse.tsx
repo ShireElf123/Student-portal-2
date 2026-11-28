@@ -1,15 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PLAYHOUSE_SHOWS, type PlayhouseShow } from "../data/toddler/playhouseShows";
-import { PLAYHOUSE_COVERS } from "../data/pictureBookCovers";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { soundEffects } from "../utils/soundEffects";
+
+function coverFor(show: PlayhouseShow): string {
+  return show.coverImage || "/covers/playhouse-curtain.jpg";
+}
 
 export function ToddlerPlayhouse({
   isMeadow,
   onAddStar,
+  openShowId,
+  onOpenShow,
 }: {
   isMeadow: boolean;
   onAddStar: (amount?: number) => void;
+  openShowId?: string | null;
+  onOpenShow?: (id: string | null) => void;
 }) {
   const [show, setShow] = useState<PlayhouseShow | null>(null);
   const [sceneIndex, setSceneIndex] = useState(0);
@@ -18,21 +25,45 @@ export function ToddlerPlayhouse({
 
   const scene = show?.scenes[sceneIndex];
 
-  const openShow = (next: PlayhouseShow) => {
+  const applyShow = (next: PlayhouseShow | null, announce: boolean) => {
     stopSpeaking();
-    soundEffects.playPop();
     setShow(next);
     setSceneIndex(0);
     setDone(false);
     setHeard({});
-    const first = next.scenes[0];
-    if (first?.lines[0]) speakText(`${first.lines[0].speaker} says: ${first.lines[0].line}`, { pitch: 1.12 });
+    if (next && announce) {
+      soundEffects.playPop();
+      const first = next.scenes[0];
+      if (first?.lines[0]) speakText(`${first.lines[0].speaker} says: ${first.lines[0].line}`, { pitch: 1.12 });
+    }
+  };
+
+  useEffect(() => {
+    if (openShowId === undefined) return;
+    if (!openShowId) {
+      if (show) applyShow(null, false);
+      return;
+    }
+    if (show?.id === openShowId) return;
+    const next = PLAYHOUSE_SHOWS.find((item) => item.id === openShowId) ?? null;
+    applyShow(next, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openShowId]);
+
+  const openShow = (next: PlayhouseShow) => {
+    if (onOpenShow) {
+      onOpenShow(next.id);
+      return;
+    }
+    applyShow(next, true);
   };
 
   const closeShow = () => {
-    stopSpeaking();
-    setShow(null);
-    setDone(false);
+    if (onOpenShow) {
+      onOpenShow(null);
+      return;
+    }
+    applyShow(null, false);
   };
 
   const speakLine = (key: string, speaker: string, line: string) => {
@@ -66,32 +97,32 @@ export function ToddlerPlayhouse({
         <p className={`text-sm sm:text-base font-black mb-4 ${isMeadow ? "text-slate-800" : "text-white/90"}`}>
           Short plays with Teddy, Nana, Rosie, Dot, and friends. Tap a line. Hear the voice.
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {PLAYHOUSE_SHOWS.map((item) => (
             <button
               key={item.id}
               type="button"
+              data-testid={`playhouse-show-${item.id}`}
               onClick={() => openShow(item)}
-              className={`wonder-clay-tile text-left min-h-40 rounded-[2rem] p-5 border-4 bg-gradient-to-br ${item.coverGradient} text-white`}
+              className="playhouse-poster"
             >
-              {item.coverImage || PLAYHOUSE_COVERS[item.id] ? (
+              <span className="playhouse-poster-art">
                 <img
-                  src={item.coverImage ?? PLAYHOUSE_COVERS[item.id]}
+                  src={coverFor(item)}
                   alt=""
-                  width={160}
-                  height={160}
+                  width={800}
+                  height={800}
                   loading="lazy"
                   decoding="async"
-                  className="h-20 w-20 rounded-2xl object-cover shadow-lg border-2 border-white/50"
                 />
-              ) : (
-                <span className="text-5xl drop-shadow">{item.coverEmoji}</span>
-              )}
-              <p className="mt-3 text-xs font-black uppercase tracking-wider text-white/90">
-                {item.scenes.length} scenes · {item.minutes} min
-              </p>
-              <h3 className="text-xl font-black leading-tight">{item.title}</h3>
-              <p className="text-sm font-semibold text-white/95 line-clamp-2">{item.tagline}</p>
+              </span>
+              <span className="block px-3 py-2.5">
+                <span className={`block text-[10px] font-black uppercase tracking-wider ${isMeadow ? "text-slate-600" : "text-slate-600"}`}>
+                  {item.scenes.length} scenes · {item.minutes} min
+                </span>
+                <span className="block text-base sm:text-lg font-black leading-tight text-slate-900">{item.title}</span>
+                <span className="block text-xs font-semibold text-slate-700 line-clamp-2">{item.tagline}</span>
+              </span>
             </button>
           ))}
         </div>
@@ -119,7 +150,9 @@ export function ToddlerPlayhouse({
 
       {done || !scene ? (
         <div className="p-8 text-center space-y-4">
-          <div className="text-6xl">🎭</div>
+          <div className="playhouse-scene-art">
+            <img src={coverFor(show)} alt="" width={800} height={800} decoding="async" />
+          </div>
           <h4 className={`text-2xl font-black ${isMeadow ? "text-slate-900" : "text-white"}`}>Curtain.</h4>
           <p className={isMeadow ? "text-slate-800 font-semibold" : "text-white/90 font-semibold"}>
             You watched every scene of {show.title}. +3 stars.
@@ -128,7 +161,7 @@ export function ToddlerPlayhouse({
             <button
               type="button"
               className="min-h-12 px-5 rounded-2xl bg-amber-400 text-amber-950 font-black border-b-4 border-amber-700"
-              onClick={() => openShow(show)}
+              onClick={() => applyShow(show, true)}
             >
               Watch again
             </button>
@@ -144,17 +177,15 @@ export function ToddlerPlayhouse({
       ) : (
         <div className={`p-5 sm:p-8 space-y-4 bg-gradient-to-b ${scene.bgGradient}`}>
           <div className="text-center">
-            <div className="relative mx-auto mb-3 h-36 sm:h-48 w-full overflow-hidden rounded-[1.75rem] border-4 border-white/70 shadow-lg">
+            <div className="playhouse-scene-art mb-3 relative" data-testid="playhouse-scene-frame">
               <img
-                src={show.coverImage ?? PLAYHOUSE_COVERS[show.id] ?? "/covers/playhouse-curtain.jpg"}
+                src={coverFor(show)}
                 alt=""
                 width={800}
-                height={448}
+                height={800}
                 decoding="async"
-                className="absolute inset-0 h-full w-full object-cover"
                 data-testid="playhouse-scene-art"
               />
-              <span className="absolute bottom-2 right-2 rounded-2xl bg-white/90 px-2 py-1 text-3xl shadow">{scene.illustration}</span>
             </div>
             <p className="text-xs font-black uppercase tracking-wider opacity-80">{scene.setting}</p>
             <h4 className="text-2xl font-black">{scene.title}</h4>
@@ -198,7 +229,7 @@ export function ToddlerPlayhouse({
               onClick={nextScene}
               className="min-h-12 px-6 rounded-2xl bg-amber-400 text-amber-950 font-black text-sm border-b-4 border-amber-700"
             >
-              {sceneIndex === show.scenes.length - 1 ? "Curtain ⭐" : "Next scene"}
+              {sceneIndex < show.scenes.length - 1 ? "Next scene" : "Curtain"}
             </button>
           </div>
         </div>

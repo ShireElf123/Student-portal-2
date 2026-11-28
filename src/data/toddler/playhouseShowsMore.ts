@@ -12,6 +12,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "The Blue Mail Flag",
       tagline: "Dot writes. The flag stands up. The letter waits kindly.",
       coverEmoji: "📫",
+      coverImage: "/playhouse/mailbox-blue-flag.jpg",
       coverGradient: "from-sky-500 to-indigo-800",
     },
     [
@@ -89,6 +90,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Soup Steam Secret",
       tagline: "Nana stirs. Teddy guesses. The secret is carrots and time.",
       coverEmoji: "🍲",
+      coverImage: "/covers/pancake-saturday.jpg",
       coverGradient: "from-orange-500 to-rose-800",
     },
     [
@@ -166,6 +168,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "The Mitten on the Bench",
       tagline: "Snow. A bench. One mitten waiting like a small red house.",
       coverEmoji: "👋",
+      coverImage: "/covers/snow-maple-street.jpg",
       coverGradient: "from-rose-400 to-slate-700",
     },
     [
@@ -243,6 +246,7 @@ export const MORE_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Ferry Ticket Please",
       tagline: "A round token, a low horn, and Gully who never pays.",
       coverEmoji: "⛴️",
+      coverImage: "/covers/ferry-horn-morning.jpg",
       coverGradient: "from-cyan-400 to-slate-800",
     },
     [

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from "react";
 import { afterEach, describe, expect, it } from "vitest";
-import { cleanup, fireEvent, render } from "@testing-library/react";
+import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { ToddlerWorldView } from "./ToddlerWorldView";
 
 afterEach(() => cleanup());
@@ -63,5 +63,49 @@ describe("ToddlerWorldView home gateway", () => {
     window.dispatchEvent(new PopStateEvent("popstate", { state: {} }));
     expect(queryByTestId("wonder-destination-phonics")).toBeNull();
     expect(getByTestId("wonder-home-header")).toBeTruthy();
+  });
+
+  it("returns from an opened game to the Games arcade on browser back", async () => {
+    const { getByTestId, queryByTestId } = render(
+      <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
+    );
+    fireEvent.click(getByTestId("toddler-tab-games"));
+    fireEvent.click(getByTestId("arcade-game-rainbow-piano"));
+    expect(getByTestId("arcade-more-games")).toBeTruthy();
+    window.dispatchEvent(
+      new PopStateEvent("popstate", {
+        state: { wonderlandDestination: { tab: "games" } },
+      }),
+    );
+    await waitFor(() => expect(queryByTestId("arcade-more-games")).toBeNull());
+    expect(getByTestId("wonder-arcade-board")).toBeTruthy();
+    expect(getByTestId("wonder-destination-games")).toBeTruthy();
+  });
+
+  it("returns from a Playhouse show to the Playhouse posters on browser back", async () => {
+    const { getByTestId, getByText, queryByText } = render(
+      <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
+    );
+    fireEvent.click(getByTestId("toddler-tab-playhouse"));
+    fireEvent.click(getByTestId("playhouse-show-teddy-loose-button"));
+    expect(getByText("All plays")).toBeTruthy();
+    window.dispatchEvent(
+      new PopStateEvent("popstate", {
+        state: { wonderlandDestination: { tab: "playhouse" } },
+      }),
+    );
+    await waitFor(() => expect(queryByText("All plays")).toBeNull());
+    expect(getByTestId("playhouse-show-teddy-loose-button")).toBeTruthy();
+  });
+
+  it("centres destination play inside a max-width shell", () => {
+    const { getByTestId } = render(
+      <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
+    );
+    fireEvent.click(getByTestId("toddler-tab-games"));
+    const shell = getByTestId("wonder-destination-games");
+    expect(shell.className).toContain("wonder-place");
+    const stage = shell.querySelector(".flex-1.max-w-7xl.mx-auto");
+    expect(stage).toBeTruthy();
   });
 });

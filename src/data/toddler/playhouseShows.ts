@@ -40,6 +40,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Teddy’s Loose Button",
       tagline: "Nana sews. Teddy holds still. The button stays.",
       coverEmoji: "🧸",
+      coverImage: "/playhouse/teddy-loose-button.jpg",
       coverGradient: "from-amber-400 to-rose-500",
     },
     [
@@ -117,6 +118,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Rosie’s Quiet Bell",
       tagline: "The firehouse practices a whisper alarm for a sleeping cat.",
       coverEmoji: "🚒",
+      coverImage: "/covers/playhouse-rosie.jpg",
       coverGradient: "from-red-500 to-amber-400",
     },
     [
@@ -194,6 +196,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Dot’s First Whisper",
       tagline: "A library mouse learns the feather voice.",
       coverEmoji: "📚",
+      coverImage: "/playhouse/dot-first-whisper.jpg",
       coverGradient: "from-amber-500 to-indigo-600",
     },
     [
@@ -271,6 +274,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Momo’s Snow Phone",
       tagline: "A mitten is not a telephone. The plow still says hello.",
       coverEmoji: "👋",
+      coverImage: "/playhouse/momo-snow-phone.jpg",
       coverGradient: "from-sky-400 to-indigo-600",
     },
     [
@@ -348,6 +352,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Beep’s Last Seat",
       tagline: "The night bus saves one snug hill for a sleepy backpack.",
       coverEmoji: "🚌",
+      coverImage: "/playhouse/beep-last-seat.jpg",
       coverGradient: "from-indigo-600 to-amber-400",
     },
     [
@@ -425,6 +430,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Stamp and the Rain Letter",
       tagline: "A wet name, a flower sticker, house three.",
       coverEmoji: "🚚",
+      coverImage: "/playhouse/stamp-rain-letter.jpg",
       coverGradient: "from-blue-500 to-amber-400",
     },
     [
@@ -502,6 +508,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Gully and the Captain Cat",
       tagline: "A gull waits. A cat keeps the crate. The lighthouse blinks anyway.",
       coverEmoji: "⚓",
+      coverImage: "/playhouse/gully-captain-cat.jpg",
       coverGradient: "from-cyan-400 to-slate-600",
     },
     [
@@ -579,6 +586,7 @@ export const PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "The Kindness Wagon Play",
       tagline: "Notes, pears, a snail in the shade.",
       coverEmoji: "🛒",
+      coverImage: "/playhouse/kindness-wagon-play.jpg",
       coverGradient: "from-lime-400 to-rose-400",
     },
     [

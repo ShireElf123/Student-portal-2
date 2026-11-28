@@ -1,3 +1,5 @@
+import { PLAYHOUSE_SHOWS } from "./toddler/playhouseShows";
+
 /** Painted picture-book and playhouse covers. Cartoon objects and toys — no photoreal children. */
 export const PICTURE_BOOK_COVERS: Record<string, string> = {
   "pancake-saturday": "/covers/pancake-saturday.jpg",
@@ -87,16 +89,7 @@ export const PICTURE_BOOK_COVERS: Record<string, string> = {
   "big-hug-bed": "/covers/big-hug-bed.jpg",
 };
 
-export const PLAYHOUSE_COVERS: Record<string, string> = {
-  "teddy-loose-button": "/covers/playhouse-curtain.jpg",
-  "rosie-quiet-bell": "/covers/playhouse-rosie.jpg",
-  "kindness-wagon-play": "/covers/playhouse-curtain.jpg",
-  "mailbox-blue-flag": "/covers/playhouse-curtain.jpg",
-  "soup-steam-secret": "/covers/pancake-saturday.jpg",
-  "lost-mitten-bench": "/covers/snow-maple-street.jpg",
-  "ferry-ticket-please": "/covers/ferry-horn-morning.jpg",
-  "watermelon-too-pink": "/covers/stoop-watermelon.jpg",
-  "gutter-paper-boat": "/covers/paper-gutter-boat.jpg",
-  "tomato-patience": "/covers/window-box-tomatoes.jpg",
-  "folding-table-wiggle": "/covers/block-table-feast.jpg",
-};
+/** Derived from each show's coverImage — do not add a second assignment map. */
+export const PLAYHOUSE_COVERS: Record<string, string> = Object.fromEntries(
+  PLAYHOUSE_SHOWS.map((show) => [show.id, show.coverImage ?? ""]),
+);

@@ -51,6 +51,12 @@ import {
   WONDERLAND_HISTORY_KEY,
   type ToddlerSpaceTabId,
 } from "../data/toddler/toddlerSpaceTabs";
+import {
+  readWonderlandPlace,
+  scheduleWonderlandScrollReset,
+  worldRouteFromPlace,
+  type WonderlandPlace,
+} from "../data/toddler/wonderlandPlace";
 import { ToddlerDailyMissionsModal } from "./ToddlerDailyMissionsModal";
 import { ToddlerStickerAlbumModal } from "./ToddlerStickerAlbumModal";
 import { BuddyCompanionBadge } from "./BuddyCompanionBadge";
@@ -239,32 +245,87 @@ export function ToddlerWorldView({
   const [destination, setDestination] = useState<ToddlerSpaceTabId | null>(null);
   const destinationRef = useRef<ToddlerSpaceTabId | null>(null);
   destinationRef.current = destination;
+  const [innerGame, setInnerGame] = useState<string | null>(null);
+  const [playhouseShowId, setPlayhouseShowId] = useState<string | null>(null);
+  const [worldsRoute, setWorldsRoute] = useState<string | null>(null);
+  const historyDepthRef = useRef(0);
+  const collapsingHomeRef = useRef(false);
+  const collectionScrollRef = useRef<Partial<Record<string, number>>>({});
+  const placeRef = useRef<WonderlandPlace>({ tab: null });
+  const selectedBookRef = useRef<string | null>(null);
+  const worldPlaceRef = useRef<{ world: string | null; area: string | null; activity: string | null }>({
+    world: null,
+    area: null,
+    activity: null,
+  });
+
+  const writePlace = (place: WonderlandPlace, mode: "push" | "replace") => {
+    const tab = place.tab;
+    if (tab && (place.game || place.show || place.book || place.activity) && destinationRef.current === tab) {
+      collectionScrollRef.current[tab] = window.scrollY;
+    }
+    placeRef.current = place;
+    destinationRef.current = tab;
+    setInitialWorldTarget(null);
+    setInitialGameTarget(null);
+    setDestination(tab);
+    setInnerGame(place.game ?? null);
+    setPlayhouseShowId(place.show ?? null);
+    worldPlaceRef.current = {
+      world: place.world ?? null,
+      area: place.area ?? null,
+      activity: place.activity ?? null,
+    };
+    setWorldsRoute(worldRouteFromPlace(place));
+    const base = history.state && typeof history.state === "object" ? history.state : {};
+    const payload = tab ? { tab, game: place.game ?? null, book: place.book ?? null, show: place.show ?? null, world: place.world ?? null, area: place.area ?? null, activity: place.activity ?? null } : null;
+    const nextState = { ...base, [WONDERLAND_HISTORY_KEY]: payload };
+    if (mode === "push") {
+      history.pushState(nextState, "");
+      historyDepthRef.current += 1;
+    } else {
+      history.replaceState(nextState, "");
+    }
+    if (place.game || place.show || place.book || place.activity || !place.tab) {
+      scheduleWonderlandScrollReset();
+    } else if (tab) {
+      const y = collectionScrollRef.current[tab] ?? 0;
+      window.requestAnimationFrame(() => {
+        document.documentElement.scrollTop = y;
+        document.body.scrollTop = y;
+      });
+    }
+  };
 
   const enterDestination = (tab: ToddlerSpaceTabId) => {
     const alreadyOpen = destinationRef.current !== null;
-    destinationRef.current = tab;
-    setDestination(tab);
-    const base = history.state && typeof history.state === "object" ? history.state : {};
-    const nextState = { ...base, [WONDERLAND_HISTORY_KEY]: tab };
-    if (alreadyOpen) {
-      history.replaceState(nextState, "");
-    } else {
-      history.pushState(nextState, "");
-    }
+    writePlace({ tab }, alreadyOpen ? "replace" : "push");
+    if (!alreadyOpen) scheduleWonderlandScrollReset();
   };
 
   const goHome = () => {
     stopSpeaking();
     destinationRef.current = null;
     setDestination(null);
-    if (readWonderlandDestination(history.state)) {
-      history.back();
+    setInnerGame(null);
+    setPlayhouseShowId(null);
+    setWorldsRoute(null);
+    worldPlaceRef.current = { world: null, area: null, activity: null };
+    handleCloseBook(true);
+    const steps = historyDepthRef.current;
+    historyDepthRef.current = 0;
+    placeRef.current = { tab: null };
+    if (steps > 0 && readWonderlandDestination(history.state)) {
+      collapsingHomeRef.current = true;
+      history.go(-steps);
     }
+    scheduleWonderlandScrollReset();
   };
 
   const [gameState, setGameState] = useState(() => getGamificationState());
   const activeBuddy = gameState.buddy ?? DEFAULT_BUDDY;
   const [selectedBook, setSelectedBook] = useState<PictureBook | null>(null);
+  selectedBookRef.current = selectedBook?.id ?? null;
   const [bookShelf, setBookShelf] = useState<BookShelfId>("all");
   const [readMode, setReadMode] = useState<"to-me" | "myself">("to-me");
   const readModeRef = useRef<"to-me" | "myself">("to-me");
@@ -316,9 +377,39 @@ export function ToddlerWorldView({
 
   useEffect(() => {
     const onPop = (event: PopStateEvent) => {
-      const next = readWonderlandDestination(event.state);
-      destinationRef.current = next;
-      setDestination(next);
+      const place = readWonderlandPlace(event.state);
+      if (collapsingHomeRef.current) {
+        if (place.tab) return;
+        collapsingHomeRef.current = false;
+      }
+      historyDepthRef.current = Math.max(0, historyDepthRef.current - 1);
+      placeRef.current = place;
+      setInitialWorldTarget(null);
+      setInitialGameTarget(null);
+      destinationRef.current = place.tab;
+      setDestination(place.tab);
+      setInnerGame(place.game ?? null);
+      setPlayhouseShowId(place.show ?? null);
+      worldPlaceRef.current = {
+        world: place.world ?? null,
+        area: place.area ?? null,
+        activity: place.activity ?? null,
+      };
+      setWorldsRoute(worldRouteFromPlace(place));
+      if (!place.book && selectedBookRef.current) {
+        stopSpeaking();
+        setSelectedBook(null);
+        setIsBookCompleted(false);
+      }
+      if (place.game || place.show || place.book || place.activity || !place.tab) {
+        scheduleWonderlandScrollReset();
+      } else if (place.tab) {
+        const y = collectionScrollRef.current[place.tab] ?? 0;
+        window.requestAnimationFrame(() => {
+          document.documentElement.scrollTop = y;
+          document.body.scrollTop = y;
+        });
+      }
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
@@ -542,6 +633,9 @@ export function ToddlerWorldView({
   const handleOpenBook = (book: PictureBook, pageIndex = 0, learnerId?: string) => {
     const startingPage = book.pages[pageIndex];
     if (!startingPage) return;
+    if (destinationRef.current === "books" && selectedBookRef.current !== book.id) {
+      writePlace({ tab: "books", book: book.id }, "push");
+    }
     setSelectedBook(book);
     setCurrentPageIndex(pageIndex);
     setBookInteractionAnswers({});
@@ -580,7 +674,7 @@ export function ToddlerWorldView({
     if (fallback) handleOpenBook(fallback.book, fallback.pageIndex);
   }, [initialActivityId, initialLaunchNonce, initialSkillId, initialBlueprint?.id, initialBlueprintLearnerId]);
 
-  const handleCloseBook = () => {
+  const handleCloseBook = (fromHome?: boolean) => {
     stopSpeaking();
     setReadAlongWordIndex(null);
     releaseParentAudio();
@@ -590,10 +684,14 @@ export function ToddlerWorldView({
       } catch {}
       setIsRecordingParentVoice(false);
     }
+    const openedFromHistory = Boolean(placeRef.current.book);
     setSelectedBook(null);
     setBookInteractionHints({});
     storybookSessionIdRef.current = null;
     setIsBookCompleted(false);
+    if (!fromHome && openedFromHistory && destinationRef.current === "books") {
+      history.back();
+    }
   };
 
   const handleNextPage = () => {
@@ -966,7 +1064,23 @@ export function ToddlerWorldView({
               <ToddlerWorldsNavigator
                 onAddStar={addStar}
                 starsCount={starsCount}
-                initialWorldId={initialWorldTarget}
+                initialWorldId={worldsRoute ?? initialWorldTarget}
+                onWorldNav={(route, action) => {
+                  if (action === "back") {
+                    const here = placeRef.current;
+                    if (here.activity || here.area || here.world) history.back();
+                    return;
+                  }
+                  writePlace(
+                    {
+                      tab: "worlds",
+                      world: route.worldId,
+                      area: route.areaId,
+                      activity: route.activityId,
+                    },
+                    "push",
+                  );
+                }}
                 onOpenPictureBooks={() => enterDestination("books")}
                 onOpenGames={() => enterDestination("games")}
                 onOpenFocus={() => enterDestination("focus")}
@@ -1085,7 +1199,16 @@ export function ToddlerWorldView({
         )}
 
         {destination === "playhouse" && (
-          <ToddlerPlayhouse isMeadow={isMeadow} onAddStar={addStar} />
+          <ToddlerPlayhouse
+            isMeadow={isMeadow}
+            onAddStar={addStar}
+            openShowId={playhouseShowId}
+            onOpenShow={(id) => {
+              if (id) writePlace({ tab: "playhouse", show: id }, "push");
+              else if (placeRef.current.show) history.back();
+              else setPlayhouseShowId(null);
+            }}
+          />
         )}
 
         {destination === "phonics" && (
@@ -1109,7 +1232,15 @@ export function ToddlerWorldView({
               starsCount={starsCount}
               onAddStar={addStar}
               onBackToBooks={() => enterDestination("books")}
-              targetActivity={initialGameTarget ?? undefined}
+              targetActivity={innerGame ?? initialGameTarget ?? undefined}
+              onActivityChange={(id) => {
+                if (id) writePlace({ tab: "games", game: id }, "push");
+                else if (placeRef.current.game) history.back();
+                else {
+                  setInitialGameTarget(null);
+                  setInnerGame(null);
+                }
+              }}
               initialBlueprint={initialBlueprint?.gameType === "bubble-pop-phonics" ? initialBlueprint : undefined}
               initialBlueprintLearnerId={initialBlueprint?.gameType === "bubble-pop-phonics" ? initialBlueprintLearnerId : undefined}
             />
@@ -1268,7 +1399,7 @@ export function ToddlerWorldView({
                   )}
 
                   <button
-                    onClick={handleCloseBook}
+                    onClick={() => handleCloseBook()}
                     className="p-1.5 sm:p-2 rounded-2xl bg-white hover:bg-rose-50 text-slate-700 hover:text-rose-600 border-b-3 border-slate-300 transition-colors cursor-pointer text-xs font-black shadow-sm"
                   >
                     ✕
@@ -1459,7 +1590,7 @@ export function ToddlerWorldView({
                     </button>
 
                     <button
-                      onClick={handleCloseBook}
+                      onClick={() => handleCloseBook()}
                       className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 font-black text-sm border-b-4 border-slate-300 shadow-md transition-all active:translate-y-1 cursor-pointer"
                     >
                       <span>Choose Another Book 📚</span>

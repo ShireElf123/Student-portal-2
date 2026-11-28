@@ -18,6 +18,16 @@ import { PLAYHOUSE_COVERS } from "../data/pictureBookCovers";
 afterEach(() => cleanup());
 
 describe("Playhouse interiors", () => {
+  it("paints a unique full-bleed poster for every show", () => {
+    const { container } = render(<ToddlerPlayhouse isMeadow onAddStar={() => {}} />);
+    const posters = Array.from(container.querySelectorAll(".playhouse-poster img")) as HTMLImageElement[];
+    expect(posters).toHaveLength(PLAYHOUSE_SHOWS.length);
+    const srcs = posters.map((img) => img.getAttribute("src"));
+    expect(srcs.every((src) => src && src.endsWith(".jpg"))).toBe(true);
+    expect(srcs.some((src) => src?.includes("curtain"))).toBe(false);
+    expect(new Set(srcs).size).toBe(srcs.length);
+  });
+
   it("opens a scene on a painted cover, not an emoji-only stage", () => {
     const { container, getByTestId } = render(<ToddlerPlayhouse isMeadow onAddStar={() => {}} />);
     const first = PLAYHOUSE_SHOWS[0];

@@ -12,6 +12,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Watermelon Too Pink",
       tagline: "Teddy’s chin is a crime scene. Nana has napkins.",
       coverEmoji: "🍉",
+      coverImage: "/covers/stoop-watermelon.jpg",
       coverGradient: "from-rose-500 to-lime-700",
     },
     [
@@ -89,6 +90,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Gutter Paper Boat",
       tagline: "Rain makes a river. Teddy makes a captain face.",
       coverEmoji: "⛵",
+      coverImage: "/covers/paper-gutter-boat.jpg",
       coverGradient: "from-sky-500 to-slate-800",
     },
     [
@@ -166,6 +168,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Tomato Patience",
       tagline: "Green moons. Then red. Waiting is a flavor.",
       coverEmoji: "🍅",
+      coverImage: "/covers/window-box-tomatoes.jpg",
       coverGradient: "from-red-500 to-lime-800",
     },
     [
@@ -243,6 +246,7 @@ export const STREET_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Folding Table Wiggle",
       tagline: "One leg dances. A napkin makes it sit. Then the block eats.",
       coverEmoji: "💺",
+      coverImage: "/covers/block-table-feast.jpg",
       coverGradient: "from-amber-400 to-rose-800",
     },
     [

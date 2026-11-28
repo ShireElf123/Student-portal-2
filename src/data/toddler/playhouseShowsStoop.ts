@@ -11,6 +11,7 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Toast Too Loud",
       tagline: "The toaster pops. Teddy jumps. Breakfast still happens.",
       coverEmoji: "🍞",
+      coverImage: "/playhouse/toast-too-loud.jpg",
       coverGradient: "from-amber-400 to-rose-700",
     },
     [
@@ -88,6 +89,7 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Elevator Please",
       tagline: "A button, a wait, a ding, and doors that have manners.",
       coverEmoji: "🏢",
+      coverImage: "/playhouse/elevator-please.jpg",
       coverGradient: "from-slate-400 to-indigo-800",
     },
     [
@@ -165,6 +167,7 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Library Lion Nap",
       tagline: "Stone paws, a quiet room, and Dot who already knows the rules.",
       coverEmoji: "🦁",
+      coverImage: "/covers/dot-library-mouse.jpg",
       coverGradient: "from-amber-500 to-stone-800",
     },
     [
@@ -242,6 +245,7 @@ export const STOOP_PLAYHOUSE_SHOWS: PlayhouseShow[] = [
       title: "Laundry Line Talk",
       tagline: "Pegs, a shirt like a flag, and wind that does the work.",
       coverEmoji: "👕",
+      coverImage: "/covers/laundromat-rain.jpg",
       coverGradient: "from-sky-400 to-amber-600",
     },
     [

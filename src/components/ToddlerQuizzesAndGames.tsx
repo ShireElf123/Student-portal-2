@@ -45,6 +45,7 @@ interface ToddlerQuizzesAndGamesProps {
   onAddStar: (amount?: number) => void;
   onBackToBooks?: () => void;
   targetActivity?: string;
+  onActivityChange?: (id: string | null) => void;
   initialBlueprint?: BubblePopBlueprint;
   initialBlueprintLearnerId?: string;
   isMeadow?: boolean;
@@ -531,6 +532,7 @@ export function ToddlerQuizzesAndGames({
   starsCount,
   onAddStar,
   targetActivity,
+  onActivityChange,
   initialBlueprint,
   initialBlueprintLearnerId,
   isMeadow = false,
@@ -577,6 +579,8 @@ export function ToddlerQuizzesAndGames({
   useEffect(() => {
     if (targetActivity && TODDLER_ACTIVITY_IDS.includes(targetActivity as ToddlerActivity)) {
       setCurrentActivity(targetActivity as ToddlerActivity);
+    } else if (!targetActivity) {
+      setCurrentActivity(null);
     }
   }, [targetActivity]);
 
@@ -1143,6 +1147,7 @@ export function ToddlerQuizzesAndGames({
     else if (id === "feed-animal") handleResetBunny();
     else soundEffects.playPop();
     setCurrentActivity(id);
+    onActivityChange?.(id);
   };
 
   const showArcade = currentActivity === null;
@@ -1233,6 +1238,7 @@ export function ToddlerQuizzesAndGames({
           data-testid="arcade-more-games"
           onClick={() => {
             setCurrentActivity(null);
+            onActivityChange?.(null);
             soundEffects.playPop();
           }}
           className={`inline-flex items-center gap-1 min-h-12 px-4 rounded-2xl font-black text-sm border-b-4 shadow-md ${

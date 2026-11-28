@@ -136,6 +136,10 @@ interface ToddlerWorldsNavigatorProps {
   onOpenPictureBooks?: () => void;
   onOpenGames?: () => void;
   onOpenFocus?: () => void;
+  onWorldNav?: (
+    route: { worldId: string | null; areaId: string | null; activityId: string | null },
+    action: "push" | "back",
+  ) => void;
 }
 
 function countingLevelForActivity(activity: ToddlerActivity) {
@@ -160,7 +164,9 @@ export function ToddlerWorldsNavigator({
   onOpenPictureBooks,
   onOpenGames,
   onOpenFocus,
+  onWorldNav,
 }: ToddlerWorldsNavigatorProps) {
+  const skipWorldHistoryRef = useRef(false);
   const openingRoute = worldRouteParts(initialWorldId);
   // Navigation hierarchy state
   const [selectedWorldId, setSelectedWorldId] = useState<string | null>(openingRoute.worldId);
@@ -369,7 +375,14 @@ export function ToddlerWorldsNavigator({
   // Sync a world choice or a full registry route from the parent. Full routes
   // select the actual activity and initialize its specialized counting/sorting state.
   useEffect(() => {
-    if (!initialWorldId) return;
+    if (!initialWorldId) {
+      setSelectedWorldId(null);
+      setSelectedAreaId(null);
+      setActiveActivity(null);
+      setActiveMission(null);
+      setActiveStory(null);
+      return;
+    }
     if (initialWorldId.startsWith("world:")) {
       const [, worldId, areaId, activityId] = initialWorldId.split(":");
       const targetWorld = ALL_TODDLER_WORLDS.find((world) => world.id === worldId);
@@ -388,7 +401,11 @@ export function ToddlerWorldsNavigator({
         return;
       }
       setSelectedAreaId(areaId);
-      handleStartActivity(targetActivity);
+      if (activeActivity?.id !== targetActivity.id) {
+        skipWorldHistoryRef.current = true;
+        handleStartActivity(targetActivity);
+        skipWorldHistoryRef.current = false;
+      }
       return;
     }
 
@@ -491,6 +508,7 @@ export function ToddlerWorldsNavigator({
     setSelectedWorldId(world.id);
     setSelectedAreaId(null);
     setActiveActivity(null);
+    onWorldNav?.({ worldId: world.id, areaId: null, activityId: null }, "push");
     setActiveMission(null);
     setActiveStory(null);
     setDynamicCounting(null);
@@ -547,6 +565,7 @@ export function ToddlerWorldsNavigator({
     soundEffects.playPop();
     cancelMissionWrap();
     stopSpeaking();
+    onWorldNav?.({ worldId: null, areaId: null, activityId: null }, "back");
     setSelectedWorldId(null);
     setSelectedAreaId(null);
     setActiveActivity(null);
@@ -563,6 +582,7 @@ export function ToddlerWorldsNavigator({
     soundEffects.playPop();
     cancelMissionWrap();
     stopSpeaking();
+    onWorldNav?.({ worldId: selectedWorldId, areaId: null, activityId: null }, "back");
     setSelectedAreaId(null);
     setActiveActivity(null);
     setActiveMission(null);
@@ -578,6 +598,10 @@ export function ToddlerWorldsNavigator({
     soundEffects.playPop();
     cancelMissionWrap();
     stopSpeaking();
+    onWorldNav?.(
+      { worldId: selectedWorldId, areaId: selectedAreaId, activityId: null },
+      "back",
+    );
     // Leaving the activity cancels any pending celebration reveal.
     advancePendingRef.current = false;
     clearAdvanceTimers();
@@ -599,6 +623,12 @@ export function ToddlerWorldsNavigator({
     soundEffects.playStarSparkle();
     cancelMissionWrap();
     stopSpeaking();
+    if (!skipWorldHistoryRef.current) {
+      onWorldNav?.(
+        { worldId: activity.worldId, areaId: activity.areaId, activityId: activity.id },
+        "push",
+      );
+    }
     toyCreditedRef.current = null;
     advancePendingRef.current = false;
     clearAdvanceTimers();
