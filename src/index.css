@@ -585,17 +585,19 @@
   box-shadow: none;
 }
 .wonder-launcher--playroom .wonder-launch-tile {
-  flex: 0 0 23%;
+  flex: 0 0 24%;
   max-width: 8.25rem;
   min-width: 4.25rem;
+  margin: -0.28rem -0.12rem;
 }
 .wonder-launcher--night {
   padding: 0.45rem;
 }
 .wonder-picture-card {
+  position: relative;
   background: #fffdf7;
   color: #1c1917;
-  border: 5px solid #fde68a;
+  border: 4px solid #fde68a;
   transform: rotate(var(--toy-rot, 0deg)) translateY(var(--toy-y, 0px));
   transform-origin: 50% 90%;
   box-shadow:
@@ -604,29 +606,52 @@
 }
 .wonder-picture-card.is-selected,
 .wonder-picture-card.is-named {
-  transform: rotate(var(--toy-rot, 0deg)) translateY(var(--toy-y, 0px)) scale(1.08);
-  z-index: 2;
+  transform: rotate(var(--toy-rot, 0deg)) translateY(var(--toy-y, 0px)) scale(1.1);
+  z-index: 3;
   box-shadow:
-    0 14px 0 rgba(15, 23, 42, 0.1),
-    0 18px 28px -14px rgba(15, 23, 42, 0.4);
+    0 16px 0 rgba(15, 23, 42, 0.1),
+    0 22px 28px -14px rgba(15, 23, 42, 0.4);
 }
-.wonder-picture-card[data-place="worlds"] { border-color: #7dd3fc; --toy-rot: -8deg; --toy-y: 10px; }
-.wonder-picture-card[data-place="books"] { border-color: #fbbf24; --toy-rot: 5deg; --toy-y: -8px; }
-.wonder-picture-card[data-place="games"] { border-color: #2dd4bf; --toy-rot: -3deg; --toy-y: 4px; }
-.wonder-picture-card[data-place="focus"] { border-color: #5eead4; --toy-rot: 9deg; --toy-y: 14px; }
-.wonder-picture-card[data-place="playhouse"] { border-color: #e879f9; --toy-rot: -6deg; --toy-y: -4px; }
-.wonder-picture-card[data-place="phonics"] { border-color: #fb7185; --toy-rot: 4deg; --toy-y: 12px; }
-.wonder-picture-card[data-place="counting"] { border-color: #818cf8; --toy-rot: -10deg; --toy-y: 2px; }
-.wonder-picture-card[data-place="avatar-studio"] { border-color: #f9a8d4; --toy-rot: 7deg; --toy-y: 16px; }
+.wonder-picture-card.is-opening {
+  z-index: 6;
+  animation: wonderToyOpen 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes wonderToyOpen {
+  0% {
+    transform: rotate(var(--toy-rot, 0deg)) translateY(var(--toy-y, 0px)) scale(1.1);
+  }
+  100% {
+    transform: rotate(0deg) translateY(-1.6rem) scale(1.32);
+  }
+}
+.wonder-picture-card[data-place="worlds"] { border-color: #7dd3fc; --toy-rot: -16deg; --toy-y: 12px; }
+.wonder-picture-card[data-place="books"] { border-color: #fbbf24; --toy-rot: 11deg; --toy-y: -10px; }
+.wonder-picture-card[data-place="games"] { border-color: #2dd4bf; --toy-rot: -7deg; --toy-y: 6px; }
+.wonder-picture-card[data-place="focus"] { border-color: #5eead4; --toy-rot: 18deg; --toy-y: 16px; }
+.wonder-picture-card[data-place="playhouse"] { border-color: #e879f9; --toy-rot: -13deg; --toy-y: -6px; }
+.wonder-picture-card[data-place="phonics"] { border-color: #fb7185; --toy-rot: 9deg; --toy-y: 14px; }
+.wonder-picture-card[data-place="counting"] { border-color: #818cf8; --toy-rot: -19deg; --toy-y: 4px; }
+.wonder-picture-card[data-place="avatar-studio"] { border-color: #f9a8d4; --toy-rot: 14deg; --toy-y: 18px; }
 @media (prefers-reduced-motion: reduce) {
   .wonder-picture-card[data-place] {
     --toy-rot: 0deg;
     --toy-y: 0px;
   }
+  .wonder-picture-card.is-opening {
+    animation: none;
+    transform: none;
+  }
 }
 .wonder-picture-label {
-  font-size: 0.7rem;
-  letter-spacing: 0.01em;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 .wonder-launch-tile {
   min-height: 6.5rem;
@@ -693,11 +718,11 @@
 @keyframes wonderDestinationIn {
   from {
     opacity: 0;
-    transform: translateY(14px) scale(0.985);
+    transform: rotate(-8deg) translateY(18px) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: rotate(0deg) translateY(0) scale(1);
   }
 }
 

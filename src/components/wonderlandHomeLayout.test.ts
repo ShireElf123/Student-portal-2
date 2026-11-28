@@ -28,6 +28,8 @@ describe("Toddler Wonderland home composition", () => {
     expect(nav).toContain("flex flex-col");
     expect(nav).toContain("speakText");
     expect(nav).toContain("is-named");
+    expect(nav).toContain("is-opening");
+    expect(css).toContain("wonderToyOpen");
     expect(css).toContain(".wonder-launcher--playroom");
     expect(css).toContain("--toy-rot");
     expect(css).toContain(".wonder-launch-icon--hero");

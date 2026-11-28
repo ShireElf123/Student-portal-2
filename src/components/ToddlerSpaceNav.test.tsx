@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render } from "@testing-library/react";
+import { cleanup, fireEvent, render, waitFor } from "@testing-library/react";
 import { ToddlerSpaceNav } from "./ToddlerSpaceNav";
 import { TODDLER_SPACE_TABS } from "../data/toddler/toddlerSpaceTabs";
 
@@ -20,7 +20,7 @@ afterEach(() => {
 });
 
 describe("ToddlerSpaceNav", () => {
-  it("renders eight tabs and reports the selected destination", () => {
+  it("renders eight tabs and reports the selected destination", async () => {
     const chosen: string[] = [];
     const { getByTestId, getByLabelText } = render(
       <ToddlerSpaceNav activeTab="worlds" onSelect={(tab) => chosen.push(tab)} isMeadow />,
@@ -33,10 +33,11 @@ describe("ToddlerSpaceNav", () => {
     fireEvent.click(games);
     expect(chosen).toEqual([]);
     fireEvent.click(games);
-    expect(chosen).toEqual(["games"]);
+    expect(games.getAttribute("data-opening")).toBe("true");
+    await waitFor(() => expect(chosen).toEqual(["games"]));
   });
 
-  it("speaks the toy name on first tap and opens on the second", () => {
+  it("speaks the toy name on first tap and opens on the second", async () => {
     const chosen: string[] = [];
     const { getByTestId } = render(
       <ToddlerSpaceNav activeTab={null} onSelect={(tab) => chosen.push(tab)} isMeadow />,
@@ -47,11 +48,13 @@ describe("ToddlerSpaceNav", () => {
     expect(games.getAttribute("data-named")).toBe("true");
     expect(chosen).toEqual([]);
     fireEvent.click(games);
-    expect(chosen).toEqual(["games"]);
     expect(games.getAttribute("data-named")).toBe("false");
+    expect(games.getAttribute("data-opening")).toBe("true");
+    expect(chosen).toEqual([]);
+    await waitFor(() => expect(chosen).toEqual(["games"]));
   });
 
-  it("names a different toy instead of opening the first", () => {
+  it("names a different toy instead of opening the first", async () => {
     const chosen: string[] = [];
     const { getByTestId } = render(
       <ToddlerSpaceNav activeTab={null} onSelect={(tab) => chosen.push(tab)} isMeadow />,
@@ -61,7 +64,8 @@ describe("ToddlerSpaceNav", () => {
     expect(speak.spoken).toEqual(["Games", "Worlds"]);
     expect(chosen).toEqual([]);
     fireEvent.click(getByTestId("toddler-tab-worlds"));
-    expect(chosen).toEqual(["worlds"]);
+    expect(getByTestId("toddler-tab-worlds").getAttribute("data-opening")).toBe("true");
+    await waitFor(() => expect(chosen).toEqual(["worlds"]));
   });
 
   it("marks the active tab for assistive tech", () => {

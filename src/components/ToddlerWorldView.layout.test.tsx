@@ -6,10 +6,11 @@ import { ToddlerWorldView } from "./ToddlerWorldView";
 
 afterEach(() => cleanup());
 
-function openToy(getByTestId: (id: string) => HTMLElement, id: string) {
+async function openToy(getByTestId: (id: string) => HTMLElement, id: string) {
   const toy = getByTestId(`toddler-tab-${id}`);
   fireEvent.click(toy);
   fireEvent.click(toy);
+  await waitFor(() => expect(getByTestId(`wonder-destination-${id}`)).toBeTruthy());
 }
 
 describe("ToddlerWorldView home gateway", () => {
@@ -32,11 +33,11 @@ describe("ToddlerWorldView home gateway", () => {
     expect(queryByText("Xylophone")).toBeNull();
   });
 
-  it("opens Games as a dedicated destination without the home launcher", () => {
+  it("opens Games as a dedicated destination without the home launcher", async () => {
     const { getByTestId, getByText, queryByTestId, queryByText } = render(
       <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
     );
-    openToy(getByTestId, "games");
+    await openToy(getByTestId, "games");
     expect(queryByTestId("toddler-space-nav")).toBeNull();
     expect(queryByTestId("wonder-home-header")).toBeNull();
     expect(getByTestId("wonder-destination-games")).toBeTruthy();
@@ -49,21 +50,21 @@ describe("ToddlerWorldView home gateway", () => {
     expect(getByTestId("wonder-home-header")).toBeTruthy();
   });
 
-  it("opens Worlds atlas inside the destination shell", () => {
+  it("opens Worlds atlas inside the destination shell", async () => {
     const { getByTestId, getByText, queryByTestId } = render(
       <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
     );
-    openToy(getByTestId, "worlds");
+    await openToy(getByTestId, "worlds");
     expect(queryByTestId("toddler-space-nav")).toBeNull();
     expect(getByTestId("wonder-destination-worlds")).toBeTruthy();
     expect(getByText("Pick a land")).toBeTruthy();
   });
 
-  it("returns to the home gateway on browser back", () => {
+  it("returns to the home gateway on browser back", async () => {
     const { getByTestId, queryByTestId } = render(
       <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
     );
-    openToy(getByTestId, "phonics");
+    await openToy(getByTestId, "phonics");
     expect(getByTestId("wonder-destination-phonics")).toBeTruthy();
     fireEvent.popState(window);
     window.dispatchEvent(new PopStateEvent("popstate", { state: {} }));
@@ -75,7 +76,7 @@ describe("ToddlerWorldView home gateway", () => {
     const { getByTestId, queryByTestId } = render(
       <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
     );
-    openToy(getByTestId, "games");
+    await openToy(getByTestId, "games");
     fireEvent.click(getByTestId("arcade-game-rainbow-piano"));
     expect(getByTestId("arcade-more-games")).toBeTruthy();
     window.dispatchEvent(
@@ -92,7 +93,7 @@ describe("ToddlerWorldView home gateway", () => {
     const { getByTestId, getByText, queryByText } = render(
       <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
     );
-    openToy(getByTestId, "playhouse");
+    await openToy(getByTestId, "playhouse");
     fireEvent.click(getByTestId("playhouse-show-teddy-loose-button"));
     expect(getByText("All plays")).toBeTruthy();
     window.dispatchEvent(
@@ -104,11 +105,11 @@ describe("ToddlerWorldView home gateway", () => {
     expect(getByTestId("playhouse-show-teddy-loose-button")).toBeTruthy();
   });
 
-  it("centres destination play inside a max-width shell", () => {
+  it("centres destination play inside a max-width shell", async () => {
     const { getByTestId } = render(
       <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
     );
-    openToy(getByTestId, "games");
+    await openToy(getByTestId, "games");
     const shell = getByTestId("wonder-destination-games");
     expect(shell.className).toContain("wonder-place");
     const stage = shell.querySelector(".flex-1.max-w-7xl.mx-auto");
