@@ -16,6 +16,8 @@ Reusable visual spec for one illustrated product. Destinations keep their own pe
 - Sky `#38bdf8` → `#bae6fd`. Meadow `#86efac` → `#16a34a`. Cream paper `#fffdf7`.
 - Home meadow is a **polymer-clay diorama** (smooth Play-Doh hills, fingerprint flowers, clay clouds) — not watercolor.
 - Destinations are **rooms you walk into**: peach plaster, honey wood floor, arched window, chunky clay furniture. Same material as the clay rainbow cards / fox photo. Not gouache landscapes.
+- Room photographs are **empty stages**. Personality lives in wall color, window view, and furniture hugging the side walls. The center floor stays bare so games, posters, and icons can sit on it.
+- Never put floating picture-cards, arcade cabinets, ABC cubes, numbered pebbles, or launcher-twin toys in a destination photo — those fight the real games and icons.
 - Foreground darker and sharper; distant hills bluer and softer.
 - Clouds are painted puffs, not emoji. Flowers are clay dots, not clip-art.
 - Interface sits **in** the scene (paper plates, clay tiles) — never a screenshot floating on empty gradient.

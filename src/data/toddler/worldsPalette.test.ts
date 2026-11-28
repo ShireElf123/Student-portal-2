@@ -30,4 +30,11 @@ describe("Worlds meadow palette", () => {
     expect(css).toContain(".wonder-place-playhouse");
     expect(css).toContain(".play-theme-safari");
   });
+
+  it("washes destination rooms so games and icons sit on a cream stage", () => {
+    const css = fs.readFileSync(path.join(root, "src/index.css"), "utf8");
+    const games = css.slice(css.indexOf(".wonder-place-games"), css.indexOf(".wonder-place-focus"));
+    expect(games).toContain("255, 253, 247");
+    expect(css).toContain("rgba(255, 253, 247, 0.9)");
+  });
 });
