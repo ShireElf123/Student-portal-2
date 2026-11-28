@@ -618,9 +618,11 @@
   object-position: center;
 }
 .wonder-place-worlds {
-  background:
-    radial-gradient(circle at 14% 0%, rgba(125, 211, 252, 0.55), transparent 38%),
-    linear-gradient(180deg, #bae6fd 0%, #bbf7d0 46%, #34d399 100%);
+  background-image:
+    linear-gradient(180deg, rgba(186, 230, 253, 0.28) 0%, rgba(52, 211, 153, 0.32) 100%),
+    url("/art/places/worlds.jpg");
+  background-size: cover;
+  background-position: center 42%;
 }
 .worlds-meadow-btn {
   background: #fff;
@@ -630,19 +632,25 @@
   border-bottom-color: #34d399;
 }
 .wonder-place-books {
-  background:
-    radial-gradient(circle at 88% 0%, rgba(251, 146, 60, 0.35), transparent 34%),
-    linear-gradient(180deg, #fed7aa 0%, #ffedd5 38%, #fbbf24 100%);
+  background-image:
+    linear-gradient(180deg, rgba(254, 215, 170, 0.28) 0%, rgba(251, 191, 36, 0.28) 100%),
+    url("/art/places/stories.jpg");
+  background-size: cover;
+  background-position: center;
 }
 .wonder-place-games {
-  background:
-    radial-gradient(circle at 20% 0%, rgba(52, 211, 153, 0.45), transparent 40%),
-    linear-gradient(180deg, #6ee7b7 0%, #5eead4 45%, #14b8a6 100%);
+  background-image:
+    linear-gradient(180deg, rgba(110, 231, 183, 0.28) 0%, rgba(20, 184, 166, 0.32) 100%),
+    url("/art/places/games.jpg");
+  background-size: cover;
+  background-position: center 55%;
 }
 .wonder-place-focus {
-  background:
-    radial-gradient(circle at 80% 10%, rgba(125, 211, 252, 0.55), transparent 38%),
-    linear-gradient(180deg, #ccfbf1 0%, #a5f3fc 48%, #5eead4 100%);
+  background-image:
+    linear-gradient(180deg, rgba(204, 251, 241, 0.32) 0%, rgba(94, 234, 212, 0.3) 100%),
+    url("/art/places/focus.jpg");
+  background-size: cover;
+  background-position: center 48%;
 }
 .wonder-place-playhouse {
   background:
@@ -650,19 +658,25 @@
     linear-gradient(180deg, #e9d5ff 0%, #fbcfe8 48%, #f472b6 100%);
 }
 .wonder-place-phonics {
-  background:
-    radial-gradient(circle at 90% 8%, rgba(251, 113, 133, 0.4), transparent 36%),
-    linear-gradient(180deg, #fecdd3 0%, #fbcfe8 42%, #fb7185 100%);
+  background-image:
+    linear-gradient(180deg, rgba(254, 205, 211, 0.28) 0%, rgba(251, 113, 133, 0.28) 100%),
+    url("/art/places/phonics.jpg");
+  background-size: cover;
+  background-position: center 58%;
 }
 .wonder-place-counting {
-  background:
-    radial-gradient(circle at 14% 6%, rgba(165, 180, 252, 0.55), transparent 36%),
-    linear-gradient(180deg, #c7d2fe 0%, #bfdbfe 48%, #818cf8 100%);
+  background-image:
+    linear-gradient(180deg, rgba(199, 210, 254, 0.3) 0%, rgba(129, 140, 248, 0.3) 100%),
+    url("/art/places/counting.jpg");
+  background-size: cover;
+  background-position: center 55%;
 }
 .wonder-place-avatar-studio {
-  background:
-    radial-gradient(circle at 50% 0%, rgba(244, 114, 182, 0.4), transparent 42%),
-    linear-gradient(180deg, #fbcfe8 0%, #ddd6fe 48%, #c084fc 100%);
+  background-image:
+    linear-gradient(180deg, rgba(251, 207, 232, 0.28) 0%, rgba(192, 132, 252, 0.28) 100%),
+    url("/art/places/buddy.jpg");
+  background-size: cover;
+  background-position: center;
 }
 .wonder-place-night {
   background: linear-gradient(180deg, #1e1b4b 0%, #0c0d14 55%, #020617 100%);

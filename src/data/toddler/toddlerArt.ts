@@ -7,6 +7,20 @@ export const DESTINATION_ICON: Partial<Record<ToddlerSpaceTabId, string>> = {
   games: "/art/icons/games.png",
   focus: "/art/icons/focus.png",
   playhouse: "/art/icons/playhouse.png",
+  phonics: "/art/icons/phonics.png",
+  counting: "/art/icons/counting.png",
+  "avatar-studio": "/art/icons/buddy.png",
+};
+
+/** Painted destination shells. Playhouse keeps show-cover art; its plate lands next batch. */
+export const PLACE_ART: Partial<Record<ToddlerSpaceTabId, string>> = {
+  worlds: "/art/places/worlds.jpg",
+  books: "/art/places/stories.jpg",
+  games: "/art/places/games.jpg",
+  focus: "/art/places/focus.jpg",
+  phonics: "/art/places/phonics.jpg",
+  counting: "/art/places/counting.jpg",
+  "avatar-studio": "/art/places/buddy.jpg",
 };
 
 export const HOME_ART = {

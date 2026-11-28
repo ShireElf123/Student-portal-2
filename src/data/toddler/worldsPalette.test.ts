@@ -10,8 +10,8 @@ describe("Worlds meadow palette", () => {
   it("uses sky-to-meadow chrome instead of banana yellow plates", () => {
     const css = fs.readFileSync(path.join(root, "src/index.css"), "utf8");
     const worlds = css.slice(css.indexOf(".wonder-place-worlds"), css.indexOf(".wonder-place-books"));
-    expect(worlds).toContain("#bae6fd");
-    expect(worlds).toContain("#bbf7d0");
+    expect(worlds).toContain("/art/places/worlds.jpg");
+    expect(worlds).toContain("186, 230, 253");
     expect(worlds).not.toContain("#fde68a");
     expect(worlds).not.toContain("253, 224, 71");
     expect(TODDLER_DESTINATION_SHELL.worlds.barClass).toContain("from-sky-300");

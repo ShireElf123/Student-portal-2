@@ -28,6 +28,9 @@ describe("Toddler Wonderland home composition", () => {
     expect(view).toContain("HOME_ART.teddy");
     expect(css).toContain(".wonder-home-sky");
     expect(css).toContain(".wonder-home-meadow");
+    expect(css).toContain("/art/places/worlds.jpg");
+    expect(css).toContain("/art/places/phonics.jpg");
+    expect(css).not.toContain("/art/places/playhouse");
     expect(nav).not.toMatch(/games-dock|Games dock|worlds tabs/i);
   });
 
