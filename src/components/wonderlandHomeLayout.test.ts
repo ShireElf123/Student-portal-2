@@ -38,6 +38,8 @@ describe("Toddler Wonderland home composition", () => {
     expect(css).toContain(".wonder-launch-icon--hero");
     expect(css).toContain("orientation: landscape");
     expect(view).toContain("HOME_ART.teddy");
+    expect(view).toContain("HOME_ART.tree");
+    expect(view).toContain("HOME_ART.butterfly");
     expect(view).toContain("min-h-dvh");
     expect(css).toContain(".wonder-home-sky");
     expect(css).toContain(".wonder-home-meadow");

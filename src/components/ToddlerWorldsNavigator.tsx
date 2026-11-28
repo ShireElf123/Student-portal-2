@@ -1301,16 +1301,16 @@ export function ToddlerWorldsNavigator({
                 </div>
               </div>
             ) : (
-              <div className="p-8 rounded-3xl bg-gradient-to-b from-amber-500/20 via-[#14142b] to-[#14142b] border-2 border-amber-400/40 text-center space-y-5">
+              <div className="p-8 rounded-3xl bg-gradient-to-b from-sky-400/20 via-[#14142b] to-[#14142b] border-2 border-emerald-400/40 text-center space-y-5">
                 <div className="text-6xl animate-bounce">🌟</div>
                 <h3 className="text-3xl font-black text-white">Story Completed!</h3>
-                <p className="text-amber-200 text-sm max-w-md mx-auto">
+                <p className="text-sky-100 text-sm max-w-md mx-auto">
                   You helped the characters through every scene, solved the challenges, and earned 3 Golden Stars!
                 </p>
                 <button
                   type="button"
                   onClick={handleContinueAfterCelebration}
-                  className="min-h-16 px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-lg cursor-pointer shadow-lg hover:from-amber-400"
+                  className="min-h-16 px-8 py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-emerald-500 text-white font-black text-lg cursor-pointer shadow-lg hover:from-sky-400"
                 >
                   {trailNext ? `Next: ${trailNext.clueIcon} ${trailNext.title}` : "Back to the trail"}
                 </button>
@@ -1719,7 +1719,7 @@ export function ToddlerWorldsNavigator({
                     type="button"
                     data-testid="trail-next"
                     onClick={handleContinueAfterCelebration}
-                    className="w-full min-h-16 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white font-black text-lg cursor-pointer shadow-lg transition-all"
+                    className="w-full min-h-16 py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-emerald-500 hover:from-sky-400 hover:to-emerald-400 text-white font-black text-lg cursor-pointer shadow-lg transition-all"
                   >
                     {activeMission && missionStepIdx < activeMission.steps.length - 1
                       ? "Next Mission Step ➡️"

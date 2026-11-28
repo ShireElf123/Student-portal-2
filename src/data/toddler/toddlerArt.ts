@@ -30,4 +30,6 @@ export const HOME_ART = {
   teddy: "/art/home/teddy.png",
   sun: "/art/home/sun.png",
   cloud: "/art/home/cloud.png",
+  tree: "/art/home/tree.png",
+  butterfly: "/art/home/butterfly.png",
 } as const;

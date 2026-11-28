@@ -954,7 +954,13 @@ export function ToddlerWorldView({
         className="-mt-1 mb-1"
       />
 
-      <div className="wonder-home-stage flex-1 flex flex-col w-full">
+      <div className="wonder-home-stage flex-1 flex flex-col w-full relative">
+      {isMeadow && (
+        <>
+          <img src={HOME_ART.tree} alt="" className="wonder-art-tree" width={180} height={320} decoding="async" />
+          <img src={HOME_ART.butterfly} alt="" className="wonder-art-butterfly" width={72} height={72} decoding="async" />
+        </>
+      )}
       <div className="wonder-home-playroom flex-1 flex items-end px-3 sm:px-4 pt-1 pb-1">
         <ToddlerSpaceNav activeTab={null} onSelect={enterDestination} isMeadow={isMeadow} />
       </div>

@@ -161,7 +161,7 @@ export function BuddyCompanionBadge({
 
         {/* EYES STYLES */}
         {current.eyeStyle === "cyclops" && (
-          <g>
+          <g className={animated ? "wonder-buddy-eye" : undefined}>
             <circle cx="50" cy="52" r="14" fill="white" stroke="#1e293b" strokeWidth="2.5" />
             <circle cx="51" cy="52" r="7" fill="#0284c7" />
             <circle cx="52" cy="51" r="3.5" fill="#0f172a" />
