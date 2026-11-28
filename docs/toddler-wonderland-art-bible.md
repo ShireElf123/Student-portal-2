@@ -34,6 +34,7 @@ Reusable visual spec for one illustrated product. Destinations keep their own pe
 - Names live in the voice, not as printed labels on the toy.
 - No text baked into icons. No emoji.
 - Grown-up chrome (mute, exit, milestone) stays in a slim strip. Picture-cards sit on the meadow first; Buddy / star jar / stickers / quests sit underneath, not above the toys.
+- Never lock web orientation. Use `dvh` so turning a tablet reflows the playroom. PC (1280px+) gets a bigger table of toys, not a phone strip.
 - Home sky is clay, same material as the meadow. Overlay clouds are clay too.
 
 ## Destination personalities (same universe)

@@ -844,7 +844,7 @@ export function ToddlerWorldView({
   const isMeadow = gameState.wonderlandTheme === "sunny-meadow";
 
   return (
-    <div className={`min-h-full pb-20 transition-colors duration-500 ${
+    <div className={`min-h-dvh pb-20 transition-colors duration-500 ${
       isMeadow
         ? "wonder-home-meadow text-slate-900"
         : "bg-[#0c0d14] text-white"
@@ -858,8 +858,8 @@ export function ToddlerWorldView({
       }`}>
         {isMeadow && (
           <>
-            <img src={HOME_ART.sun} alt="" className="wonder-art-sun hidden sm:block" width={72} height={72} decoding="async" />
-            <img src={HOME_ART.cloud} alt="" className="wonder-art-cloud hidden lg:block" style={{ top: "0.2rem", left: "10%" }} width={120} height={70} decoding="async" />
+            <img src={HOME_ART.sun} alt="" className="wonder-art-sun" width={72} height={72} decoding="async" />
+            <img src={HOME_ART.cloud} alt="" className="wonder-art-cloud hidden sm:block" style={{ top: "0.2rem", left: "10%" }} width={120} height={70} decoding="async" />
           </>
         )}
 

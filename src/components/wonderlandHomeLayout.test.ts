@@ -38,12 +38,19 @@ describe("Toddler Wonderland home composition", () => {
     expect(css).toContain(".wonder-launch-icon--hero");
     expect(css).toContain("orientation: landscape");
     expect(view).toContain("HOME_ART.teddy");
+    expect(view).toContain("min-h-dvh");
     expect(css).toContain(".wonder-home-sky");
     expect(css).toContain(".wonder-home-meadow");
+    expect(css).toContain("100dvh");
+    expect(css).toContain("rotate: var(--toy-rot");
     expect(css).toContain("/art/places/worlds.jpg");
     expect(css).toContain("/art/places/phonics.jpg");
     expect(css).toContain("/art/places/playhouse.jpg");
     expect(nav).not.toMatch(/games-dock|Games dock|worlds tabs/i);
+    const app = fs.readFileSync(path.join(root, "src/App.tsx"), "utf8");
+    expect(app).toContain("wonderland_boot_v1");
+    expect(app).toContain("h-dvh");
+    expect(app).toContain('return "toddler"');
   });
 
   it("groups rewards in a treasure tray and utilities in a dedicated rail", () => {
