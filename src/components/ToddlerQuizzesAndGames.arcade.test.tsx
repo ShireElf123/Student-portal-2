@@ -3,7 +3,7 @@ import React from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, fireEvent, render } from "@testing-library/react";
 import { K1_STUDIO_GAMES } from "../data/toddler/k1StudioGames";
-import { TODDLER_ARCADE_GAMES } from "../data/toddler/toddlerArcadeCatalog";
+import { K1_STUDIO_ART, TODDLER_ARCADE_GAMES } from "../data/toddler/toddlerArcadeCatalog";
 
 vi.mock("../utils/speechUtils", () => ({
   speakText: () => true,
@@ -71,6 +71,26 @@ describe("Games arcade selection", () => {
     ]);
     for (const game of K1_STUDIO_GAMES) {
       expect(getByTestId(`arcade-game-${game.id}`)).toBeTruthy();
+    }
+  });
+
+  it("uses unique /games arcade art, not Worlds or Stories covers", () => {
+    for (const game of TODDLER_ARCADE_GAMES) {
+      expect(game.art.startsWith("/games/arcade-")).toBe(true);
+    }
+    const uniqueStudio = [
+      "ten-frame-taxi",
+      "blend-kitchen",
+      "bead-train",
+      "picnic-plus",
+      "weather-porch",
+      "laundry-sort",
+      "story-porch",
+      "sock-drawer",
+      "farm-count",
+    ];
+    for (const id of uniqueStudio) {
+      expect(K1_STUDIO_ART[id as keyof typeof K1_STUDIO_ART].startsWith("/games/arcade-")).toBe(true);
     }
   });
 

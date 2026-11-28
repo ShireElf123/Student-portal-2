@@ -33,20 +33,20 @@ export const TODDLER_ARCADE_GAMES: ToddlerArcadeGame[] = [
   { id: "color-magic", title: "Color Lab", art: "/games/arcade-color-lab.jpg", accent: "from-lime-400 to-emerald-500", rim: "border-emerald-700" },
   { id: "bubble-pop", title: "Bubbles", art: "/games/arcade-bubbles.jpg", accent: "from-fuchsia-400 to-violet-500", rim: "border-fuchsia-700" },
   { id: "bubble-pop-phonics", title: "Phonics Pop", art: "/games/arcade-phonics-pop.jpg", accent: "from-sky-400 to-indigo-500", rim: "border-indigo-700" },
-  { id: "feed-animal", title: "Feed Bunny", art: "/covers/buddy-farm-tale.jpg", accent: "from-orange-400 to-amber-500", rim: "border-amber-700" },
+  { id: "feed-animal", title: "Feed Bunny", art: "/games/arcade-feed-bunny.jpg", accent: "from-orange-400 to-amber-500", rim: "border-amber-700" },
 ];
 
-/** Existing illustrated worlds/covers for Skill Studio, keyed by the real game id. */
+/** Unique arcade art for Skill Studio. Remaining seven still need dedicated cards. */
 export const K1_STUDIO_ART: Record<K1StudioGameId, string> = {
-  "ten-frame-taxi": "/worlds/vehicle-world.jpg",
-  "blend-kitchen": "/worlds/kitchen-world.jpg",
-  "bead-train": "/worlds/creative-world.jpg",
-  "picnic-plus": "/covers/block-table-feast.jpg",
-  "weather-porch": "/covers/attic-rain-trunk.jpg",
-  "laundry-sort": "/worlds/my-world.jpg",
-  "story-porch": "/worlds/story-world.jpg",
-  "sock-drawer": "/covers/big-hug-bed.jpg",
-  "farm-count": "/worlds/animal-world.jpg",
+  "ten-frame-taxi": "/games/arcade-ten-frame-taxi.jpg",
+  "blend-kitchen": "/games/arcade-blend-kitchen.jpg",
+  "bead-train": "/games/arcade-bead-train.jpg",
+  "picnic-plus": "/games/arcade-picnic-plus.jpg",
+  "weather-porch": "/games/arcade-weather-porch.jpg",
+  "laundry-sort": "/games/arcade-laundry-sort.jpg",
+  "story-porch": "/games/arcade-story-porch.jpg",
+  "sock-drawer": "/games/arcade-sock-drawer.jpg",
+  "farm-count": "/games/arcade-farm-count.jpg",
   "reef-sort": "/worlds/secret-coral.jpg",
   "shape-bakery": "/covers/bakery-window-fog.jpg",
   "bus-stop": "/worlds/city-world.jpg",
