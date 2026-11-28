@@ -697,7 +697,7 @@
 }
 .wonder-place-worlds {
   background-image:
-    linear-gradient(180deg, rgba(186, 230, 253, 0.28) 0%, rgba(52, 211, 153, 0.32) 100%),
+    linear-gradient(180deg, rgba(186, 230, 253, 0.10) 0%, rgba(52, 211, 153, 0.12) 100%),
     url("/art/places/worlds.jpg");
   background-size: cover;
   background-position: center 42%;
@@ -711,49 +711,49 @@
 }
 .wonder-place-books {
   background-image:
-    linear-gradient(180deg, rgba(254, 215, 170, 0.28) 0%, rgba(251, 191, 36, 0.28) 100%),
+    linear-gradient(180deg, rgba(254, 215, 170, 0.10) 0%, rgba(251, 191, 36, 0.12) 100%),
     url("/art/places/stories.jpg");
   background-size: cover;
   background-position: center;
 }
 .wonder-place-games {
   background-image:
-    linear-gradient(180deg, rgba(110, 231, 183, 0.28) 0%, rgba(20, 184, 166, 0.32) 100%),
+    linear-gradient(180deg, rgba(110, 231, 183, 0.10) 0%, rgba(20, 184, 166, 0.12) 100%),
     url("/art/places/games.jpg");
   background-size: cover;
   background-position: center 55%;
 }
 .wonder-place-focus {
   background-image:
-    linear-gradient(180deg, rgba(204, 251, 241, 0.32) 0%, rgba(94, 234, 212, 0.3) 100%),
+    linear-gradient(180deg, rgba(204, 251, 241, 0.12) 0%, rgba(94, 234, 212, 0.12) 100%),
     url("/art/places/focus.jpg");
   background-size: cover;
   background-position: center 48%;
 }
 .wonder-place-playhouse {
   background-image:
-    linear-gradient(180deg, rgba(233, 213, 255, 0.28) 0%, rgba(244, 114, 182, 0.28) 100%),
+    linear-gradient(180deg, rgba(233, 213, 255, 0.10) 0%, rgba(244, 114, 182, 0.12) 100%),
     url("/art/places/playhouse.jpg");
   background-size: cover;
   background-position: center 55%;
 }
 .wonder-place-phonics {
   background-image:
-    linear-gradient(180deg, rgba(254, 205, 211, 0.28) 0%, rgba(251, 113, 133, 0.28) 100%),
+    linear-gradient(180deg, rgba(254, 205, 211, 0.10) 0%, rgba(251, 113, 133, 0.12) 100%),
     url("/art/places/phonics.jpg");
   background-size: cover;
   background-position: center 58%;
 }
 .wonder-place-counting {
   background-image:
-    linear-gradient(180deg, rgba(199, 210, 254, 0.3) 0%, rgba(129, 140, 248, 0.3) 100%),
+    linear-gradient(180deg, rgba(199, 210, 254, 0.10) 0%, rgba(129, 140, 248, 0.12) 100%),
     url("/art/places/counting.jpg");
   background-size: cover;
   background-position: center 55%;
 }
 .wonder-place-avatar-studio {
   background-image:
-    linear-gradient(180deg, rgba(251, 207, 232, 0.28) 0%, rgba(192, 132, 252, 0.28) 100%),
+    linear-gradient(180deg, rgba(251, 207, 232, 0.10) 0%, rgba(192, 132, 252, 0.12) 100%),
     url("/art/places/buddy.jpg");
   background-size: cover;
   background-position: center;
@@ -929,10 +929,10 @@
 }
 .wonder-home-meadow {
   background-image:
-    linear-gradient(180deg, rgba(134, 239, 172, 0.28) 0%, rgba(22, 163, 74, 0.42) 100%),
+    linear-gradient(180deg, rgba(255, 253, 247, 0.08) 0%, rgba(134, 239, 172, 0.14) 100%),
     url("/art/home/meadow.jpg");
   background-size: cover;
-  background-position: center 62%;
+  background-position: center 58%;
 }
 .wonder-art-sun,
 .wonder-art-cloud {

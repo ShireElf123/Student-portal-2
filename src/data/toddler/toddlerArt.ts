@@ -12,7 +12,7 @@ export const DESTINATION_ICON: Partial<Record<ToddlerSpaceTabId, string>> = {
   "avatar-studio": "/art/icons/buddy.png",
 };
 
-/** Painted destination shells. */
+/** Polymer-clay playroom interiors for each destination shell. */
 export const PLACE_ART: Partial<Record<ToddlerSpaceTabId, string>> = {
   worlds: "/art/places/worlds.jpg",
   books: "/art/places/stories.jpg",
