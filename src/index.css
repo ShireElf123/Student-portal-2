@@ -826,6 +826,80 @@
   animation: floatGently 4s ease-in-out infinite;
 }
 
+.wonder-home-sky {
+  background-image:
+    linear-gradient(180deg, rgba(56, 189, 248, 0.12) 0%, rgba(186, 230, 253, 0.28) 100%),
+    url("/art/home/sky.jpg");
+  background-size: cover;
+  background-position: center top;
+}
+.wonder-home-meadow {
+  background-image:
+    linear-gradient(180deg, rgba(134, 239, 172, 0.28) 0%, rgba(22, 163, 74, 0.42) 100%),
+    url("/art/home/meadow.jpg");
+  background-size: cover;
+  background-position: center 62%;
+}
+.wonder-art-sun,
+.wonder-art-cloud {
+  pointer-events: none;
+  user-select: none;
+  position: absolute;
+}
+.wonder-art-sun {
+  top: 0.35rem;
+  right: 0.85rem;
+  width: 3.4rem;
+  height: 3.4rem;
+  animation: wonderSpinSlow 48s linear infinite;
+}
+.wonder-art-cloud {
+  width: 7.5rem;
+  opacity: 0.92;
+  animation: wonderDrift 56s linear infinite;
+}
+.wonder-art-cloud-b {
+  animation-duration: 72s;
+  animation-delay: -18s;
+  width: 5.5rem;
+  opacity: 0.8;
+}
+@keyframes wonderSpinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes wonderDrift {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(18px); }
+  100% { transform: translateX(0); }
+}
+.wonder-home-teddy {
+  overflow: hidden;
+  background: rgba(255, 253, 247, 0.92) !important;
+}
+.wonder-home-teddy img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center 60%;
+}
+.wonder-launch-icon {
+  width: 2.05rem;
+  height: 2.05rem;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 2px rgba(15, 23, 42, 0.16));
+}
+@media (min-width: 640px) {
+  .wonder-launch-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+  .wonder-art-sun {
+    width: 4.25rem;
+    height: 4.25rem;
+  }
+}
+
 /* Accessibility: Focus Rings */
 .focus-ring {
   outline: none;

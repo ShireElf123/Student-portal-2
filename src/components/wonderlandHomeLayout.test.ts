@@ -23,6 +23,11 @@ describe("Toddler Wonderland home composition", () => {
     ]);
     expect(nav).toContain("grid-cols-4 lg:grid-cols-8");
     expect(nav).toContain('data-testid="toddler-space-nav"');
+    expect(nav).toContain("DESTINATION_ICON");
+    expect(nav).toContain("wonder-launch-icon");
+    expect(view).toContain("HOME_ART.teddy");
+    expect(css).toContain(".wonder-home-sky");
+    expect(css).toContain(".wonder-home-meadow");
     expect(nav).not.toMatch(/games-dock|Games dock|worlds tabs/i);
   });
 

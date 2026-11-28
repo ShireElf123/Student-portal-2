@@ -1,5 +1,6 @@
 import React from "react";
 import { TODDLER_SPACE_TABS, type ToddlerSpaceTabId } from "../data/toddler/toddlerSpaceTabs";
+import { DESTINATION_ICON } from "../data/toddler/toddlerArt";
 
 export function ToddlerSpaceNav({
   activeTab,
@@ -39,9 +40,20 @@ export function ToddlerSpaceNav({
                 : "text-white hover:bg-white/15 border-b-4 border-transparent"
             }`}
           >
-            <span className="text-2xl sm:text-3xl leading-none drop-shadow-sm" aria-hidden>
-              {tab.emoji}
-            </span>
+            {DESTINATION_ICON[tab.id] ? (
+              <img
+                src={DESTINATION_ICON[tab.id]}
+                alt=""
+                width={40}
+                height={40}
+                decoding="async"
+                className="wonder-launch-icon"
+              />
+            ) : (
+              <span className="text-2xl sm:text-3xl leading-none drop-shadow-sm" aria-hidden>
+                {tab.emoji}
+              </span>
+            )}
             <span className="leading-tight">{tab.label}</span>
           </button>
         );

@@ -5,6 +5,7 @@ import {
   TODDLER_SPACE_TABS,
   type ToddlerSpaceTabId,
 } from "../data/toddler/toddlerSpaceTabs";
+import { DESTINATION_ICON } from "../data/toddler/toddlerArt";
 
 export function ToddlerDestinationShell({
   tab,
@@ -48,8 +49,13 @@ export function ToddlerDestinationShell({
             <p className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-700">
               {shell.kicker}
             </p>
-            <h1 className="text-lg sm:text-2xl font-black text-slate-900 leading-tight">
-              <span aria-hidden>{meta?.emoji}</span> {meta?.label}
+            <h1 className="text-lg sm:text-2xl font-black text-slate-900 leading-tight flex items-center gap-2">
+              {meta && DESTINATION_ICON[meta.id] ? (
+                <img src={DESTINATION_ICON[meta.id]} alt="" width={36} height={36} className="wonder-launch-icon" decoding="async" />
+              ) : (
+                <span aria-hidden>{meta?.emoji}</span>
+              )}
+              {meta?.label}
             </h1>
           </div>
           <button

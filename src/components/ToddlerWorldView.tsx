@@ -51,6 +51,7 @@ import {
   WONDERLAND_HISTORY_KEY,
   type ToddlerSpaceTabId,
 } from "../data/toddler/toddlerSpaceTabs";
+import { HOME_ART } from "../data/toddler/toddlerArt";
 import {
   readWonderlandPlace,
   scheduleWonderlandScrollReset,
@@ -79,9 +80,7 @@ import { adaptStorybookBlueprintToPictureBook, findStaticPictureBookForSkill } f
 import { markGameBlueprintCompleted } from "../services/gameContentService";
 import {
   RollingHillsDivider,
-  FloatingCloudDecoration,
   CharacterAnchor,
-  TactileAgencyButton,
 } from "./landscape/LandscapeDecorations";
 
 interface ToddlerWorldViewProps {
@@ -848,7 +847,7 @@ export function ToddlerWorldView({
   return (
     <div className={`min-h-full pb-20 transition-colors duration-500 ${
       isMeadow
-        ? "bg-gradient-to-b from-[#86efac] via-[#4ade80] to-[#16a34a] text-slate-900"
+        ? "wonder-home-meadow text-slate-900"
         : "bg-[#0c0d14] text-white"
     }`}>
       {destination === null ? (
@@ -856,26 +855,14 @@ export function ToddlerWorldView({
       {/* Top Playful Banner with Organic Sky & Clouds */}
       <div className={`relative overflow-hidden px-4 pt-4 sm:pt-5 pb-3 transition-all duration-500 ${
         isMeadow
-          ? "bg-gradient-to-b from-[#38bdf8] via-[#7dd3fc] to-[#bae6fd] text-slate-900"
+          ? "wonder-home-sky text-slate-900"
           : "bg-gradient-to-b from-indigo-950 via-slate-900 to-[#0c0d14] text-white"
       }`}>
-        {/* Floating Clouds (Daytime Meadow) */}
         {isMeadow && (
           <>
-            <FloatingCloudDecoration className="absolute -top-2 left-6 hidden md:block" size="md" />
-            <FloatingCloudDecoration className="absolute top-4 right-52 hidden lg:block" size="sm" />
-            <FloatingCloudDecoration className="absolute -top-3 right-10 hidden sm:block" size="sm" />
-            {/* Friendly Sun Badge */}
-            <div className="absolute top-2 right-4 text-4xl sm:text-5xl animate-spin-slow pointer-events-none select-none opacity-90 hidden sm:block" style={{ animationDuration: "25s" }}>
-              ☀️
-            </div>
-            {/* Playful Flying Butterflies */}
-            <div className="absolute bottom-2 left-1/4 text-xl animate-bounce pointer-events-none select-none hidden md:block">
-              🦋
-            </div>
-            <div className="absolute top-8 right-1/3 text-lg animate-pulse pointer-events-none select-none hidden lg:block">
-              🐝
-            </div>
+            <img src={HOME_ART.sun} alt="" className="wonder-art-sun hidden sm:block" width={96} height={96} decoding="async" />
+            <img src={HOME_ART.cloud} alt="" className="wonder-art-cloud hidden md:block" style={{ top: "0.4rem", left: "8%" }} width={180} height={90} decoding="async" />
+            <img src={HOME_ART.cloud} alt="" className="wonder-art-cloud wonder-art-cloud-b hidden lg:block" style={{ top: "1.6rem", right: "28%" }} width={140} height={70} decoding="async" />
           </>
         )}
 
@@ -883,8 +870,8 @@ export function ToddlerWorldView({
           <div className="flex flex-col gap-3 sm:gap-4">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
               <div className="flex items-center gap-3 sm:gap-3.5">
-                <div className="wonder-home-teddy w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-400 to-pink-500 flex items-center justify-center text-3xl sm:text-4xl shadow-2xl shadow-orange-500/40 ring-4 ring-white border-2 border-amber-300 animate-bounce flex-shrink-0">
-                  🧸
+                <div className="wonder-home-teddy w-16 h-16 sm:w-20 sm:h-20 rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-700/20 ring-4 ring-white border-2 border-white flex-shrink-0 animate-float-gentle">
+                  <img src={HOME_ART.teddy} alt="" width={80} height={80} decoding="async" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-1 shadow-md ${
