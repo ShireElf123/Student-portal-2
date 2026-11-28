@@ -176,16 +176,15 @@ export function ToddlerBalloonSky({ onAddStar, onComplete, letters, closedKit = 
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header Banner */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-sky-400/20 via-blue-500/20 to-indigo-500/20 border-2 border-sky-400/30 text-center space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-400/20 text-sky-300 text-xs font-black uppercase tracking-wider">
+    <div className="play-board play-theme-balloons space-y-4" data-testid="play-board-balloons">
+      <div className="play-panel p-5 sm:p-6 text-center space-y-2">
+        <div className="play-chip inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">
           <span>🎈</span> Balloon Sky Carnival
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-white">
+        <h2 className="play-title text-2xl sm:text-3xl">
           Pop &amp; Learn Floating Balloons
         </h2>
-        <p className="text-white/70 text-xs sm:text-sm max-w-lg mx-auto">
+        <p className="play-copy text-xs sm:text-sm max-w-lg mx-auto">
           Tap the floating balloons as they drift through the fluffy clouds. Pop the target to earn golden stars!
         </p>
 
@@ -250,10 +249,10 @@ export function ToddlerBalloonSky({ onAddStar, onComplete, letters, closedKit = 
       </div>
 
       {/* Popped Stats Counter */}
-      <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.04] border border-white/10 text-xs font-bold text-white/80">
+      <div className="flex items-center justify-between p-4 rounded-2xl play-panel bg-white text-xs font-bold text-sky-900">
         <div className="flex items-center gap-2">
           <span>🎈 Total Popped:</span>
-          <span className="text-base font-black text-amber-300">{poppedCount}</span>
+          <span className="text-base font-black text-amber-700 count-num">{poppedCount}</span>
         </div>
         <div>
           Target pops today: {Math.min(targetPopsToday, DAILY_TARGET_STAR_GOAL)}/{DAILY_TARGET_STAR_GOAL} ⭐

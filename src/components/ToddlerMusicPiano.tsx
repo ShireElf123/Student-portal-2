@@ -215,16 +215,15 @@ export function ToddlerMusicPiano({
   const expectedKey = selectedSong && !songCompleted ? selectedSong.notes[currentNoteIdx] : null;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6" onPointerDownCapture={() => soundEffects.unlock()}>
-      {/* Top Header Card */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-pink-500/15 via-purple-500/15 to-indigo-500/15 border-2 border-pink-400/30 text-center space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-400/20 text-pink-300 text-xs font-black uppercase tracking-wider">
+    <div className="play-board play-theme-music space-y-4" data-testid="play-board-music" onPointerDownCapture={() => soundEffects.unlock()}>
+      <div className="play-panel p-5 sm:p-6 text-center space-y-2">
+        <div className="play-chip inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">
           <Music size={14} /> Musical Meadow Piano &amp; Xylophone
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-white">
+        <h2 className="play-title text-2xl sm:text-3xl">
           Rainbow Music Chimes
         </h2>
-        <p className="text-white/70 text-xs sm:text-sm max-w-lg mx-auto">
+        <p className="play-copy text-xs sm:text-sm max-w-lg mx-auto">
           Tap the big colorful keys to hear crystal xylophone notes, or choose a nursery rhyme to follow the bouncing star!
         </p>
 
@@ -240,7 +239,7 @@ export function ToddlerMusicPiano({
             className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
               selectedSong === null
                 ? "bg-white text-slate-900 shadow-md scale-105"
-                : "bg-white/10 text-white/70 hover:bg-white/20"
+                : "bg-white text-slate-700 border-2 border-pink-200 hover:bg-pink-50"
             }`}
           >
             🎨 Free Play Meadow
@@ -255,7 +254,7 @@ export function ToddlerMusicPiano({
                 className={`px-3 py-1.5 rounded-xl font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 ${
                   isSelected
                     ? "bg-gradient-to-r from-amber-400 to-yellow-300 text-amber-950 font-black shadow-md scale-105"
-                    : "bg-white/10 text-white/70 hover:bg-white/20"
+                    : "bg-white text-slate-700 border-2 border-pink-200 hover:bg-pink-50"
                 }`}
               >
                 <span>{song.emoji}</span>
@@ -268,13 +267,13 @@ export function ToddlerMusicPiano({
 
       {/* Song Guided Notes Display Banner */}
       {selectedSong && (
-        <div className="p-4 rounded-2xl bg-white/[0.04] border border-white/10 text-center">
+        <div className="p-4 rounded-2xl play-panel bg-white text-center">
           <div className="mb-3 flex flex-wrap justify-center gap-2">
             <button type="button" onClick={playSongDemo} disabled={isPlayingDemo} className="rounded-xl bg-amber-400 px-4 py-2 text-xs font-black text-amber-950 disabled:opacity-50">▶ Hear the tune</button>
-            {isPlayingDemo && <button type="button" onClick={stopDemo} className="rounded-xl bg-white/15 px-4 py-2 text-xs font-bold text-white">Stop</button>}
-            <span className="self-center text-[11px] text-white/55">Instrumental xylophone notes (not singing)</span>
+            {isPlayingDemo && <button type="button" onClick={stopDemo} className="rounded-xl bg-rose-100 px-4 py-2 text-xs font-bold text-rose-800">Stop</button>}
+            <span className="self-center text-[11px] text-slate-600">Instrumental xylophone notes (not singing)</span>
           </div>
-          <div className="text-xs text-white/60 mb-2 font-bold">
+          <div className="text-xs text-slate-700 mb-2 font-bold">
             Song Progress: {songCompleted ? "Completed! ⭐⭐⭐" : `Note ${currentNoteIdx + 1} of ${selectedSong.notes.length}`}
           </div>
           <div className="flex items-center justify-center gap-2 overflow-x-auto py-1">
@@ -288,8 +287,8 @@ export function ToddlerMusicPiano({
                     isCurrent
                       ? "bg-amber-400 text-amber-950 scale-110 ring-4 ring-amber-300/40 animate-bounce"
                       : isPast
-                      ? "bg-emerald-500/30 text-emerald-300 border border-emerald-400/40"
-                      : "bg-white/5 text-white/40"
+                      ? "bg-emerald-100 text-emerald-800 border border-emerald-400"
+                      : "bg-white text-slate-400 border border-pink-100"
                   }`}
                 >
                   <span>{n}</span>

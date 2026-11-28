@@ -348,22 +348,21 @@ export function ToddlerRhymeGame({
   };
 
   return (
-    <div className="bg-[#131322] border border-white/10 rounded-3xl p-5 sm:p-7 shadow-xl max-w-2xl mx-auto">
-      {/* Header */}
+    <div className="play-board play-theme-rhymes p-5 sm:p-7 max-w-2xl" data-testid="play-board-rhymes">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-2.5">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-500 flex items-center justify-center text-xl shadow-md">
             🎵
           </div>
           <div>
-            <h3 className="text-lg sm:text-xl font-black text-white">Rhyme Time Playground</h3>
-            <p className="text-sm text-white/85">Find words that have matching sounds!</p>
+            <h3 className="text-lg sm:text-xl font-black play-title">Rhyme Time Playground</h3>
+            <p className="text-sm play-copy">Find words that have matching sounds!</p>
           </div>
         </div>
 
         <button
           onClick={() => speakText(current.spokenPrompt, { pitch: 1.25, closedKit })}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-pink-500/20 hover:bg-pink-500/30 text-pink-300 text-xs font-bold border border-pink-400/30 transition-all cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-rose-50 text-rose-800 text-xs font-bold border-2 border-rose-300 transition-all cursor-pointer"
         >
           <Volume2 size={14} /> Listen
         </button>
@@ -372,12 +371,12 @@ export function ToddlerRhymeGame({
       {!isCompleted ? (
         <div className="space-y-6">
           {/* Target Word Hero Display */}
-          <div className="p-6 rounded-3xl bg-gradient-to-br from-white/[0.07] to-white/[0.02] border-2 border-white/10 flex flex-col items-center justify-center text-center shadow-inner relative">
+          <div className="p-6 rounded-3xl play-panel bg-white flex flex-col items-center justify-center text-center relative">
             <span className="text-6xl mb-2 filter drop-shadow-md animate-bounce">{current.targetEmoji}</span>
-            <h4 className="text-2xl font-black text-amber-300 tracking-wide">
+            <h4 className="text-2xl font-black text-rose-800 tracking-wide">
               {current.targetWord}
             </h4>
-            <p className="text-sm sm:text-base text-white/90 mt-1">Which friend below rhymes with {current.targetWord}?</p>
+            <p className="text-sm sm:text-base text-slate-700 mt-1">Which friend below rhymes with {current.targetWord}?</p>
           </div>
 
           {/* Option Choices */}
@@ -398,12 +397,12 @@ export function ToddlerRhymeGame({
                     isSelected && opt.isCorrect
                       ? "bg-emerald-500 text-white border-emerald-400 border-b-emerald-700 ring-4 ring-emerald-400/40"
                       : isWrong
-                      ? "bg-rose-500/30 text-white border-rose-400 border-b-rose-700 ring-4 ring-rose-400/30"
-                      : "bg-white/10 hover:bg-white/15 border-white/20 border-b-white/10 text-white"
+                      ? "bg-rose-100 text-rose-900 border-rose-400 border-b-rose-700 ring-4 ring-rose-400/30"
+                      : "bg-white hover:bg-rose-50 border-rose-200 border-b-rose-300 text-slate-900"
                   }`}
                 >
                   <span className="text-4xl sm:text-5xl filter drop-shadow">{opt.emoji}</span>
-                  <span className="text-sm sm:text-base font-black text-white">{opt.word}</span>
+                  <span className={`text-sm sm:text-base font-black ${isSelected && opt.isCorrect ? "text-white" : "text-slate-900"}`}>{opt.word}</span>
                 </motion.button>
               );
             })}
@@ -415,7 +414,7 @@ export function ToddlerRhymeGame({
               <div
                 key={i}
                 className={`h-2.5 rounded-full transition-all ${
-                  i === index ? "w-7 bg-pink-400" : i < index ? "w-2.5 bg-emerald-400" : "w-2.5 bg-white/20"
+                  i === index ? "w-7 bg-pink-500" : i < index ? "w-2.5 bg-emerald-500" : "w-2.5 bg-rose-200"
                 }`}
               />
             ))}
@@ -427,9 +426,9 @@ export function ToddlerRhymeGame({
           <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center text-5xl shadow-xl shadow-pink-500/30 animate-bounce">
             🎉
           </div>
-          <h4 className="text-2xl font-black text-white">Rhyme Master!</h4>
-          <p className="text-sm text-pink-200">
-            You completed all rhyming challenges! Earned <strong className="text-white">+3 Stars</strong> &amp; <strong className="text-white">+50 XP</strong>!
+          <h4 className="text-2xl font-black play-title">Rhyme Master!</h4>
+          <p className="text-sm text-rose-800">
+            You completed all rhyming challenges! Earned <strong className="text-slate-900">+3 Stars</strong> &amp; <strong className="text-slate-900">+50 XP</strong>!
           </p>
           <button
             onClick={handleRestart}

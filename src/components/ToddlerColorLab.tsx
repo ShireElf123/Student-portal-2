@@ -122,14 +122,14 @@ function PaintCanvas() {
   };
 
   return (
-    <section className="mt-5 rounded-[1.75rem] border border-pink-300/30 bg-gradient-to-br from-pink-500/10 to-violet-500/10 p-3 sm:p-4 text-left" aria-label="Paint studio">
+    <section className="mt-5 rounded-[1.75rem] border-2 border-pink-300 bg-white p-3 sm:p-4 text-left" aria-label="Paint studio">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
         <div>
-          <h4 className="text-xl font-black text-white">Little Paint Studio</h4>
-          <p className="text-sm text-white/75">Pick a colour. Draw on the big paper.</p>
+          <h4 className="text-xl font-black text-slate-900">Little Paint Studio</h4>
+          <p className="text-sm text-slate-600">Pick a colour. Draw on the big paper.</p>
         </div>
         <div className="flex gap-2">
-          <button type="button" onClick={clearCanvas} className="rounded-xl bg-white/10 px-3 py-2.5 text-sm font-bold text-white hover:bg-white/20">Clear</button>
+          <button type="button" onClick={clearCanvas} className="rounded-xl bg-slate-100 px-3 py-2.5 text-sm font-bold text-slate-800 hover:bg-slate-200">Clear</button>
           <button
             type="button"
             onClick={() => {
@@ -140,7 +140,7 @@ function PaintCanvas() {
               link.href = canvas.toDataURL("image/png");
               link.click();
             }}
-            className="rounded-xl bg-pink-500/25 px-3 py-2.5 text-sm font-bold text-white hover:bg-pink-500/40"
+            className="rounded-xl bg-pink-500 px-3 py-2.5 text-sm font-bold text-white hover:bg-pink-400"
           >
             Save
           </button>
@@ -158,7 +158,7 @@ function PaintCanvas() {
             style={{ backgroundColor: paintColor }}
           />
         ))}
-        <label className="flex items-center gap-2 text-sm font-bold text-white/80 min-w-[9rem]">
+        <label className="flex items-center gap-2 text-sm font-bold text-slate-800 min-w-[9rem]">
           Brush
           <input
             aria-label="Brush size"
@@ -338,16 +338,15 @@ export function ToddlerColorLab({
   };
 
   return (
-    <div className="bg-[#121422] border border-white/10 rounded-3xl p-4 sm:p-6 shadow-xl max-w-5xl mx-auto">
-      {/* Header */}
+    <div className="play-board play-theme-color p-4 sm:p-6 max-w-5xl" data-testid="play-board-color">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-400 via-rose-400 to-indigo-500 flex items-center justify-center text-xl shadow-md">
             🎨
           </div>
           <div>
-            <h3 className="text-lg sm:text-xl font-black text-white">Color Magic Mixing Lab</h3>
-            <p className="text-sm text-white/70">
+            <h3 className="text-lg sm:text-xl font-black play-title">Color Magic Mixing Lab</h3>
+            <p className="text-sm play-copy">
               {targetColor ? `Mix until you make ${targetColor}.` : "Tap two colours. Watch a new colour appear."}
             </p>
           </div>
@@ -355,7 +354,7 @@ export function ToddlerColorLab({
 
         <button
           onClick={handleReset}
-          className="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-white/80 hover:text-white transition-all cursor-pointer"
+          className="p-2 bg-white hover:bg-amber-50 rounded-xl text-amber-900 border-2 border-amber-300 transition-all cursor-pointer"
           title="Clear & Mix Again"
         >
           <RotateCcw size={16} />
@@ -363,7 +362,7 @@ export function ToddlerColorLab({
       </div>
 
       {/* Center Magic Mixing Cauldron */}
-      <div className="my-4 p-5 sm:p-6 rounded-3xl bg-gradient-to-b from-white/[0.08] to-white/[0.02] border-2 border-white/10 flex flex-col items-center justify-center text-center relative overflow-hidden">
+      <div className="my-4 p-5 sm:p-6 rounded-3xl play-panel bg-white flex flex-col items-center justify-center text-center relative overflow-hidden">
         {currentResult ? (
           <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
@@ -373,18 +372,18 @@ export function ToddlerColorLab({
             <div className={`w-28 h-28 rounded-full bg-gradient-to-br ${currentResult.bgGradient} flex items-center justify-center text-6xl shadow-2xl animate-pulse ring-8 ring-white/20`}>
               {currentResult.emoji}
             </div>
-            <h4 className="text-2xl font-black text-white">{currentResult.title}</h4>
-            <p className="text-sm text-amber-200 font-semibold max-w-sm">{currentResult.phrase}</p>
+            <h4 className="text-2xl font-black text-slate-900">{currentResult.title}</h4>
+            <p className="text-sm text-amber-800 font-semibold max-w-sm">{currentResult.phrase}</p>
             <button
               onClick={handleReset}
-              className="mt-3 px-5 py-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-bold text-sm border border-white/20 transition-all cursor-pointer"
+              className="mt-3 px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-bold text-sm border-b-4 border-amber-700 transition-all cursor-pointer"
             >
               Mix Another Color ✨
             </button>
           </motion.div>
         ) : (
           <div className="flex flex-col items-center space-y-4">
-            <div className="w-24 h-24 rounded-3xl bg-white/5 border-2 border-dashed border-white/20 flex items-center justify-center text-4xl">
+            <div className="w-24 h-24 rounded-3xl bg-amber-50 border-2 border-dashed border-amber-300 flex items-center justify-center text-4xl">
               {selectedDrops.length === 0 && <span className="opacity-40 animate-pulse">⚗️</span>}
               {selectedDrops.length === 1 && (
                 <span className="text-5xl animate-bounce">{selectedDrops[0].emoji}</span>
@@ -392,7 +391,7 @@ export function ToddlerColorLab({
               {selectedDrops.length === 2 && <span className="text-5xl animate-spin">✨</span>}
             </div>
 
-            <div className="text-sm font-bold text-white/80">
+            <div className="text-sm font-bold text-slate-800">
               {mixHint
                 ? mixHint
                 : selectedDrops.length === 0
@@ -405,7 +404,7 @@ export function ToddlerColorLab({
             {selectedDrops.length > 0 && (
               <div className="flex items-center gap-2">
                 {selectedDrops.map((d, i) => (
-                  <span key={i} className="px-3 py-1 bg-white/10 rounded-full text-xs font-bold text-white border border-white/10">
+                  <span key={i} className="px-3 py-1 bg-amber-100 rounded-full text-xs font-bold text-amber-950 border border-amber-300">
                     {d.name}
                   </span>
                 ))}

@@ -31,11 +31,11 @@ export function ToddlerSpaceNav({
             aria-selected={selected}
             data-testid={`toddler-tab-${tab.id}`}
             onClick={() => onSelect(tab.id)}
-            className={`flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none min-h-12 ${
+            className={`wonder-clay-tile flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 px-2 sm:px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg transition-all cursor-pointer select-none min-h-12 ${
               selected
                 ? tab.activeClass
                 : isMeadow
-                ? "text-slate-700 hover:text-slate-900 hover:bg-amber-100/70 border-b-4 border-emerald-100/90"
+                ? "bg-white text-slate-800 hover:text-slate-900 hover:bg-amber-50 border-b-4 border-emerald-200"
                 : "text-white hover:bg-white/15 border-b-4 border-transparent"
             }`}
           >

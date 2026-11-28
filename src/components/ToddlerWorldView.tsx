@@ -845,7 +845,7 @@ export function ToddlerWorldView({
                   <button
                     type="button"
                     onClick={() => onStartAssessment("toddler-phonics-basics")}
-                    className="wonder-clay border-b-4 bg-gradient-to-b from-emerald-500 to-emerald-600 hover:from-emerald-400 text-white border-emerald-800"
+                    className="wonder-clay wonder-parent-chip border-b-4 bg-white text-emerald-800 border-emerald-400 hover:bg-emerald-50"
                   >
                     <GraduationCap size={16} />
                     <span className="hidden sm:inline">Milestone Check</span>
@@ -856,7 +856,7 @@ export function ToddlerWorldView({
                   <button
                     type="button"
                     onClick={onRequestExit}
-                    className="wonder-clay border-b-4 bg-slate-800 hover:bg-slate-700 text-white border-slate-950"
+                    className="wonder-clay wonder-parent-chip border-b-4 bg-slate-800 hover:bg-slate-700 text-white border-slate-950"
                     title="Grown-Up Gate: Exit Toddler Space or Switch Profile"
                   >
                     <Lock size={14} className="text-amber-400" />
@@ -866,7 +866,7 @@ export function ToddlerWorldView({
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5">
+            <div className="wonder-companion-band" data-testid="wonder-companion-band">
               <button
                 type="button"
                 data-testid="wonder-buddy-stage"
@@ -890,7 +890,7 @@ export function ToddlerWorldView({
                 </div>
               </button>
 
-              <div data-testid="wonder-treasure-tray" className="wonder-treasure-tray">
+              <div data-testid="wonder-treasure-tray" className="wonder-treasure-tray flex-1">
                 <div className="wonder-clay border-b-4 bg-gradient-to-b from-amber-400 to-amber-500 text-amber-950 border-amber-600 cursor-default">
                   <Star className="w-5 h-5 fill-amber-200 text-amber-950 animate-pulse" />
                   <div className="text-left">

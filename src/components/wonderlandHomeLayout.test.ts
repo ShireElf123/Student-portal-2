@@ -30,7 +30,11 @@ describe("Toddler Wonderland home composition", () => {
     expect(css).toContain(".wonder-treasure-tray");
     expect(css).toContain(".wonder-clay");
     expect(css).toContain(".wonder-brand-title");
+    expect(css).toContain(".wonder-companion-band");
+    expect(css).toContain(".play-board");
+    expect(css).toContain(".play-theme-safari");
     expect(view).toContain('data-testid="wonder-treasure-tray"');
+    expect(view).toContain('data-testid="wonder-companion-band"');
     expect(view).toContain('data-testid="wonder-utility-rail"');
     expect(view).toContain('data-testid="wonder-buddy-stage"');
     expect(view).toContain('data-testid="hud-champion-chip"');

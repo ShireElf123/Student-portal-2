@@ -241,31 +241,29 @@ export function ToddlerAnimalSafari({
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Top Banner Card */}
-      <div className="p-6 rounded-3xl bg-gradient-to-r from-amber-500/20 via-emerald-500/20 to-sky-500/20 border-2 border-emerald-400/30 text-center space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-400/20 text-emerald-300 text-xs font-black uppercase tracking-wider">
+    <div className="play-board play-theme-safari space-y-4" data-testid="play-board-safari">
+      <div className="play-panel p-5 sm:p-6 text-center space-y-2">
+        <div className="play-chip inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">
           <span>🌿</span> {sceneTitle}
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black text-white">
+        <h2 className="play-title text-2xl sm:text-3xl">
           {sceneTitle}
         </h2>
-        <p className="text-white/70 text-xs sm:text-sm max-w-lg mx-auto">
+        <p className="play-copy text-xs sm:text-sm max-w-lg mx-auto">
           Hear friendly animal voices, meet cute creatures, and solve safari mystery sounds!
         </p>
 
-        {/* Mode Toggle */}
-        <div className="flex items-center justify-center gap-2 pt-2">
+        <div className="flex items-center justify-center gap-2 pt-2 flex-wrap">
           <button
             onClick={() => {
               setActiveMode("detective");
               soundEffects.playPop();
               startNewDetectiveRound();
             }}
-            className={`px-4 py-2 rounded-2xl font-black text-xs transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
               activeMode === "detective"
-                ? "bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 shadow-md scale-105"
-                : "bg-white/10 text-white/70 hover:bg-white/20"
+                ? "bg-gradient-to-r from-amber-500 to-yellow-400 text-amber-950 border-amber-700 shadow-md scale-105"
+                : "bg-white text-slate-700 border-amber-200 hover:bg-amber-50"
             }`}
           >
             🕵️ Safari Sound Detective
@@ -275,14 +273,13 @@ export function ToddlerAnimalSafari({
             onClick={() => {
               setActiveMode("explore");
               soundEffects.playPop();
-              // Free play takes over: stop any scheduled mystery round.
               advancePendingRef.current = false;
               clearCelebrationTimers();
             }}
-            className={`px-4 py-2 rounded-2xl font-black text-xs transition-all cursor-pointer ${
+            className={`px-4 py-2 rounded-2xl font-black text-xs transition-all cursor-pointer border-b-4 ${
               activeMode === "explore"
-                ? "bg-gradient-to-r from-emerald-500 to-teal-400 text-white shadow-md scale-105"
-                : "bg-white/10 text-white/70 hover:bg-white/20"
+                ? "bg-gradient-to-r from-lime-500 to-green-600 text-white border-green-800 shadow-md scale-105"
+                : "bg-white text-slate-700 border-amber-200 hover:bg-amber-50"
             }`}
           >
             🔍 Free Safari Explorer
@@ -290,22 +287,21 @@ export function ToddlerAnimalSafari({
         </div>
       </div>
 
-      {/* Detective Prompt Box */}
       {activeMode === "detective" && (
-        <div className="p-6 rounded-3xl bg-amber-500/10 border-2 border-amber-400/40 text-center space-y-3">
-          <div className="flex items-center justify-center gap-2">
-            <div className="text-xs font-black text-amber-300 uppercase tracking-widest">
+        <div className="play-panel p-5 sm:p-6 text-center space-y-3 bg-white">
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <div className="text-xs font-black text-amber-800 uppercase tracking-widest">
               Mystery Animal Call
             </div>
-            <div className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-black text-xs">
+            <div className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border-2 border-emerald-400 font-black text-xs">
               🕵️ Solved: {score}
             </div>
           </div>
-          <div className="text-2xl sm:text-3xl font-black text-white flex items-center justify-center gap-3">
+          <div className="text-2xl sm:text-3xl font-black text-slate-900 flex items-center justify-center gap-3">
             <span>🔊</span>
             <span className="tracking-wide">"{targetAnimal.soundText}"</span>
           </div>
-          <div className="flex justify-center gap-3 pt-1">
+          <div className="flex justify-center gap-3 pt-1 flex-wrap">
             <button
               onClick={handlePlayTargetSound}
               className="px-5 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-xs border-b-4 border-amber-600 shadow-md cursor-pointer flex items-center gap-2 active:border-b-0 active:translate-y-1"
@@ -317,7 +313,7 @@ export function ToddlerAnimalSafari({
             {showCelebration && (
               <button
                 onClick={startNewDetectiveRound}
-                className="px-5 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-white font-black text-xs border-b-4 border-emerald-700 shadow-md cursor-pointer flex items-center gap-2 active:border-b-0 active:translate-y-1"
+                className="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs border-b-4 border-emerald-800 shadow-md cursor-pointer flex items-center gap-2 active:border-b-0 active:translate-y-1"
               >
                 <span>Next Mystery Animal →</span>
               </button>
@@ -326,8 +322,7 @@ export function ToddlerAnimalSafari({
         </div>
       )}
 
-      {/* Animal Cards Grid (Chunky 3D Buttons) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
         {roster.map((animal) => {
           const isCorrectTarget = activeMode === "detective" && showCelebration && animal.id === targetAnimal.id;
           return (
@@ -336,38 +331,33 @@ export function ToddlerAnimalSafari({
               whileHover={{ scale: 1.04, y: -4 }}
               whileTap={{ scale: 0.96 }}
               onClick={() => handleAnimalClick(animal)}
-              className={`relative p-5 rounded-3xl border-2 transition-all cursor-pointer flex flex-col items-center justify-between text-center overflow-hidden select-none ${
-                isCorrectTarget
-                  ? "bg-emerald-500/20 border-emerald-400 ring-4 ring-emerald-400/40 shadow-xl"
-                  : "bg-white/[0.04] border-white/10 hover:border-white/30 hover:bg-white/[0.08]"
+              className={`relative p-4 sm:p-5 transition-all cursor-pointer flex flex-col items-center justify-between text-center overflow-hidden select-none ${
+                isCorrectTarget ? "play-card play-card-on ring-4 ring-emerald-500/40" : "play-card hover:border-amber-300"
               }`}
             >
-              {/* Top Habitat Pill */}
-              <div className="text-[10px] font-bold text-white/60 bg-white/10 px-2.5 py-0.5 rounded-full mb-2">
+              <div className="text-[10px] font-bold text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded-full mb-2 border border-amber-300">
                 {animal.habitat}
               </div>
 
-              {/* Painted portrait when we have one; emoji otherwise */}
               <div className="py-2 filter drop-shadow-lg transition-transform hover:scale-110">
                 {animal.artSrc ? (
                   <img
                     src={animal.artSrc}
                     alt={animal.name}
-                    className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-2xl mx-auto border-2 border-white/30"
+                    className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-2xl mx-auto border-2 border-amber-200"
                   />
                 ) : (
                   <div className="text-5xl sm:text-6xl">{animal.emoji}</div>
                 )}
               </div>
 
-              {/* Name & Sound */}
               <div className="mt-2 space-y-0.5">
-                <div className="text-base font-black text-white">{animal.name}</div>
-                <div className="text-xs font-bold text-amber-300">{animal.soundText}</div>
+                <div className="text-base font-black text-slate-900">{animal.name}</div>
+                <div className="text-xs font-bold text-orange-700">{animal.soundText}</div>
               </div>
 
               {isCorrectTarget && (
-                <div className="absolute top-2 right-2 bg-emerald-500 text-white p-1 rounded-full">
+                <div className="absolute top-2 right-2 bg-emerald-600 text-white p-1 rounded-full" aria-label="Correct">
                   <CheckCircle2 size={18} />
                 </div>
               )}
@@ -376,28 +366,27 @@ export function ToddlerAnimalSafari({
         })}
       </div>
 
-      {/* Info Card when an animal is selected in Explore mode */}
       {activeMode === "explore" && selectedAnimal && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-5 rounded-3xl bg-white/[0.06] border border-white/20 flex items-center gap-4"
+          className="play-panel p-4 sm:p-5 flex items-center gap-4 bg-white"
         >
           {selectedAnimal.artSrc ? (
             <img
               src={selectedAnimal.artSrc}
               alt={selectedAnimal.name}
-              className="w-16 h-16 object-cover rounded-2xl border border-white/30"
+              className="w-16 h-16 object-cover rounded-2xl border-2 border-amber-300"
             />
           ) : (
             <div className="text-5xl">{selectedAnimal.emoji}</div>
           )}
-          <div className="space-y-1">
-            <h4 className="text-lg font-black text-white flex items-center gap-2">
+          <div className="space-y-1 text-left">
+            <h4 className="text-lg font-black text-slate-900 flex items-center gap-2 flex-wrap">
               <span>{selectedAnimal.name}</span>
-              <span className="text-xs text-amber-300 font-bold">"{selectedAnimal.soundText}"</span>
+              <span className="text-xs text-orange-700 font-bold">"{selectedAnimal.soundText}"</span>
             </h4>
-            <p className="text-xs sm:text-sm text-white/80">{selectedAnimal.funFact}</p>
+            <p className="text-xs sm:text-sm text-slate-700">{selectedAnimal.funFact}</p>
           </div>
         </motion.div>
       )}
