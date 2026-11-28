@@ -192,6 +192,14 @@ export interface SpeakOptions {
   closedKit?: boolean;
 }
 
+/** Clip-only chain used by the Farm Chicks counting victory PoC. */
+export interface QueuedNarrationOptions extends SpeakOptions {
+  /** Pause between finished thoughts. Default 160ms. */
+  gapMs?: number;
+  /** Every line must have a narrator clip or nothing plays. */
+  requireClips?: boolean;
+}
+
 /** Start indexes of each spoken word, for read-along highlight. */
 export function wordStarts(text: string): number[] {
   const starts: number[] = [];
@@ -251,6 +259,7 @@ class SpeechCoordinator {
    * the live utterance with no safety net and its caller waiting forever.
    */
   private activeWatchdog: { token: number; timer: NodeJS.Timeout } | null = null;
+  private queueTimer: ReturnType<typeof setTimeout> | null = null;
   private activeUtterance: SpeechSynthesisUtterance | null = null;
   private listeners: Set<SpeechListener> = new Set();
   private voiceChangeListeners: Set<() => void> = new Set();
@@ -467,9 +476,17 @@ class SpeechCoordinator {
     this.activeWatchdog = null;
   }
 
+  private clearQueueTimer(): void {
+    if (this.queueTimer) {
+      clearTimeout(this.queueTimer);
+      this.queueTimer = null;
+    }
+  }
+
   public stop(): void {
     this.activeToken++;
     this.clearActiveWatchdog();
+    this.clearQueueTimer();
     toddlerAudio.stopVoice();
 
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -788,12 +805,117 @@ class SpeechCoordinator {
 
     return true;
   }
+
+  /**
+   * Play finished-thought narrator clips in order. Does not change exact-text
+   * lookup. Missing required clips, parent playback, or stop() cancel the rest
+   * without Web Speech and without a success onEnd.
+   */
+  public speakQueued(lines: string[], options?: QueuedNarrationOptions): boolean {
+    const parts = (lines || []).map((line) => (line || "").replace(/\s+/g, " ").trim()).filter(Boolean);
+    if (parts.length === 0) {
+      return false;
+    }
+
+    if (this.isVoiceMuted) {
+      options?.onEnd?.();
+      return true;
+    }
+
+    if (toddlerAudio.isParentPlaying()) {
+      return false;
+    }
+
+    const requireClips = Boolean(options?.requireClips || options?.closedKit);
+    if (requireClips) {
+      for (const part of parts) {
+        const found = narrationClipLookups(part).some((lookup) => toddlerAudio.hasNarrationClip(lookup));
+        if (!found) return false;
+      }
+    }
+
+    this.stop();
+    const token = ++this.activeToken;
+    const gapMs = options?.gapMs ?? 160;
+    let index = 0;
+    let settled = false;
+
+    const finishSuccess = () => {
+      if (token !== this.activeToken || settled) return;
+      settled = true;
+      this.notify(false);
+      try {
+        options?.onEnd?.();
+      } catch {
+        // ignore
+      }
+    };
+
+    const playIndex = () => {
+      if (token !== this.activeToken) return;
+      if (toddlerAudio.isParentPlaying()) return;
+      if (index >= parts.length) {
+        finishSuccess();
+        return;
+      }
+
+      const part = parts[index];
+      const clipHandlers = {
+        onStart: () => {
+          if (token !== this.activeToken) return;
+          this.notify(true);
+          if (index === 0) {
+            try {
+              options?.onStart?.();
+            } catch {
+              // ignore
+            }
+          }
+        },
+        onEnd: () => {
+          if (token !== this.activeToken || settled) return;
+          index += 1;
+          if (index >= parts.length) {
+            finishSuccess();
+            return;
+          }
+          this.clearQueueTimer();
+          this.queueTimer = setTimeout(() => {
+            this.queueTimer = null;
+            playIndex();
+          }, gapMs);
+        },
+        onFail: () => {
+          if (token !== this.activeToken) return;
+          this.notify(false);
+        },
+      };
+
+      let started = false;
+      for (const lookup of narrationClipLookups(part)) {
+        if (toddlerAudio.tryNarrationClip(lookup, clipHandlers)) {
+          started = true;
+          break;
+        }
+      }
+      if (!started) {
+        this.notify(false);
+      }
+    };
+
+    playIndex();
+    return true;
+  }
 }
 
 export const speechCoordinator = new SpeechCoordinator();
 
 export function speakText(text: string, options?: SpeakOptions): boolean {
   return speechCoordinator.speak(text, options);
+}
+
+export function speakQueuedNarration(lines: string[], options?: QueuedNarrationOptions): boolean {
+  return speechCoordinator.speakQueued(lines, options);
 }
 
 export function stopSpeaking(): void {

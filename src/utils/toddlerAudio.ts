@@ -144,6 +144,11 @@ class ToddlerAudioManager {
     return this.playVoiceAsset(asset, options);
   }
 
+  /** Exact-text registry hit only — does not start playback. */
+  hasNarrationClip(text: string): boolean {
+    return Boolean(narrationClipForText(text));
+  }
+
   playSafariAnimalSfx(animalId: string): boolean {
     const asset = animalClipForFriendId(animalId);
     if (!asset) return soundEffects.playAnimalCall(animalId);

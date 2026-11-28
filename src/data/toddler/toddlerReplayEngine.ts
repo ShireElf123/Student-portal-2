@@ -53,6 +53,20 @@ const COUNTING_OBJECT_TEMPLATES = [
   { name: "Spotted Ladybugs", emoji: "🐞", sound: "Crawl on leaf!", bg: "from-red-900 to-slate-950", text: "text-red-300" },
 ];
 
+/** Farm Valley counting PoC: correct-answer beats for Farm Chicks, 1–5 only. */
+export function farmChicksVictoryLines(count: number): string[] | null {
+  if (!Number.isInteger(count) || count < 1 || count > 5) return null;
+  return ["Hooray! That's right!", `${count}!`, "Farm Chicks!", "Cheep!"];
+}
+
+export function shouldUseFarmChicksVictoryQueue(
+  areaId: string | null | undefined,
+  itemName: string | null | undefined,
+  count: number,
+): boolean {
+  return areaId === "farm-valley" && itemName === "Farm Chicks" && farmChicksVictoryLines(count) !== null;
+}
+
 export function countingBand(level: number): { min: number; max: number; label: string } {
   if (level <= 1) return { min: 1, max: 5, label: "1 to 5" };
   if (level === 2) return { min: 6, max: 10, label: "6 to 10" };

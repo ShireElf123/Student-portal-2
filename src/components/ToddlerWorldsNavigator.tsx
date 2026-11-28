@@ -43,13 +43,15 @@ import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure"
 import {
   countingHintFromActivity,
   countingLevelForPlace,
+  farmChicksVictoryLines,
   generateCountingScenario,
   generateSortingChallenge,
+  shouldUseFarmChicksVictoryQueue,
   DynamicCountingScenario,
   DynamicSortingChallenge,
 } from "../data/toddler/toddlerReplayEngine";
 import { soundEffects } from "../utils/soundEffects";
-import { speakText as speakDevice, stopSpeaking, type SpeakOptions } from "../utils/speechUtils";
+import { speakText as speakDevice, speakQueuedNarration, stopSpeaking, type SpeakOptions } from "../utils/speechUtils";
 import { awardXP, triggerCelebrationConfetti } from "../utils/gamification";
 import { recordLearningEvent, getActiveLearnerId } from "../utils/learnerBrain";
 import { resolveSkillForActivity } from "../data/activitySkillRegistry";
@@ -276,6 +278,45 @@ export function ToddlerWorldsNavigator({
 
     advanceTimersRef.current.push(
       setTimeout(run, Math.max(7000, Math.ceil(feedback.length / 10) * 1000 + 2500))
+    );
+  };
+
+  /**
+   * Farm Chicks PoC: four finished-thought clips, then the existing fanfare.
+   * Missing clips / parent lock do not start the chain or the fanfare.
+   * A watchdog still releases celebration if clip onEnd is dropped.
+   */
+  const speakQueuedThenRun = (lines: string[], pauseMs: number, onSpokenEnd: () => void) => {
+    advancePendingRef.current = true;
+    clearAdvanceTimers();
+
+    const run = () => {
+      if (!advancePendingRef.current) return;
+      advancePendingRef.current = false;
+      clearAdvanceTimers();
+      onSpokenEnd();
+    };
+
+    const started = speakQueuedNarration(lines, {
+      pitch: 1.2,
+      closedKit: true,
+      requireClips: true,
+      gapMs: 160,
+      onEnd: () => {
+        if (!advancePendingRef.current) return;
+        clearAdvanceTimers();
+        advanceTimersRef.current.push(setTimeout(run, pauseMs));
+      },
+    });
+
+    if (!started) {
+      advancePendingRef.current = false;
+      return;
+    }
+
+    const chars = lines.join(" ").length;
+    advanceTimersRef.current.push(
+      setTimeout(run, Math.max(7000, Math.ceil(chars / 10) * 1000 + 2500 + lines.length * 160)),
     );
   };
 
@@ -733,12 +774,21 @@ export function ToddlerWorldsNavigator({
         setUnlockedNotice(newlyUnlockedAreas);
       }
 
-      const victoryFeedback = `Hooray! That's right, ${chosenNumber} ${dynamicCounting.itemName}! ${dynamicCounting.soundEffect}`;
-      speakThenRun(victoryFeedback, 600, () => {
+      const celebrate = () => {
         setShowCelebration(true);
         soundEffects.playFanfare();
         triggerCelebrationConfetti();
-      });
+      };
+      const farmChicksLines = farmChicksVictoryLines(chosenNumber);
+      if (
+        farmChicksLines &&
+        shouldUseFarmChicksVictoryQueue(activeActivity.areaId, dynamicCounting.itemName, chosenNumber)
+      ) {
+        speakQueuedThenRun(farmChicksLines, 600, celebrate);
+      } else {
+        const victoryFeedback = `Hooray! That's right, ${chosenNumber} ${dynamicCounting.itemName}! ${dynamicCounting.soundEffect}`;
+        speakThenRun(victoryFeedback, 600, celebrate);
+      }
     } else {
       soundEffects.playGentleBoing();
       const countSequence = Array.from({ length: dynamicCounting.targetCount }, (_, i) => i + 1).join(", ");

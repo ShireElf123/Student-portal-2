@@ -31,6 +31,17 @@ vi.mock("../utils/speechUtils", () => ({
     }
     return true;
   },
+  speakQueuedNarration: (lines: string[], options?: { onEnd?: () => void }) => {
+    speech.spoken.push(...lines);
+    const finish = () => options?.onEnd?.();
+    if (!speech.reportEnd.value) return true;
+    if (speech.autoEnd.value) {
+      setTimeout(finish, 0);
+    } else {
+      speech.pendingEnds.push(finish);
+    }
+    return true;
+  },
   stopSpeaking: () => {
     speech.pendingEnds.length = 0;
   },
@@ -203,6 +214,26 @@ describe("Animal World counting activity", () => {
     await answerCorrectly(container);
     await flush(2000);
 
+    expect(container.textContent).toContain("You did it!");
+  });
+
+  it("speaks Farm Chicks victory as four finished thoughts before celebrating", async () => {
+    const { container } = render(
+      <ToddlerWorldsNavigator onAddStar={() => {}} starsCount={0} initialWorldId={FARM_COUNT_ROUTE} />
+    );
+    await flush(500);
+    expect(speech.spoken.some((line) => line.includes("fluffy yellow chicks"))).toBe(true);
+
+    await answerCorrectly(container);
+    const hoorayAt = speech.spoken.indexOf("Hooray! That's right!");
+    expect(hoorayAt).toBeGreaterThanOrEqual(0);
+    expect(speech.spoken.slice(hoorayAt, hoorayAt + 4)).toEqual([
+      "Hooray! That's right!",
+      expect.stringMatching(/^[1-5]!$/),
+      "Farm Chicks!",
+      "Cheep!",
+    ]);
+    await flush(2000);
     expect(container.textContent).toContain("You did it!");
   });
 

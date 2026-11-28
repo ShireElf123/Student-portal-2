@@ -3,8 +3,10 @@ import {
   countingBand,
   countingHintFromActivity,
   countingLevelForPlace,
+  farmChicksVictoryLines,
   generateCountingScenario,
   pickCountingTemplate,
+  shouldUseFarmChicksVictoryQueue,
 } from "./toddlerReplayEngine";
 
 describe("counting growth bands", () => {
@@ -48,5 +50,21 @@ describe("counting growth bands", () => {
     expect(scenario.spokenPrompt).toBe(
       "Look at the cozy hay! Count the fluffy yellow chicks: one, two, three!",
     );
+  });
+
+  it("builds Farm Valley Farm Chicks victory beats only for counts 1–5", () => {
+    expect(farmChicksVictoryLines(3)).toEqual([
+      "Hooray! That's right!",
+      "3!",
+      "Farm Chicks!",
+      "Cheep!",
+    ]);
+    expect(farmChicksVictoryLines(1)?.[1]).toBe("1!");
+    expect(farmChicksVictoryLines(5)?.[1]).toBe("5!");
+    expect(farmChicksVictoryLines(6)).toBeNull();
+    expect(farmChicksVictoryLines(0)).toBeNull();
+    expect(shouldUseFarmChicksVictoryQueue("farm-valley", "Farm Chicks", 3)).toBe(true);
+    expect(shouldUseFarmChicksVictoryQueue("jungle-canopy", "Farm Chicks", 3)).toBe(false);
+    expect(shouldUseFarmChicksVictoryQueue("farm-valley", "Pond Ducks", 3)).toBe(false);
   });
 });
