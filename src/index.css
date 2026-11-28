@@ -505,16 +505,12 @@
   .wonder-utility-rail {
     justify-content: flex-start;
   }
-  .wonder-launcher--playroom .wonder-launch-tile {
-    max-width: 5.6rem;
-    min-width: 3.9rem;
-  }
   .wonder-launch-icon--hero {
-    width: 3.35rem;
-    height: 3.35rem;
+    width: 4.1rem;
+    height: 4.1rem;
   }
   .wonder-launch-tile {
-    min-height: 5.35rem;
+    min-height: 6.25rem;
   }
 }
 
@@ -635,19 +631,23 @@
 }
 .wonder-launcher--playroom {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  justify-items: center;
-  align-items: center;
-  align-content: center;
-  gap: 0.55rem 0.45rem;
-  padding: 0.35rem 0.15rem 0.35rem 4.1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-items: stretch;
+  align-items: stretch;
+  align-content: stretch;
+  grid-auto-rows: 1fr;
+  gap: 0.65rem 0.7rem;
+  padding: 0.2rem 0.15rem;
+  width: 100%;
+  height: 100%;
 }
 .wonder-launcher--playroom .wonder-launch-tile {
   flex: none;
   width: 100%;
-  max-width: 8.25rem;
+  max-width: none;
   min-width: 0;
-  min-height: 6.5rem;
+  min-height: 6.75rem;
+  height: 100%;
   margin: 0;
 }
 .wonder-launcher--night {
@@ -698,14 +698,14 @@
     scale: 1.32;
   }
 }
-.wonder-picture-card[data-place="worlds"] { border-color: #7dd3fc; --toy-rot: -16deg; --toy-y: 12px; }
-.wonder-picture-card[data-place="books"] { border-color: #fbbf24; --toy-rot: 11deg; --toy-y: -10px; }
-.wonder-picture-card[data-place="games"] { border-color: #2dd4bf; --toy-rot: -7deg; --toy-y: 6px; }
-.wonder-picture-card[data-place="focus"] { border-color: #5eead4; --toy-rot: 18deg; --toy-y: 16px; }
-.wonder-picture-card[data-place="playhouse"] { border-color: #e879f9; --toy-rot: -13deg; --toy-y: -6px; }
-.wonder-picture-card[data-place="phonics"] { border-color: #fb7185; --toy-rot: 9deg; --toy-y: 14px; }
-.wonder-picture-card[data-place="counting"] { border-color: #818cf8; --toy-rot: -19deg; --toy-y: 4px; }
-.wonder-picture-card[data-place="avatar-studio"] { border-color: #f9a8d4; --toy-rot: 14deg; --toy-y: 18px; }
+.wonder-picture-card[data-place="worlds"] { border-color: #7dd3fc; --toy-rot: 0deg; --toy-y: 0px; }
+.wonder-picture-card[data-place="books"] { border-color: #fbbf24; --toy-rot: 0deg; --toy-y: 0px; }
+.wonder-picture-card[data-place="games"] { border-color: #2dd4bf; --toy-rot: 0deg; --toy-y: 0px; }
+.wonder-picture-card[data-place="focus"] { border-color: #5eead4; --toy-rot: 0deg; --toy-y: 0px; }
+.wonder-picture-card[data-place="playhouse"] { border-color: #e879f9; --toy-rot: 0deg; --toy-y: 0px; }
+.wonder-picture-card[data-place="phonics"] { border-color: #fb7185; --toy-rot: 0deg; --toy-y: 0px; }
+.wonder-picture-card[data-place="counting"] { border-color: #818cf8; --toy-rot: 0deg; --toy-y: 0px; }
+.wonder-picture-card[data-place="avatar-studio"] { border-color: #f9a8d4; --toy-rot: 0deg; --toy-y: 0px; }
 @media (prefers-reduced-motion: reduce) {
   .wonder-picture-card[data-place] {
     --toy-rot: 0deg;
@@ -721,14 +721,21 @@
   }
 }
 .wonder-picture-label {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
+  display: block;
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0.12rem 0 0;
   overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  clip: auto;
   white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: #1c1917;
   border: 0;
 }
 .wonder-launch-tile {
@@ -810,22 +817,87 @@
 [data-wonder-frame="tablet"][data-wonder-orientation="portrait"] .wonder-turn-hint {
   display: block;
 }
-[data-wonder-orientation="landscape"] .wonder-launcher--playroom {
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  padding-left: 0.35rem;
+
+[data-wonder-frame="pocket"] .wonder-home-playroom {
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0.35rem 0.7rem 0.25rem;
 }
-[data-wonder-frame="pocket"][data-wonder-orientation="landscape"] .wonder-art-tree {
+[data-wonder-frame="pocket"] .wonder-launcher-wrap {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+[data-wonder-frame="pocket"] .wonder-launch-icon--hero {
+  width: 4.85rem;
+  height: 4.85rem;
+}
+[data-wonder-frame="pocket"] .wonder-art-tree {
+  height: min(70%, 11rem);
+  left: -1.25rem;
+  opacity: 0.55;
+  z-index: 0;
+}
+[data-wonder-frame="pocket"] .wonder-companion-band {
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow-x: auto;
+  gap: 0.35rem;
+  padding: 0.3rem;
+}
+[data-wonder-frame="pocket"] .wonder-buddy-chip {
+  min-height: 3.15rem;
+  padding: 0.2rem 0.45rem;
+  flex-shrink: 0;
+}
+[data-wonder-frame="pocket"] .wonder-buddy-chip .text-left {
   display: none;
+}
+[data-wonder-frame="pocket"] .wonder-treasure-tray {
+  flex-wrap: nowrap;
+  min-width: 0;
+  gap: 0.3rem;
+}
+[data-wonder-frame="pocket"] .wonder-treasure-tray > * {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 3.15rem;
+  padding-inline: 0.45rem;
+}
+[data-wonder-frame="pocket"] .wonder-star-kicker,
+[data-wonder-frame="pocket"] [data-testid="hud-champion-chip"],
+[data-wonder-frame="pocket"] .wonder-tray-copy {
+  display: none;
+}
+
+[data-wonder-frame="tablet"] .wonder-launcher--playroom,
+[data-wonder-frame="wide"] .wonder-launcher--playroom {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 0.4rem 0.2rem 0.4rem 4.4rem;
+  height: auto;
 }
 [data-wonder-frame="tablet"] .wonder-launcher--playroom .wonder-launch-tile,
 [data-wonder-frame="wide"] .wonder-launcher--playroom .wonder-launch-tile {
   max-width: 9.75rem;
   min-height: 8.25rem;
+  height: auto;
 }
 [data-wonder-frame="tablet"] .wonder-launch-icon--hero,
 [data-wonder-frame="wide"] .wonder-launch-icon--hero {
   width: 5.75rem;
   height: 5.75rem;
+}
+[data-wonder-frame="pocket"][data-wonder-orientation="landscape"] .wonder-launcher--playroom {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+[data-wonder-frame="pocket"][data-wonder-orientation="landscape"] .wonder-art-tree {
+  display: none;
+}
+[data-wonder-frame="tablet"][data-wonder-orientation="landscape"] .wonder-launcher--playroom,
+[data-wonder-frame="wide"][data-wonder-orientation="landscape"] .wonder-launcher--playroom {
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  padding-left: 0.35rem;
 }
 [data-wonder-frame="wide"][data-wonder-orientation="landscape"] .wonder-home-playroom {
   align-items: flex-end;

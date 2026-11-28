@@ -1002,13 +1002,13 @@ export function ToddlerWorldView({
             <div className="wonder-clay border-b-4 bg-gradient-to-b from-amber-400 to-amber-500 text-amber-950 border-amber-600 cursor-default">
               <Star className="w-5 h-5 fill-amber-200 text-amber-950 animate-pulse" />
               <div className="text-left">
-                <div className="text-xs uppercase font-black tracking-wider leading-none">Star jar</div>
+                <div className="wonder-star-kicker text-xs uppercase font-black tracking-wider leading-none">Star jar</div>
                 <div className="text-[11px] font-black leading-tight" data-testid="hud-champion-chip" title={currentRank.description}>
                   {currentRank.emoji} {currentRank.title}
                 </div>
                 <div className="text-base font-black leading-tight">
                   <span className="count-num" data-testid="hud-star-count">{starsCount}</span>{" "}
-                  <span className="text-sm font-bold">Stars</span>
+                  <span className="wonder-tray-copy text-sm font-bold">Stars</span>
                 </div>
               </div>
             </div>
@@ -1022,7 +1022,7 @@ export function ToddlerWorldView({
               title="Explorer Sticker Album"
             >
               <Trophy size={14} />
-              <span>Stickers</span>
+              <span className="wonder-tray-copy">Stickers</span>
               <span className="px-1.5 py-0.5 rounded-full bg-amber-950/20 text-xs font-black count-num" data-testid="hud-sticker-count">
                 {unlockedStickersCount}/{TODDLER_STICKERS.length}
               </span>
@@ -1037,7 +1037,7 @@ export function ToddlerWorldView({
               title="Today's 3 Adventure Missions"
             >
               <Calendar size={14} />
-              <span>Quests</span>
+              <span className="wonder-tray-copy">Quests</span>
               <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-xs">
                 <span className="count-num">{completedMissions.length}/3</span>
               </span>

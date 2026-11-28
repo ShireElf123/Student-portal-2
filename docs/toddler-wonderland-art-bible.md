@@ -32,7 +32,7 @@ The experience is an **illustrated world the interface lives inside** — not pi
 - Same upper-left light and clay material as teddy.
 - Transparent PNG. Home launcher shows them as **clay picture-cards** (cream plate, colored frame) sitting on the meadow.
 - Icon size about 70px on phones, 92–108px on landscape tablets.
-- Toys scatter on the meadow (tilted picture-cards). Portrait is a 4×2 grid; landscape spreads all eight. Treasure tray is a designed meadow shelf (larger Pip + rewards). Layout follows the **physical device** (pocket / tablet / wide). Chrome “desktop site” on a phone stays pocket so tiles remain toddler-tappable — never a scaled-down PC strip.
+- Home is a **tap grid on the meadow**, not a pile of tilted cards. Phone portrait: **2×4** equal cream picture-cards with visible names (Khan Kids / Duolingo ABC pattern). Cards never overlap; rotation is 0 on pocket. Tablet portrait: 4×2. Landscape tablet/wide: eight across. Tree is scenery behind the grid, never on a tap target. Treasure tray is one slim shelf. Layout follows the **physical device**; Chrome “desktop site” on a phone stays pocket.
 - **One tap** lifts and straightens the card, then walks into the room. Do not speak the category name on Home. Do not auto-greet when Home opens. Honour `prefers-reduced-motion`.
 - No text baked into icons. No emoji.
 - Grown-up chrome stays in a slim strip.

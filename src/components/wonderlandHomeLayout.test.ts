@@ -38,6 +38,7 @@ describe("Toddler Wonderland home composition", () => {
     expect(css).toContain(".wonder-launch-icon--hero");
     expect(css).toContain("data-wonder-orientation");
     expect(css).toContain("data-wonder-frame");
+    expect(css).toContain("grid-template-columns: repeat(2");
     expect(css).toContain("grid-template-columns: repeat(4");
     expect(css).toContain("repeat(8");
     expect(view).toContain("data-wonder-frame");
