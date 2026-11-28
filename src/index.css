@@ -551,7 +551,7 @@
 }
 @media (min-width: 1024px) {
   .wonder-launcher-wrap {
-    margin-bottom: 2rem;
+    margin-bottom: 0.5rem;
   }
 }
 .wonder-turn-hint {
@@ -585,51 +585,34 @@
   box-shadow: none;
 }
 .wonder-launcher--playroom .wonder-launch-tile {
-  flex: 0 0 22%;
-  max-width: 9rem;
-  min-width: 4.5rem;
-  margin: -0.4rem -0.2rem;
-  background: transparent;
-  border: 0;
-  box-shadow: none;
-  color: #1c1917;
-}
-.wonder-launcher--playroom .wonder-picture-card::after {
-  content: "";
-  position: absolute;
-  left: 22%;
-  right: 22%;
-  bottom: 0.2rem;
-  height: 0.55rem;
-  border-radius: 50%;
-  background: rgba(22, 101, 52, 0.28);
-  filter: blur(3px);
-  pointer-events: none;
-}
-.wonder-launcher--playroom .wonder-launch-tile[data-toy="hero"] {
-  flex-basis: 28%;
-  max-width: 10.5rem;
-}
-.wonder-launcher--playroom .wonder-launch-tile[data-toy="side"] {
-  flex-basis: 18%;
-  max-width: 6.5rem;
+  flex: 0 0 24%;
+  max-width: 8.25rem;
+  min-width: 4.25rem;
+  margin: -0.28rem -0.12rem;
 }
 .wonder-launcher--night {
   padding: 0.45rem;
 }
 .wonder-picture-card {
   position: relative;
-  background: transparent;
+  background: #fffdf7;
   color: #1c1917;
-  border: 0;
+  border: 4px solid #fde68a;
+  border-radius: 1.35rem;
   rotate: var(--toy-rot, 0deg);
   translate: 0 var(--toy-y, 0px);
   transform-origin: 50% 90%;
+  box-shadow:
+    0 10px 0 rgba(15, 23, 42, 0.08),
+    0 14px 22px -16px rgba(15, 23, 42, 0.35);
 }
 .wonder-picture-card.is-selected,
 .wonder-picture-card.is-named {
-  scale: 1.12;
+  scale: 1.1;
   z-index: 3;
+  box-shadow:
+    0 16px 0 rgba(15, 23, 42, 0.1),
+    0 22px 28px -14px rgba(15, 23, 42, 0.4);
 }
 .wonder-picture-card.is-opening {
   z-index: 6;
@@ -647,14 +630,14 @@
     scale: 1.32;
   }
 }
-.wonder-picture-card[data-place="worlds"] { --toy-rot: -16deg; --toy-y: 12px; }
-.wonder-picture-card[data-place="books"] { --toy-rot: 11deg; --toy-y: -10px; }
-.wonder-picture-card[data-place="games"] { --toy-rot: -7deg; --toy-y: 6px; }
-.wonder-picture-card[data-place="focus"] { --toy-rot: 18deg; --toy-y: 16px; }
-.wonder-picture-card[data-place="playhouse"] { --toy-rot: -13deg; --toy-y: -6px; }
-.wonder-picture-card[data-place="phonics"] { --toy-rot: 9deg; --toy-y: 14px; }
-.wonder-picture-card[data-place="counting"] { --toy-rot: -19deg; --toy-y: 4px; }
-.wonder-picture-card[data-place="avatar-studio"] { --toy-rot: 14deg; --toy-y: 18px; }
+.wonder-picture-card[data-place="worlds"] { border-color: #7dd3fc; --toy-rot: -16deg; --toy-y: 12px; }
+.wonder-picture-card[data-place="books"] { border-color: #fbbf24; --toy-rot: 11deg; --toy-y: -10px; }
+.wonder-picture-card[data-place="games"] { border-color: #2dd4bf; --toy-rot: -7deg; --toy-y: 6px; }
+.wonder-picture-card[data-place="focus"] { border-color: #5eead4; --toy-rot: 18deg; --toy-y: 16px; }
+.wonder-picture-card[data-place="playhouse"] { border-color: #e879f9; --toy-rot: -13deg; --toy-y: -6px; }
+.wonder-picture-card[data-place="phonics"] { border-color: #fb7185; --toy-rot: 9deg; --toy-y: 14px; }
+.wonder-picture-card[data-place="counting"] { border-color: #818cf8; --toy-rot: -19deg; --toy-y: 4px; }
+.wonder-picture-card[data-place="avatar-studio"] { border-color: #f9a8d4; --toy-rot: 14deg; --toy-y: 18px; }
 @media (prefers-reduced-motion: reduce) {
   .wonder-picture-card[data-place] {
     --toy-rot: 0deg;
@@ -688,17 +671,8 @@
   filter: drop-shadow(0 3px 3px rgba(15, 23, 42, 0.18));
 }
 .wonder-launch-icon--hero {
-  width: 4.85rem;
-  height: 4.85rem;
-  filter: drop-shadow(0 10px 8px rgba(15, 23, 42, 0.28));
-}
-.wonder-launcher--playroom .wonder-launch-tile[data-toy="hero"] .wonder-launch-icon--hero {
-  width: 6.1rem;
-  height: 6.1rem;
-}
-.wonder-launcher--playroom .wonder-launch-tile[data-toy="side"] .wonder-launch-icon--hero {
-  width: 3.7rem;
-  height: 3.7rem;
+  width: 4.35rem;
+  height: 4.35rem;
 }
 .wonder-launch-icon--place {
   width: 2.35rem;
@@ -714,10 +688,7 @@
     padding: 0.35rem 0.2rem 1rem;
   }
   .wonder-launcher--playroom .wonder-launch-tile {
-    max-width: 10rem;
-  }
-  .wonder-launcher--playroom .wonder-launch-tile[data-toy="hero"] {
-    max-width: 11.5rem;
+    max-width: 9.25rem;
   }
   .wonder-launch-tile {
     min-height: 8rem;
@@ -725,14 +696,6 @@
   .wonder-launch-icon--hero {
     width: 5.75rem;
     height: 5.75rem;
-  }
-  .wonder-launcher--playroom .wonder-launch-tile[data-toy="hero"] .wonder-launch-icon--hero {
-    width: 7.25rem;
-    height: 7.25rem;
-  }
-  .wonder-launcher--playroom .wonder-launch-tile[data-toy="side"] .wonder-launch-icon--hero {
-    width: 4.4rem;
-    height: 4.4rem;
   }
   .wonder-picture-label {
     font-size: 0.85rem;
@@ -744,16 +707,8 @@
 }
 @media (orientation: landscape) and (min-width: 500px), (min-width: 1024px) {
   .wonder-launcher--playroom .wonder-launch-tile {
-    flex-basis: 11%;
-    max-width: 9.5rem;
-  }
-  .wonder-launcher--playroom .wonder-launch-tile[data-toy="hero"] {
-    flex-basis: 14%;
-    max-width: 11rem;
-  }
-  .wonder-launcher--playroom .wonder-launch-tile[data-toy="side"] {
-    flex-basis: 9%;
-    max-width: 7rem;
+    flex-basis: 11.8%;
+    max-width: 9.75rem;
   }
   .wonder-launch-tile {
     min-height: 9.25rem;
@@ -761,53 +716,6 @@
   .wonder-launch-icon--hero {
     width: 6.75rem;
     height: 6.75rem;
-  }
-  .wonder-launcher--playroom .wonder-launch-tile[data-toy="hero"] .wonder-launch-icon--hero {
-    width: 8.1rem;
-    height: 8.1rem;
-  }
-  .wonder-launcher--playroom .wonder-launch-tile[data-toy="side"] .wonder-launch-icon--hero {
-    width: 5.1rem;
-    height: 5.1rem;
-  }
-}
-
-@media (min-width: 1280px) {
-  .wonder-launcher-wrap {
-    max-width: 86rem;
-    margin-bottom: 2.5rem;
-  }
-  .wonder-home-playroom {
-    min-height: 24rem;
-    padding-top: 1.25rem;
-    padding-bottom: 1.5rem;
-  }
-  .wonder-launcher {
-    gap: 0.8rem 1.1rem;
-    padding: 0.75rem 0.5rem 1.4rem;
-  }
-  .wonder-launcher--playroom .wonder-launch-tile[data-toy="hero"] {
-    flex-basis: 16%;
-    max-width: 13rem;
-  }
-  .wonder-launcher--playroom .wonder-launch-tile[data-toy="side"] {
-    flex-basis: 10%;
-    max-width: 8.5rem;
-  }
-  .wonder-launcher--playroom .wonder-launch-tile[data-toy="hero"] .wonder-launch-icon--hero {
-    width: 9.25rem;
-    height: 9.25rem;
-  }
-  .wonder-launcher--playroom .wonder-launch-tile[data-toy="side"] .wonder-launch-icon--hero {
-    width: 5.75rem;
-    height: 5.75rem;
-  }
-  .wonder-art-sun {
-    width: 5.5rem;
-    height: 5.5rem;
-  }
-  .wonder-arcade-card img {
-    height: 11rem;
   }
 }
 

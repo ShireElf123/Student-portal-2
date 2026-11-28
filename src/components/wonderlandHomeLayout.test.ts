@@ -29,10 +29,8 @@ describe("Toddler Wonderland home composition", () => {
     expect(nav).toContain("speakText");
     expect(nav).toContain("is-named");
     expect(nav).toContain("is-opening");
-    expect(nav).toContain('data-toy={HERO_TOYS.has(tab.id) ? "hero" : "side"}');
     expect(css).toContain("wonderToyOpen");
-    expect(css).toContain('[data-toy="hero"]');
-    expect(css).toContain('[data-toy="side"]');
+    expect(css).toContain("border: 4px solid #fde68a");
     expect(css).toContain(".wonder-launcher--playroom");
     expect(css).toContain("--toy-rot");
     expect(css).toContain(".wonder-launch-icon--hero");

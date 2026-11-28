@@ -844,7 +844,7 @@ export function ToddlerWorldView({
   const isMeadow = gameState.wonderlandTheme === "sunny-meadow";
 
   return (
-    <div className={`min-h-dvh pb-20 transition-colors duration-500 ${
+    <div className={`min-h-dvh pb-6 transition-colors duration-500 ${
       isMeadow
         ? "wonder-home-meadow text-slate-900"
         : "bg-[#0c0d14] text-white"

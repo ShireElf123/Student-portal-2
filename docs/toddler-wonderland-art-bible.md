@@ -26,10 +26,9 @@ Reusable visual spec for one illustrated product. Destinations keep their own pe
 
 - 3/4 view, strong silhouette, one hero object per icon.
 - Same upper-left light and clay material as teddy.
-- Transparent PNG. Home launcher shows them as **loose clay toys** on the meadow (no cream plate, no colored frame) — Pok Pok pucks, not a card grid.
-- Five bigger toys: Worlds, Stories, Games, Playhouse, My Buddy. Three smaller: Focus, Phonics, Counting. All eight stay tappable.
-- Icon size about 70–120px. Drop-shadow + grass oval, not a UI border.
-- Toys scatter on the meadow (tilted, overlapping). Portrait wraps; landscape spreads with vertical jitter.
+- Transparent PNG. Home launcher shows them as **clay picture-cards** (cream plate, colored frame) sitting on the meadow.
+- Icon size about 70px on phones, 92–108px on landscape tablets.
+- Toys scatter on the meadow (tilted picture-cards). Portrait wraps four-across; landscape spreads all eight. Keep bottom chrome tight — no extra meadow void under the treasure tray.
 - First tap speaks the toy name. Second tap **lifts and straightens** the card (rainbow-held-up), then walks into the room. Honour `prefers-reduced-motion` (skip the spin, open immediately).
 - Names live in the voice, not as printed labels on the toy.
 - No text baked into icons. No emoji.
