@@ -58,6 +58,8 @@ describe("Toddler Wonderland home composition", () => {
     expect(view).toContain('data-testid="hud-star-count"');
     expect(view).toContain('data-testid="hud-sticker-count"');
     expect(view).toContain("wonder-brand-title");
+    expect(view).toContain("wonder-home-playroom");
+    expect(view.indexOf("wonder-home-playroom")).toBeLessThan(view.indexOf('data-testid="wonder-companion-band"'));
   });
 
   it("keeps star digits on .count-num and does not hide rewards", () => {

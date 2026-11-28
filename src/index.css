@@ -249,7 +249,7 @@
  * Toddler Wonderland identity: clay surfaces, illustrated places, full brand.
  */
 .wonder-brand-title {
-  font-size: clamp(1.85rem, 7.4vw, 3.15rem);
+  font-size: clamp(1.35rem, 5.2vw, 2.15rem);
   line-height: 0.95;
   letter-spacing: -0.03em;
   overflow: visible;
@@ -263,8 +263,8 @@
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  min-height: 3rem;
-  padding: 0.45rem 0.85rem;
+  min-height: 2.65rem;
+  padding: 0.35rem 0.7rem;
   border-radius: 1.15rem;
   font-weight: 900;
   line-height: 1.1;
@@ -511,13 +511,13 @@
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
-  gap: 0.65rem;
-  padding: 0.55rem;
-  border-radius: 1.75rem;
-  background: rgba(255, 255, 255, 0.78);
+  gap: 0.45rem;
+  padding: 0.4rem;
+  border-radius: 1.35rem;
+  background: rgba(255, 253, 247, 0.72);
   border: 3px solid #fff;
   box-shadow:
-    0 14px 24px -16px rgba(15, 23, 42, 0.28),
+    0 10px 18px -16px rgba(15, 23, 42, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 .wonder-parent-chip {
@@ -541,9 +541,13 @@
   gap: 0.55rem;
 }
 
+.wonder-home-playroom {
+  position: relative;
+  z-index: 2;
+}
 .wonder-launcher-wrap {
   max-width: 72rem;
-  margin: 0 auto 1rem;
+  margin: 0 auto 0.35rem;
 }
 @media (min-width: 1024px) {
   .wonder-launcher-wrap {
@@ -952,7 +956,7 @@
 
 .wonder-home-sky {
   background-image:
-    linear-gradient(180deg, rgba(56, 189, 248, 0.12) 0%, rgba(186, 230, 253, 0.28) 100%),
+    linear-gradient(180deg, rgba(56, 189, 248, 0.06) 0%, rgba(186, 230, 253, 0.12) 100%),
     url("/art/home/sky.jpg");
   background-size: cover;
   background-position: center top;

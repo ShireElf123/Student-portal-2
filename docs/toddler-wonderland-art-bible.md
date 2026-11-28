@@ -28,7 +28,8 @@ Reusable visual spec for one illustrated product. Destinations keep their own pe
 - Icon size about 70px on phones, 92–108px on landscape tablets.
 - Landscape is the tablet playroom: eight picture-doors in one row. Portrait phones keep two rows of four.
 - No text baked into icons. No emoji.
-- Grown-up chrome (mute, exit, milestone) stays, but the toys are the first thing a pre-reader taps.
+- Grown-up chrome (mute, exit, milestone) stays in a slim strip. Picture-cards sit on the meadow first; Buddy / star jar / stickers / quests sit underneath, not above the toys.
+- Home sky is clay, same material as the meadow. Overlay clouds are clay too.
 
 ## Destination personalities (same universe)
 
