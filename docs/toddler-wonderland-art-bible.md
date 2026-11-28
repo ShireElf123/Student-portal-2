@@ -28,7 +28,8 @@ Reusable visual spec for one illustrated product. Destinations keep their own pe
 - Same upper-left light and clay material as teddy.
 - Transparent PNG. Home launcher shows them as **clay picture-cards** (cream plate, colored frame) sitting on the meadow — Pok Pok / Sago style toys, not a frosted toolbar.
 - Icon size about 70px on phones, 92–108px on landscape tablets.
-- Landscape is the tablet playroom: eight picture-doors in one row. Portrait phones keep two rows of four.
+- Toys scatter on the meadow (tilted picture-cards), not an equal 8-grid dock. Portrait still wraps four-across; landscape spreads all eight with a vertical jitter.
+- First tap speaks the toy name. Second tap opens the room.
 - No text baked into icons. No emoji.
 - Grown-up chrome (mute, exit, milestone) stays in a slim strip. Picture-cards sit on the meadow first; Buddy / star jar / stickers / quests sit underneath, not above the toys.
 - Home sky is clay, same material as the meadow. Overlay clouds are clay too.

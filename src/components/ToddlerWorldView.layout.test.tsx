@@ -6,6 +6,12 @@ import { ToddlerWorldView } from "./ToddlerWorldView";
 
 afterEach(() => cleanup());
 
+function openToy(getByTestId: (id: string) => HTMLElement, id: string) {
+  const toy = getByTestId(`toddler-tab-${id}`);
+  fireEvent.click(toy);
+  fireEvent.click(toy);
+}
+
 describe("ToddlerWorldView home gateway", () => {
   it("renders grouped rewards, utilities, buddy stage, and eight destinations", () => {
     const { getByTestId, getByText, queryByText } = render(
@@ -30,7 +36,7 @@ describe("ToddlerWorldView home gateway", () => {
     const { getByTestId, getByText, queryByTestId, queryByText } = render(
       <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
     );
-    fireEvent.click(getByTestId("toddler-tab-games"));
+    openToy(getByTestId, "games");
     expect(queryByTestId("toddler-space-nav")).toBeNull();
     expect(queryByTestId("wonder-home-header")).toBeNull();
     expect(getByTestId("wonder-destination-games")).toBeTruthy();
@@ -47,7 +53,7 @@ describe("ToddlerWorldView home gateway", () => {
     const { getByTestId, getByText, queryByTestId } = render(
       <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
     );
-    fireEvent.click(getByTestId("toddler-tab-worlds"));
+    openToy(getByTestId, "worlds");
     expect(queryByTestId("toddler-space-nav")).toBeNull();
     expect(getByTestId("wonder-destination-worlds")).toBeTruthy();
     expect(getByText("Pick a land")).toBeTruthy();
@@ -57,7 +63,7 @@ describe("ToddlerWorldView home gateway", () => {
     const { getByTestId, queryByTestId } = render(
       <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
     );
-    fireEvent.click(getByTestId("toddler-tab-phonics"));
+    openToy(getByTestId, "phonics");
     expect(getByTestId("wonder-destination-phonics")).toBeTruthy();
     fireEvent.popState(window);
     window.dispatchEvent(new PopStateEvent("popstate", { state: {} }));
@@ -69,7 +75,7 @@ describe("ToddlerWorldView home gateway", () => {
     const { getByTestId, queryByTestId } = render(
       <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
     );
-    fireEvent.click(getByTestId("toddler-tab-games"));
+    openToy(getByTestId, "games");
     fireEvent.click(getByTestId("arcade-game-rainbow-piano"));
     expect(getByTestId("arcade-more-games")).toBeTruthy();
     window.dispatchEvent(
@@ -86,7 +92,7 @@ describe("ToddlerWorldView home gateway", () => {
     const { getByTestId, getByText, queryByText } = render(
       <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
     );
-    fireEvent.click(getByTestId("toddler-tab-playhouse"));
+    openToy(getByTestId, "playhouse");
     fireEvent.click(getByTestId("playhouse-show-teddy-loose-button"));
     expect(getByText("All plays")).toBeTruthy();
     window.dispatchEvent(
@@ -102,7 +108,7 @@ describe("ToddlerWorldView home gateway", () => {
     const { getByTestId } = render(
       <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
     );
-    fireEvent.click(getByTestId("toddler-tab-games"));
+    openToy(getByTestId, "games");
     const shell = getByTestId("wonder-destination-games");
     expect(shell.className).toContain("wonder-place");
     const stage = shell.querySelector(".flex-1.max-w-7xl.mx-auto");

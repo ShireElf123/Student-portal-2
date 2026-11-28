@@ -10,7 +10,7 @@ describe("Toddler Wonderland home composition", () => {
   const nav = fs.readFileSync(path.join(root, "src/components/ToddlerSpaceNav.tsx"), "utf8");
   const css = fs.readFileSync(path.join(root, "src/index.css"), "utf8");
 
-  it("keeps the eight-category launcher in two rows of four on phones", () => {
+  it("keeps eight scattered toys on the meadow", () => {
     expect(TODDLER_SPACE_TABS.map((tab) => tab.label)).toEqual([
       "Worlds",
       "Stories",
@@ -26,8 +26,10 @@ describe("Toddler Wonderland home composition", () => {
     expect(nav).toContain("wonder-launch-icon--hero");
     expect(nav).toContain("wonder-picture-card");
     expect(nav).toContain("flex flex-col");
-    expect(css).toContain("grid-template-columns: repeat(4, minmax(0, 1fr))");
-    expect(css).toContain("grid-template-columns: repeat(8, minmax(0, 1fr))");
+    expect(nav).toContain("speakText");
+    expect(nav).toContain("is-named");
+    expect(css).toContain(".wonder-launcher--playroom");
+    expect(css).toContain("--toy-rot");
     expect(css).toContain(".wonder-launch-icon--hero");
     expect(css).toContain("orientation: landscape");
     expect(view).toContain("HOME_ART.teddy");
