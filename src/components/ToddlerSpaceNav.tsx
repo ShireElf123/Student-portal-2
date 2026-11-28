@@ -6,7 +6,7 @@ export function ToddlerSpaceNav({
   onSelect,
   isMeadow,
 }: {
-  activeTab: ToddlerSpaceTabId;
+  activeTab: ToddlerSpaceTabId | null;
   onSelect: (tab: ToddlerSpaceTabId) => void;
   isMeadow: boolean;
 }) {

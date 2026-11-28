@@ -31,3 +31,29 @@ export const TODDLER_SPACE_TABS: ToddlerSpaceTab[] = [
 ];
 
 export const TODDLER_SPACE_MOBILE_FIRST_ROW = TODDLER_SPACE_TABS.slice(0, 4).map((tab) => tab.id);
+
+export const WONDERLAND_HISTORY_KEY = "wonderlandDestination";
+
+export function isToddlerSpaceTabId(value: unknown): value is ToddlerSpaceTabId {
+  return TODDLER_SPACE_TABS.some((tab) => tab.id === value);
+}
+
+export function readWonderlandDestination(state: unknown): ToddlerSpaceTabId | null {
+  if (!state || typeof state !== "object") return null;
+  const value = (state as Record<string, unknown>)[WONDERLAND_HISTORY_KEY];
+  return isToddlerSpaceTabId(value) ? value : null;
+}
+
+export const TODDLER_DESTINATION_SHELL: Record<
+  ToddlerSpaceTabId,
+  { kicker: string; barClass: string }
+> = {
+  worlds: { kicker: "Adventure atlas", barClass: "from-amber-200 to-lime-200" },
+  books: { kicker: "Story library", barClass: "from-amber-100 to-orange-200" },
+  games: { kicker: "Play now", barClass: "from-emerald-200 to-teal-200" },
+  focus: { kicker: "Calm body", barClass: "from-teal-100 to-cyan-200" },
+  playhouse: { kicker: "The stage", barClass: "from-violet-200 to-fuchsia-200" },
+  phonics: { kicker: "Letters and sounds", barClass: "from-rose-100 to-pink-200" },
+  counting: { kicker: "Numbers", barClass: "from-indigo-100 to-sky-200" },
+  "avatar-studio": { kicker: "Character studio", barClass: "from-pink-100 to-purple-200" },
+};

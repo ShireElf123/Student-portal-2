@@ -42,6 +42,7 @@ interface ToddlerQuizzesAndGamesProps {
   initialBlueprint?: BubblePopBlueprint;
   initialBlueprintLearnerId?: string;
   isMeadow?: boolean;
+  hideChrome?: boolean;
 }
 
 type ToddlerActivity =
@@ -527,6 +528,7 @@ export function ToddlerQuizzesAndGames({
   initialBlueprint,
   initialBlueprintLearnerId,
   isMeadow = false,
+  hideChrome = false,
 }: ToddlerQuizzesAndGamesProps) {
   const [currentActivity, setCurrentActivity] = useState<ToddlerActivity>(() => {
     if (targetActivity && TODDLER_ACTIVITY_IDS.includes(targetActivity as ToddlerActivity)) {
@@ -1134,6 +1136,7 @@ export function ToddlerQuizzesAndGames({
 
   return (
     <div className="space-y-4">
+      {!hideChrome && (
       <div className="flex items-center justify-between gap-3 max-w-6xl mx-auto">
         <div className="flex items-center gap-2 min-w-0">
           <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${isMeadow ? "text-slate-900" : "text-white"}`}>
@@ -1161,6 +1164,7 @@ export function ToddlerQuizzesAndGames({
           <span className="hidden sm:inline">{voiceMuted ? "Muted" : "Voice"}</span>
         </button>
       </div>
+      )}
 
       <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 p-2.5 sm:p-3 rounded-3xl max-w-6xl mx-auto ${
         isMeadow ? "bg-white/90 border-4 border-white shadow-xl" : "bg-white/[0.07] border border-white/15"

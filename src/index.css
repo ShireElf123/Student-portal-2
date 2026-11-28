@@ -325,6 +325,21 @@
     inset 0 -3px 0 rgba(16, 185, 129, 0.12);
 }
 
+.wonder-destination-enter {
+  animation: wonderDestinationIn 0.22s ease-out;
+}
+
+@keyframes wonderDestinationIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Custom sleek PC scrollbars (replaces bulky default OS scrollbars) */
 ::-webkit-scrollbar {
   width: 8px;

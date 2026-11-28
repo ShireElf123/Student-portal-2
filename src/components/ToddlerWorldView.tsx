@@ -45,7 +45,12 @@ import { ToddlerCountingBoard } from "./ToddlerCountingBoard";
 import { ToddlerFocusBoard } from "./ToddlerFocusBoard";
 import { ToddlerWorldsNavigator } from "./ToddlerWorldsNavigator";
 import { ToddlerSpaceNav } from "./ToddlerSpaceNav";
-import type { ToddlerSpaceTabId } from "../data/toddler/toddlerSpaceTabs";
+import { ToddlerDestinationShell } from "./ToddlerDestinationShell";
+import {
+  readWonderlandDestination,
+  WONDERLAND_HISTORY_KEY,
+  type ToddlerSpaceTabId,
+} from "../data/toddler/toddlerSpaceTabs";
 import { ToddlerDailyMissionsModal } from "./ToddlerDailyMissionsModal";
 import { ToddlerStickerAlbumModal } from "./ToddlerStickerAlbumModal";
 import { BuddyCompanionBadge } from "./BuddyCompanionBadge";
@@ -231,7 +236,32 @@ export function ToddlerWorldView({
   onSwitchToEducator,
   onRequestExit,
 }: ToddlerWorldViewProps) {
-  const [activeTab, setActiveTab] = useState<ToddlerSpaceTabId>("worlds");
+  const [destination, setDestination] = useState<ToddlerSpaceTabId | null>(null);
+  const destinationRef = useRef<ToddlerSpaceTabId | null>(null);
+  destinationRef.current = destination;
+
+  const enterDestination = (tab: ToddlerSpaceTabId) => {
+    const alreadyOpen = destinationRef.current !== null;
+    destinationRef.current = tab;
+    setDestination(tab);
+    const base = history.state && typeof history.state === "object" ? history.state : {};
+    const nextState = { ...base, [WONDERLAND_HISTORY_KEY]: tab };
+    if (alreadyOpen) {
+      history.replaceState(nextState, "");
+    } else {
+      history.pushState(nextState, "");
+    }
+  };
+
+  const goHome = () => {
+    stopSpeaking();
+    destinationRef.current = null;
+    setDestination(null);
+    if (readWonderlandDestination(history.state)) {
+      history.back();
+    }
+  };
+
   const [gameState, setGameState] = useState(() => getGamificationState());
   const activeBuddy = gameState.buddy ?? DEFAULT_BUDDY;
   const [selectedBook, setSelectedBook] = useState<PictureBook | null>(null);
@@ -266,23 +296,33 @@ export function ToddlerWorldView({
     stopSpeaking();
     setSelectedBook(null);
     if (initialActivityId === "books") {
-      setActiveTab("books");
+      enterDestination("books");
       setInitialGameTarget(null);
       setInitialWorldTarget(null);
     } else if (initialActivityId.startsWith("game:")) {
-      setActiveTab("games");
+      enterDestination("games");
       setInitialGameTarget(initialActivityId.slice("game:".length));
       setInitialWorldTarget(null);
     } else if (initialActivityId.startsWith("world:")) {
-      setActiveTab("worlds");
+      enterDestination("worlds");
       setInitialWorldTarget(initialActivityId);
       setInitialGameTarget(null);
     } else if (initialActivityId === "worlds") {
-      setActiveTab("worlds");
+      enterDestination("worlds");
       setInitialWorldTarget(null);
       setInitialGameTarget(null);
     }
   }, [initialActivityId, initialLaunchNonce]);
+
+  useEffect(() => {
+    const onPop = (event: PopStateEvent) => {
+      const next = readWonderlandDestination(event.state);
+      destinationRef.current = next;
+      setDestination(next);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   // Pages already visited in the current book session. Page-turn stars are
   // paid once per page so flipping back and forth cannot farm stars.
@@ -339,7 +379,7 @@ export function ToddlerWorldView({
       }
       toddlerAudio.endParentPlayback();
     };
-  }, [activeTab]);
+  }, [destination]);
 
   // Load custom parent audio recording for current book page if one exists
   useEffect(() => {
@@ -713,6 +753,8 @@ export function ToddlerWorldView({
         ? "bg-gradient-to-b from-[#86efac] via-[#4ade80] to-[#16a34a] text-slate-900"
         : "bg-[#0c0d14] text-white"
     }`}>
+      {destination === null ? (
+      <>
       {/* Top Playful Banner with Organic Sky & Clouds */}
       <div className={`relative overflow-hidden px-4 pt-4 sm:pt-5 pb-3 transition-all duration-500 ${
         isMeadow
@@ -823,7 +865,7 @@ export function ToddlerWorldView({
               type="button"
               data-testid="wonder-buddy-stage"
               onClick={() => {
-                setActiveTab("avatar-studio");
+                enterDestination("avatar-studio");
                 soundEffects.playPop();
               }}
               className={`wonder-buddy-stage border-b-4 shadow-md active:translate-y-1 ${
@@ -910,158 +952,33 @@ export function ToddlerWorldView({
         className="-mt-1 mb-2 sm:mb-3"
       />
 
-      {/* Main Mode Navigation Tabs — Worlds/Stories/Games/Focus first on the phone row */}
       <div className="max-w-7xl mx-auto px-4 pt-2 pb-2">
-        <ToddlerSpaceNav activeTab={activeTab} onSelect={setActiveTab} isMeadow={isMeadow} />
-
-        {/* Worlds is the front page: full width like the phone. Other tabs keep the desktop sidebar. */}
-        <div className={`grid grid-cols-1 gap-6 items-start ${activeTab === "worlds" ? "" : "lg:grid-cols-12"}`}>
-          {/* Desktop Left Sidebar: Buddy Mascot, Explorer Rank, Today's Quests */}
-          <div className={`hidden flex-col gap-4 lg:col-span-3 ${activeTab === "worlds" ? "" : "lg:flex"}`}>
-            {/* Buddy Companion Mascot Card */}
-            <div className={`p-5 rounded-3xl border shadow-lg ${
-              isMeadow
-                ? "bg-white/95 border-pink-200 text-slate-800"
-                : "bg-white/[0.04] border-white/10 text-white"
-            }`}>
-              <div className="flex items-center gap-3 mb-3">
-                <BuddyCompanionBadge buddy={activeBuddy} size="md" animated />
-                <div>
-                  <div className="text-xs font-black uppercase text-pink-500">Learning Coach</div>
-                  <h3 className="text-lg font-black">{activeBuddy.name}</h3>
-                  <div className="text-sm text-amber-500 font-bold">Level {gameState.level} Explorer</div>
-                </div>
-              </div>
-              <p className="text-sm italic bg-pink-500/10 p-2.5 rounded-2xl border border-pink-400/20 mb-3">
-                "{activeBuddy.catchphrase || "Ready for another magical adventure!"}"
-              </p>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => {
-                    soundEffects.playPop();
-                    speakText(`Hello little explorer! I am ${activeBuddy.name}! You are doing fantastic! Let's explore together!`, { pitch: 1.2 });
-                  }}
-                  className="flex-1 min-h-12 py-2.5 px-3 rounded-xl bg-pink-500 hover:bg-pink-400 text-white font-black text-sm text-center cursor-pointer shadow-sm transition-all"
-                >
-                  Say Hello 💬
-                </button>
-                <button
-                  onClick={() => {
-                    soundEffects.playPop();
-                    setActiveTab("avatar-studio");
-                  }}
-                  className="min-h-12 py-2.5 px-3 rounded-xl bg-white/15 hover:bg-white/25 font-black text-sm text-center cursor-pointer transition-all"
-                  title="Customize Buddy"
-                >
-                  Wardrobe 🎨
-                </button>
-              </div>
-            </div>
-
-            {/* Explorer Rank Card */}
-            <div className={`p-5 rounded-3xl border shadow-lg ${
-              isMeadow
-                ? "bg-white/95 border-amber-200 text-slate-800"
-                : "bg-white/[0.04] border-white/10 text-white"
-            }`}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-black uppercase tracking-wider text-amber-500">Explorer Rank</span>
-                <span className="text-2xl">{currentRank.emoji}</span>
-              </div>
-              <h4 className="text-base font-black mb-1">{currentRank.title}</h4>
-              <p className="text-sm text-slate-700 dark:text-white/90 mb-3">{currentRank.description}</p>
-              <div className="space-y-1.5 text-sm font-bold">
-                <div className="flex justify-between">
-                  <span>Star Jar Balance:</span>
-                  <span className="text-amber-500 font-black">
-                    <span className="count-num">{starsCount}</span> ⭐
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Unlocked Stickers:</span>
-                  <span className="text-emerald-500 font-black">
-                    <span className="count-num">{unlockedStickersCount}</span>
-                    {" / "}
-                    <span className="count-num">{TODDLER_STICKERS.length}</span>
-                  </span>
-                </div>
-              </div>
-              <button
-                onClick={() => {
-                  soundEffects.playPop();
-                  setIsStickerAlbumOpen(true);
-                }}
-                className="w-full mt-3 min-h-12 py-2.5 rounded-xl bg-amber-400/20 hover:bg-amber-400/30 text-amber-600 dark:text-amber-300 border border-amber-400/30 font-black text-sm cursor-pointer transition-all text-center"
-              >
-                View Sticker Album 🏆
-              </button>
-            </div>
-
-            {/* Today's Quests Card */}
-            <div className={`p-5 rounded-3xl border shadow-lg ${
-              isMeadow
-                ? "bg-white/95 border-indigo-200 text-slate-800"
-                : "bg-white/[0.04] border-white/10 text-white"
-            }`}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-black uppercase tracking-wider text-indigo-500">Today's Missions</span>
-                <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-400">
-                  <span className="count-num">{completedMissions.length}/3</span> Done
-                </span>
-              </div>
-              <div className="space-y-2 mb-3">
-                {todayAdventure.missions.map((m) => {
-                  const done = completedMissions.includes(m.id);
-                  return (
-                    <div
-                      key={m.id}
-                      onClick={() => {
-                        soundEffects.playPop();
-                        setIsDailyMissionsOpen(true);
-                      }}
-                      className={`p-3 rounded-xl text-sm flex items-center justify-between cursor-pointer transition-all ${
-                        done
-                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                          : "bg-white/5 hover:bg-white/10"
-                      }`}
-                    >
-                      <span className="truncate flex items-center gap-1.5">
-                        <span>{m.emoji}</span>
-                        <span className="font-bold">{m.title}</span>
-                      </span>
-                      <span>{done ? "✓" : `+${m.starsReward}⭐`}</span>
-                    </div>
-                  );
-                })}
-              </div>
-              <button
-                onClick={() => {
-                  soundEffects.playPop();
-                  setIsDailyMissionsOpen(true);
-                }}
-                className="w-full min-h-12 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-black text-sm cursor-pointer shadow-md transition-all text-center"
-              >
-                Launch Today's Quests 🎯
-              </button>
-            </div>
-          </div>
-
-          {/* Main Content Area */}
-          <div className={`${activeTab === "worlds" ? "" : "lg:col-span-9"} space-y-6`}>
+        <ToddlerSpaceNav activeTab={null} onSelect={enterDestination} isMeadow={isMeadow} />
+      </div>
+      </>
+      ) : (
+      <div className="wonder-destination-enter">
+        <ToddlerDestinationShell
+          tab={destination}
+          isMeadow={isMeadow}
+          isMuted={isMuted}
+          onToggleMute={toggleMute}
+          onHome={goHome}
+        >
             {/* SECTION 0: 6 WORLDS GATEWAYS NAVIGATOR */}
-            {activeTab === "worlds" && (
+            {destination === "worlds" && (
               <ToddlerWorldsNavigator
                 onAddStar={addStar}
                 starsCount={starsCount}
                 initialWorldId={initialWorldTarget}
-                onOpenPictureBooks={() => setActiveTab("books")}
-                onOpenGames={() => setActiveTab("games")}
-                onOpenFocus={() => setActiveTab("focus")}
+                onOpenPictureBooks={() => enterDestination("books")}
+                onOpenGames={() => enterDestination("games")}
+                onOpenFocus={() => enterDestination("focus")}
               />
             )}
 
         {/* SECTION 1: PICTURE BOOKS SHELF */}
-        {activeTab === "books" && (
+        {destination === "books" && (
           <div className="relative">
             {/* Mascot peeking over story shelf */}
             <div className="hidden sm:block">
@@ -1180,30 +1097,31 @@ export function ToddlerWorldView({
           </div>
         )}
 
-        {activeTab === "playhouse" && (
+        {destination === "playhouse" && (
           <ToddlerPlayhouse isMeadow={isMeadow} onAddStar={addStar} />
         )}
 
-        {activeTab === "phonics" && (
+        {destination === "phonics" && (
           <ToddlerPhonicsBoard isMeadow={isMeadow} onAddStar={addStar} />
         )}
 
-        {activeTab === "counting" && (
+        {destination === "counting" && (
           <ToddlerCountingBoard isMeadow={isMeadow} onAddStar={addStar} onStartAssessment={onStartAssessment} />
         )}
 
-        {activeTab === "focus" && (
-          <ToddlerFocusBoard isMeadow={isMeadow} onAddStar={addStar} onReadyLearn={() => setActiveTab("phonics")} />
+        {destination === "focus" && (
+          <ToddlerFocusBoard isMeadow={isMeadow} onAddStar={addStar} onReadyLearn={() => enterDestination("phonics")} />
         )}
 
         {/* SECTION 4: INTERACTIVE GAMES & PICTURE QUIZZES */}
-        {activeTab === "games" && (
+        {destination === "games" && (
           <div>
             <ToddlerQuizzesAndGames
               isMeadow={isMeadow}
+              hideChrome
               starsCount={starsCount}
               onAddStar={addStar}
-              onBackToBooks={() => setActiveTab("books")}
+              onBackToBooks={() => enterDestination("books")}
               targetActivity={initialGameTarget ?? undefined}
               initialBlueprint={initialBlueprint?.gameType === "bubble-pop-phonics" ? initialBlueprint : undefined}
               initialBlueprintLearnerId={initialBlueprint?.gameType === "bubble-pop-phonics" ? initialBlueprintLearnerId : undefined}
@@ -1212,19 +1130,19 @@ export function ToddlerWorldView({
         )}
 
         {/* SECTION 5: LEARNING BUDDY AVATAR STUDIO */}
-        {activeTab === "avatar-studio" && (
-          <BuddyAvatarStudio onBack={() => setActiveTab("books")} />
+        {destination === "avatar-studio" && (
+          <BuddyAvatarStudio onBack={goHome} />
         )}
-          </div>
-        </div>
+        </ToddlerDestinationShell>
       </div>
+      )}
 
       {/* Daily Missions Modal */}
       <ToddlerDailyMissionsModal
         isOpen={isDailyMissionsOpen}
         onClose={() => setIsDailyMissionsOpen(false)}
         onSelectMissionTab={(tab, subactivity) => {
-          setActiveTab(tab);
+          enterDestination(tab);
           if (subactivity && tab === "worlds") {
             setInitialWorldTarget(subactivity);
           }
