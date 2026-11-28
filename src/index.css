@@ -505,12 +505,16 @@
   .wonder-utility-rail {
     justify-content: flex-start;
   }
+  .wonder-launcher--playroom .wonder-launch-tile {
+    max-width: 5.6rem;
+    min-width: 3.9rem;
+  }
   .wonder-launch-icon--hero {
-    width: 4.1rem;
-    height: 4.1rem;
+    width: 3.35rem;
+    height: 3.35rem;
   }
   .wonder-launch-tile {
-    min-height: 6.25rem;
+    min-height: 5.35rem;
   }
 }
 
@@ -523,8 +527,6 @@
   width: 100%;
   max-width: 72rem;
   margin-inline: auto;
-  position: relative;
-  z-index: 3;
 }
 .wonder-home-tip {
   margin: 0.1rem 0 0;
@@ -532,20 +534,6 @@
   font-weight: 800;
   line-height: 1.15;
   color: #57534e;
-}
-.wonder-home-chrome {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-}
-.wonder-rail-copy {
-  display: none;
-}
-.wonder-rail-short {
-  display: inline;
-}
-.wonder-art-cloud-wide {
-  display: none;
 }
 .wonder-buddy-chip {
   min-height: 4.25rem;
@@ -590,19 +578,16 @@
   position: relative;
   z-index: 2;
   width: 100%;
-  flex: 1 1 auto;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.35rem 0.7rem 0.45rem;
 }
 .wonder-launcher-wrap {
   max-width: 72rem;
   width: 100%;
   margin: 0 auto 0.2rem;
-  position: relative;
-  z-index: 2;
+}
+@media (min-width: 1024px) {
+  .wonder-launcher-wrap {
+    margin-bottom: 0.5rem;
+  }
 }
 .wonder-turn-hint {
   display: none;
@@ -615,6 +600,11 @@
   color: #3f3f46;
   font-size: 0.72rem;
   font-weight: 800;
+}
+@media (orientation: portrait) and (min-width: 600px) and (max-width: 1023px) {
+  .wonder-turn-hint {
+    display: block;
+  }
 }
 .wonder-launcher {
   display: flex;
@@ -629,26 +619,11 @@
   border: 0;
   box-shadow: none;
 }
-.wonder-launcher--playroom {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  justify-items: stretch;
-  align-items: stretch;
-  align-content: stretch;
-  grid-auto-rows: 1fr;
-  gap: 0.65rem 0.7rem;
-  padding: 0.2rem 0.15rem;
-  width: 100%;
-  height: 100%;
-}
 .wonder-launcher--playroom .wonder-launch-tile {
-  flex: none;
-  width: 100%;
-  max-width: none;
-  min-width: 0;
-  min-height: 6.75rem;
-  height: 100%;
-  margin: 0;
+  flex: 0 0 24%;
+  max-width: 8.25rem;
+  min-width: 4.25rem;
+  margin: -0.28rem -0.12rem;
 }
 .wonder-launcher--night {
   padding: 0.45rem;
@@ -698,14 +673,14 @@
     scale: 1.32;
   }
 }
-.wonder-picture-card[data-place="worlds"] { border-color: #7dd3fc; --toy-rot: 0deg; --toy-y: 0px; }
-.wonder-picture-card[data-place="books"] { border-color: #fbbf24; --toy-rot: 0deg; --toy-y: 0px; }
-.wonder-picture-card[data-place="games"] { border-color: #2dd4bf; --toy-rot: 0deg; --toy-y: 0px; }
-.wonder-picture-card[data-place="focus"] { border-color: #5eead4; --toy-rot: 0deg; --toy-y: 0px; }
-.wonder-picture-card[data-place="playhouse"] { border-color: #e879f9; --toy-rot: 0deg; --toy-y: 0px; }
-.wonder-picture-card[data-place="phonics"] { border-color: #fb7185; --toy-rot: 0deg; --toy-y: 0px; }
-.wonder-picture-card[data-place="counting"] { border-color: #818cf8; --toy-rot: 0deg; --toy-y: 0px; }
-.wonder-picture-card[data-place="avatar-studio"] { border-color: #f9a8d4; --toy-rot: 0deg; --toy-y: 0px; }
+.wonder-picture-card[data-place="worlds"] { border-color: #7dd3fc; --toy-rot: -16deg; --toy-y: 12px; }
+.wonder-picture-card[data-place="books"] { border-color: #fbbf24; --toy-rot: 11deg; --toy-y: -10px; }
+.wonder-picture-card[data-place="games"] { border-color: #2dd4bf; --toy-rot: -7deg; --toy-y: 6px; }
+.wonder-picture-card[data-place="focus"] { border-color: #5eead4; --toy-rot: 18deg; --toy-y: 16px; }
+.wonder-picture-card[data-place="playhouse"] { border-color: #e879f9; --toy-rot: -13deg; --toy-y: -6px; }
+.wonder-picture-card[data-place="phonics"] { border-color: #fb7185; --toy-rot: 9deg; --toy-y: 14px; }
+.wonder-picture-card[data-place="counting"] { border-color: #818cf8; --toy-rot: -19deg; --toy-y: 4px; }
+.wonder-picture-card[data-place="avatar-studio"] { border-color: #f9a8d4; --toy-rot: 14deg; --toy-y: 18px; }
 @media (prefers-reduced-motion: reduce) {
   .wonder-picture-card[data-place] {
     --toy-rot: 0deg;
@@ -721,21 +696,14 @@
   }
 }
 .wonder-picture-label {
-  display: block;
-  position: static;
-  width: auto;
-  height: auto;
-  margin: 0.12rem 0 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
-  clip: auto;
+  clip: rect(0, 0, 0, 0);
   white-space: nowrap;
-  text-overflow: ellipsis;
-  max-width: 100%;
-  font-size: 0.78rem;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  color: #1c1917;
   border: 0;
 }
 .wonder-launch-tile {
@@ -795,137 +763,76 @@
   color: #fff;
   border-color: #be123c;
 }
-[data-wonder-frame="tablet"] .wonder-rail-copy,
-[data-wonder-frame="wide"] .wonder-rail-copy {
-  display: inline;
+@media (min-width: 640px) {
+  .wonder-launcher {
+    gap: 0.55rem 0.7rem;
+    padding: 0.35rem 0.2rem 1rem;
+  }
+  .wonder-launcher--playroom .wonder-launch-tile {
+    max-width: 9.25rem;
+  }
+  .wonder-launch-tile {
+    min-height: 8rem;
+  }
+  .wonder-launch-icon--hero {
+    width: 5.75rem;
+    height: 5.75rem;
+  }
+  .wonder-picture-label {
+    font-size: 0.85rem;
+  }
+  .wonder-art-sun {
+    width: 4.25rem;
+    height: 4.25rem;
+  }
 }
-[data-wonder-frame="tablet"] .wonder-rail-short,
-[data-wonder-frame="wide"] .wonder-rail-short {
-  display: none;
+@media (orientation: landscape) and (min-width: 500px), (min-width: 1024px) {
+  .wonder-launcher--playroom .wonder-launch-tile {
+    flex-basis: 11.8%;
+    max-width: 9.75rem;
+  }
+  .wonder-launch-tile {
+    min-height: 9.25rem;
+  }
+  .wonder-launch-icon--hero {
+    width: 6.75rem;
+    height: 6.75rem;
+  }
 }
-[data-wonder-frame="tablet"] .wonder-art-cloud-wide,
-[data-wonder-frame="wide"] .wonder-art-cloud-wide {
-  display: block;
+@media (min-width: 1280px) {
+  .wonder-home-stage,
+  .wonder-home-tray,
+  .wonder-launcher-wrap {
+    max-width: 86rem;
+  }
+  .wonder-launcher {
+    gap: 0.7rem 0.9rem;
+    padding: 0.5rem 0.35rem 0.6rem;
+  }
+  .wonder-launcher--playroom .wonder-launch-tile {
+    flex-basis: 11%;
+    max-width: 11rem;
+  }
+  .wonder-launch-tile {
+    min-height: 10.5rem;
+  }
+  .wonder-launch-icon--hero {
+    width: 7.5rem;
+    height: 7.5rem;
+  }
+  .wonder-art-sun {
+    width: 5rem;
+    height: 5rem;
+  }
 }
-[data-wonder-frame="tablet"][data-wonder-orientation="landscape"] .wonder-home-chrome,
-[data-wonder-frame="wide"] .wonder-home-chrome {
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-[data-wonder-frame="tablet"][data-wonder-orientation="portrait"] .wonder-turn-hint {
-  display: block;
-}
-
-[data-wonder-frame="pocket"] .wonder-home-playroom {
-  align-items: stretch;
-  justify-content: stretch;
-  padding: 0.35rem 0.7rem 0.25rem;
-}
-[data-wonder-frame="pocket"] .wonder-launcher-wrap {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0;
-}
-[data-wonder-frame="pocket"] .wonder-launch-icon--hero {
-  width: 4.85rem;
-  height: 4.85rem;
-}
-[data-wonder-frame="pocket"] .wonder-art-tree {
-  height: min(70%, 11rem);
-  left: -1.25rem;
-  opacity: 0.55;
-  z-index: 0;
-}
-[data-wonder-frame="pocket"] .wonder-companion-band {
-  flex-wrap: nowrap;
-  align-items: center;
-  overflow-x: auto;
-  gap: 0.35rem;
-  padding: 0.3rem;
-}
-[data-wonder-frame="pocket"] .wonder-buddy-chip {
-  min-height: 3.15rem;
-  padding: 0.2rem 0.45rem;
-  flex-shrink: 0;
-}
-[data-wonder-frame="pocket"] .wonder-buddy-chip .text-left {
-  display: none;
-}
-[data-wonder-frame="pocket"] .wonder-treasure-tray {
-  flex-wrap: nowrap;
-  min-width: 0;
-  gap: 0.3rem;
-}
-[data-wonder-frame="pocket"] .wonder-treasure-tray > * {
-  flex: 1 1 0;
-  min-width: 0;
-  min-height: 3.15rem;
-  padding-inline: 0.45rem;
-}
-[data-wonder-frame="pocket"] .wonder-star-kicker,
-[data-wonder-frame="pocket"] [data-testid="hud-champion-chip"],
-[data-wonder-frame="pocket"] .wonder-tray-copy {
-  display: none;
-}
-
-[data-wonder-frame="tablet"] .wonder-launcher--playroom,
-[data-wonder-frame="wide"] .wonder-launcher--playroom {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  padding: 0.4rem 0.2rem 0.4rem 4.4rem;
-  height: auto;
-}
-[data-wonder-frame="tablet"] .wonder-launcher--playroom .wonder-launch-tile,
-[data-wonder-frame="wide"] .wonder-launcher--playroom .wonder-launch-tile {
-  max-width: 9.75rem;
-  min-height: 8.25rem;
-  height: auto;
-}
-[data-wonder-frame="tablet"] .wonder-launch-icon--hero,
-[data-wonder-frame="wide"] .wonder-launch-icon--hero {
-  width: 5.75rem;
-  height: 5.75rem;
-}
-[data-wonder-frame="pocket"][data-wonder-orientation="landscape"] .wonder-launcher--playroom {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-[data-wonder-frame="pocket"][data-wonder-orientation="landscape"] .wonder-art-tree {
-  display: none;
-}
-[data-wonder-frame="tablet"][data-wonder-orientation="landscape"] .wonder-launcher--playroom,
-[data-wonder-frame="wide"][data-wonder-orientation="landscape"] .wonder-launcher--playroom {
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  padding-left: 0.35rem;
-}
-[data-wonder-frame="wide"][data-wonder-orientation="landscape"] .wonder-home-playroom {
-  align-items: flex-end;
-  padding-bottom: 1.25rem;
-}
-[data-wonder-frame="wide"][data-wonder-orientation="landscape"] .wonder-launcher--playroom {
-  padding-left: 5rem;
-}
-[data-wonder-frame="wide"][data-wonder-orientation="landscape"] .wonder-launcher--playroom .wonder-launch-tile {
-  max-width: 11rem;
-  min-height: 10.25rem;
-}
-[data-wonder-frame="wide"][data-wonder-orientation="landscape"] .wonder-launch-icon--hero {
-  width: 7.25rem;
-  height: 7.25rem;
-}
-[data-wonder-frame="tablet"] .wonder-home-stage,
-[data-wonder-frame="tablet"] .wonder-home-tray,
-[data-wonder-frame="tablet"] .wonder-launcher-wrap,
-[data-wonder-frame="wide"] .wonder-home-stage,
-[data-wonder-frame="wide"] .wonder-home-tray,
-[data-wonder-frame="wide"] .wonder-launcher-wrap {
-  max-width: 86rem;
-}
-[data-wonder-frame="tablet"] .wonder-art-sun,
-[data-wonder-frame="wide"] .wonder-art-sun {
-  width: 4.25rem;
-  height: 4.25rem;
+@media (min-width: 1440px) {
+  .wonder-launcher--playroom .wonder-launch-tile {
+    max-width: 12rem;
+  }
+  .wonder-launch-icon--hero {
+    width: 8rem;
+    height: 8rem;
+  }
 }
 
 .wonder-destination-enter {
@@ -1267,34 +1174,6 @@
   width: 5.5rem;
   opacity: 0.8;
 }
-.wonder-art-tree {
-  pointer-events: none;
-  user-select: none;
-  position: absolute;
-  left: -0.45rem;
-  bottom: 0;
-  height: min(92%, 14rem);
-  width: auto;
-  object-fit: contain;
-  z-index: 0;
-  opacity: 0.96;
-}
-.wonder-art-butterfly {
-  pointer-events: none;
-  user-select: none;
-  position: absolute;
-  right: 7%;
-  top: 4%;
-  width: 3.1rem;
-  height: 3.1rem;
-  object-fit: contain;
-  z-index: 3;
-  animation: wonderFlutter 8s ease-in-out infinite;
-}
-@keyframes wonderFlutter {
-  0%, 100% { translate: 0 0; rotate: -10deg; }
-  50% { translate: 22px -14px; rotate: 12deg; }
-}
 .wonder-buddy-eye {
   transform-origin: 50px 52px;
   animation: wonderBuddyBlink 5.6s ease-in-out infinite;
@@ -1302,18 +1181,6 @@
 @keyframes wonderBuddyBlink {
   0%, 90%, 100% { transform: scaleY(1); }
   94% { transform: scaleY(0.12); }
-}
-@media (max-width: 359px) {
-  .wonder-art-tree {
-    display: none;
-  }
-  .wonder-launcher--playroom {
-    padding-left: 0.2rem;
-  }
-  .wonder-art-butterfly {
-    width: 2.4rem;
-    height: 2.4rem;
-  }
 }
 @keyframes wonderSpinSlow {
   from { transform: rotate(0deg); }
@@ -1352,7 +1219,6 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .wonder-art-butterfly,
   .wonder-buddy-eye {
     animation: none !important;
   }
