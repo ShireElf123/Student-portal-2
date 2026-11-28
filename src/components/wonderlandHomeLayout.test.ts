@@ -30,7 +30,7 @@ describe("Toddler Wonderland home composition", () => {
     expect(css).toContain(".wonder-home-meadow");
     expect(css).toContain("/art/places/worlds.jpg");
     expect(css).toContain("/art/places/phonics.jpg");
-    expect(css).not.toContain("/art/places/playhouse");
+    expect(css).toContain("/art/places/playhouse.jpg");
     expect(nav).not.toMatch(/games-dock|Games dock|worlds tabs/i);
   });
 

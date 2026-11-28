@@ -35,10 +35,11 @@ describe("Toddler Wonderland illustrated art", () => {
     }
   });
 
-  it("paints destination shells that have plates, and leaves Playhouse on show covers", () => {
-    expect(PLACE_ART.playhouse).toBeUndefined();
-    for (const [id, rel] of Object.entries(PLACE_ART)) {
-      expect(fs.existsSync(publicPath(rel)), `${id}:${rel}`).toBe(true);
+  it("paints every destination shell, including Playhouse", () => {
+    for (const tab of TODDLER_SPACE_TABS) {
+      const rel = PLACE_ART[tab.id];
+      expect(rel, tab.id).toBeTruthy();
+      expect(fs.existsSync(publicPath(rel!)), rel).toBe(true);
     }
   });
 });

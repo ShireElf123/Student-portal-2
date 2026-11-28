@@ -12,12 +12,13 @@ export const DESTINATION_ICON: Partial<Record<ToddlerSpaceTabId, string>> = {
   "avatar-studio": "/art/icons/buddy.png",
 };
 
-/** Painted destination shells. Playhouse keeps show-cover art; its plate lands next batch. */
+/** Painted destination shells. */
 export const PLACE_ART: Partial<Record<ToddlerSpaceTabId, string>> = {
   worlds: "/art/places/worlds.jpg",
   books: "/art/places/stories.jpg",
   games: "/art/places/games.jpg",
   focus: "/art/places/focus.jpg",
+  playhouse: "/art/places/playhouse.jpg",
   phonics: "/art/places/phonics.jpg",
   counting: "/art/places/counting.jpg",
   "avatar-studio": "/art/places/buddy.jpg",

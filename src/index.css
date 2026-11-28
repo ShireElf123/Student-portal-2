@@ -653,9 +653,11 @@
   background-position: center 48%;
 }
 .wonder-place-playhouse {
-  background:
-    radial-gradient(circle at 10% 0%, rgba(244, 114, 182, 0.35), transparent 36%),
-    linear-gradient(180deg, #e9d5ff 0%, #fbcfe8 48%, #f472b6 100%);
+  background-image:
+    linear-gradient(180deg, rgba(233, 213, 255, 0.28) 0%, rgba(244, 114, 182, 0.28) 100%),
+    url("/art/places/playhouse.jpg");
+  background-size: cover;
+  background-position: center 55%;
 }
 .wonder-place-phonics {
   background-image:
