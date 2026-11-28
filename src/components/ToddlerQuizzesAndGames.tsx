@@ -12,6 +12,7 @@ import {
   ArrowRight,
   PartyPopper,
   Shapes,
+  ChevronLeft,
 } from "lucide-react";
 import {
   speakText,
@@ -32,6 +33,11 @@ import { ToddlerAnimalSafari } from "./ToddlerAnimalSafari";
 import { ToddlerBalloonSky } from "./ToddlerBalloonSky";
 import { ToddlerK1Studio } from "./ToddlerK1Studio";
 import { K1_STUDIO_GAMES, K1_STUDIO_GAME_IDS, type K1StudioGameId } from "../data/toddler/k1StudioGames";
+import {
+  TODDLER_ARCADE_GAMES,
+  K1_STUDIO_ART,
+  studioAccent,
+} from "../data/toddler/toddlerArcadeCatalog";
 import type { BubblePopBlueprint } from "../contentEngine/types";
 
 interface ToddlerQuizzesAndGamesProps {
@@ -530,11 +536,11 @@ export function ToddlerQuizzesAndGames({
   isMeadow = false,
   hideChrome = false,
 }: ToddlerQuizzesAndGamesProps) {
-  const [currentActivity, setCurrentActivity] = useState<ToddlerActivity>(() => {
+  const [currentActivity, setCurrentActivity] = useState<ToddlerActivity | null>(() => {
     if (targetActivity && TODDLER_ACTIVITY_IDS.includes(targetActivity as ToddlerActivity)) {
       return targetActivity as ToddlerActivity;
     }
-    return "animal-quiz";
+    return null;
   });
   const [generatedBubbleBlueprint, setGeneratedBubbleBlueprint] = useState<BubblePopBlueprint | null>(() => initialBlueprint ?? null);
   const [generatedBubbleLearnerId, setGeneratedBubbleLearnerId] = useState<string | null>(() => initialBlueprintLearnerId ?? null);
@@ -1130,17 +1136,24 @@ export function ToddlerQuizzesAndGames({
     return () => window.clearTimeout(id);
   }, [currentActivity, isShapeCompleted]);
 
-  const idleTile = isMeadow
-    ? "wonder-clay-tile bg-white text-slate-800 border-emerald-200 hover:bg-amber-50"
-    : "wonder-clay-tile bg-white/15 border-white/25 text-white hover:bg-white/25";
+  const openArcadeGame = (id: ToddlerActivity) => {
+    if (id === "animal-quiz") handleRestartQuiz();
+    else if (id === "shape-match") handleRestartShapes();
+    else if (id === "bubble-pop") spawnBubbles();
+    else if (id === "feed-animal") handleResetBunny();
+    else soundEffects.playPop();
+    setCurrentActivity(id);
+  };
+
+  const showArcade = currentActivity === null;
 
   return (
     <div className="space-y-4">
-      {!hideChrome && (
+      {!hideChrome && showArcade && (
       <div className="flex items-center justify-between gap-3 max-w-6xl mx-auto">
         <div className="flex items-center gap-2 min-w-0">
           <h2 className={`text-xl sm:text-2xl font-black flex items-center gap-2 ${isMeadow ? "text-slate-900" : "text-white"}`}>
-            <span aria-hidden>🎮</span> Games
+            Arcade
           </h2>
           {isVoiceActive && (
             <span className={`text-xs font-black px-2 py-1 rounded-full ${isMeadow ? "bg-emerald-100 text-emerald-800" : "bg-emerald-500/20 text-emerald-300"}`}>
@@ -1166,200 +1179,69 @@ export function ToddlerQuizzesAndGames({
       </div>
       )}
 
-      <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 p-2.5 sm:p-3 rounded-3xl max-w-6xl mx-auto ${
-        isMeadow ? "bg-white/90 border-4 border-white shadow-xl" : "bg-white/[0.07] border border-white/15"
-      }`}>
-        <button
-          onClick={() => {
-            setCurrentActivity("rainbow-piano");
-            soundEffects.playPop();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "rainbow-piano"
-              ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white border-rose-700 shadow-md scale-102 ring-2 ring-pink-300/40"
-              : idleTile
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎹</span>
-          <span className="text-center leading-tight">Xylophone</span>
-        </button>
+      {showArcade ? (
+        <div data-testid="wonder-arcade-board" className="max-w-6xl mx-auto space-y-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+            {TODDLER_ARCADE_GAMES.map((game) => (
+              <button
+                key={game.id}
+                type="button"
+                data-testid={`arcade-game-${game.id}`}
+                onClick={() => openArcadeGame(game.id)}
+                className={`wonder-arcade-card ${game.rim}`}
+              >
+                <img src={game.art} alt="" width={640} height={480} loading="lazy" decoding="async" />
+                <span className={`block px-2.5 py-2 bg-gradient-to-r ${game.accent} text-white font-black text-sm sm:text-base leading-tight`}>
+                  {game.title}
+                </span>
+              </button>
+            ))}
+          </div>
 
-        <button
-          onClick={() => {
-            setCurrentActivity("animal-safari");
-            soundEffects.playPop();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "animal-safari"
-              ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md scale-102 ring-2 ring-emerald-300/40"
-              : idleTile
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🌿</span>
-          <span className="text-center leading-tight">Safari</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("balloon-sky");
-            soundEffects.playPop();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "balloon-sky"
-              ? "bg-gradient-to-r from-sky-400 to-blue-500 text-white border-blue-700 shadow-md scale-102 ring-2 ring-sky-300/40"
-              : idleTile
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎈</span>
-          <span className="text-center leading-tight">Balloons</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("animal-quiz");
-            handleRestartQuiz();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "animal-quiz"
-              ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-orange-700 shadow-md scale-102 ring-2 ring-amber-300/40"
-              : idleTile
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🦁</span>
-          <span className="text-center leading-tight">Animal Quiz</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("shape-match");
-            handleRestartShapes();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "shape-match"
-              ? "bg-gradient-to-r from-purple-500 to-indigo-500 text-white border-indigo-700 shadow-md scale-102 ring-2 ring-purple-300/40"
-              : idleTile
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">⭐</span>
-          <span className="text-center leading-tight">Shapes</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("memory-match");
-            soundEffects.playPop();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "memory-match"
-              ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-cyan-700 shadow-md scale-102 ring-2 ring-cyan-300/40"
-              : idleTile
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎲</span>
-          <span className="text-center leading-tight">Memory</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("rhyme-time");
-            soundEffects.playPop();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "rhyme-time"
-              ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white border-rose-700 shadow-md scale-102 ring-2 ring-pink-300/40"
-              : idleTile
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎵</span>
-          <span className="text-center leading-tight">Rhymes</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("color-magic");
-            soundEffects.playPop();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "color-magic"
-              ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md scale-102 ring-2 ring-emerald-300/40"
-              : idleTile
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🎨</span>
-          <span className="text-center leading-tight">Color Lab</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("bubble-pop");
-            spawnBubbles();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "bubble-pop"
-              ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white border-fuchsia-700 shadow-md scale-102 ring-2 ring-fuchsia-300/40"
-              : idleTile
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">💧</span>
-          <span className="text-center leading-tight">Bubbles</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("bubble-pop-phonics");
-            soundEffects.playPop();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "bubble-pop-phonics"
-              ? "bg-gradient-to-r from-sky-500 to-indigo-500 text-white border-indigo-700 shadow-md scale-102 ring-2 ring-sky-300/40"
-              : idleTile
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🔤</span>
-          <span className="text-center leading-tight">Phonics Pop</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setCurrentActivity("feed-animal");
-            handleResetBunny();
-          }}
-          className={`flex min-h-[5.75rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 py-4 px-3 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-            currentActivity === "feed-animal"
-              ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white border-amber-700 shadow-md scale-102 ring-2 ring-amber-300/40"
-              : idleTile
-          }`}
-        >
-          <span className="text-3xl sm:text-4xl md:text-5xl leading-none">🐰</span>
-          <span className="text-center leading-tight">Feed Bunny</span>
-        </button>
-      </div>
-
-      <div className="mb-4">
-        <p className="mb-3 px-1 text-xs sm:text-sm font-black uppercase tracking-wider text-white/80">
-          Skill studio
-        </p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {K1_STUDIO_GAMES.map((studioGame) => (
-            <button
-              key={studioGame.id}
-              type="button"
-              onClick={() => {
-                setCurrentActivity(studioGame.id);
-                soundEffects.playPop();
-              }}
-              className={`flex min-h-[6rem] sm:min-h-28 md:min-h-32 flex-col items-center justify-center gap-1.5 sm:gap-2 px-3 py-4 rounded-2xl font-black text-sm sm:text-base md:text-lg leading-tight text-center transition-all cursor-pointer border-b-4 ${
-                currentActivity === studioGame.id
-                  ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-teal-700 shadow-md ring-2 ring-emerald-300/40"
-                  : idleTile
-              }`}
-            >
-              <span className="text-3xl sm:text-4xl md:text-5xl leading-none">{studioGame.emoji}</span>
-              <span className="text-center leading-tight px-0.5">{studioGame.title}</span>
-            </button>
-          ))}
+          <div>
+            <p className={`mb-3 px-1 text-xs sm:text-sm font-black uppercase tracking-wider ${isMeadow ? "text-slate-800" : "text-white/80"}`}>
+              Skill studio
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+              {K1_STUDIO_GAMES.map((studioGame) => (
+                <button
+                  key={studioGame.id}
+                  type="button"
+                  data-testid={`arcade-game-${studioGame.id}`}
+                  onClick={() => openArcadeGame(studioGame.id)}
+                  className={`wonder-arcade-card border-emerald-600`}
+                >
+                  <img
+                    src={K1_STUDIO_ART[studioGame.id]}
+                    alt=""
+                    width={640}
+                    height={480}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span className={`block px-2.5 py-2 bg-gradient-to-r ${studioAccent(studioGame.id)} text-white font-black text-sm sm:text-base leading-tight`}>
+                    {studioGame.title}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      ) : (
+        <button
+          type="button"
+          data-testid="arcade-more-games"
+          onClick={() => {
+            setCurrentActivity(null);
+            soundEffects.playPop();
+          }}
+          className={`inline-flex items-center gap-1 min-h-12 px-4 rounded-2xl font-black text-sm border-b-4 shadow-md ${
+            isMeadow ? "bg-white text-slate-900 border-emerald-400" : "bg-white/15 text-white border-white/25"
+          }`}
+        >
+          <ChevronLeft size={16} /> More games
+        </button>
+      )}
 
       {/* ACTIVITY 0: RAINBOW XYLOPHONE */}
       {currentActivity === "rainbow-piano" && (
