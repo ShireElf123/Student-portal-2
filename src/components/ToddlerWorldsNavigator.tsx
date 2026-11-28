@@ -1944,16 +1944,16 @@ export function ToddlerWorldsNavigator({
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-amber-600">Wonderland Atlas</p>
-          <h2 className="text-4xl sm:text-5xl font-black tracking-tight">Pick a land</h2>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-700">Wonderland Atlas</p>
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-900">Pick a land</h2>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={toggleTapSounds}
-            className="px-4 py-2.5 rounded-2xl bg-white text-slate-900 font-bold text-base min-h-12 cursor-pointer border border-white/60 shadow-sm inline-flex items-center gap-1.5"
+            className="px-3 py-2 rounded-2xl bg-white/90 text-slate-800 font-bold text-sm min-h-12 cursor-pointer border border-white shadow-sm inline-flex items-center gap-1.5"
             title={tapsMuted ? "Tap sounds are off" : "Quiet tap sounds"}
           >
             {tapsMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
@@ -1965,7 +1965,7 @@ export function ToddlerWorldsNavigator({
               setLetterLaneOpen(true);
               speakText("Letter Lane. Three letters. About five minutes. No streak.", { pitch: 1.15 });
             }}
-            className="px-4 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-base min-h-12 cursor-pointer shadow-sm"
+            className="px-3 py-2 rounded-2xl bg-white text-slate-800 font-black text-sm min-h-12 cursor-pointer border border-amber-200 shadow-sm"
           >
             Letter Lane
           </button>
@@ -1976,7 +1976,7 @@ export function ToddlerWorldsNavigator({
                 onOpenFocus();
                 speakText("Focus body. Check how you feel. Move or push. Then quiet.", { pitch: 1.12 });
               }}
-              className="px-4 py-2.5 rounded-2xl bg-teal-400 hover:bg-teal-300 text-teal-950 font-black text-base min-h-12 cursor-pointer shadow-sm"
+              className="px-3 py-2 rounded-2xl bg-white text-slate-800 font-black text-sm min-h-12 cursor-pointer border border-teal-200 shadow-sm"
             >
               Busy body
             </button>
@@ -1984,7 +1984,7 @@ export function ToddlerWorldsNavigator({
           {onOpenGames && (
             <button
               onClick={onOpenGames}
-              className="px-4 py-2.5 rounded-2xl bg-white text-slate-900 font-bold text-base min-h-12 cursor-pointer border border-white/60 shadow-sm"
+              className="px-3 py-2 rounded-2xl bg-white text-slate-800 font-bold text-sm min-h-12 cursor-pointer border border-white shadow-sm"
             >
               Free Play
             </button>

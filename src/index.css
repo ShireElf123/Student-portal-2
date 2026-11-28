@@ -245,6 +245,86 @@
   font-kerning: none;
 }
 
+/**
+ * Toddler Wonderland home composition.
+ * Groups utilities, Buddy, and rewards so they stop competing as equal chips.
+ */
+.wonder-utility-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 3rem;
+  min-width: 3rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 1rem;
+  font-weight: 900;
+  font-size: 0.8125rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.12s ease;
+}
+.wonder-utility-btn:active {
+  transform: translateY(2px);
+}
+
+.wonder-treasure-tray {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 0.4rem;
+  padding: 0.4rem;
+  border-radius: 1.75rem;
+  background: rgba(255, 255, 255, 0.94);
+  border: 3px solid rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 10px 24px -10px rgba(22, 101, 52, 0.28),
+    0 2px 8px rgba(15, 23, 42, 0.06),
+    inset 0 -3px 0 rgba(22, 101, 52, 0.06);
+}
+
+@media (min-width: 640px) {
+  .wonder-treasure-tray {
+    justify-content: flex-end;
+  }
+}
+
+.wonder-treasure-tray--night {
+  background: rgba(15, 23, 42, 0.55);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.45);
+}
+
+.wonder-treasure-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 3rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 1.15rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.wonder-buddy-stage {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3.5rem;
+  padding: 0.45rem 0.85rem 0.45rem 0.45rem;
+  border-radius: 1.75rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.wonder-launcher {
+  border-radius: 1.85rem;
+  box-shadow:
+    0 14px 28px -12px rgba(22, 101, 52, 0.22),
+    inset 0 -3px 0 rgba(16, 185, 129, 0.12);
+}
+
 /* Custom sleek PC scrollbars (replaces bulky default OS scrollbars) */
 ::-webkit-scrollbar {
   width: 8px;
