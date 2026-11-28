@@ -24,9 +24,11 @@ Reusable visual spec for one illustrated product. Destinations keep their own pe
 
 - 3/4 view, strong silhouette, one hero object per icon.
 - Same upper-left light and clay material as teddy.
-- Transparent PNG. Home launcher shows them large (about 56px on phones, 72–86px on landscape tablets) so the clay reads as a toy, not a toolbar glyph.
+- Transparent PNG. Home launcher shows them as **clay picture-cards** (cream plate, colored frame) sitting on the meadow — Pok Pok / Sago style toys, not a frosted toolbar.
+- Icon size about 70px on phones, 92–108px on landscape tablets.
 - Landscape is the tablet playroom: eight picture-doors in one row. Portrait phones keep two rows of four.
 - No text baked into icons. No emoji.
+- Grown-up chrome (mute, exit, milestone) stays, but the toys are the first thing a pre-reader taps.
 
 ## Destination personalities (same universe)
 
