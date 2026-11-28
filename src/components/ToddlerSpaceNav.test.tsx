@@ -31,41 +31,34 @@ describe("ToddlerSpaceNav", () => {
     }
     const games = getByTestId("toddler-tab-games");
     fireEvent.click(games);
-    expect(chosen).toEqual([]);
-    fireEvent.click(games);
     expect(games.getAttribute("data-opening")).toBe("true");
     await waitFor(() => expect(chosen).toEqual(["games"]));
   });
 
-  it("speaks the toy name on first tap and opens on the second", async () => {
+  it("opens on one tap without speaking the category name", async () => {
     const chosen: string[] = [];
     const { getByTestId } = render(
       <ToddlerSpaceNav activeTab={null} onSelect={(tab) => chosen.push(tab)} isMeadow />,
     );
     const games = getByTestId("toddler-tab-games");
     fireEvent.click(games);
-    expect(speak.spoken).toEqual(["Games"]);
-    expect(games.getAttribute("data-named")).toBe("true");
-    expect(chosen).toEqual([]);
-    fireEvent.click(games);
-    expect(games.getAttribute("data-named")).toBe("false");
+    expect(speak.spoken).toEqual([]);
     expect(games.getAttribute("data-opening")).toBe("true");
     expect(chosen).toEqual([]);
     await waitFor(() => expect(chosen).toEqual(["games"]));
   });
 
-  it("names a different toy instead of opening the first", async () => {
+  it("ignores a second tap while the open motion is playing", async () => {
     const chosen: string[] = [];
     const { getByTestId } = render(
       <ToddlerSpaceNav activeTab={null} onSelect={(tab) => chosen.push(tab)} isMeadow />,
     );
     fireEvent.click(getByTestId("toddler-tab-games"));
     fireEvent.click(getByTestId("toddler-tab-worlds"));
-    expect(speak.spoken).toEqual(["Games", "Worlds"]);
-    expect(chosen).toEqual([]);
-    fireEvent.click(getByTestId("toddler-tab-worlds"));
-    expect(getByTestId("toddler-tab-worlds").getAttribute("data-opening")).toBe("true");
-    await waitFor(() => expect(chosen).toEqual(["worlds"]));
+    expect(speak.spoken).toEqual([]);
+    expect(getByTestId("toddler-tab-games").getAttribute("data-opening")).toBe("true");
+    expect(getByTestId("toddler-tab-worlds").getAttribute("data-opening")).toBe("false");
+    await waitFor(() => expect(chosen).toEqual(["games"]));
   });
 
   it("marks the active tab for assistive tech", () => {

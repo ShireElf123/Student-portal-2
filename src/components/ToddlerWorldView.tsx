@@ -844,7 +844,7 @@ export function ToddlerWorldView({
   const isMeadow = gameState.wonderlandTheme === "sunny-meadow";
 
   return (
-    <div className={`min-h-dvh pb-6 transition-colors duration-500 ${
+    <div className={`min-h-dvh flex flex-col pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] transition-colors duration-500 ${
       isMeadow
         ? "wonder-home-meadow text-slate-900"
         : "bg-[#0c0d14] text-white"
@@ -954,11 +954,12 @@ export function ToddlerWorldView({
         className="-mt-1 mb-1"
       />
 
-      <div className="wonder-home-playroom max-w-7xl mx-auto px-3 sm:px-4 pt-1 pb-2">
+      <div className="wonder-home-stage flex-1 flex flex-col w-full">
+      <div className="wonder-home-playroom flex-1 flex items-end px-3 sm:px-4 pt-1 pb-1">
         <ToddlerSpaceNav activeTab={null} onSelect={enterDestination} isMeadow={isMeadow} />
       </div>
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 pb-3">
+      <div className="wonder-home-tray px-3 sm:px-4 pb-2">
         <div className="wonder-companion-band" data-testid="wonder-companion-band">
           <button
             type="button"
@@ -967,19 +968,22 @@ export function ToddlerWorldView({
               enterDestination("avatar-studio");
               soundEffects.playPop();
             }}
-            className={`wonder-clay border-b-4 gap-2 px-3 py-1 ${
+            className={`wonder-clay wonder-buddy-chip border-b-4 gap-2 px-3 py-1.5 ${
               isMeadow
                 ? "bg-white text-slate-800 border-pink-400 hover:bg-pink-50"
                 : "bg-pink-500/20 text-pink-200 border-pink-600 hover:bg-pink-500/30"
             }`}
             title="Customize your Learning Buddy!"
           >
-            <BuddyCompanionBadge buddy={activeBuddy} size="sm" animated />
+            <BuddyCompanionBadge buddy={activeBuddy} size="md" animated />
             <div className="text-left">
               <div className="text-xs uppercase font-black text-pink-600">Buddy</div>
               <div className={`text-sm font-black leading-tight ${isMeadow ? "text-slate-900" : "text-white"}`}>
                 {activeBuddy.name}
               </div>
+              <p className="wonder-home-tip" data-testid="wonder-home-tip" role="note">
+                Tap a picture to play
+              </p>
             </div>
           </button>
 
@@ -1029,6 +1033,7 @@ export function ToddlerWorldView({
             </button>
           </div>
         </div>
+      </div>
       </div>
       </>
       ) : (

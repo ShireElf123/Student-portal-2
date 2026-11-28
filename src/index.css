@@ -505,19 +505,52 @@
   .wonder-utility-rail {
     justify-content: flex-start;
   }
+  .wonder-launcher--playroom .wonder-launch-tile {
+    max-width: 5.6rem;
+    min-width: 3.9rem;
+  }
+  .wonder-launch-icon--hero {
+    width: 3.35rem;
+    height: 3.35rem;
+  }
+  .wonder-launch-tile {
+    min-height: 5.35rem;
+  }
 }
 
+.wonder-home-stage {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+}
+.wonder-home-tray {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+}
+.wonder-home-tip {
+  margin: 0.1rem 0 0;
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: #57534e;
+}
+.wonder-buddy-chip {
+  min-height: 4.25rem;
+  align-items: center;
+}
 .wonder-companion-band {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
   gap: 0.45rem;
-  padding: 0.4rem;
-  border-radius: 1.35rem;
-  background: rgba(255, 253, 247, 0.72);
+  padding: 0.45rem;
+  border-radius: 1.5rem;
+  background: rgba(255, 253, 247, 0.88);
   border: 3px solid #fff;
   box-shadow:
     0 10px 18px -16px rgba(15, 23, 42, 0.28),
+    0 8px 0 rgba(15, 23, 42, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 .wonder-parent-chip {
@@ -544,10 +577,12 @@
 .wonder-home-playroom {
   position: relative;
   z-index: 2;
+  width: 100%;
 }
 .wonder-launcher-wrap {
   max-width: 72rem;
-  margin: 0 auto 0.35rem;
+  width: 100%;
+  margin: 0 auto 0.2rem;
 }
 @media (min-width: 1024px) {
   .wonder-launcher-wrap {
@@ -606,13 +641,21 @@
     0 10px 0 rgba(15, 23, 42, 0.08),
     0 14px 22px -16px rgba(15, 23, 42, 0.35);
 }
-.wonder-picture-card.is-selected,
-.wonder-picture-card.is-named {
+.wonder-picture-card.is-selected {
   scale: 1.1;
   z-index: 3;
   box-shadow:
     0 16px 0 rgba(15, 23, 42, 0.1),
     0 22px 28px -14px rgba(15, 23, 42, 0.4);
+}
+@media (hover: hover) and (pointer: fine) {
+  .wonder-picture-card:hover {
+    scale: 1.08;
+    z-index: 3;
+  }
+}
+.wonder-picture-card:active {
+  scale: 1.04;
 }
 .wonder-picture-card.is-opening {
   z-index: 6;
@@ -643,7 +686,9 @@
     --toy-rot: 0deg;
     --toy-y: 0px;
   }
-  .wonder-picture-card.is-opening {
+  .wonder-picture-card.is-opening,
+  .wonder-picture-card:hover,
+  .wonder-picture-card:active {
     animation: none;
     rotate: 0deg;
     translate: 0 0;
@@ -675,12 +720,48 @@
   height: 4.35rem;
 }
 .wonder-launch-icon--place {
-  width: 2.35rem;
-  height: 2.35rem;
+  width: 2.15rem;
+  height: 2.15rem;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+.wonder-place-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.7rem;
+  height: 2.7rem;
   background: #fffdf7;
-  border-radius: 0.85rem;
-  padding: 0.12rem;
-  box-shadow: 0 2px 0 rgba(15, 23, 42, 0.08);
+  border: 3px solid #fde68a;
+  border-radius: 0.9rem;
+  box-shadow: 0 3px 0 rgba(15, 23, 42, 0.08);
+}
+.wonder-place-mark[data-place="worlds"] { border-color: #7dd3fc; }
+.wonder-place-mark[data-place="books"] { border-color: #fbbf24; }
+.wonder-place-mark[data-place="games"] { border-color: #2dd4bf; }
+.wonder-place-mark[data-place="focus"] { border-color: #5eead4; }
+.wonder-place-mark[data-place="playhouse"] { border-color: #e879f9; }
+.wonder-place-mark[data-place="phonics"] { border-color: #fb7185; }
+.wonder-place-mark[data-place="counting"] { border-color: #818cf8; }
+.wonder-place-mark[data-place="avatar-studio"] { border-color: #f9a8d4; }
+.wonder-home-back,
+.wonder-place-mute {
+  background: #fffdf7;
+  color: #1c1917;
+  border: 3px solid #bbf7d0;
+  border-bottom-width: 4px;
+  box-shadow: 0 3px 0 rgba(15, 23, 42, 0.08);
+}
+.wonder-place-mute {
+  border-color: #e7e5e4;
+}
+.wonder-place-mute.is-muted {
+  background: #fb7185;
+  color: #fff;
+  border-color: #be123c;
 }
 @media (min-width: 640px) {
   .wonder-launcher {
@@ -716,6 +797,41 @@
   .wonder-launch-icon--hero {
     width: 6.75rem;
     height: 6.75rem;
+  }
+}
+@media (min-width: 1280px) {
+  .wonder-home-stage,
+  .wonder-home-tray,
+  .wonder-launcher-wrap {
+    max-width: 86rem;
+  }
+  .wonder-launcher {
+    gap: 0.7rem 0.9rem;
+    padding: 0.5rem 0.35rem 0.6rem;
+  }
+  .wonder-launcher--playroom .wonder-launch-tile {
+    flex-basis: 11%;
+    max-width: 11rem;
+  }
+  .wonder-launch-tile {
+    min-height: 10.5rem;
+  }
+  .wonder-launch-icon--hero {
+    width: 7.5rem;
+    height: 7.5rem;
+  }
+  .wonder-art-sun {
+    width: 5rem;
+    height: 5rem;
+  }
+}
+@media (min-width: 1440px) {
+  .wonder-launcher--playroom .wonder-launch-tile {
+    max-width: 12rem;
+  }
+  .wonder-launch-icon--hero {
+    width: 8rem;
+    height: 8rem;
   }
 }
 

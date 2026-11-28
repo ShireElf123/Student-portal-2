@@ -40,7 +40,7 @@ export function ToddlerDestinationShell({
             type="button"
             data-testid="wonder-home-back"
             onClick={onHome}
-            className="inline-flex items-center gap-1 min-h-12 min-w-12 px-3 rounded-2xl bg-white text-slate-900 font-black text-sm border-b-4 border-emerald-400 shadow-md active:translate-y-0.5"
+            className="wonder-home-back inline-flex items-center gap-1 min-h-12 min-w-12 px-3 rounded-2xl text-slate-900 font-black text-sm active:translate-y-0.5"
           >
             <ChevronLeft size={18} />
             Home
@@ -51,7 +51,9 @@ export function ToddlerDestinationShell({
             </p>
             <h1 className="text-lg sm:text-2xl font-black text-slate-900 leading-tight flex items-center gap-2">
               {meta && DESTINATION_ICON[meta.id] ? (
-                <img src={DESTINATION_ICON[meta.id]} alt="" width={48} height={48} className="wonder-launch-icon wonder-launch-icon--place" decoding="async" />
+                <span className="wonder-place-mark" data-place={meta.id} data-testid="wonder-place-mark">
+                  <img src={DESTINATION_ICON[meta.id]} alt="" width={48} height={48} className="wonder-launch-icon wonder-launch-icon--place" decoding="async" />
+                </span>
               ) : (
                 <span aria-hidden>{meta?.emoji}</span>
               )}
@@ -61,10 +63,10 @@ export function ToddlerDestinationShell({
           <button
             type="button"
             onClick={onToggleMute}
-            className={`inline-flex items-center justify-center gap-1 min-h-12 min-w-12 px-3 rounded-2xl font-black text-sm border-b-4 shadow-md ${
+            className={`wonder-place-mute inline-flex items-center justify-center gap-1 min-h-12 min-w-12 px-3 rounded-2xl font-black text-sm ${
               isMuted
-                ? "bg-rose-500 text-white border-rose-700"
-                : "bg-white text-slate-800 border-slate-300"
+                ? "is-muted"
+                : ""
             }`}
             title={isMuted ? "Sound is muted" : "Sound is on"}
           >

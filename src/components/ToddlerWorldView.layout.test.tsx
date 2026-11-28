@@ -7,9 +7,7 @@ import { ToddlerWorldView } from "./ToddlerWorldView";
 afterEach(() => cleanup());
 
 async function openToy(getByTestId: (id: string) => HTMLElement, id: string) {
-  const toy = getByTestId(`toddler-tab-${id}`);
-  fireEvent.click(toy);
-  fireEvent.click(toy);
+  fireEvent.click(getByTestId(`toddler-tab-${id}`));
   await waitFor(() => expect(getByTestId(`wonder-destination-${id}`)).toBeTruthy());
 }
 
@@ -28,6 +26,7 @@ describe("ToddlerWorldView home gateway", () => {
     expect(getByText("Toddler Wonderland")).toBeTruthy();
     expect(getByText(/Ages 2/)).toBeTruthy();
     expect(getByText("Play inside. Every land is a new place.")).toBeTruthy();
+    expect(getByTestId("wonder-home-tip").textContent).toMatch(/Tap a picture to play/);
     expect(getByTestId("toddler-space-nav").querySelectorAll('[role="tab"]')).toHaveLength(8);
     expect(queryByText("Pick a land")).toBeNull();
     expect(queryByText("Xylophone")).toBeNull();
@@ -114,5 +113,6 @@ describe("ToddlerWorldView home gateway", () => {
     expect(shell.className).toContain("wonder-place");
     const stage = shell.querySelector(".flex-1.max-w-7xl.mx-auto");
     expect(stage).toBeTruthy();
+    expect(getByTestId("wonder-place-mark").getAttribute("data-place")).toBe("games");
   });
 });

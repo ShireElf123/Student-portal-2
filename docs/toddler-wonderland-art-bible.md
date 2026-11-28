@@ -28,9 +28,9 @@ Reusable visual spec for one illustrated product. Destinations keep their own pe
 - Same upper-left light and clay material as teddy.
 - Transparent PNG. Home launcher shows them as **clay picture-cards** (cream plate, colored frame) sitting on the meadow.
 - Icon size about 70px on phones, 92–108px on landscape tablets.
-- Toys scatter on the meadow (tilted picture-cards). Portrait wraps four-across; landscape spreads all eight. Keep bottom chrome tight — no extra meadow void under the treasure tray.
-- First tap speaks the toy name. Second tap **lifts and straightens** the card (rainbow-held-up), then walks into the room. Honour `prefers-reduced-motion` (skip the spin, open immediately).
-- Names live in the voice, not as printed labels on the toy.
+- Toys scatter on the meadow (tilted picture-cards). Portrait wraps four-across; landscape spreads all eight. Treasure tray is a designed meadow shelf (larger Pip + rewards), not unused grass under the cards.
+- **One tap** lifts and straightens the card, then walks into the room. Do not speak the category name on Home. Do not auto-greet when Home opens. Honour `prefers-reduced-motion` (skip the spin, open immediately).
+- Names live on the card for assistive tech, not as printed labels on the toy. Educational audio inside rooms stays on.
 - No text baked into icons. No emoji.
 - Grown-up chrome (mute, exit, milestone) stays in a slim strip. Picture-cards sit on the meadow first; Buddy / star jar / stickers / quests sit underneath, not above the toys.
 - Never lock web orientation. Use `dvh` so turning a tablet reflows the playroom. PC (1280px+) gets a bigger table of toys, not a phone strip.

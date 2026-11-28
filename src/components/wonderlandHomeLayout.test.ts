@@ -26,11 +26,13 @@ describe("Toddler Wonderland home composition", () => {
     expect(nav).toContain("wonder-launch-icon--hero");
     expect(nav).toContain("wonder-picture-card");
     expect(nav).toContain("flex flex-col");
-    expect(nav).toContain("speakText");
-    expect(nav).toContain("is-named");
+    expect(nav).not.toContain("speakText");
+    expect(nav).not.toContain("is-named");
     expect(nav).toContain("is-opening");
     expect(css).toContain("wonderToyOpen");
     expect(css).toContain("border: 4px solid #fde68a");
+    expect(css).toContain(".wonder-place-mark");
+    expect(css).toContain(".wonder-home-stage");
     expect(css).toContain(".wonder-launcher--playroom");
     expect(css).toContain("--toy-rot");
     expect(css).toContain(".wonder-launch-icon--hero");
@@ -71,6 +73,8 @@ describe("Toddler Wonderland home composition", () => {
     expect(view).toContain('data-testid="hud-sticker-count"');
     expect(view).toContain("wonder-brand-title");
     expect(view).toContain("wonder-home-playroom");
+    expect(view).toContain("wonder-home-stage");
+    expect(view).toContain('data-testid="wonder-home-tip"');
     expect(view.indexOf("wonder-home-playroom")).toBeLessThan(view.indexOf('data-testid="wonder-companion-band"'));
   });
 
