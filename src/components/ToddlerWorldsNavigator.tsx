@@ -1705,7 +1705,7 @@ export function ToddlerWorldsNavigator({
 
           <div className="flex items-center gap-2">
             <span className="px-3.5 py-1.5 rounded-2xl bg-white/10 text-white font-bold text-sm border border-white/10 tabular-nums whitespace-nowrap">
-              {areaStats.completedCount} of {areaStats.totalCount} Discoveries
+              <span className="count-num">{areaStats.completedCount}</span> of <span className="count-num">{areaStats.totalCount}</span> Discoveries
             </span>
           </div>
         </div>
@@ -1849,7 +1849,7 @@ export function ToddlerWorldsNavigator({
 
             <div className="px-4 py-2 rounded-2xl bg-black/20 backdrop-blur-sm border border-white/20 text-xs font-black flex items-center gap-1.5">
               <Star size={14} className="text-amber-300 fill-amber-300" />
-              <span>{worldStats.starsEarned} Stars Earned Here</span>
+              <span><span className="count-num">{worldStats.starsEarned}</span> Stars Earned Here</span>
             </div>
           </div>
 

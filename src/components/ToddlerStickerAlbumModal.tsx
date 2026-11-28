@@ -54,7 +54,7 @@ export function ToddlerStickerAlbumModal({
                   </span>
                 </h2>
                 <p className="text-white/60 text-xs sm:text-sm">
-                  Rank: <span className="font-bold text-amber-300">{currentRank.title}</span> {currentRank.emoji} • Total Stars: <span className="text-yellow-300 font-bold">{starsCount} ⭐</span>
+                  Rank: <span className="font-bold text-amber-300">{currentRank.title}</span> {currentRank.emoji} • Total Stars: <span className="text-yellow-300 font-bold"><span className="count-num">{starsCount}</span> ⭐</span>
                 </p>
               </div>
             </div>
@@ -112,7 +112,7 @@ export function ToddlerStickerAlbumModal({
                         </span>
                       ) : (
                         <span className="text-amber-300 flex items-center gap-0.5 justify-center">
-                          <Star size={10} fill="currentColor" /> {sticker.requiredStars}
+                          <Star size={10} fill="currentColor" /> <span className="count-num">{sticker.requiredStars}</span>
                         </span>
                       )}
                     </div>

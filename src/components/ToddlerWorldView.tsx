@@ -211,7 +211,7 @@ function StoryCoverCard({
         )}
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 pt-10">
           <p className="text-[11px] font-black uppercase tracking-wide text-white/90">
-            {book.pages.length} pages · {book.readTimeMinutes} min
+            <span className="count-num">{book.pages.length}</span> pages · <span className="count-num">{book.readTimeMinutes}</span> min
           </p>
           <h3 className="text-base sm:text-lg font-black leading-tight text-white line-clamp-2">{book.title}</h3>
         </div>
@@ -796,7 +796,7 @@ export function ToddlerWorldView({
               <Calendar size={14} />
               <span>Quests</span>
               <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-xs">
-                {completedMissions.length}/3
+                <span className="count-num">{completedMissions.length}/3</span>
               </span>
             </button>
 
@@ -811,7 +811,7 @@ export function ToddlerWorldView({
             >
               <Trophy size={14} />
               <span>Stickers</span>
-              <span className="px-1.5 py-0.5 rounded-full bg-amber-950/20 text-xs font-black">
+              <span className="px-1.5 py-0.5 rounded-full bg-amber-950/20 text-xs font-black count-num" data-testid="hud-sticker-count">
                 {unlockedStickersCount}/{TODDLER_STICKERS.length}
               </span>
             </button>
@@ -860,7 +860,8 @@ export function ToddlerWorldView({
                   {currentRank.emoji} {currentRank.title}
                 </div>
                 <div className="text-base font-black leading-tight">
-                  {starsCount} <span className="text-sm font-bold">Stars</span>
+                  <span className="count-num" data-testid="hud-star-count">{starsCount}</span>{" "}
+                  <span className="text-sm font-bold">Stars</span>
                 </div>
               </div>
             </div>
@@ -961,11 +962,17 @@ export function ToddlerWorldView({
               <div className="space-y-1.5 text-sm font-bold">
                 <div className="flex justify-between">
                   <span>Star Jar Balance:</span>
-                  <span className="text-amber-500 font-black">{starsCount} ⭐</span>
+                  <span className="text-amber-500 font-black">
+                    <span className="count-num">{starsCount}</span> ⭐
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Unlocked Stickers:</span>
-                  <span className="text-emerald-500 font-black">{unlockedStickersCount} / {TODDLER_STICKERS.length}</span>
+                  <span className="text-emerald-500 font-black">
+                    <span className="count-num">{unlockedStickersCount}</span>
+                    {" / "}
+                    <span className="count-num">{TODDLER_STICKERS.length}</span>
+                  </span>
                 </div>
               </div>
               <button
@@ -988,7 +995,7 @@ export function ToddlerWorldView({
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-black uppercase tracking-wider text-indigo-500">Today's Missions</span>
                 <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-400">
-                  {completedMissions.length}/3 Done
+                  <span className="count-num">{completedMissions.length}/3</span> Done
                 </span>
               </div>
               <div className="space-y-2 mb-3">
@@ -1262,7 +1269,7 @@ export function ToddlerWorldView({
                   <div className="min-w-0">
                     <h3 className="text-base sm:text-lg font-black text-slate-900 truncate">{selectedBook.title}</h3>
                     <p className="text-xs sm:text-sm font-bold text-amber-800">
-                      Page {activePage.pageNumber} of {selectedBook.pages.length}
+                      Page <span className="count-num">{activePage.pageNumber}</span> of <span className="count-num">{selectedBook.pages.length}</span>
                     </p>
                   </div>
                 </div>
@@ -1495,7 +1502,9 @@ export function ToddlerWorldView({
                     </button>
 
                     <p className="font-black text-amber-900 text-sm sm:text-base">
-                      {currentPageIndex + 1} / {selectedBook.pages.length}
+                      <span className="count-num">{currentPageIndex + 1}</span>
+                      {" / "}
+                      <span className="count-num">{selectedBook.pages.length}</span>
                     </p>
 
                     <button
@@ -1525,7 +1534,7 @@ export function ToddlerWorldView({
 
                   <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-amber-200 border-2 border-amber-400 text-amber-950 font-black text-base shadow-sm">
                     <Star className="w-6 h-6 fill-amber-400 text-amber-950 animate-pulse" />
-                    <span>Your Star Jar: {starsCount} Stars</span>
+                    <span>Your Star Jar: <span className="count-num">{starsCount}</span> Stars</span>
                   </div>
 
                   <div className="flex flex-wrap items-center justify-center gap-3 pt-4">

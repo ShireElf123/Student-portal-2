@@ -234,6 +234,17 @@
   }
 }
 
+/**
+ * Multi-digit HUD counters. Fredoka / extra-black Nunito give numerals wide
+ * sidebearings, so 436 reads as 4 3 6. Apply only to the digits — labels keep
+ * their original tracking.
+ */
+.count-num {
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: -0.06em;
+  font-kerning: none;
+}
+
 /* Custom sleek PC scrollbars (replaces bulky default OS scrollbars) */
 ::-webkit-scrollbar {
   width: 8px;
