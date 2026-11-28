@@ -5,6 +5,7 @@ import { speakText } from "../utils/speechUtils";
 
 const NAME_HOLD_MS = 2600;
 const OPEN_SPIN_MS = 420;
+const HERO_TOYS = new Set<ToddlerSpaceTabId>(["worlds", "books", "games", "playhouse", "avatar-studio"]);
 
 function prefersReducedMotion() {
   return Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches);
@@ -73,10 +74,11 @@ export function ToddlerSpaceNav({
               aria-selected={selected}
               data-testid={`toddler-tab-${tab.id}`}
               data-place={tab.id}
+              data-toy={HERO_TOYS.has(tab.id) ? "hero" : "side"}
               data-named={named ? "true" : "false"}
               data-opening={opening ? "true" : "false"}
               onClick={() => tapToy(tab.id, tab.label)}
-              className={`wonder-picture-card wonder-launch-tile flex flex-col items-center justify-center gap-1 px-1 py-2 sm:px-1.5 sm:py-2.5 rounded-[1.35rem] font-black text-xs sm:text-sm md:text-base cursor-pointer select-none ${
+              className={`wonder-picture-card wonder-launch-tile flex flex-col items-center justify-center gap-1 px-1 py-2 sm:px-1.5 sm:py-2.5 cursor-pointer select-none ${
                 selected ? "is-selected" : ""
               } ${named ? "is-named" : ""} ${opening ? "is-opening" : ""}`}
             >
