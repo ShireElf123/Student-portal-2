@@ -36,7 +36,7 @@ export const TODDLER_ARCADE_GAMES: ToddlerArcadeGame[] = [
   { id: "feed-animal", title: "Feed Bunny", art: "/games/arcade-feed-bunny.jpg", accent: "from-orange-400 to-amber-500", rim: "border-amber-700" },
 ];
 
-/** Unique arcade art for Skill Studio. Remaining seven still need dedicated cards. */
+/** Unique arcade art for Skill Studio, keyed by the real game id. */
 export const K1_STUDIO_ART: Record<K1StudioGameId, string> = {
   "ten-frame-taxi": "/games/arcade-ten-frame-taxi.jpg",
   "blend-kitchen": "/games/arcade-blend-kitchen.jpg",
@@ -47,13 +47,13 @@ export const K1_STUDIO_ART: Record<K1StudioGameId, string> = {
   "story-porch": "/games/arcade-story-porch.jpg",
   "sock-drawer": "/games/arcade-sock-drawer.jpg",
   "farm-count": "/games/arcade-farm-count.jpg",
-  "reef-sort": "/worlds/secret-coral.jpg",
-  "shape-bakery": "/covers/bakery-window-fog.jpg",
-  "bus-stop": "/worlds/city-world.jpg",
-  "shadow-lantern": "/worlds/night-world.jpg",
-  "dino-tracks": "/worlds/secret-dino-cave.jpg",
-  "ice-pack": "/worlds/arctic-world.jpg",
-  "bug-sort": "/worlds/bug-world.jpg",
+  "reef-sort": "/games/arcade-reef-sort.jpg",
+  "shape-bakery": "/games/arcade-shape-bakery.jpg",
+  "bus-stop": "/games/arcade-bus-stop.jpg",
+  "shadow-lantern": "/games/arcade-shadow-lantern.jpg",
+  "dino-tracks": "/games/arcade-dino-tracks.jpg",
+  "ice-pack": "/games/arcade-ice-pack.jpg",
+  "bug-sort": "/games/arcade-bug-sort.jpg",
 };
 
 export function studioAccent(id: K1StudioGameId): string {

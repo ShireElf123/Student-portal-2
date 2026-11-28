@@ -78,19 +78,8 @@ describe("Games arcade selection", () => {
     for (const game of TODDLER_ARCADE_GAMES) {
       expect(game.art.startsWith("/games/arcade-")).toBe(true);
     }
-    const uniqueStudio = [
-      "ten-frame-taxi",
-      "blend-kitchen",
-      "bead-train",
-      "picnic-plus",
-      "weather-porch",
-      "laundry-sort",
-      "story-porch",
-      "sock-drawer",
-      "farm-count",
-    ];
-    for (const id of uniqueStudio) {
-      expect(K1_STUDIO_ART[id as keyof typeof K1_STUDIO_ART].startsWith("/games/arcade-")).toBe(true);
+    for (const art of Object.values(K1_STUDIO_ART)) {
+      expect(art.startsWith("/games/arcade-")).toBe(true);
     }
   });
 
