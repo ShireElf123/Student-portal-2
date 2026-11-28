@@ -36,7 +36,13 @@ describe("Toddler Wonderland home composition", () => {
     expect(css).toContain(".wonder-launcher--playroom");
     expect(css).toContain("--toy-rot");
     expect(css).toContain(".wonder-launch-icon--hero");
-    expect(css).toContain("orientation: landscape");
+    expect(css).toContain("data-wonder-orientation");
+    expect(css).toContain("data-wonder-frame");
+    expect(css).toContain("grid-template-columns: repeat(4");
+    expect(css).toContain("repeat(8");
+    expect(view).toContain("data-wonder-frame");
+    expect(view).toContain("wonder-home-chrome");
+    expect(view).not.toContain("sm:flex-row sm:items-center sm:justify-between");
     expect(view).toContain("HOME_ART.teddy");
     expect(view).toContain("HOME_ART.tree");
     expect(view).toContain("HOME_ART.butterfly");
@@ -78,6 +84,8 @@ describe("Toddler Wonderland home composition", () => {
     expect(view).toContain("wonder-home-stage");
     expect(view).toContain('data-testid="wonder-home-tip"');
     expect(view.indexOf("wonder-home-playroom")).toBeLessThan(view.indexOf('data-testid="wonder-companion-band"'));
+    expect(view.indexOf("wonder-home-playroom")).toBeLessThan(view.indexOf("HOME_ART.tree"));
+    expect(view).not.toContain("flex-1 flex items-end");
   });
 
   it("keeps star digits on .count-num and does not hide rewards", () => {

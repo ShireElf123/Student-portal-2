@@ -17,6 +17,7 @@ describe("ToddlerWorldView home gateway", () => {
       <ToddlerWorldView onStartAssessment={() => undefined} onRequestExit={() => undefined} />,
     );
     expect(getByTestId("wonder-home-header")).toBeTruthy();
+    expect(getByTestId("wonder-home-header").closest("[data-wonder-frame]")).toBeTruthy();
     expect(getByTestId("wonder-utility-rail")).toBeTruthy();
     expect(getByTestId("wonder-buddy-stage")).toBeTruthy();
     expect(getByTestId("wonder-treasure-tray")).toBeTruthy();

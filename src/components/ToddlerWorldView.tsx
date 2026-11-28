@@ -51,6 +51,7 @@ import {
   type ToddlerSpaceTabId,
 } from "../data/toddler/toddlerSpaceTabs";
 import { HOME_ART } from "../data/toddler/toddlerArt";
+import { useWonderFrame } from "../utils/wonderFrame";
 import {
   readWonderlandPlace,
   scheduleWonderlandScrollReset,
@@ -842,9 +843,13 @@ export function ToddlerWorldView({
   };
 
   const isMeadow = gameState.wonderlandTheme === "sunny-meadow";
+  const { frame: wonderFrame, orientation: wonderOrientation } = useWonderFrame();
 
   return (
-    <div className={`min-h-dvh flex flex-col pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] transition-colors duration-500 ${
+    <div
+      data-wonder-frame={wonderFrame}
+      data-wonder-orientation={wonderOrientation}
+      className={`min-h-dvh flex flex-col pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] transition-colors duration-500 ${
       isMeadow
         ? "wonder-home-meadow text-slate-900"
         : "bg-[#0c0d14] text-white"
@@ -859,12 +864,12 @@ export function ToddlerWorldView({
         {isMeadow && (
           <>
             <img src={HOME_ART.sun} alt="" className="wonder-art-sun" width={72} height={72} decoding="async" />
-            <img src={HOME_ART.cloud} alt="" className="wonder-art-cloud hidden sm:block" style={{ top: "0.2rem", left: "10%" }} width={120} height={70} decoding="async" />
+            <img src={HOME_ART.cloud} alt="" className="wonder-art-cloud wonder-art-cloud-wide" style={{ top: "0.2rem", left: "10%" }} width={120} height={70} decoding="async" />
           </>
         )}
 
         <div className="max-w-7xl mx-auto relative z-10" data-testid="wonder-home-header">
-          <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="wonder-home-chrome">
             <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
               <div className="wonder-home-teddy w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center shadow-lg ring-2 ring-white border border-white flex-shrink-0 animate-float-gentle">
                 <img src={HOME_ART.teddy} alt="" width={48} height={48} decoding="async" />
@@ -918,7 +923,7 @@ export function ToddlerWorldView({
                 title={isMuted ? "Sound is Muted - Click to Unmute" : "Sound is Active - Click to Mute"}
               >
                 {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-                <span className="hidden sm:inline">{isMuted ? "Muted" : "Voice On"}</span>
+                <span className="wonder-rail-copy">{isMuted ? "Muted" : "Voice On"}</span>
               </button>
               {onStartAssessment && (
                 <button
@@ -927,8 +932,8 @@ export function ToddlerWorldView({
                   className="wonder-clay wonder-parent-chip border-b-4 bg-white text-emerald-800 border-emerald-400 hover:bg-emerald-50"
                 >
                   <GraduationCap size={16} />
-                  <span className="hidden sm:inline">Milestone Check</span>
-                  <span className="sm:hidden">Check</span>
+                  <span className="wonder-rail-copy">Milestone Check</span>
+                  <span className="wonder-rail-short">Check</span>
                 </button>
               )}
               {onRequestExit && (
@@ -956,12 +961,12 @@ export function ToddlerWorldView({
 
       <div className="wonder-home-stage flex-1 flex flex-col w-full relative">
       {isMeadow && (
-        <>
-          <img src={HOME_ART.tree} alt="" className="wonder-art-tree" width={180} height={320} decoding="async" />
-          <img src={HOME_ART.butterfly} alt="" className="wonder-art-butterfly" width={72} height={72} decoding="async" />
-        </>
+        <img src={HOME_ART.butterfly} alt="" className="wonder-art-butterfly" width={72} height={72} decoding="async" />
       )}
-      <div className="wonder-home-playroom flex-1 flex items-end px-3 sm:px-4 pt-1 pb-1">
+      <div className="wonder-home-playroom">
+        {isMeadow && (
+          <img src={HOME_ART.tree} alt="" className="wonder-art-tree" width={180} height={320} decoding="async" />
+        )}
         <ToddlerSpaceNav activeTab={null} onSelect={enterDestination} isMeadow={isMeadow} />
       </div>
 
