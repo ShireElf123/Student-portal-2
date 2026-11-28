@@ -51,7 +51,7 @@ export function ToddlerDestinationShell({
             </p>
             <h1 className="text-lg sm:text-2xl font-black text-slate-900 leading-tight flex items-center gap-2">
               {meta && DESTINATION_ICON[meta.id] ? (
-                <img src={DESTINATION_ICON[meta.id]} alt="" width={36} height={36} className="wonder-launch-icon" decoding="async" />
+                <img src={DESTINATION_ICON[meta.id]} alt="" width={48} height={48} className="wonder-launch-icon wonder-launch-icon--place" decoding="async" />
               ) : (
                 <span aria-hidden>{meta?.emoji}</span>
               )}

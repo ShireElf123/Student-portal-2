@@ -541,12 +541,90 @@
   gap: 0.55rem;
 }
 
+.wonder-launcher-wrap {
+  max-width: 72rem;
+  margin: 0 auto 1rem;
+}
+@media (min-width: 1024px) {
+  .wonder-launcher-wrap {
+    margin-bottom: 2rem;
+  }
+}
+.wonder-turn-hint {
+  display: none;
+  margin: 0 auto 0.45rem;
+  width: fit-content;
+  padding: 0.28rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 253, 247, 0.92);
+  border: 2px solid #fff;
+  color: #3f3f46;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+@media (orientation: portrait) and (min-width: 600px) and (max-width: 1023px) {
+  .wonder-turn-hint {
+    display: block;
+  }
+}
 .wonder-launcher {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+  padding: 0.65rem;
+  max-width: 72rem;
+  margin: 0 auto;
   border-radius: 1.85rem;
   box-shadow:
     0 16px 32px -14px rgba(22, 101, 52, 0.28),
     0 2px 0 rgba(255, 255, 255, 0.9) inset,
     0 -6px 0 rgba(16, 185, 129, 0.18);
+}
+.wonder-launch-tile {
+  min-height: 5.35rem;
+}
+.wonder-launch-icon {
+  width: 2.05rem;
+  height: 2.05rem;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 2px rgba(15, 23, 42, 0.16));
+}
+.wonder-launch-icon--hero {
+  width: 3.45rem;
+  height: 3.45rem;
+}
+.wonder-launch-icon--place {
+  width: 2.35rem;
+  height: 2.35rem;
+}
+@media (min-width: 640px) {
+  .wonder-launcher {
+    gap: 0.7rem;
+    padding: 0.85rem;
+  }
+  .wonder-launch-tile {
+    min-height: 6.5rem;
+  }
+  .wonder-launch-icon--hero {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+  .wonder-art-sun {
+    width: 4.25rem;
+    height: 4.25rem;
+  }
+}
+@media (orientation: landscape) and (min-width: 740px), (min-width: 1024px) {
+  .wonder-launcher {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+  .wonder-launch-tile {
+    min-height: 7.25rem;
+  }
+  .wonder-launch-icon--hero {
+    width: 5.35rem;
+    height: 5.35rem;
+  }
 }
 
 .wonder-destination-enter {
@@ -898,22 +976,6 @@
   height: 100%;
   object-fit: contain;
   object-position: center 60%;
-}
-.wonder-launch-icon {
-  width: 2.05rem;
-  height: 2.05rem;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 2px rgba(15, 23, 42, 0.16));
-}
-@media (min-width: 640px) {
-  .wonder-launch-icon {
-    width: 2.4rem;
-    height: 2.4rem;
-  }
-  .wonder-art-sun {
-    width: 4.25rem;
-    height: 4.25rem;
-  }
 }
 
 /* Accessibility: Focus Rings */

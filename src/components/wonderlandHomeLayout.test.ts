@@ -21,10 +21,14 @@ describe("Toddler Wonderland home composition", () => {
       "Counting",
       "My Buddy",
     ]);
-    expect(nav).toContain("grid-cols-4 lg:grid-cols-8");
     expect(nav).toContain('data-testid="toddler-space-nav"');
     expect(nav).toContain("DESTINATION_ICON");
-    expect(nav).toContain("wonder-launch-icon");
+    expect(nav).toContain("wonder-launch-icon--hero");
+    expect(nav).toContain("flex flex-col");
+    expect(css).toContain("grid-template-columns: repeat(4, minmax(0, 1fr))");
+    expect(css).toContain("grid-template-columns: repeat(8, minmax(0, 1fr))");
+    expect(css).toContain(".wonder-launch-icon--hero");
+    expect(css).toContain("orientation: landscape");
     expect(view).toContain("HOME_ART.teddy");
     expect(css).toContain(".wonder-home-sky");
     expect(css).toContain(".wonder-home-meadow");
