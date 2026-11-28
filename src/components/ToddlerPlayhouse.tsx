@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { PLAYHOUSE_SHOWS, type PlayhouseShow } from "../data/toddler/playhouseShows";
 import { speakText, stopSpeaking } from "../utils/speechUtils";
 import { soundEffects } from "../utils/soundEffects";
+import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
 
 function coverFor(show: PlayhouseShow): string {
   return show.coverImage || "/covers/playhouse-curtain.jpg";
@@ -87,6 +88,11 @@ export function ToddlerPlayhouse({
       setDone(true);
       soundEffects.playFanfare();
       onAddStar(3);
+      try {
+        payDailyMissionIfMatches("playhouse");
+      } catch {
+        // ignore
+      }
       speakText("The curtain closes. You watched the whole play!", { pitch: 1.15 });
     }
   };

@@ -25,6 +25,7 @@ import {
   recordDailyCount,
   recordDailySetMember,
   recordPhonicsLetterTapped,
+  weeklyMissionTabs,
 } from "./toddlerDailyAdventure";
 
 class MemoryStorage implements Storage {
@@ -62,6 +63,19 @@ const yesterday = () => {
   date.setDate(date.getDate() - 1);
   return date.toISOString().split("T")[0];
 };
+
+describe("weekly learning mix", () => {
+  it("visits Worlds plus Playhouse across the week, not only Games", () => {
+    const tabs = weeklyMissionTabs();
+    expect(tabs).toContain("worlds");
+    expect(tabs).toContain("playhouse");
+    expect(tabs).toContain("phonics");
+    expect(tabs).toContain("counting");
+    expect(tabs).toContain("books");
+    expect(tabs).toContain("games");
+    expect(tabs).toContain("focus");
+  });
+});
 
 describe("daily counters", () => {
   it("counts within the day, starting from zero", () => {

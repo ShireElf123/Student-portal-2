@@ -87,14 +87,14 @@ export function ToddlerCountingBoard({
   const [card, setCard] = useState<CountingCard | null>(null);
   const [filled, setFilled] = useState(0);
   const [starred, setStarred] = useState<number | null>(null);
-  const [moreIndex, setMoreIndex] = useState(0);
+  const [moreIndex, setMoreIndex] = useState(() => Math.floor(Math.random() * MORE_LESS_ROUNDS.length));
   const [tenIndex, setTenIndex] = useState(0);
   const [tenFilled, setTenFilled] = useState(MAKE_TEN_ROUNDS[0].have);
-  const [peekIndex, setPeekIndex] = useState(0);
+  const [peekIndex, setPeekIndex] = useState(() => Math.floor(Math.random() * SUBITIZE_ROUNDS.length));
   const [peekHidden, setPeekHidden] = useState(false);
-  const [shapeIndex, setShapeIndex] = useState(0);
-  const [patternIndex, setPatternIndex] = useState(0);
-  const [afterIndex, setAfterIndex] = useState(0);
+  const [shapeIndex, setShapeIndex] = useState(() => Math.floor(Math.random() * SHAPE_ROUNDS.length));
+  const [patternIndex, setPatternIndex] = useState(() => Math.floor(Math.random() * PATTERN_ROUNDS.length));
+  const [afterIndex, setAfterIndex] = useState(() => Math.floor(Math.random() * NEXT_NUMBER_ROUNDS.length));
 
   const more = MORE_LESS_ROUNDS[moreIndex % MORE_LESS_ROUNDS.length];
   const ten = MAKE_TEN_ROUNDS[tenIndex % MAKE_TEN_ROUNDS.length];

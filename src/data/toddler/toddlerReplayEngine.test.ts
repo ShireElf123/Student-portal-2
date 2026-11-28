@@ -7,6 +7,8 @@ import {
   generateCountingScenario,
   pickCountingTemplate,
   shouldUseFarmChicksVictoryQueue,
+  spokenPromptGivesCountAway,
+  stripSpokenCountOut,
 } from "./toddlerReplayEngine";
 
 describe("counting growth bands", () => {
@@ -47,8 +49,26 @@ describe("counting growth bands", () => {
     const scenario = generateCountingScenario(1, pool, hint);
     expect(scenario.targetCount).toBe(3);
     expect(scenario.itemName).toBe("Farm Chicks");
-    expect(scenario.spokenPrompt).toBe(
-      "Look at the cozy hay! Count the fluffy yellow chicks: one, two, three!",
+    expect(scenario.spokenPrompt).toContain("fluffy yellow chicks");
+    expect(scenario.spokenPrompt.toLowerCase()).not.toContain("one, two, three");
+    expect(scenario.spokenPrompt).toContain("How many do you see?");
+  });
+
+  it("varies the count on replay when the authored total is not locked", () => {
+    const pool = [
+      { name: "Farm Chicks", emoji: "🐤", sound: "Cheep!", bg: "from-yellow-900 to-amber-950", text: "text-yellow-200" },
+    ];
+    const counts = new Set(
+      Array.from({ length: 24 }, () => generateCountingScenario(1, pool, { title: "Count the Yellow Chicks" }).targetCount),
+    );
+    expect(counts.size).toBeGreaterThan(1);
+    expect([...counts].every((count) => count >= 1 && count <= 5)).toBe(true);
+  });
+
+  it("strips count-out spoiler lines without losing the scene", () => {
+    expect(spokenPromptGivesCountAway("Count the chicks: one, two, three!")).toBe(true);
+    expect(stripSpokenCountOut("Look at the cozy hay! Count the fluffy yellow chicks: one, two, three!")).toBe(
+      "Look at the cozy hay! Count the fluffy yellow chicks.",
     );
   });
 

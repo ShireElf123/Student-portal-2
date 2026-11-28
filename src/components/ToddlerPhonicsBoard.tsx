@@ -44,11 +44,11 @@ export function ToddlerPhonicsBoard({
   const [tile, setTile] = useState<PhonicsTile | null>(null);
   const [family, setFamily] = useState<WordFamily | null>(null);
   const [traceOn, setTraceOn] = useState(false);
-  const [huntIndex, setHuntIndex] = useState(0);
-  const [blendIndex, setBlendIndex] = useState(0);
+  const [huntIndex, setHuntIndex] = useState(() => Math.floor(Math.random() * SOUND_HUNTS.length));
+  const [blendIndex, setBlendIndex] = useState(() => Math.floor(Math.random() * BLEND_WORDS.length));
   const [blendStep, setBlendStep] = useState(0);
-  const [sightIndex, setSightIndex] = useState(0);
-  const [orderIndex, setOrderIndex] = useState(0);
+  const [sightIndex, setSightIndex] = useState(() => Math.floor(Math.random() * SIGHT_WORDS.length));
+  const [orderIndex, setOrderIndex] = useState(() => Math.floor(Math.random() * LETTER_NEXT_ROUNDS.length));
   const hunt = SOUND_HUNTS[huntIndex % SOUND_HUNTS.length];
   const blend: BlendWord = BLEND_WORDS[blendIndex % BLEND_WORDS.length];
   const sight = SIGHT_WORDS[sightIndex % SIGHT_WORDS.length];

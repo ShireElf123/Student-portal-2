@@ -121,12 +121,51 @@ export function countingHintFromActivity(activity: {
   return { title: activity.title, spokenPrompt: activity.spokenPrompt, targetCount };
 }
 
+/** Fisher–Yates copy so replay does not leave the correct tap in the same seat. */
+export function shuffleCopy<T>(items: T[]): T[] {
+  const next = [...items];
+  for (let i = next.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [next[i], next[j]] = [next[j], next[i]];
+  }
+  return next;
+}
+
+/** True when the prompt already counts the answer out loud. */
+export function spokenPromptGivesCountAway(prompt: string): boolean {
+  return /:\s*(one|two|three)/i.test(prompt) || /count together:/i.test(prompt);
+}
+
+export function stripSpokenCountOut(prompt: string): string {
+  const stripped = prompt
+    .replace(/:\s*((one|two|three|four|five|six|seven|eight|nine|ten)[,!\s]*)+$/i, ".")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!stripped) return prompt;
+  return /[.!?]$/.test(stripped) ? stripped : `${stripped}.`;
+}
+
+export function honestCountingSpokenPrompt(
+  itemName: string,
+  level: number,
+  authored?: string,
+  count?: number,
+): string {
+  if (authored && count != null && !spokenPromptGivesCountAway(authored)) return authored;
+  if (authored && spokenPromptGivesCountAway(authored)) {
+    return `${stripSpokenCountOut(authored)} How many do you see?`;
+  }
+  return level <= 1
+    ? `Look! Count the ${itemName}. How many do you see?`
+    : `This group is bigger. Count the ${itemName}. How many do you see?`;
+}
+
 export function generateCountingScenario(
   level: number = 1,
   pool: { name: string; emoji: string; sound: string; bg: string; text: string }[] = COUNTING_OBJECT_TEMPLATES,
   hint?: CountingHint,
 ): DynamicCountingScenario {
-  const { min, max, label } = countingBand(level);
+  const { min, max } = countingBand(level);
   let count = min + Math.floor(Math.random() * (max - min + 1));
   if (hint?.targetCount != null && hint.targetCount >= min && hint.targetCount <= max) {
     count = hint.targetCount;
@@ -142,7 +181,7 @@ export function generateCountingScenario(
     }
   }
 
-  const options = [count, ...distractors].sort(() => Math.random() - 0.5);
+  const options = shuffleCopy([count, ...distractors]);
 
   return {
     id: `count-${Date.now()}-${count}`,
@@ -153,12 +192,12 @@ export function generateCountingScenario(
     bgGradient: template.bg,
     textColor: template.text,
     question: `How many ${template.name} can you count?`,
-    spokenPrompt:
-      hint?.spokenPrompt && hint.targetCount === count
-        ? hint.spokenPrompt
-        : level <= 1
-          ? `Look! Count the ${template.name}. How many do you see?`
-          : `This group is bigger. Count the ${template.name} from ${label}. How many do you see?`,
+    spokenPrompt: honestCountingSpokenPrompt(
+      template.name,
+      level,
+      hint?.spokenPrompt && hint.targetCount === count ? hint.spokenPrompt : undefined,
+      count,
+    ),
     distractorCounts: options,
   };
 }

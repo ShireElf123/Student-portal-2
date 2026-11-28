@@ -39,7 +39,8 @@ import {
   isAreaUnlocked,
   ToddlerWorldProgressState,
 } from "../data/toddler/toddlerProgressManager";
-import { payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
+import { getTodaysOpenWorldMission, payDailyMissionIfMatches } from "../data/toddler/toddlerDailyAdventure";
+import { SHARED_VOICE } from "../data/toddler/sharedVoiceLines";
 import {
   countingHintFromActivity,
   countingLevelForPlace,
@@ -47,6 +48,7 @@ import {
   generateCountingScenario,
   generateSortingChallenge,
   shouldUseFarmChicksVictoryQueue,
+  shuffleCopy,
   DynamicCountingScenario,
   DynamicSortingChallenge,
 } from "../data/toddler/toddlerReplayEngine";
@@ -172,6 +174,7 @@ export function ToddlerWorldsNavigator({
   const [selectedWorldId, setSelectedWorldId] = useState<string | null>(openingRoute.worldId);
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(openingRoute.areaId);
   const [activeActivity, setActiveActivity] = useState<ToddlerActivity | null>(null);
+  const [playOptions, setPlayOptions] = useState<ToddlerActivity["options"]>([]);
   const [activeMission, setActiveMission] = useState<ToddlerMission | null>(null);
   const [missionStepIdx, setMissionStepIdx] = useState<number>(0);
   const [activeSecretZone, setActiveSecretZone] = useState<(typeof SECRET_ZONES)[number] | null>(null);
@@ -539,13 +542,11 @@ export function ToddlerWorldsNavigator({
     setSortedItems({});
     setCountingAnswered(false);
 
-    const firstOpen = firstOpenActivity(area, progress);
-    if (firstOpen) {
-      handleStartActivity(firstOpen);
-      return;
+    if (!skipWorldHistoryRef.current) {
+      onWorldNav?.({ worldId: area.worldId, areaId: area.id, activityId: null }, "push");
     }
 
-    speakText(`${area.title}! ${area.tagline}. Let's explore together!`, {
+    speakText(`${area.title}! ${area.tagline}. Look around, then pick a stop.`, {
       pitch: 1.15,
       closedKit: isClosedVoiceIsland(area.id),
     });
@@ -640,6 +641,7 @@ export function ToddlerWorldsNavigator({
     setTappedCountIndices([]);
     setCountingAnswered(false);
     setSortedItems({});
+    setPlayOptions(shuffleCopy(activity.options));
 
     // Check if activity uses specialized engines
     if (activity.storyAdventureId) {
@@ -723,6 +725,11 @@ export function ToddlerWorldsNavigator({
 
       onAddStar(activeActivity.rewardStars);
       awardXP(activeActivity.rewardXP, `Explored ${activeActivity.title}`);
+      try {
+        payDailyMissionIfMatches("worlds", activeActivity.worldId);
+      } catch {
+        // ignore
+      }
 
       if (newlyUnlockedAreas.length > 0) {
         setUnlockedNotice(newlyUnlockedAreas);
@@ -766,7 +773,7 @@ export function ToddlerWorldsNavigator({
       speakText(
         isClosedVoiceIsland(activeActivity.areaId)
           ? chosen.feedback
-          : `That is ${chosen.label}! ${chosen.feedback} Let's try again!`,
+          : `That is ${chosen.label}! ${chosen.feedback} ${SHARED_VOICE.tryAnother}`,
         { pitch: 1.15 },
       );
       setTimeout(() => setSelectedOptionId(null), 1200);
@@ -799,6 +806,11 @@ export function ToddlerWorldsNavigator({
 
       onAddStar(activeActivity.rewardStars);
       awardXP(activeActivity.rewardXP, `Counted ${dynamicCounting.itemName}`);
+      try {
+        payDailyMissionIfMatches("worlds", activeActivity.worldId);
+      } catch {
+        // ignore
+      }
 
       if (newlyUnlockedAreas.length > 0) {
         setUnlockedNotice(newlyUnlockedAreas);
@@ -821,17 +833,17 @@ export function ToddlerWorldsNavigator({
       }
     } else {
       soundEffects.playGentleBoing();
-      const countSequence = Array.from({ length: dynamicCounting.targetCount }, (_, i) => i + 1).join(", ");
-      speakText(`That is ${chosenNumber}! Let's count them together: ${countSequence}! Try tapping the right number!`, { pitch: 1.15 });
+      speakText(`${SHARED_VOICE.lookAgain} ${SHARED_VOICE.countAgain}`, { pitch: 1.15 });
     }
   };
 
   const handleRegenerateCounting = () => {
     if (!activeActivity) return;
+    const hint = countingHintFromActivity(activeActivity);
     const countScenario = generateCountingScenario(
       countingLevelForActivity(activeActivity),
       getWorldPlayTheme(activeActivity.worldId, activeActivity.areaId).counting,
-      countingHintFromActivity(activeActivity),
+      { title: hint.title },
     );
     setDynamicCounting(countScenario);
     setCountingAnswered(false);
@@ -861,6 +873,11 @@ export function ToddlerWorldsNavigator({
 
         onAddStar(activeActivity.rewardStars);
         awardXP(activeActivity.rewardXP, `Sorted ${dynamicSorting.title}`);
+        try {
+          payDailyMissionIfMatches("worlds", activeActivity.worldId);
+        } catch {
+          // ignore
+        }
 
         if (newlyUnlockedAreas.length > 0) {
           setUnlockedNotice(newlyUnlockedAreas);
@@ -875,8 +892,7 @@ export function ToddlerWorldsNavigator({
       }
     } else {
       soundEffects.playGentleBoing();
-      const correctLabel = item.correctCategory === "A" ? dynamicSorting.categoryA.label : dynamicSorting.categoryB.label;
-      speakText(`Oops! ${item.label} belongs in ${correctLabel}! Let's try putting it there!`, { pitch: 1.15 });
+      speakText(SHARED_VOICE.sortAgain, { pitch: 1.15 });
     }
   };
 
@@ -1615,7 +1631,7 @@ export function ToddlerWorldsNavigator({
                 <Volume2 size={18} /> Hear it again
               </button>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-xl mx-auto">
-                {activeActivity.options.map((opt) => {
+                {(playOptions.length > 0 ? playOptions : activeActivity.options).map((opt) => {
                   const isSelected = selectedOptionId === opt.id;
                   return (
                     <button
@@ -1654,6 +1670,9 @@ export function ToddlerWorldsNavigator({
                     You did it!
                   </span>
                   <h3 className="text-2xl font-black text-white">{activeActivity.title}</h3>
+                  {(progress.completedActivities[activeActivity.id]?.playCount ?? 0) > 1 && (
+                    <p className="text-sm font-bold text-emerald-200">{SHARED_VOICE.practicedAgain}</p>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-center gap-4 py-2">
@@ -2031,6 +2050,23 @@ export function ToddlerWorldsNavigator({
           🧸 {progress.lastVisitedWorldId ? `Keep going · ${atlasNext.area.title}` : `Play ${atlasNext.area.title}`}
         </button>
       )}
+
+      {(() => {
+        const todayWorld = getTodaysOpenWorldMission();
+        const todayLand = todayWorld?.targetSubactivity
+          ? ALL_TODDLER_WORLDS.find((world) => world.id === todayWorld.targetSubactivity)
+          : undefined;
+        if (!todayWorld || !todayLand) return null;
+        return (
+          <button
+            type="button"
+            onClick={() => handleSelectWorld(todayLand)}
+            className="w-full min-h-14 px-5 rounded-3xl bg-white text-slate-900 font-black text-lg cursor-pointer border-b-4 border-sky-400 shadow-sm"
+          >
+            {todayWorld.emoji} Today’s land · {todayLand.title}
+          </button>
+        );
+      })()}
 
       <div className="grid grid-cols-1 gap-6">
         {ATLAS_CONTINENTS.map((continent) => {
